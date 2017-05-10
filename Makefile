@@ -1,0 +1,13 @@
+# tools for active package development
+
+vignettes:
+	Rscript -e "devtools::build_vignettes()"
+
+check:
+	Rscript -e "devtools::check()"
+
+document:
+	Rscript -e "devtools::check_doc()"
+
+auto_test:
+	R -q -e "testthat::auto_test_package()"
