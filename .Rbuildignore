@@ -1,11 +1,13 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.travis\.yml$
-^\.httr-oauth$
+^appveyor\.yml$
 ^codecov\.yml$
+^\.httr-oauth$
 ^Makefile$
 ^NEWS$
 ^docs$
 ^tmp$
 ^README-.*\.png$
+^README\.Rmd$
 ^logo\.png$
