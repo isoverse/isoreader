@@ -7,7 +7,7 @@
 #' @param R_units what units resistances are in (default GOhm, i.e. 10^9)
 #' @param V_pattern regular expression pattern how to recognize voltage columns and detect the masses they belong to (default is v followed by a number, e.g. v45)
 #' @param I_prefix prefix for the newly created current columns, the suffix is automatically the current units
-#' @param quiet whether to suppress information messages
+#' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}
 #' @note make sure that existing currents are not overwritten (e.g. in data frame that comes jointly from isodat and elementar)
 #' @note consider automatically guessing V_units from the voltage columns?
 #' @export
