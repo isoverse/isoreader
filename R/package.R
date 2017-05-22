@@ -3,8 +3,9 @@
 
 #' @import dplyr
 #' @import tidyr
-#' @import ggplot2
+#' @importFrom purrr map_lgl
 #' @import stringr
+#' @import ggplot2
 #' @importFrom stats setNames
 NULL
 
@@ -16,4 +17,15 @@ release_questions <- function() {
   c(
     "Is it passing travis, appveyor and win-builder?"
   )
+}
+
+#' read isotope data file
+#' 
+#' Deprecated, use [isoread_dual_inlet()], [isoread_continuous_flow()] and [isoread_scan()] instead.
+#'
+#' @export
+isoread <- function(...) {
+  stop(
+    "Deprecated, use isoread_dual_inlet(), isoread_continuous_flow() or isoread_scan() instead.",
+    call. = FALSE)
 }
