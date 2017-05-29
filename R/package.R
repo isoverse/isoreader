@@ -4,6 +4,7 @@
 #' @import dplyr
 #' @import tidyr
 #' @importFrom purrr map_lgl
+#' @importFrom tibble tribble
 #' @import stringr
 #' @import ggplot2
 #' @importFrom stats setNames

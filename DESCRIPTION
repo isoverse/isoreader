@@ -12,6 +12,9 @@ Imports:
     dplyr,
     tidyr,
     stringr,
+    purrr,
+    tibble,
+    readr,
     ggplot2
 Suggests:
     testthat,
