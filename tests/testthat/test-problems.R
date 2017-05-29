@@ -3,33 +3,41 @@ context("Problems")
 test_that("Test that problem registration and reporting works properly", {
   
   x <- letters
-  expect_equal(isoreader:::n_problems(x), 0)
+  expect_equal(isoreader:::n_problems(x), 0L)
+  
+  # initialize problems attribute
+  expect_equal({
+    y <- isoreader:::initialize_problems_attribute(x)
+    as.character(y)
+  }, x)
+  expect_equal(isoreader:::n_problems(y), 0L)
+  expect_equal(problems(y) %>% names(), c("filename", "type", "func", "message"))
   
   # add a problem
   expect_equal({
-    y <- isoreader:::register_problem(x, text = "problem")
+    y <- isoreader:::register_problem(x, message = "problem")
     as.character(y)
   }, x)
   
   expect_equal(isoreader:::n_problems(y), 1)
-  expect_equal(problems(y), data_frame(text = "problem"))
+  expect_equal(problems(y) %>% select(message), data_frame(message = "problem"))
   
   # add another problem
   expect_equal({
-    z <- isoreader:::register_problem(y, text = "problem2", code = 5)
+    z <- isoreader:::register_problem(y, message = "problem2", code = 5)
     as.character(z)
   }, x)
   expect_equal(isoreader:::n_problems(z), 2)
-  expect_equal(problems(z), data_frame(text = c("problem", "problem2"), code = c(NA, 5)))
+  expect_equal(problems(z) %>% select(message, code), data_frame(message = c("problem", "problem2"), code = c(NA, 5)))
   
   # register a file problem
   expect_equal({
-    x_file <- isoreader:::register_file_problem(x, "testfile.did", "unspecified error", "message")
+    x_file <- isoreader:::register_problem(x, "testfile.did", "unspecified error", "message")
     as.character(x_file)
   }, x)
   expect_equal(isoreader:::n_problems(x_file), 1)
   expect_equal(problems(x_file), 
-               data_frame(file = "testfile.did", type = "unspecified error",
+               data_frame(filename = "testfile.did", type = "unspecified error",
                           func = "compare(object, expected, ...)", message = "message"))
   
   # stop for problems
