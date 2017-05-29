@@ -1,6 +1,6 @@
 #' Load dual inlet data
 #' 
-#' @inheritParams convert_voltages_to_currents
+#' @inheritParams isoread_files
 #' @export
 isoread_dual_inlet <- function(paths, quiet = default("quiet")) {
   isoread_files(
@@ -51,5 +51,6 @@ print.dual_inlet <- function(x, ...) {
   if (n_problems(x) > 0) {
     cat("Encountered problems:\n")
     print(problems(x), ...)
+    cat("\n")
   }
 }

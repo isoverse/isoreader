@@ -1,7 +1,11 @@
-# main controller function to read binary isotope data files
-# @param supported_extensions data frame with the supported extensions and corresponding reader functions
-# @param data_structure the basic data structure for the type of isofile
-# @param quiet standard quiet parameter
+#' Main function to read binary isotope data files
+#' 
+#' This function takes care of extracting basic information about isofiles, making sure only valid fire formats are processed, and reading and processing the binary files themselves. This function is not typicaly called directly but indirectly by calling \link{isoread_dual_inlet}, \link{isoread_continuous_flow} and \link{isoread_scan}. It is exported because it can be very useful for testing new file readers.
+#' 
+#' @param paths one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).
+#' @param supported_extensions data frame with supported extensions and corresponding reader functions
+#' @param data_structure the basic data structure for the type of isofile
+#' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}
 isoread_files <- function(paths, supported_extensions, data_structure, quiet = default("quiet")) {
   
   # supplied data checks
@@ -20,7 +24,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
   # read files
   isofiles <- sapply(filepaths, function(filepath) {
     ext <- get_file_ext(filepath)
-    if (!quiet) sprintf("Info: Reading file %s with '%s' reader", filepath, ext)
+    if (!quiet) sprintf("Info: Reading file %s with '%s' reader", filepath, ext) %>% message()
     
     # prepare isofile object
     isofile <- data_structure
@@ -43,6 +47,13 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
         return(isofile)
       })
     
+    # report problems
+    if (!quiet && n_problems(isofile) > 0) {
+      cat("Encountered problems:\n")
+      print(problems(isofile))
+      cat("\n")
+    }
+    
     return(list(isofile) %>% 
              # set filepath as list name
              setNames(basename(filepath)))
@@ -54,6 +65,13 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
   } else {
     # multiple files
     class(isofiles) <- c("isofiles", class(isofiles))
+    # combine all problems and also store in parent isofiles
+    attr(isofiles, "problems") <-
+      isofiles %>% 
+      lapply(function(isofile) { 
+        problems(isofile) %>% mutate(filename = isofile$file_info$file_name) 
+      }) %>% bind_rows() %>% 
+      { select_(., .dots = c("filename", names(.)[names(.)!="filename"])) }
   }
   
   return(isofiles)  

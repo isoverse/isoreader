@@ -11,10 +11,9 @@ initialize_problems_attribute <- function(obj) {
   if (n_problems(obj) == 0) {
     attr(obj, "problems") <-
       data_frame(
-        filename = character(),
         type = character(),
         func = character(),
-        message = character()
+        details = character()
       )
   }
   return(obj)
@@ -22,12 +21,12 @@ initialize_problems_attribute <- function(obj) {
 
 # register a problem during isoreader operations
 # helper function to standardize problems for file reads
-# with a filename, type and message
-register_problem <- function(obj, filename = NA_character_, type = NA_character_, message = NA_character_, ..., 
+# with a filename, type and details
+register_problem <- function(obj, type = NA_character_, details = NA_character_, ..., 
                                   func = deparse(sys.call(-1)), 
                                   reset = FALSE) {
   if (func == "NULL") func <- NA_character_
-  problem <- data_frame(filename = filename, type = type, func = func, message = message, ...)
+  problem <- data_frame(type = type, func = func, details = details, ...)
   if (!reset && n_problems(obj) > 0) {
     attr(obj, "problems") <- suppressWarnings(bind_rows(probs(obj), problem))
   } else {

@@ -7,6 +7,8 @@
 isoread_dual_inlet(paths, quiet = default("quiet"))
 }
 \arguments{
+\item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
+
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }
 \description{
