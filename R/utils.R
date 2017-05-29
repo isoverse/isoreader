@@ -20,6 +20,8 @@ get_supported_cf_files <- function() {
 #' Show supported file types
 #' @export
 show_supported_file_types <- function() {
+  extension <- NULL
+  description <- NULL
   sprintf(
     c("Isoreader supported file types",
       "Dual Inlet | 'isoread_dual_inlet()':",

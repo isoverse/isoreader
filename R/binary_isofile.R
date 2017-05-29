@@ -61,6 +61,8 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
 
 
 #' Print a collection of isofiles
+#' @param x Object to show.
+#' @param ... additional parameters passed to print.default
 #' @export
 print.isofiles <- function(x, ...) {
   sprintf("# data from %d isofiles:\n", length(x)) %>% 

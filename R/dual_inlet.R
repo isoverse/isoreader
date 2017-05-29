@@ -42,12 +42,14 @@ isoread_did <- function(ds) {
 }
 
 #' Print a dual inlet isofile
+#' @param x Object to show.
+#' @param ... additional parameters passed to print.default
 #' @export
 print.dual_inlet <- function(x, ...) {
   sprintf("Dual inlet data from '%s'\n", x$file_info$file_path) %>% 
     cat()
   if (n_problems(x) > 0) {
     cat("Encountered problems:\n")
-    print(problems(x))
+    print(problems(x), ...)
   }
 }

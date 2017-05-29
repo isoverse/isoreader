@@ -6,6 +6,11 @@
 \usage{
 \method{print}{dual_inlet}(x, ...)
 }
+\arguments{
+\item{x}{Object to show.}
+
+\item{...}{additional parameters passed to print.default}
+}
 \description{
 Print a dual inlet isofile
 }

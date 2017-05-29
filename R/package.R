@@ -8,6 +8,7 @@
 #' @import stringr
 #' @import ggplot2
 #' @importFrom stats setNames
+#' @importFrom methods is
 NULL
 
 ## quiets concerns of R CMD check about . that appears in pipelines
@@ -24,6 +25,7 @@ release_questions <- function() {
 #' 
 #' Deprecated, use [isoread_dual_inlet()], [isoread_continuous_flow()] and [isoread_scan()] instead.
 #'
+#' @param ... original isoread parameters
 #' @export
 isoread <- function(...) {
   stop(

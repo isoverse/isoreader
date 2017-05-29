@@ -6,6 +6,11 @@
 \usage{
 \method{print}{isofiles}(x, ...)
 }
+\arguments{
+\item{x}{Object to show.}
+
+\item{...}{additional parameters passed to print.default}
+}
 \description{
 Print a collection of isofiles
 }

@@ -6,6 +6,9 @@
 \usage{
 isoread(...)
 }
+\arguments{
+\item{...}{original isoread parameters}
+}
 \description{
 Deprecated, use [isoread_dual_inlet()], [isoread_continuous_flow()] and [isoread_scan()] instead.
 }
