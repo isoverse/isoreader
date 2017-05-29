@@ -19,5 +19,20 @@ test_that("test that retrieving file paths works correctly", {
     c(direct_list[2], system.file("extdata", package = "isoreader")) %>% isoreader:::retrieve_file_paths(c("did", "dxf"))
   )
   
+  # test duplicated file names error
+  # @FIXME: not sure how to test this without actually artifically duplicating an included data file
+})
+
+test_that("test that column name checks work correctly", {
+  expect_error(isoreader:::col_check("x", data_frame(y=1:5)), "not in data")
+  expect_error(isoreader:::col_check(c("x", "y"), data_frame(x=1:5)), "not in data")
+  expect_silent(isoreader:::col_check("x", data_frame(x=1:5)))
+  expect_silent(isoreader:::col_check(c("x", "y"), data_frame(x=1:5, y="test")))
+})
+
+
+test_that("test that support file types are listed", {
+  
+  expect_output(show_supported_file_types(), "supported file types")
   
 })

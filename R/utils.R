@@ -4,16 +4,8 @@ magrittr::`%>%`
 
 # helper to make sure columns exist
 col_check <- function(col, data, fun = sys.call(-1)) {
-  if (!is.null(col) && !col %in% names(data)) 
-    stop("column not in dataset: '", col, "'. You may have to change the default parameters in your call to ", fun, call. = FALSE)
-}
-
-# get supported dual inlet file types and which functions they map to
-get_supported_di_files <- function() {
-  tribble(
-    ~extension, ~fun,        ~description,
-    "did",      isoread_did, "Isodat Dual Inlet file format"
-  )
+  if (!is.null(col) && length(missing <- setdiff(col, names(data))) > 0) 
+    stop("column(s) not in data: '", str_c(col, collapse = "', '"), "'. You may have to change the parameters in your call to ", fun, call. = FALSE)
 }
 
 # get supported continuous flow file types and which functions they map to
