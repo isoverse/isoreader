@@ -24,7 +24,7 @@ convert_voltages_to_currents(data, R, V_units = "mV", I_units = "nA",
 
 \item{I_prefix}{prefix for the newly created current columns, the suffix is automatically the current units}
 
-\item{quiet}{whether to suppress information messages}
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }
 \description{
 Convert voltages to currents
