@@ -1,10 +1,5 @@
 context("Dual Inlet Files")
 
-test_that("test that dual inlet data structure is correct", {
-  expect_is(make_di_data_structure(), "isofile")
-  expect_is(make_di_data_structure(), "dual_inlet")
-})
-
 test_that("test that supported di files are correct", {
   expect_is(exts <- get_supported_di_files(), "data.frame")
   expect_equal(exts$extension, c("did"))
