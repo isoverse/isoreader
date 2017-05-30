@@ -32,7 +32,5 @@ test_that("test that column name checks work correctly", {
 
 
 test_that("test that support file types are listed", {
-  
   expect_output(show_supported_file_types(), "supported file types")
-  
 })

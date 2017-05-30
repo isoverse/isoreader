@@ -1,4 +1,4 @@
-context("Default values")
+context("Settings and default values")
 
 test_that("default values can be set and retrieved", {
   expect_error(isoreader:::default("don't know"), "default .* does not exist")

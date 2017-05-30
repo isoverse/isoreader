@@ -2,22 +2,12 @@
 #' 
 #' @inheritParams isoread_files
 #' @export
-isoread_dual_inlet <- function(paths, quiet = default("quiet")) {
+isoread_dual_inlet <- function(paths, quiet = default("quiet"), 
+                               read_mass_data = TRUE, read_file_info = TRUE) {
   isoread_files(
     paths,
     supported_extensions = get_supported_di_files(),
     data_structure = make_di_data_structure()
-  )
-}
-
-# basic dual inlet data structure
-make_di_data_structure <- function() {
-  structure(
-    list(
-      file_info = list(),
-      mass_data = data_frame()
-    ),
-    class = c("dual_inlet", "isofile")
   )
 }
 
@@ -27,18 +17,6 @@ get_supported_di_files <- function() {
     ~extension, ~fun,        ~description,
     "did",      isoread_did, "Isodat Dual Inlet file format"
   )
-}
-
-# read isodat did file
-# @param ds the data structure to fill
-isoread_did <- function(ds) {
-  
-  if(!is(ds, "isofile") || !is(ds, "dual_inlet")) 
-    stop("data structure must have class 'isofile' and 'dual_inlet'", call. = FALSE)
-  col_check(c("file_info", "mass_data"), ds)
-  col_check(c("file_name", "file_path"), ds$file_info)
-  
-  return(ds)  
 }
 
 #' Print a dual inlet isofile

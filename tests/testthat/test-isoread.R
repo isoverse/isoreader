@@ -1,4 +1,4 @@
-context("read binary iso file")
+context("Test basic isoread_files coordinator function")
 
 test_that("test that parameter checks are performed when reading binary file", {
   # make sure adequate parameter supplied

@@ -8,15 +8,6 @@ col_check <- function(col, data, fun = sys.call(-1)) {
     stop("column(s) not in data: '", str_c(col, collapse = "', '"), "'. You may have to change the parameters in your call to ", fun, call. = FALSE)
 }
 
-# get supported continuous flow file types and which functions they map to
-get_supported_cf_files <- function() {
-  tribble(
-    ~extension, ~fun,        ~description,
-    "cf",       isoread_cf,  "Isodat Continuous Flow file format (older)",
-    "dxf",      isoread_dxf, "Isodat Continuous Flow file format (newer)"
-  )
-}
-
 #' Show supported file types
 #' @export
 show_supported_file_types <- function() {
@@ -37,7 +28,6 @@ show_supported_file_types <- function() {
   ) %>% 
     cat()
 }
-
 
 # get file extension
 get_file_ext <- function(filepath) {

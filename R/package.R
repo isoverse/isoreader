@@ -20,15 +20,3 @@ release_questions <- function() {
     "Is it passing travis, appveyor and win-builder?"
   )
 }
-
-#' read isotope data file
-#' 
-#' Deprecated, use \link{isoread_dual_inlet}, \link{isoread_continuous_flow} and \link{isoread_scan} instead.
-#'
-#' @param ... original isoread parameters
-#' @export
-isoread <- function(...) {
-  stop(
-    "Deprecated, use isoread_dual_inlet(), isoread_continuous_flow() or isoread_scan() instead.",
-    call. = FALSE)
-}

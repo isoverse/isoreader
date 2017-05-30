@@ -1,12 +1,28 @@
-#' Main function to read binary isotope data files
+#' Read isotope data file
 #' 
-#' This function takes care of extracting basic information about isofiles, making sure only valid fire formats are processed, and reading and processing the binary files themselves. This function is not typicaly called directly but indirectly by calling \link{isoread_dual_inlet}, \link{isoread_continuous_flow} and \link{isoread_scan}. It is exported because it can be very useful for testing new file readers.
+#' Deprecated, use \link{isoread_dual_inlet}, \link{isoread_continuous_flow} and \link{isoread_scan} instead.
+#'
+#' @param ... original isoread parameters
+#' @export
+isoread <- function(...) {
+  stop(
+    "Deprecated, use isoread_dual_inlet(), isoread_continuous_flow() or isoread_scan() instead.",
+    call. = FALSE)
+}
+
+#' Main function to read isotope data files
+#' 
+#' This function takes care of extracting basic information about isofiles, dealing with problems and making sure only valid fire formats are processed. This function is not typicaly called directly but indirectly by calling \link{isoread_dual_inlet}, \link{isoread_continuous_flow} and \link{isoread_scan}. It is exported because it can be very useful for testing new file readers.
 #' 
 #' @param paths one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).
 #' @param supported_extensions data frame with supported extensions and corresponding reader functions
 #' @param data_structure the basic data structure for the type of isofile
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}
-isoread_files <- function(paths, supported_extensions, data_structure, quiet = default("quiet")) {
+#' @param read_mass_data whether to read the raw mass data from the file
+#' @param read_data_table whether to read an preprocessed data tables from the file
+#' @param read_file_info whether to read auxiliary file information (program, methods, etc.)
+isoread_files <- function(paths, supported_extensions, data_structure, quiet = default("quiet"),
+                          read_mass_data = TRUE, read_data_table = TRUE, read_file_info = TRUE) {
   
   # supplied data checks
   col_check(c("extension", "fun"), supported_extensions)
@@ -34,8 +50,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
         # initialize problems attribute
         isofile <- initialize_problems_attribute(isofile)
         # store filename and path
-        isofile$file_info$file_name <- basename(filepath)
-        isofile$file_info$file_path <- filepath
+        isofile <- set_ds_file_path(isofile, filepath)
         # use extension-specific function to read file
         isofile <- fun_map[[ext]](isofile)
         # return isofile
@@ -54,9 +69,8 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
       cat("\n")
     }
     
-    return(list(isofile) %>% 
-             # set filepath as list name
-             setNames(basename(filepath)))
+    # set filepath as list name
+    return(list(isofile) %>% setNames(basename(filepath)))
   })
 
   if (length(isofiles) == 1) {
@@ -77,7 +91,6 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
   return(isofiles)  
 }
 
-
 #' Print a collection of isofiles
 #' @param x Object to show.
 #' @param ... additional parameters passed to print.default
@@ -87,4 +100,3 @@ print.isofiles <- function(x, ...) {
     cat()
   sapply(x, print)
 }
-
