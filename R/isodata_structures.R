@@ -41,6 +41,7 @@ print.isofiles <- function(x, ...) {
   sprintf("# data from %d isofiles:\n", length(x)) %>% 
     cat()
   sapply(x, print)
+  invisible(x)
 }
 
 #' Print a dual inlet isofile
@@ -48,7 +49,7 @@ print.isofiles <- function(x, ...) {
 #' @param ... additional parameters passed to print.default
 #' @export
 print.dual_inlet <- function(x, ...) {
-  sprintf("Dual inlet data '%s' (file %s%s)\n", 
+  sprintf("Dual inlet data '%s' (%s%s)\n", 
           x$file_info$file_id,
           x$file_info$file_path,
           x$file_info$file_subpath %>% { if(!is.na(.)) str_c("|", .) else "" }
@@ -58,6 +59,7 @@ print.dual_inlet <- function(x, ...) {
     print(problems(x), ...)
     cat("\n")
   }
+  invisible(x)
 }
 
 #' Print a continuous_flow isofile
@@ -65,7 +67,7 @@ print.dual_inlet <- function(x, ...) {
 #' @param ... additional parameters passed to print.default
 #' @export
 print.continuous_flow <- function(x, ...) {
-  sprintf("Continuous flow data '%s' (file %s%s)\n", 
+  sprintf("Continuous flow data '%s' (%s%s)\n", 
           x$file_info$file_id,
           x$file_info$file_path,
           x$file_info$file_subpath %>% { if(!is.na(.)) str_c("|", .) else "" }
@@ -75,6 +77,7 @@ print.continuous_flow <- function(x, ...) {
     print(problems(x), ...)
     cat("\n")
   }
+  invisible(x)
 }
 
 
