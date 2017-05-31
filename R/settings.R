@@ -34,3 +34,18 @@ turn_info_messages_off <- function(data) {
   set_default("quiet", TRUE)
   if (!missing(data)) return(data)
 }
+
+
+# turn debug messages on/off
+# not exported, used for internal debugging
+turn_debug_on <- function(data) {
+  set_default("debug", TRUE)
+  message("Info: debug mode turned on")
+  if (!missing(data)) return(data)
+}
+
+turn_debug_off <- function(data) {
+  set_default("debug", FALSE)
+  message("Info: debug mode turned off")
+  if (!missing(data)) return(data)
+}
