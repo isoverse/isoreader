@@ -1,4 +1,5 @@
 # retrieve package default values, internal function, not exported
+# @TODO: rename default to 'setting'
 default <- function(name) {
   value <- getOption(str_c("isoreader.", name))
   if (is.null(value)) stop("isoreader default '", name, "' does not exist", call. = FALSE)
@@ -6,6 +7,7 @@ default <- function(name) {
 }
 
 # set package default value, internal function, not exported
+# @TODO: rename to 'set_setting'
 set_default <- function(name, value, overwrite = TRUE) {
   if (overwrite || !str_c("isoreader.", name) %in% names(options()))
     options(list(value) %>% setNames(str_c("isoreader.", name)))

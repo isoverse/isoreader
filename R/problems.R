@@ -28,7 +28,7 @@ register_warning <- function(obj, details = NA_character_, ...,
 # register error
 register_error <- function(obj, details = NA_character_, ..., 
                            func = deparse(sys.call(-1)), warn = TRUE) {
-  if (warn) warning("caught error '", details, "'", call. = FALSE, immediate. = TRUE)
+  if (warn) warning("caught error - ", details, call. = FALSE, immediate. = TRUE)
   register_problem(obj, type = "error", details = details, func = func, ...)
 }
 
