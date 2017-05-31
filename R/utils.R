@@ -79,8 +79,10 @@ retrieve_file_paths <- function(paths, extensions = c()) {
 }
 
 # execute function with catch if not in debug mode
+# @param func can be either function name or function call
 # problems are reported in obj
 exec_func_with_error_catch <- function(func, obj, ...) {
+  func_name <- substitute(func) %>% deparse() %>% str_replace_all("\\\"", "")
   if (default("debug")) {
     # debug mode, don't catch any errors
     obj <- do.call(func, args = c(list(obj), list(...)))
@@ -90,7 +92,7 @@ exec_func_with_error_catch <- function(func, obj, ...) {
       tryCatch({
         do.call(func, args = c(list(obj), list(...)))
       }, error = function(e){
-        return(register_error(obj, e$message))
+        return(register_error(obj, e$message, func = func_name))
       })
   }
   return(obj)
