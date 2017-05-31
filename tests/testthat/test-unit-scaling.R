@@ -30,3 +30,18 @@ test_that("common SI prefixes are supported", {
     isoreader:::get_si_prefix_scaling(unit = "fA", suffix = "A"), 
     isoreader:::get_si_prefix_scaling(suffix = "A", unit = "fA"))
 })
+
+test_that("test that time scaling works", {
+  time <- 1:60
+  
+  # direct numbers
+  expect_error(isoreader:::scale_time(time, to = "s"), "requires specifying from unit")
+  expect_equal(isoreader:::scale_time(time, from = "min", to = "s"), time*60)
+  expect_equal(isoreader:::scale_time(time, from = "min", to = "hour"), time/60)
+  expect_equal(isoreader:::scale_time(time, from = "hours", to = "seconds"), time*60*60)
+  expect_equal(isoreader:::scale_time(time, from = "second", to = "days"), time/60/60/24)
+  
+  # with duration object
+  expect_warning(isoreader:::scale_time(lubridate::duration(time, "hours"), from = "s", to = "minutes"), "ignored")
+  expect_equal(isoreader:::scale_time(lubridate::duration(time, "hours"), to = "minutes"), time*60)
+})

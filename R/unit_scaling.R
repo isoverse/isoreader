@@ -27,3 +27,16 @@ get_si_prefix_scaling <- function(unit, suffix) {
   prefix[sapply(prefixes, function(i) which(i == names(prefix)))] %>% unname()
 }
 
+# scale time units (uses lubridate)
+# @param to unit to scale to
+# @param from unit to scale from (only needs to be supplied if time is not already a duration)
+scale_time <- function(time, to, from = NULL) {
+  if (is(time, "Duration") && !is.null(from)) {
+    warning("time is supplied as a duration so from will be ignored!", call. = FALSE, immediate. = TRUE)
+  } else if (!is(time, "Duration")) {
+    if (is.null(from)) stop("supplied times is not a duration object and therefore requires specifying from unit", call. = FALSE)
+    time <- duration(time, from)
+  }
+  time / duration(1, to)
+}
+
