@@ -6,31 +6,15 @@ readr::problems
 #' @export
 readr::stop_for_problems
 
-# isoreader problems structure
-initialize_problems_attribute <- function(obj) {
-  if (n_problems(obj) == 0) {
-    attr(obj, "problems") <-
-      data_frame(
-        type = character(),
-        func = character(),
-        details = character()
-      )
-  }
-  return(obj)
-}
-
 # register a problem during isoreader operations
 # helper function to standardize problems for file reads
 # with a filename, type and details
 register_problem <- function(obj, type = NA_character_, details = NA_character_, ..., 
-                                  func = deparse(sys.call(-1)), reset = FALSE) {
+                                  func = deparse(sys.call(-1))) {
   if (func == "NULL") func <- NA_character_
   problem <- data_frame(type = type, func = func, details = details, ...)
-  if (!reset && n_problems(obj) > 0) {
-    attr(obj, "problems") <- suppressWarnings(bind_rows(probs(obj), problem))
-  } else {
-    attr(obj, "problems") <- problem
-  }
+  obj <- obj %>% set_problems(
+      suppressWarnings(bind_rows(get_problems(obj), problem)))
   return(obj)
 }
 
@@ -49,14 +33,49 @@ register_error <- function(obj, details = NA_character_, ...,
 }
 
 
-# equivalent approach to readr (not exported there)
-probs <- function(x) {
-  attr(suppressWarnings(x), "problems")
+# set problems
+set_problems <- function(obj, problems) {
+  attr(obj, "problems") <- problems
+  return(obj)
+}
+
+# get problems (for internal use only, external use is readr::problems)
+get_problems <- function(x) {
+  probs <- attr(suppressWarnings(x), "problems")
+  if (is.null(probs)) {
+    # return empty initialized data_frame
+    probs <- x %>% initialize_problems_attribute() %>% attr("problems")
+  }
+  return(probs)
+}
+
+# combine problems
+# @return problems data frame (needs to be assigned with set_problems)
+combined_problems <- function(...) {
+  objs <- list(...)
+  suppressWarnings(
+    lapply(objs, get_problems) %>% 
+      bind_rows()
+  )
+}
+
+# isoreader problems structure
+initialize_problems_attribute <- function(obj) {
+  if (n_problems(obj) == 0) {
+    obj <- obj %>% 
+      set_problems(
+        data_frame(
+          type = character(),
+          func = character(),
+          details = character()
+        ))
+  }
+  return(obj)
 }
 
 # equivalent approach to readr (not exported there)
 n_problems <- function(x) {
-  probs <- probs(x)
+  probs <- attr(suppressWarnings(x), "problems")
   if (is.null(probs)) 0 else nrow(probs)
 }
 
