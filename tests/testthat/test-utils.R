@@ -34,3 +34,12 @@ test_that("test that column name checks work correctly", {
 test_that("test that support file types are listed", {
   expect_output(show_supported_file_types(), "supported file types")
 })
+
+test_that("test that error catching works correctly", {
+  expect_equal( {isoreader:::turn_debug_on(); default("debug")}, TRUE)
+  expect_error(isoreader:::exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
+  expect_equal( {isoreader:::turn_debug_off(); default("debug")}, FALSE)
+  expect_warning(y <- isoreader:::exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
+  expect_equal(problems(y) %>% select(type, details), data_frame(type = "error", details = "problem"))
+})
+

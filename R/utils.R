@@ -77,3 +77,21 @@ retrieve_file_paths <- function(paths, extensions = c()) {
    
   return(filepaths)
 }
+
+# execute function with catch if not in debug mode
+# problems are reported in obj
+exec_func_with_error_catch <- function(func, obj, ...) {
+  if (default("debug")) {
+    # debug mode, don't catch any errors
+    obj <- do.call(func, args = c(list(obj), list(...)))
+  } else {
+    # regular mode, catch errors and report them as problems
+    obj <- 
+      tryCatch({
+        do.call(func, args = c(list(obj), list(...)))
+      }, error = function(e){
+        return(register_error(obj, e$message))
+      })
+  }
+  return(obj)
+}

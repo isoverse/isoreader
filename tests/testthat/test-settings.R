@@ -22,3 +22,10 @@ test_that("info message functions can be part of a pipeline", {
   expect_equal(df %>% turn_info_messages_on(), df)
   expect_equal(df %>% turn_info_messages_off(), df)
 })
+
+test_that("test that debug mode can be activated", {
+  expect_message(isoreader:::turn_debug_on(), "debug mode turned on")
+  expect_equal(isoreader:::default("debug"), TRUE)
+  expect_message(isoreader:::turn_debug_off(), "debug mode turned off")
+  expect_equal(isoreader:::default("debug"), FALSE)
+})
