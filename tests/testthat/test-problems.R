@@ -45,3 +45,22 @@ test_that("Test that problem registration and reporting works properly", {
   expect_error(stop_for_problems(z), "2 parsing failures")
   
 })
+
+test_that("Test that warning and error registration works properly", {
+  x <- letters
+  
+  # add a warning
+  expect_warning(y <- isoreader:::register_warning(x, details = "problem", warn = TRUE), "problem")
+  expect_silent(y <- isoreader:::register_warning(x, details = "problem", warn = FALSE))
+  expect_equal(as.character(y), x)
+  expect_equal(isoreader:::n_problems(y), 1)
+  expect_equal(problems(y) %>% select(type, details), data_frame(type = "warning", details = "problem"))
+  
+  # add an error
+  expect_warning(y <- isoreader:::register_error(x, details = "problem", warn = TRUE), "problem")
+  expect_silent(y <- isoreader:::register_error(x, details = "problem", warn = FALSE))
+  expect_equal(as.character(y), x)
+  expect_equal(isoreader:::n_problems(y), 1)
+  expect_equal(problems(y) %>% select(type, details), data_frame(type = "error", details = "problem"))
+})
+  
