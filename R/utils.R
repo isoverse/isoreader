@@ -3,9 +3,10 @@
 magrittr::`%>%`
 
 # helper to make sure columns exist
-col_check <- function(col, data, fun = sys.call(-1)) {
-  if (!is.null(col) && length(missing <- setdiff(col, names(data))) > 0) 
-    stop("column(s) not in data: '", str_c(col, collapse = "', '"), "'. You may have to change the parameters in your call to ", fun, call. = FALSE)
+col_check <- function(cols, data, fun = sys.call(-1), msg = "You may have to change the parameters in your function call") {
+  if (!is.null(cols) && length(missing <- setdiff(cols, names(data))) > 0) 
+    stop("column(s) not in data: '", str_c(missing, collapse = "', '"), 
+         "'. ", msg, ". Function: ", fun, call. = FALSE)
 }
 
 #' Show supported file types
