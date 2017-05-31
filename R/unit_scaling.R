@@ -26,3 +26,4 @@ get_si_prefix_scaling <- function(unit, suffix) {
   # scaling
   prefix[sapply(prefixes, function(i) which(i == names(prefix)))] %>% unname()
 }
+

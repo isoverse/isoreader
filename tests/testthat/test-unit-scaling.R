@@ -1,4 +1,4 @@
-context("SI prefixes")
+context("Unit scaling")
 
 test_that("common SI prefixes are supported", {
   # parameters missing
