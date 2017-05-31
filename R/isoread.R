@@ -40,27 +40,13 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
   # read files
   isofiles <- sapply(filepaths, function(filepath) {
     ext <- get_file_ext(filepath)
-    if (!quiet) sprintf("Info: Reading file %s with '%s' reader", filepath, ext) %>% message()
+    if (!quiet) sprintf("Info: reading file %s with '%s' reader", filepath, ext) %>% message()
     
     # prepare isofile object
-    isofile <- data_structure
-    isofile <- 
-      # processes not chained to make sure errors are caught during each step
-      tryCatch({
-        # initialize problems attribute
-        isofile <- initialize_problems_attribute(isofile)
-        # store filename and path
-        isofile <- set_ds_file_path(isofile, filepath)
-        # use extension-specific function to read file
-        isofile <- fun_map[[ext]](isofile)
-        # return isofile
-        isofile
-      }, error = function(e){
-        warning(e$message)
-        isofile <- register_problem(isofile, filename = basename(filepath), 
-                                    type = "uncaught error", message = e$message)
-        return(isofile)
-      })
+    isofile <- data_structure %>% set_ds_file_path(filepath)
+    
+    # use extension-specific function to read file
+    isofile <- exec_func_with_error_catch(fun_map[[ext]], isofile)
     
     # report problems
     if (!quiet && n_problems(isofile) > 0) {
@@ -69,8 +55,8 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
       cat("\n")
     }
     
-    # set filepath as list name
-    return(list(isofile) %>% setNames(basename(filepath)))
+    # set file_id as name in the list
+    return(list(isofile) %>% setNames(isofile$file_info$file_id))
   })
 
   if (length(isofiles) == 1) {
@@ -79,24 +65,21 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
   } else {
     # multiple files
     class(isofiles) <- c("isofiles", class(isofiles))
-    # combine all problems and also store in parent isofiles
-    attr(isofiles, "problems") <-
-      isofiles %>% 
+    # combine all problems and add file name, store in parent isofiles
+    combined_problems <- isofiles %>% 
       lapply(function(isofile) { 
         problems(isofile) %>% mutate(filename = isofile$file_info$file_name) 
       }) %>% bind_rows() %>% 
       { select_(., .dots = c("filename", names(.)[names(.)!="filename"])) }
+    isofiles <- isofiles %>% set_problems(combined_problems)
+    # check for name duplicates and register a warning if there are any
+    if (any(dups <- duplicated(names(isofiles)))) {
+      isofiles <- isofiles %>% register_warning(
+        sprintf("encountered duplicate file IDs which may interfere with processing aggregated data properly: %s",
+                names(isofiles)[dups] %>% str_c(collapse = ", "))
+      )
+    }
+    # return all isofiles
+    return(isofiles)
   }
-  
-  return(isofiles)  
-}
-
-#' Print a collection of isofiles
-#' @param x Object to show.
-#' @param ... additional parameters passed to print.default
-#' @export
-print.isofiles <- function(x, ...) {
-  sprintf("# data from %d isofiles:\n", length(x)) %>% 
-    cat()
-  sapply(x, print)
 }
