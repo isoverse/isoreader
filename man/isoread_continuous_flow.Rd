@@ -4,7 +4,19 @@
 \alias{isoread_continuous_flow}
 \title{Load continuous flow data}
 \usage{
-isoread_continuous_flow()
+isoread_continuous_flow(paths, quiet = default("quiet"),
+  read_mass_data = TRUE, read_data_table = TRUE, read_file_info = TRUE)
+}
+\arguments{
+\item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
+
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
+
+\item{read_mass_data}{whether to read the raw mass data from the file}
+
+\item{read_data_table}{whether to read an preprocessed data tables from the file}
+
+\item{read_file_info}{whether to read auxiliary file information (program, methods, etc.)}
 }
 \description{
 Load continuous flow data
