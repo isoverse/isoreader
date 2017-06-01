@@ -127,12 +127,14 @@ process_iarc_samples <- function(isofile_template, tasks, gas_configs, folder_pa
     }
     
     # process task info
-    isofile <- exec_func_with_error_catch(process_iarc_sample_info, isofile, task)
+    if(isofile$read_options$file_info)
+      isofile <- exec_func_with_error_catch(process_iarc_sample_info, isofile, task)
     
     # process task data
-    isofile <- exec_func_with_error_catch(process_iarc_sample_data, isofile, task, 
-                                          gas_configs, folder_path)
-    
+    if (isofile$read_option$raw_data)
+      isofile <- exec_func_with_error_catch(process_iarc_sample_data, isofile, task, 
+                                            gas_configs, folder_path)
+      
     return(list(isofile) %>% setNames(isofile$file_info$file_id))
   })
 }
