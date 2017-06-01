@@ -13,6 +13,6 @@ get_data_table(isofiles)
 Aggregate table data
 }
 \seealso{
-Other data_aggregation: \code{\link{get_file_info}},
-  \code{\link{get_mass_data}}
+Other data aggregation functions: \code{\link{get_file_info}},
+  \code{\link{get_raw_data}}
 }

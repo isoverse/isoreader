@@ -18,9 +18,9 @@ test_that("test that parameter checks are performed", {
   expect_error(isoreader:::isoread_did(structure(list(), class = "dual_inlet")), 
                "data structure must have class \\'isofile\\' and \\'dual_inlet\\'")
   expect_error(isoreader:::isoread_did(structure(list(), class = c("dual_inlet", "isofile"))), 
-               "not in data: \\'file_info\\', \\'mass_data\\'")
-  expect_error(isoreader:::isoread_did(structure(list(file_info = list(), mass_data=data_frame()), 
+               "not in data: \\'file_info\\', \\'raw_data\\'")
+  expect_error(isoreader:::isoread_did(structure(list(file_info = list(), raw_data=data_frame()), 
                                                  class = c("dual_inlet", "isofile"))), 
-               "not in data: \\'file_name\\', \\'file_path\\'")
+               "not in data: \\'file_id\\', \\'file_path\\'")
 
 })

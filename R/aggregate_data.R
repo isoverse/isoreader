@@ -1,16 +1,16 @@
-#' Aggregate mass data
+#' Aggregate raw data
 #' 
 #' @param isofiles isotope file objects
-#' @family data_aggregation
+#' @family data aggregation functions
 #' @export
-get_mass_data <- function(isofiles) {
+get_raw_data <- function(isofiles) {
   
 }
 
 #' Aggregate file info
 #'
-#' @inheritParams get_mass_data
-#' @family data_aggregation
+#' @inheritParams get_raw_data
+#' @family data aggregation functions
 #' @export
 get_file_info <- function(isofiles) {
   
@@ -19,8 +19,8 @@ get_file_info <- function(isofiles) {
 
 #' Aggregate table data
 #' 
-#' @inheritParams get_mass_data
-#' @family data_aggregation
+#' @inheritParams get_raw_data
+#' @family data aggregation functions
 #' @export
 get_data_table <- function(isofiles) {
   

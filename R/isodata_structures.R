@@ -4,12 +4,16 @@
 make_iso_data_structure <- function() {
   structure(
     list(
+      read_options = list( # records read options+defaults
+        file_info = FALSE, # whether file info was read
+        raw_data = FALSE # whether mass data was raed (Note: maybe not top-level b/c of scans?)
+      ), 
       file_info = list(
         file_id = NA_character_, # unique identifer
         file_path = NA_character_, # path to file (file extension is key for processing)
         file_subpath = NA_character_ # sub path in case file is an archieve
       ),
-      mass_data = data_frame() # all mass data
+      raw_data = data_frame() # all mass data (Note: maybe not top-level b/c of scans?)
     ),
     class = c("isofile")
   ) %>% 
@@ -27,6 +31,12 @@ make_di_data_structure <- function() {
 # basic continuous flow data structure
 make_cf_data_structure <- function() {
   struct <- make_iso_data_structure()
+  struct$read_options <- struct$read_options %>% 
+    modifyList(
+      list(
+        data_table = FALSE
+      )
+    )
   class(struct) <- c("continuous_flow", class(struct))
   return(struct)
 }
@@ -74,10 +84,16 @@ print.dual_inlet <- function(x, ..., show_problems = TRUE) {
 #' @param show_problems whether to show encountered problems
 #' @export
 print.continuous_flow <- function(x, ..., show_problems = TRUE) {
+  
+  # if (x$read_options$raw_data)
+  #   raw_data_info <- 
+  # else
+  #   raw_data_info <- "no mass data read"
+  # 
   sprintf("Continuous flow data '%s' (%d data points: %s) from %s%s\n", 
           x$file_info$file_id,
-          x$mass_data %>% nrow(),
-          x$mass_data %>% select(matches("^[iIvV]")) %>% names() %>% 
+          x$raw_data %>% nrow(),
+          x$raw_data %>% select(matches("^[iIvV]")) %>% names() %>% 
             { if(length(.) == 0) "0 ions" else str_c(., collapse = ", ") },
           x$file_info$file_path,
           x$file_info$file_subpath %>% { if(!is.na(.)) str_c("|", .) else "" }

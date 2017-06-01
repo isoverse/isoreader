@@ -5,8 +5,7 @@
 \title{Main function to read isotope data files}
 \usage{
 isoread_files(paths, supported_extensions, data_structure,
-  quiet = setting("quiet"), read_mass_data = TRUE, read_data_table = TRUE,
-  read_file_info = TRUE)
+  quiet = setting("quiet"), ...)
 }
 \arguments{
 \item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
@@ -17,11 +16,7 @@ isoread_files(paths, supported_extensions, data_structure,
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 
-\item{read_mass_data}{whether to read the raw mass data from the file}
-
-\item{read_data_table}{whether to read an preprocessed data tables from the file}
-
-\item{read_file_info}{whether to read auxiliary file information (program, methods, etc.)}
+\item{...}{additional parameters passed to the specific processing functions for the different file extensions}
 }
 \description{
 This function takes care of extracting basic information about isofiles, dealing with problems and making sure only valid fire formats are processed. This function is not typicaly called directly but indirectly by calling \link{isoread_dual_inlet}, \link{isoread_continuous_flow} and \link{isoread_scan}. It is exported because it can be very useful for testing new file readers.

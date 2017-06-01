@@ -5,19 +5,22 @@
 \title{Load continuous flow data}
 \usage{
 isoread_continuous_flow(paths, quiet = setting("quiet"),
-  read_mass_data = TRUE, read_data_table = TRUE, read_file_info = TRUE)
+  read_raw_data = TRUE, read_file_info = TRUE, read_data_table = TRUE)
 }
 \arguments{
 \item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 
-\item{read_mass_data}{whether to read the raw mass data from the file}
-
-\item{read_data_table}{whether to read an preprocessed data tables from the file}
+\item{read_raw_data}{whether to read the raw mass/ion data from the file}
 
 \item{read_file_info}{whether to read auxiliary file information (program, methods, etc.)}
+
+\item{read_data_table}{whether to attempt to read any preprocessed data tables from the file}
 }
 \description{
 Load continuous flow data
+}
+\seealso{
+Other isoread functions for different types of IRMS data: \code{\link{isoread_dual_inlet}}
 }

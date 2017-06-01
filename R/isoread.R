@@ -18,12 +18,9 @@ isoread <- function(...) {
 #' @param supported_extensions data frame with supported extensions and corresponding reader functions
 #' @param data_structure the basic data structure for the type of isofile
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}
-#' @param read_mass_data whether to read the raw mass data from the file
-#' @param read_data_table whether to read an preprocessed data tables from the file
-#' @param read_file_info whether to read auxiliary file information (program, methods, etc.)
+#' @param ... additional parameters passed to the specific processing functions for the different file extensions
 #' @export
-isoread_files <- function(paths, supported_extensions, data_structure, quiet = setting("quiet"),
-                          read_mass_data = TRUE, read_data_table = TRUE, read_file_info = TRUE) {
+isoread_files <- function(paths, supported_extensions, data_structure, quiet = setting("quiet"), ...) {
 
   # quiet
   on_exit_quiet <- update_quiet(quiet)
@@ -39,6 +36,11 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = s
   if (missing(paths)) stop("file path(s) required", call. = FALSE)
   filepaths <- retrieve_file_paths(paths, supported_extensions$extension)
   
+  # overview
+  if (!setting("quiet")) {
+    message("Info: preparing to process ", length(filepaths), " data file(s)...")
+  }
+  
   # extension to reader map
   fun_map <- supported_extensions %>% { setNames(as.list(.$fun), str_c(".", .$extension)) }
   
@@ -53,7 +55,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = s
     isofile <- data_structure %>% set_ds_file_path(filepath)
     
     # use extension-specific function to read file
-    isofile <- exec_func_with_error_catch(fun_map[[ext]], isofile)
+    isofile <- exec_func_with_error_catch(fun_map[[ext]], isofile, ...)
     
     # report problems
     if (!setting("quiet") && n_problems(isofile) > 0) {
@@ -76,6 +78,8 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = s
     }
   }
 
+  # NOTE: consider implementing safety check to make sure that all isofiles that were generated still have the same top-level structure as the data structure originally provided
+  
   if (length(isofiles) == 1) {
     # only one file read
     return(isofiles[[1]])

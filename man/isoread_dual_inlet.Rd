@@ -4,7 +4,7 @@
 \alias{isoread_dual_inlet}
 \title{Load dual inlet data}
 \usage{
-isoread_dual_inlet(paths, quiet = setting("quiet"), read_mass_data = TRUE,
+isoread_dual_inlet(paths, quiet = setting("quiet"), read_raw_data = TRUE,
   read_file_info = TRUE)
 }
 \arguments{
@@ -12,10 +12,13 @@ isoread_dual_inlet(paths, quiet = setting("quiet"), read_mass_data = TRUE,
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 
-\item{read_mass_data}{whether to read the raw mass data from the file}
+\item{read_raw_data}{whether to read the raw mass/ion data from the file}
 
 \item{read_file_info}{whether to read auxiliary file information (program, methods, etc.)}
 }
 \description{
 Load dual inlet data
+}
+\seealso{
+Other isoread functions for different types of IRMS data: \code{\link{isoread_continuous_flow}}
 }

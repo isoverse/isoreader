@@ -1,10 +1,11 @@
 # read ionos .iarc archieves for their continuous flow data
 # @param ds the isofile data structure to fill
-isoread_flow_iarc <- function(ds) {
+isoread_flow_iarc <- function(ds, ...) {
   
+  # safety checks
   if(!is(ds, "isofile") || !is(ds, "continuous_flow")) 
     stop("data structure must have class 'isofile' and 'continuous_flow'", call. = FALSE)
-  col_check(c("file_info", "mass_data"), ds)
+  col_check(c("file_info", "raw_data"), ds)
   col_check(c("file_id", "file_path", "file_subpath"), ds$file_info)
   
   # global variables for NSE
@@ -223,13 +224,13 @@ read_irms_data_file <- function(isofile, filepath, gas_config, run_time.s, data_
     select(tp, time.s, everything())
   
   # store mass data
-  if (nrow(isofile$mass_data) > 0) {
-    existing <- isofile$mass_data %>% select(starts_with("i")) %>% names()
+  if (nrow(isofile$raw_data) > 0) {
+    existing <- isofile$raw_data %>% select(starts_with("i")) %>% names()
     if ( any(dups <- existing %in% names(irms_data)) )
       stop("same ions reported in multiple data files, cannot reconcile duplicate data: ", 
            str_c(existing[dups], collapse = ", "), call. = FALSE)
   } else {
-    isofile$mass_data <- irms_data
+    isofile$raw_data <- irms_data
   }
   
   return(isofile)
