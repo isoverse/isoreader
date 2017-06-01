@@ -15,20 +15,6 @@ isoread_dual_inlet <- function(paths, quiet = default("quiet"),
 get_supported_di_files <- function() {
   tribble(
     ~extension, ~fun,        ~description,
-    "did",      isoread_did, "Isodat Dual Inlet file format"
+    "did",      "isoread_did", "Isodat Dual Inlet file format"
   )
-}
-
-#' Print a dual inlet isofile
-#' @param x Object to show.
-#' @param ... additional parameters passed to print.default
-#' @export
-print.dual_inlet <- function(x, ...) {
-  sprintf("Dual inlet data from '%s'\n", x$file_info$file_path) %>% 
-    cat()
-  if (n_problems(x) > 0) {
-    cat("Encountered problems:\n")
-    print(problems(x), ...)
-    cat("\n")
-  }
 }
