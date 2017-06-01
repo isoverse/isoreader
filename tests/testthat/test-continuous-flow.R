@@ -2,7 +2,7 @@ context("Continuous flow")
 
 test_that("test that supported cf files are correct", {
   expect_is(exts <- isoreader:::get_supported_cf_files(), "data.frame")
-  expect_equal(exts$extension, c("cf", "dxf", "iarc"))
+  expect_equal(exts$extension, c("cf", "dxf", "iarc", "feather.zip"))
   expect_true(all(exts$fun %>% sapply(class) == "character"))
   
   # check for existence in namespace
