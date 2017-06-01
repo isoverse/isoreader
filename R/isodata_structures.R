@@ -40,21 +40,27 @@ make_cf_data_structure <- function() {
 print.isofiles <- function(x, ...) {
   sprintf("# data from %d isofiles:\n", length(x)) %>% 
     cat()
-  sapply(x, print)
+  sapply(x, print, show_problems = FALSE)
+  if (n_problems(x) > 0) {
+    cat("\nAll encountered problems:\n")
+    print(problems(x), ...)
+    cat("\n")
+  }
   invisible(x)
 }
 
 #' Print a dual inlet isofile
 #' @param x Object to show.
 #' @param ... additional parameters passed to print.default
+#' @param show_problems whether to show encountered problems
 #' @export
-print.dual_inlet <- function(x, ...) {
+print.dual_inlet <- function(x, ..., show_problems = TRUE) {
   sprintf("Dual inlet data '%s' (%s%s)\n", 
           x$file_info$file_id,
           x$file_info$file_path,
           x$file_info$file_subpath %>% { if(!is.na(.)) str_c("|", .) else "" }
   ) %>% cat()
-  if (n_problems(x) > 0) {
+  if (show_problems && n_problems(x) > 0) {
     cat("Encountered problems:\n")
     print(problems(x), ...)
     cat("\n")
@@ -65,15 +71,19 @@ print.dual_inlet <- function(x, ...) {
 #' Print a continuous_flow isofile
 #' @param x Object to show.
 #' @param ... additional parameters passed to print.default
+#' @param show_problems whether to show encountered problems
 #' @export
-print.continuous_flow <- function(x, ...) {
-  sprintf("Continuous flow data '%s' (%s%s)\n", 
+print.continuous_flow <- function(x, ..., show_problems = TRUE) {
+  sprintf("Continuous flow data '%s' (%d data points: %s) from %s%s\n", 
           x$file_info$file_id,
+          x$mass_data %>% nrow(),
+          x$mass_data %>% select(matches("^[iIvV]")) %>% names() %>% 
+            { if(length(.) == 0) "0 ions" else str_c(., collapse = ", ") },
           x$file_info$file_path,
           x$file_info$file_subpath %>% { if(!is.na(.)) str_c("|", .) else "" }
   ) %>% cat()
-  if (n_problems(x) > 0) {
-    cat("Encountered problems:\n")
+  if (show_problems && n_problems(x) > 0) {
+    cat("\nEncountered problems:\n")
     print(problems(x), ...)
     cat("\n")
   }
