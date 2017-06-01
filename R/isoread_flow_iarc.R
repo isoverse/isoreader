@@ -8,7 +8,7 @@ isoread_flow_iarc <- function(ds) {
   col_check(c("file_id", "file_path", "file_subpath"), ds$file_info)
   
   # global variables for NSE
-  sample <- NULL
+  samples <- NULL
   
   # unzipping iarc archieve ====
   folder_name <- ds$file_info$file_path %>% basename() %>% { str_replace(., fixed(get_file_ext(.)), "") }
