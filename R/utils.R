@@ -82,7 +82,8 @@ retrieve_file_paths <- function(paths, extensions = c()) {
 # @param func can be either function name or function call
 # problems are reported in obj
 exec_func_with_error_catch <- function(func, obj, ...) {
-  func_name <- substitute(func) %>% deparse() %>% str_replace_all("\\\"", "")
+  if (is.character(func)) func_name <- func
+  else func_name <- substitute(func) %>% deparse()
   if (default("debug")) {
     # debug mode, don't catch any errors
     obj <- do.call(func, args = c(list(obj), list(...)))
@@ -96,4 +97,16 @@ exec_func_with_error_catch <- function(func, obj, ...) {
       })
   }
   return(obj)
+}
+
+# find parent call regardless of if it's called by piping or traditional
+# ignores tryCatch calls
+# @param current_func the name of the function this is called from (character)
+find_parent_call <- function(current_func) {
+  calls <- sys.calls()
+  calls <- sapply(calls, as.character)
+  is_trycatch <- sapply(calls, function(x) any(str_detect(x, "tryCatch")))
+  calls <- calls[!is_trycatch]
+  has_func <- sapply(calls, function(x) any(str_detect(x, current_func))) %>% which()
+  calls[[has_func[1] - 1]][1]
 }
