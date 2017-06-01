@@ -5,7 +5,7 @@
 \title{Main function to read isotope data files}
 \usage{
 isoread_files(paths, supported_extensions, data_structure,
-  quiet = default("quiet"), read_mass_data = TRUE, read_data_table = TRUE,
+  quiet = setting("quiet"), read_mass_data = TRUE, read_data_table = TRUE,
   read_file_info = TRUE)
 }
 \arguments{

@@ -54,7 +54,8 @@ scale_time <- function(time, to, from = NULL) {
 #' @note make sure that existing currents are not overwritten (e.g. in data frame that comes jointly from isodat and elementar)
 #' @note consider automatically guessing V_units from the voltage columns?
 #' @export
-convert_voltages_to_currents <- function(data, R, V_units = "mV", I_units = "nA", R_units = "GOhm", V_pattern = "^[vV](\\d+)", I_prefix = "i") {
+convert_voltages_to_currents <- function(data, R, V_units = "mV", I_units = "nA", R_units = "GOhm", 
+                                         V_pattern = "^[vV](\\d+)", I_prefix = "i", quiet = setting("quiet")) {
   # safety checks
   if(missing(data) || !is.data.frame(data))  stop("data has to be supplied as a data frame to ", sys.call(0), call. = FALSE)
   if(missing(R) || !is.vector(R, "numeric") || is.null(names(R)) || any(names(R) == "")) 

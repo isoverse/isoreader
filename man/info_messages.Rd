@@ -14,5 +14,5 @@ turn_info_messages_off(data)
 \item{data}{a data frame - returned as is if provided (e.g. in the middle of a pipeline)}
 }
 \description{
-These functions turn information messages on/off in all subsequent function calls by changing the global default for the \code{quiet} parameter of most isoreader functions. These functions can be called stand alone or within a pipeline to turn messages on/off at a certain point during the pipeline.
+These functions turn information messages on/off in all subsequent function calls by changing the global settings for the \code{quiet} parameter of most isoreader functions. These functions can be called stand alone or within a pipeline to turn messages on/off at a certain point during the pipeline.
 }

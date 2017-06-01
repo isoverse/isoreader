@@ -4,7 +4,7 @@
 \alias{isoread_dual_inlet}
 \title{Load dual inlet data}
 \usage{
-isoread_dual_inlet(paths, quiet = default("quiet"), read_mass_data = TRUE,
+isoread_dual_inlet(paths, quiet = setting("quiet"), read_mass_data = TRUE,
   read_file_info = TRUE)
 }
 \arguments{

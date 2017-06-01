@@ -4,7 +4,7 @@
 \alias{isoread_continuous_flow}
 \title{Load continuous flow data}
 \usage{
-isoread_continuous_flow(paths, quiet = default("quiet"),
+isoread_continuous_flow(paths, quiet = setting("quiet"),
   read_mass_data = TRUE, read_data_table = TRUE, read_file_info = TRUE)
 }
 \arguments{
