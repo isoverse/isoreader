@@ -3,12 +3,15 @@
 
 #' @import dplyr
 #' @import tidyr
-#' @importFrom purrr map_lgl
+#' @importFrom purrr map_lgl map
 #' @importFrom tibble tribble
 #' @import stringr
 #' @import ggplot2
 #' @importFrom stats setNames
 #' @importFrom methods is
+#' @import xml2
+#' @importFrom rhdf5 h5read h5readAttributes
+#' @importFrom lubridate duration
 NULL
 
 ## quiets concerns of R CMD check about . that appears in pipelines
