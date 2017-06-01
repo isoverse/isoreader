@@ -3,6 +3,8 @@
 language: R
 sudo: false
 cache: packages
+bioc_packages:
+  - rhdf5
 r:
   - oldrel
   - release
