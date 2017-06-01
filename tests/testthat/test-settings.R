@@ -8,7 +8,6 @@ test_that("default values can be set and retrieved", {
   expect_false(isoreader:::setting("quiet"))
 })
 
-
 test_that("info messages can be turned on and off", {
   expect_message(turn_info_messages_on(), "messages turned on")
   expect_false(isoreader:::setting("quiet"))
@@ -44,4 +43,16 @@ test_that("test that debug mode can be activated", {
   expect_equal(isoreader:::setting("debug"), TRUE)
   expect_message(isoreader:::turn_debug_off(), "debug mode turned off")
   expect_equal(isoreader:::setting("debug"), FALSE)
+})
+
+
+test_that("default values restored on package load", {
+  expect_true({turn_info_messages_off(); isoreader:::setting("quiet")})
+  expect_true({suppressMessages(isoreader:::turn_debug_on()); isoreader:::setting("debug")})
+  
+  # reloading package should reset settings
+  detach("package:isoreader", unload=TRUE)
+  library(isoreader)
+  expect_false(isoreader:::setting("quiet"))
+  expect_false(isoreader:::setting("debug"))
 })
