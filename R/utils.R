@@ -84,7 +84,7 @@ retrieve_file_paths <- function(paths, extensions = c()) {
 exec_func_with_error_catch <- function(func, obj, ...) {
   if (is.character(func)) func_name <- func
   else func_name <- substitute(func) %>% deparse()
-  if (default("debug")) {
+  if (setting("debug")) {
     # debug mode, don't catch any errors
     obj <- do.call(func, args = c(list(obj), list(...)))
   } else {

@@ -42,7 +42,7 @@ print.isofiles <- function(x, ...) {
     cat()
   sapply(x, print, show_problems = FALSE)
   if (n_problems(x) > 0) {
-    cat("\nAll encountered problems:\n")
+    cat("\nAll encountered problems (", n_problems(x), "):\n", sep = "")
     print(problems(x), ...)
     cat("\n")
   }
@@ -61,7 +61,7 @@ print.dual_inlet <- function(x, ..., show_problems = TRUE) {
           x$file_info$file_subpath %>% { if(!is.na(.)) str_c("|", .) else "" }
   ) %>% cat()
   if (show_problems && n_problems(x) > 0) {
-    cat("Encountered problems:\n")
+    cat("Encountered", n_problems(x), "problems:\n")
     print(problems(x), ...)
     cat("\n")
   }
@@ -83,7 +83,7 @@ print.continuous_flow <- function(x, ..., show_problems = TRUE) {
           x$file_info$file_subpath %>% { if(!is.na(.)) str_c("|", .) else "" }
   ) %>% cat()
   if (show_problems && n_problems(x) > 0) {
-    cat("\nEncountered problems:\n")
+    cat("\nEncountered", n_problems(x), "problems:\n")
     print(problems(x), ...)
     cat("\n")
   }

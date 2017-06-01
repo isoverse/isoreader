@@ -21,7 +21,7 @@ isoread <- function(...) {
 #' @param read_mass_data whether to read the raw mass data from the file
 #' @param read_data_table whether to read an preprocessed data tables from the file
 #' @param read_file_info whether to read auxiliary file information (program, methods, etc.)
-isoread_files <- function(paths, supported_extensions, data_structure, quiet = default("quiet"),
+isoread_files <- function(paths, supported_extensions, data_structure, quiet = setting("quiet"),
                           read_mass_data = TRUE, read_data_table = TRUE, read_file_info = TRUE) {
   
   # supplied data checks
@@ -42,7 +42,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
   all_problems <- data_frame()
   for (filepath in filepaths) {
     ext <- get_file_ext(filepath)
-    if (!quiet) sprintf("Info: reading file %s with '%s' reader", filepath, ext) %>% message()
+    if (!setting("quiet")) sprintf("Info: reading file %s with '%s' reader", filepath, ext) %>% message()
     
     # prepare isofile object
     isofile <- data_structure %>% set_ds_file_path(filepath)
@@ -51,8 +51,8 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
     isofile <- exec_func_with_error_catch(fun_map[[ext]], isofile)
     
     # report problems
-    if (!quiet && n_problems(isofile) > 0) {
-      cat("Warn: encountered problems\n")
+    if (!setting("quiet") && n_problems(isofile) > 0) {
+      cat("Warning: encountered", n_problems(isofile), "problems\n")
       print(problems(isofile))
       cat("\n")
     }

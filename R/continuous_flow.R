@@ -3,7 +3,7 @@
 #' @inheritParams isoread_files
 #' @export
 isoread_continuous_flow <- function(
-  paths, quiet = default("quiet"), 
+  paths, quiet = setting("quiet"), 
   read_mass_data = TRUE, read_data_table = TRUE, read_file_info = TRUE) {
 
   isoread_files(

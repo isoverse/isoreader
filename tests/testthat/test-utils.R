@@ -36,9 +36,9 @@ test_that("test that support file types are listed", {
 })
 
 test_that("test that error catching works correctly", {
-  expect_equal( {suppressMessages(isoreader:::turn_debug_on()); default("debug")}, TRUE)
+  expect_equal( {suppressMessages(isoreader:::turn_debug_on()); isoreader:::setting("debug")}, TRUE)
   expect_error(isoreader:::exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
-  expect_equal( {suppressMessages(isoreader:::turn_debug_off()); default("debug")}, FALSE)
+  expect_equal( {suppressMessages(isoreader:::turn_debug_off()); isoreader:::setting("debug")}, FALSE)
   expect_warning(y <- isoreader:::exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
   expect_equal(problems(y) %>% select(type, details), data_frame(type = "error", details = "problem"))
 })

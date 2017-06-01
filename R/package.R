@@ -3,14 +3,15 @@
 
 #' @import dplyr
 #' @import tidyr
-#' @importFrom purrr map_lgl map
+#' @importFrom purrr map map_lgl map_chr map_df sort_by
 #' @importFrom tibble tribble
+#' @importFrom lubridate interval duration
 #' @import stringr
 #' @import ggplot2
 #' @importFrom stats setNames
 #' @importFrom methods is
 #' @import xml2
-#' @importFrom rhdf5 h5read h5readAttributes
+#' @importFrom rhdf5 h5ls h5read h5readAttributes
 #' @importFrom lubridate duration
 NULL
 

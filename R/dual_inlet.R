@@ -2,7 +2,7 @@
 #' 
 #' @inheritParams isoread_files
 #' @export
-isoread_dual_inlet <- function(paths, quiet = default("quiet"), 
+isoread_dual_inlet <- function(paths, quiet = setting("quiet"), 
                                read_mass_data = TRUE, read_file_info = TRUE) {
   isoread_files(
     paths,

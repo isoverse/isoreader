@@ -54,8 +54,7 @@ scale_time <- function(time, to, from = NULL) {
 #' @note make sure that existing currents are not overwritten (e.g. in data frame that comes jointly from isodat and elementar)
 #' @note consider automatically guessing V_units from the voltage columns?
 #' @export
-convert_voltages_to_currents <- function(data, R, V_units = "mV", I_units = "nA", R_units = "GOhm", V_pattern = "^[vV](\\d+)", I_prefix = "i", 
-                                         quiet = default("quiet")) {
+convert_voltages_to_currents <- function(data, R, V_units = "mV", I_units = "nA", R_units = "GOhm", V_pattern = "^[vV](\\d+)", I_prefix = "i") {
   # safety checks
   if(missing(data) || !is.data.frame(data))  stop("data has to be supplied as a data frame to ", sys.call(0), call. = FALSE)
   if(missing(R) || !is.vector(R, "numeric") || is.null(names(R)) || any(names(R) == "")) 
@@ -84,7 +83,7 @@ convert_voltages_to_currents <- function(data, R, V_units = "mV", I_units = "nA"
   data[,I_cols] <- data[,V_cols] / rep(R[R_cols], each = nrow(data)) * prefix_conversion
   
   # info message
-  if (!quiet) {
+  if (!setting("quiet")) {
     sprintf("Info: converted %d voltage columns (%s [%s]) to currents (%s [%s]) with resistances %s %s", 
             length(V_cols), str_c(V_cols, collapse = ", "), V_units, str_c(I_cols, collapse = ", "), I_units,
             str_c(R[R_cols], collapse = ", "), R_units) %>% 

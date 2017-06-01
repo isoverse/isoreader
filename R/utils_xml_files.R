@@ -25,7 +25,7 @@ xml_fetch_container_value <- function(xml, ids, container = "PersistedPropertyBa
 # XML iarc xml file processing ========
 
 # process iarc info xml file
-process_iarc_info_xml <- function(filepath, quiet = default("quiet")) {
+process_iarc_info_xml <- function(filepath) {
   info_xml <- read_xml(filepath, encoding = "UTF-8")
   info_version <- info_xml %>% xml_child("Version") %>% xml_text()
   
@@ -51,7 +51,7 @@ process_iarc_info_xml <- function(filepath, quiet = default("quiet")) {
   }
   
   # information
-  if (!quiet) {
+  if (!setting("quiet")) {
     sprintf("      found %d processing list(s) in .iarc: '%s'", 
             nrow(processing_lists), 
             str_c("ProcessingList_", processing_lists$ProcessingListId, collapse = "', '")) %>% 
@@ -62,7 +62,7 @@ process_iarc_info_xml <- function(filepath, quiet = default("quiet")) {
 }
 
 # process iarc methods xml files
-process_iarc_methods_xml <- function(filepaths, quiet = default("quiet")) {
+process_iarc_methods_xml <- function(filepaths) {
   
   method_params <- 
     filepaths %>% 
@@ -80,7 +80,7 @@ process_iarc_methods_xml <- function(filepaths, quiet = default("quiet")) {
     bind_rows()
   
   # info
-  if (!quiet) {
+  if (!setting("quiet")) {
     method_files <- method_params$MethodFile %>% unique()
     sprintf("      found %d method(s) in .iarc: '%s'", 
             method_files %>% length(), 
@@ -92,7 +92,7 @@ process_iarc_methods_xml <- function(filepaths, quiet = default("quiet")) {
 }
 
 # process iarc tasks xml files
-process_iarc_tasks_xml <- function(filepaths, method_parameters, quiet = default("quiet")) {
+process_iarc_tasks_xml <- function(filepaths, method_parameters) {
   
   
   process_iarc_task_xml <- function(task_file) {
@@ -147,7 +147,7 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters, quiet = default
   # for all task files, run the processing function
   tasks <- filepaths %>% lapply(process_iarc_task_xml)
   
-  if (!quiet) {
+  if (!setting("quiet")) {
     sprintf("      found %d sample(s) in .iarc", length(tasks)) %>% 
       message()
   }
@@ -157,9 +157,9 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters, quiet = default
 }
 
 # process iarc tasks xml files
-process_iarc_processing_xml <- function(processing_list_id, filepath, quiet = default("quiet")) {
+process_iarc_processing_xml <- function(processing_list_id, filepath) {
   if (!file.exists(filepath)) stop("invalid processing list file path: ", filepath, call. = FALSE)
-  if (!quiet) {
+  if (!setting("quiet")) {
     sprintf("      searching processing list '%s' for gas configurations...", basename(filepath)) %>% 
       message()
   }
@@ -236,14 +236,14 @@ process_iarc_processing_xml <- function(processing_list_id, filepath, quiet = de
     })
   
   # info
-  if (!quiet) {
+  if (!setting("quiet")) {
     sprintf("      found configurations for '%s'", 
             species_config %>% names() %>% str_c(collapse = "', '")) %>% 
       message()
   }
   
   # debug
-  if (default("debug")) {
+  if (setting("debug")) {
     message("DEBUG: species configurations: ")
     print(species_config)
   }

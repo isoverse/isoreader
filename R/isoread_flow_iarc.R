@@ -1,6 +1,6 @@
 # read ionos .iarc archieves for their continuous flow data
 # @param ds the isofile data structure to fill
-isoread_flow_iarc <- function(ds, quiet = default("quiet")) {
+isoread_flow_iarc <- function(ds) {
   
   if(!is(ds, "isofile") || !is(ds, "continuous_flow")) 
     stop("data structure must have class 'isofile' and 'continuous_flow'", call. = FALSE)
@@ -11,7 +11,7 @@ isoread_flow_iarc <- function(ds, quiet = default("quiet")) {
   folder_name <- ds$file_info$file_path %>% basename() %>% { str_replace(., fixed(get_file_ext(.)), "") }
   folder_path <- file.path(tempdir(), folder_name)
   if (!file.exists(folder_path)) {
-    if (!quiet) message("     unpacking isoprime archieve file...")
+    if (!setting("quiet")) message("      unpacking isoprime archieve file...")
     unzip(ds$file_info$file_path, exdir = folder_path)
   }
   
@@ -61,7 +61,7 @@ isoread_flow_iarc <- function(ds, quiet = default("quiet")) {
     file.path(folder_path, str_c("ProcessingList_", used_processing_lists$ProcessingListId)))
   
   # read sample/task data ====
-  isofiles <- process_iarc_samples(ds, tasks)
+  isofiles <- process_iarc_samples(ds, tasks, gas_configs, folder_path)
   class(isofiles) <- c("isofiles", class(isofiles))
   
   # propagate problems =====
@@ -89,7 +89,7 @@ isoread_flow_iarc <- function(ds, quiet = default("quiet")) {
 }
 
 # process iarc samples
-process_iarc_samples <- function(isofile_template, tasks) {
+process_iarc_samples <- function(isofile_template, tasks, gas_configs, folder_path) {
   # function to generate sample id
   generate_task_sample_id <- function(task) {
     str_c(task$info$Id, "_", task$info$Name)
@@ -109,7 +109,7 @@ process_iarc_samples <- function(isofile_template, tasks) {
         file_subpath = task$filename)
     
     # processing info
-    if (!default("quiet")) {
+    if (!setting("quiet")) {
       sprintf("      processing sample '%s' (IRMS data %s)",
               generate_task_sample_id(task), 
               task$data_files %>% filter(TypeIdentifier == "Acquire") %>% 
@@ -124,7 +124,7 @@ process_iarc_samples <- function(isofile_template, tasks) {
     
     # process task data
     isofile <- exec_func_with_error_catch(process_iarc_sample_data, isofile, task, 
-                                          temp_dir = folder, gas_configs = gas_configs)
+                                          gas_configs, folder_path)
     
     return(list(isofile) %>% setNames(isofile$file_info$file_id))
   })
@@ -132,7 +132,7 @@ process_iarc_samples <- function(isofile_template, tasks) {
 
 # process iarc task info
 # @param isofile task
-process_iarc_sample_info <- function(isofile, task, quiet = default("quiet")) {
+process_iarc_sample_info <- function(isofile, task) {
   isofile$file_info <- c(isofile$file_info, as.list(task$info))
   return(isofile)
 }
@@ -140,7 +140,7 @@ process_iarc_sample_info <- function(isofile, task, quiet = default("quiet")) {
 # process iarc task data
 # @param temp_dir the temporary directory where the files are unzipped
 # @param gas_configs the gas configurations
-process_iarc_sample_data <- function(isofile, task, temp_dir, gas_configs, quiet = default("quiet")) {
+process_iarc_sample_data <- function(isofile, task, gas_configs, folder_path) {
   # aquire = IRMS data
   irms_data <- task$data_files %>% filter(TypeIdentifier == "Acquire")
   if (nrow(irms_data) == 0) stop("no IRMS acquisitions associated with this sample", call. = FALSE)
@@ -154,7 +154,7 @@ process_iarc_sample_data <- function(isofile, task, temp_dir, gas_configs, quiet
   dt_format <- "%Y-%m-%dT%H:%M:%OS" # with fractional seconds
   for (i in 1:nrow(irms_data)) {
     isofile <- with(irms_data[i,], {
-      filepath <- file.path(temp_dir, DataFile)
+      filepath <- file.path(folder_path, DataFile)
       run_time.s <- interval(strptime(AcquireStartDate, dt_format), strptime(AcquireEndDate, dt_format) ) / duration(1, "s")
       read_irms_data_file(isofile, filepath, gas_config, run_time.s, data_units = "nA")
     })
@@ -177,8 +177,7 @@ read_irms_data_file <- function(isofile, filepath, gas_config, run_time.s, data_
   config <- gas_config$species[[dataset_attributes$Species]]
   
   # read irms data and determine which beams are used
-  #h5read(filepath, "DataSet") %>% as_data_frame()
-  irms_data <- test_data
+  irms_data <- h5read(filepath, "DataSet") %>% as_data_frame()
   data_channels <- irms_data %>% names() %>% str_subset("^Beam")
   config_channels <- config$channels %>% filter(channel %in% data_channels)
   
