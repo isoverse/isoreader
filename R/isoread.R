@@ -44,6 +44,9 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = s
   # extension to reader map
   fun_map <- supported_extensions %>% { setNames(as.list(.$fun), str_c(".", .$extension)) }
   
+  # read options update in data structure
+  data_structure <- update_read_options(data_structure, ...)
+  
   # read files
   isofiles <- list()
   all_problems <- data_frame()

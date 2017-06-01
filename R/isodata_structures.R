@@ -31,12 +31,10 @@ make_di_data_structure <- function() {
 # basic continuous flow data structure
 make_cf_data_structure <- function() {
   struct <- make_iso_data_structure()
+  
+  # add data_table read option
   struct$read_options <- struct$read_options %>% 
-    modifyList(
-      list(
-        data_table = FALSE
-      )
-    )
+    modifyList(list(data_table = FALSE))
   class(struct) <- c("continuous_flow", class(struct))
   return(struct)
 }
@@ -65,13 +63,15 @@ print.isofiles <- function(x, ...) {
 #' @param show_problems whether to show encountered problems
 #' @export
 print.dual_inlet <- function(x, ..., show_problems = TRUE) {
-  sprintf("Dual inlet data '%s' (%s%s)\n", 
+  sprintf("Dual inlet data '%s' (%s; %s) from %s%s\n", 
           x$file_info$file_id,
+          get_raw_data_info(x),
+          get_file_info_info(x),
           x$file_info$file_path,
           x$file_info$file_subpath %>% { if(!is.na(.)) str_c("|", .) else "" }
   ) %>% cat()
   if (show_problems && n_problems(x) > 0) {
-    cat("Encountered", n_problems(x), "problems:\n")
+    cat("Problems:\n")
     print(problems(x), ...)
     cat("\n")
   }
@@ -84,28 +84,46 @@ print.dual_inlet <- function(x, ..., show_problems = TRUE) {
 #' @param show_problems whether to show encountered problems
 #' @export
 print.continuous_flow <- function(x, ..., show_problems = TRUE) {
-  
-  # if (x$read_options$raw_data)
-  #   raw_data_info <- 
-  # else
-  #   raw_data_info <- "no mass data read"
-  # 
-  sprintf("Continuous flow data '%s' (%d data points: %s) from %s%s\n", 
+  sprintf("Continuous flow data '%s' (%s; %s) from %s%s\n", 
           x$file_info$file_id,
-          x$raw_data %>% nrow(),
-          x$raw_data %>% select(matches("^[iIvV]")) %>% names() %>% 
-            { if(length(.) == 0) "0 ions" else str_c(., collapse = ", ") },
+          get_raw_data_info(x),
+          get_file_info_info(x),
           x$file_info$file_path,
           x$file_info$file_subpath %>% { if(!is.na(.)) str_c("|", .) else "" }
   ) %>% cat()
   if (show_problems && n_problems(x) > 0) {
-    cat("\nEncountered", n_problems(x), "problems:\n")
+    cat("Problems:\n")
     print(problems(x), ...)
     cat("\n")
   }
   invisible(x)
 }
 
+# print info
+get_raw_data_info <- function(x) {
+  if (x$read_options$raw_data) {
+    sprintf(
+      "%d data points: %s",
+      x$raw_data %>% nrow(),
+      x$raw_data %>% select(matches("^[iIvV]")) %>% names() %>% 
+      { if(length(.) == 0) "0 ions" else str_c(., collapse = ", ") }
+    )
+  } else {
+    "raw data not read"
+  }
+}
+get_file_info_info <- function(x) {
+  if (x$read_options$file_info) {
+    sprintf(
+      "%d file info entries",
+      length(x$file_info)
+    )
+  } else {
+    "file info not read"
+  }
+}
+
+# Update structures =====
 
 # set data structure file path
 set_ds_file_path <- function(ds, file_path, file_id = basename(file_path), file_subpath = NA_character_) {
@@ -114,5 +132,16 @@ set_ds_file_path <- function(ds, file_path, file_id = basename(file_path), file_
   ds$file_info$file_path <- file_path
   ds$file_info$file_id <- file_id
   ds$file_info$file_subpath <- file_subpath
+  return(ds)
+}
+
+# update read options in structure
+update_read_options <- function(ds, ...) {
+  dots <- list(...)
+  # remove read_ prefix in function parameters
+  names(dots) <- names(dots) %>% str_replace("^read_", "") 
+  update <- dots[names(dots) %in% names(ds$read_options)]
+  # update all that exist in the read options
+  ds$read_options <- modifyList(ds$read_options, update)
   return(ds)
 }
