@@ -10,9 +10,10 @@
 #' @import ggplot2
 #' @importFrom stats setNames
 #' @importFrom methods is
+#' @importFrom utils unzip
 #' @import xml2
-#' @importFrom rhdf5 h5ls h5read h5readAttributes
-#' @importFrom lubridate duration
+#' @importFrom rhdf5 h5ls h5read h5readAttributes H5close
+#' @importFrom lazyeval as.lazy
 NULL
 
 ## quiets concerns of R CMD check about . that appears in pipelines

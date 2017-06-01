@@ -21,9 +21,10 @@ isoread <- function(...) {
 #' @param read_mass_data whether to read the raw mass data from the file
 #' @param read_data_table whether to read an preprocessed data tables from the file
 #' @param read_file_info whether to read auxiliary file information (program, methods, etc.)
+#' @export
 isoread_files <- function(paths, supported_extensions, data_structure, quiet = setting("quiet"),
                           read_mass_data = TRUE, read_data_table = TRUE, read_file_info = TRUE) {
-  
+
   # quiet
   on_exit_quiet <- update_quiet(quiet)
   on.exit(on_exit_quiet())
@@ -69,7 +70,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = s
     } else {
       # single file: set file_id as name in the list
       isofile_problems <- get_problems(isofile) %>% 
-        mutate(file_id = isofile$file_info$file_id) 
+        mutate_(.dots = list(file_id = ~isofile$file_info$file_id))
       all_problems <- bind_rows(all_problems, isofile_problems)
       isofiles <- c(isofiles, setNames(list(isofile), isofile$file_info$file_id))
     }
@@ -81,7 +82,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = s
   } else {
     # multiple files
     class(isofiles) <- c("isofiles", class(isofiles))
-    isofiles <- set_problems(isofiles, select(all_problems, file_id, everything()))
+    isofiles <- set_problems(isofiles, all_problems %>% { select_(., .dots = c("file_id", names(.))) })
 
     # check for name duplicates and register a warning if there are any
     if (any(dups <- duplicated(names(isofiles)))) {

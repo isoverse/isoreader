@@ -7,6 +7,9 @@ isoread_flow_iarc <- function(ds) {
   col_check(c("file_info", "mass_data"), ds)
   col_check(c("file_id", "file_path", "file_subpath"), ds$file_info)
   
+  # global variables for NSE
+  sample <- NULL
+  
   # unzipping iarc archieve ====
   folder_name <- ds$file_info$file_path %>% basename() %>% { str_replace(., fixed(get_file_ext(.)), "") }
   folder_path <- file.path(tempdir(), folder_name)
@@ -42,7 +45,9 @@ isoread_flow_iarc <- function(ds) {
   
   # processing lists / gas configuration ====
   all_processing_lists <- 
-    tasks %>% map("info") %>% bind_rows() %>% group_by(ProcessingListTypeIdentifier) %>% summarise(samples=n()) %>% 
+    tasks %>% map("info") %>% bind_rows() %>% 
+    group_by_(.dots = "ProcessingListTypeIdentifier") %>% 
+    summarise(samples=n()) %>% 
     full_join(processing_lists, by = c("ProcessingListTypeIdentifier" = "DefinitionUniqueIdentifier"))
   
   # safety check on processing lists (make sure all processing lists defined in tasks have a ProcessingListId)
@@ -112,8 +117,9 @@ process_iarc_samples <- function(isofile_template, tasks, gas_configs, folder_pa
     if (!setting("quiet")) {
       sprintf("      processing sample '%s' (IRMS data %s)",
               generate_task_sample_id(task), 
-              task$data_files %>% filter(TypeIdentifier == "Acquire") %>% 
-              {.$DataFile} %>% { if(length(.) > 0) str_c(., collapse = "', '") else "" }
+              task$data_files %>% 
+                filter_(.dots = list(~TypeIdentifier == "Acquire")) %>% 
+                {.$DataFile} %>% { if(length(.) > 0) str_c(., collapse = "', '") else "" }
               #task$info$GlobalIdentifier
               ) %>% 
         message()
@@ -142,7 +148,7 @@ process_iarc_sample_info <- function(isofile, task) {
 # @param gas_configs the gas configurations
 process_iarc_sample_data <- function(isofile, task, gas_configs, folder_path) {
   # aquire = IRMS data
-  irms_data <- task$data_files %>% filter(TypeIdentifier == "Acquire")
+  irms_data <- task$data_files %>% filter_(.dots = list(~TypeIdentifier == "Acquire")) 
   if (nrow(irms_data) == 0) stop("no IRMS acquisitions associated with this sample", call. = FALSE)
   
   # check for gas configurations
@@ -170,6 +176,9 @@ read_irms_data_file <- function(isofile, filepath, gas_config, run_time.s, data_
   if (!"DataSet" %in% h5ls(filepath)$name)
     stop("expected DataSet attribute not present in HDF5 data file", call. = FALSE)
   
+  # global variables to allow NSE
+  channel <- mass <- masses <- Scan <- tp <- time.s <- NULL
+  
   # attributes (NOTE: not sure what to do with the $Tuning information (usually not filled))
   dataset_attributes <- h5readAttributes(filepath, "DataSet")
   if (!dataset_attributes$Species %in% names(gas_config$species))
@@ -178,6 +187,7 @@ read_irms_data_file <- function(isofile, filepath, gas_config, run_time.s, data_
   
   # read irms data and determine which beams are used
   irms_data <- h5read(filepath, "DataSet") %>% as_data_frame()
+  H5close() # garbage collect
   data_channels <- irms_data %>% names() %>% str_subset("^Beam")
   config_channels <- config$channels %>% filter(channel %in% data_channels)
   

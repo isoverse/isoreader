@@ -20,7 +20,8 @@ Imports:
     readr,
     xml2,
     rhdf5,
-    ggplot2
+    ggplot2,
+    lazyeval
 Suggests:
     testthat,
     knitr,

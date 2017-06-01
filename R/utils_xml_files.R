@@ -94,6 +94,8 @@ process_iarc_methods_xml <- function(filepaths) {
 # process iarc tasks xml files
 process_iarc_tasks_xml <- function(filepaths, method_parameters) {
   
+  # global variables for NSE
+  #ID <- GlobalIdentifier <- DisplayName <- Value <- NULL
   
   process_iarc_task_xml <- function(task_file) {
     # read file
@@ -112,9 +114,11 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
       xml_find_all(".//SerialisableTaskValue") %>% 
       map_xml_children() %>% 
       # link with parameters defined in methods
-      mutate(
-        MethodId = task_info$MethodId,
-        GlobalIdentifier = task_info$GlobalIdentifier) %>% 
+      mutate_(
+        .dots = list(
+          MethodId = ~task_info[["MethodId"]],
+          GlobalIdentifier = ~task_info[["GlobalIdentifier"]]
+        )) %>% 
       full_join(method_parameters, by = c("MethodId" = "MethodId", "ParameterIdentifier" = "Id"))
     
     # @NOTE: TypeIdentifier in the method_parameters holds the data type but even for numbers it seems to always be "String", currently not processed further (i.e. not turned into a different data type)
@@ -123,11 +127,13 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
     task_data <- 
       task_xml %>% 
       xml_find_all(".//SerialisableDataSet") %>% 
-      map_xml_children(sel = c("Id", "AcquireDataStatus", "AcquireStartDate", "AcquireEndDate", "TypeIdentifier")) %>% 
-      mutate(
-        GlobalIdentifier = task_info$GlobalIdentifier,
-        DataFile = str_c(Id, ".hdf5")) %>% 
-      select(-Id)
+      map_xml_children(select = c("Id", "AcquireDataStatus", "AcquireStartDate", "AcquireEndDate", "TypeIdentifier")) %>% 
+      mutate_(
+        .dots = list(
+          GlobalIdentifier = ~task_info[["GlobalIdentifier"]],
+          DataFile = ~str_c(Id, ".hdf5")
+        )) %>% 
+      { .[names(.) != "Id"] }
     
     # return
     list(
@@ -137,7 +143,8 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
         task_info %>% as_data_frame() %>% 
         left_join(
           # wide format for task values
-          task_values %>% select(GlobalIdentifier, DisplayName, Value) %>% spread(DisplayName, Value), 
+          task_values %>% select_("GlobalIdentifier", "DisplayName", "Value") %>% 
+            spread_("DisplayName", "Value"), 
           by = "GlobalIdentifier"),
       # task data
       data_files = task_data
@@ -163,6 +170,9 @@ process_iarc_processing_xml <- function(processing_list_id, filepath) {
     sprintf("      searching processing list '%s' for gas configurations...", basename(filepath)) %>% 
       message()
   }
+  
+  # global variables for NSE
+  Label <- NumeratorBeamChannel <- numerator_mass <- DenominatorBeamChannel <- denominator_mass <- NULL
   
   # read file
   xml <- read_xml(filepath, encoding = "UTF-8")
