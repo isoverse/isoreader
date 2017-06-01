@@ -16,6 +16,22 @@ test_that("info messages can be turned on and off", {
   expect_true(isoreader:::setting("quiet"))
 })
 
+test_that("info messages can be switched for just one function", {
+  
+  quiet_test <- function(quiet) {
+    on_exit_quiet <- isoreader:::update_quiet(quiet)
+    on.exit(on_exit_quiet())
+    return(setting("quiet"))
+  }
+  
+  expect_message(turn_info_messages_on(), "messages turned on")
+  expect_equal(quiet_test(TRUE), TRUE)
+  expect_equal(isoreader:::setting("quiet"), FALSE)
+  expect_equal(quiet_test(FALSE), FALSE)
+  expect_equal(isoreader:::setting("quiet"), FALSE)
+  
+})
+
 test_that("info message functions can be part of a pipeline", {
   library(dplyr)
   df <- data_frame(a = 1:5)

@@ -6,10 +6,12 @@ isoread_continuous_flow <- function(
   paths, quiet = setting("quiet"), 
   read_mass_data = TRUE, read_data_table = TRUE, read_file_info = TRUE) {
 
+  # process data
   isoread_files(
     paths,
     supported_extensions = get_supported_cf_files(),
-    data_structure = make_cf_data_structure()
+    data_structure = make_cf_data_structure(),
+    quiet = quiet
   )
 }
 

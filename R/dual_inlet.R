@@ -7,7 +7,8 @@ isoread_dual_inlet <- function(paths, quiet = setting("quiet"),
   isoread_files(
     paths,
     supported_extensions = get_supported_di_files(),
-    data_structure = make_di_data_structure()
+    data_structure = make_di_data_structure(),
+    quiet = quiet
   )
 }
 

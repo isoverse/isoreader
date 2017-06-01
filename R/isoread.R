@@ -24,6 +24,10 @@ isoread <- function(...) {
 isoread_files <- function(paths, supported_extensions, data_structure, quiet = setting("quiet"),
                           read_mass_data = TRUE, read_data_table = TRUE, read_file_info = TRUE) {
   
+  # quiet
+  on_exit_quiet <- update_quiet(quiet)
+  on.exit(on_exit_quiet())
+  
   # supplied data checks
   col_check(c("extension", "fun"), supported_extensions)
   if(!is(data_structure, "isofile")) stop("data structure must include class 'isofile'", call. = FALSE)

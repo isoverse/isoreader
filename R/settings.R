@@ -12,6 +12,7 @@ set_setting <- function(name, value, overwrite = TRUE) {
   return(invisible(value))
 }
 
+
 #' Turn information messages on/off
 #' 
 #' These functions turn information messages on/off in all subsequent function calls by changing the global settings for the \code{quiet} parameter of most isoreader functions. These functions can be called stand alone or within a pipeline to turn messages on/off at a certain point during the pipeline.
@@ -35,6 +36,16 @@ turn_info_messages_off <- function(data) {
   if (!missing(data)) return(data)
 }
 
+# update quiet returns update function for on.exit
+update_quiet <- function(quiet) {
+  if (quiet != setting("quiet")) {
+    quiet_setting <- setting("quiet")
+    set_setting("quiet", quiet)
+    return(function() set_setting("quiet", quiet_setting))
+  } else {
+    return(function() {})
+  }
+}
 
 # turn debug messages on/off
 # not exported, used for internal debugging
