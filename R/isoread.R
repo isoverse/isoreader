@@ -38,7 +38,9 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
   fun_map <- supported_extensions %>% { setNames(as.list(.$fun), str_c(".", .$extension)) }
   
   # read files
-  isofiles <- sapply(filepaths, function(filepath) {
+  isofiles <- list()
+  all_problems <- data_frame()
+  for (filepath in filepaths) {
     ext <- get_file_ext(filepath)
     if (!quiet) sprintf("Info: reading file %s with '%s' reader", filepath, ext) %>% message()
     
@@ -50,14 +52,24 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
     
     # report problems
     if (!quiet && n_problems(isofile) > 0) {
-      cat("Encountered problems:\n")
+      cat("Warn: encountered problems\n")
       print(problems(isofile))
       cat("\n")
     }
     
-    # set file_id as name in the list
-    return(list(isofile) %>% setNames(isofile$file_info$file_id))
-  })
+    # add to overall files and problems
+    if (is(isofile, "isofiles")) {
+      # multi file returned, problems already have filenames included
+      all_problems <- bind_rows(all_problems, get_problems(isofile))
+      isofiles <- c(isofiles, isofile)
+    } else {
+      # single file: set file_id as name in the list
+      isofile_problems <- get_problems(isofile) %>% 
+        mutate(file_id = isofile$file_info$file_id) 
+      all_problems <- bind_rows(all_problems, isofile_problems)
+      isofiles <- c(isofiles, setNames(list(isofile), isofile$file_info$file_id))
+    }
+  }
 
   if (length(isofiles) == 1) {
     # only one file read
@@ -65,13 +77,8 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
   } else {
     # multiple files
     class(isofiles) <- c("isofiles", class(isofiles))
-    # combine all problems and add file name, store in parent isofiles
-    combined_problems <- isofiles %>% 
-      lapply(function(isofile) { 
-        problems(isofile) %>% mutate(filename = isofile$file_info$file_name) 
-      }) %>% bind_rows() %>% 
-      { select_(., .dots = c("filename", names(.)[names(.)!="filename"])) }
-    isofiles <- isofiles %>% set_problems(combined_problems)
+    isofiles <- set_problems(isofiles, select(all_problems, file_id, everything()))
+
     # check for name duplicates and register a warning if there are any
     if (any(dups <- duplicated(names(isofiles)))) {
       isofiles <- isofiles %>% register_warning(
@@ -79,6 +86,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = d
                 names(isofiles)[dups] %>% str_c(collapse = ", "))
       )
     }
+    
     # return all isofiles
     return(isofiles)
   }
