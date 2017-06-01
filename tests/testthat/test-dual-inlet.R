@@ -1,11 +1,14 @@
 context("Dual Inlet Files")
 
 test_that("test that supported di files are correct", {
-  expect_is(exts <- get_supported_di_files(), "data.frame")
+  expect_is(exts <- isoreader:::get_supported_di_files(), "data.frame")
   expect_equal(exts$extension, c("did"))
   expect_true(all(exts$fun %>% sapply(class) == "character"))
-  expect_true(all(exts$fun %>% sapply(exists)))
-  expect_true(all(exts$fun %>% sapply(get) %>% sapply(class) == "function"))
+  
+  # check for existence in names sapce
+  expect_true(exists("show_supported_file_types"))
+  expect_true(all(exts$fun %>% sapply(exists, where = environment(show_supported_file_types))))
+  expect_true(all(exts$fun %>% sapply(get, envir = environment(show_supported_file_types)) %>% sapply(class) == "function"))
 })
 
 test_that("test that parameter checks are performed", {
