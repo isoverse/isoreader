@@ -28,6 +28,7 @@ Suggests:
     knitr,
     rmarkdown,
     covr
+biocViews: 
 License: GPL (>= 2) | file LICENSE
 Encoding: UTF-8
 LazyData: true
