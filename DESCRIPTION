@@ -1,7 +1,7 @@
 Package: isoreader
 Title: Read IRMS data from isodat files
 Description: R interface to IRMS (isotope ratio mass spectrometry) file formats typically used in stable isotope geochemistry.
-Version: 0.2.0.9999
+Version: 0.3.1.9999
 Authors@R: person("Sebastian", "Kopf", email = "sebastian.kopf@colorado.edu",
     role = c("aut", "cre"))
 URL: https://github.com/kopflab/isorunner
@@ -20,6 +20,7 @@ Imports:
     readr,
     xml2,
     rhdf5,
+    UNF,
     ggplot2,
     lazyeval
 Suggests:

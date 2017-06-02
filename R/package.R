@@ -14,6 +14,7 @@
 #' @import xml2
 #' @importFrom rhdf5 h5ls h5read h5readAttributes H5close
 #' @importFrom lazyeval as.lazy
+#' @importFrom UNF unf
 NULL
 
 ## quiets concerns of R CMD check about . that appears in pipelines

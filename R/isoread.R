@@ -18,9 +18,10 @@ isoread <- function(...) {
 #' @param supported_extensions data frame with supported extensions and corresponding reader functions
 #' @param data_structure the basic data structure for the type of isofile
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}
+#' @param cache whether to cache isofiles and attempt to reload from cache (will only reload if a file was previously read with the same read options and has NOT been modified since)
 #' @param ... additional parameters passed to the specific processing functions for the different file extensions
 #' @export
-isoread_files <- function(paths, supported_extensions, data_structure, quiet = setting("quiet"), ...) {
+isoread_files <- function(paths, supported_extensions, data_structure, ..., quiet = setting("quiet"), cache = TRUE) {
 
   # quiet
   on_exit_quiet <- update_quiet(quiet)
@@ -50,15 +51,41 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = s
   # read files
   isofiles <- list()
   all_problems <- data_frame()
+  version_warning <- 0
   for (filepath in filepaths) {
     ext <- get_file_ext(filepath)
-    if (!setting("quiet")) sprintf("Info: reading file %s with '%s' reader", filepath, ext) %>% message()
     
     # prepare isofile object
     isofile <- data_structure %>% set_ds_file_path(filepath)
     
-    # use extension-specific function to read file
-    isofile <- exec_func_with_error_catch(fun_map[[ext]], isofile, ...)
+    # check for cache
+    cache_path <- generate_cache_file_path(isofile)
+    if (cache && file.exists(cache_path)) {
+      
+      # file is cached and caching is turned on --> read from cached file
+      if (!setting("quiet")) sprintf("Info: restoring file %s from cache", filepath) %>% message()
+      rm("isofile") # remove object
+      load(cache_path) # load object
+      # make sure object in file was loaded properly
+      if (!exists("isofile", inherits = FALSE) || !(is(isofile, "isofiles") || is(isofile, "isofile"))) 
+        stop("cached file did not contain isofile(s)", call. = FALSE)
+      # check for version warning
+      cached_version <- if(is(isofile, "isofiles")) isofile[[1]]$version else isofile$version
+      if (cached_version != packageVersion("isoreader")) 
+        version_warning <- version_warning + 1
+      
+    } else {
+      
+      # read file anew using extension-specific function to read file
+      if (!setting("quiet")) sprintf("Info: reading file %s with '%s' reader", filepath, ext) %>% message()
+      isofile <- exec_func_with_error_catch(fun_map[[ext]], isofile, ...)
+      # store in cached file
+      if (cache) {
+        if (!file.exists(setting("cache_dir"))) dir.create(setting("cache_dir"))
+        save(isofile, file = cache_path)
+      }
+      
+    }
     
     # report problems
     if (!setting("quiet") && n_problems(isofile) > 0) {
@@ -82,6 +109,13 @@ isoread_files <- function(paths, supported_extensions, data_structure, quiet = s
   }
 
   # NOTE: consider implementing safety check to make sure that all isofiles that were generated still have the same top-level structure as the data structure originally provided
+  
+  # version warning check
+  if (version_warning > 0) {
+    version_problem <- register_warning(
+      NA, str_c(version_warning, " of the reloaded cached files were created by a different version of the isoreader package. This may lead to processing problems.\nPlease run the function 'cleanup_isoreader_cache()' once to remove all version mismatched cached files."))
+    all_problems <- bind_rows(all_problems, get_problems(version_problem))
+  }
   
   if (length(isofiles) == 1) {
     # only one file read

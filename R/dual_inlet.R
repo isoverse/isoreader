@@ -5,15 +5,18 @@
 #' @param read_file_info whether to read auxiliary file information (program, methods, etc.)
 #' @family isoread functions for different types of IRMS data
 #' @export
-isoread_dual_inlet <- function(paths, quiet = setting("quiet"), 
-                               read_raw_data = TRUE, read_file_info = TRUE) {
+isoread_dual_inlet <- function(
+  paths, read_raw_data = TRUE, read_file_info = TRUE,
+  quiet = setting("quiet"), cache = TRUE) {
+  
   isoread_files(
     paths,
     supported_extensions = get_supported_di_files(),
     data_structure = make_di_data_structure(),
-    quiet = quiet,
     read_raw_data = read_raw_data,
-    read_file_info = read_file_info
+    read_file_info = read_file_info,
+    quiet = quiet,
+    cache = cache
   )
 }
 
