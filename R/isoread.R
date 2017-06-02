@@ -67,10 +67,10 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., quie
       rm("isofile") # remove object
       load(cache_path) # load object
       # make sure object in file was loaded properly
-      if (!exists("isofile", inherits = FALSE) || !(is(isofile, "isofiles") || is(isofile, "isofile"))) 
+      if (!exists("isofile", inherits = FALSE) || !(is_isofile_list(isofile) || is_isofile(isofile))) 
         stop("cached file did not contain isofile(s)", call. = FALSE)
       # check for version warning
-      cached_version <- if(is(isofile, "isofiles")) isofile[[1]]$version else isofile$version
+      cached_version <- if(is_isofile_list(isofile)) isofile[[1]]$version else isofile$version
       if (cached_version != packageVersion("isoreader")) 
         version_warning <- version_warning + 1
       
@@ -95,7 +95,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., quie
     }
     
     # add to overall files and problems
-    if (is(isofile, "isofiles")) {
+    if (is_isofile_list(isofile)) {
       # multi file returned, problems already have filenames included
       all_problems <- bind_rows(all_problems, get_problems(isofile))
       isofiles <- c(isofiles, isofile)
@@ -122,7 +122,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., quie
     return(isofiles[[1]])
   } else {
     # multiple files
-    class(isofiles) <- c("isofiles", class(isofiles))
+    class(isofiles) <- c("isofile_list", class(isofiles))
     isofiles <- set_problems(isofiles, all_problems %>% { select_(., .dots = c("file_id", names(.))) })
 
     # check for name duplicates and register a warning if there are any

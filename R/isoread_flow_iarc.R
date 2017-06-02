@@ -68,7 +68,7 @@ isoread_flow_iarc <- function(ds, ...) {
   
   # read sample/task data ====
   isofiles <- process_iarc_samples(ds, tasks, gas_configs, folder_path)
-  class(isofiles) <- c("isofiles", class(isofiles))
+  class(isofiles) <- c("isofile_list", class(isofiles))
   
   # propagate problems =====
   iarc_problems <- combined_problems(

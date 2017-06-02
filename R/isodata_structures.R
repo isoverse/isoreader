@@ -1,7 +1,15 @@
 # Structures ----
 
+# basic isofile container structure
+make_isofile_list_data_structure <- function() {
+  structure(
+    list(),
+    class = c("isofile_list", "list")
+  )
+}
+
 # basic data structure
-make_iso_data_structure <- function() {
+make_isofile_data_structure <- function() {
   structure(
     list(
       version = packageVersion("isoreader"),
@@ -24,14 +32,14 @@ make_iso_data_structure <- function() {
 
 # basic dual inlet data structure
 make_di_data_structure <- function() {
-  struct <- make_iso_data_structure()
+  struct <- make_isofile_data_structure()
   class(struct) <- c("dual_inlet", class(struct))
   return(struct)
 }
 
 # basic continuous flow data structure
 make_cf_data_structure <- function() {
-  struct <- make_iso_data_structure()
+  struct <- make_isofile_data_structure()
   
   # add data_table read option
   struct$read_options <- struct$read_options %>% 
@@ -40,13 +48,37 @@ make_cf_data_structure <- function() {
   return(struct)
 }
 
+# Class testing ====
+
+
+#' Test if the object is an isofile 
+#'
+#' @param x An object
+#' @return `TRUE` if the object inherits from the `isofile` class.
+#' @export
+is_isofile <- function(x) {
+  "isofile" %in% class(x)
+}
+
+#' Test if the object is an isofile list (collection of isofiles)
+#'
+#' @param x An object
+#' @return `TRUE` if the object inherits from the `isofile_list` class.
+#' @export
+is_isofile_list <- function(x) {
+  "isofile_list" %in% class(x)
+}
+
+
+
 # Printing ----
 
 #' Print a collection of isofiles
 #' @param x Object to show.
 #' @param ... additional parameters passed to print.default
+#' @rdname printing
 #' @export
-print.isofiles <- function(x, ...) {
+print.isofile_list <- function(x, ...) {
   sprintf("# data from %d isofiles:\n", length(x)) %>% 
     cat()
   sapply(x, print, show_problems = FALSE)
@@ -62,6 +94,7 @@ print.isofiles <- function(x, ...) {
 #' @param x Object to show.
 #' @param ... additional parameters passed to print.default
 #' @param show_problems whether to show encountered problems
+#' @rdname printing
 #' @export
 print.dual_inlet <- function(x, ..., show_problems = TRUE) {
   sprintf("Dual inlet data '%s' (%s; %s) from %s%s\n", 
@@ -83,6 +116,7 @@ print.dual_inlet <- function(x, ..., show_problems = TRUE) {
 #' @param x Object to show.
 #' @param ... additional parameters passed to print.default
 #' @param show_problems whether to show encountered problems
+#' @rdname printing
 #' @export
 print.continuous_flow <- function(x, ..., show_problems = TRUE) {
   sprintf("Continuous flow data '%s' (%s; %s) from %s%s\n", 
@@ -178,8 +212,8 @@ cleanup_isoreader_cache <- function(clean_all = FALSE) {
   } else {
     remove <- sapply(files, function(file){
       load(file)
-      if (!exists("isofile", inherits = FALSE) || !(is(isofile, "isofiles") || is(isofile, "isofile"))) return(TRUE)
-      cached_version <- if(is(isofile, "isofiles")) isofile[[1]]$version else isofile$version  
+      if (!exists("isofile", inherits = FALSE) || !(is_isofile_list(isofile) || is_isofile(isofile))) return(TRUE)
+      cached_version <- if(is_isofile_list(isofile)) isofile[[1]]$version else isofile$version  
       if (cached_version != packageVersion("isoreader")) return(TRUE)
       return(FALSE)
     })
@@ -189,3 +223,8 @@ cleanup_isoreader_cache <- function(clean_all = FALSE) {
   }
   invisible(NULL)
 }
+
+
+# Operations =====
+
+
