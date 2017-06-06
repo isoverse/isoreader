@@ -108,5 +108,6 @@ find_parent_call <- function(current_func) {
   is_trycatch <- sapply(calls, function(x) any(str_detect(x, "tryCatch")))
   calls <- calls[!is_trycatch]
   has_func <- sapply(calls, function(x) any(str_detect(x, current_func))) %>% which()
+  if (has_func[1] == 1) return("") # called from top-level
   calls[[has_func[1] - 1]][1]
 }
