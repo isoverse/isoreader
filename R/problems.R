@@ -45,9 +45,9 @@ set_problems <- function(obj, problems) {
 get_problems <- function(x) {
   probs <- attr(suppressWarnings(x), "problems")
   if (is.null(probs)) {
-    # return empty initialized data_frame
-    probs <- x %>% initialize_problems_attribute() %>% attr("problems")
-  }
+    # return empty initialized problems structure
+    return(get_problems_structure())
+  } 
   return(probs)
 }
 
@@ -62,15 +62,18 @@ combined_problems <- function(...) {
 }
 
 # isoreader problems structure
+get_problems_structure <- function() {
+  data_frame(
+    type = character(),
+    func = character(),
+    details = character()
+  )
+}
+
+# initialize problems attribute
 initialize_problems_attribute <- function(obj) {
   if (n_problems(obj) == 0) {
-    obj <- obj %>% 
-      set_problems(
-        data_frame(
-          type = character(),
-          func = character(),
-          details = character()
-        ))
+    obj <- set_problems(obj, get_problems_structure())
   }
   return(obj)
 }
