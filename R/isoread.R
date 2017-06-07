@@ -50,32 +50,33 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., quie
   
   # read files
   isofiles <- list()
-  all_problems <- data_frame()
   version_warning <- 0
   for (filepath in filepaths) {
     ext <- get_file_ext(filepath)
     
     # prepare isofile object
-    isofile <- data_structure %>% set_ds_file_path(filepath)
+    isofile <- set_ds_file_path(data_structure, filepath)
     
     # check for cache
     cache_path <- generate_cache_file_path(isofile)
     if (cache && file.exists(cache_path)) {
-      
+      ## cache available  
       # file is cached and caching is turned on --> read from cached file
       if (!setting("quiet")) sprintf("Info: restoring file %s from cache", filepath) %>% message()
       rm("isofile") # remove object
       load(cache_path) # load object
       # make sure object in file was loaded properly
-      if (!exists("isofile", inherits = FALSE) || !(is_isofile_list(isofile) || is_isofile(isofile))) 
+      if (!exists("isofile", inherits = FALSE) || !(is_iso_object(isofile))) 
         stop("cached file did not contain isofile(s)", call. = FALSE)
       # check for version warning
       cached_version <- if(is_isofile_list(isofile)) isofile[[1]]$version else isofile$version
-      if (cached_version != packageVersion("isoreader")) 
+      if (cached_version != packageVersion("isoreader")) {
+        isofile <- register_warning(isofile, details = "file created by a different version of the isoreader package")
         version_warning <- version_warning + 1
+      }
       
     } else {
-      
+      ## no cache
       # read file anew using extension-specific function to read file
       if (!setting("quiet")) sprintf("Info: reading file %s with '%s' reader", filepath, ext) %>% message()
       isofile <- exec_func_with_error_catch(fun_map[[ext]], isofile, ...)
@@ -94,46 +95,17 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., quie
       cat("\n")
     }
     
-    # add to overall files and problems
-    if (is_isofile_list(isofile)) {
-      # multi file returned, problems already have filenames included
-      all_problems <- bind_rows(all_problems, get_problems(isofile))
-      isofiles <- c(isofiles, isofile)
-    } else {
-      # single file: set file_id as name in the list
-      isofile_problems <- get_problems(isofile) %>% 
-        mutate_(.dots = list(file_id = ~isofile$file_info$file_id))
-      all_problems <- bind_rows(all_problems, isofile_problems)
-      isofiles <- c(isofiles, setNames(list(isofile), isofile$file_info$file_id))
-    }
+    isofiles <- c(isofiles, list(isofile))
   }
 
   # NOTE: consider implementing safety check to make sure that all isofiles that were generated still have the same top-level structure as the data structure originally provided
   
   # version warning check
   if (version_warning > 0) {
-    version_problem <- register_warning(
-      NA, str_c(version_warning, " of the reloaded cached files were created by a different version of the isoreader package. This may lead to processing problems.\nPlease run the function 'cleanup_isoreader_cache()' once to remove all version mismatched cached files."))
-    all_problems <- bind_rows(all_problems, get_problems(version_problem))
+    warning(version_warning, " of the reloaded cached files were created by a different version of the isoreader package. This may lead to processing problems.\nPlease run the function 'cleanup_isoreader_cache()' once to remove all version mismatched cached files.",
+            call. = FALSE, immediate. = TRUE)
   }
   
-  if (length(isofiles) == 1) {
-    # only one file read
-    return(isofiles[[1]])
-  } else {
-    # multiple files
-    class(isofiles) <- c("isofile_list", class(isofiles))
-    isofiles <- set_problems(isofiles, all_problems %>% { select_(., .dots = c("file_id", names(.))) })
-
-    # check for name duplicates and register a warning if there are any
-    if (any(dups <- duplicated(names(isofiles)))) {
-      isofiles <- isofiles %>% register_warning(
-        sprintf("encountered duplicate file IDs which may interfere with processing aggregated data properly: %s",
-                names(isofiles)[dups] %>% str_c(collapse = ", "))
-      )
-    }
-    
-    # return all isofiles
-    return(isofiles)
-  }
+  # turn into isofile list and return
+  return(make_isofile_list(isofiles))
 }

@@ -7,7 +7,7 @@
 #' @export
 get_raw_data <- function(isofiles) {
   if (!is(isofiles, "list")) isofiles <- list(isofiles)
-  check_isofiles(isofiles)
+  check_all_iso_objects(isofiles, error = "aggregate")
   check_read_options(isofiles, "raw_data")
   
   # Note: provide easy way to include additional information (merge with get_file_info() but a select set of columns)
@@ -25,7 +25,7 @@ get_raw_data <- function(isofiles) {
 #' @export
 get_file_info <- function(isofiles) {
   if (!is(isofiles, "list")) isofiles <- list(isofiles)
-  check_isofiles(isofiles)
+  check_all_iso_objects(isofiles, error = "aggregate")
   check_read_options(isofiles, "file_info")
   
   # Note: need to check for file info values that may have more than 1 value
@@ -45,15 +45,6 @@ get_data_table <- function(isofiles) {
   check_isofiles(isofiles)
   
   stop("not implemented yet")
-}
-
-# check if all are isofiles
-check_isofiles <- function(isofiles) {
-  if (any(not_iso <- !sapply(isofiles, is, "isofile"))) {
-    stop("encountered non-isofile data type(s): ",
-         lapply(isofiles, class)[not_iso] %>% unlist() %>% 
-           unique() %>% str_c(collapse = ", "), call. = FALSE)
-  }
 }
 
 # check if read options are compatible

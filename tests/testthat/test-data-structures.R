@@ -1,20 +1,47 @@
 context("Data Structures")
 
+# basic isofile data structure is correct ====
+test_that("test that basic isofile data structure is correct", {
+  expect_is(isofile <- isoreader:::make_isofile_data_structure(), "isofile")
+  expect_equal(names(isofile), c("version", "read_options", "file_info", "raw_data"))
+  expect_equal(names(isofile$read_options), c("file_info", "raw_data"))
+  expect_equal(isofile$version, packageVersion("isoreader"))
+  expect_false(is_isofile(42))
+  expect_false(is_isofile(isoreader:::make_isofile_list()))
+  expect_true(is_isofile(isofile))
+  expect_false(is_iso_object(42))
+  expect_true(is_iso_object(isofile))
+  expect_false(isoreader:::check_all_iso_objects(1))
+  expect_error(isoreader:::check_all_iso_objects(1, error = "test"), "encountered incompatible data type")
+})
+
+# dual inlet data structure is correct ====
 test_that("test that dual inlet data structure is correct", {
   expect_is(isoreader:::make_di_data_structure(), "isofile")
   expect_is(isoreader:::make_di_data_structure(), "dual_inlet")
   # FIXME: expand
 })
 
+# continuous data structure is correct ====
 test_that("test that continuous data structure is correct", {
   expect_is(isoreader:::make_cf_data_structure(), "isofile")
   expect_is(isoreader:::make_cf_data_structure(), "continuous_flow")
   # FIXME: expand
 })
 
+# isofile list checks work ====
+test_that("test that isofile list checks work", {
+  expect_is(isofiles <- isoreader:::make_isofile_list(), "isofile_list")
+  expect_false(is_isofile_list(42))
+  expect_false(is_isofile_list(isoreader:::make_isofile_data_structure()))
+  expect_true(is_isofile_list(isofiles))
+  expect_true(is_iso_object(isofiles))
+})
+
+# can set file path for data structures ====
 test_that("can set file path for data structures", {
   expect_error(isoreader:::set_ds_file_path(data_frame()), "can only set path for isofile data structures")
-  expect_silent(ds <- isoreader:::make_cf_data_structure())
+  expect_silent(ds <- isoreader:::make_isofile_data_structure())
   expect_error(isoreader:::set_ds_file_path(ds, "DOESNOTEXIST"), "does not exist")
   
   # default
@@ -30,4 +57,84 @@ test_that("can set file path for data structures", {
   expect_equal(ds$file_info$file_id, "my_id")
   expect_equal(ds$file_info$file_subpath, "subpath")
 })
+
+
+# can update read options ====
+test_that("test that can update read options", {
+  expect_is(isofile <- isoreader:::make_isofile_data_structure(), "isofile")
+  expect_equal(isofile$read_options, list(file_info = FALSE, raw_data = FALSE))
+  expect_equal(isoreader:::update_read_options(isofile, not_an_option = FALSE)$read_options,
+               list(file_info = FALSE, raw_data = FALSE))
+  expect_equal(isoreader:::update_read_options(isofile, read_file_info = TRUE, raw_data = TRUE)$read_options,
+               list(file_info = TRUE, raw_data = TRUE))
+})
+
+
+# isofils objects can be combined properly ====
+test_that("test that isofils objects can be combined properly and subset", {
+  
+  expect_is(isofile <- isoreader:::make_isofile_data_structure(), "isofile")
+  expect_equal({
+    isofile1 <- isofile %>% isoreader:::set_ds_file_path(system.file("extdata", package = "isoreader"), file_id="A")
+    isofile1$file_info$file_id
+  }, "A")
+  expect_equal({
+    isofile2 <- isofile %>% isoreader:::set_ds_file_path(system.file("extdata", package = "isoreader"), file_id="B")
+    isofile2$file_info$file_id
+  }, "B")
+  expect_equal({
+    isofile3 <- isofile %>% isoreader:::set_ds_file_path(system.file("extdata", package = "isoreader"), file_id="C")
+    isofile3$file_info$file_id
+  }, "C")
+  
+  # combinining isofiles
+  expect_is(isofilesAB <- c(isofile1, isofile2), "isofile_list")
+  expect_is(isofilesABC <- c(isofile1, isofile2, isofile3), "isofile_list")
+  expect_equal(c(isofilesAB, isofile3), c(isofile1, isofile2, isofile3))
+  
+  ## problems combining identical files
+  expect_warning(isofilesAA <- c(isofile1, isofile1), "duplicate file ID may interfere with data processing")
+  expect_is(isofilesAA, "isofile_list")
+  expect_equal(problems(isofilesAA) %>% select(file_id, type), 
+               data_frame(file_id = "A", type = "warning"))
+  expect_equal(problems(c(isofile1, isofile1)), problems(c(isofile1, isofile1, isofile1)))
+  
+  ## propagating problems
+  expect_is(
+    isofilesAB_probs <- c(
+      isoreader:::register_warning(isofile1, "warning A", warn=FALSE),
+      isoreader:::register_warning(isofile2, "warning B", warn=FALSE)),
+    "isofile_list"
+  )
+  expect_equal(problems(isofilesAB_probs) %>% select(file_id, details),
+               data_frame(file_id = c("A", "B"), details = paste("warning", c("A", "B"))))
+  expect_warning(isofiles_ABB_probs <- c(isofilesAB_probs, isofile2), "duplicate file ID")
+  expect_equal(problems(isofiles_ABB_probs) %>% select(file_id, details),
+               data_frame(file_id = c("A", "B", "B"), details = c("warning A", "warning B", 
+                          "duplicate file ID may interfere with data processing: B")))
+  
+  # subsetting isofiles
+  expect_is(isofilesAB[2], "isofile_list")
+  expect_is(isofilesABC[1:2], "isofile_list")
+  expect_is(isofilesABC[c("A", "C")], "isofile_list")
+  expect_equal(isofilesABC[c(1,3)], isofilesABC[c("A", "C")])
+  expect_is(isofilesAB[[2]], "isofile")
+  expect_is(isofilesAB[['B']], "isofile")
+  expect_equal(isofilesAB[[2]], isofilesAB[['B']])
+  
+  ## ignore out of range indices
+  expect_equal(isofilesABC[2:3], isofilesABC[2:5])
+  expect_equal(isofilesABC[c("B", "C")], isofilesABC[c("B", "C", "D")]) 
+  
+  # assigning by indices
+  expect_equal( { isofiles <- isofilesAB; isofiles[[3]] <- isofile3; names(isofiles)}, names(isofilesABC))
+  expect_equal( { isofiles <- isofilesAB; isofiles[[2]] <- isofile3; names(isofiles) }, names(c(isofile1, isofile3)))
+  expect_equal( { isofiles <- isofilesAB; isofiles[1] <- isofilesABC[3]; names(isofiles) }, names(c(isofile3, isofile2)))
+  expect_equal( { isofiles <- isofilesAB; isofiles[[1]] <- isofilesABC[[3]]; names(isofiles) }, names(c(isofile3, isofile2)))
+  
+  ## warnings from assignments
+  expect_warning( { isofiles <- isofilesAB; isofiles[1] <- isofiles[2]}, "duplicate file ID")
+})
+
+
 
