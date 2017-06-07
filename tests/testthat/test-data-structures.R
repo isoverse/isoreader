@@ -87,6 +87,7 @@ test_that("test that isofils objects can be combined properly and subset", {
     isofile3$file_info$file_id
   }, "C")
   
+  
   # combinining isofiles
   expect_is(isofilesAB <- c(isofile1, isofile2), "isofile_list")
   expect_is(isofilesABC <- c(isofile1, isofile2, isofile3), "isofile_list")
@@ -134,6 +135,10 @@ test_that("test that isofils objects can be combined properly and subset", {
   
   ## warnings from assignments
   expect_warning( { isofiles <- isofilesAB; isofiles[1] <- isofiles[2]}, "duplicate file ID")
+  
+  # convertion to list
+  expect_equal(as.list(isofilesABC) %>% class(), "list")
+  expect_equal(as.list(isofilesABC)[[1]], isofilesABC[[1]])
 })
 
 

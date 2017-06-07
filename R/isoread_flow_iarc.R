@@ -68,30 +68,17 @@ isoread_flow_iarc <- function(ds, ...) {
   
   # read sample/task data ====
   isofiles <- process_iarc_samples(ds, tasks, gas_configs, folder_path)
-  class(isofiles) <- c("isofile_list", class(isofiles))
   
   # propagate problems =====
-  iarc_problems <- combined_problems(
-    processing_lists, method_params, tasks, gas_configs)
-  
-  # compile all problems 
-  all_problems <- data_frame()
+  iarc_problems <- combined_problems(processing_lists, method_params, tasks, gas_configs)
   for (i in 1:length(isofiles)) {
-    isofile_problems <- get_problems(isofiles[[i]]) %>% 
-      mutate(file_id = isofiles[[i]]$file_info$file_id) 
-    all_problems <- bind_rows(all_problems, isofile_problems)
     # add general iarc problems to individual files
     isofiles[[i]] <- set_problems(
       isofiles[[i]], bind_rows(iarc_problems, get_problems(isofiles[[i]])))
   }
   
-  all_problems <- bind_rows(
-    mutate(iarc_problems, file_id = basename(ds$file_info$file_path)),
-    all_problems
-  )
-  
-  # final isofiles
-  isofiles %>% set_problems(all_problems)
+  # turn into isofiles list and return
+  return(make_isofile_list(isofiles))
 }
 
 # process iarc samples
@@ -135,7 +122,7 @@ process_iarc_samples <- function(isofile_template, tasks, gas_configs, folder_pa
       isofile <- exec_func_with_error_catch(process_iarc_sample_data, isofile, task, 
                                             gas_configs, folder_path)
       
-    return(list(isofile) %>% setNames(isofile$file_info$file_id))
+    return(list(isofile))
   })
 }
 

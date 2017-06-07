@@ -2,11 +2,14 @@
 % Please edit documentation in R/isodata_structures.R
 \name{print.isofile_list}
 \alias{print.isofile_list}
+\alias{print.isofile}
 \alias{print.dual_inlet}
 \alias{print.continuous_flow}
 \title{Print a collection of isofiles}
 \usage{
 \method{print}{isofile_list}(x, ...)
+
+\method{print}{isofile}(x, ..., show_problems = TRUE)
 
 \method{print}{dual_inlet}(x, ..., show_problems = TRUE)
 
@@ -19,9 +22,19 @@
 
 \item{show_problems}{whether to show encountered problems}
 
+\item{x}{Object to show}
+
+\item{...}{additional parameters passed to print.default}
+
+\item{show_file_info}{whether to show file info information}
+
+\item{show_raw_data_info}{whether to show raw data information}
+
 \item{x}{Object to show.}
 
 \item{...}{additional parameters passed to print.default}
+
+\item{show_problems}{whether to show encountered problems}
 
 \item{x}{Object to show.}
 
@@ -31,6 +44,8 @@
 }
 \description{
 Print a collection of isofiles
+
+Print a general isofile
 
 Print a dual inlet isofile
 

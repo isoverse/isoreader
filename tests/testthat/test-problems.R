@@ -40,6 +40,20 @@ test_that("Test that problem registration and reporting works properly", {
   
 })
 
+test_that("Test that problems set for isofile lists get propagated to all files", {
+  # propagate problems for isofiles
+  expect_is(isofile <- isoreader:::make_isofile_data_structure(), "isofile")
+  isofile1 <- isofile %>% { .$file_info$file_id <- "A"; . }
+  isofile2 <- isofile %>% { .$file_info$file_id <- "B"; . }
+  expect_is(isofiles <- c(isofile1, isofile2), "isofile_list")
+  expect_equal(problems(isofiles) %>% nrow(), 0L)
+  expect_is(isofiles_w_probs <- register_problem(isofiles, type = "test"), "isofile_list")
+  expect_equal(problems(isofiles_w_probs) %>% select(file_id, type),
+               data_frame(file_id = c("A", "B"), type = c("test")))
+  expect_equal(problems(isofiles_w_probs[[1]]) %>% select(type), data_frame(type = "test"))
+  expect_equal(problems(isofiles_w_probs[[2]]) %>% select(type), data_frame(type = "test"))
+})
+
 test_that("Test that warning and error registration works properly", {
   x <- letters
   

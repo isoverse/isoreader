@@ -9,12 +9,22 @@ readr::stop_for_problems
 # register a problem during isoreader operations
 # helper function to standardize problems for file reads
 # with a filename, type and details
+# @obj isofile or isofile_list
 register_problem <- function(obj, type = NA_character_, details = NA_character_, ..., 
                                   func = deparse(sys.call(-1))) {
   if (func == "NULL") func <- NA_character_
   problem <- data_frame(type = type, func = func, details = details, ...)
-  obj <- obj %>% set_problems(
-      suppressWarnings(bind_rows(get_problems(obj), problem)))
+  if (is_isofile_list(obj)) {
+    obj <- as.list(obj)
+    for (i in 1:length(obj)) {
+      existing_problems <- get_problems(obj[[i]])
+      obj[[i]] <- set_problems(obj[[i]], suppressWarnings(bind_rows(existing_problems, problem)))
+    } 
+    obj <- make_isofile_list(obj)
+  } else {
+    obj <- obj %>% set_problems(
+        suppressWarnings(bind_rows(get_problems(obj), problem)))
+  }
   return(obj)
 }
 
