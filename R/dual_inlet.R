@@ -7,7 +7,7 @@
 #' @export
 isoread_dual_inlet <- function(
   paths, read_raw_data = TRUE, read_file_info = TRUE,
-  quiet = setting("quiet"), cache = TRUE) {
+  quiet = setting("quiet"), cache = setting("cache")) {
   
   isoread_files(
     paths,

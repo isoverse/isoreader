@@ -8,7 +8,7 @@
 #' @export
 isoread_continuous_flow <- function(
   paths, read_raw_data = TRUE, read_file_info = TRUE, read_data_table = TRUE,
-  quiet = setting("quiet"), cache = TRUE) {
+  quiet = setting("quiet"), cache = setting("cache")) {
 
   # process data
   isoread_files(

@@ -3,6 +3,7 @@
   default_options <- list(
     isoreader.quiet = FALSE,
     isoreader.debug = FALSE,
+    isoreader.cache = TRUE,
     isoreader.cache_dir = "cache"
   )
   options(default_options)

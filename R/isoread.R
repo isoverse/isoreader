@@ -21,7 +21,7 @@ isoread <- function(...) {
 #' @param cache whether to cache isofiles and attempt to reload from cache (will only reload if a file was previously read with the same read options and has NOT been modified since)
 #' @param ... additional parameters passed to the specific processing functions for the different file extensions
 #' @export
-isoread_files <- function(paths, supported_extensions, data_structure, ..., quiet = setting("quiet"), cache = TRUE) {
+isoread_files <- function(paths, supported_extensions, data_structure, ..., quiet = setting("quiet"), cache = setting("cache")) {
 
   # quiet
   on_exit_quiet <- update_quiet(quiet)

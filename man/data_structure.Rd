@@ -27,5 +27,5 @@ as_isofile_list(...)
 
 \code{is_iso_object} test if the object is an iso-object (isofile or isofile list)
 
-\code{as_isofile_list} turns object(s) and lists of objects into an isofile list (equivalent to calling \code{c(...)}), automatically checks that all parameters are iso objects, issues warnings if there are duplicate file ids and summarizes all problems in the isofile list
+\code{as_isofile_list} concatenates isofile and isofile list object(s) into one combined isofile list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within isofile lists have to be the same type of isofile, issues warnings if there are duplicate file ids and summarizes all problems in the isofile list
 }

@@ -12,6 +12,31 @@ set_setting <- function(name, value, overwrite = TRUE) {
   return(invisible(value))
 }
 
+#' Turn caching on/off
+#' 
+#' These functions turn caching of data files on/off in all subsequent isoread calls by changing the global settings for the \code{cache} parameter. Can be called stand alone or within a pipeline.
+#' 
+#' @param data a data frame - returned as is if provided (e.g. in the middle of a pipeline)
+#' @name caching
+NULL
+
+#' @rdname caching
+#' @export
+turn_caching_on <- function(data) {
+  set_setting("cache", TRUE)
+  if (!setting("quiet")) message("Info: caching turned on")
+  if (!missing(data)) return(data)
+}
+
+#' @rdname caching
+#' @export
+turn_caching_off <- function(data) {
+  set_setting("cache", FALSE)
+  if (!setting("quiet")) message("Info: caching turned off")
+  if (!missing(data)) return(data)
+}
+
+
 
 #' Turn information messages on/off
 #' 

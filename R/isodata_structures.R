@@ -103,8 +103,8 @@ as_isofile_list <- function(...) {
     { do.call(c, .) }
     
     # check if al ellements are the same data type
-    classes <- sapply(iso_list, class) 
-    if (!all(sapply(classes, function(x) all(x == classes[1])))) {
+    classes <- lapply(iso_list, class) 
+    if (!all(sapply(classes, function(x) all(x == classes[[1]])))) {
       stop("can only combine isofile objects with the same data type, encountered: ", 
            unlist(classes) %>% { .[.!="isofile"] } %>% 
            { str_c(unique(.), collapse = ", ")}, call. = FALSE)

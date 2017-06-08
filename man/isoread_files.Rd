@@ -5,7 +5,7 @@
 \title{Main function to read isotope data files}
 \usage{
 isoread_files(paths, supported_extensions, data_structure, ...,
-  quiet = setting("quiet"), cache = TRUE)
+  quiet = setting("quiet"), cache = setting("cache"))
 }
 \arguments{
 \item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
