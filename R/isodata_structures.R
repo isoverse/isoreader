@@ -71,7 +71,7 @@ is_iso_object <- function(x) {
 
 # Iso file list ----
 
-#' @description \code{as_isofile_list} turns object(s) and lists of objects into an isofile list (equivalent to calling \code{c(...)}), automatically checks that all parameters are iso objects, issues warnings if there are duplicate file ids and summarizes all problems in the isofile list
+#' @description \code{as_isofile_list} concatenates isofile and isofile list object(s) into one combined isofile list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within isofile lists have to be the same type of isofile, issues warnings if there are duplicate file ids and summarizes all problems in the isofile list
 #' @param ... isofile and isofile_list objects to concatenate
 #' @rdname data_structure
 #' @export
@@ -101,6 +101,14 @@ as_isofile_list <- function(...) {
       else setNames(list(obj), obj$file_info$file_id) # use file_id to name new files
     }) %>% 
     { do.call(c, .) }
+    
+    # check if al ellements are the same data type
+    classes <- sapply(iso_list, class) 
+    if (!all(sapply(classes, function(x) all(x == classes[1])))) {
+      stop("can only combine isofile objects with the same data type, encountered: ", 
+           unlist(classes) %>% { .[.!="isofile"] } %>% 
+           { str_c(unique(.), collapse = ", ")}, call. = FALSE)
+    }
     
     # check for name duplicates and register a warning if there are any
     if (any(dups <- duplicated(names(iso_list)) | duplicated(names(iso_list), fromLast = TRUE))) {
