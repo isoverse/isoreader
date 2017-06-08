@@ -66,7 +66,7 @@ make_isofile_list <- function(...) {
     { do.call(c, .) }
     
     # check for name duplicates and register a warning if there are any
-    if (any(dups <- duplicated(names(iso_list)))) {
+    if (any(dups <- duplicated(names(iso_list)) | duplicated(names(iso_list), fromLast = TRUE))) {
       for (idx in which(dups)) {
         iso_list[[idx]] <- register_warning(
           iso_list[[idx]], str_c("duplicate file ID may interfere with data processing: ", names(iso_list)[idx]))
