@@ -6,8 +6,7 @@
 #' @family data aggregation functions
 #' @export
 get_raw_data <- function(isofiles) {
-  if (!is(isofiles, "list")) isofiles <- list(isofiles)
-  check_all_iso_objects(isofiles, error = "aggregate")
+  isofiles <- as_isofile_list(isofiles)
   check_read_options(isofiles, "raw_data")
   
   # Note: provide easy way to include additional information (merge with get_file_info() but a select set of columns)
@@ -24,8 +23,7 @@ get_raw_data <- function(isofiles) {
 #' @family data aggregation functions
 #' @export
 get_file_info <- function(isofiles) {
-  if (!is(isofiles, "list")) isofiles <- list(isofiles)
-  check_all_iso_objects(isofiles, error = "aggregate")
+  isofiles <- as_isofile_list(isofiles)
   check_read_options(isofiles, "file_info")
   
   # Note: need to check for file info values that may have more than 1 value

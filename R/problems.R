@@ -20,7 +20,7 @@ register_problem <- function(obj, type = NA_character_, details = NA_character_,
       existing_problems <- get_problems(obj[[i]])
       obj[[i]] <- set_problems(obj[[i]], suppressWarnings(bind_rows(existing_problems, problem)))
     } 
-    obj <- make_isofile_list(obj)
+    obj <- as_isofile_list(obj)
   } else {
     obj <- obj %>% set_problems(
         suppressWarnings(bind_rows(get_problems(obj), problem)))

@@ -78,7 +78,7 @@ isoread_flow_iarc <- function(ds, ...) {
   }
   
   # turn into isofiles list and return
-  return(make_isofile_list(isofiles))
+  return(as_isofile_list(isofiles))
 }
 
 # process iarc samples

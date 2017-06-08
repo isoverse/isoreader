@@ -4,6 +4,7 @@
 \alias{is_isofile}
 \alias{is_isofile_list}
 \alias{is_iso_object}
+\alias{as_isofile_list}
 \title{Isoreader data structure functions}
 \usage{
 is_isofile(x)
@@ -11,9 +12,13 @@ is_isofile(x)
 is_isofile_list(x)
 
 is_iso_object(x)
+
+as_isofile_list(...)
 }
 \arguments{
-\item{x}{An object}
+\item{x}{an object to test whether it has the specific class}
+
+\item{...}{isofile and isofile_list objects to concatenate}
 }
 \description{
 \code{is_isofile} tests if the object is an isofile
@@ -21,4 +26,6 @@ is_iso_object(x)
 \code{is_isofile_list} tests if the object is an isofile list (collection of isofiles)
 
 \code{is_iso_object} test if the object is an iso-object (isofile or isofile list)
+
+\code{as_isofile_list} turns object(s) and lists of objects into an isofile list (equivalent to calling \code{c(...)}), automatically checks that all parameters are iso objects, issues warnings if there are duplicate file ids and summarizes all problems in the isofile list
 }

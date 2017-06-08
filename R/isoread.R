@@ -107,5 +107,5 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., quie
   }
   
   # turn into isofile list and return
-  return(make_isofile_list(isofiles))
+  return(as_isofile_list(isofiles))
 }

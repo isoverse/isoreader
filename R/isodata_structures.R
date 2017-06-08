@@ -40,57 +40,6 @@ make_cf_data_structure <- function() {
   return(struct)
 }
 
-# make isofile list by combining isofiles or other isofile_lists
-# checks that all parameters are actually is_objects
-# also checks that no duplicate file_ids exist in the list
-# summarizes all problems from the objects and attaches them to the new isofile list
-make_isofile_list <- function(...) {
-  # dots passed in
-  iso_objs <- list(...)
-  # allow simple list to be passed in
-  if (length(iso_objs) == 1 && !is_iso_object(..1) && is.list(..1)) iso_objs <- ..1
-  
-  if (length(iso_objs) == 0) {
-    # simple list
-    iso_list <- list()
-    iso_problems <- get_problems_structure() %>% mutate(file_id = character())
-  } else {
-    # combine everything
-    check_all_iso_objects(iso_objs, error = "combine")
-    
-    # combine iso objects
-    iso_list <- lapply(iso_objs, function(obj) {
-      if (is_isofile_list(obj)) as.list(obj) # iso lists already have named entries
-      else setNames(list(obj), obj$file_info$file_id) # use file_id to name new files
-    }) %>% 
-    { do.call(c, .) }
-    
-    # check for name duplicates and register a warning if there are any
-    if (any(dups <- duplicated(names(iso_list)) | duplicated(names(iso_list), fromLast = TRUE))) {
-      for (idx in which(dups)) {
-        iso_list[[idx]] <- register_warning(
-          iso_list[[idx]], str_c("duplicate file ID may interfere with data processing: ", names(iso_list)[idx]))
-      }
-    }
-    
-    # propagate problems
-    iso_problems <- lapply(iso_list, function(isofile) {
-      get_problems(isofile) %>% 
-      mutate_(.dots = list(file_id = ~isofile$file_info$file_id))
-    }) %>% bind_rows()
-  }
-  
-  # problems
-  iso_problems <- iso_problems %>% 
-    unique() %>% # remove duplicate entries
-    { select_(., .dots = c("file_id", names(.))) }
-  
-  # generate structure
-  structure(
-    iso_list,
-    class = c("isofile_list")
-  ) %>% set_problems(iso_problems)
-}
 
 # Class testing ====
 
@@ -99,7 +48,7 @@ make_isofile_list <- function(...) {
 #' 
 #' @description \code{is_isofile} tests if the object is an isofile 
 #'
-#' @param x An object
+#' @param x an object to test whether it has the specific class
 #' @rdname data_structure
 #' @export
 is_isofile <- function(x) {
@@ -120,21 +69,66 @@ is_iso_object <- function(x) {
   is_isofile(x) || is_isofile_list(x)
 }
 
-# check if all are iso objects
-# throws an error if not
-# @param error if passed in throws an error if there is one and uses error in message
-# @return TRUE if all are iso objects, FALSE if not
-check_all_iso_objects <- function(isofiles, error = NULL) {
-  if (length(isofiles) == 0) return (TRUE)
-  if(!all(is_iso <- sapply(isofiles, is_iso_object))) {
-    if (!is.null(error))
-      stop("can only ", error, " isofile and isofile_list objects, encountered incompatible data type(s): ",
-           unlist(lapply(isofiles, class)[!is_iso]) %>% 
+# Iso file list ----
+
+#' @description \code{as_isofile_list} turns object(s) and lists of objects into an isofile list (equivalent to calling \code{c(...)}), automatically checks that all parameters are iso objects, issues warnings if there are duplicate file ids and summarizes all problems in the isofile list
+#' @param ... isofile and isofile_list objects to concatenate
+#' @rdname data_structure
+#' @export
+as_isofile_list <- function(...) {
+
+  # dots passed in
+  iso_objs <- list(...)
+  
+  # allow simple list to be passed in
+  if (length(iso_objs) == 1 && !is_iso_object(..1) && is.list(..1)) iso_objs <- ..1
+  
+  if (length(iso_objs) == 0) {
+    # empty list
+    iso_list <- list()
+    iso_problems <- get_problems_structure() %>% mutate(file_id = character())
+  } else {
+    # combine everything
+    if(!all(is_iso <- sapply(iso_objs, is_iso_object))) {
+      stop("can only combine isofile and isofile_list objects, encountered incompatible data type(s): ",
+           unlist(lapply(iso_objs, class)[!is_iso]) %>% 
            { str_c(unique(.), collapse = ", ")}, call. = FALSE)
-    return(FALSE)
+    }
+    
+    # combine iso objects
+    iso_list <- lapply(iso_objs, function(obj) {
+      if (is_isofile_list(obj)) as.list(obj) # iso lists already have named entries
+      else setNames(list(obj), obj$file_info$file_id) # use file_id to name new files
+    }) %>% 
+    { do.call(c, .) }
+    
+    # check for name duplicates and register a warning if there are any
+    if (any(dups <- duplicated(names(iso_list)) | duplicated(names(iso_list), fromLast = TRUE))) {
+      for (idx in which(dups)) {
+        iso_list[[idx]] <- register_warning(
+          iso_list[[idx]], str_c("duplicate file ID may interfere with data processing: ", names(iso_list)[idx]))
+      }
+    }
+    
+    # propagate problems
+    iso_problems <- lapply(iso_list, function(isofile) {
+      get_problems(isofile) %>% 
+        mutate_(.dots = list(file_id = ~isofile$file_info$file_id))
+    }) %>% bind_rows()
   }
-  return(TRUE)
+  
+  # problems
+  iso_problems <- iso_problems %>% 
+    unique() %>% # remove duplicate entries
+    { select_(., .dots = c("file_id", names(.))) }
+  
+  # generate structure
+  structure(
+    iso_list,
+    class = c("isofile_list")
+  ) %>% set_problems(iso_problems)
 }
+
 
 # Printing ----
 
@@ -316,33 +310,33 @@ as.list.isofile_list <- function(x) {
   # remove NULL entries
   l <- unname(l[!map_lgl(l, is.null)])
   # make isofile list from the subset
-  make_isofile_list(l)
+  as_isofile_list(l)
 }
 
 #' @export
 `[<-.isofile_list` <- function(x, i, value) {
   # regular replacement
   l <- NextMethod("[<-")
-  # make_isofile_list with the replaced item
-  make_isofile_list(unname(as.list(l)))
+  # as_isofile_list with the replaced item
+  as_isofile_list(unname(as.list(l)))
 }
 
 #' @export
 `[[<-.isofile_list` <- function(x, i, value) {
   # regular replacement
   l <- NextMethod("[<-")
-  # make_isofile_list with the replaced item
-  make_isofile_list(unname(as.list(l)))
+  # as_isofile_list with the replaced item
+  as_isofile_list(unname(as.list(l)))
 }
 
 # combine isofile with other things
 #' @export
 c.isofile <- function(...) {
-  make_isofile_list(...)
+  as_isofile_list(...)
 }
 
 # combine isofile other things
 #' @export
 c.isofile_list <- function(...) {
-  make_isofile_list(...)
+  as_isofile_list(...)
 }
