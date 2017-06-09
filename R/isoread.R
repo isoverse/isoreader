@@ -94,13 +94,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., quie
       
     }
     
-    # report problems
-    if (!setting("quiet") && n_problems(isofile) > 0) {
-      cat("Warning: encountered", n_problems(isofile), "problems\n")
-      print(problems(isofile))
-      cat("\n")
-    }
-    
+    # combine with isofiles list
     isofiles <- c(isofiles, list(isofile))
   }
 
@@ -112,6 +106,15 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., quie
             call. = FALSE, immediate. = TRUE)
   }
   
-  # turn into isofile list and return
-  return(as_isofile_list(isofiles))
+  # turn into isofile list
+  isofiles <- as_isofile_list(isofiles) 
+  
+  # report problems
+  if (!setting("quiet") && n_problems(isofiles) > 0) {
+    cat("Warning: encountered", n_problems(isofiles), "problems\n")
+    print(problems(isofiles))
+    cat("\n")
+  }
+  
+  return(isofiles)
 }

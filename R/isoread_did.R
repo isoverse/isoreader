@@ -109,12 +109,12 @@ process_did_raw_voltage_data <- function(ds) {
   ds$raw_data <- fetch_keys(
     ds$binary, "^(Standard|Sample) \\w+$", byte_min = CDualInletRawData$byte_end, byte_max = CTwoDoublesArrayData$byte_start, require = "1+") %>% 
     mutate(
-      analysis = str_match(value, "^(Standard|Sample) (\\w+)$") %>% {str_to_lower(.[,2])},
+      type = str_match(value, "^(Standard|Sample) (\\w+)$") %>% {str_to_lower(.[,2])},
       cycle.0idx = str_match(value, "^(Standard|Sample) (\\w+)$") %>% {.[,3]}, # 0 based index, adjust in next line
       cycle = ifelse(cycle.0idx == "Pre", 0, suppressWarnings(as.integer(cycle.0idx)) + 1L)
     ) %>% 
     # read volutage data for each analysis and cycle
-    group_by(analysis, cycle) %>% 
+    group_by(type, cycle) %>% 
     do({
       read_voltage_data(.$byte_start, .$byte_end)
     }) %>% 
