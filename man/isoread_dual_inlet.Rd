@@ -5,7 +5,8 @@
 \title{Load dual inlet data}
 \usage{
 isoread_dual_inlet(paths, read_raw_data = TRUE, read_file_info = TRUE,
-  quiet = setting("quiet"), cache = setting("cache"))
+  read_vendor_data_table = FALSE, quiet = setting("quiet"),
+  cache = setting("cache"))
 }
 \arguments{
 \item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
@@ -13,6 +14,8 @@ isoread_dual_inlet(paths, read_raw_data = TRUE, read_file_info = TRUE,
 \item{read_raw_data}{whether to read the raw mass/ion data from the file}
 
 \item{read_file_info}{whether to read auxiliary file information (program, methods, etc.)}
+
+\item{read_vendor_data_table}{whether to read the vendor computed data table}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 

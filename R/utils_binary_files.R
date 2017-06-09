@@ -69,33 +69,37 @@ move_to_key <- function(bfile, key, occurence = 1, fixed = TRUE, ...) {
 # finds all keys matching 'key' or a specific occurence of it (use -1 for last occurence)
 # @param fixed whether to find the key(s) by regexp match or fixed string (default = pattern)
 # @param require if a result is required - valid values are specific integers (1, 5, 42) or character "1+", "2+" meaning at least
+# @param error_prefix custom error message if set, this is prefixed
 # @param byte_min only look for keys that start after this position
 # @param byte_max only look for keys that start before this position
 # @return the lines of the keys data frame with all the information about the found key(s)
-fetch_keys <- function(bfile, pattern, occurence = NULL, fixed = FALSE, require = NULL,
+fetch_keys <- function(bfile, pattern, occurence = NULL, fixed = FALSE, require = NULL, error_prefix = NULL,
                        byte_min = 0, byte_max = length(bfile$raw)) {
   
+  # basic checks
   if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
   if (nrow(bfile$keys) == 0) stop("no keys available", call. = FALSE)
   
+  # get all keys in requested byte interval
   sub_keys <- filter(bfile$keys, byte_start > byte_min & byte_start < byte_max)
   
-  # check if any keys in interval
+  # start looking for keys
+  error_prefix <- if(is.null(error_prefix)) "" else str_c(error_prefix, ": ")
   if (nrow(sub_keys) == 0 && is.null(require)) return(filter(bfile$keys, FALSE))
-  else if (nrow(sub_keys) == 0) stop("no keys in this byte interval: ", byte_min, " - ", byte_max, call. = FALSE)
+  else if (nrow(sub_keys) == 0) stop(error_prefix, "no keys in this byte interval: ", byte_min, " - ", byte_max, call. = FALSE)
   
   # check if any keys with pattern
   if (length(idx <- grep(pattern, sub_keys$value, fixed = fixed)) == 0) {
     if (is.null(require)) return(filter(bfile$keys, FALSE))
-    else stop("key '", pattern, "' was not found", call. = FALSE)
+    else stop(error_prefix, "key '", pattern, "' was not found", call. = FALSE)
   }
   
   if (!is.null(occurence)) {
     if (occurence == -1) occurence <- length(idx)
     
     if (occurence > length(idx))
-      stop(sprintf("key '%s' was found but only has %.0f occurences (trying to select occurence # %.0f", 
-                   pattern, length(idx), occurence), call. = FALSE)
+      stop(sprintf("%skey '%s' was found but only has %.0f occurences (trying to select occurence # %.0f", 
+                   error_prefix, pattern, length(idx), occurence), call. = FALSE)
     
   } else {
     occurence <- 1:length(idx) # return ALL found occurences
@@ -108,12 +112,14 @@ fetch_keys <- function(bfile, pattern, occurence = NULL, fixed = FALSE, require 
   if (!is.null(require)) {
     if ( is.integer(require) || is.numeric(require)) {
       if (nrow(keys) != require)
-        stop(sprintf("key '%s' was found %.0f times but required %.0f times", pattern, nrow(keys), require), call. = FALSE)
+        stop(sprintf("%skey '%s' was found %.0f times but required %.0f times", 
+                     error_prefix, pattern, nrow(keys), require), call. = FALSE)
     } else {
       require <- suppressWarnings(as.numeric(str_match(require,  "^(\\d+)\\+$") %>% { .[1,2] }))
       if (is.na(require)) stop("cannot interpret 'require' parameter ", require, call. = FALSE)
       if (nrow(keys) < require) 
-        stop(sprintf("key '%s' was found %.0f times but required at least %.0f times", pattern, nrow(keys), require), call. = FALSE)
+        stop(sprintf("%skey '%s' was found %.0f times but required at least %.0f times", 
+                     error_prefix, pattern, nrow(keys), require), call. = FALSE)
     }
   }
   
@@ -168,6 +174,68 @@ find_binary_unicode = function(raw, minlength) {
 
 # Parse data =====
 
+# Wrapper for parsing binary data.
+# 
+# Convenience wrapper for parsing binary data for specific data types, includes sensibility checks.
+# 
+# @param raw either raw data stream or binary_file class
+# @param type data type see \code{\link{map_binary_data_type}} for details
+# @param length how many instances of this object (for characters and raw this means length of string, all others a vector)
+# @param start the start position, if not provided but raw is a binary_file calss
+# @param sensible an expected value bracket that if not met will throw an error
+# @param error_prefix custom error message if set, this is prefixed
+# @param print_binary this is for debugging, prints the binary sequence that is being interpreted but only if in debug mode!
+# @return read data
+parse_binary_data <- function(raw, type, length = 1, start = 1, sensible = NULL, error_prefix = NULL,
+                              print_binary = FALSE) {
+  
+  # map data type
+  mapped_type <- map_binary_data_type(type)
+  
+  # interpret raw correctly (either as binary_file or direct raw data)
+  if (is(raw, "binary_file")) {
+    start <- if (missing(start)) raw$pos else 1
+    raw <- raw$raw
+  }
+  if (!is(raw, "raw")) stop("cannot parse non-binary data", call. = FALSE)
+  
+  # subset raw data to right point
+  raw <- raw[start:length(raw)]
+  
+  # different reads
+  if (type == "binary")
+    read <- paste(readBin(raw, "raw", n = length, size = 1), collapse=" ")
+  else if (type == "UTF8")
+    read <- rawToChar(readBin(raw, "raw", n = length, size=1))
+  else if (mapped_type$class == "character")
+    read <- paste(readBin(raw, "character", n = length, size = mapped_type$nbyte), collapse="")
+  else
+    read <- readBin(raw, mapped_type$class, n = length, size = mapped_type$nbyte)
+  
+  # print binary debug
+  if (print_binary && setting("debug")) {
+    print(get_raw_binary_text(raw[1:(1 + length * mapped_type$nbyte)]))
+  }
+  
+  # sensible check
+  error_prefix <- if(is.null(error_prefix)) "" else str_c(error_prefix, ": ")
+  if (!is.null(sensible)) {
+    if (class(read) != class(sensible)) 
+      stop(sprintf("%scannot compare data (%s) to expected values (%s), data type mismatch", 
+                   error_prefix, class(read), class(sensible)), call. = FALSE)
+    if (is.character(sensible) && !all(good_data <- str_detect(sensible, read))) 
+      stop(sprintf("%sparsed data (%s, ...) does not match expected pattern (%s)",
+                   error_prefix, str_c(head(read[!good_data]), collapse = ", "), sensible), call. = FALSE)
+    else if (is.numeric(sensible) && !all(good_data <- read >= sensible[1] & read <= sensible[2]))
+      stop(sprintf("%sparsed data (%s, ...) does not match expected value range (%s)",
+                   error_prefix,  str_c(signif(head(read[!good_data])), collapse = ", "), 
+                   str_c(sensible[1], " to ", sensible[2])),
+           call. = FALSE)
+  }
+  
+  return(read)
+}
+
 # Binary data type mapping
 # 
 # Maps binary C data types to proper R data types and byte lengths
@@ -199,65 +267,6 @@ map_binary_data_type <- function(
     float = list(class = 'numeric', nbyte = 4),
     double = list(class = 'numeric', nbyte = 8),
     stop("not a valid data type: '", type, "'"))
-}
-
-# Wrapper for parsing binary data.
-# 
-# Convenience wrapper for parsing binary data.
-# For more details on reading binary data, check ?readBin
-# 
-# @param raw either raw data stream or binary_file class
-# @param type data type see \code{\link{map_binary_data_type}} for details
-# @param length how many instances of this object (for characters and raw this means length of string, all others a vector)
-# @param start the start position, if not provided but raw is a binary_file calss
-# @param sensible an expected value bracket that if not met will throw an error
-# @param print_binary this is for debugging, prints the binary sequence that is being interpreted but only if in debug mode!
-# @return read data
-parse_binary_data <- function(raw, type, length = 1, start = 1, sensible = NULL, print_binary = FALSE) {
-  # map data type
-  mapped_type <- map_binary_data_type(type)
-  
-  # interpret raw correctly (either as binary_file or direct raw data)
-  if (is(raw, "binary_file")) {
-    start <- if (missing(start)) raw$pos else 1
-    raw <- raw$raw
-  }
-  if (!is(raw, "raw")) stop("cannot parse non-binary data", call. = FALSE)
-  
-  # subset raw data to right point
-  raw <- raw[start:length(raw)]
-  
-  # different reads
-  if (type == "binary")
-    read <- paste(readBin(raw, "raw", n = length, size = 1), collapse=" ")
-  else if (type == "UTF8")
-    read <- rawToChar(readBin(raw, "raw", n = length, size=1))
-  else if (mapped_type$class == "character")
-    read <- paste(readBin(raw, "character", n = length, size = mapped_type$nbyte), collapse="")
-  else
-    read <- readBin(raw, mapped_type$class, n = length, size = mapped_type$nbyte)
-  
-  # print binary debug
-  if (print_binary && setting("debug")) {
-    print(get_raw_binary_text(raw[1:(1 + length * mapped_type$nbyte)]))
-  }
-  
-  # sensible check
-  if (!is.null(sensible)) {
-    if (class(read) != class(sensible)) 
-      stop(sprintf("cannot compare data (%s) to expected values (%s), data type mismatch", 
-                   class(read), class(sensible)), call. = FALSE)
-    if (is.character(sensible) && !all(good_data <- str_detect(sensible, read))) 
-      stop(sprintf("parsed data (%s, ...) does not match expected pattern (%s)",
-                   str_c(head(read[!good_data]), collapse = ", "), sensible), call. = FALSE)
-    else if (is.numeric(sensible) && !all(good_data <- read >= sensible[1] & read <= sensible[2]))
-      stop(sprintf("parsed data (%s, ...) does not match expected value range (%s)",
-                   str_c(signif(head(read[!good_data])), collapse = ", "), 
-                   str_c(sensible[1], " to ", sensible[2])),
-           call. = FALSE)
-  }
-  
-  return(read)
 }
 
 # Get raw binary data in text form

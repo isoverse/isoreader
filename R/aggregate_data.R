@@ -33,16 +33,19 @@ get_file_info <- function(isofiles) {
 }
 
 
-#' Aggregate table data
+#' Aggregate vendor computed table data
 #' 
 #' @inheritParams get_raw_data
 #' @family data aggregation functions
 #' @export
-get_data_table <- function(isofiles) {
-  if (!is(isofiles, "list")) isofiles <- list(isofiles)
-  check_isofiles(isofiles)
-  
-  stop("not implemented yet")
+get_vendor_computed_data_table <- function(isofiles) {
+  isofiles <- as_isofile_list(isofiles)
+  check_read_options(isofiles, "vendor_data_table")
+  lapply(isofiles, function(isofile) {
+    as_data_frame(isofile$vendor_data_table) %>% 
+      mutate(file_id = isofile$file_info$file_id) %>% 
+      select(file_id, everything())
+  }) %>% bind_rows()
 }
 
 # check if read options are compatible
@@ -50,8 +53,9 @@ check_read_options <- function(isofiles, option) {
   option_values <- map(isofiles, "read_options") %>% map_lgl(option)
   if (!all(option_values)) {
     warning(sum(!option_values), "/", length(isofiles), 
-            " files do not have ", str_replace(option, "_", " "), 
-            " read and will have missing values in the aggregated data",
+            " files were read without extracting the ", str_replace_all(option, "_", " "), 
+            " (parameter '", str_c("read_", option), 
+            "=FALSE') and will have missing values in the aggregated data",
             call. = FALSE, immediate. = TRUE)
   }
 }
