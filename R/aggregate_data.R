@@ -38,7 +38,7 @@ get_file_info <- function(isofiles) {
 #' @inheritParams get_raw_data
 #' @family data aggregation functions
 #' @export
-get_vendor_computed_data_table <- function(isofiles) {
+get_vendor_data_table <- function(isofiles) {
   isofiles <- as_isofile_list(isofiles)
   check_read_options(isofiles, "vendor_data_table")
   lapply(isofiles, function(isofile) {

@@ -14,5 +14,5 @@ Aggregate raw data
 }
 \seealso{
 Other data aggregation functions: \code{\link{get_file_info}},
-  \code{\link{get_vendor_computed_data_table}}
+  \code{\link{get_vendor_data_table}}
 }
