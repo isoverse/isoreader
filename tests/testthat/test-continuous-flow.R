@@ -14,15 +14,9 @@ test_that("test that supported cf files are correct", {
 test_that("test that parameter checks are performed", {
   
   # flow iarc
-  expect_error(isoreader:::isoread_flow_iarc (structure(list(), class = "isofile")), 
-               "data structure must have class \\'isofile\\' and \\'continuous_flow\\'")
-  expect_error(isoreader:::isoread_flow_iarc(structure(list(), class = "dual_inlet")), 
-               "data structure must have class \\'isofile\\' and \\'continuous_flow\\'")
-  expect_error(isoreader:::isoread_flow_iarc(structure(list(), class = c("continuous_flow", "isofile"))), 
-               "not in data: \\'file_info\\', \\'raw_data\\'")
-  expect_error(isoreader:::isoread_flow_iarc(structure(list(file_info = list(), raw_data=data_frame()), 
-                                                 class = c("continuous_flow", "isofile"))), 
-               "not in data: \\'file_id\\', \\'file_path\\'")
+  expect_error(isoreader:::isoread_flow_iarc (isoreader:::make_di_data_structure()), 
+               "data structure must be a \\'continuous_flow\\' isofile")
+  
   
 })
 

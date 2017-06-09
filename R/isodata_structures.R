@@ -209,7 +209,7 @@ print.continuous_flow <- function(x, ..., show_problems = TRUE) {
 get_raw_data_info <- function(x) {
   if (x$read_options$raw_data) {
     sprintf(
-      "%d data points: %s",
+      "%d recordings of %s",
       x$raw_data %>% nrow(),
       x$raw_data %>% select(matches("^[iIvV]")) %>% names() %>% 
       { if(length(.) == 0) "0 ions" else str_c(., collapse = ", ") }

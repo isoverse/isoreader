@@ -3,10 +3,8 @@
 isoread_flow_iarc <- function(ds, ...) {
   
   # safety checks
-  if(!is(ds, "isofile") || !is(ds, "continuous_flow")) 
-    stop("data structure must have class 'isofile' and 'continuous_flow'", call. = FALSE)
-  col_check(c("file_info", "raw_data"), ds)
-  col_check(c("file_id", "file_path", "file_subpath"), ds$file_info)
+  if(!is_isofile(ds) || !is(ds, "continuous_flow")) 
+    stop("data structure must be a 'continuous_flow' isofile", call. = FALSE)
   
   # global variables for NSE
   samples <- NULL

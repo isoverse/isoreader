@@ -80,6 +80,12 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., quie
       # read file anew using extension-specific function to read file
       if (!setting("quiet")) sprintf("Info: reading file %s with '%s' reader", filepath, ext) %>% message()
       isofile <- exec_func_with_error_catch(fun_map[[ext]], isofile, ...)
+      
+      # cleanup any binary content depending on debug setting
+      if (!setting("debug")) {
+        isofile$binary <- NULL
+      }
+      
       # store in cached file
       if (cache) {
         if (!file.exists(setting("cache_dir"))) dir.create(setting("cache_dir"))
