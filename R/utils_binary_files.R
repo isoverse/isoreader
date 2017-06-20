@@ -14,8 +14,12 @@ read_binary_file <- function(filepath) {
         raw = raw(),
         keys = data_frame(),
         C_blocks = data_frame(),
-        pos = 1L,
-        error_prefix = ""
+        data = list(),
+        error_mode_throw = TRUE, # whether to throw errors
+        error_prefix = "", # what prefix to append to errors
+        last_op_success = TRUE, # last operation success or failure
+        pos = 1L, # current position within the file
+        max_pos = NULL # max position to consider during operations
       ),
       class = "binary_file"
     )
@@ -24,6 +28,7 @@ read_binary_file <- function(filepath) {
   size <- file.info(filepath)$size
   con <- file(filepath, "rb")
   bfile$raw <- readBin(con, raw(), n = size)
+  bfile$max_pos <- length(bfile$raw)
   close(con)
   
   # find C_blocks
@@ -35,37 +40,93 @@ read_binary_file <- function(filepath) {
   return(bfile)
 }
 
+# get captured data from binary file
+get_captured_data <- function(bfile, id) {
+  return(bfile$data[[id]])
+}
+
+# reset binary file navigation
+reset_binary_file_navigation <- function(bfile) {
+  bfile$pos <- 1L
+  bfile$max_pos <- length(bfile$raw)
+  return(bfile)
+}
+
 # set an error prefix for the operations that fellow
-set_error_prefix <- function(bfile, error_prefix) {
-  bfile$error_prefix <- str_c(error_prefix, ": ")
+set_binary_file_error_response <- function(bfile, throw = bfile$error_mode_throw, prefix = "") {
+  bfile$error_mode_throw <- throw
+  bfile$error_prefix <- if (nchar(prefix) >0) str_c(prefix, " - ") else ""
   return(bfile)
 }
 
 # unset error prefix
-unset_error_prefix <- function(bfile) {
+reset_binary_file_error_response <- function(bfile) {
+  bfile$error_mode_throw <- TRUE
   bfile$error_prefix <- ""
   return(bfile)
 }
 
+# throw binary file error if error mode is active
+op_error <- function(bfile, msg) {
+  if (bfile$error_mode_throw){
+    stop(sprintf("%s%s", bfile$error_prefix, msg), call. = FALSE)
+  } 
+}
+
+# indicate succesful operation
+successful_op <- function(bfile) {
+  bfile$last_op_success <- TRUE
+  return(bfile)
+}
+
+# indicate succesful operation
+failed_op <- function(bfile) {
+  bfile$last_op_success <- FALSE
+  return(bfile)
+}
 
 # Navigation ======
 
 # skip nbyte number of bytes in the raw data stream
+# @deprecate
 skip_pos <- function(bfile, nbyte) {
   bfile$pos <- as.integer(bfile$pos + nbyte)
   return(bfile)
 }
 
 # skip certain number of data
+# @deprecate
 skip_type <- function(bfile, type, length) {
   mapped_type <- map_binary_data_type(type)
   return(skip_pos(file, mapped_type$nbyte * length) )
 }
 
+# skip nbyte number of bytes in the raw data stream
+skip_bytes <- function(bfile, nbyte) {
+  return(move_to_pos(bfile, bfile$pos + nbyte))
+}
+
 # move to position
 move_to_pos <- function(bfile, pos) {
-  bfile$pos <- as.integer(pos)
-  return(bfile)
+  if (pos > bfile$max_pos) {
+    op_error(bfile, sprintf("cannot move to position %.0f as it exceeds position max set at %.0f", 
+                            pos, bfile$max_pos))
+    return(failed_op(bfile))
+  } else {
+    bfile$pos <- as.integer(pos)
+    return(successful_op(bfile))
+  }
+}
+
+# cap at position
+cap_at_pos <- function(bfile, pos) {
+  if (pos < bfile$pos) {
+    op_error(bfile, sprintf("cannot cap at position %.0f as it is smaller than current position %.0f", 
+                            pos, bfile$pos))
+    return(failed_op(bfile))
+  }
+  bfile$max_pos <- as.integer(pos)
+  return(successful_op(bfile))
 }
 
 # moves position to the end of a specific key or occurence of a key 
@@ -73,6 +134,7 @@ move_to_pos <- function(bfile, pos) {
 # @param occurence if key is a string, which occurence to move to? (use -1 for last occurence)
 # @param fixed whether to find the key (if a string) by regexp match or fixed string (default = fixed string)
 # @param ... passed on to find_binary_file_key
+# @deprecate
 move_to_key <- function(bfile, key, occurence = 1, fixed = TRUE, ...) {
   
   key <- fetch_keys(bfile, pattern = key, occurence = occurence, fixed = fixed, ...)
@@ -88,38 +150,64 @@ move_to_key <- function(bfile, key, occurence = 1, fixed = TRUE, ...) {
 # @FIXME: testing
 # move_to_C_block(my_test$binary, "NO")
 # move_to_C_block(my_test$binary, "CData", occurence = 2)
-move_to_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1) {
-  
+move_to_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1, reset_cap = TRUE) {
   # fetch right C block
   cblock <- fetch_C_block(bfile, C_block, min_pos = min_pos, occurence = occurence)
-  
-  # move to right occurence
-  move_to_pos(bfile, cblock$end[1] + 1)
+  if (is.null(cblock)) {
+    op_error(bfile, sprintf("cannot move to C block '%s'", C_block))
+    return(failed_op(bfile))
+  } 
+  # reset position cap
+  if (reset_cap) bfile$max_pos <- length(bfile$raw)
+  return(move_to_pos(bfile, cblock$end[1] + 1))
 }
 
 # moves position to the end of the next instance of the specified C_block (from current position in the binary file)
 move_to_next_C_block <- function(bfile, C_block) {
-  move_to_C_block(bfile, C_block, min_pos = bfile$pos, occurence = 1)
+  move_to_C_block(bfile, C_block, min_pos = bfile$pos, occurence = 1, reset_cap = FALSE)
+}
+
+# cap valid position at the beginning of a specific C_block
+cap_at_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1) {
+  # fetch right C block
+  cblock <- fetch_C_block(bfile, C_block, min_pos = min_pos, occurence = occurence)
+  if (is.null(cblock)) {
+    op_error(bfile, sprintf("cannot cap at C block '%s'", C_block))
+    return(failed_op(bfile))
+  } 
+  return(cap_at_pos(bfile, cblock$start[1] - 1))
+}
+
+# move to C block range
+# Note: if need to specific occurence, use move_to_C_block, cap_at_C_block
+move_to_C_block_range <- function(bfile, from_C_block, to_C_block, min_pos = 1){
+  bfile %>% 
+    move_to_C_block(from_C_block, min_pos = min_pos) %>% 
+    cap_at_C_block(to_C_block, min_pos = min_pos)
 }
 
 # fetch a specific C_block
 # @param C_block name of the block
 # @param min_pos minimum position where to find the block
 # @param occurence which occurence to find? (use -1 for last occurence, use NULL for all)
-# @param error_prefix custom error message if set, this is prefixed
 # @FIXME: testing
 fetch_C_block <- function(bfile, C_block, min_pos = 1, occurence = NULL) {
   # basic checks
   if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
   if (nrow(bfile$C_blocks) == 0) stop("no C_blocks available", call. = FALSE)
+  if (missing(C_block) || !is.character(C_block)) stop("C_block name not provided", call. = FALSE)
   
   # find C_blocks
   C_blocks <- filter(bfile$C_blocks, block == C_block, start >= min_pos)
-  if (nrow(C_blocks) == 0) 
-    stop(sprintf("%sblock '%s' not found after position %.0f", bfile$error_prefix, C_block, min_pos), call. = FALSE)
-  if (!is.null(occurence) && occurence > 1 && nrow(C_blocks) < occurence) 
-    stop(sprintf("%soccurence %.0f of block '%s' not found (only %.0f occurences) after position %.0f",
-                 bfile$error_prefix, occurence, C_block, nrow(C_blocks)), min_pos, call. = FALSE)
+  if (nrow(C_blocks) == 0) {
+    op_error(bfile, sprintf("block '%s' not found after position %.0f", C_block, min_pos))
+    return(NULL)
+  }
+    
+  if (!is.null(occurence) && occurence > 1 && nrow(C_blocks) < occurence) {
+    op_error(bfile, sprintf("occurence %.0f of block '%s' not found (only %.0f occurences) after position %.0f", occurence, C_block, nrow(C_blocks)), min_pos, call. = FALSE)
+    return(NULL)
+  }
   
   # return right occurence
   if (!is.null(occurence) && occurence == -1)
@@ -137,6 +225,7 @@ fetch_C_block <- function(bfile, C_block, min_pos = 1, occurence = NULL) {
 # @param byte_min only look for keys that start after this position
 # @param byte_max only look for keys that start before this position
 # @return the lines of the keys data frame with all the information about the found key(s)
+# @deprecated
 fetch_keys <- function(bfile, pattern, occurence = NULL, fixed = FALSE, require = NULL, error_prefix = NULL,
                        byte_min = 0, byte_max = length(bfile$raw)) {
   
@@ -190,6 +279,193 @@ fetch_keys <- function(bfile, pattern, occurence = NULL, fixed = FALSE, require 
   return(keys)
 }
 
+# regular expression for control block
+re_block <- function(block_name) {
+  block <- get_ctrl_blocks_config()[[block_name]]
+  if (is.null(block)) stop("encountered unknown block: ", block_name, call. = FALSE)
+  structure(
+    list(
+      label = sprintf("<%s>", block_name),
+      regexp = block$regexp,
+      size = block$size
+    ),
+    class = "binary_regexp")
+}
+
+# regular expression for null characters
+re_null <- function(n) {
+  structure(
+    list(
+      label = sprintf("<%.0fx00>", n),
+      regexp = str_c("\\x00{", n, "}"),
+      size = n
+    ),
+    class = "binary_regexp")
+}
+
+# regular expression for text (unicode) elements
+re_text <- function(text) {
+  # can't easily assemble the \x5a structure so using a hard copy
+  hex <- c(`20` = "\x20", `21` = "\x21", `22` = "\x22", `23` = "\x23", `24` = "\x24", `25` = "\x25", `26` = "\x26", `27` = "\x27", `28` = "\x28", `29` = "\x29", `2a` = "\x2a", `2b` = "\x2b", `2c` = "\x2c", `2d` = "\x2d", `2e` = "\x2e", `2f` = "\x2f", `30` = "\x30", `31` = "\x31", `32` = "\x32", `33` = "\x33", `34` = "\x34", `35` = "\x35", `36` = "\x36", `37` = "\x37", `38` = "\x38", `39` = "\x39", `3a` = "\x3a", `3b` = "\x3b", `3c` = "\x3c", `3d` = "\x3d", `3e` = "\x3e", `3f` = "\x3f", `40` = "\x40", `41` = "\x41", `42` = "\x42", `43` = "\x43", `44` = "\x44", `45` = "\x45", `46` = "\x46", `47` = "\x47", `48` = "\x48", `49` = "\x49", `4a` = "\x4a", `4b` = "\x4b", `4c` = "\x4c", `4d` = "\x4d", `4e` = "\x4e", `4f` = "\x4f", `50` = "\x50", `51` = "\x51", `52` = "\x52", `53` = "\x53", `54` = "\x54", `55` = "\x55", `56` = "\x56", `57` = "\x57", `58` = "\x58", `59` = "\x59", `5a` = "\x5a", `5b` = "\x5b", `5c` = "\x5c", `5d` = "\x5d", `5e` = "\x5e", `5f` = "\x5f", `60` = "\x60", `61` = "\x61", `62` = "\x62", `63` = "\x63", `64` = "\x64", `65` = "\x65", `66` = "\x66", `67` = "\x67", `68` = "\x68", `69` = "\x69", `6a` = "\x6a", `6b` = "\x6b", `6c` = "\x6c", `6d` = "\x6d", `6e` = "\x6e", `6f` = "\x6f", `70` = "\x70", `71` = "\x71", `72` = "\x72", `73` = "\x73", `74` = "\x74", `75` = "\x75", `76` = "\x76", `77` = "\x77", `78` = "\x78", `79` = "\x79", `7a` = "\x7a", `7b` = "\x7b", `7c` = "\x7c", `7d` = "\x7d", `7e` = "\x7e")
+  
+  # return hex regexps of the text
+  structure(
+    list(
+      label = sprintf("{%s}", text),
+      regexp = hex[as.character(charToRaw(text))] %>% str_c("\\x00") %>% str_c(collapse = ""),
+      size = 2*nchar(text)
+    ),
+    class = "binary_regexp")
+}
+
+# plain regexp
+re_direct <- function(regexp, label = regexp) {
+  structure(
+    list(
+      label = sprintf("[%s]", label),
+      regexp = regexp,
+      size = ceiling(nchar(regexp)/4) # estimate
+    ),
+    class = "binary_regexp")
+}
+
+# find next occurence of supplied regular expression pattern
+find_next_pattern <- function(bfile, ..., value = FALSE) {
+  if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
+  regexps <- list(...)
+  if (!all(sapply(regexps, is, "binary_regexp"))) 
+    stop("can only use binary regexps, generate with re_x() functions", call. = FALSE)
+  pattern <- str_c(map_chr(regexps, "regexp"), collapse = "")
+  grepRaw(pattern, bfile$raw, offset = bfile$pos, value = value) %>% 
+    { if(length(.) > 0) . else NULL } # return NULL if not found
+}
+
+# move to next regular expression pattern
+# @param ... construct with the re... functions
+# @param max_gap maximum number of bytes until the pattern
+# @param move_to_end whether to move to the end of the pattern (default is yes)
+move_to_next_pattern <- function(bfile, ..., max_gap = NULL, move_to_end = TRUE) {
+  # safety check
+  if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
+  if(!is.null(max_gap) && !is.numeric(max_gap)) stop("max gap must be a number", call. = FALSE)
+  
+  # find pattern
+  pos <- find_next_pattern(bfile, ...)
+  
+  # move to new position
+  if ( !is.null(pos) && pos <= bfile$max_pos && (is.null(max_gap) || pos <= bfile$pos + max_gap)) {
+    if (move_to_end) n <- length(find_next_pattern(bfile, ..., value = TRUE)) else 0
+    return(move_to_pos(bfile, pos + n))
+  } else {
+    regexps <- list(...)
+    gap_text <- if (!is.null(max_gap)) sprintf(" after maximal gap of %.0f bytes", max_gap) else ""
+    op_error(
+      bfile, 
+      sprintf("could not find '%s'%s in search interval %.0f to %.0f, found '%s...'",
+              str_c(map_chr(regexps, "label"), collapse = ""), 
+              gap_text, bfile$pos, bfile$max_pos,
+              bfile %>% 
+                map_binary_structure(length = sum(map_dbl(regexps, "size")) + 
+                                       (if(!is.null(max_gap)) max_gap else 50) + 10) %>% 
+                generate_binary_structure_map_printout()))
+    return(failed_op(bfile))
+  }
+}
+
+
+# move to next control blocks
+# FIXME: test
+# @param max_gap maximum number of bytes until the block
+# @param move_to_end whether to move to the end of the pattern (default is yes)
+# expect_error(move_to_next_blocks("bla"))
+move_to_pattern <- function(bfile, pattern, search_text, max_gap = NULL, move_to_end = TRUE) {
+  # safety check
+  print(pattern)
+  if(!is.null(max_gap) && !is.numeric(max_gap)) stop("max gap must be a number", call. = FALSE)
+  if(nchar(pattern) == 0) stop("no regular expression supplied", call. = FALSE)
+  
+  # find pattern
+  pos <- grepRaw(pattern, bfile$raw, offset = bfile$pos)
+
+  # move to new position
+  if ( length(pos) > 0 && pos <= bfile$max_pos && (is.null(max_gap) || pos <= bfile$pos + max_gap)) {
+    if (move_to_end) n <- length(grepRaw(pattern, bfile$raw, offset = bfile$pos, value = TRUE)) else 0
+    return(move_to_pos(bfile, pos + n))
+  } else {
+    op_error(
+      bfile, 
+      sprintf("could not find '%s' after maximal gap of %s bytes in search interval %.0f to %.0f, found '%s'",
+              search_text, if (!is.null(max_gap)) str_c(max_gap) else "any number of",
+              bfile$pos, bfile$max_pos,
+              bfile %>% 
+                map_binary_structure(length = nchar(pattern) + (if(!is.null(max_gap)) max_gap else 0) + 20) %>% 
+                generate_binary_structure_map_printout(data_as_raw = TRUE) %>% 
+                { str_c(., "...") }))
+    return(failed_op(bfile))
+  }
+}
+
+
+# move to next control blocks
+# FIXME: test
+# @param max_gap maximum number of bytes until the block
+# expect_error(move_to_next_blocks("bla"))
+move_to_next_blocks <- function(bfile, block_names, max_gap = NULL) {
+  move_to_pattern(
+    bfile,
+    get_blocks_regexp(block_names),
+    search_text = str_c(sprintf("<%s>", block_names), collapse = ""),
+    max_gap = max_gap
+  )
+}
+
+# move to after the next instance of the target value
+move_to_next_value <- function(bfile, value, post_block_names = c(), type = auto_type(value), max_gap = NULL) {
+  # guess type from value class
+  auto_type <- function(value) {
+    if (is.character(value)) return("text")
+    else if (is.integer(value)) return("integer")
+    else if (is.numeric(value)) return("double") # could also be float
+    else stop("unknown value class: ", class(value), call. = FALSE)
+  }
+  # construct regexp
+  if (type == "text") {
+    regexp <- str_c(str_split(value, "")[[1]], "\\x00") %>% str_c(collapse = "")
+  } else {
+    stop("moving to next value not implemented yet for type ", type, call. = FALSE)
+  }
+  
+  # move to pattern
+  move_to_pattern(
+    bfile,
+    str_c(regexp, get_blocks_regexp(post_block_names)),
+    search_text = str_c(c(as.character(value), sprintf("<%s>", block_names)), collapse = ""),
+    max_gap = max_gap
+  )
+}
+
+
+# capture data block data in specified type
+# uses parse_row_data and therefore can handle multiple data types
+# @inheritParams skip_data_blocks
+# @inheritParams parse_raw_data
+capture_data <- function(bfile, capture_as, type, post_data_blocks, data_bytes_max = NULL,
+                         ignore_trailing_zeros = TRUE, exact_length = TRUE, sensible = NULL) {
+  # capture data
+  blocks <- find_blocks(bfile, post_data_blocks)
+  stopifnot(is.null(data_bytes_max) || is.numeric(data_bytes_max))
+  if (!is.null(blocks$pos) && blocks$pos <= bfile$max_pos && (is.null(data_bytes_max) || blocks$pos <= bfile$pos + data_bytes_max)) {
+    bfile$data[[capture_as]] <- 
+      parse_raw_data(bfile$raw[bfile$pos:(blocks$pos - 1)], type,
+                     ignore_trailing_zeros = ignore_trailing_zeros,
+                     exact_length = exact_length, sensible = sensible,
+                     errors = if(bfile$error_mode_throw) bfile$error_prefix else NULL) 
+  } else {
+    bfile$data[[capture_as]] <- NULL
+  }
+  return(move_to_next_blocks(bfile, post_data_blocks, max_gap = data_bytes_max))
+}
+
 
 # Keys ======
 
@@ -216,6 +492,7 @@ find_C_blocks = function(raw) {
 
 # finds all unicode and ascii strings and stores them for navigation around the file
 # @param raw the raw binary data
+# @deprecated
 find_binary_keys = function(raw, asciiL = 8, unicodeL = 5) {
   ascii <- find_binary_ascii(raw, asciiL)
   unicode <- find_binary_unicode(raw, unicodeL)
@@ -231,6 +508,7 @@ find_binary_keys = function(raw, asciiL = 8, unicodeL = 5) {
 # find all ascii strings in the raw data
 # @param minlength minimum length of continuous ascii characters
 # @return data frame of found ascii strings
+# @deprecated
 find_binary_ascii = function(raw, minlength) {
   data_frame(
     byte_start = get_ascii(raw, minlength = minlength, value = FALSE, all = TRUE),
@@ -244,6 +522,7 @@ find_binary_ascii = function(raw, minlength) {
 # find all unicode strings in the raw binary data
 # @param minlength minimun length of unicode characters (each are 2 bytes long)
 # @return data frame with found unicode strings
+# @deprecated
 find_binary_unicode = function(raw, minlength) {
   data_frame(
     byte_start = get_unicode(raw, minlength = minlength, value = FALSE, all = TRUE),
@@ -258,40 +537,54 @@ find_binary_unicode = function(raw, minlength) {
 # Parse data =====
 
 # configuration information for the control blocks
+# 
+# those with auto = TRUE are considered when making an automatic map_binary_structure
+# 
 # @FIXME: testing
 get_ctrl_blocks_config <- function() {
   list(
     
-    # FEFx blocks
-    nl = list(size = 4L, regexp = "\xff\xfe\xff\x0a"), # FF FE FF 0A new line
-    `fef-x` = list(size = 4L, regexp = "\xff\xfe\xff[\x01-\x13]", # meaning = ?
+    # specific sequences
+    `del-nl`   = list(size = 2L, auto = TRUE, regexp = "\x7f\x85"), # 7F 85 delete next line
+    `eop-nl`   = list(size = 2L, auto = TRUE, regexp = "\xdc\x85"), # DC 85 end of proof?? next line
+    `75-84`    = list(size = 2L, auto = TRUE, regexp = "\x75\x84"), # 75 84 - no idea what it means but it's special somehow
+    `ff-80`    = list(size = 2L, auto = TRUE, regexp = "\\x00\xff\x80\\x00"), # ff 80 - no idea what it means 
+    `07-80-id` = list(size = 6L, auto = TRUE, regexp = "\x05\x80.\xff(\\x00|\x80|\xff){2}", # some sort of counter or id
+                   replace = function(b) str_c("id-", str_c(readBin(b[c(3,5,6)], "raw", n=6), collapse="-"))),
+    
+    # FFF and EEE and combination blocks
+    nl      = list(size = 4L, auto = TRUE, regexp = "\xff\xfe\xff\x0a"), # FF FE FF 0A new line
+    `fef-0` = list(size = 4L, auto = TRUE, regexp = "\xff\xfe\xff\\x00"), # meaning = ?
+    `fef-x` = list(size = 4L, auto = TRUE, regexp = "\xff\xfe\xff.", # meaning = ?
                    replace = function(b) str_c("fef-", readBin(b[4], "raw"))),
-    `fef-0` = list(size = 4L, regexp = "\xff\xfe\xff\\x00"), # meaning = ?
-    ffff = list(size = 4L, regexp = "\xff{4}"), # meaning = ?
+    `eee-0` = list(size = 4L, auto = TRUE, regexp = "\xef\xef\xef\\x00."),
+    ffff    = list(size = 4L, auto = TRUE, regexp = "\xff{4}"), # meaning = ?
     
     # x000 blocks
-    stx = list(size = 4L, regexp = "\x02\\x00{3}"), # start of text
-    etx = list(size = 4L, regexp = "\x03\\x00{3}"), # end of text
-    `x-000` = list(size = 4L, regexp = "[\x01-\x0b]\\x00{3}", replace = # meaning = ?
+    stx        = list(size = 4L, auto = TRUE, regexp = "\x02\\x00{3}"), # start of text
+    etx        = list(size = 4L, auto = TRUE, regexp = "\x03\\x00{3}"), # end of text
+    `00-x-000` = list(size = 6L, auto = TRUE, regexp = "\\x00\\x00[\x01-\x1f]\\x00{3}", replace = # meaning = ?
+                        function(b) str_c("00-", str_replace(readBin(b[3], "raw"), "^0", ""), "-000")),
+    `x-000`    = list(size = 4L, auto = TRUE, regexp = "[\x01-\x1f]\\x00{3}", replace = # meaning = ?
                      function(b) str_c(str_replace(readBin(b[1], "raw"), "^0", ""), "-000")),
-    `00-x-000` = list(size = 6L, regexp = "\\x00\\x00[\x01-\x0b]\\x00{3}", replace = # meaning = ?
-                     function(b) str_c("00-", str_replace(readBin(b[3], "raw"), "^0", ""), "-000")),
     
-    # specific text sequences
-    `del-nl` = list(size = 2L, regexp = "\x7f\x85"), # 7F 85 delete next line
-    `eop-nl` = list(size = 2L, regexp = "\xdc\x85"), # DC 85 end of proof?? next line
-    `75_84` = list(size = 2L, regexp = "\x75\x84") # 75 84 - no idea what it means but it's special somehow
+    # c block (not auto processed because Cblocks are found separately)
+    `C-block`  = list(size = 20L, auto = FALSE, regexp = "\xff\xff(\\x00|[\x01-\x0f])\\x00.\\x00\x43[\x20-\x7e]+"),
+    
+    # text block (not auto processed)
+    text = list(size = 20L, auto = FALSE, regexp = "([\x20-\x7e]\\x00)+")
   )
 }
 
 # get configuration information for the data blocks
+# 
 # @FIXME: testing
 get_data_blocks_config <- function() {
   list(
-    text = list(type = "character", size = 2L, regexp = "[\x20-\x7e]\\x00"),
-    integer = list(type = "integer", size = 4L, regexp = ".{4}"),
-    float = list(type = "numeric", size = 4L, regexp = ".{4}"),
-    double = list(type = "numeric", size = 8L, regexp = ".{8}")
+    text    = list(type = "character", size = 2L, regexp = "[\x20-\x7e]\\x00"),
+    integer = list(type = "integer", size = 4L),
+    float   = list(type = "numeric", size = 4L),
+    double  = list(type = "numeric", size = 8L)
   )
 }
 
@@ -344,12 +637,15 @@ parse_raw_data <- function(raw, type, n = full_raw(), ignore_trailing_zeros = FA
     return(NULL)
   }
   
-  # check that regexp pattern fits
-  regexp <- sprintf("(%s){%.0f}", str_c(map_chr(dbc, "regexp"), collapse = ""), n)
-  if (length(grepRaw(regexp, raw_trim)) == 0) {
-    if (!is.null(errors)) 
-      stop(sprintf("%sraw data does not match requested data pattern", error_prefix), call. = FALSE)
-    return(NULL)
+  # check that regexp pattern fits 
+  regexp <- str_c(sapply(dbc, function(x) if(!is.null(x$regexp)) x$regexp else ""), collapse = "")
+  if (nchar(regexp) > 0) {
+    regexp <- sprintf("(%s){%.0f}", regexp, n)
+    if (length(grepRaw(regexp, raw_trim)) == 0) {
+      if (!is.null(errors)) 
+        stop(sprintf("%sraw data does not match requested data pattern", error_prefix), call. = FALSE)
+      return(NULL)
+    }
   }
   
   # process data
@@ -605,6 +901,9 @@ map_binary_structure <- function(bfile, start = bfile$pos, length = 100, ctrl_bl
     
     # check for cblocks
     if ( nrow(cblock <- filter(bfile$C_blocks, start == pos)) > 0 ) {
+      if (pos > last_block_end) {
+        blocks <- c(blocks, new_block(start = last_block_end, length = pos - last_block_end, type = "data"))
+      }
       blocks <- c(blocks, new_block(start = pos, length = 0, type = "cblock", rep_text = 
                                       with(cblock, sprintf("C-%s-%s %s", id1, id2, block))))
       pos <- last_block_end <- cblock$end + 1
@@ -615,7 +914,7 @@ map_binary_structure <- function(bfile, start = bfile$pos, length = 100, ctrl_bl
     found_match <- FALSE
     for (b in names(ctrl_blocks)) {
       # lock for first regexp that matches exactly at the current position
-      if ( length(b_pos <- grepRaw(ctrl_blocks[[b]]$regexp, bfile$raw, offset = pos)) && b_pos == pos ) {
+      if ( ctrl_blocks[[b]]$auto && length(b_pos <- grepRaw(ctrl_blocks[[b]]$regexp, bfile$raw, offset = pos)) > 0 && b_pos == pos) {
         
         # data block
         if (pos > last_block_end) {
@@ -717,7 +1016,10 @@ generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, lin
   }
   
   # get blocks
-  blocks <- map(bsm$blocks, `[`, c("start", "type", "text_level", "rep_text")) %>% bind_rows() 
+  blocks <- lapply(bsm$blocks, function(block) {
+    block$raw <- str_c(block$raw, collapse = " ")
+    block[c("start", "type", "text_level", "rep_text", "raw")]
+  }) %>% bind_rows() 
   
   # data overview
   if (data_as_raw) {
@@ -726,7 +1028,7 @@ generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, lin
       lapply(bsm$blocks, function(block) {
         if (block$type == "data") 
           data_frame(
-            rep_value = sprintf("[%s]", str_c(as.character(block$raw), collapse = " ")), 
+            rep_value = sprintf("{%s}", str_c(as.character(block$raw), collapse = " ")), 
             start = block$start)
         else NULL
       }) %>% bind_rows() 
@@ -738,38 +1040,50 @@ generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, lin
         else NULL
       }) %>% bind_rows() %>% 
       # only consider actual matches
-      filter(matches) %>% 
-      # trailing zeros block
-      mutate(trailing00_block = ifelse(trailing_zeros > 0,  str_c("<", trailing_zeros, "x00>"), "")) %>% 
-      group_by(start) %>% 
-      do({
-        # figure out what to do in case of text supplied together with other data types
-        data <- .
-        text_value <- if ("text" %in% data$data_type) filter(data, data_type == "text") else NULL
-        if (!is.null(text_value) && nrow(data > 1) && nchar(text_value$rep_value) >= 4) {
-          # more than 4 chars in the text, chances are likely this is actually  text
-          data <- text_value
-        }
-        
-        # combine
-        data_text <- with(data, str_c("[", rep_value, "]", trailing00_block))
-        if (length(data_text) > 1) data_frame(rep_value = str_c("{", str_c(data_text, collapse = "|"), "}"))
-        else data_frame(rep_value = data_text)
-      }) 
+      filter(matches) 
+    
+    if (nrow(data_overview) > 0) {
+      data_overview <- data_overview %>% 
+        # trailing zeros block
+        mutate(trailing00_block = ifelse(trailing_zeros > 0,  str_c("<", trailing_zeros, "x00>"), "")) %>% 
+        group_by(start) %>% 
+        do({
+          # figure out what to do in case of text supplied together with other data types
+          data <- .
+          text_value <- if ("text" %in% data$data_type) filter(data, data_type == "text") else NULL
+          if (!is.null(text_value) && nrow(data > 1) && nchar(text_value$rep_value) >= 4) {
+            # more than 4 chars in the text, chances are likely this is actually  text
+            data <- text_value
+          }
+          
+          # combine
+          data_text <- with(data, str_c("{", rep_value, "}", trailing00_block))
+          if (length(data_text) > 1) data_frame(rep_value = str_c("{", str_c(data_text, collapse = "|"), "}"))
+          else data_frame(rep_value = data_text)
+        }) 
+    }
   }
   
   # process blocks and block data for printing
-  blocks %>% 
-    left_join(data_overview, by = "start") %>% 
+  if (nrow(data_overview) == 0) data_overview <- data_frame(start = integer(0), rep_value = character(0))
+  all_blocks <- blocks %>% left_join(data_overview, by = "start") 
+  
+  # indentation
+  if (nrow(all_blocks) == 1)
+    all_blocks <- mutate(all_blocks, indent = 0)
+  else 
+    all_blocks <- all_blocks %>% 
     mutate(
-      # indentation
       nl = start == min(start) | type == "cblock" | type %in% c("stx", "etx") | c("", type[1:(n()-1)]) %in% c("stx", "etx"),
       text_level = text_level - min(text_level),
-      indent = ifelse(nl, text_level, NA),
-      
-      # text blocks
-      rep_text = ifelse(is.na(rep_text), "NA", rep_text),
-      block_text = ifelse(type == "data", rep_value, str_c("<", rep_text, ">")), 
+      indent = ifelse(nl, text_level, NA))
+  
+  # text blocks
+  all_blocks %>% 
+    mutate(
+      rep_text = ifelse(is.na(rep_text), str_c("<", raw, ">"), str_c("<", rep_text, ">")),
+      rep_value = ifelse(is.na(rep_value), str_c("{", raw, "}"), rep_value),
+      block_text = ifelse(type == "data", rep_value, rep_text), 
       indent_text = str_c(nl_indent(indent, start), block_text)
     ) %>% 
     # combine text
