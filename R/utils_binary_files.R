@@ -354,7 +354,7 @@ move_to_next_pattern <- function(bfile, ..., max_gap = NULL, move_to_end = TRUE)
   
   # move to new position
   if ( !is.null(pos) && pos <= bfile$max_pos && (is.null(max_gap) || pos <= bfile$pos + max_gap)) {
-    if (move_to_end) n <- length(find_next_pattern(bfile, ..., value = TRUE)) else 0
+    n <- if (move_to_end) length(find_next_pattern(bfile, ..., value = TRUE)) else 0
     return(move_to_pos(bfile, pos + n))
   } else {
     regexps <- list(...)
@@ -372,98 +372,30 @@ move_to_next_pattern <- function(bfile, ..., max_gap = NULL, move_to_end = TRUE)
   }
 }
 
-
-# move to next control blocks
-# FIXME: test
-# @param max_gap maximum number of bytes until the block
-# @param move_to_end whether to move to the end of the pattern (default is yes)
-# expect_error(move_to_next_blocks("bla"))
-move_to_pattern <- function(bfile, pattern, search_text, max_gap = NULL, move_to_end = TRUE) {
-  # safety check
-  print(pattern)
-  if(!is.null(max_gap) && !is.numeric(max_gap)) stop("max gap must be a number", call. = FALSE)
-  if(nchar(pattern) == 0) stop("no regular expression supplied", call. = FALSE)
-  
-  # find pattern
-  pos <- grepRaw(pattern, bfile$raw, offset = bfile$pos)
-
-  # move to new position
-  if ( length(pos) > 0 && pos <= bfile$max_pos && (is.null(max_gap) || pos <= bfile$pos + max_gap)) {
-    if (move_to_end) n <- length(grepRaw(pattern, bfile$raw, offset = bfile$pos, value = TRUE)) else 0
-    return(move_to_pos(bfile, pos + n))
-  } else {
-    op_error(
-      bfile, 
-      sprintf("could not find '%s' after maximal gap of %s bytes in search interval %.0f to %.0f, found '%s'",
-              search_text, if (!is.null(max_gap)) str_c(max_gap) else "any number of",
-              bfile$pos, bfile$max_pos,
-              bfile %>% 
-                map_binary_structure(length = nchar(pattern) + (if(!is.null(max_gap)) max_gap else 0) + 20) %>% 
-                generate_binary_structure_map_printout(data_as_raw = TRUE) %>% 
-                { str_c(., "...") }))
-    return(failed_op(bfile))
-  }
-}
-
-
-# move to next control blocks
-# FIXME: test
-# @param max_gap maximum number of bytes until the block
-# expect_error(move_to_next_blocks("bla"))
-move_to_next_blocks <- function(bfile, block_names, max_gap = NULL) {
-  move_to_pattern(
-    bfile,
-    get_blocks_regexp(block_names),
-    search_text = str_c(sprintf("<%s>", block_names), collapse = ""),
-    max_gap = max_gap
-  )
-}
-
-# move to after the next instance of the target value
-move_to_next_value <- function(bfile, value, post_block_names = c(), type = auto_type(value), max_gap = NULL) {
-  # guess type from value class
-  auto_type <- function(value) {
-    if (is.character(value)) return("text")
-    else if (is.integer(value)) return("integer")
-    else if (is.numeric(value)) return("double") # could also be float
-    else stop("unknown value class: ", class(value), call. = FALSE)
-  }
-  # construct regexp
-  if (type == "text") {
-    regexp <- str_c(str_split(value, "")[[1]], "\\x00") %>% str_c(collapse = "")
-  } else {
-    stop("moving to next value not implemented yet for type ", type, call. = FALSE)
-  }
-  
-  # move to pattern
-  move_to_pattern(
-    bfile,
-    str_c(regexp, get_blocks_regexp(post_block_names)),
-    search_text = str_c(c(as.character(value), sprintf("<%s>", block_names)), collapse = ""),
-    max_gap = max_gap
-  )
-}
-
-
 # capture data block data in specified type
 # uses parse_row_data and therefore can handle multiple data types
-# @inheritParams skip_data_blocks
 # @inheritParams parse_raw_data
-capture_data <- function(bfile, capture_as, type, post_data_blocks, data_bytes_max = NULL,
+capture_data <- function(bfile, id, type, ..., data_bytes_max = NULL,
                          ignore_trailing_zeros = TRUE, exact_length = TRUE, sensible = NULL) {
-  # capture data
-  blocks <- find_blocks(bfile, post_data_blocks)
-  stopifnot(is.null(data_bytes_max) || is.numeric(data_bytes_max))
-  if (!is.null(blocks$pos) && blocks$pos <= bfile$max_pos && (is.null(data_bytes_max) || blocks$pos <= bfile$pos + data_bytes_max)) {
-    bfile$data[[capture_as]] <- 
-      parse_raw_data(bfile$raw[bfile$pos:(blocks$pos - 1)], type,
+  
+  # move to begining of target ... after the data
+  if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
+  start <- bfile$pos
+  bfile <- move_to_next_pattern(bfile, ..., max_gap = data_bytes_max, move_to_end = FALSE)
+  end <- bfile$pos - 1
+  
+  # store data
+  if (end > start) {
+    bfile$data[[id]] <- 
+      parse_raw_data(bfile$raw[start:end], type,
                      ignore_trailing_zeros = ignore_trailing_zeros,
                      exact_length = exact_length, sensible = sensible,
                      errors = if(bfile$error_mode_throw) bfile$error_prefix else NULL) 
   } else {
-    bfile$data[[capture_as]] <- NULL
+    bfile$data[[id]] <- NULL
   }
-  return(move_to_next_blocks(bfile, post_data_blocks, max_gap = data_bytes_max))
+  
+  return(move_to_next_pattern(bfile, ..., max_gap = 0))
 }
 
 
