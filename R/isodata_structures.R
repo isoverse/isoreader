@@ -142,7 +142,7 @@ as_isofile_list <- function(...) {
 
 # Printing ----
 
-#' Print a collection of isofiles
+#' Print summary of individual isofiles (dual inlet or continuous flow) or collection of isofiles.
 #' @param x Object to show.
 #' @param ... additional parameters passed to print.default
 #' @rdname printing
@@ -159,12 +159,7 @@ print.isofile_list <- function(x, ...) {
   invisible(x)
 }
 
-#' Print a general isofile
-#' @param x Object to show
-#' @param ... additional parameters passed to print.default
 #' @param show_problems whether to show encountered problems
-#' @param show_file_info whether to show file info information
-#' @param show_raw_data_info whether to show raw data information
 #' @rdname printing
 #' @export
 print.isofile <- function(x, ..., show_problems = TRUE) {
@@ -187,20 +182,12 @@ print.isofile <- function(x, ..., show_problems = TRUE) {
   invisible(x)
 }
 
-#' Print a dual inlet isofile
-#' @param x Object to show.
-#' @param ... additional parameters passed to print.default
-#' @param show_problems whether to show encountered problems
 #' @rdname printing
 #' @export
 print.dual_inlet <- function(x, ..., show_problems = TRUE) {
   NextMethod("print", x, ..., show_problems = show_problems)
 }
 
-#' Print a continuous_flow isofile
-#' @param x Object to show.
-#' @param ... additional parameters passed to print.default
-#' @param show_problems whether to show encountered problems
 #' @rdname printing
 #' @export
 print.continuous_flow <- function(x, ..., show_problems = TRUE) {
@@ -278,7 +265,7 @@ generate_cache_file_path <- function(ds) {
 #' @param all if set to TRUE, all cached files will be removed regardless of their version
 #' @export
 cleanup_isoreader_cache <- function(all = FALSE) {
-  files <- list.files(setting("cache_dir"), pattern = "isofile_[^.]+\\.RData", full = TRUE)
+  files <- list.files(setting("cache_dir"), pattern = "isofile_[^.]+\\.RData", full.names = TRUE)
   if (all) {
     file.remove(files)
     if (!setting("quiet")) message("Info: removed all (", length(files), ") cached isoreader files.")
@@ -301,13 +288,13 @@ cleanup_isoreader_cache <- function(all = FALSE) {
 # S3 operations =====
 
 #' @export
-as.list.isofile <- function(x) {
+as.list.isofile <- function(x, ...) {
   class(x) <- "list"
   return(x)
 }
 
 #' @export
-as.list.isofile_list <- function(x) {
+as.list.isofile_list <- function(x, ...) {
   class(x) <- "list"
   return(x)
 }
