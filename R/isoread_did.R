@@ -11,8 +11,8 @@ isoread_did <- function(ds, ...) {
   
   # process file info
   if(ds$read_options$file_info) {
-    ds <- exec_func_with_error_catch(extract_isodat_measurement_info, ds)
     ds <- exec_func_with_error_catch(extract_isodat_sequence_line_info, ds)
+    ds <- exec_func_with_error_catch(extract_isodat_measurement_info, ds)
     ds <- exec_func_with_error_catch(extract_standard_information, ds)
   }
   
@@ -30,20 +30,20 @@ isoread_did <- function(ds, ...) {
 # extract reference standard information
 extract_standard_information <- function(ds) {
   
-  CSecondaryStandardMethodPart <- fetch_keys(ds$binary, "CSecondaryStandardMethodPart", occurence = 1, fixed = TRUE, require = 1)
-  Instrument <- fetch_keys(ds$binary, "Instrument", occurence = 1, byte_min = CSecondaryStandardMethodPart$byte_end, fixed = TRUE, require = 1)
-  
-  ds$binary <- move_to_pos(ds$binary, CSecondaryStandardMethodPart$byte_end + 14L)
-  
-  #print(CSecondaryStandardMethodPart$byte_end)
-  #print(Instrument$byte_start)
-    
-  standard_name <- get_unicode(ds$binary$raw[(CSecondaryStandardMethodPart$byte_end+14L):Instrument$byte_start])
-  
-  
-  CConfiguration <- fetch_keys(ds$binary, "CConfiguration", occurence = 1, fixed = TRUE, require = 1)
-  CPrimaryStandardMethodPart <- fetch_keys(ds$binary, "CSecondaryStandardMethodPart", occurence = 1, fixed = TRUE, require = 1)
-  
+  # CSecondaryStandardMethodPart <- fetch_keys(ds$binary, "CSecondaryStandardMethodPart", occurence = 1, fixed = TRUE, require = 1)
+  # Instrument <- fetch_keys(ds$binary, "Instrument", occurence = 1, byte_min = CSecondaryStandardMethodPart$byte_end, fixed = TRUE, require = 1)
+  # 
+  # ds$binary <- move_to_pos(ds$binary, CSecondaryStandardMethodPart$byte_end + 14L)
+  # 
+  # #print(CSecondaryStandardMethodPart$byte_end)
+  # #print(Instrument$byte_start)
+  #   
+  # standard_name <- get_unicode(ds$binary$raw[(CSecondaryStandardMethodPart$byte_end+14L):Instrument$byte_start])
+  # 
+  # 
+  # CConfiguration <- fetch_keys(ds$binary, "CConfiguration", occurence = 1, fixed = TRUE, require = 1)
+  # CPrimaryStandardMethodPart <- fetch_keys(ds$binary, "CSecondaryStandardMethodPart", occurence = 1, fixed = TRUE, require = 1)
+  # 
   # NOTE: the following holds a number of keys that suggest information about tuning
   # (Trap, Emission, Extraction, Shield, etc.) but it is not obvious where the numerical information
   # these keys refer to is kept - perhaps not actually in the vicinity of the text indicators?
@@ -134,29 +134,23 @@ extract_isodat_sequence_line_info <- function(ds) {
 # extracts the measurement information for isodat files
 extract_isodat_measurement_info = function(ds) {
   
-  CMeasurmentInfos <- fetch_keys(ds$binary, "CMeasurmentInfos", occurence = 1, fixed = TRUE, require = 1)
-  CMeasurmentErrors <- fetch_keys(ds$binary, "CMeasurmentErrors", occurence = 1, fixed = TRUE, require = 1)
+  # find measurement info
+  ds$binary <- ds$binary %>% 
+    set_binary_file_error_prefix("cannot process measurement info") %>% 
+    move_to_C_block_range("CMeasurmentInfos", "CMeasurmentErrors") %>% 
+    move_to_next_C_block("CISLScriptMessageData")
   
-  # parse measurement info table
-  rawtable <- ds$binary$raw[CMeasurmentInfos$byte_end:CMeasurmentErrors$byte_start]
-  dividers <- c(grepRaw("\xff\xfe\xff", rawtable, all=TRUE), length(rawtable))
-  if (length(dividers) == 0) 
-     stop("this file does not seem to have the expected hex code sequence FF FE FF as dividers in the grid info", call. = FALSE)
-  
-  # go through info table
-  value <- NA_character_
-  for (i in 2:length(dividers)) {
-    x <- get_unicode(rawtable[(dividers[i-1]+4):dividers[i]])
-    if (x == "CUserInfo") {
-      id <- paste0("Info_", sub("^(\\w+).*$", "\\1", value))
-      if (!is.null(ds$file_info[[id]]))
-        ds$file_info[[id]] <- c(ds$file_info[[id]], value) # append value with first word as ID
-      else
-        ds$file_info[[id]] <- value # store new value with first word as ID
-    }
-    else value <- x # keep value
+  isl_info_msgs <- c()
+  while(!is.null(find_next_pattern(ds$binary, re_text("CUserInfo")))) {
+    ds$binary <- ds$binary %>%
+      move_to_next_pattern(re_block("00-x-000"), re_block("fef-x")) %>% 
+      capture_data("info", "text", re_block("fef-x"), re_text("CUserInfo"), move_past_dots = TRUE) 
+    isl_info_msgs <- c(isl_info_msgs, ds$binary$data$info)
   }
   
+  # store all in one information set
+  ds$file_info$measurement_info <- isl_info_msgs
+
   return(ds)
 }
 
