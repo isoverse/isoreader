@@ -19,6 +19,9 @@ get_raw_data <- function(isofiles) {
 
 #' Aggregate file info
 #'
+#' Note file info entries with multiple values are concatenated for this general purpose function.
+#' To get access to a specific multi-value file info, access using $file_info[['INFO_NAME']]
+#'
 #' @inheritParams get_raw_data
 #' @family data aggregation functions
 #' @export
@@ -26,9 +29,11 @@ get_file_info <- function(isofiles) {
   isofiles <- as_isofile_list(isofiles)
   check_read_options(isofiles, "file_info")
   
-  # Note: need to check for file info values that may have more than 1 value
+  # Note: need to check for file info values that may have more than 1 valu
   lapply(isofiles, function(isofile) {
-    as_data_frame(isofile$file_info)
+    lapply(isofile$file_info, function(entry) {
+      if (length(entry) > 1) str_c(entry, collapse = "; ") else entry
+    })  %>% as_data_frame()
   }) %>% bind_rows()
 }
 
