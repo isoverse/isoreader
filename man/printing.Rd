@@ -5,7 +5,7 @@
 \alias{print.isofile}
 \alias{print.dual_inlet}
 \alias{print.continuous_flow}
-\title{Print a collection of isofiles}
+\title{Print summary of individual isofiles (dual inlet or continuous flow) or collection of isofiles.}
 \usage{
 \method{print}{isofile_list}(x, ...)
 
@@ -21,33 +21,7 @@
 \item{...}{additional parameters passed to print.default}
 
 \item{show_problems}{whether to show encountered problems}
-
-\item{x}{Object to show}
-
-\item{...}{additional parameters passed to print.default}
-
-\item{show_file_info}{whether to show file info information}
-
-\item{show_raw_data_info}{whether to show raw data information}
-
-\item{x}{Object to show.}
-
-\item{...}{additional parameters passed to print.default}
-
-\item{show_problems}{whether to show encountered problems}
-
-\item{x}{Object to show.}
-
-\item{...}{additional parameters passed to print.default}
-
-\item{show_problems}{whether to show encountered problems}
 }
 \description{
-Print a collection of isofiles
-
-Print a general isofile
-
-Print a dual inlet isofile
-
-Print a continuous_flow isofile
+Print summary of individual isofiles (dual inlet or continuous flow) or collection of isofiles.
 }
