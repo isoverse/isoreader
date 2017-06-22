@@ -110,22 +110,22 @@ extract_vendor_data_table <- function(ds) {
 # extracts the sequence line information for isodat files
 extract_isodat_sequence_line_info <- function(ds) {
   
-  SeqLineInfo <- fetch_keys(ds$binary, "Sequence Line Information", occurence = 1, fixed = TRUE, require = 1)
-  VisInfo <- fetch_keys(ds$binary, "Visualisation Informations", occurence = 1, fixed = TRUE, require = 1)
+  # find sequence line information
+  ds$binary <- ds$binary %>% 
+    set_binary_file_error_prefix("cannot process sequence line info") %>% 
+    move_to_C_block_range("CParsedEvaluationString", "CBinary") %>% 
+    move_to_next_pattern(re_text("Sequence Line Information"))
   
-  # parse sequence lin info
-  rawtable <- ds$binary$raw[SeqLineInfo$byte_end:VisInfo$byte_start]
-  if (length(rawtable) < 10)
-    stop("this file does not seem to have a data block for the sequence line information", call. = FALSE)
-  
-  dividers <- grepRaw("\xff\xfe\xff", rawtable, all=TRUE)
-  if (length(dividers) == 0) 
-    stop("this file does not seem to have the expected hex code sequence FF FE FF as dividers in the sequence line information", call. = FALSE)
-  
-  for (i in 2:length(dividers)) {
-    x <- get_unicode(rawtable[(dividers[i-1]+4):dividers[i]])
-    if (i %% 2 == 1) ds$file_info[[x]] <- value # store key / value pair in data list
-    else value <- x # keep value for key (which comes AFTER its value)
+  seq_line_info <- list()
+  while(!is.null(find_next_pattern(ds$binary, re_null(4), re_or(re_block("vtab"), re_block("C-block"))))) {
+    ds$binary <- ds$binary %>%
+      move_to_next_pattern(re_text("/"), re_block("fef-x")) %>% 
+      capture_data("value", "text", re_or(re_block("fef-x"), re_block("nl")), re_block("text"), re_null(4), move_past_dots = FALSE) %>% 
+      move_to_next_pattern(re_or(re_block("fef-x"), re_block("nl"))) %>% 
+      capture_data("info", "text", re_null(4), re_or(re_block("vtab"), re_block("C-block")), move_past_dots = FALSE) %>% 
+      move_to_next_pattern(re_null(4)) 
+    if (!is.null(ds$binary$data$info))
+      ds$file_info[[ds$binary$data$info]] <- ds$binary$data$value
   }
   
   return(ds)
