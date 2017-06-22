@@ -13,6 +13,7 @@ isoread_did <- function(ds, ...) {
   if(ds$read_options$file_info) {
     ds <- exec_func_with_error_catch(extract_isodat_measurement_info, ds)
     ds <- exec_func_with_error_catch(extract_isodat_sequence_line_info, ds)
+    ds <- exec_func_with_error_catch(extract_standard_information, ds)
   }
   
   # process raw data
@@ -22,6 +23,32 @@ isoread_did <- function(ds, ...) {
   # process pre-evaluated data table
   if (ds$read_options$vendor_data_table)
     ds <- exec_func_with_error_catch(extract_vendor_data_table, ds)
+  
+  return(ds)
+}
+
+# extract reference standard information
+extract_standard_information <- function(ds) {
+  
+  CSecondaryStandardMethodPart <- fetch_keys(ds$binary, "CSecondaryStandardMethodPart", occurence = 1, fixed = TRUE, require = 1)
+  Instrument <- fetch_keys(ds$binary, "Instrument", occurence = 1, byte_min = CSecondaryStandardMethodPart$byte_end, fixed = TRUE, require = 1)
+  
+  ds$binary <- move_to_pos(ds$binary, CSecondaryStandardMethodPart$byte_end + 14L)
+  
+  #print(CSecondaryStandardMethodPart$byte_end)
+  #print(Instrument$byte_start)
+    
+  standard_name <- get_unicode(ds$binary$raw[(CSecondaryStandardMethodPart$byte_end+14L):Instrument$byte_start])
+  
+  
+  CConfiguration <- fetch_keys(ds$binary, "CConfiguration", occurence = 1, fixed = TRUE, require = 1)
+  CPrimaryStandardMethodPart <- fetch_keys(ds$binary, "CSecondaryStandardMethodPart", occurence = 1, fixed = TRUE, require = 1)
+  
+  # NOTE: the following holds a number of keys that suggest information about tuning
+  # (Trap, Emission, Extraction, Shield, etc.) but it is not obvious where the numerical information
+  # these keys refer to is kept - perhaps not actually in the vicinity of the text indicators?
+  # There is a large binary block right before CConfiguration that starts after the "Administrator" key
+  #IsotopeMS <- fetch_keys(ds$binary, "Isotope MS/\\w+", byte_min = CConfiguration$byte_end, byte_max = CPrimaryStandardMethodPart$byte_start) 
   
   return(ds)
 }
@@ -135,50 +162,71 @@ extract_isodat_measurement_info = function(ds) {
 
 # extract voltage data in did file
 extract_did_raw_voltage_data <- function(ds) {
-  # find masses
-  CTraceInfo <- fetch_keys(ds$binary, "CTraceInfo", occurence = 1, fixed = TRUE, require = 1)
-  CPlotRange <- fetch_keys(ds$binary, "CPlotRange", occurence = 1, fixed = TRUE, require = 1)
-  masses <- fetch_keys(
-    ds$binary, "Mass \\d+", byte_min = CTraceInfo$byte_end, byte_max = CPlotRange$byte_start, 
-    require = "1+", error_prefix = "cannot find mass names") %>% 
-    mutate(
-      # column names
-      column = str_replace(value, "Mass (\\d+)", "v\\1.mV")
-    )
   
-  # read voltage data
-  read_voltage_data <- function(byte_start, byte_end) {
-    ds$binary <- move_to_pos(ds$binary, byte_end + 1L)
-    
-    # intensity block skip
-    has_intensity_block <- 
-      fetch_keys(ds$binary, "CIntensityData", fixed = TRUE, byte_min = byte_start, byte_max = byte_end + 64L) %>% { nrow(.) > 0}
-    ds$binary <- skip_pos(ds$binary, if (has_intensity_block) 82 else 64)
-    
-    # retrieve data
-    parse_binary_data(ds$binary, "double", length = nrow(masses), 
-                      sensible = c(-1000, 100000), error_prefix = "cannot extract voltages") %>% 
-      as.list() %>% 
-      setNames(masses$column) %>% 
-      as_data_frame()
+  # mass information
+  ds$binary <- ds$binary %>% 
+    set_binary_file_error_prefix("cannot identify measured masses") %>% 
+    move_to_C_block("CBinary") %>%
+    move_to_next_C_block_range("CTraceInfoEntry", "CPlotRange") 
+  
+  # read all masses
+  masses <- c()
+  while(!is.null(find_next_pattern(ds$binary, re_block("fef-x"), re_text("Mass ")))) {
+    ds$binary <- ds$binary %>%
+      move_to_next_pattern(re_block("fef-x"), re_text("Mass ")) %>% 
+      capture_data("mass", "text", re_or(re_block("fef-x"), re_block("C-block")), 
+                   data_bytes_max = 8, move_past_dots = FALSE) 
+    masses <- c(masses, ds$binary$data$mass)
   }
   
-  # extract cycle information (Standard vs. Sample) and retrieve raw data
-  CDualInletRawData <- fetch_keys(ds$binary, "CDualInletRawData", occurence = 1, fixed = TRUE, require = 1)
-  CTwoDoublesArrayData <- fetch_keys(ds$binary, "CTwoDoublesArrayData", occurence = 1, fixed = TRUE, require = 1)
-  ds$raw_data <- fetch_keys(
-    ds$binary, "^(Standard|Sample) \\d+$", byte_min = CDualInletRawData$byte_end, byte_max = CTwoDoublesArrayData$byte_start, 
-    require = "1+", error_prefix = "cannot find measurement type") %>% 
-    mutate(
-      type = str_match(value, "^(Standard|Sample) (\\d+)$") %>% {str_to_lower(.[,2])},
-      cycle.0idx = str_match(value, "^(Standard|Sample) (\\d+)$") %>% {.[,3]}, # 0 based index, adjust in next line
-      cycle = ifelse(cycle.0idx == "Pre", 0, suppressWarnings(as.integer(cycle.0idx)) + 1L)
-    ) %>% 
-    # read volutage data for each analysis and cycle
-    group_by(type, cycle) %>% 
-    do({
-      read_voltage_data(.$byte_start, .$byte_end)
-    }) %>% 
-    ungroup()
+  # mass column formatting
+  masses_columns <- str_c("v", masses, ".mV")
+  
+  # locate voltage data
+  ds$binary <- ds$binary %>% 
+    set_binary_file_error_prefix("cannot locate voltage data") %>% 
+    move_to_C_block_range("CDualInletRawData", "CTwoDoublesArrayData") %>% 
+    move_to_next_C_block("CIntegrationUnitTransferPart") %>% 
+    set_binary_file_error_prefix("cannot process voltage data") 
+  
+  # read voltage data for the standards
+  voltages <- list()
+  while(!is.null(find_next_pattern(ds$binary, re_text("/"), re_block("fef-x"), re_block("nl"), re_text("Standard ")))) {
+    ds$binary <- ds$binary %>% 
+      move_to_next_pattern(re_text("/"), re_block("fef-x"), re_block("nl"), re_text("Standard ")) %>% 
+      capture_data("cycle", "text", re_block("00-x-000"), move_past_dots = TRUE) %>% 
+      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(2), re_block("00-x-000")) %>%
+      move_to_next_pattern(re_block("00-x-000"), re_block("x-000")) %>%
+      capture_data("voltage", "double", re_block("00-x-000"), sensible = c(-1000, 100000))
+    if (length(ds$binary$data$voltage) != length(masses)) 
+      stop("incorrect number of voltage measurements supplied for standard ", ds$binary$data$cycle, call. = FALSE)
+    measurement <- list(
+      c(list(
+        type = "standard",
+        cycle = as.integer(ds$binary$data$cycle) + 1
+      ), setNames(as.list(ds$binary$data$voltage), masses_columns)))
+    voltages <- c(voltages, measurement)
+  }
+  
+  # read the voltage data for the samples
+  while(!is.null(find_next_pattern(ds$binary, re_text("/"), re_block("fef-0"), re_block("fef-x"), re_text("Sample ")))) {
+    ds$binary <- ds$binary %>%
+      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-x"), re_text("Sample ")) %>%
+      capture_data("cycle", "text", re_null(2), re_block("00-x-000"), move_past_dots = TRUE) %>%
+      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(2), re_block("00-x-000")) %>%
+      move_to_next_pattern(re_block("00-x-000"), re_block("x-000")) %>%
+      capture_data("voltage", "double", re_block("00-x-000"), sensible = c(-1000, 100000))
+    if (length(ds$binary$data$voltage) != length(masses)) 
+      stop("incorrect number of voltage measurements supplied for sample ", ds$binary$data$cycle, call. = FALSE)
+    measurement <- list(
+      c(list(
+        type = "sample",
+        cycle = as.integer(ds$binary$data$cycle) + 1
+      ), setNames(as.list(ds$binary$data$voltage), masses_columns)))
+    voltages <- c(voltages, measurement)
+  }
+  
+  # voltages data frame
+  ds$raw_data <- bind_rows(voltages)
   return(ds)
 }

@@ -153,7 +153,7 @@ fetch_C_block <- function(bfile, C_block, min_pos = 1, occurence = NULL) {
 # @FIXME: testing
 # move_to_C_block(my_test$binary, "NO")
 # move_to_C_block(my_test$binary, "CData", occurence = 2)
-move_to_next_C_block <- function(bfile, C_block, min_pos = bfile$pos, occurence = 1, reset_cap = FALSE) {
+move_to_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1, reset_cap = TRUE) {
   # fetch right C block
   cblock <- fetch_C_block(bfile, C_block, min_pos = min_pos, occurence = occurence)
   if (is.null(cblock)) {
@@ -164,8 +164,13 @@ move_to_next_C_block <- function(bfile, C_block, min_pos = bfile$pos, occurence 
   return(move_to_pos(bfile, cblock$end[1] + 1))
 }
 
+# move to next C block (does not reet cap by default)
+move_to_next_C_block <- function(bfile, C_block, reset_cap = FALSE) {
+  move_to_C_block(bfile, C_block, min_pos = bfile$pos, occurence = 1, reset_cap = reset_cap)
+}
+
 # cap valid position at the beginning of a specific C_block
-cap_at_next_C_block <- function(bfile, C_block, min_pos = bfile$pos, occurence = 1) {
+cap_at_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1) {
   # fetch right C block
   cblock <- fetch_C_block(bfile, C_block, min_pos = min_pos, occurence = occurence)
   if (is.null(cblock)) {
@@ -174,15 +179,33 @@ cap_at_next_C_block <- function(bfile, C_block, min_pos = bfile$pos, occurence =
   return(cap_at_pos(bfile, cblock$start[1]))
 }
 
+# cap at next C block
+cap_at_next_C_block <- function(bfile, C_block) {
+  cap_at_next_C_block(bfile, C_block, min_pos = bfile$pos, occurence = 1)
+}
+
 # move to C block range
 # Note: if need to specific occurence, use move_to_C_block, cap_at_C_block
 move_to_C_block_range <- function(bfile, from_C_block, to_C_block, min_pos = 1){
+  # range move safety check (a bit redundant because also checked in 
+  # move_to_pos and cap_at_pos but errors there are out of context)
+  from <- fetch_C_block(bfile, from_C_block, min_pos = min_pos)
+  to <- fetch_C_block(bfile, to_C_block, min_pos = min_pos)
+  if (!is.null(from) && !is.null(to) && to$start[1] < from$end[1]) {
+    op_error(bfile, sprintf("cannot move to Cblock range, first occurence of block '%s' before first block '%s'",
+                            from_C_block, to_C_block))
+  }
+
+  # move to blocks
   bfile %>% 
-    move_to_next_C_block(from_C_block, min_pos = min_pos, reset_cap = TRUE) %>% 
-    cap_at_next_C_block(to_C_block, min_pos = min_pos)
+    move_to_C_block(from_C_block, min_pos = min_pos, reset_cap = TRUE) %>% 
+    cap_at_C_block(to_C_block, min_pos = min_pos)
 }
 
-
+# move to next C block range
+move_to_next_C_block_range <- function(bfile, from_C_block, to_C_block){
+  move_to_C_block_range(bfile, from_C_block, to_C_block, min_pos = bfile$pos)
+}
 
 # finds all keys matching 'key' or a specific occurence of it (use -1 for last occurence)
 # @param fixed whether to find the key(s) by regexp match or fixed string (default = pattern)

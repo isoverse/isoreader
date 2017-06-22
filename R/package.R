@@ -3,7 +3,7 @@
 
 #' @import dplyr
 #' @import tidyr
-#' @importFrom purrr map map_lgl map_chr map_df sort_by
+#' @importFrom purrr map map_lgl map_chr map_df map_int map_dbl sort_by
 #' @importFrom tibble tribble
 #' @importFrom lubridate interval duration
 #' @import stringr
