@@ -14,5 +14,6 @@ Aggregate vendor computed table data
 }
 \seealso{
 Other data aggregation functions: \code{\link{get_file_info}},
+  \code{\link{get_method_info_standards}},
   \code{\link{get_raw_data}}
 }

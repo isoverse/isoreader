@@ -10,9 +10,11 @@ get_file_info(isofiles)
 \item{isofiles}{isotope file objects}
 }
 \description{
-Aggregate file info
+Note file info entries with multiple values are concatenated for this general purpose function.
+To get access to a specific multi-value file info, access using $file_info[['INFO_NAME']]
 }
 \seealso{
-Other data aggregation functions: \code{\link{get_raw_data}},
+Other data aggregation functions: \code{\link{get_method_info_standards}},
+  \code{\link{get_raw_data}},
   \code{\link{get_vendor_data_table}}
 }

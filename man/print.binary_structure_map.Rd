@@ -5,7 +5,7 @@
 \title{Print binary structure map}
 \usage{
 \method{print}{binary_structure_map}(x, ..., data_as_raw = FALSE,
-  line_breaks = TRUE, pos_info = line_breaks)
+  line_break_blocks = c("cblock", "stx", "etx"), pos_info = TRUE)
 }
 \arguments{
 \item{x}{object to show.}
@@ -14,7 +14,7 @@
 
 \item{data_as_raw}{whether to show data as raw}
 
-\item{line_breaks}{whether to inclue line breaks}
+\item{line_break_blocks}{at which blocks to introduce a line break}
 
 \item{pos_info}{whether to include position information}
 }

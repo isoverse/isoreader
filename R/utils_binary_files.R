@@ -1,4 +1,5 @@
 # Binary file utils =============
+# @TODO: remove deprecated functions
 
 # Read binary file
 # @note this does not work for very large files probably because of the 2^31-1 limit on vector size! think about ways to fix this...

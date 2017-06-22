@@ -5,8 +5,8 @@
 \title{Load dual inlet data}
 \usage{
 isoread_dual_inlet(paths, read_raw_data = TRUE, read_file_info = TRUE,
-  read_vendor_data_table = FALSE, quiet = setting("quiet"),
-  cache = setting("cache"))
+  read_method_info = TRUE, read_vendor_data_table = FALSE,
+  quiet = setting("quiet"), cache = setting("cache"))
 }
 \arguments{
 \item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}

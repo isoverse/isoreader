@@ -29,11 +29,31 @@ get_file_info <- function(isofiles) {
   isofiles <- as_isofile_list(isofiles)
   check_read_options(isofiles, "file_info")
   
-  # Note: need to check for file info values that may have more than 1 valu
   lapply(isofiles, function(isofile) {
     lapply(isofile$file_info, function(entry) {
       if (length(entry) > 1) str_c(entry, collapse = "; ") else entry
     })  %>% as_data_frame()
+  }) %>% bind_rows()
+}
+
+#' Get standards from methods info
+#'
+#' Combines primary and secondary standards into a single table
+#'
+#' @inheritParams get_raw_data
+#' @family data aggregation functions
+#' @export
+get_method_info_standards <- function(isofiles) {
+  isofiles <- as_isofile_list(isofiles)
+  check_read_options(isofiles, "method_info")
+  
+  lapply(isofiles, function(isofile) {
+    full_join(
+      isofile$method_info$secondary_standards,
+      isofile$method_info$primary_standards,
+      by = "reference") %>% 
+      mutate(file_id = isofile$file_info$file_id) %>% 
+      select(file_id, everything())
   }) %>% bind_rows()
 }
 
