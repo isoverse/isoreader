@@ -6,7 +6,7 @@ test_that("test that retrieving file paths works correctly", {
   expect_error(isoreader:::retrieve_file_paths("DOESNOTEXIST"), "not exist")
   expect_error(isoreader:::retrieve_file_paths(c("DOESNOTEXIST", "NOTEITHER")), "not exist")
   expect_error(isoreader:::retrieve_file_paths(system.file("extdata", package = "isoreader")), "no extensions")
-  expect_error(isoreader:::retrieve_file_paths(system.file("extdata", package = "isoreader") %>% list.files(full.names = T), "did"), 
+  expect_error(isoreader:::retrieve_file_paths(system.file("extdata", package = "isoreader") %>% list.files(full.names = TRUE), "did"), 
                "do not have one of the supported extensions")
   
   # check expected result

@@ -74,14 +74,17 @@ update_quiet <- function(quiet) {
 
 # turn debug messages on/off
 # not exported, used for internal debugging
-turn_debug_on <- function(data) {
+# @param catch_errors whether to still catch errors in debug mode or whether to throw them
+turn_debug_on <- function(data, catch_errors = TRUE) {
   set_setting("debug", TRUE)
-  message("Info: debug mode turned on")
+  set_setting("catch_errors", catch_errors)
+  message("Info: debug mode turned on, error catching turned ", if(catch_errors) "on" else "off")
   if (!missing(data)) return(data)
 }
 
 turn_debug_off <- function(data) {
   set_setting("debug", FALSE)
+  set_setting("catch_errors", TRUE)
   message("Info: debug mode turned off")
   if (!missing(data)) return(data)
 }

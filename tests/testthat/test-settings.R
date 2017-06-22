@@ -41,8 +41,13 @@ test_that("info message functions can be part of a pipeline", {
 test_that("test that debug mode can be activated", {
   expect_message(isoreader:::turn_debug_on(), "debug mode turned on")
   expect_equal(isoreader:::setting("debug"), TRUE)
+  expect_equal(isoreader:::setting("catch_errors"), TRUE)
+  expect_message(isoreader:::turn_debug_on(catch_errors = FALSE), "debug mode turned on")
+  expect_equal(isoreader:::setting("debug"), TRUE)
+  expect_equal(isoreader:::setting("catch_errors"), FALSE)
   expect_message(isoreader:::turn_debug_off(), "debug mode turned off")
   expect_equal(isoreader:::setting("debug"), FALSE)
+  expect_equal(isoreader:::setting("catch_errors"), TRUE)
 })
 
 
