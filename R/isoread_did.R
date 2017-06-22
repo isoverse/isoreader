@@ -53,60 +53,6 @@ extract_standard_information <- function(ds) {
   return(ds)
 }
 
-# extract vendor computed data table
-extract_vendor_data_table <- function(ds) {
-  
-  # pre-evaluated data table
-  CDualInletEvaluatedData <- fetch_keys(ds$binary, "CDualInletEvaluatedData", occurence = 1, fixed = TRUE, require = 1)
-  GasIndices <- fetch_keys(ds$binary, "Gas Indices", occurence = 1, fixed = TRUE, require = 1) 
-  data_table_keys <-
-    fetch_keys(
-      ds$binary, "^(d |AT).+$", byte_min = CDualInletEvaluatedData$byte_end, byte_max = GasIndices$byte_start, 
-      require = "1+", error_prefix = "could not find vendor computed data table") 
-
-  # number of cycles
-  CDualInletRawData <- fetch_keys(ds$binary, "CDualInletRawData", occurence = 1, fixed = TRUE, require = 1)
-  CTwoDoublesArrayData <- fetch_keys(ds$binary, "CTwoDoublesArrayData", occurence = 1, fixed = TRUE, require = 1)
-  n_cycles <- fetch_keys(ds$binary, "^(Standard|Sample) \\d+$", byte_min = CDualInletRawData$byte_end, byte_max = CTwoDoublesArrayData$byte_start) %>% 
-    { str_count(., "Sample \\d+") %>% sum() }
-  
-  if (length(n_cycles) == 0) 
-    stop("cannot find number of measurements")
-  
-  # data gap intervals
-  gap_to_data <- c("d " = 54, "AT" = 50)
-    
-  # assign vendor_data_table
-  ds$vendor_data_table <-
-    data_table_keys %>% 
-    # remove trailing white spaces in the column names
-    mutate(column = str_replace(value, "\\s*$", "")) %>% 
-    group_by(column) %>% 
-    # extract the column data
-    do(with(., {
-      # move to right place in binary
-      ds$binary <- move_to_pos(ds$binary, byte_end + 1L)
-      gap <- gap_to_data[str_sub(column, 1, 2)]
-      if (is.na(gap)) stop("could not process vendor data table column: ", value, call. = FALSE)
-      ds$binary <- skip_pos(ds$binary, gap)
-      
-      # parse data
-      data <- parse_binary_data(ds$binary, "double", length = 2*n_cycles, 
-                                sensible = c(-1e10, 1e10), error_prefix = "cannot extract vendor calculated values")
-      
-      # assemble data frame
-      data_frame(
-        cycle = data[c(TRUE, FALSE)] + 1L,
-        value = data[c(FALSE, TRUE)]
-      )
-      
-    })) %>% 
-    ungroup() %>% 
-    spread(column, value) 
-  
-  return(ds)
-}
-
 # extracts the sequence line information for isodat files
 extract_isodat_sequence_line_info <- function(ds) {
   
@@ -123,7 +69,7 @@ extract_isodat_sequence_line_info <- function(ds) {
       capture_data("value", "text", re_or(re_block("fef-x"), re_block("nl")), re_block("text"), re_null(4), move_past_dots = FALSE) %>% 
       move_to_next_pattern(re_or(re_block("fef-x"), re_block("nl"))) %>% 
       capture_data("info", "text", re_null(4), re_or(re_block("vtab"), re_block("C-block")), move_past_dots = FALSE) %>% 
-      move_to_next_pattern(re_null(4)) 
+      move_to_next_pattern(re_null(4))
     if (!is.null(ds$binary$data$info))
       ds$file_info[[ds$binary$data$info]] <- ds$binary$data$value
   }
@@ -143,7 +89,7 @@ extract_isodat_measurement_info = function(ds) {
   isl_info_msgs <- c()
   while(!is.null(find_next_pattern(ds$binary, re_text("CUserInfo")))) {
     ds$binary <- ds$binary %>%
-      move_to_next_pattern(re_block("00-x-000"), re_block("fef-x")) %>% 
+      move_to_next_pattern(re_block("x-000"), re_block("fef-x")) %>% 
       capture_data("info", "text", re_block("fef-x"), re_text("CUserInfo"), move_past_dots = TRUE) 
     isl_info_msgs <- c(isl_info_msgs, ds$binary$data$info)
   }
@@ -188,10 +134,11 @@ extract_did_raw_voltage_data <- function(ds) {
   while(!is.null(find_next_pattern(ds$binary, re_text("/"), re_block("fef-x"), re_block("nl"), re_text("Standard ")))) {
     ds$binary <- ds$binary %>% 
       move_to_next_pattern(re_text("/"), re_block("fef-x"), re_block("nl"), re_text("Standard ")) %>% 
-      capture_data("cycle", "text", re_block("00-x-000"), move_past_dots = TRUE) %>% 
-      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(2), re_block("00-x-000")) %>%
-      move_to_next_pattern(re_block("00-x-000"), re_block("x-000")) %>%
-      capture_data("voltage", "double", re_block("00-x-000"), sensible = c(-1000, 100000))
+      capture_data("cycle", "text", re_null(4), re_block("stx"), move_past_dots = TRUE) %>% 
+      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("stx")) %>%
+      move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>% 
+      capture_data("voltage", "double", re_null(6),re_block("x-000"), sensible = c(-1000, 100000))
+    
     if (length(ds$binary$data$voltage) != length(masses)) 
       stop("incorrect number of voltage measurements supplied for standard ", ds$binary$data$cycle, call. = FALSE)
     measurement <- list(
@@ -206,10 +153,10 @@ extract_did_raw_voltage_data <- function(ds) {
   while(!is.null(find_next_pattern(ds$binary, re_text("/"), re_block("fef-0"), re_block("fef-x"), re_text("Sample ")))) {
     ds$binary <- ds$binary %>%
       move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-x"), re_text("Sample ")) %>%
-      capture_data("cycle", "text", re_null(2), re_block("00-x-000"), move_past_dots = TRUE) %>%
-      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(2), re_block("00-x-000")) %>%
-      move_to_next_pattern(re_block("00-x-000"), re_block("x-000")) %>%
-      capture_data("voltage", "double", re_block("00-x-000"), sensible = c(-1000, 100000))
+      capture_data("cycle", "text", re_null(4), re_block("stx"), move_past_dots = TRUE) %>% 
+      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("stx")) %>%
+      move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>% 
+      capture_data("voltage", "double", re_null(6),re_block("x-000"), sensible = c(-1000, 100000))
     if (length(ds$binary$data$voltage) != length(masses)) 
       stop("incorrect number of voltage measurements supplied for sample ", ds$binary$data$cycle, call. = FALSE)
     measurement <- list(
@@ -222,5 +169,51 @@ extract_did_raw_voltage_data <- function(ds) {
   
   # voltages data frame
   ds$raw_data <- bind_rows(voltages)
+  return(ds)
+}
+
+# extract vendor computed data table
+extract_vendor_data_table <- function(ds) {
+  
+  # find sequence line information
+  ds$binary <- ds$binary %>% 
+    set_binary_file_error_prefix("cannot process vendor computed data table") %>% 
+    move_to_C_block_range("CDualInletEvaluatedData", "CParsedEvaluationString")
+  
+  # read the data table
+  vendor_dt <- list()
+  while(!is.null(find_next_pattern(ds$binary, re_block("fef-0"), re_block("stx")))) {
+    ds$binary <- ds$binary %>%
+      move_to_next_pattern(re_text("/"), re_block("fef-x")) %>% 
+      # capture column type (typically Delta or AT%)
+      capture_data("type", "text", re_or(re_block("nl"), re_block("fef-x")), re_block("text"), move_past_dots = FALSE) %>%
+      move_to_next_pattern(re_or(re_block("nl"), re_block("fef-x")), max_gap = 0) %>% 
+      # capture actual colum name
+      capture_data("column", "text", re_null(4), re_block("stx"), move_past_dots = TRUE) %>%
+      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-x"), re_block("text"), re_null(4), re_times(re_block("x-000"), 3)) %>%
+      # capture column data
+      capture_data("values", "double", re_block("fef-0"), re_block("stx"), sensible = c(-1e10, 1e10), move_past_dots = TRUE)
+    
+    if (length(ds$binary$data$values) %% 2 != 0)
+      stop("odd number of data entries recovered", call. = FALSE)
+    
+    table_column <- list(
+      list(
+        cycle = ds$binary$data$values[c(TRUE, FALSE)] + 1L,
+        value = ds$binary$data$values[c(FALSE, TRUE)]
+      )) %>% setNames(str_replace(ds$binary$data$column, "\\s*$", "")) # remove trailing white spaces in column names
+    vendor_dt <- c(vendor_dt, table_column)
+  }
+  
+  # safety checks
+  if (length(vendor_dt) == 0) stop("no vendor computed data found", call. = FALSE)
+  cycles <- lapply(vendor_dt, `[[`, 1) 
+  if (!all(sapply(cycles, identical, cycles[[1]])))
+    stop("not all columns have the same number of cycles", call. = FALSE)
+  
+  # vendor table
+  ds$vendor_data_table <- bind_cols(
+    data_frame(cycle = vendor_dt[[1]][[1]]), 
+    lapply(vendor_dt, `[[`, 2) %>% as_data_frame())
   return(ds)
 }

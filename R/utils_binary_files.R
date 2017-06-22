@@ -331,6 +331,17 @@ re_or <- function(...) {
     class = "binary_regexp")
 }
 
+# repeated pattern
+re_times <- function(re, n) {
+  structure(
+    list(
+      label = rep(re$label, n) %>% str_c(collapse = ""),
+      regexp = sprintf("(%s){%.0f}", re$regexp, n),
+      size = re$size * n
+    ),
+    class = "binary_regexp")
+}
+
 # find next occurence of supplied regular expression pattern
 find_next_pattern <- function(bfile, ..., value = FALSE) {
   if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
@@ -382,6 +393,9 @@ move_to_next_pattern <- function(bfile, ..., max_gap = NULL, move_to_end = TRUE)
 capture_data <- function(bfile, id, type, ..., data_bytes_max = NULL, move_past_dots = FALSE,
                          ignore_trailing_zeros = TRUE, exact_length = TRUE, sensible = NULL) {
   
+  # reset existing data in this field
+  bfile$data[[id]] <- NULL
+  
   # move to begining of target ... after the data
   if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
   start <- bfile$pos
@@ -396,8 +410,6 @@ capture_data <- function(bfile, id, type, ..., data_bytes_max = NULL, move_past_
                      ignore_trailing_zeros = ignore_trailing_zeros,
                      exact_length = exact_length, sensible = sensible,
                      errors = str_c(bfile$error_prefix, id_text)) 
-  } else {
-    bfile$data[[id]] <- NULL
   }
   
   # whether to move past the dots
@@ -488,7 +500,8 @@ get_ctrl_blocks_config <- function() {
     # specific sequences
     `del-nl`   = list(size = 2L, auto = TRUE, regexp = "\x7f\x85"), # 7F 85 delete next line
     `eop-nl`   = list(size = 2L, auto = TRUE, regexp = "\xdc\x85"), # DC 85 end of proof?? next line
-    `vtab`     = list(size = 2L, auto = TRUE, regexp = "\x0b\x80"), # DB = vertical tab, divider in tables?
+    `vtab`     = list(size = 2L, auto = TRUE, regexp = "\x0b\x80"), # 0b 80 = vertical tab, divider in tables?
+    `ce-80`    = list(size = 2L, auto = TRUE, regexp = "\xce\x80"), # ce 80 = not sure what it means but common divider in tables
     `75-84`    = list(size = 2L, auto = TRUE, regexp = "\x75\x84"), # 75 84 - no idea what it means but it's special somehow
     `ff-80`    = list(size = 2L, auto = TRUE, regexp = "\\x00\xff\x80\\x00"), # ff 80 - no idea what it means 
     `07-80-id` = list(size = 6L, auto = TRUE, regexp = "\x05\x80.\xff(\\x00|\x80|\xff){2}", # some sort of counter or id
@@ -505,9 +518,7 @@ get_ctrl_blocks_config <- function() {
     # x000 blocks
     stx        = list(size = 4L, auto = TRUE, regexp = "\x02\\x00{3}"), # start of text
     etx        = list(size = 4L, auto = TRUE, regexp = "\x03\\x00{3}"), # end of text
-    `00-x-000` = list(size = 6L, auto = TRUE, regexp = "\\x00\\x00[\x01-\x1f]\\x00{3}", replace = # meaning = ?
-                        function(b) str_c("00-", str_replace(readBin(b[3], "raw"), "^0", ""), "-000")),
-    `x-000`    = list(size = 4L, auto = TRUE, regexp = "[\x01-\x1f]\\x00{3}", replace = # meaning = ?
+    `x-000`    = list(size = 4L, auto = TRUE, regexp = "[\x01-\x1f]\\x00{3}", replace = # meaning = ? maybe 1-000 has special meaning?
                      function(b) str_c(str_replace(readBin(b[1], "raw"), "^0", ""), "-000")),
     
     # c block (not auto processed because Cblocks are found separately)
@@ -523,10 +534,11 @@ get_ctrl_blocks_config <- function() {
 # @FIXME: testing
 get_data_blocks_config <- function() {
   list(
-    text    = list(type = "character", size = 2L, regexp = "[\x20-\x7e]\\x00"),
-    integer = list(type = "integer", size = 4L),
-    float   = list(type = "numeric", size = 4L),
-    double  = list(type = "numeric", size = 8L)
+    raw     = list(type = "raw", auto = FALSE, size = 1L),
+    text    = list(type = "character", auto = TRUE, size = 2L, regexp = "[\x20-\x7e]\\x00"),
+    integer = list(type = "integer", auto = TRUE, size = 4L),
+    float   = list(type = "numeric", auto = TRUE, size = 4L),
+    double  = list(type = "numeric", auto = TRUE, size = 8L)
   )
 }
 
@@ -895,7 +907,7 @@ map_binary_structure <- function(bfile, start = bfile$pos, length = 100, ctrl_bl
   
   
   # data blocks processing
-  data_block_configs <- get_data_blocks_config()
+  data_block_configs <- get_data_blocks_config() %>% {.[map_lgl(., "auto")] }
   data_block_types <- names(data_block_configs)
   data_matches <- data_frame(data_type = data_block_types, matches = FALSE, 
                              trailing_zeros = 0, n_values = 0, rep_value = NA_character_, 
@@ -955,7 +967,8 @@ generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, lin
   # indentation function
   nl_indent <- function(nls, lvl, byte_start) {
     mapply(function(nl, n, bs) {
-      if(!nl || is.na(n)) "" 
+      n <- if(is.na(n)) 0 else n
+      if(!nl) "" 
       else 
         str_c(c(if (nl) "\n" else "", 
                 if (pos_info) sprintf("%07d: ", bs), 
@@ -1023,7 +1036,7 @@ generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, lin
     all_blocks <- all_blocks %>% 
     mutate(
       nl = start == min(start) | type %in% line_break_blocks | c("", type[1:(n()-1)]) %in% line_break_blocks,
-      text_level = 0) # cumsum(type == "stx") - cumsum(type == "etx")) # stx/etx do not actually make sense for indentation
+      text_level = c(NA, (head(cumsum(type == "stx"), -1) - tail(cumsum(type == "etx"), -1))))
   
   # calculate indentation level
   all_blocks <- all_blocks %>% 
