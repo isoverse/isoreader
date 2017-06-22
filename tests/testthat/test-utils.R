@@ -11,12 +11,12 @@ test_that("test that retrieving file paths works correctly", {
   
   # check expected result
   expect_identical(
-    direct_list <- system.file("extdata", package = "isoreader") %>% list.files(full.names = T, pattern = "\\.(dxf|did)$"),
-    system.file("extdata", package = "isoreader") %>% isoreader:::retrieve_file_paths(c("did", "dxf"))
+    direct_list <- system.file("extdata", package = "isoreader") %>% list.files(full.names = T, pattern = "\\.(dxf|did|cf)$"),
+    system.file("extdata", package = "isoreader") %>% isoreader:::retrieve_file_paths(c("did", "dxf", "cf"))
   )
   expect_identical(
-    system.file("extdata", package = "isoreader") %>% list.files(full.names = T, pattern = "\\.(dxf|did)$") %>% {.[c(2,1,3:length(.))]},
-    c(direct_list[2], system.file("extdata", package = "isoreader")) %>% isoreader:::retrieve_file_paths(c("did", "dxf"))
+    system.file("extdata", package = "isoreader") %>% list.files(full.names = T, pattern = "\\.(dxf|did|cf)$") %>% {.[c(2,1,3:length(.))]},
+    c(direct_list[2], system.file("extdata", package = "isoreader")) %>% isoreader:::retrieve_file_paths(c("did", "dxf", "cf"))
   )
   
   # test duplicated file names error

@@ -16,6 +16,4 @@ test_that("test that parameter checks are performed", {
   expect_error(isoreader:::isoread_did(isoreader:::make_cf_data_structure()), 
                "data structure must be a \\'dual_inlet\\' isofile")
   
-  expect_is(isoread_dual_inlet("/Users/sk/Dropbox/Tools/software/R/isoreader/inst/extdata/dual_inlet_example.did", cache = FALSE)[[1]], "dual_inlet")
-  
 })
