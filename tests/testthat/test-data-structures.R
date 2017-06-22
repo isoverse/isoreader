@@ -3,8 +3,8 @@ context("Data Structures")
 # basic isofile data structure is correct ====
 test_that("test that basic isofile data structure is correct", {
   expect_is(isofile <- isoreader:::make_isofile_data_structure(), "isofile")
-  expect_equal(names(isofile), c("version", "read_options", "file_info", "raw_data", "vendor_data_table"))
-  expect_equal(names(isofile$read_options), c("file_info", "raw_data", "vendor_data_table"))
+  expect_equal(names(isofile), c("version", "read_options", "file_info", "method_info", "raw_data", "vendor_data_table"))
+  expect_equal(names(isofile$read_options), c("file_info", "method_info", "raw_data", "vendor_data_table"))
   expect_equal(isofile$version, packageVersion("isoreader"))
   expect_false(is_isofile(42))
   expect_false(is_isofile(as_isofile_list()))
@@ -61,11 +61,11 @@ test_that("can set file path for data structures", {
 # can update read options ====
 test_that("test that can update read options", {
   expect_is(isofile <- isoreader:::make_isofile_data_structure(), "isofile")
-  expect_equal(isofile$read_options, list(file_info = FALSE, raw_data = FALSE, vendor_data_table = FALSE))
+  expect_equal(isofile$read_options, list(file_info = FALSE, method_info = FALSE, raw_data = FALSE, vendor_data_table = FALSE))
   expect_equal(isoreader:::update_read_options(isofile, not_an_option = FALSE)$read_options,
-               list(file_info = FALSE, raw_data = FALSE, vendor_data_table = FALSE))
+               list(file_info = FALSE, method_info = FALSE, raw_data = FALSE, vendor_data_table = FALSE))
   expect_equal(isoreader:::update_read_options(isofile, read_file_info = TRUE, raw_data = TRUE)$read_options,
-               list(file_info = TRUE, raw_data = TRUE, vendor_data_table = FALSE))
+               list(file_info = TRUE, method_info = FALSE, raw_data = TRUE, vendor_data_table = FALSE))
 })
 
 

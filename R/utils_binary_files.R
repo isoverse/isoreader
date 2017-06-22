@@ -181,7 +181,7 @@ cap_at_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1) {
 
 # cap at next C block
 cap_at_next_C_block <- function(bfile, C_block) {
-  cap_at_next_C_block(bfile, C_block, min_pos = bfile$pos, occurence = 1)
+  cap_at_C_block(bfile, C_block, min_pos = bfile$pos, occurence = 1)
 }
 
 # move to C block range
@@ -342,14 +342,25 @@ re_times <- function(re, n) {
     class = "binary_regexp")
 }
 
-# find next occurence of supplied regular expression pattern
-find_next_pattern <- function(bfile, ..., value = FALSE) {
-  if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
+# combine regular expression patterns
+re_combine <- function(...) {
   regexps <- list(...)
   if (!all(sapply(regexps, is, "binary_regexp"))) 
     stop("can only use binary regexps, generate with re_x() functions", call. = FALSE)
-  pattern <- str_c(map_chr(regexps, "regexp"), collapse = "")
-  pos <- grepRaw(pattern, bfile$raw, offset = bfile$pos, value = value) 
+  structure(
+    list(
+      label = str_c(map_chr(regexps, "label"), collapse = ""),
+      regexp = str_c(map_chr(regexps, "regexp"), collapse = ""),
+      size = sum(map_dbl(regexps, "size"))
+    ),
+    class = "binary_regexp")
+}
+
+# find next occurence of supplied regular expression pattern
+find_next_pattern <- function(bfile, ..., value = FALSE) {
+  if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
+  regexps <- re_combine(...)
+  pos <- grepRaw(regexps$regexp, bfile$raw, offset = bfile$pos, value = value) 
   if (length(pos) == 0) return(NULL) # return NULL if not found
   else if (!value && pos > bfile$max_pos) return (NULL) # return NULL if bigger than allowed
   else return(pos)
@@ -374,15 +385,15 @@ move_to_next_pattern <- function(bfile, ..., max_gap = NULL, move_to_end = TRUE)
   } 
   
   # encountered a problem
-  regexps <- list(...)
+  regexps <- re_combine(...)
   gap_text <- if (!is.null(max_gap)) sprintf(" after maximal gap of %.0f bytes", max_gap) else ""
   op_error(
     bfile, 
     sprintf("could not find '%s'%s in search interval %.0f to %.0f, found '%s...'",
-            str_c(map_chr(regexps, "label"), collapse = ""), 
+            regexps$label, 
             gap_text, bfile$pos, bfile$max_pos,
             bfile %>% 
-              map_binary_structure(length = sum(map_dbl(regexps, "size")) + 
+              map_binary_structure(length = regexps$size + 
                                      (if(!is.null(max_gap)) max_gap else 50) + 10) %>% 
               generate_binary_structure_map_printout()))
 }
@@ -502,6 +513,8 @@ get_ctrl_blocks_config <- function() {
     `eop-nl`   = list(size = 2L, auto = TRUE, regexp = "\xdc\x85"), # DC 85 end of proof?? next line
     `vtab`     = list(size = 2L, auto = TRUE, regexp = "\x0b\x80"), # 0b 80 = vertical tab, divider in tables?
     `ce-80`    = list(size = 2L, auto = TRUE, regexp = "\xce\x80"), # ce 80 = not sure what it means but common divider in tables
+    `ce-8a`    = list(size = 2L, auto = TRUE, regexp = "\xce\x8a"), # ce 80 = not sure what it means but sometimes divider in tables
+    `ee-85`    = list(size = 2L, auto = TRUE, regexp = "\xee\x85"), # ce 80 = not sure what it means but sometimes in arrays
     `75-84`    = list(size = 2L, auto = TRUE, regexp = "\x75\x84"), # 75 84 - no idea what it means but it's special somehow
     `ff-80`    = list(size = 2L, auto = TRUE, regexp = "\\x00\xff\x80\\x00"), # ff 80 - no idea what it means 
     `07-80-id` = list(size = 6L, auto = TRUE, regexp = "\x05\x80.\xff(\\x00|\x80|\xff){2}", # some sort of counter or id

@@ -7,6 +7,7 @@ make_isofile_data_structure <- function() {
       version = packageVersion("isoreader"),
       read_options = list( # records read options+defaults
         file_info = FALSE, # whether file info was read
+        method_info = FALSE, # whether method info was read
         raw_data = FALSE, # whether mass data was read (Note: maybe not top-level b/c of scans?)
         vendor_data_table = FALSE # whether vendor data table was read
       ), 
@@ -15,6 +16,7 @@ make_isofile_data_structure <- function() {
         file_path = NA_character_, # path to file (file extension is key for processing)
         file_subpath = NA_character_ # sub path in case file is an archieve
       ),
+      method_info = list(), # all methods information
       raw_data = data_frame(), # all mass data (Note: maybe not top-level b/c of scans?)
       vendor_data_table = data_frame() # vendor computed data table
     ),
