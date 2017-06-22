@@ -478,7 +478,7 @@ find_binary_unicode = function(raw, minlength) {
 # Parse data =====
 
 # configuration information for the control blocks
-# 
+# good info at http://www.aboutmyip.com/AboutMyXApp/AsciiChart.jsp
 # those with auto = TRUE are considered when making an automatic map_binary_structure
 # 
 # @FIXME: testing
@@ -488,6 +488,7 @@ get_ctrl_blocks_config <- function() {
     # specific sequences
     `del-nl`   = list(size = 2L, auto = TRUE, regexp = "\x7f\x85"), # 7F 85 delete next line
     `eop-nl`   = list(size = 2L, auto = TRUE, regexp = "\xdc\x85"), # DC 85 end of proof?? next line
+    `vtab`     = list(size = 2L, auto = TRUE, regexp = "\x0b\x80"), # DB = vertical tab, divider in tables?
     `75-84`    = list(size = 2L, auto = TRUE, regexp = "\x75\x84"), # 75 84 - no idea what it means but it's special somehow
     `ff-80`    = list(size = 2L, auto = TRUE, regexp = "\\x00\xff\x80\\x00"), # ff 80 - no idea what it means 
     `07-80-id` = list(size = 6L, auto = TRUE, regexp = "\x05\x80.\xff(\\x00|\x80|\xff){2}", # some sort of counter or id
@@ -838,7 +839,7 @@ map_binary_structure <- function(bfile, start = bfile$pos, length = 100, ctrl_bl
   # generate new block record
   new_block <- function(start, length, type, rep_text = NA_character_) {
     block <- list(
-      start = start, end = start + length - 1, type = type, text_level = text_level, 
+      start = start, end = start + length - 1, type = type, 
       rep_text = rep_text, raw = bfile$raw[start:(start + length - 1)])
     setNames(list(block), start)
   }
@@ -846,7 +847,6 @@ map_binary_structure <- function(bfile, start = bfile$pos, length = 100, ctrl_bl
   # loop variables
   blocks <- list()  
   data_buffer <- c()
-  text_level <- 0
   pos <- last_block_end <- start
   while (pos < (start+length)) {
     
@@ -880,9 +880,7 @@ map_binary_structure <- function(bfile, start = bfile$pos, length = 100, ctrl_bl
         }
         
         # new control block
-        if (b == "etx") text_level <- text_level - 1
         blocks <- c(blocks, new_block(start = pos, length = ctrl_blocks[[b]]$size, type = b, rep_text = replace_text))
-        if (b == "stx") text_level <- text_level + 1
         
         # move position
         pos <- last_block_end <- pos + ctrl_blocks[[b]]$size
@@ -952,24 +950,23 @@ map_binary_structure <- function(bfile, start = bfile$pos, length = 100, ctrl_bl
 # generate binary structure map printout
 # @inheritParams print.binary_structure_map
 # @FIXME: testing
-generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, line_breaks = FALSE, pos_info = FALSE) {
+generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, line_break_blocks = c(), pos_info = FALSE) {
   
   # indentation function
-  nl_text <- if (line_breaks) "\n" else ""
-  nl_indent <- function(lvl, byte_start) {
-    mapply(function(n, bs) {
-      if(is.na(n)) "" 
+  nl_indent <- function(nls, lvl, byte_start) {
+    mapply(function(nl, n, bs) {
+      if(!nl || is.na(n)) "" 
       else 
-        str_c(c(nl_text, 
+        str_c(c(if (nl) "\n" else "", 
                 if (pos_info) sprintf("%07d: ", bs), 
-                if (line_breaks) rep("  ", n)), collapse = "")
-    }, lvl, byte_start)
+                rep("  ", n)), collapse = "")
+    }, nls, lvl, byte_start)
   }
   
   # get blocks
   blocks <- lapply(bsm$blocks, function(block) {
     block$raw <- str_c(block$raw, collapse = " ")
-    block[c("start", "type", "text_level", "rep_text", "raw")]
+    block[c("start", "type", "rep_text", "raw")]
   }) %>% bind_rows() 
   
   # data overview
@@ -1021,13 +1018,16 @@ generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, lin
   
   # indentation
   if (nrow(all_blocks) == 1)
-    all_blocks <- mutate(all_blocks, indent = 0)
+    all_blocks <- mutate(all_blocks, nl = TRUE, text_level = 0)
   else 
     all_blocks <- all_blocks %>% 
     mutate(
-      nl = start == min(start) | type == "cblock" | type %in% c("stx", "etx") | c("", type[1:(n()-1)]) %in% c("stx", "etx"),
-      text_level = text_level - min(text_level),
-      indent = ifelse(nl, text_level, NA))
+      nl = start == min(start) | type %in% line_break_blocks | c("", type[1:(n()-1)]) %in% line_break_blocks,
+      text_level = 0) # cumsum(type == "stx") - cumsum(type == "etx")) # stx/etx do not actually make sense for indentation
+  
+  # calculate indentation level
+  all_blocks <- all_blocks %>% 
+    mutate(indent = text_level - min(text_level, na.rm = TRUE))
   
   # text blocks
   all_blocks %>% 
@@ -1035,7 +1035,7 @@ generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, lin
       rep_text = ifelse(is.na(rep_text), str_c("<", raw, ">"), str_c("<", rep_text, ">")),
       rep_value = ifelse(is.na(rep_value), str_c("{", raw, "}"), rep_value),
       block_text = ifelse(type == "data", rep_value, rep_text), 
-      indent_text = str_c(nl_indent(indent, start), block_text)
+      indent_text = str_c(nl_indent(nl, indent, start), block_text)
     ) %>% 
     # combine text
     { str_c(.$indent_text, collapse = "") }
@@ -1045,9 +1045,9 @@ generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, lin
 #' @param x object to show.
 #' @param ... additional parameters passed to print.default
 #' @param data_as_raw whether to show data as raw
-#' @param line_breaks whether to inclue line breaks
+#' @param line_break_blocks at which blocks to introduce a line break
 #' @param pos_info whether to include position information
 #' @export
-print.binary_structure_map <- function(x, ..., data_as_raw = FALSE, line_breaks = TRUE, pos_info = line_breaks) {
-  cat("# Binary data structure: ", generate_binary_structure_map_printout(x, data_as_raw, line_breaks, pos_info))
+print.binary_structure_map <- function(x, ..., data_as_raw = FALSE, line_break_blocks = c("cblock", "stx", "etx"), pos_info = TRUE) {
+  cat("# Binary data structure: ", generate_binary_structure_map_printout(x, data_as_raw, line_break_blocks, pos_info))
 }
