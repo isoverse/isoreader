@@ -512,7 +512,8 @@ get_ctrl_blocks_config <- function() {
     # specific sequences
     `del-nl`   = list(size = 2L, auto = TRUE, regexp = "\x7f\x85"), # 7F 85 delete next line
     `eop-nl`   = list(size = 2L, auto = TRUE, regexp = "\xdc\x85"), # DC 85 end of proof?? next line
-    `vtab`     = list(size = 2L, auto = TRUE, regexp = "\x0b\x80"), # 0b 80 = vertical tab, divider in tables?
+    `0b-80`    = list(size = 2L, auto = TRUE, regexp = "\x0b\x80"), # 0b 80 = vertical tab, divider in tables?
+    `e0-81`    = list(size = 2L, auto = TRUE, regexp = "\xe0\x81"), # e0 81 = some sort of table divider?
     `ce-80`    = list(size = 2L, auto = TRUE, regexp = "\xce\x80"), # ce 80 = not sure what it means but common divider in tables
     `ce-8a`    = list(size = 2L, auto = TRUE, regexp = "\xce\x8a"), # ce 80 = not sure what it means but sometimes divider in tables
     `ee-85`    = list(size = 2L, auto = TRUE, regexp = "\xee\x85"), # ce 80 = not sure what it means but sometimes in arrays
