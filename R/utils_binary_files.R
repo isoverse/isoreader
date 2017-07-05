@@ -520,6 +520,7 @@ get_ctrl_blocks_config <- function() {
     `ff-80`    = list(size = 2L, auto = TRUE, regexp = "\\x00\xff\x80\\x00"), # ff 80 - no idea what it means 
     `07-80-id` = list(size = 6L, auto = TRUE, regexp = "\x05\x80.\xff(\\x00|\x80|\xff){2}", # some sort of counter or id
                    replace = function(b) str_c("id-", str_c(readBin(b[c(3,5,6)], "raw", n=6), collapse="-"))),
+    `54-fc` = list(size = 4L, auto = TRUE, regexp = "\x54\xfc\\x00\\x00"), #another type of data start indicator
     
     # FFF and EEE and combination blocks
     nl      = list(size = 4L, auto = TRUE, regexp = "\xff\xfe\xff\x0a"), # FF FE FF 0A new line

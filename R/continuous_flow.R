@@ -7,7 +7,7 @@
 #' @family isoread functions for different types of IRMS data
 #' @export
 isoread_continuous_flow <- function(
-  paths, read_raw_data = TRUE, read_file_info = TRUE, read_data_table = TRUE,
+  paths, read_raw_data = TRUE, read_file_info = TRUE, read_method_info = TRUE, read_vendor_data_table = FALSE,
   quiet = setting("quiet"), cache = setting("cache")) {
 
   # process data
@@ -17,7 +17,8 @@ isoread_continuous_flow <- function(
     data_structure = make_cf_data_structure(),
     read_raw_data = read_raw_data,
     read_file_info = read_file_info,
-    read_data_table = read_data_table,
+    read_method_info = read_method_info,
+    read_vendor_data_table = read_vendor_data_table,
     quiet = quiet,
     cache = cache
   )
