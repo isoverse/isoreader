@@ -13,7 +13,9 @@ isoread_dual_inlet(paths, read_raw_data = TRUE, read_file_info = TRUE,
 
 \item{read_raw_data}{whether to read the raw mass/ion data from the file}
 
-\item{read_file_info}{whether to read auxiliary file information (program, methods, etc.)}
+\item{read_file_info}{whether to read auxiliary file information (file id, sequence information, etc.)}
+
+\item{read_method_info}{whether to read methods information (standards, processing info)}
 
 \item{read_vendor_data_table}{whether to read the vendor computed data table}
 

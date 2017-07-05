@@ -2,7 +2,8 @@
 #' 
 #' @inheritParams isoread_files
 #' @param read_raw_data whether to read the raw mass/ion data from the file
-#' @param read_file_info whether to read auxiliary file information (program, methods, etc.)
+#' @param read_file_info whether to read auxiliary file information (file id, sequence information, etc.)
+#' @param read_method_info whether to read methods information (standards, processing info)
 #' @param read_vendor_data_table whether to read the vendor computed data table
 #' @family isoread functions for different types of IRMS data
 #' @export
