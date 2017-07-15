@@ -15,6 +15,12 @@ isoread_dxf <- function(ds, ...) {
     ds <- exec_func_with_error_catch(extract_isodat_measurement_info, ds)
   }
   
+  # process method info
+  if (ds$read_options$method_info) {
+    ds <- exec_func_with_error_catch(extract_primary_standard_information, ds)
+    ds <- exec_func_with_error_catch(extract_secondary_standard_information, ds)
+  }
+  
   # process raw data
   if (ds$read_option$raw_data) {
     ds <- exec_func_with_error_catch(extract_dxf_raw_voltage_data, ds)

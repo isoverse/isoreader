@@ -25,11 +25,11 @@ test_that("test that did file can be read", {
   # test specific files
   
   expect_true(file.exists(file <- system.file(package = "isoreader", "extdata", "continuous_flow_example.dxf")))
-  expect_is(dxf <- isoread_continuous_flow(file, cache = FALSE)[[1]], "continuous_flow")
+  expect_is(dxf <- isoread_continuous_flow(file, cache = FALSE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- system.file(package = "isoreader", "extdata", "peak_jump_example.dxf")))
-  expect_is(dxf <- isoread_continuous_flow(file, cache = FALSE)[[1]], "continuous_flow")
+  expect_is(dxf <- isoread_continuous_flow(file, cache = FALSE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
 })

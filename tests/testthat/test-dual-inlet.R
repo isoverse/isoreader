@@ -22,10 +22,10 @@ test_that("test that did file can be read", {
   # test specific files
   
   expect_true(file.exists(file <- system.file(package = "isoreader", "extdata", "dual_inlet_example.did")))
-  expect_is(did <- isoread_dual_inlet(file, cache = FALSE)[[1]], "dual_inlet")
+  expect_is(did <- isoread_dual_inlet(file, cache = FALSE), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
   
   expect_true(file.exists("additional_dual_inlet_example_01.did"))
-  expect_is(isoread_dual_inlet("additional_dual_inlet_example_01.did", cache = FALSE)[[1]], "dual_inlet")
+  expect_is(isoread_dual_inlet("additional_dual_inlet_example_01.did", cache = FALSE), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
 })

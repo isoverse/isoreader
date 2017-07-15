@@ -123,6 +123,8 @@ extract_secondary_standard_information <- function(ds) {
   }
   
   # standards
+  print(bind_rows(refs))
+  print(bind_rows(secondary_stds))
   ds$method_info$secondary_standards <- 
     full_join(bind_rows(refs), bind_rows(secondary_stds), by = "molecule")
   return(ds)
