@@ -41,17 +41,24 @@ get_file_info <- function(isofiles) {
 #' Combines primary and secondary standards into a single table
 #'
 #' @inheritParams get_raw_data
+#' @param with_ratios whether to include ratios or just standard delta values
 #' @family data aggregation functions
 #' @export
-get_method_info_standards <- function(isofiles) {
+get_method_info_standards <- function(isofiles, with_ratios = TRUE) {
   isofiles <- as_isofile_list(isofiles)
   check_read_options(isofiles, "method_info")
   
   lapply(isofiles, function(isofile) {
-    full_join(
-      isofile$method_info$secondary_standards,
-      isofile$method_info$primary_standards,
-      by = "reference") %>% 
+    if(with_ratios) {
+      stds <- left_join(
+        isofile$method_info$standards,
+        isofile$method_info$reference_ratios,
+        by = "reference")
+    } else {
+      stds <- isofile$method_info$standards
+    }
+    
+    stds %>% 
       mutate(file_id = isofile$file_info$file_id) %>% 
       select(file_id, everything())
   }) %>% bind_rows()

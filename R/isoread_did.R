@@ -17,8 +17,7 @@ isoread_did <- function(ds, ...) {
   
   # process method info
   if (ds$read_options$method_info) {
-    ds <- exec_func_with_error_catch(extract_primary_standard_information, ds)
-    ds <- exec_func_with_error_catch(extract_secondary_standard_information, ds)
+    ds <- exec_func_with_error_catch(extract_isodat_reference_values, ds)
   }
   
   # process raw data
@@ -32,104 +31,6 @@ isoread_did <- function(ds, ...) {
   return(ds)
 }
 
-# extract reference standard information
-extract_primary_standard_information <- function(ds) {
-  
-  # find the different standard names
-  ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot recover primary standard") %>% 
-    move_to_C_block_range("CPrimaryStandardMethodPart", "CSecondaryStandardMethodPart")
-  
-  ref_names <- ref_pos <- c()
-  while(!is.null(find_next_pattern(ds$binary, re_text("/"), re_block("fef-0"), re_block("fef-x"), re_block("text"), re_null(4), re_block("stx")))) {
-    ds$binary <- ds$binary %>%
-      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-x")) %>%
-      capture_data("reference", "text", re_null(4), re_block("stx")) 
-    if (!is.null(ds$binary$data$reference)) {
-      ref_names <- c(ref_names, ds$binary$data$reference)
-      ref_pos <- c(ref_pos, ds$binary$pos)
-    }
-  }
-  
-  # find the different standard values
-  ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot recover primary standard") %>% 
-    move_to_C_block_range("CPrimaryStandardMethodPart", "CSecondaryStandardMethodPart")
-  
-  primary_stds <- list()
-  standard_value_re <- re_combine(re_text(","), re_times(re_block("fef-0"), 2), re_null(4), re_block("x-000"), re_block("fef-x"))
-  while(!is.null(find_next_pattern(ds$binary, standard_value_re))) {
-    ds$binary <- ds$binary %>%
-      move_to_next_pattern(standard_value_re) %>%
-      capture_data("code", "text", re_block("fef-x"), move_past_dots = TRUE) %>% 
-      capture_data("ratio_name", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
-      capture_data("ratio_format", "text", re_block("fef-0"), re_block("fef-x"), move_past_dots = TRUE) %>% 
-      capture_data("element", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
-      move_to_next_pattern(re_block("stx"), re_block("x-000")) %>% 
-      capture_data("ratio_value", "double", re_null(2), re_block("x-000")) %>% 
-      identity()
-    ref_name <- ref_names[max(which(ds$binary$pos > ref_pos))]
-    primary_stds <- c(primary_stds, list(c(reference = ref_name, ds$binary$data[c("element", "ratio_name", "ratio_value", "ratio_format")])))
-  }
-  
-  # store information
-  ds$method_info$primary_standards <- bind_rows(primary_stds)
-  return(ds)
-}
-
-# extract secondary standard information
-extract_secondary_standard_information <- function(ds) {
-  # get secondary standard names
-  ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot recover secondary standard names") %>% 
-    move_to_C_block("CSecondaryStandardMethodPart")
-  
-  if (is.null(cap <- find_next_pattern(ds$binary, re_text("Isotope MS"))))
-    stop("cannot find 'Isotope MS' section", call. = FALSE)
-  ds$binary <- cap_at_pos(ds$binary, cap)
-  
-  refs <- list()
-  pre_std_name_re <- re_combine(re_block("stx"), re_block("nl"), re_text("Instrument"), re_block("etx"), re_block("fef-x"))
-  while(!is.null(find_next_pattern(ds$binary, pre_std_name_re))) {
-    ds$binary <- ds$binary %>%
-      move_to_next_pattern(pre_std_name_re) %>%
-      capture_data("name", "text", re_block("fef-x"), move_past_dots = TRUE) %>% 
-      capture_data("molecule", "text", re_null(4), re_direct(".."), re_block("etx")) %>% 
-      identity()
-    refs <- c(refs, list(ds$binary$data[c("name", "molecule")]))
-  }
-  
-  # get secondar standard values
-  ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot recover secondary standard values") %>% 
-    move_to_C_block("CSecondaryStandardMethodPart", reset_cap = FALSE) # move back to start, cap is still the same
-  
-  secondary_stds <- list()
-  standard_value_re <- re_combine(re_text("/"), re_times(re_block("fef-0"), 2), re_null(4), re_block("x-000"), re_block("fef-x"))
-  while(!is.null(find_next_pattern(ds$binary, standard_value_re))) {
-    ds$binary <- ds$binary %>%
-      move_to_next_pattern(standard_value_re) %>%
-      capture_data("code", "text", re_block("fef-x"), move_past_dots = TRUE) %>% 
-      capture_data("delta_name", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
-      capture_data("delta_format", "text", re_block("fef-x"), move_past_dots = TRUE) %>% 
-      capture_data("molecule", "text", re_block("fef-0"), re_block("fef-x"), move_past_dots = TRUE) %>%
-      capture_data("delta_units", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
-      move_to_next_pattern(re_block("stx"), re_block("x-000")) %>% 
-      capture_data("delta_value", "double", re_null(2), re_block("x-000"), move_past_dots = TRUE) %>% 
-      move_to_next_pattern(re_block("stx"), re_block("fef-x"), max_gap = 0) %>% 
-      capture_data("reference", "text", re_null(12), re_or(re_block("ee-85"), re_block("x-000"))) %>% 
-      identity()
-    secondary_stds <- c(secondary_stds, list(ds$binary$data[c("delta_name", "delta_value", "delta_units", "delta_format", "molecule", "reference")]))
-  }
-  
-  # standards
-  print(bind_rows(refs))
-  print(bind_rows(secondary_stds))
-  ds$method_info$secondary_standards <- 
-    full_join(bind_rows(refs), bind_rows(secondary_stds), by = "molecule")
-  return(ds)
-}
-  
 # extract voltage data in did file
 extract_did_raw_voltage_data <- function(ds) {
   

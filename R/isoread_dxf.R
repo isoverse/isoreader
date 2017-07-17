@@ -17,8 +17,7 @@ isoread_dxf <- function(ds, ...) {
   
   # process method info
   if (ds$read_options$method_info) {
-    ds <- exec_func_with_error_catch(extract_primary_standard_information, ds)
-    ds <- exec_func_with_error_catch(extract_secondary_standard_information, ds)
+    ds <- exec_func_with_error_catch(extract_isodat_reference_values, ds)
   }
   
   # process raw data

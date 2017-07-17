@@ -347,7 +347,7 @@ re_times <- function(re, n) {
 re_combine <- function(...) {
   regexps <- list(...)
   if (!all(sapply(regexps, is, "binary_regexp"))) 
-    stop("can only use binary regexps, generate with re_x() functions", call. = FALSE)
+    stop("can only combine binary regexps, generate with re_x() functions", call. = FALSE)
   structure(
     list(
       label = str_c(map_chr(regexps, "label"), collapse = ""),
@@ -358,11 +358,12 @@ re_combine <- function(...) {
 }
 
 # find next occurence of supplied regular expression pattern
-find_next_pattern <- function(bfile, ..., value = FALSE) {
+find_next_pattern <- function(bfile, ..., max_gap = NULL, value = FALSE) {
   if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
   regexps <- re_combine(...)
   pos <- grepRaw(regexps$regexp, bfile$raw, offset = bfile$pos, value = value) 
   if (length(pos) == 0) return(NULL) # return NULL if not found
+  else if (!is.null(max_gap) && !value && pos > bfile$pos + max_gap) return(NULL) # return NULL if outside max gap
   else if (!value && pos > bfile$max_pos) return (NULL) # return NULL if bigger than allowed
   else return(pos)
 }
@@ -377,10 +378,10 @@ move_to_next_pattern <- function(bfile, ..., max_gap = NULL, move_to_end = TRUE)
   if(!is.null(max_gap) && !is.numeric(max_gap)) stop("max gap must be a number", call. = FALSE)
   
   # find pattern
-  pos <- find_next_pattern(bfile, ...)
+  pos <- find_next_pattern(bfile, ..., max_gap = max_gap)
   
   # move to new position
-  if ( !is.null(pos) && (is.null(max_gap) || pos <= bfile$pos + max_gap)) {
+  if ( !is.null(pos) ) {
     n <- if (move_to_end) length(find_next_pattern(bfile, ..., value = TRUE)) else 0
     return(move_to_pos(bfile, pos + n))
   } 
@@ -541,7 +542,8 @@ get_ctrl_blocks_config <- function() {
     `C-block`  = list(size = 20L, auto = FALSE, regexp = "\xff\xff(\\x00|[\x01-\x0f])\\x00.\\x00\x43[\x20-\x7e]+"),
     
     # text block (not auto processed)
-    text = list(size = 20L, auto = FALSE, regexp = "([\x20-\x7e]\\x00)+")
+    text   = list(size = 20L, auto = FALSE, regexp = "([\x20-\x7e]\\x00)+"),
+    permil = list(size = 2L, auto = FALSE, regexp = "\x30\x20")
   )
 }
 
@@ -858,11 +860,15 @@ map_C_block_structure <- function(bfile, C_block, occurence = 1, length = 100, c
 }
 
 # map out binary structure for easy visualization (used mostly for error messages and debugging)
-# @param start at which byte positio to start mapping (index 1 based)
 # @param length how many bytes to map
+# @param start at which byte positio to start mapping (index 1 based)
 # @param ctrl_blocks named list of block patterns with size, regexp and [optional] replace function
 # @FIXME: testing
-map_binary_structure <- function(bfile, start = bfile$pos, length = 100, ctrl_blocks = get_ctrl_blocks_config()) {
+map_binary_structure <- function(bfile, length = 100, start = bfile$pos, ctrl_blocks = get_ctrl_blocks_config()) {
+  
+  if(!is(bfile, "binary_file")) 
+    stop("can only generate map for binary file object, passed in: ", 
+         str_c(class(bfile), collapse = ", "), call. = FALSE)
   
   # generate new block record
   new_block <- function(start, length, type, rep_text = NA_character_) {

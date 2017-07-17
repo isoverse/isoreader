@@ -1,5 +1,114 @@
 # isodat file information common to multiple file types =====
 
+# extract the reference deltas and ratios for isodat files
+extract_isodat_reference_values <- function(ds) {
+  # get secondar standard values
+  ds$binary <- ds$binary %>% 
+    set_binary_file_error_prefix("cannot recover reference names") %>% 
+    move_to_C_block("CSecondaryStandardMethodPart", reset_cap = TRUE) 
+  
+  # cap at CResultArray for dxf files
+  if (is(ds, "continuous_flow")) {
+    ds$binary <- cap_at_next_C_block(ds$binary, "CResultArray")
+  }
+  
+  # find instrument reference names
+  instrument_pre1 <- re_combine(re_block("etx"), re_or(re_text("/"), re_text(",")), re_block("fef-0"), re_block("fef-x"))
+  instrument_pre2 <- re_combine(re_null(4), re_block("stx"), re_block("nl"), re_text("Instrument"))
+  ref_names <- ref_configs <- ref_pos <- c()
+  while(!is.null(pos <- find_next_pattern(ds$binary, re_combine(instrument_pre1, re_block("text"), instrument_pre2)))) {
+    ds$binary <- ds$binary %>% 
+      move_to_pos(pos) %>% 
+      move_to_next_pattern(instrument_pre1, max_gap = 0) %>% 
+      capture_data("ref_name", "text", instrument_pre2, move_past_dots = TRUE) 
+    
+    instrument_post1 <- re_combine(re_block("etx"), re_block("fef-x"), re_text(ds$binary$data$ref_name), re_block("fef-x"))
+    instrument_post2 <- re_combine(re_null(4), re_direct("[^\\x00]{2}"), re_block("etx"))
+    
+    # check for gas configuration name
+    if(!is.null(pos <- find_next_pattern(ds$binary, re_combine(instrument_post1, re_block("text"), instrument_post2), max_gap = 0))) {
+      ds$binary <- ds$binary %>% 
+        move_to_pos(pos) %>% 
+        move_to_next_pattern(instrument_post1, max_gap = 0) %>% 
+        capture_data("config", "text", instrument_post2) 
+    } else {
+      ds$binary$data$config <- ""
+    }
+    
+    # store information
+    ref_names <- c(ref_names, ds$binary$data$ref_name)
+    ref_configs <- c(ref_configs, ds$binary$data$config)
+    ref_pos <- c(ref_pos, ds$binary$pos)
+  }
+  # references (not saved, just for troubleshooting and for delta+ratio assignments)
+  refs <- data_frame(name = ref_names, config = ref_configs, pos = ref_pos)
+  
+  ### deltas
+  # get reference delta values
+  ds$binary <- ds$binary %>% 
+    set_binary_file_error_prefix("cannot recover reference delta values") %>% 
+    move_to_C_block("CSecondaryStandardMethodPart", reset_cap = FALSE) 
+  
+  # find delta values
+  delta_re <- re_combine(re_null(4), re_block("x-000"), re_block("fef-x"), re_text("Delta "))
+  deltas <- list()
+  while(!is.null(pos <- find_next_pattern(ds$binary, delta_re))) {
+    ds$binary <- ds$binary %>% 
+      move_to_pos(pos + delta_re$size) %>% 
+      capture_data("delta_code", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
+      capture_data("delta_name", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
+      capture_data("delta_format", "text", re_block("fef-x"), move_past_dots = TRUE) %>% 
+      capture_data("gas", "text", re_block("fef-0"), re_block("fef-x"), move_past_dots = TRUE) %>%
+      #capture_data("delta_units", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
+      move_to_next_pattern(re_block("stx"), re_block("x-000")) %>% 
+      capture_data("delta_value", "double", re_null(2), re_block("x-000"), move_past_dots = TRUE) %>% 
+      move_to_next_pattern(re_block("stx"), re_block("fef-x"), max_gap = 0) %>% 
+      capture_data("reference", "text", re_null(12), re_direct("([^\\x00]{2})?"), re_block("x-000")) %>% 
+      identity()
+    deltas <- c(deltas, list(c(standard = ref_names[max(which(ds$binary$pos > ref_pos))],
+                               #config = ref_configs[max(which(ds$binary$pos > ref_pos))], # not actually used, usually the same as the $gas
+                               ds$binary$data[c("gas", "delta_code", "delta_name", "delta_value", "delta_format", "reference")])))
+  }
+  
+  deltas <- bind_rows(deltas) %>% 
+    select(-delta_code) %>%  # code is very isodat specific and not stored in final
+    select(-delta_format) # format does not realy hold information that isn't contained in the values themselves
+  
+  ### ratios
+  
+  # get reference delta values
+  ds$binary <- ds$binary %>% 
+    set_binary_file_error_prefix("cannot recover reference ratio values") %>% 
+    move_to_C_block("CSecondaryStandardMethodPart", reset_cap = FALSE) 
+  
+  # find ratios
+  ratio_re <- re_combine(re_null(4), re_block("x-000"), re_block("fef-x"), re_text("Ratio "))
+  ratios <- list()
+  while(!is.null(pos <- find_next_pattern(ds$binary, ratio_re))) {
+    ds$binary <- ds$binary %>% 
+      move_to_pos(pos + delta_re$size) %>% 
+      capture_data("ratio_code", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
+      capture_data("ratio_name", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
+      capture_data("ratio_format", "text", re_block("fef-0"), re_block("fef-x"), move_past_dots = TRUE) %>% 
+      capture_data("element", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
+      move_to_next_pattern(re_block("stx"), re_block("x-000")) %>% 
+      capture_data("ratio_value", "double", re_null(2), re_block("x-000")) %>% 
+      identity()
+    ratios <- c(ratios, list(c(reference = ref_names[max(which(ds$binary$pos > ref_pos))],
+                               ds$binary$data[c("ratio_code", "element", "ratio_name", "ratio_value", "ratio_format")])))
+  }
+  
+  ratios <- bind_rows(ratios) %>% unique() %>% 
+    select(-ratio_code) %>%  # code is very isodat specific and not stored in final
+    select(-ratio_format) # format does not realy hold information that isn't contained in the values themselves
+  
+  # store information
+  ds$method_info$standards <- deltas
+  ds$method_info$reference_ratios <- ratios
+  
+  return(ds)
+}
+
 # extracts the sequence line information for isodat files
 extract_isodat_sequence_line_info <- function(ds) {
   
