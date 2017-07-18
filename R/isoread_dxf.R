@@ -192,7 +192,7 @@ extract_dxf_vendor_data_table <- function(ds) {
   ### rest of data table
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot process vendor data table") %>% 
-    move_to_C_block("CGCPeakList")
+    move_to_C_block("CGCPeakList", reset_cap = FALSE) # important to NOT reset position cap
   
   # find columns and row data for the whole data table
   columns <- list()
