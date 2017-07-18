@@ -33,8 +33,8 @@ test_that("test that did file can be read", {
   expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- "cf_example_H_01.dxf"))
-  expect_is(isoread_continuous_flow(file, cache = FALSE), "continuous_flow")
-  expect_equal(nrow(problems(did)), 0)
+  expect_is(dxf <- isoread_continuous_flow(file, cache = FALSE), "continuous_flow")
+  expect_equal(nrow(problems(dxf)), 0)
   
 })
 
