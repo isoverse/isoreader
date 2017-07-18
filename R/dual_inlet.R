@@ -11,6 +11,7 @@ isoread_dual_inlet <- function(
   paths, read_raw_data = TRUE, read_file_info = TRUE, read_method_info = TRUE, read_vendor_data_table = FALSE,
   quiet = setting("quiet"), cache = setting("cache")) {
   
+  # process data
   isoread_files(
     paths,
     supported_extensions = get_supported_di_files(),

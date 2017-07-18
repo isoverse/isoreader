@@ -1,9 +1,6 @@
 #' Load continuous flow data
 #' 
-#' @inheritParams isoread_files
-#' @param read_raw_data whether to read the raw mass/ion data from the file
-#' @param read_file_info whether to read auxiliary file information (program, methods, etc.)
-#' @param read_data_table whether to attempt to read any preprocessed data tables from the file
+#' @inheritParams isoread_dual_inlet
 #' @family isoread functions for different types of IRMS data
 #' @export
 isoread_continuous_flow <- function(

@@ -755,6 +755,9 @@ map_binary_structure <- function(bfile, length = 100, start = bfile$pos, ctrl_bl
 # @FIXME: testing
 generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, line_break_blocks = c(), pos_info = FALSE) {
   
+  # global vars
+  trailing_zeros <- start <- data_type <- type <- text_level <- rep_text <- rep_value <- nl <- indent <- block_text <- NULL
+  
   # indentation function
   nl_indent <- function(nls, lvl, byte_start) {
     mapply(function(nl, n, bs) {

@@ -110,6 +110,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
   }
   
   # add time point column
+  tp <- time.s <- NULL # global vars
   ds$raw_data <-
     voltages %>% arrange(time.s) %>% 
     mutate(tp = 1:n()) %>% 
@@ -160,6 +161,7 @@ extract_dxf_vendor_data_table <- function(ds) {
   rts_df <- bind_rows(rts) 
   
   # retention times
+  peak <- start <- rt <- end <- mass <- amp <- Ampl <- bg <- BGD <- NULL
   peaks <- rts_df %>% 
     select(peak, Start = start, Rt = rt, End = end) %>% 
     distinct(peak, .keep_all = TRUE) %>% 
@@ -188,11 +190,12 @@ extract_dxf_vendor_data_table <- function(ds) {
   columns <- list()
   rows <- list()
   rows_i <- 0
-  positions <- find_next_patterns(ds$binary, re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("x-000"), re_block("fef-x"))
+  pre_column_re <- re_combine(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("x-000"), re_block("fef-x"))
+  positions <- find_next_patterns(ds$binary, pre_column_re)
   for(pos in positions) {
     # get column id
     ds$binary <- ds$binary %>% 
-      move_to_pos(pos + pre_re$size) %>% 
+      move_to_pos(pos + pre_column_re$size) %>% 
       move_to_next_pattern(re_block("fef-x")) %>% # skip ID column since it is not unique in peak jumping files
       capture_data("col", "raw", re_block("fef-x"), move_past_dots = TRUE, ignore_trailing_zeros = FALSE) %>% 
       capture_data("format", "text", re_block("fef-x"), move_past_dots = TRUE) # retrieve format (!not always the same)
@@ -214,8 +217,7 @@ extract_dxf_vendor_data_table <- function(ds) {
       
       # data format
       type <- 
-        if (!process) ""
-      else if (ds$binary$data$format == "%s") "text"
+      if (ds$binary$data$format == "%s") "text"
       else if (ds$binary$data$format %in% c("%u", "%d")) "integer"
       else if (str_detect(ds$binary$data$format, "\\%[0-9.]+f")) "double"
       else op_error(ds$binary, 
@@ -266,6 +268,7 @@ extract_dxf_vendor_data_table <- function(ds) {
   cols <- bind_rows(columns)
   
   # store vendor data table
+  .check. <- column <- NULL # global var
   data_table <- full_join(peaks, mutate(bind_rows(rows), .check. = TRUE), by = "Nr.")
   if (any(is.na(data_table$Start) || any(is.na(data_table$.check.)))) {
     ds <- register_warning(ds, details = "vendor data table has unexpected empty cells, process vendor table with care")

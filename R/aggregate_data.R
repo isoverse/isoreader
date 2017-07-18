@@ -10,6 +10,7 @@ get_raw_data <- function(isofiles) {
   check_read_options(isofiles, "raw_data")
   
   # Note: provide easy way to include additional information (merge with get_file_info() but a select set of columns)
+  file_id <- NULL # global vars
   lapply(isofiles, function(isofile) {
     as_data_frame(isofile$raw_data) %>% 
       mutate(file_id = isofile$file_info$file_id) %>% 
@@ -58,6 +59,7 @@ get_method_info_standards <- function(isofiles, with_ratios = TRUE) {
       stds <- isofile$method_info$standards
     }
     
+    file_id <- NULL # global vars
     stds %>% 
       mutate(file_id = isofile$file_info$file_id) %>% 
       select(file_id, everything())
@@ -74,6 +76,7 @@ get_method_info_standards <- function(isofiles, with_ratios = TRUE) {
 get_vendor_data_table <- function(isofiles, with_units = TRUE) {
   isofiles <- as_isofile_list(isofiles)
   check_read_options(isofiles, "vendor_data_table")
+  column <- column_with_units <- file_id <- NULL # global vars
   lapply(isofiles, function(isofile) {
     df <- isofile$vendor_data_table
     if (with_units && is.null(attr(df, "units")))  {

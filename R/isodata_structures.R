@@ -272,6 +272,7 @@ cleanup_isoreader_cache <- function(all = FALSE) {
     file.remove(files)
     if (!setting("quiet")) message("Info: removed all (", length(files), ") cached isoreader files.")
   } else {
+    isofile <- NULL
     remove <- sapply(files, function(file){
       load(file)
       if (!exists("isofile", inherits = FALSE) || !(is_iso_object(isofile))) return(TRUE) # always remove non-iso object files

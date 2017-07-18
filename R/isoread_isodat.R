@@ -12,6 +12,9 @@ extract_isodat_reference_values <- function(ds) {
     ds$binary <- cap_at_next_C_block(ds$binary, "CResultArray")
   }
   
+  # global vars
+  delta_code <- delta_format <- ratio_code <- ratio_format <- NULL
+  
   # find instrument reference names
   instrument_pre1 <- re_combine(re_block("etx"), re_or(re_text("/"), re_text(",")), re_block("fef-0"), re_block("fef-x"))
   instrument_pre2 <- re_combine(re_null(4), re_block("stx"), re_block("nl"), re_text("Instrument"))
