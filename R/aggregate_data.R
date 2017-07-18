@@ -79,6 +79,7 @@ get_vendor_data_table <- function(isofiles, with_units = TRUE) {
   column <- column_with_units <- file_id <- NULL # global vars
   lapply(isofiles, function(isofile) {
     df <- isofile$vendor_data_table
+    if (nrow(df) == 0) return(df)
     if (with_units && is.null(attr(df, "units")))  {
       warning("isofile ", isofile$file_info$file_id, " does not have unit information in its vendor data table", call. = FALSE, immediate. = TRUE)
     } else if (with_units) {

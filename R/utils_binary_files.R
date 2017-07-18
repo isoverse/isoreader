@@ -323,6 +323,7 @@ move_to_next_pattern <- function(bfile, ..., max_gap = NULL, move_to_end = TRUE)
 # capture data block data in specified type
 # uses parse_raw_data and therefore can handle multiple data types
 # @inheritParams parse_raw_data
+# note: consider renaming to capture_data_till_pattern
 capture_data <- function(bfile, id, type, ..., data_bytes_max = NULL, move_past_dots = FALSE,
                          ignore_trailing_zeros = TRUE, exact_length = TRUE, sensible = NULL) {
   
@@ -370,7 +371,7 @@ capture_n_data <- function(bfile, id, type, n, sensible = NULL) {
   # store data
   id_text <- sprintf("'%s' capture failed: ", id)
   bfile$data[[id]] <- 
-    parse_raw_data(bfile$raw[bfile$pos:(bfile$pos + size * n - 1)], type,
+    parse_raw_data(bfile$raw[bfile$pos:(bfile$pos + size * n - 1)], type, n = n,
                    ignore_trailing_zeros = FALSE,
                    exact_length = FALSE, sensible = sensible,
                    errors = str_c(bfile$error_prefix, id_text)) 
@@ -705,6 +706,9 @@ map_binary_structure <- function(bfile, length = 100, start = bfile$pos, ctrl_bl
                              min_value = NA_real_, max_value = NA_real_)
   
   # loop through blocks to interpret data
+  if (length(blocks) == 0) # no structure blocks found
+    blocks <- new_block(start, length, "raw")
+  
   for (i in 1:length(blocks)) {
     
     # only process if data blocks

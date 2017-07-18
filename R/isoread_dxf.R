@@ -79,21 +79,21 @@ extract_dxf_raw_voltage_data <- function(ds) {
     move_to_next_pattern(re_text("OrigDataBlock"), re_null(4), re_block("stx"))
   
   # find all data sets
-  data_start_re <- re_combine(
-    re_block("fef-0"), re_null(4), re_block("x-000"), re_block("x-000"), re_direct(".."), 
-    re_block("x-000"), re_direct(".."), re_null(2))
+  data_start_re <- re_combine(re_block("fef-0"), re_null(4), re_block("x-000"), re_block("x-000"), re_direct("..", size = 2), re_block("x-000"))
+  data_end_re <- re_combine(re_direct(".{4}"), re_null(4), re_block("fef-0"), re_block("stx"))
+  gas_config_re <- re_combine(re_block("fef-x"), re_block("text"), re_block("fef-0"))
   voltages <- data_frame()
-  while (!is.null(find_next_pattern(ds$binary, data_start_re))) {
+  positions <- find_next_patterns(ds$binary, data_start_re)
+  for (pos in positions) {
     # move to beginning of data
-    ds$binary <- ds$binary %>% move_to_next_pattern(data_start_re)
+    ds$binary <- ds$binary %>% move_to_pos(pos + data_start_re$size + 4L) # 4 byte gap before data
     
     # find gas configuration name
     gas_config <- ds$binary %>% 
-      move_to_next_pattern(re_direct(".."), re_null(6), re_block("fef-0")) %>% 
-      move_to_next_pattern(re_block("etx"), re_block("x-000"), re_block("x-000"), re_block("fef-x")) %>% 
-      capture_data("gas", "text", re_block("fef-0"), re_null(4), re_direct(".."), re_block("etx"), re_text("/"),
-                   re_block("fef-0"), data_bytes_max = 50) %>% 
-                   { .$data$gas }
+      move_to_next_pattern(data_end_re) %>% 
+      move_to_next_pattern(gas_config_re, move_to_end = FALSE, max_gap = 20) %>% 
+      skip_pos(4) %>% # skip the fef-x at the beginning
+      capture_data("gas", "text", re_block("fef-0"), data_bytes_max = 50) %>% { .$data$gas }
     
     # find gas configuration masses
     masses <- configs[[gas_config]]
@@ -102,11 +102,19 @@ extract_dxf_raw_voltage_data <- function(ds) {
     
     # save voltage data
     ds$binary <- ds$binary %>% 
-      capture_data("voltages", c("float", rep("double", length(masses))),  
-                   re_direct(".."), re_null(6), re_block("fef-0")) 
+      capture_data("voltages", c("float", rep("double", length(masses))), data_end_re)
     voltages <- bind_rows(voltages, 
                           ds$binary$data$voltages %>% 
                             as_data_frame() %>% setNames(c("time.s", masses_columns)))
+  }
+  
+  # check for data
+  if (nrow(voltages) == 0) {
+    if (setting("debug")) { # debug
+      message("DEBUG: found gas configurations: ")
+      print(configs)
+    }
+    stop("could not find raw voltage data", call. = FALSE)
   }
   
   # add time point column
