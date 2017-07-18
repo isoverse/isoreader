@@ -358,14 +358,22 @@ re_combine <- function(...) {
 }
 
 # find next occurence of supplied regular expression pattern
-find_next_pattern <- function(bfile, ..., max_gap = NULL, value = FALSE) {
+find_next_pattern <- function(bfile, ..., max_gap = NULL, value = FALSE, all = FALSE) {
   if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
   regexps <- re_combine(...)
-  pos <- grepRaw(regexps$regexp, bfile$raw, offset = bfile$pos, value = value) 
+  pos <- grepRaw(regexps$regexp, bfile$raw, offset = bfile$pos, value = value, all = all) 
   if (length(pos) == 0) return(NULL) # return NULL if not found
   else if (!is.null(max_gap) && !value && pos > bfile$pos + max_gap) return(NULL) # return NULL if outside max gap
   else if (!value && pos > bfile$max_pos) return (NULL) # return NULL if bigger than allowed
   else return(pos)
+}
+
+# find the next occurences of a supplised regular expression pattern
+find_next_patterns <- function(bfile, ...) {
+  positions <- find_next_pattern(bfile, ..., value = FALSE, all = TRUE)
+  positions <- positions[positions <= bfile$max_pos] # don't allow those that exceed the allowed positions
+  if (length(positions) == 0) return(NULL)
+  return(positions)
 }
 
 # move to next regular expression pattern

@@ -4,7 +4,7 @@
 extract_isodat_reference_values <- function(ds) {
   # get secondar standard values
   ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot recover reference names") %>% 
+    set_binary_file_error_prefix("cannot recover references") %>% 
     move_to_C_block("CSecondaryStandardMethodPart", reset_cap = TRUE) 
   
   # cap at CResultArray for dxf files
@@ -16,7 +16,8 @@ extract_isodat_reference_values <- function(ds) {
   instrument_pre1 <- re_combine(re_block("etx"), re_or(re_text("/"), re_text(",")), re_block("fef-0"), re_block("fef-x"))
   instrument_pre2 <- re_combine(re_null(4), re_block("stx"), re_block("nl"), re_text("Instrument"))
   ref_names <- ref_configs <- ref_pos <- c()
-  while(!is.null(pos <- find_next_pattern(ds$binary, re_combine(instrument_pre1, re_block("text"), instrument_pre2)))) {
+  positions <- find_next_patterns(ds$binary, re_combine(instrument_pre1, re_block("text"), instrument_pre2))
+  for (pos in positions) {
     ds$binary <- ds$binary %>% 
       move_to_pos(pos) %>% 
       move_to_next_pattern(instrument_pre1, max_gap = 0) %>% 
@@ -52,7 +53,9 @@ extract_isodat_reference_values <- function(ds) {
   # find delta values
   delta_re <- re_combine(re_null(4), re_block("x-000"), re_block("fef-x"), re_text("Delta "))
   deltas <- list()
-  while(!is.null(pos <- find_next_pattern(ds$binary, delta_re))) {
+  
+  positions <- find_next_patterns(ds$binary, delta_re)
+  for (pos in positions) {
     ds$binary <- ds$binary %>% 
       move_to_pos(pos + delta_re$size) %>% 
       capture_data("delta_code", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
@@ -84,7 +87,9 @@ extract_isodat_reference_values <- function(ds) {
   # find ratios
   ratio_re <- re_combine(re_null(4), re_block("x-000"), re_block("fef-x"), re_text("Ratio "))
   ratios <- list()
-  while(!is.null(pos <- find_next_pattern(ds$binary, ratio_re))) {
+  
+  positions <- find_next_patterns(ds$binary, ratio_re)
+  for (pos in positions) {
     ds$binary <- ds$binary %>% 
       move_to_pos(pos + delta_re$size) %>% 
       capture_data("ratio_code", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
