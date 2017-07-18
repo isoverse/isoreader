@@ -26,7 +26,7 @@ isoread_did <- function(ds, ...) {
   
   # process pre-evaluated data table
   if (ds$read_options$vendor_data_table)
-    ds <- exec_func_with_error_catch(extract_vendor_data_table, ds)
+    ds <- exec_func_with_error_catch(extract_did_vendor_data_table, ds)
   
   return(ds)
 }
@@ -104,7 +104,7 @@ extract_did_raw_voltage_data <- function(ds) {
 }
 
 # extract vendor computed data table
-extract_vendor_data_table <- function(ds) {
+extract_did_vendor_data_table <- function(ds) {
   
   # find sequence line information
   ds$binary <- ds$binary %>% 

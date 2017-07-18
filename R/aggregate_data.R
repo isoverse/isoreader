@@ -68,13 +68,21 @@ get_method_info_standards <- function(isofiles, with_ratios = TRUE) {
 #' Aggregate vendor computed table data
 #' 
 #' @inheritParams get_raw_data
+#' @param with_units whether to include units in the column headers or not
 #' @family data aggregation functions
 #' @export
-get_vendor_data_table <- function(isofiles) {
+get_vendor_data_table <- function(isofiles, with_units = TRUE) {
   isofiles <- as_isofile_list(isofiles)
   check_read_options(isofiles, "vendor_data_table")
   lapply(isofiles, function(isofile) {
-    as_data_frame(isofile$vendor_data_table) %>% 
+    df <- isofile$vendor_data_table
+    if (with_units && is.null(attr(df, "units")))  {
+      warning("isofile ", isofile$file_info$file_id, " does not have unit information in its vendor data table", call. = FALSE, immediate. = TRUE)
+    } else if (with_units) {
+      cols_with_units <- attr(df, "units") %>% select(column, column_with_units) %>% deframe()
+      names(df) <- cols_with_units[names(df)]
+    }
+    df %>% 
       mutate(file_id = isofile$file_info$file_id) %>% 
       select(file_id, everything())
   }) %>% bind_rows()

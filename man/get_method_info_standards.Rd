@@ -4,10 +4,12 @@
 \alias{get_method_info_standards}
 \title{Get standards from methods info}
 \usage{
-get_method_info_standards(isofiles)
+get_method_info_standards(isofiles, with_ratios = TRUE)
 }
 \arguments{
 \item{isofiles}{isotope file objects}
+
+\item{with_ratios}{whether to include ratios or just standard delta values}
 }
 \description{
 Combines primary and secondary standards into a single table

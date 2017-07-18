@@ -4,10 +4,12 @@
 \alias{get_vendor_data_table}
 \title{Aggregate vendor computed table data}
 \usage{
-get_vendor_data_table(isofiles)
+get_vendor_data_table(isofiles, with_units = TRUE)
 }
 \arguments{
 \item{isofiles}{isotope file objects}
+
+\item{with_units}{whether to include units in the column headers or not}
 }
 \description{
 Aggregate vendor computed table data

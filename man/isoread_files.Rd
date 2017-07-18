@@ -20,6 +20,9 @@ isoread_files(paths, supported_extensions, data_structure, ...,
 
 \item{cache}{whether to cache isofiles and attempt to reload from cache (will only reload if a file was previously read with the same read options and has NOT been modified since)}
 }
+\value{
+single isofile object (if single file) or list of isofiles (isofile_list)
+}
 \description{
 This function takes care of extracting basic information about isofiles, dealing with problems and making sure only valid fire formats are processed. This function is not typicaly called directly but indirectly by calling \link{isoread_dual_inlet}, \link{isoread_continuous_flow} and \link{isoread_scan}. It is exported because it can be very useful for testing new file readers.
 }

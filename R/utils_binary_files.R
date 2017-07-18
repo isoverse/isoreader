@@ -59,16 +59,14 @@ set_binary_file_error_prefix <- function(bfile, prefix = "") {
 
 # throw binary file error if error mode is active
 op_error <- function(bfile, msg) {
-  stop(sprintf("%s%s", bfile$error_prefix, msg), call. = FALSE)
+  stop(sprintf("%s%s (pos %.0f)", bfile$error_prefix, msg, bfile$pos), call. = FALSE)
 }
 
 # Navigation ======
 
 # skip nbyte number of bytes in the raw data stream
-# @deprecate
 skip_pos <- function(bfile, nbyte) {
-  bfile$pos <- as.integer(bfile$pos + nbyte)
-  return(bfile)
+  move_to_pos(bfile, bfile$pos + nbyte)
 }
 
 # skip certain number of data
@@ -308,13 +306,13 @@ re_text <- function(text) {
     class = "binary_regexp")
 }
 
-# plain regexp
-re_direct <- function(regexp, label = regexp) {
+# plain regexp (default size is an estimate)
+re_direct <- function(regexp, label = regexp, size = ceiling(nchar(regexp)/4)) {
   structure(
     list(
       label = sprintf("[%s]", label),
       regexp = regexp,
-      size = ceiling(nchar(regexp)/4) # estimate
+      size = size
     ),
     class = "binary_regexp")
 }
@@ -409,7 +407,7 @@ move_to_next_pattern <- function(bfile, ..., max_gap = NULL, move_to_end = TRUE)
 }
 
 # capture data block data in specified type
-# uses parse_row_data and therefore can handle multiple data types
+# uses parse_raw_data and therefore can handle multiple data types
 # @inheritParams parse_raw_data
 capture_data <- function(bfile, id, type, ..., data_bytes_max = NULL, move_past_dots = FALSE,
                          ignore_trailing_zeros = TRUE, exact_length = TRUE, sensible = NULL) {
@@ -438,6 +436,33 @@ capture_data <- function(bfile, id, type, ..., data_bytes_max = NULL, move_past_
     bfile <- move_to_next_pattern(bfile, ..., max_gap = 0)
     
   return(bfile)
+}
+
+# capture specific number of data points following after the current position
+# instead of capturing data until the next pattern, this captures a specific
+# number of data points (i.e. primarily for numeric data), moves to after the data
+# also uses parse_raw_data and therefore can handle multiple data types
+# @inheritParams parse_raw_data
+capture_n_data <- function(bfile, id, type, n, sensible = NULL) {
+  
+  # reset existing data in this field
+  bfile$data[[id]] <- NULL
+  
+  # find raw length
+  if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
+  dbc <- get_data_blocks_config()[type]
+  size <- sum(map_int(dbc, "size"))
+  
+  # store data
+  id_text <- sprintf("'%s' capture failed: ", id)
+  bfile$data[[id]] <- 
+    parse_raw_data(bfile$raw[bfile$pos:(bfile$pos + size * n - 1)], type,
+                   ignore_trailing_zeros = FALSE,
+                   exact_length = FALSE, sensible = sensible,
+                   errors = str_c(bfile$error_prefix, id_text)) 
+  
+  # move to after the data
+  return(move_to_pos(bfile, bfile$pos + size * n))
 }
 
 
@@ -550,8 +575,9 @@ get_ctrl_blocks_config <- function() {
     `C-block`  = list(size = 20L, auto = FALSE, regexp = "\xff\xff(\\x00|[\x01-\x0f])\\x00.\\x00\x43[\x20-\x7e]+"),
     
     # text block (not auto processed)
-    text   = list(size = 20L, auto = FALSE, regexp = "([\x20-\x7e]\\x00)+"),
-    permil = list(size = 2L, auto = FALSE, regexp = "\x30\x20")
+    text    = list(size = 20L, auto = FALSE, regexp = "([\x20-\x7e]\\x00)+"),
+    `text0` = list(size = 20L, auto = FALSE, regexp = "([\x20-\x7e]\\x00)*"), # allows no text
+    permil  = list(size = 2L, auto = FALSE, regexp = "\x30\x20")
   )
 }
 
