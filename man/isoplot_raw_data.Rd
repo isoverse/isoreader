@@ -7,7 +7,7 @@
 isoplot_raw_data(isofiles, ..., quiet = setting("quiet"))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects to export}
+\item{isofiles}{collection of isofile objects}
 
 \item{...}{parameters for the data specific plotting functions}
 

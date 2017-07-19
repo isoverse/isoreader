@@ -7,7 +7,7 @@
 get_method_info_standards(isofiles, with_ratios = TRUE)
 }
 \arguments{
-\item{isofiles}{isotope file objects}
+\item{isofiles}{collection of isofile objects}
 
 \item{with_ratios}{whether to include ratios or just standard delta values}
 }

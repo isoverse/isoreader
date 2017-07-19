@@ -31,6 +31,8 @@ test_that("common SI prefixes are supported", {
     isoreader:::get_si_prefix_scaling(suffix = "A", unit = "fA"))
 })
 
+# TIme conversions ==== 
+
 test_that("test that time scaling works", {
   time <- 1:60
   
@@ -44,6 +46,11 @@ test_that("test that time scaling works", {
   # with duration object
   expect_warning(isoreader:::scale_time(lubridate::duration(time, "hours"), from = "s", to = "minutes"), "ignored")
   expect_equal(isoreader:::scale_time(lubridate::duration(time, "hours"), to = "minutes"), time*60)
+})
+
+test_that("test that time conversion works for isofiles", {
+  expect_error(convert_time(42), "can only convert time in continuous flow isofiles")
+  expect_error(convert_time(isoreader:::make_cf_data_structure()), "no time unit to convert to specified")
 })
 
 # Voltage/current conversion ==== 

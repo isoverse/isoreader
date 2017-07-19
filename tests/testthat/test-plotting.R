@@ -16,6 +16,7 @@ test_that("test that plot continuous flow works properly", {
   expect_error(isoplot_raw_data(cf, ratios = c("42")), "invalid ratio")
   expect_error(isoplot_raw_data(cf, ratios = c("3/2")), "mass\\(es\\) not available in the provided isofiles")
   expect_error(cf %>% {.$raw_data$time.min = 1:10; .} %>% isoplot_raw_data(.), "unclear which column is the time column")
+  expect_error(isoplot_raw_data(cf, time_interval = 55), "time interval needs to be a vector with two numeric entries")
   expect_error(isoplot_raw_data(cf, panels = "42"), "unknown layout specification")
   expect_error(isoplot_raw_data(cf, colors = "42"), "unknown layout specification")
   expect_error(isoplot_raw_data(cf, linetypes = "42"), "unknown layout specification")

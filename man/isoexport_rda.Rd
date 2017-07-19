@@ -7,7 +7,7 @@
 isoexport_rda(isofiles, filename, folder = ".", quiet = setting("quiet"))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects to export}
+\item{isofiles}{collection of isofile objects}
 
 \item{filename}{the name of the file to export (without the Rda ending)}
 

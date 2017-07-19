@@ -7,7 +7,7 @@
 get_raw_data(isofiles)
 }
 \arguments{
-\item{isofiles}{isotope file objects}
+\item{isofiles}{collection of isofile objects}
 }
 \description{
 Aggregate raw data

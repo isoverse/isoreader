@@ -5,18 +5,20 @@
 \title{Plot chromatogram from continuous flow data}
 \usage{
 isoplot_continuous_flow(isofiles, masses = NA, ratios = c(),
-  time_interval = c(), normalize = FALSE, zoom = NULL,
-  panels = c("none", "traces", "files"), colors = c("none", "traces",
-  "files"), linetypes = c("none", "traces", "files"))
+  time_interval = c(), time_interval_units = "seconds", normalize = FALSE,
+  zoom = NULL, panels = c("none", "traces", "files"), colors = c("none",
+  "traces", "files"), linetypes = c("none", "traces", "files"))
 }
 \arguments{
-\item{isofiles}{collection of continuous flow isofile objects}
+\item{isofiles}{collection of isofile objects}
 
 \item{masses}{which masses to plot (e.g. c("45", "44")), NULL (the default) means that all masses will be plotted}
 
 \item{ratios}{which ratios to plot (e.g. c("45/44", "46/44")), not affected by zoom parameter}
 
-\item{time_interval}{which time interval to plot (in the units of time of the iso objects)}
+\item{time_interval}{which time interval to plot}
+
+\item{time_interval_units}{which units the time interval is in, default is "seconds"}
 
 \item{normalize}{whether to normalize all traces (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if \code{zoom} is set) is applied after normalizing.}
 

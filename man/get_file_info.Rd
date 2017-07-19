@@ -7,7 +7,7 @@
 get_file_info(isofiles)
 }
 \arguments{
-\item{isofiles}{isotope file objects}
+\item{isofiles}{collection of isofile objects}
 }
 \description{
 Note file info entries with multiple values are concatenated for this general purpose function.

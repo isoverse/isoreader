@@ -2,7 +2,7 @@
 
 #' Aggregate raw data
 #' 
-#' @param isofiles isotope file objects
+#' @param isofiles collection of isofile objects
 #' @family data aggregation functions
 #' @export
 get_raw_data <- function(isofiles) {

@@ -7,7 +7,7 @@
 isoplot_dual_inlet(isofiles, masses = NA, ratios = c())
 }
 \arguments{
-\item{isofiles}{collection of continuous flow isofile objects}
+\item{isofiles}{collection of isofile objects}
 
 \item{masses}{which masses to plot (e.g. c("45", "44")), NULL (the default) means that all masses will be plotted}
 

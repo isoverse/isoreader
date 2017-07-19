@@ -1,3 +1,61 @@
+# unit conversion functions ----
+
+#' Convert time units in continuous flow files
+#' 
+#' This function can be used to convert the time units of a collection of isofiles to a new common time unit. The original time units are inferred from the naming of the time column. New time units are very flexible and can be anything that \code{\link[lubridate]{duration}} understands, i.e. "s", "seconds", "min", "minutes", "hours", "days", etc. are all valid units.
+#' 
+#' @inheritParams isoplot_raw_data
+#' @param to what time units to convert to
+#' @return the passed in isofiles with changed time units
+convert_time <- function(isofiles, to, quiet = setting("quiet")) {
+  
+  # checks
+  if(!is_continuous_flow(isofiles)) stop("can only convert time in continuous flow isofiles", call. = FALSE)
+  if(missing(to)) stop("no time unit to convert to specified", call. = FALSE)
+  
+  if (!setting("quiet")) 
+    sprintf("Info: converting time to '%s' for %d continuous flow data file(s)", to, length(isofiles)) %>% message()
+  
+  # find time from units
+  time_pattern <- "^time\\.(.*)$"
+  time_from <- sapply(isofiles, function(isofile) {
+    time_column <- str_subset(names(isofile$raw_data), time_pattern)
+    if(length(time_column) == 0) return(NA_character_) # no time column (potentially data not read)
+    if (length(time_column) != 1) 
+      stop("unclear which column is the time column in '", isofile$file_info$file_id, 
+          "', found: ", str_c(time_column, collapse = ", "), call. = FALSE)
+    str_match(time_column, time_pattern) %>% {.[2]}
+  })
+  
+  # for each file convert the time units
+  for (i in 1:length(isofiles)) {
+    if (!is.na(time_from[i])) {
+      old_time <- str_c("time.", time_from[i])
+      new_time <- str_c("time.", to)
+      isofiles[[i]]$raw_data[[old_time]] <- scale_time(isofiles[[i]]$raw_data[[old_time]], to = to, from = time_from[i])
+      isofiles[[i]]$raw_data <- isofiles[[i]]$raw_data %>% rename_(.dots = setNames(old_time, new_time))
+    }
+  }
+  
+  return(isofiles)
+}
+
+
+# processing functions ----
+
+# scale time units (uses lubridate)
+# @param to unit to scale to
+# @param from unit to scale from (only needs to be supplied if time is not already a duration)
+scale_time <- function(time, to, from = NULL) {
+  if (is(time, "Duration") && !is.null(from)) {
+    warning("time is supplied as a duration so from will be ignored!", call. = FALSE, immediate. = TRUE)
+  } else if (!is(time, "Duration")) {
+    if (is.null(from)) stop("supplied times is not a duration object and therefore requires specifying from unit", call. = FALSE)
+    time <- duration(time, from)
+  }
+  time / duration(1, to)
+}
+
 # get the scaling factor for a simple si unit prefix
 # @param unit the unit to find the suffix for (e.g. mm, kg, ms, nA, kV)
 # @param suffix the expected suffix (e.g. m, g, s, A, V)
@@ -25,19 +83,6 @@ get_si_prefix_scaling <- function(unit, suffix) {
 
   # scaling
   prefix[sapply(prefixes, function(i) which(i == names(prefix)))] %>% unname()
-}
-
-# scale time units (uses lubridate)
-# @param to unit to scale to
-# @param from unit to scale from (only needs to be supplied if time is not already a duration)
-scale_time <- function(time, to, from = NULL) {
-  if (is(time, "Duration") && !is.null(from)) {
-    warning("time is supplied as a duration so from will be ignored!", call. = FALSE, immediate. = TRUE)
-  } else if (!is(time, "Duration")) {
-    if (is.null(from)) stop("supplied times is not a duration object and therefore requires specifying from unit", call. = FALSE)
-    time <- duration(time, from)
-  }
-  time / duration(1, to)
 }
 
 

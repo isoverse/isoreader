@@ -2,8 +2,7 @@
 
 #' Export data to R Data Archive
 #' 
-#' @inheritParams isoread_files
-#' @param isofiles collection of isofile objects to export
+#' @inheritParams isoplot_raw_data
 #' @param filename the name of the file to export (without the Rda ending)
 #' @param folder the folder where to save the Rda file
 #' @family export functions

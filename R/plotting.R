@@ -2,7 +2,8 @@
 #' 
 #' Convenience function for making standard plots for raw isoreader data. Calls \code{\link{isoplot_continuous_flow}} and \code{\link{isoplot_dual_inlet}} for data specific plotting (see those functions for parameter details).
 #' 
-#' @inheritParams isoexport_rda
+#' @inheritParams isoread_files
+#' @inheritParams get_raw_data
 #' @param ... parameters for the data specific plotting functions
 #' @family plot functions
 #' @export
@@ -22,10 +23,11 @@ isoplot_raw_data <- function(isofiles, ..., quiet = setting("quiet")) {
 
 #' Plot chromatogram from continuous flow data
 #'
-#' @param isofiles collection of continuous flow isofile objects
+#' @inheritParams isoplot_raw_data
 #' @param masses which masses to plot (e.g. c("45", "44")), NULL (the default) means that all masses will be plotted
 #' @param ratios which ratios to plot (e.g. c("45/44", "46/44")), not affected by zoom parameter
-#' @param time_interval which time interval to plot (in the units of time of the iso objects)
+#' @param time_interval which time interval to plot
+#' @param time_interval_units which units the time interval is in, default is "seconds"
 #' @param normalize whether to normalize all traces (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if \code{zoom} is set) is applied after normalizing.
 #' @param zoom if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values > 1 are zoom in, values < 1 are zoom out, baseline always remains the anchor point. Note that for overlay plots (\code{panels = "none"}) zooming is relative to the max in each panel (potentially across different traces). Also note that zooming only affects masses, ratios are not zoomed.
 #' @param panels whether to panel traces, options are "none" (overlay all), "traces" (by mass/ratio traces), "files" (panel by files). The default is "traces"
@@ -34,7 +36,7 @@ isoplot_raw_data <- function(isofiles, ..., quiet = setting("quiet")) {
 #' @family plot functions
 #' @export
 isoplot_continuous_flow <- function(
-  isofiles, masses = NA, ratios = c(), time_interval = c(), normalize = FALSE, zoom = NULL, 
+  isofiles, masses = NA, ratios = c(), time_interval = c(), time_interval_units = "seconds", normalize = FALSE, zoom = NULL, 
   panels = c("none", "traces", "files"), colors = c("none", "traces", "files"), linetypes = c("none", "traces", "files")) {
   
   # checks
@@ -63,9 +65,17 @@ isoplot_continuous_flow <- function(
   time_pattern <- "^time\\.(.*)$"
   time_column <- str_subset(names(raw_data), time_pattern)
   if (length(time_column) != 1) 
-    stop("unclear which column is the time column, found: ", str_c(time_column, collapse = ", "), call. = FALSE)
-  time_unit <- str_match(time_column, time_pattern) %>% {sprintf("[%s]", .[2]) }
+    stop("unclear which column is the time column, consider an explicit 'convert_time' call before plotting, found: ", 
+         str_c(time_column, collapse = ", "), call. = FALSE)
+  time_unit <- str_match(time_column, time_pattern) %>% {.[2] }
   raw_data$time <- raw_data[[time_column]]
+  
+  # time interval
+  if (length(time_interval) == 2) {
+    time_interval <- scale_time(time_interval, to = time_unit, from = time_interval_units)
+  } else if (length(time_interval) > 0 && length(time_interval) != 2)
+    stop("time interval needs to be a vector with two numeric entries, found: ", str_c(time_interval, collapse = ", "), call. = FALSE)
+  time_unit <- sprintf("[%s]", time_unit)
   
   # border extrapolation function
   extrapolate_border <- function(cutoff, border, change, time, value) {
