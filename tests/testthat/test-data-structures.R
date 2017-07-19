@@ -15,15 +15,33 @@ test_that("test that basic isofile data structure is correct", {
 
 # dual inlet data structure is correct ====
 test_that("test that dual inlet data structure is correct", {
-  expect_is(isoreader:::make_di_data_structure(), "isofile")
-  expect_is(isoreader:::make_di_data_structure(), "dual_inlet")
+  expect_is(di <- isoreader:::make_di_data_structure(), "isofile")
+  expect_is(di, "dual_inlet")
+  expect_false(is_dual_inlet(42))
+  expect_false(is_continuous_flow(di))
+  expect_true(is_dual_inlet(di))
+  expect_true({
+    di1 <- di2 <- di
+    di1$file_info$file_id <- "A"
+    di2$file_info$file_id <- "B"
+    is_dual_inlet(c(di1, di2))
+  })
   # FIXME: expand
 })
 
 # continuous data structure is correct ====
 test_that("test that continuous data structure is correct", {
-  expect_is(isoreader:::make_cf_data_structure(), "isofile")
-  expect_is(isoreader:::make_cf_data_structure(), "continuous_flow")
+  expect_is(cf <- isoreader:::make_cf_data_structure(), "isofile")
+  expect_is(cf, "continuous_flow")
+  expect_false(is_continuous_flow(42))
+  expect_false(is_dual_inlet(cf))
+  expect_true(is_continuous_flow(cf))
+  expect_true({
+    cf1 <- cf2 <- cf
+    cf1$file_info$file_id <- "A"
+    cf2$file_info$file_id <- "B"
+    is_continuous_flow(c(cf1, cf2))
+  })
   # FIXME: expand
 })
 

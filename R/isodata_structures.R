@@ -73,6 +73,23 @@ is_iso_object <- function(x) {
   is_isofile(x) || is_isofile_list(x)
 }
 
+#' @description \code{is_dual_inlet} tests if an isofile or isofile list consists exclusively of dual inlet file objects
+#' @rdname data_structure
+#' @export
+is_dual_inlet <- function(x) {
+  if(!is_iso_object(x)) return(FALSE)
+  all(sapply(as_isofile_list(x), is, "dual_inlet"))
+}
+
+#' @description \code{is_continuous_flow} tests if an isofile or isofile list consists exclusively of continuous flow file objects
+#' @rdname data_structure
+#' @export
+is_continuous_flow <- function(x) {
+  if(!is_iso_object(x)) return(FALSE)
+  all(sapply(as_isofile_list(x), is, "continuous_flow"))
+}
+
+
 # Iso file list ----
 
 #' @description \code{as_isofile_list} concatenates isofile and isofile list object(s) into one combined isofile list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within isofile lists have to be the same type of isofile, issues warnings if there are duplicate file ids and summarizes all problems in the isofile list

@@ -4,6 +4,8 @@
 \alias{is_isofile}
 \alias{is_isofile_list}
 \alias{is_iso_object}
+\alias{is_dual_inlet}
+\alias{is_continuous_flow}
 \alias{as_isofile_list}
 \title{Isoreader data structure functions}
 \usage{
@@ -12,6 +14,10 @@ is_isofile(x)
 is_isofile_list(x)
 
 is_iso_object(x)
+
+is_dual_inlet(x)
+
+is_continuous_flow(x)
 
 as_isofile_list(...)
 }
@@ -26,6 +32,10 @@ as_isofile_list(...)
 \code{is_isofile_list} tests if the object is an isofile list (collection of isofiles)
 
 \code{is_iso_object} test if the object is an iso-object (isofile or isofile list)
+
+\code{is_dual_inlet} tests if an isofile or isofile list consists exclusively of dual inlet file objects
+
+\code{is_continuous_flow} tests if an isofile or isofile list consists exclusively of continuous flow file objects
 
 \code{as_isofile_list} concatenates isofile and isofile list object(s) into one combined isofile list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within isofile lists have to be the same type of isofile, issues warnings if there are duplicate file ids and summarizes all problems in the isofile list
 }
