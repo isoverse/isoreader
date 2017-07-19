@@ -9,6 +9,7 @@ readr::stop_for_problems
 # register a problem during isoreader operations
 # helper function to standardize problems for file reads
 # with a filename, type and details
+# will propage the problem to all underlying files
 # @obj isofile or isofile_list
 register_problem <- function(obj, type = NA_character_, details = NA_character_, ..., 
                                   func = deparse(sys.call(-1))) {

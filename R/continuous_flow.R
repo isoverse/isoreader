@@ -22,13 +22,14 @@ isoread_continuous_flow <- function(
   )
 }
 
-# get supported continuous flow file types and which functions they map to
+# get supported continuous flow file types and which functions they map to, whether they can be cached (if caching requested), etc.
 get_supported_cf_files <- function() {
   tribble(
-    ~extension,    ~fun,                ~description,
-    "cf",          "isoread_cf",        "Isodat Continuous Flow file format (older)",
-    "dxf",         "isoread_dxf",       "Isodat Continuous Flow file format (newer)",
-    "iarc",        "isoread_flow_iarc", "IonOS Continous Flow data archieve",
-    "feather.zip", "isoread_feather",   "Isoreader cached data format (for R+python)"
+    ~id,     ~extension,    ~fun,                ~cache,   ~description,
+    "cf",    "cf",          "isoread_cf",        TRUE,     "Isodat Continuous Flow file format (older)",
+    "dxf",   "dxf",         "isoread_dxf",       TRUE,     "Isodat Continuous Flow file format (newer)",
+    "iarc",  "iarc",        "isoread_flow_iarc", TRUE,     "IonOS Continous Flow data archieve",
+    #"zip",  "feather.zip", "isoread_feather",   FALSE,    "Isoreader cached data format (for R+python)", # potential future expansion
+    "Rda",   "cf.Rda",      "isoread_rda",       FALSE,    "Isoreader cached data (for R)"
   )
 }

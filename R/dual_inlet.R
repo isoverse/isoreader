@@ -26,11 +26,12 @@ isoread_dual_inlet <- function(
   )
 }
 
-# get supported dual inlet file types and which functions they map to
+# get supported dual inlet file types and which functions they map to, whether they can be cached (if caching requested), etc.
 get_supported_di_files <- function() {
   tribble(
-    ~extension,    ~fun,              ~description,
-    "did",         "isoread_did",     "Isodat Dual Inlet file format",
-    "feather.zip", "isoread_feather", "Isoreader cached data format (for R+python)"
+    ~id,    ~extension,    ~fun,              ~cache,   ~description,
+    "did",  "did",         "isoread_did",     TRUE,     "Isodat Dual Inlet file format",
+    #"zip", "feather.zip", "isoread_feather", FALSE,     "Isoreader cached data format (for R+python)", # potential future expansion
+    "Rda",   "di.Rda",      "isoread_rda",     FALSE,    "Isoreader cached data (for R)"
   )
 }

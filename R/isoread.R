@@ -19,7 +19,7 @@ isoread <- function(...) {
 #' @param data_structure the basic data structure for the type of isofile
 #' @param discard_duplicates whether to automatically discard duplicate file_ids (only first one is kept)
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}
-#' @param cache whether to cache isofiles and attempt to reload from cache (will only reload if a file was previously read with the same read options and has NOT been modified since)
+#' @param cache whether to cache isofiles and attempt to reload from cache (will only reload if a file was previously read with the same read options and has NOT been modified since). Note that previously exported R Data Archives (di.Rda, cf.Rda) are never cached since they are already essentially in cached form.
 #' @param ... additional parameters passed to the specific processing functions for the different file extensions
 #' @return single isofile object (if single file) or list of isofiles (isofile_list)
 #' @export
@@ -45,7 +45,8 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
   }
   
   # extension to reader map
-  fun_map <- supported_extensions %>% { setNames(as.list(.$fun), str_c(".", .$extension)) }
+  fun_map <- supported_extensions %>% { setNames(as.list(.$fun), str_c(".", .$id)) }
+  cache_map <- supported_extensions %>% { setNames(as.list(.$cache), str_c(".", .$id)) }
   
   # read options update in data structure
   data_structure <- update_read_options(data_structure, ...)
@@ -54,14 +55,15 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
   isofiles <- list()
   version_warning <- 0
   for (filepath in filepaths) {
-    ext <- get_file_ext(filepath)
+    id <- get_file_ext(filepath)
+    if (!id %in% names(fun_map)) stop("unknown file id, cannot find reader function: ", id, call. = FALSE)
     
     # prepare isofile object
     isofile <- set_ds_file_path(data_structure, filepath)
     
     # check for cache
     cache_path <- generate_cache_file_path(isofile)
-    if (cache && file.exists(cache_path)) {
+    if (cache && cache_map[[id]] && file.exists(cache_path)) {
       ## cache available  
       # file is cached and caching is turned on --> read from cached file
       if (!setting("quiet")) sprintf("Info: restoring file %s from cache", filepath) %>% message()
@@ -80,8 +82,8 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
     } else {
       ## no cache
       # read file anew using extension-specific function to read file
-      if (!setting("quiet")) sprintf("Info: reading file %s with '%s' reader", filepath, ext) %>% message()
-      isofile <- exec_func_with_error_catch(fun_map[[ext]], isofile, ...)
+      if (!setting("quiet")) sprintf("Info: reading file %s with '%s' reader", filepath, id) %>% message()
+      isofile <- exec_func_with_error_catch(fun_map[[id]], isofile, ...)
       
       # cleanup any binary content depending on debug setting
       if (!setting("debug")) {
