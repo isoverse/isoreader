@@ -48,7 +48,8 @@ isoplot_continuous_flow <- function(
     stop("cannot have the same specification for colors and linetypes", call. = FALSE)
   
   # global vars
-  #mass <- column <- ratio <- label <- value <- label_with_units <- NULL
+  time <- type <- column <- value <- file_id <- label_with_units <- NULL
+  is_ratio <- max_signal <- baseline <- cutoff <- discard <- change <- border <- gap <- NULL
   
   # collect raw data
   raw_data <- get_raw_data(isofiles)
@@ -192,6 +193,9 @@ isoplot_dual_inlet <- function(isofiles, masses = NA, ratios = c()) {
 # peforms all the necessary safety checks
 # @return a data frame with all requested masses and ratios
 get_mass_and_ratio_definitions <- function(raw_data, masses, ratios) {
+  
+  # global vars
+  mass <- column <- ratio <- top <- bot <- label <- NULL
   
   # masses
   mass_column_pattern <- "^[vi](\\d+)\\.(.*)$"
