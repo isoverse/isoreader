@@ -94,9 +94,10 @@ is_continuous_flow <- function(x) {
 
 #' @description \code{as_isofile_list} concatenates isofile and isofile list object(s) into one combined isofile list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within isofile lists have to be the same type of isofile, issues warnings if there are duplicate file ids and summarizes all problems in the isofile list
 #' @param ... isofile and isofile_list objects to concatenate
+#' @param discard_duplicates whether to discard encountered file id duplicates
 #' @rdname data_structure
 #' @export
-as_isofile_list <- function(...) {
+as_isofile_list <- function(..., discard_duplicates = TRUE) {
 
   # dots passed in
   iso_objs <- list(...)
@@ -133,9 +134,14 @@ as_isofile_list <- function(...) {
     
     # check for name duplicates and register a warning if there are any
     if (any(dups <- duplicated(names(iso_list)) | duplicated(names(iso_list), fromLast = TRUE))) {
+      msg <- if(discard_duplicates) "duplicate files encountered, only first kept" else "duplicate files kept, may interfere with data processing"
       for (idx in which(dups)) {
         iso_list[[idx]] <- register_warning(
-          iso_list[[idx]], str_c("duplicate file ID may interfere with data processing: ", names(iso_list)[idx]))
+          iso_list[[idx]], str_c(msg, ": ", names(iso_list)[idx]))
+      }
+      
+      if (discard_duplicates) {
+        iso_list[duplicated(names(iso_list))] <- NULL
       }
     }
     

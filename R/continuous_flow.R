@@ -5,7 +5,7 @@
 #' @export
 isoread_continuous_flow <- function(
   paths, read_raw_data = TRUE, read_file_info = TRUE, read_method_info = TRUE, read_vendor_data_table = FALSE,
-  quiet = setting("quiet"), cache = setting("cache")) {
+  discard_duplicates = TRUE, quiet = setting("quiet"), cache = setting("cache")) {
 
   # process data
   isoread_files(
@@ -16,6 +16,7 @@ isoread_continuous_flow <- function(
     read_file_info = read_file_info,
     read_method_info = read_method_info,
     read_vendor_data_table = read_vendor_data_table,
+    discard_duplicates = discard_duplicates,
     quiet = quiet,
     cache = cache
   )
