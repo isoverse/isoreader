@@ -19,12 +19,14 @@ is_dual_inlet(x)
 
 is_continuous_flow(x)
 
-as_isofile_list(...)
+as_isofile_list(..., discard_duplicates = TRUE)
 }
 \arguments{
 \item{x}{an object to test whether it has the specific class}
 
 \item{...}{isofile and isofile_list objects to concatenate}
+
+\item{discard_duplicates}{whether to discard encountered file id duplicates}
 }
 \description{
 \code{is_isofile} tests if the object is an isofile

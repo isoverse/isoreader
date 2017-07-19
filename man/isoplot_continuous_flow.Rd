@@ -4,7 +4,7 @@
 \alias{isoplot_continuous_flow}
 \title{Plot chromatogram from continuous flow data}
 \usage{
-isoplot_continuous_flow(isofiles, masses = all_masses(), ratios = c(),
+isoplot_continuous_flow(isofiles, masses = NA, ratios = c(),
   time_interval = c(), normalize = FALSE, zoom = NULL,
   panels = c("none", "traces", "files"), colors = c("none", "traces",
   "files"), linetypes = c("none", "traces", "files"))
@@ -12,7 +12,7 @@ isoplot_continuous_flow(isofiles, masses = all_masses(), ratios = c(),
 \arguments{
 \item{isofiles}{collection of continuous flow isofile objects}
 
-\item{masses}{which masses to plot (e.g. c("45", "44")), plots all by default}
+\item{masses}{which masses to plot (e.g. c("45", "44")), NULL (the default) means that all masses will be plotted}
 
 \item{ratios}{which ratios to plot (e.g. c("45/44", "46/44")), not affected by zoom parameter}
 

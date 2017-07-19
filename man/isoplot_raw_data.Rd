@@ -4,15 +4,17 @@
 \alias{isoplot_raw_data}
 \title{Plot raw data from isoreader files}
 \usage{
-isoplot_raw_data(isofiles, ...)
+isoplot_raw_data(isofiles, ..., quiet = setting("quiet"))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects to plot}
+\item{isofiles}{collection of isofile objects to export}
 
 \item{...}{parameters for the data specific plotting functions}
+
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }
 \description{
-Convenience function for making standard plots for raw isoreader data. Calls \link{\code{isoplot_continuous_flow}} and \link{\code{isoplot_dual_inlet}} for data specific plotting (see those functions for parameter details).
+Convenience function for making standard plots for raw isoreader data. Calls \code{\link{isoplot_continuous_flow}} and \code{\link{isoplot_dual_inlet}} for data specific plotting (see those functions for parameter details).
 }
 \seealso{
 Other plot functions: \code{\link{isoplot_continuous_flow}}

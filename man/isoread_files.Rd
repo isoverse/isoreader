@@ -5,7 +5,8 @@
 \title{Main function to read isotope data files}
 \usage{
 isoread_files(paths, supported_extensions, data_structure, ...,
-  quiet = setting("quiet"), cache = setting("cache"))
+  discard_duplicates = TRUE, quiet = setting("quiet"),
+  cache = setting("cache"))
 }
 \arguments{
 \item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
@@ -16,9 +17,11 @@ isoread_files(paths, supported_extensions, data_structure, ...,
 
 \item{...}{additional parameters passed to the specific processing functions for the different file extensions}
 
+\item{discard_duplicates}{whether to automatically discard duplicate file_ids (only first one is kept)}
+
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 
-\item{cache}{whether to cache isofiles and attempt to reload from cache (will only reload if a file was previously read with the same read options and has NOT been modified since)}
+\item{cache}{whether to cache isofiles and attempt to reload from cache (will only reload if a file was previously read with the same read options and has NOT been modified since). Note that previously exported R Data Archives (di.Rda, cf.Rda) are never cached since they are already essentially in cached form.}
 }
 \value{
 single isofile object (if single file) or list of isofiles (isofile_list)
