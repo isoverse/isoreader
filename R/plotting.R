@@ -1,14 +1,18 @@
 #' Plot raw data from isoreader files
 #' 
-#' Convenience function for making standard plots for raw isoreader data. Calls \link{\code{isoplot_continuous_flow}} and \link{\code{isoplot_dual_inlet}} for data specific plotting (see those functions for parameter details).
+#' Convenience function for making standard plots for raw isoreader data. Calls \code{\link{isoplot_continuous_flow}} and \code{\link{isoplot_dual_inlet}} for data specific plotting (see those functions for parameter details).
 #' 
-#' @param isofiles collection of isofile objects to plot
+#' @inheritParams isoexport_rda
 #' @param ... parameters for the data specific plotting functions
 #' @family plot functions
 #' @export
-isoplot_raw_data <- function(isofiles, ...) {
+isoplot_raw_data <- function(isofiles, ..., quiet = setting("quiet")) {
   if(!is_iso_object(isofiles)) stop("can only plot iso files or lists of iso files", call. = FALSE)
-  else if (is_continuous_flow(isofiles))
+  
+  if (!setting("quiet")) 
+    sprintf("Info: plotting data from %d data files", length(isofiles)) %>% message()
+  
+  if (is_continuous_flow(isofiles))
     isoplot_continuous_flow (isofiles, ...)
   else if (is_dual_inlet(isofiles))
     isoplot_dual_inlet (isofiles, ...)
@@ -19,7 +23,7 @@ isoplot_raw_data <- function(isofiles, ...) {
 #' Plot chromatogram from continuous flow data
 #'
 #' @param isofiles collection of continuous flow isofile objects
-#' @param masses which masses to plot (e.g. c("45", "44")), plots all by default
+#' @param masses which masses to plot (e.g. c("45", "44")), NULL (the default) means that all masses will be plotted
 #' @param ratios which ratios to plot (e.g. c("45/44", "46/44")), not affected by zoom parameter
 #' @param time_interval which time interval to plot (in the units of time of the iso objects)
 #' @param normalize whether to normalize all traces (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if \code{zoom} is set) is applied after normalizing.
@@ -30,7 +34,7 @@ isoplot_raw_data <- function(isofiles, ...) {
 #' @family plot functions
 #' @export
 isoplot_continuous_flow <- function(
-  isofiles, masses = all_masses(), ratios = c(), time_interval = c(), normalize = FALSE, zoom = NULL, 
+  isofiles, masses = NA, ratios = c(), time_interval = c(), normalize = FALSE, zoom = NULL, 
   panels = c("none", "traces", "files"), colors = c("none", "traces", "files"), linetypes = c("none", "traces", "files")) {
   
   # checks
@@ -43,59 +47,17 @@ isoplot_continuous_flow <- function(
   if(colors != "none" && colors == linetypes) 
     stop("cannot have the same specification for colors and linetypes", call. = FALSE)
   
+  # global vars
+  #mass <- column <- ratio <- label <- value <- label_with_units <- NULL
+  
   # collect raw data
   raw_data <- get_raw_data(isofiles)
   if (nrow(raw_data) == 0) stop("no raw data in supplied isofiles", call. = FALSE)
   
-  # masses
-  mass_column_pattern <- "^[vi](\\d+)\\.(.*)$"
-  mass_columns <- names(raw_data) %>% 
-    str_subset(mass_column_pattern) %>% 
-    str_match(mass_column_pattern) %>%  
-    { data_frame(column = .[,1], mass = .[,2], units = .[,3]) }
-  mass_lookup <- select(mass_columns, mass, column) %>% deframe()
-  all_masses <- function() mass_columns$mass
-  masses <- as.character(masses)
-  if(length(masses) == 0 && length(ratios) == 0) stop("must specify at least one mass or ratio", call. = FALSE)
-  
-  # ratios
-  ratio_pattern <- "^(\\d+)/(\\d+)$"
-  if (!all(ok <- str_detect(ratios, ratio_pattern))) {
-    stop("invalid ratio(s): ", str_c(ratios[!ok], collapse = ", "), call. = FALSE)
-  }
-  if (length(ratios) > 0) {
-    ratio_columns <- ratios %>% 
-      str_match(ratio_pattern) %>% 
-      { data_frame(column = str_c("ratio.",.[,1]), ratio = .[,1], top = .[,2], bot = .[,3], units = "") }
-  } else {
-    ratio_columns <- data_frame(column = "", ratio = "", top = "", bot = "", units = "")[0,]
-  }
-  
-  # safety checks
-  all_needed_masses <- unique(c(masses, ratio_columns$top, ratio_columns$bot))
-  if ( length(missing <- setdiff(all_needed_masses, mass_columns$mass)) > 0 ) {
-    stop("mass(es) not available in the provided isofiles: ", str_c(missing, collapse = ", "), call. = FALSE)
-  }
-  
-  # generate ratios
-  if (nrow(ratio_columns) > 0) {
-    for (i in 1:nrow(ratio_columns)) {
-      raw_data[[ratio_columns$column[i]]] <- raw_data[[mass_lookup[ratio_columns$top[i]]]] / raw_data[[mass_lookup[ratio_columns$bot[i]]]]
-    }
-  }
-  
-  # all data columns to plot (mass and ratio)
-  all_columns <- 
-    bind_rows(
-      mass_columns %>% 
-        filter(mass %in% masses) %>% 
-        select(column, label = mass, units),
-      ratio_columns %>% 
-        select(column, label = ratio, units)
-    ) %>% mutate(
-      label_with_units = ifelse(nchar(units) > 0, str_c(label, " [", units, "]"), label)
-    )
-  
+  # masses and ratios
+  all_columns <- get_mass_and_ratio_definitions(raw_data, masses, ratios)
+  raw_data <- calculate_ratios(raw_data, filter(all_columns, type == "ratio"))
+
   # time column
   time_pattern <- "^time\\.(.*)$"
   time_column <- str_subset(names(raw_data), time_pattern)
@@ -154,7 +116,6 @@ isoplot_continuous_flow <- function(
           mutate(baseline = 0, max_signal = 1)
       } else .
     } %>% 
-    { test_df <<- .; . } %>% 
     # zooming
     { 
       if (!is.null(zoom)) {
@@ -222,7 +183,79 @@ isoplot_continuous_flow <- function(
 
 #' Plot mass data from dual inlet files
 #' @inheritParams isoplot_continuous_flow
-isoplot_dual_inlet <- function(isofiles, masses = all_masses(), ratios = c()) {
+isoplot_dual_inlet <- function(isofiles, masses = NA, ratios = c()) {
   stop("not yet implemented", call. = FALSE)
+}
+
+
+# helper function to process mass and ratio requests for plotting functions
+# peforms all the necessary safety checks
+# @return a data frame with all requested masses and ratios
+get_mass_and_ratio_definitions <- function(raw_data, masses, ratios) {
+  
+  # masses
+  mass_column_pattern <- "^[vi](\\d+)\\.(.*)$"
+  mass_columns <- names(raw_data) %>% 
+    str_subset(mass_column_pattern) %>% 
+    str_match(mass_column_pattern) %>%  
+    { data_frame(column = .[,1], mass = .[,2], units = .[,3]) }
+  mass_lookup <- select(mass_columns, mass, column) %>% deframe()
+  
+  # get alll masses if none provided
+  if (!is.null(masses) &&  is.na(masses)) masses <- mass_columns$mass
+  else masses <- as.character(masses)
+  
+  # safety check
+  if(length(masses) == 0 && length(ratios) == 0) stop("must specify at least one mass or ratio", call. = FALSE)
+  
+  # ratios
+  ratio_pattern <- "^(\\d+)/(\\d+)$"
+  if (!all(ok <- str_detect(ratios, ratio_pattern))) {
+    stop("invalid ratio(s): ", str_c(ratios[!ok], collapse = ", "), call. = FALSE)
+  }
+  if (length(ratios) > 0) {
+    ratio_columns <- ratios %>% 
+      str_match(ratio_pattern) %>% 
+      { data_frame(column = str_c("ratio.",.[,1]), ratio = .[,1], top = .[,2], bot = .[,3], units = "") }
+  } else {
+    ratio_columns <- data_frame(column = "", ratio = "", top = "", bot = "", units = "")[0,]
+  }
+  
+  # more safety checks
+  all_needed_masses <- unique(c(masses, ratio_columns$top, ratio_columns$bot))
+  if ( length(missing <- setdiff(all_needed_masses, mass_columns$mass)) > 0 ) {
+    stop("mass(es) not available in the provided isofiles: ", str_c(missing, collapse = ", "), call. = FALSE)
+  }
+  
+  # all data columns to plot (mass and ratio)
+  bind_rows(
+    mass_columns %>% 
+      filter(mass %in% masses) %>% 
+      rename(label = mass) %>% 
+      mutate(type = "mass"),
+    ratio_columns %>% 
+      rename(label = ratio) %>% 
+      mutate(type = "ratio",
+             top = mass_lookup[top],
+             bot = mass_lookup[bot])
+  ) %>% mutate(
+    label_with_units = ifelse(nchar(units) > 0, str_c(label, " [", units, "]"), label)
+  )
+}
+
+# calculate derived ratios in mass data
+# @param ratio_columns is a data frame with columns 'column', 'top' and 'bot' for calculating the resulting ratio of top/bot and storing it in the new column 'column'
+calculate_ratios <- function(raw_data, ratio_columns) {
+  if(!all(c("column", "top", "bot") %in% names(ratio_columns))) stop("columns missing", call. = FALSE)
+  if(any(is.na(ratio_columns$column)) || any(is.na(ratio_columns$top)) || any(is.na(ratio_columns$bot)))
+    stop("missing values", call. = FALSE)
+ 
+  # generate ratios
+  if (nrow(ratio_columns) > 0) {
+    for (i in 1:nrow(ratio_columns)) {
+      raw_data[[ratio_columns$column[i]]] <- raw_data[[ratio_columns$top[i]]] / raw_data[[ratio_columns$bot[i]]]
+    }
+  }
+  return(raw_data)
 }
 
