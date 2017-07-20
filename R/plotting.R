@@ -1,3 +1,5 @@
+# plotting functions ==== 
+
 #' Plot raw data from isoreader files
 #' 
 #' Convenience function for making standard plots for raw isoreader data. Calls \code{\link{isoplot_continuous_flow}} and \code{\link{isoplot_dual_inlet}} for data specific plotting (see those functions for parameter details).
@@ -39,15 +41,12 @@ isoplot_continuous_flow <- function(
   isofiles, masses = NA, ratios = c(), time_interval = c(), time_interval_units = "seconds", normalize = FALSE, zoom = NULL, 
   panels = c("none", "traces", "files"), colors = c("none", "traces", "files"), linetypes = c("none", "traces", "files")) {
   
-  # checks
+  # checks and defaults
   if(!is_continuous_flow(isofiles)) stop("can only plot continuous flow isofiles", call. = FALSE)
   if (missing(panels)) panels <- "traces"
   if (missing(colors)) colors <- "files"
   if (missing(linetypes)) linetypes <- "none"
-  if (!all(ok <- c(panels, colors, linetypes) %in% c("none", "traces", "files")))
-    stop("unknown layout specification ", str_c(c(panels, colors, linetypes)[!ok], collapse = ", "), call. = FALSE)
-  if(colors != "none" && colors == linetypes) 
-    stop("cannot have the same specification for colors and linetypes", call. = FALSE)
+  check_layout_parameters(panels, colors, linetypes)
   
   # global vars
   time <- type <- column <- value <- file_id <- label_with_units <- NULL
@@ -153,8 +152,6 @@ isoplot_continuous_flow <- function(
     left_join(all_columns, by = "column")
   
   # generate plot
-  files_label <- "File"
-  traces_label <- "Trace"
   p <- plot_data %>% 
     ggplot() + 
     aes(time, value, group = paste(file_id, column)) +
@@ -171,33 +168,65 @@ isoplot_continuous_flow <- function(
   if (normalize)
     p <- p + theme(axis.ticks.y = element_blank(), axis.text.y = element_blank())
   
-  # paneling
-  if (panels == "traces") 
-    p <- p + facet_grid(label_with_units~., scales = "free_y") 
-  else if (panels == "files") 
-    p <- p + facet_grid(file_id~., scales = "free_y") 
+  # apply layout parameters
+  p <- apply_layout_parameters(p, panels, colors, linetypes, facet_grid = TRUE)
   
-  # colors
-  if (colors == "traces") 
-    p <- p %+% aes(color = label_with_units) + labs(color = traces_label)
-  else if (colors == "files") 
-    p <- p %+% aes(color = file_id) + labs(color = files_label)
-  
-  # linetypes
-  if (linetypes == "traces") 
-    p <- p %+% aes(linetype = label_with_units) + labs(linetype = traces_label)
-  else if (linetypes == "files") 
-    p <- p %+% aes(linetype = file_id) + labs(linetype = files_label)
-  
+  # return plot
   return(p)
 }
 
 #' Plot mass data from dual inlet files
+#' FIXME: allow for normalization within each type too?
 #' @inheritParams isoplot_continuous_flow
-isoplot_dual_inlet <- function(isofiles, masses = NA, ratios = c()) {
-  stop("not yet implemented", call. = FALSE)
+isoplot_dual_inlet <- function(
+  isofiles, masses = NA, ratios = c(),
+  panels = c("none", "traces", "files"), colors = c("none", "traces", "files"), linetypes = c("none", "traces", "files")) {
+  
+  # checks
+  if(!is_dual_inlet(isofiles)) stop("can only plot dual inlet isofiles", call. = FALSE)
+  if (missing(panels)) panels <- "traces"
+  if (missing(colors)) colors <- "files"
+  if (missing(linetypes)) linetypes <- "none"
+  check_layout_parameters(panels, colors, linetypes)
+
+  # collect raw data
+  raw_data <- get_raw_data(isofiles)
+  if (nrow(raw_data) == 0) stop("no raw data in supplied isofiles", call. = FALSE)
+  
+  # masses and ratios
+  all_columns <- get_mass_and_ratio_definitions(raw_data, masses, ratios)
+  raw_data <- calculate_ratios(raw_data, filter(all_columns, type == "ratio"))
+  
+  # plot data
+  plot_data <- 
+    # relevant columns
+    raw_data[c("file_id", "type", "cycle", all_columns$column)] %>% 
+    # gather everything
+    gather(column, value, -file_id, -type, -cycle) %>% 
+    filter(!is.na(value)) %>% 
+    # labeling information
+    left_join(select(all_columns, column, label_with_units), by = "column")
+  
+  # generate plot
+  p <- plot_data %>% 
+    ggplot() + 
+    aes(cycle, value, group = paste(file_id, type, column), shape = type) +
+    geom_line() +
+    geom_point(size = 2) +
+    scale_x_continuous("Cycle", breaks = c(0:max(plot_data$cycle))) +
+    scale_y_continuous("Signal") +
+    scale_shape_discrete("Type") +
+    theme_bw() +
+    theme(legend.position = "bottom", legend.direction = "vertical")
+  
+  # apply layout parameters
+  p <- apply_layout_parameters(p, panels, colors, linetypes, facet_grid = FALSE)
+  
+  # return plot
+  return(p)
 }
 
+# calculation functions for plotting =====
 
 # helper function to process mass and ratio requests for plotting functions
 # peforms all the necessary safety checks
@@ -273,3 +302,39 @@ calculate_ratios <- function(raw_data, ratio_columns) {
   return(raw_data)
 }
 
+# formatting/layou functions for plotting =====
+
+# check validity of layout parameters
+check_layout_parameters <- function(panels, colors, linetypes) {
+  if (!all(ok <- c(panels, colors, linetypes) %in% c("none", "traces", "files")))
+    stop("unknown layout specification ", str_c(c(panels, colors, linetypes)[!ok], collapse = ", "), call. = FALSE)
+  if(colors != "none" && colors == linetypes) 
+    stop("cannot have the same specification for colors and linetypes", call. = FALSE)
+}
+
+# apply layout parameters to plot
+# @param facet_grid TRUE means facet grid, FALSE means facet wrap
+apply_layout_parameters <- function(p, panels, colors, linetypes, facet_grid, traces_label = "Data", files_label = "Files") {
+  # paneling
+  if (facet_grid && panels == "traces") 
+    p <- p + facet_grid(label_with_units~., scales = "free_y") 
+  else if (!facet_grid && panels == "traces") 
+    p <- p + facet_wrap(~label_with_units, scales = "free_y") 
+  else if (facet_grid && panels == "files") 
+    p <- p + facet_grid(file_id~., scales = "free_y")
+  else if (!facet_grid && panels == "files") 
+    p <- p + facet_wrap(~file_id, scales = "free_y") 
+  
+  # colors
+  if (colors == "traces") 
+    p <- p %+% aes(color = label_with_units) + labs(color = traces_label)
+  else if (colors == "files") 
+    p <- p %+% aes(color = file_id) + labs(color = files_label)
+  
+  # linetypes
+  if (linetypes == "traces") 
+    p <- p %+% aes(linetype = label_with_units) + labs(linetype = traces_label)
+  else if (linetypes == "files") 
+    p <- p %+% aes(linetype = file_id) + labs(linetype = files_label)
+  return(p)
+}
