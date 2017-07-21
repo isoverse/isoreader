@@ -244,17 +244,6 @@ re_or <- function(...) {
     class = "binary_regexp")
 }
 
-# repeated pattern
-re_times <- function(re, n) {
-  structure(
-    list(
-      label = rep(re$label, n) %>% str_c(collapse = ""),
-      regexp = sprintf("(%s){%.0f}", re$regexp, n),
-      size = re$size * n
-    ),
-    class = "binary_regexp")
-}
-
 # combine regular expression patterns
 re_combine <- function(...) {
   regexps <- list(...)

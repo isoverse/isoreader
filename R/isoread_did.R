@@ -121,7 +121,8 @@ extract_did_vendor_data_table <- function(ds) {
       move_to_next_pattern(re_or(re_block("nl"), re_block("fef-x")), max_gap = 0) %>% 
       # capture actual colum name
       capture_data("column", "text", re_null(4), re_block("stx"), move_past_dots = TRUE) %>%
-      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-x"), re_block("text"), re_null(4), re_times(re_block("x-000"), 3)) %>%
+      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-x"), re_block("text"), re_null(4), 
+                           re_block("x-000"), re_block("x-000"), re_block("x-000")) %>%
       # capture column data
       capture_data("values", "double", re_block("fef-0"), re_block("stx"), sensible = c(-1e10, 1e10), move_past_dots = TRUE)
     
