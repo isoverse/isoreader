@@ -15,7 +15,7 @@ isoplot_raw_data <- function(isofiles, ..., quiet = setting("quiet")) {
   isofiles <- as_isofile_list(isofiles)
   
   if (!setting("quiet")) 
-    sprintf("Info: plotting data from %d data files", length(isofiles)) %>% message()
+    sprintf("Info: plotting data from %d data file(s)", length(isofiles)) %>% message()
   
   if (is_continuous_flow(isofiles))
     isoplot_continuous_flow (isofiles, ...)
