@@ -60,11 +60,17 @@ extract_did_raw_voltage_data <- function(ds) {
     move_to_next_C_block("CIntegrationUnitTransferPart") %>% 
     set_binary_file_error_prefix("cannot process voltage data") 
   
-  # read voltage data for the standards
+  # find binary positions for voltage standards and samples
   voltages <- list()
-  while(!is.null(find_next_pattern(ds$binary, re_text("/"), re_block("fef-x"), re_block("nl"), re_text("Standard ")))) {
+  standard_voltage_start_re <- re_combine(re_text("/"), re_block("fef-x"), re_block("fef-x"), re_text("Standard "))
+  standard_positions <- find_next_patterns(ds$binary, standard_voltage_start_re)
+  sample_voltage_start_re <- re_combine(re_text("/"), re_block("fef-0"), re_block("fef-x"), re_text("Sample "))
+  sample_positions <- find_next_patterns(ds$binary, sample_voltage_start_re)
+  
+  # process standards
+  for(pos in standard_positions) {
     ds$binary <- ds$binary %>% 
-      move_to_next_pattern(re_text("/"), re_block("fef-x"), re_block("nl"), re_text("Standard ")) %>% 
+      move_to_pos(pos + standard_voltage_start_re$size) %>% 
       capture_data("cycle", "text", re_null(4), re_block("stx"), move_past_dots = TRUE) %>% 
       move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("stx")) %>%
       move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>% 
@@ -75,15 +81,15 @@ extract_did_raw_voltage_data <- function(ds) {
     measurement <- list(
       c(list(
         type = "standard",
-        cycle = as.integer(ds$binary$data$cycle) + 1
+        cycle = if (ds$binary$data$cycle == "Pre") 0 else as.integer(ds$binary$data$cycle) + 1
       ), setNames(as.list(ds$binary$data$voltage), masses_columns)))
     voltages <- c(voltages, measurement)
   }
   
-  # read the voltage data for the samples
-  while(!is.null(find_next_pattern(ds$binary, re_text("/"), re_block("fef-0"), re_block("fef-x"), re_text("Sample ")))) {
-    ds$binary <- ds$binary %>%
-      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-x"), re_text("Sample ")) %>%
+  # process samples
+  for(pos in sample_positions) {
+    ds$binary <- ds$binary %>% 
+      move_to_pos(pos + sample_voltage_start_re$size) %>% 
       capture_data("cycle", "text", re_null(4), re_block("stx"), move_past_dots = TRUE) %>% 
       move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("stx")) %>%
       move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>% 
@@ -99,7 +105,8 @@ extract_did_raw_voltage_data <- function(ds) {
   }
   
   # voltages data frame
-  ds$raw_data <- bind_rows(voltages)
+  type <- cycle <- NULL
+  ds$raw_data <- bind_rows(voltages) %>% arrange(desc(type), cycle)
   return(ds)
 }
 
