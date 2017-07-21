@@ -4,7 +4,10 @@
 \alias{isoplot_dual_inlet}
 \title{Plot mass data from dual inlet files}
 \usage{
-isoplot_dual_inlet(isofiles, masses = NA, ratios = c())
+isoplot_dual_inlet(isofiles, masses = NA, ratios = c(), panels = c("none",
+  "traces", "files", "types"), colors = c("none", "traces", "files", "types"),
+  linetypes = c("none", "traces", "files", "types"), shapes = c("none",
+  "traces", "files", "types"))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
@@ -12,7 +15,18 @@ isoplot_dual_inlet(isofiles, masses = NA, ratios = c())
 \item{masses}{which masses to plot (e.g. c("45", "44")), NULL (the default) means that all masses will be plotted}
 
 \item{ratios}{which ratios to plot (e.g. c("45/44", "46/44")), not affected by zoom parameter}
+
+\item{panels}{whether to panel data by anything, options are "none" (overlay all), "traces" (by mass/ratio traces), "files" (panel by files), "types" (panel by standard vs. sample). The default is "traces"}
+
+\item{colors}{whether to color data by anything, options are the same as for panels but the default is "files"}
+
+\item{linetypes}{whether to differentiate data by linetype, options are the same as for panels but the default is "none". Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}}
+
+\item{shapes}{whether to shape data points by anything, options are the same as for panels but the default is "types"}
 }
 \description{
 Plot mass data from dual inlet files
+}
+\note{
+not entirely clear if a normalization parameter would be useful
 }

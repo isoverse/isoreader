@@ -32,9 +32,9 @@ isoplot_raw_data <- function(isofiles, ..., quiet = setting("quiet")) {
 #' @param time_interval_units which units the time interval is in, default is "seconds"
 #' @param normalize whether to normalize all traces (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if \code{zoom} is set) is applied after normalizing.
 #' @param zoom if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values > 1 are zoom in, values < 1 are zoom out, baseline always remains the anchor point. Note that for overlay plots (\code{panels = "none"}) zooming is relative to the max in each panel (potentially across different traces). Also note that zooming only affects masses, ratios are not zoomed.
-#' @param panels whether to panel traces, options are "none" (overlay all), "traces" (by mass/ratio traces), "files" (panel by files). The default is "traces"
-#' @param colors whether to color traces, options are the same as for panels but the default is "files"
-#' @param linetypes whether to differentiate traces by linetype, options are the same as for panels but the default is "none". Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}
+#' @param panels whether to panel data by anything, options are "none" (overlay all), "traces" (by mass/ratio traces), "files" (panel by files). The default is "traces"
+#' @param colors whether to color data by anything, options are the same as for panels but the default is "files"
+#' @param linetypes whether to differentiate data by linetype, options are the same as for panels but the default is "none". Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}
 #' @family plot functions
 #' @export
 isoplot_continuous_flow <- function(
@@ -46,7 +46,8 @@ isoplot_continuous_flow <- function(
   if (missing(panels)) panels <- "traces"
   if (missing(colors)) colors <- "files"
   if (missing(linetypes)) linetypes <- "none"
-  check_layout_parameters(panels, colors, linetypes)
+  if (!all(ok <- c(panels, colors, linetypes) %in% c("none", "traces", "files")))
+    stop("unknown layout specification ", str_c(c(panels, colors, linetypes)[!ok], collapse = ", "), call. = FALSE)
   
   # global vars
   time <- type <- column <- value <- file_id <- label_with_units <- NULL
@@ -168,27 +169,52 @@ isoplot_continuous_flow <- function(
   if (normalize)
     p <- p + theme(axis.ticks.y = element_blank(), axis.text.y = element_blank())
   
-  # apply layout parameters
-  p <- apply_layout_parameters(p, panels, colors, linetypes, facet_grid = TRUE)
+  # labels
+  traces_label <- "Traces"
+  files_label <- "Files"
+  
+  # paneling
+  if ( panels == "traces") 
+    p <- p + facet_grid(label_with_units~., scales = "free_y") 
+  else if (panels == "files") 
+    p <- p + facet_grid(file_id~., scales = "free_y")
+
+  # colors
+  if (colors == "traces") 
+    p <- p %+% aes(color = label_with_units) + labs(color = traces_label)
+  else if (colors == "files") 
+    p <- p %+% aes(color = file_id) + labs(color = files_label)
+  
+  # linetypes
+  if (linetypes == "traces") 
+    p <- p %+% aes(linetype = label_with_units) + labs(linetype = traces_label)
+  else if (linetypes == "files") 
+    p <- p %+% aes(linetype = file_id) + labs(linetype = files_label)
   
   # return plot
   return(p)
 }
 
 #' Plot mass data from dual inlet files
-#' FIXME: allow for normalization within each type too?
+#' 
 #' @inheritParams isoplot_continuous_flow
+#' @param panels whether to panel data by anything, options are "none" (overlay all), "traces" (by mass/ratio traces), "files" (panel by files), "types" (panel by standard vs. sample). The default is "traces"
+#' @param shapes whether to shape data points by anything, options are the same as for panels but the default is "types"
+#' @note not entirely clear if a normalization parameter would be useful
 isoplot_dual_inlet <- function(
-  isofiles, masses = NA, ratios = c(),
-  panels = c("none", "traces", "files"), colors = c("none", "traces", "files"), linetypes = c("none", "traces", "files")) {
+  isofiles, masses = NA, ratios = c(), 
+  panels = c("none", "traces", "files", "types"), colors = c("none", "traces", "files", "types"), 
+  linetypes = c("none", "traces", "files", "types"), shapes = c("none", "traces", "files", "types")) {
   
   # checks
   if(!is_dual_inlet(isofiles)) stop("can only plot dual inlet isofiles", call. = FALSE)
   if (missing(panels)) panels <- "traces"
   if (missing(colors)) colors <- "files"
   if (missing(linetypes)) linetypes <- "none"
-  check_layout_parameters(panels, colors, linetypes)
-
+  if (missing(shapes)) shapes <- "types"
+  if (!all(ok <- c(panels, colors, linetypes, shapes) %in% c("none", "traces", "files", "types")))
+    stop("unknown layout specification ", str_c(c(panels, colors, linetypes, shapes)[!ok], collapse = ", "), call. = FALSE)
+  
   # collect raw data
   raw_data <- get_raw_data(isofiles)
   if (nrow(raw_data) == 0) stop("no raw data in supplied isofiles", call. = FALSE)
@@ -204,23 +230,68 @@ isoplot_dual_inlet <- function(
     # gather everything
     gather(column, value, -file_id, -type, -cycle) %>% 
     filter(!is.na(value)) %>% 
+    # normalize
+    # {
+    #   if (normalize) {
+    #     group_by(., file_id, column, type) %>% # what should be grouped by?? can make arguments by panel but since standard and sample are all separate and offset depending on pressure, it's not so clear what makes most sense - can just plot ratios instead of normalizing to anything
+    #       mutate(value = (value - min(value, na.rm = TRUE))/
+    #                (max(value, na.rm = TRUE) - min(value, na.rm = TRUE))) %>% 
+    #       ungroup()
+    #   } else .
+    # } %>% 
     # labeling information
     left_join(select(all_columns, column, label_with_units), by = "column")
   
   # generate plot
   p <- plot_data %>% 
     ggplot() + 
-    aes(cycle, value, group = paste(file_id, type, column), shape = type) +
+    aes(cycle, value, group = paste(file_id, type, column)) +
     geom_line() +
     geom_point(size = 2) +
     scale_x_continuous("Cycle", breaks = c(0:max(plot_data$cycle))) +
     scale_y_continuous("Signal") +
-    scale_shape_discrete("Type") +
-    theme_bw() +
-    theme(legend.position = "bottom", legend.direction = "vertical")
+    theme_bw() 
   
-  # apply layout parameters
-  p <- apply_layout_parameters(p, panels, colors, linetypes, facet_grid = FALSE)
+  # normalize plot y axis
+  # if (normalize)
+  #   p <- p + theme(axis.ticks.y = element_blank(), axis.text.y = element_blank())
+  
+  # labels
+  traces_label <- "Traces"
+  files_label <- "Files"
+  types_label <- "Data Type"
+   
+  # paneling
+  if (panels == "traces") 
+    p <- p + facet_wrap(~label_with_units, scales = "free_y") 
+  else if (panels == "files") 
+    p <- p + facet_wrap(~file_id, scales = "free_y") 
+  else if (panels == "types")
+    p <- p + facet_wrap(~type, scales = "free_y") 
+  
+  # colors
+  if (colors == "traces") 
+    p <- p %+% aes(color = label_with_units) + labs(color = traces_label)
+  else if (colors == "files") 
+    p <- p %+% aes(color = file_id) + labs(color = files_label)
+  else if (colors == "types") 
+    p <- p %+% aes(color = type) + labs(color = types_label)
+  
+  # linetypes
+  if (linetypes == "traces") 
+    p <- p %+% aes(linetype = label_with_units) + labs(linetype = traces_label)
+  else if (linetypes == "files") 
+    p <- p %+% aes(linetype = file_id) + labs(linetype = files_label)
+  else if (linetypes == "types") 
+    p <- p %+% aes(linetype = type) + labs(linetype = types_label)
+  
+  # shapes
+  if (shapes == "traces") 
+    p <- p %+% aes(shape = label_with_units) + labs(shape = traces_label)
+  else if (shapes == "files") 
+    p <- p %+% aes(shape = file_id) + labs(shape = files_label)
+  else if (shapes == "types") 
+    p <- p %+% aes(shape = type) + labs(shape = types_label)
   
   # return plot
   return(p)
@@ -300,41 +371,4 @@ calculate_ratios <- function(raw_data, ratio_columns) {
     }
   }
   return(raw_data)
-}
-
-# formatting/layou functions for plotting =====
-
-# check validity of layout parameters
-check_layout_parameters <- function(panels, colors, linetypes) {
-  if (!all(ok <- c(panels, colors, linetypes) %in% c("none", "traces", "files")))
-    stop("unknown layout specification ", str_c(c(panels, colors, linetypes)[!ok], collapse = ", "), call. = FALSE)
-  if(colors != "none" && colors == linetypes) 
-    stop("cannot have the same specification for colors and linetypes", call. = FALSE)
-}
-
-# apply layout parameters to plot
-# @param facet_grid TRUE means facet grid, FALSE means facet wrap
-apply_layout_parameters <- function(p, panels, colors, linetypes, facet_grid, traces_label = "Data", files_label = "Files") {
-  # paneling
-  if (facet_grid && panels == "traces") 
-    p <- p + facet_grid(label_with_units~., scales = "free_y") 
-  else if (!facet_grid && panels == "traces") 
-    p <- p + facet_wrap(~label_with_units, scales = "free_y") 
-  else if (facet_grid && panels == "files") 
-    p <- p + facet_grid(file_id~., scales = "free_y")
-  else if (!facet_grid && panels == "files") 
-    p <- p + facet_wrap(~file_id, scales = "free_y") 
-  
-  # colors
-  if (colors == "traces") 
-    p <- p %+% aes(color = label_with_units) + labs(color = traces_label)
-  else if (colors == "files") 
-    p <- p %+% aes(color = file_id) + labs(color = files_label)
-  
-  # linetypes
-  if (linetypes == "traces") 
-    p <- p %+% aes(linetype = label_with_units) + labs(linetype = traces_label)
-  else if (linetypes == "files") 
-    p <- p %+% aes(linetype = file_id) + labs(linetype = files_label)
-  return(p)
 }

@@ -24,11 +24,11 @@ isoplot_continuous_flow(isofiles, masses = NA, ratios = c(),
 
 \item{zoom}{if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values > 1 are zoom in, values < 1 are zoom out, baseline always remains the anchor point. Note that for overlay plots (\code{panels = "none"}) zooming is relative to the max in each panel (potentially across different traces). Also note that zooming only affects masses, ratios are not zoomed.}
 
-\item{panels}{whether to panel traces, options are "none" (overlay all), "traces" (by mass/ratio traces), "files" (panel by files). The default is "traces"}
+\item{panels}{whether to panel data by anything, options are "none" (overlay all), "traces" (by mass/ratio traces), "files" (panel by files). The default is "traces"}
 
-\item{colors}{whether to color traces, options are the same as for panels but the default is "files"}
+\item{colors}{whether to color data by anything, options are the same as for panels but the default is "files"}
 
-\item{linetypes}{whether to differentiate traces by linetype, options are the same as for panels but the default is "none". Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}}
+\item{linetypes}{whether to differentiate data by linetype, options are the same as for panels but the default is "none". Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}}
 }
 \description{
 Plot chromatogram from continuous flow data

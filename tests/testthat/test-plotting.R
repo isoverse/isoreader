@@ -20,8 +20,24 @@ test_that("test that plot continuous flow works properly", {
   expect_error(isoplot_raw_data(cf, panels = "42"), "unknown layout specification")
   expect_error(isoplot_raw_data(cf, colors = "42"), "unknown layout specification")
   expect_error(isoplot_raw_data(cf, linetypes = "42"), "unknown layout specification")
-  expect_error(isoplot_raw_data(cf, colors = "traces", linetypes = "traces"), "cannot have the same")
   expect_is(p <- isoplot_raw_data(cf, ratios = c("46/44")), "ggplot")
+  
+  
+})
+
+test_that("test that plot dual inlet works properly", {
+  
+  expect_error(isoplot_dual_inlet(42), "can only plot dual inlet")
+  expect_is(di <- isoreader:::make_di_data_structure() %>% isoreader:::update_read_options(read_raw_data = TRUE), "dual_inlet")
+  expect_error(isoplot_raw_data(di), "no raw data in supplied isofiles")
+  
+  # make test raw data
+  di$raw_data <- data_frame(type = rep(c("standard", "sample"), each = 5), cycle = rep(1:5, times = 2), v44.mV = runif(10), v46.mV = runif(10))
+  expect_error(isoplot_raw_data(di, panels = "42"), "unknown layout specification")
+  expect_error(isoplot_raw_data(di, colors = "42"), "unknown layout specification")
+  expect_error(isoplot_raw_data(di, linetypes = "42"), "unknown layout specification")
+  expect_error(isoplot_raw_data(di, shapes = "42"), "unknown layout specification")
+  expect_is(p <- isoplot_raw_data(di, ratios = c("46/44")), "ggplot")
   
   
 })
