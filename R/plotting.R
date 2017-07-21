@@ -12,6 +12,8 @@
 isoplot_raw_data <- function(isofiles, ..., quiet = setting("quiet")) {
   if(!is_iso_object(isofiles)) stop("can only plot iso files or lists of iso files", call. = FALSE)
   
+  isofiles <- as_isofile_list(isofiles)
+  
   if (!setting("quiet")) 
     sprintf("Info: plotting data from %d data files", length(isofiles)) %>% message()
   
