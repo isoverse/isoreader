@@ -238,7 +238,8 @@ re_or <- function(...) {
   structure(
     list(
       label = sprintf("(%s)", str_c(map_chr(regexps, "label"), collapse = "|")),
-      regexp = sprintf("((%s))", str_c(map_chr(regexps, "regexp"), collapse = ")|(")),
+      # NOTE: on windows, the following command with str_c instead of paste or map_chr instead of sapply strangly leads to the regexp not getting recognized anymore in grepRaw
+      regexp = paste0("((", paste(sapply(regexps, `[[`, "regexp"), collapse = ")|("), "))"),
       size = sum(map_dbl(regexps, "size")) # estimate
     ),
     class = "binary_regexp")
