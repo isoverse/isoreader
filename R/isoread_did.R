@@ -113,25 +113,48 @@ extract_did_raw_voltage_data <- function(ds) {
 # extract vendor computed data table
 extract_did_vendor_data_table <- function(ds) {
   
-  # find sequence line information
+  # find vendor data table
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot process vendor computed data table") %>% 
     move_to_C_block_range("CDualInletEvaluatedData", "CParsedEvaluationString")
   
-  # read the data table
+  # cap
+  if (!is.null(pos <- find_next_pattern(ds$binary, re_text("Gas Indices")))) {
+    ds$binary <- ds$binary %>% cap_at_pos(pos - 20)
+  } else op_error(ds$binary, "cannot find data deliminter 'Gas Indices'")
+  
+  # find data positions
+  column_header_re <- re_combine(re_block("etx"), re_text("/"), re_block("fef-x"), re_block("text"), # Delta or AT%
+                                 re_block("fef-x"), re_block("text"), # actual column name
+                                 re_null(4), re_block("stx"))
+  column_data_re <- re_combine(re_text("/"), re_block("fef-0"), re_block("fef-x"), re_block("text"), re_null(4), 
+                               re_block("x-000"), re_block("x-000"), re_block("x-000")) # data comes after this
+  column_header_positions <- find_next_patterns(ds$binary, column_header_re)
+  column_data_positions <- find_next_patterns(ds$binary, column_data_re)
+  
+  # safety checks
+  if (length(column_header_positions) == 0) {
+    op_er(ds$binary, "no column headers found")
+  } else if (length(column_header_positions) != length(column_data_positions)) {
+    op_er(ds$binary, sprintf("unequal number of column headers (%d) and data entries (%d) found", 
+                             length(column_header_positions), length(column_data_positions)))
+  } else if (!all(column_header_positions < column_data_positions)) {
+    op_er(ds$binary, "found column headers not interspersed with data entries")
+  }
+  
+  # read the data
   vendor_dt <- list()
-  while(!is.null(find_next_pattern(ds$binary, re_block("fef-0"), re_block("stx")))) {
+  for (i in 1:length(column_header_positions)) {
     ds$binary <- ds$binary %>%
-      move_to_next_pattern(re_text("/"), re_block("fef-x")) %>% 
-      # capture column type (typically Delta or AT%)
-      capture_data("type", "text", re_or(re_block("nl"), re_block("fef-x")), re_block("text"), move_past_dots = FALSE) %>%
-      move_to_next_pattern(re_or(re_block("nl"), re_block("fef-x")), max_gap = 0) %>% 
+      move_to_pos(column_header_positions[i] + 10) %>% # skip initial <stx>/<fef-x> at the start of header
+      # capture column type (typically Delta or AT%) # could skip this to speed up
+      capture_data("type", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
       # capture actual colum name
-      capture_data("column", "text", re_null(4), re_block("stx"), move_past_dots = TRUE) %>%
-      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-x"), re_block("text"), re_null(4), 
-                           re_block("x-000"), re_block("x-000"), re_block("x-000")) %>%
+      capture_data("column", "text", re_null(4), re_block("stx")) %>%
       # capture column data
-      capture_data("values", "double", re_block("fef-0"), re_block("stx"), sensible = c(-1e10, 1e10), move_past_dots = TRUE)
+      move_to_pos(column_data_positions[i]) %>% 
+      move_to_next_pattern(column_data_re, max_gap = 0) %>% # move to start of data
+      capture_data("values", "double", re_block("fef-0"), re_block("stx"), sensible = c(-1e10, 1e10))
     
     if (length(ds$binary$data$values) %% 2 != 0)
       stop("odd number of data entries recovered", call. = FALSE)
