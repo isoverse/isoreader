@@ -10,4 +10,4 @@ document:
 	Rscript -e "devtools::check_doc()"
 
 auto_test:
-	R -q -e "testthat::auto_test_package()"
+	R -q -e "rm(list = ls()); testthat::auto_test_package()"
