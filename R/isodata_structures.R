@@ -138,7 +138,7 @@ as_isofile_list <- function(..., discard_duplicates = TRUE) {
       msg <- if(discard_duplicates) "duplicate files encountered, only first kept" else "duplicate files kept, may interfere with data processing"
       for (idx in which(dups)) {
         iso_list[[idx]] <- register_warning(
-          iso_list[[idx]], str_c(msg, ": ", names(iso_list)[idx]))
+          iso_list[[idx]], str_c(str_replace_na(c(msg, ": ", names(iso_list)[idx])), collapse = ""))
       }
       
       if (discard_duplicates) {
@@ -194,11 +194,11 @@ print.isofile <- function(x, ..., show_problems = TRUE) {
   if (is.na(data_type)) data_type <- "Iso"
   sprintf("%s data '%s' (%s; %s) from %s%s\n", 
           data_type,
-          x$file_info$file_id,
+          get_isofile_id(x),
           get_raw_data_info(x),
           get_file_info_info(x),
-          x$file_info$file_path,
-          x$file_info$file_subpath %>% { if(!is.na(.)) str_c("|", .) else "" }
+          get_isofile_path(x),
+          get_isofile_subpath(x) %>% { if(!is.na(.)) str_c("|", .) else "" }
   ) %>% cat()
   if (show_problems && n_problems(x) > 0) {
     cat("Problems:\n")
