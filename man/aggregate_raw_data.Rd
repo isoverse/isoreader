@@ -4,10 +4,12 @@
 \alias{aggregate_raw_data}
 \title{Aggregate raw data}
 \usage{
-aggregate_raw_data(isofiles)
+aggregate_raw_data(isofiles, gather = FALSE)
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
+
+\item{gather}{whether to gather data into long format after aggregation (e.g. for plotting)}
 }
 \description{
 Aggregate raw data

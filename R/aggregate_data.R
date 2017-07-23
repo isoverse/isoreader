@@ -47,18 +47,37 @@ check_iso_file_param <- function(isofile) {
 #' Aggregate raw data
 #' 
 #' @param isofiles collection of isofile objects
+#' @param gather whether to gather data into long format after aggregation (e.g. for plotting)
 #' @family data aggregation functions
 #' @export
-aggregate_raw_data <- function(isofiles) {
+aggregate_raw_data <- function(isofiles, gather = FALSE) {
   isofiles <- as_isofile_list(isofiles)
   check_read_options(isofiles, "raw_data")
   
   file_id <- NULL # global vars
-  lapply(isofiles, function(isofile) {
-    as_data_frame(isofile$raw_data) %>% 
-      mutate(file_id = isofile$file_info$file_id) %>% 
-      select(file_id, everything())
-  }) %>% bind_rows()
+  data <- 
+    lapply(isofiles, function(isofile) {
+      as_data_frame(isofile$raw_data) %>% 
+        mutate(file_id = isofile$file_info$file_id) %>% 
+        select(file_id, everything())
+    }) %>% bind_rows()
+  
+  # if gathering
+  if (gather) {
+    masses_ratios_re <- "^([vir])(\\d+/?\\d*)(\\.(.+))?$"
+    data %>% 
+      # gather all masses and ratios
+      gather(column, value, matches(masses_ratios_re)) %>% 
+      # extract unit information
+      extract(column, into = c("category", "dataset", "extra_parens", "units"), regex = masses_ratios_re) %>% 
+      select(-extra_parens) %>% 
+      # remove unknown data
+      filter(!is.na(value)) %>% 
+      # assign category
+      mutate(category = ifelse(category == "r", "ratio", "mass"))
+  } else {
+    data
+  }
 }
 
 #' Aggregate file info
@@ -137,12 +156,13 @@ aggregate_vendor_data_table <- function(isofiles, with_units = TRUE) {
 
 # check if read options are compatible
 check_read_options <- function(isofiles, option) {
+  isofiles <- as_isofile_list(isofiles)
   option_values <- map(isofiles, "read_options") %>% map_lgl(option)
   if (!all(option_values)) {
     warning(sum(!option_values), "/", length(isofiles), 
             " files were read without extracting the ", str_replace_all(option, "_", " "), 
             " (parameter '", str_c("read_", option), 
-            "=FALSE') and will have missing values in the aggregated data",
+            "=FALSE') and will have missing values",
             call. = FALSE, immediate. = TRUE)
   }
 }
