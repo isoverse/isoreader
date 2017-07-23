@@ -14,7 +14,8 @@ make_isofile_data_structure <- function() {
       file_info = list(
         file_id = NA_character_, # unique identifer
         file_path = NA_character_, # path to file (file extension is key for processing)
-        file_subpath = NA_character_ # sub path in case file is an archieve
+        file_subpath = NA_character_, # sub path in case file is an archieve
+        file_datetime = NA_real_ # the run date and time of the file
       ),
       method_info = list(), # all methods information
       raw_data = data_frame(), # all mass data (Note: maybe not top-level b/c of scans?)

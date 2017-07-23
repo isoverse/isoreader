@@ -1,3 +1,49 @@
+# File info and data aggregation functions 
+
+# Specific file info calls ======
+
+#' Get file information
+#' 
+#' Retrieve basic file information form an isotope file (isofile) object.
+#' 
+#' @details \code{get_isofile_id()}: retrieve the file ID (this is typially the file name)
+#' @param isofile an isofile to retrieve basic file information from
+#' @rdname get_isofile_info
+#' @export
+get_isofile_id <- function(isofile) {
+  check_iso_file_param(isofile)
+  return(isofile$file_info$file_id)
+}
+
+#' @details \code{get_isofile_path()}: retrieve the file path (this is the path to the file in case of single file formats such as .dxf or .did and the path to the archieve file in case of collective file formats such as .iarc)
+#' @rdname get_isofile_info
+get_isofile_path <- function(isofile) {
+  check_iso_file_param(isofile)
+  return(isofile$file_info$file_path)
+}
+
+#' @details \code{get_isofile_subpath()}: retrieve the file subpath (this only exists for collective file formats such as .iarc and is the name of the metadata file inside the .iarc archive). Returns NA for isofile without subpath.
+#' @rdname get_isofile_info
+get_isofile_subpath <- function(isofile) {
+  check_iso_file_param(isofile)
+  return(isofile$file_info$file_subpath)
+}
+
+#' @details \code{get_isofile_datetime()}: retrieve the run date and time
+#' @rdname get_isofile_info
+get_isofile_datetime <- function(isofile) {
+  check_iso_file_param(isofile)
+  return(isofile$file_info$file_datetime)
+}
+
+# internal convenience function
+check_iso_file_param <- function(isofile) {
+  if(missing(isofile)) stop("no isofile provided to retrieve file information from", call. = FALSE)
+  if(!is_isofile(isofile)) stop("can only retrieve file information from an isofile object, not from '", class(isofile)[1], "'", call. = FALSE)
+}
+
+# Specific data aggregation calls =====
+
 #' Aggregate raw data
 #' 
 #' @param isofiles collection of isofile objects
