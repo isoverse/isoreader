@@ -61,21 +61,23 @@ test_that("test that aggregation functions refuse to work with non isofiles", {
 
 test_that("test that aggregeting raw data works", {
   
-  cf <- isoreader:::make_cf_data_structure()
-  expect_warning(aggregate_raw_data(cf), "read without extracting the raw data")
+  isofile <- isoreader:::make_isofile_data_structure()
+  expect_warning(aggregate_raw_data(isofile), "read without extracting the raw data")
   
   # test data
-  cf$read_options$raw_data <- TRUE
-  cf1 <- modifyList(cf, list(file_info = list(file_id = "a")))
-  cf2 <- modifyList(cf, list(file_info = list(file_id = "b")))
-  cf1$raw_data <- data_frame(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), `r46/44` = v46.mV/v44.mV)
-  cf2$raw_data <- data_frame(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), v45.mV = runif(10))
+  isofile$read_options$raw_data <- TRUE
+  isofile1 <- modifyList(isofile, list(file_info = list(file_id = "a")))
+  isofile2 <- modifyList(isofile, list(file_info = list(file_id = "b")))
+  isofile1$raw_data <- data_frame(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), `r46/44` = v46.mV/v44.mV)
+  isofile2$raw_data <- data_frame(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), v45.mV = runif(10))
   
-  # tests
-  expect_equal(aggregate_raw_data(c(cf1, cf2)), 
-               data <- bind_rows(mutate(cf1$raw_data, file_id="a"), mutate(cf2$raw_data, file_id = "b")))
+  expect_message(aggregate_raw_data(c(isofile1, isofile2), quiet = FALSE), "aggregating")
+  expect_silent(aggregate_raw_data(c(isofile1, isofile2), quiet = TRUE))
+  expect_equal(aggregate_raw_data(c(isofile1, isofile2)), 
+               data <- bind_rows(mutate(isofile1$raw_data, file_id="a"), 
+                                 mutate(isofile2$raw_data, file_id = "b")))
   
-  expect_equal(aggregate_raw_data(c(cf1, cf2), gather = TRUE), 
+  expect_equal(aggregate_raw_data(c(isofile1, isofile2), gather = TRUE), 
                data %>% gather(column, value, starts_with("v"), starts_with("r")) %>% 
                  left_join(data_frame(
                    column = c("v44.mV", "v45.mV", "v46.mV", "r46/44"),
@@ -85,4 +87,30 @@ test_that("test that aggregeting raw data works", {
                   ), by = "column") %>% select(-column) %>% filter(!is.na(value)))
 })
 
+## check aggregating file info works
 
+test_that("test that aggregating file info works", {
+
+  isofile <- isoreader:::make_isofile_data_structure()
+  expect_warning(aggregate_file_info(isofile), "read without extracting the file info")
+  
+  # test data
+  isofile$read_options$file_info <- TRUE
+  isofile1 <- modifyList(isofile, list(
+    file_info = list(file_id = "a", test_info = "x", multi_value = 1:2, only_a = TRUE)))
+  isofile2 <- modifyList(isofile, list(
+    file_info = list(file_id = "b", test_info = "y", multi_value = 1:3)))
+  
+  expect_message(aggregate_file_info(c(isofile1, isofile2), quiet = FALSE), "aggregating")
+  expect_silent(aggregate_file_info(c(isofile1, isofile2), quiet = TRUE))
+  expect_equal(aggregate_file_info(c(isofile1, isofile2)), 
+               {
+                  # check for multi value collapse functionality
+                  isofile1$file_info$multi_value <- str_c(isofile1$file_info$multi_value, collapse = "; ")
+                  isofile2$file_info$multi_value <- str_c(isofile2$file_info$multi_value, collapse = "; ")
+                  bind_rows(as_data_frame(isofile1$file_info), as_data_frame(isofile2$file_info))
+               })
+  
+})
+
+## CONTINUE HERE: vendor data table and methods info
