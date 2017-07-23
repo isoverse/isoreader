@@ -2,32 +2,30 @@
 
 #' Plot raw data from isoreader files
 #' 
-#' Convenience function for making standard plots for raw isoreader data. Calls \code{\link{isoplot_continuous_flow}} and \code{\link{isoplot_dual_inlet}} for data specific plotting (see those functions for parameter details).
+#' Convenience function for making standard plots for raw isoreader data. Calls \code{\link{plot_continuous_flow}} and \code{\link{plot_dual_inlet}} for data specific plotting (see those functions for parameter details).
 #' 
-#' @inheritParams isoread_files
 #' @inheritParams aggregate_raw_data
 #' @param ... parameters for the data specific plotting functions
 #' @family plot functions
 #' @export
-isoplot_raw_data <- function(isofiles, ..., quiet = setting("quiet")) {
+plot_raw_data <- function(isofiles, ..., quiet = setting("quiet")) {
   if(!is_iso_object(isofiles)) stop("can only plot iso files or lists of iso files", call. = FALSE)
   
   isofiles <- as_isofile_list(isofiles)
   
-  if (!setting("quiet")) 
-    sprintf("Info: plotting data from %d data file(s)", length(isofiles)) %>% message()
+  if (!quiet) sprintf("Info: plotting data from %d data file(s)", length(isofiles)) %>% message()
   
   if (is_continuous_flow(isofiles))
-    isoplot_continuous_flow (isofiles, ...)
+    plot_continuous_flow (isofiles, ...)
   else if (is_dual_inlet(isofiles))
-    isoplot_dual_inlet (isofiles, ...)
+    plot_dual_inlet (isofiles, ...)
   else
     stop("plotting of this type of isofiles not yet supported", call. = FALSE) 
 }
 
 #' Plot chromatogram from continuous flow data
 #'
-#' @inheritParams isoplot_raw_data
+#' @inheritParams plot_raw_data
 #' @param masses which masses to plot (e.g. c("45", "44")), NULL (the default) means that all masses will be plotted
 #' @param ratios which ratios to plot (e.g. c("45/44", "46/44")), not affected by zoom parameter
 #' @param time_interval which time interval to plot
@@ -39,7 +37,7 @@ isoplot_raw_data <- function(isofiles, ..., quiet = setting("quiet")) {
 #' @param linetypes whether to differentiate data by linetype, options are the same as for panels but the default is "none". Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}
 #' @family plot functions
 #' @export
-isoplot_continuous_flow <- function(
+plot_continuous_flow <- function(
   isofiles, masses = NA, ratios = c(), time_interval = c(), time_interval_units = "seconds", normalize = FALSE, zoom = NULL, 
   panels = c("none", "traces", "files"), colors = c("none", "traces", "files"), linetypes = c("none", "traces", "files")) {
   
@@ -61,7 +59,7 @@ isoplot_continuous_flow <- function(
   
   # masses and ratios
   all_columns <- get_mass_and_ratio_definitions(raw_data, masses, ratios)
-  raw_data <- calculate_ratios(raw_data, filter(all_columns, type == "ratio"))
+  raw_data <- calculate_plot_ratios(raw_data, filter(all_columns, type == "ratio"))
 
   # time column
   time_pattern <- "^time\\.(.*)$"
@@ -199,11 +197,11 @@ isoplot_continuous_flow <- function(
 
 #' Plot mass data from dual inlet files
 #' 
-#' @inheritParams isoplot_continuous_flow
+#' @inheritParams plot_continuous_flow
 #' @param panels whether to panel data by anything, options are "none" (overlay all), "traces" (by mass/ratio traces), "files" (panel by files), "types" (panel by standard vs. sample). The default is "traces"
 #' @param shapes whether to shape data points by anything, options are the same as for panels but the default is "types"
 #' @note not entirely clear if a normalization parameter would be useful
-isoplot_dual_inlet <- function(
+plot_dual_inlet <- function(
   isofiles, masses = NA, ratios = c(), 
   panels = c("none", "traces", "files", "types"), colors = c("none", "traces", "files", "types"), 
   linetypes = c("none", "traces", "files", "types"), shapes = c("none", "traces", "files", "types")) {
@@ -223,7 +221,7 @@ isoplot_dual_inlet <- function(
   
   # masses and ratios
   all_columns <- get_mass_and_ratio_definitions(raw_data, masses, ratios)
-  raw_data <- calculate_ratios(raw_data, filter(all_columns, type == "ratio"))
+  raw_data <- calculate_plot_ratios(raw_data, filter(all_columns, type == "ratio"))
   
   # plot data
   plot_data <- 
@@ -361,7 +359,7 @@ get_mass_and_ratio_definitions <- function(raw_data, masses, ratios) {
 
 # calculate derived ratios in mass data
 # @param ratio_columns is a data frame with columns 'column', 'top' and 'bot' for calculating the resulting ratio of top/bot and storing it in the new column 'column'
-calculate_ratios <- function(raw_data, ratio_columns) {
+calculate_plot_ratios <- function(raw_data, ratio_columns) {
   if(!all(c("column", "top", "bot") %in% names(ratio_columns))) stop("columns missing", call. = FALSE)
   if(any(is.na(ratio_columns$column)) || any(is.na(ratio_columns$top)) || any(is.na(ratio_columns$bot)))
     stop("missing values", call. = FALSE)
