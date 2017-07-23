@@ -4,7 +4,7 @@
 #' 
 #' This function can be used to convert the time units of a collection of isofiles to a new common time unit. The original time units are inferred from the naming of the time column. New time units are very flexible and can be anything that \code{\link[lubridate]{duration}} understands, i.e. "s", "seconds", "min", "minutes", "hours", "days", etc. are all valid units.
 #' 
-#' @inheritParams isoplot_raw_data
+#' @inheritParams plot_raw_data
 #' @param to what time units to convert to
 #' @return the passed in isofiles with changed time units
 convert_time <- function(isofiles, to, quiet = setting("quiet")) {

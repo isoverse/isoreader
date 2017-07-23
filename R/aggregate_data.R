@@ -46,12 +46,14 @@ check_iso_file_param <- function(isofile) {
 
 #' Aggregate raw data
 #' 
+#' @inheritParams isoread_files
 #' @param isofiles collection of isofile objects
 #' @param gather whether to gather data into long format after aggregation (e.g. for plotting)
 #' @family data aggregation functions
 #' @export
-aggregate_raw_data <- function(isofiles, gather = FALSE) {
+aggregate_raw_data <- function(isofiles, gather = FALSE, quiet = setting("quiet")) {
   isofiles <- as_isofile_list(isofiles)
+  if (!quiet) sprintf("Info: aggregating raw data from %d data file(s)", length(isofiles)) %>% message()
   check_read_options(isofiles, "raw_data")
   
   file_id <- NULL # global vars
@@ -88,8 +90,9 @@ aggregate_raw_data <- function(isofiles, gather = FALSE) {
 #' @inheritParams aggregate_raw_data
 #' @family data aggregation functions
 #' @export
-aggregate_file_info <- function(isofiles) {
+aggregate_file_info <- function(isofiles, quiet = setting("quiet")) {
   isofiles <- as_isofile_list(isofiles)
+  if (!quiet) sprintf("Info: aggregating file info from %d data file(s)", length(isofiles)) %>% message()
   check_read_options(isofiles, "file_info")
   
   lapply(isofiles, function(isofile) {
@@ -107,8 +110,9 @@ aggregate_file_info <- function(isofiles) {
 #' @param with_ratios whether to include ratios or just standard delta values
 #' @family data aggregation functions
 #' @export
-aggregate_standards_info <- function(isofiles, with_ratios = TRUE) {
+aggregate_standards_info <- function(isofiles, with_ratios = TRUE, quiet = setting("quiet")) {
   isofiles <- as_isofile_list(isofiles)
+  if (!quiet) sprintf("Info: aggregating standards info from %d data file(s)", length(isofiles)) %>% message()
   check_read_options(isofiles, "method_info")
   
   lapply(isofiles, function(isofile) {
@@ -135,9 +139,11 @@ aggregate_standards_info <- function(isofiles, with_ratios = TRUE) {
 #' @param with_units whether to include units in the column headers or not
 #' @family data aggregation functions
 #' @export
-aggregate_vendor_data_table <- function(isofiles, with_units = TRUE) {
+aggregate_vendor_data_table <- function(isofiles, with_units = TRUE, quiet = setting("quiet")) {
   isofiles <- as_isofile_list(isofiles)
+  if (!quiet) sprintf("Info: aggregating vendor data table from %d data file(s)", length(isofiles)) %>% message()
   check_read_options(isofiles, "vendor_data_table")
+  
   column <- column_with_units <- file_id <- NULL # global vars
   lapply(isofiles, function(isofile) {
     df <- isofile$vendor_data_table

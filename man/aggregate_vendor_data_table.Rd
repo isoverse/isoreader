@@ -4,12 +4,15 @@
 \alias{aggregate_vendor_data_table}
 \title{Aggregate vendor computed table data}
 \usage{
-aggregate_vendor_data_table(isofiles, with_units = TRUE)
+aggregate_vendor_data_table(isofiles, with_units = TRUE,
+  quiet = setting("quiet"))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
 
 \item{with_units}{whether to include units in the column headers or not}
+
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }
 \description{
 Aggregate vendor computed table data

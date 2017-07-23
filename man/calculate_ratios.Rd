@@ -7,6 +7,8 @@
 calculate_ratios(isofiles, ratios, quiet = setting("quiet"))
 }
 \arguments{
+\item{isofiles}{collection of isofile objects}
+
 \item{ratios}{which ratios to calculate (e.g. c("45/44", "46/44")), will only be calculated in files that have the necessary mass column}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}

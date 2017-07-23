@@ -1,8 +1,7 @@
 
 #' Calculate ratios from primary data
 #' 
-#' @inheritParams isoread_files
-#' @param isofiles
+#' @inheritParams aggregate_raw_data
 #' @param ratios which ratios to calculate (e.g. c("45/44", "46/44")), will only be calculated in files that have the necessary mass column
 #' @return isofiles with ratios added
 #' @export

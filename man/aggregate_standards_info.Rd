@@ -4,12 +4,15 @@
 \alias{aggregate_standards_info}
 \title{Aggregate standards from methods info}
 \usage{
-aggregate_standards_info(isofiles, with_ratios = TRUE)
+aggregate_standards_info(isofiles, with_ratios = TRUE,
+  quiet = setting("quiet"))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
 
 \item{with_ratios}{whether to include ratios or just standard delta values}
+
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }
 \description{
 Aggregates the isotopic standard information recovered from the provided isofiles. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios.

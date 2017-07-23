@@ -4,12 +4,14 @@
 \alias{aggregate_raw_data}
 \title{Aggregate raw data}
 \usage{
-aggregate_raw_data(isofiles, gather = FALSE)
+aggregate_raw_data(isofiles, gather = FALSE, quiet = setting("quiet"))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
 
 \item{gather}{whether to gather data into long format after aggregation (e.g. for plotting)}
+
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }
 \description{
 Aggregate raw data

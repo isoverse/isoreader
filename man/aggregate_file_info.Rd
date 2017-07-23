@@ -4,10 +4,12 @@
 \alias{aggregate_file_info}
 \title{Aggregate file info}
 \usage{
-aggregate_file_info(isofiles)
+aggregate_file_info(isofiles, quiet = setting("quiet"))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
+
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }
 \description{
 Note file info entries with multiple values are concatenated for this general purpose function.
