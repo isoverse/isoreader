@@ -50,14 +50,14 @@ test_that("test that debug mode can be activated", {
   expect_equal(isoreader:::setting("catch_errors"), TRUE)
 })
 
-
-test_that("default values restored on package load", {
-  expect_true({turn_info_messages_off(); isoreader:::setting("quiet")})
-  expect_true({suppressMessages(isoreader:::turn_debug_on()); isoreader:::setting("debug")})
-  
-  # reloading package should reset settings
-  detach("package:isoreader", unload=TRUE)
-  library(isoreader)
-  expect_false(isoreader:::setting("quiet"))
-  expect_false(isoreader:::setting("debug"))
-})
+## this seems to break covr::package_coverage() because of the reload and is therefore commented out for now
+# test_that("default values restored on package load", {
+#   expect_true({turn_info_messages_off(); isoreader:::setting("quiet")})
+#   expect_true({suppressMessages(isoreader:::turn_debug_on()); isoreader:::setting("debug")})
+#   
+#   # reloading package should reset settings
+#   detach("package:isoreader", unload=TRUE) # this is the problem for code coverage
+#   library(isoreader)
+#   expect_false(isoreader:::setting("quiet"))
+#   expect_false(isoreader:::setting("debug"))
+# })
