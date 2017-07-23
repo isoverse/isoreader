@@ -5,7 +5,7 @@
 #' Convenience function for making standard plots for raw isoreader data. Calls \code{\link{isoplot_continuous_flow}} and \code{\link{isoplot_dual_inlet}} for data specific plotting (see those functions for parameter details).
 #' 
 #' @inheritParams isoread_files
-#' @inheritParams get_raw_data
+#' @inheritParams aggregate_raw_data
 #' @param ... parameters for the data specific plotting functions
 #' @family plot functions
 #' @export
@@ -56,7 +56,7 @@ isoplot_continuous_flow <- function(
   is_ratio <- max_signal <- baseline <- cutoff <- discard <- change <- border <- gap <- NULL
   
   # collect raw data
-  raw_data <- get_raw_data(isofiles)
+  raw_data <- aggregate_raw_data(isofiles)
   if (nrow(raw_data) == 0) stop("no raw data in supplied isofiles", call. = FALSE)
   
   # masses and ratios
@@ -218,7 +218,7 @@ isoplot_dual_inlet <- function(
     stop("unknown layout specification ", str_c(c(panels, colors, linetypes, shapes)[!ok], collapse = ", "), call. = FALSE)
   
   # collect raw data
-  raw_data <- get_raw_data(isofiles)
+  raw_data <- aggregate_raw_data(isofiles)
   if (nrow(raw_data) == 0) stop("no raw data in supplied isofiles", call. = FALSE)
   
   # masses and ratios

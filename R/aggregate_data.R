@@ -1,15 +1,12 @@
-# Note: probably best to implement these as 
-
 #' Aggregate raw data
 #' 
 #' @param isofiles collection of isofile objects
 #' @family data aggregation functions
 #' @export
-get_raw_data <- function(isofiles) {
+aggregate_raw_data <- function(isofiles) {
   isofiles <- as_isofile_list(isofiles)
   check_read_options(isofiles, "raw_data")
   
-  # Note: provide easy way to include additional information (merge with get_file_info() but a select set of columns)
   file_id <- NULL # global vars
   lapply(isofiles, function(isofile) {
     as_data_frame(isofile$raw_data) %>% 
@@ -23,10 +20,10 @@ get_raw_data <- function(isofiles) {
 #' Note file info entries with multiple values are concatenated for this general purpose function.
 #' To get access to a specific multi-value file info, access using $file_info[['INFO_NAME']]
 #'
-#' @inheritParams get_raw_data
+#' @inheritParams aggregate_raw_data
 #' @family data aggregation functions
 #' @export
-get_file_info <- function(isofiles) {
+aggregate_file_info <- function(isofiles) {
   isofiles <- as_isofile_list(isofiles)
   check_read_options(isofiles, "file_info")
   
@@ -37,15 +34,15 @@ get_file_info <- function(isofiles) {
   }) %>% bind_rows()
 }
 
-#' Get standards from methods info
+#' Aggregate standards from methods info
 #'
-#' Combines primary and secondary standards into a single table
+#' Aggregates the isotopic standard information recovered from the provided isofiles. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios.
 #'
-#' @inheritParams get_raw_data
+#' @inheritParams aggregate_raw_data
 #' @param with_ratios whether to include ratios or just standard delta values
 #' @family data aggregation functions
 #' @export
-get_method_info_standards <- function(isofiles, with_ratios = TRUE) {
+aggregate_standards_info <- function(isofiles, with_ratios = TRUE) {
   isofiles <- as_isofile_list(isofiles)
   check_read_options(isofiles, "method_info")
   
@@ -69,11 +66,11 @@ get_method_info_standards <- function(isofiles, with_ratios = TRUE) {
 
 #' Aggregate vendor computed table data
 #' 
-#' @inheritParams get_raw_data
+#' @inheritParams aggregate_raw_data
 #' @param with_units whether to include units in the column headers or not
 #' @family data aggregation functions
 #' @export
-get_vendor_data_table <- function(isofiles, with_units = TRUE) {
+aggregate_vendor_data_table <- function(isofiles, with_units = TRUE) {
   isofiles <- as_isofile_list(isofiles)
   check_read_options(isofiles, "vendor_data_table")
   column <- column_with_units <- file_id <- NULL # global vars
