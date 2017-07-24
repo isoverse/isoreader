@@ -57,7 +57,8 @@ test_that("test that time conversion works for isofiles", {
   # test data
   cf$read_options$raw_data <- TRUE
   cf$raw_data <- data_frame(tp = 1:10, time.s = tp*0.2)
-  expect_message(convert_time(cf, to = "min", quiet = FALSE), "converting time")
+  expect_message(result <- convert_time(cf, to = "min", quiet = FALSE), "converting time")
+  expect_true(is_isofile(result))
   expect_silent(convert_time(cf, to = "min", quiet = TRUE))
   expect_equal(convert_time(cf, to = "min")$raw_data$time.min, cf$raw_data$time.s/60)
   expect_equal(convert_time(cf, to = "s")$raw_data$time.s, cf$raw_data$time.s)
@@ -67,7 +68,7 @@ test_that("test that time conversion works for isofiles", {
                 modifyList(cf, list(file_info = list(file_id = "b"))))
   isofiles$b$raw_data$time.min <- isofiles$b$raw_data$time.s/60
   isofiles$b$raw_data$time.min <- NULL
-  isofiles_in_hrs <- convert_time(isofiles, to = "hours")
+  expect_true(is_isofile_list(isofiles_in_hrs <- convert_time(isofiles, to = "hours")))
   expect_equal(isofiles_in_hrs$a$raw_data$time.hours, cf$raw_data$time.s/3600)
   expect_equal(isofiles_in_hrs$b$raw_data$time.hours, cf$raw_data$time.s/3600)
   

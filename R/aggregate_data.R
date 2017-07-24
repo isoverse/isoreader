@@ -64,6 +64,9 @@ aggregate_raw_data <- function(isofiles, gather = FALSE, quiet = setting("quiet"
         select(file_id, everything())
     }) %>% bind_rows()
   
+  # check for rows
+  if (nrow(data) == 0) return(data)
+  
   # if gathering
   if (gather) {
     column <- value <- extra_parens <- category <- NULL # global vars

@@ -6,13 +6,14 @@
 #' 
 #' @inheritParams plot_raw_data
 #' @param to what time units to convert to
-#' @return the passed in isofiles with changed time units
+#' @return the passed in isofile(s) with changed time units
 convert_time <- function(isofiles, to, quiet = setting("quiet")) {
   
   # checks
   if(!is_continuous_flow(isofiles)) stop("can only convert time in continuous flow isofiles", call. = FALSE)
   if(missing(to)) stop("no time unit to convert to specified", call. = FALSE)
-  isofiles_out <- as_isofile_list(isofiles)
+  single_file <- is_isofile(isofiles) # to make sure return is the same as supplied
+  isofiles <- as_isofile_list(isofiles)
   
   if (!quiet) 
     sprintf("Info: converting time to '%s' for %d continuous flow data file(s)", to, length(isofiles)) %>% message()
@@ -22,7 +23,7 @@ convert_time <- function(isofiles, to, quiet = setting("quiet")) {
   
   # find time from units
   time_pattern <- "^time\\.(.*)$"
-  time_from <- sapply(isofiles_out, function(isofile) {
+  time_from <- sapply(isofiles, function(isofile) {
     time_column <- str_subset(names(isofile$raw_data), time_pattern)
     if(length(time_column) == 0) return(NA_character_) # no time column (potentially data not read)
     if (length(time_column) != 1) 
@@ -32,18 +33,18 @@ convert_time <- function(isofiles, to, quiet = setting("quiet")) {
   })
   
   # for each file convert the time units
-  for (i in 1:length(isofiles_out)) {
+  for (i in 1:length(isofiles)) {
     if (!is.na(time_from[i])) {
       old_time <- str_c("time.", time_from[i])
       new_time <- str_c("time.", to)
-      isofiles_out[[i]]$raw_data[[old_time]] <- scale_time(isofiles_out[[i]]$raw_data[[old_time]], to = to, from = time_from[i])
-      isofiles_out[[i]]$raw_data <- isofiles_out[[i]]$raw_data %>% rename_(.dots = setNames(old_time, new_time))
+      isofiles[[i]]$raw_data[[old_time]] <- scale_time(isofiles[[i]]$raw_data[[old_time]], to = to, from = time_from[i])
+      isofiles[[i]]$raw_data <- isofiles[[i]]$raw_data %>% rename_(.dots = setNames(old_time, new_time))
     }
   }
   
   # return single (if passed in as single) 
-  if (is_isofile(isofiles)) return (isofiles_out[[1]])
-  return(isofiles_out)
+  if (single_file) return (isofiles[[1]])
+  return(isofiles)
 }
 
 

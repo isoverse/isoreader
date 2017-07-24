@@ -4,25 +4,21 @@
 \alias{plot_dual_inlet}
 \title{Plot mass data from dual inlet files}
 \usage{
-plot_dual_inlet(isofiles, masses = NA, ratios = c(), panels = c("none",
-  "traces", "files", "types"), colors = c("none", "traces", "files", "types"),
-  linetypes = c("none", "traces", "files", "types"), shapes = c("none",
-  "traces", "files", "types"))
+plot_dual_inlet(isofiles, datasets, panel_by = "dataset", color_by = "file",
+  linetype_by = "none", shape_by = "SA|STD")
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
 
-\item{masses}{which masses to plot (e.g. c("45", "44")), NULL (the default) means that all masses will be plotted}
+\item{datasets}{which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using \code{\link{calculate_ratios}} prior to plotting.}
 
-\item{ratios}{which ratios to plot (e.g. c("45/44", "46/44")), not affected by zoom parameter}
+\item{panel_by}{whether to panel data by anything, options are "none" (overlay all), "dataset" (by mass/ratio dataset), "file" (panel by files), "SA|STD" (panel by sample|standard). The default is "dataset"}
 
-\item{panels}{whether to panel data by anything, options are "none" (overlay all), "traces" (by mass/ratio traces), "files" (panel by files), "types" (panel by standard vs. sample). The default is "traces"}
+\item{color_by}{whether to color data by anything, options are the same as for \code{panel_by} but the default is "file"}
 
-\item{colors}{whether to color data by anything, options are the same as for panels but the default is "files"}
+\item{linetype_by}{whether to differentiate data by linetype, options are the same as for \code{panel_by} but the default is "none". Note that a limited number of linetype_by (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}}
 
-\item{linetypes}{whether to differentiate data by linetype, options are the same as for panels but the default is "none". Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}}
-
-\item{shapes}{whether to shape data points by anything, options are the same as for panels but the default is "types"}
+\item{shape_by}{whether to shape data points by anything, options are the same as for panel_by but the default is "SA|STD" (sample|standard)}
 }
 \description{
 Plot mass data from dual inlet files

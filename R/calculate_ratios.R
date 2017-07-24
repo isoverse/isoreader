@@ -3,14 +3,15 @@
 #' 
 #' @inheritParams aggregate_raw_data
 #' @param ratios which ratios to calculate (e.g. c("45/44", "46/44")), will only be calculated in files that have the necessary mass column
-#' @return isofiles with ratios added
+#' @return ithe passed in isofile(s) with ratios added
 #' @export
 calculate_ratios <- function(isofiles, ratios, quiet = setting("quiet")) {
   
   # safety checks
   if(!is_iso_object(isofiles)) stop("can only calculate ratios for iso files", call. = FALSE)
   if(missing(ratios) || is.null(ratios)) stop("no ratios provided for ratio calculations", call. = FALSE)
-  isofiles_out <- as_isofile_list(isofiles)
+  single_file <- is_isofile(isofiles) # to make sure return is the same as supplied
+  isofiles <- as_isofile_list(isofiles)
   
   # ratios
   ratio_pattern <- "^(\\d+)/(\\d+)$"
@@ -24,7 +25,7 @@ calculate_ratios <- function(isofiles, ratios, quiet = setting("quiet")) {
   # information
   if (!quiet) {
     str_interp("Info: calculating ratio(s) in $[d]{n} data file(s): ${ratios}", 
-               list(n = length(isofiles_out), ratios = str_c(ratios, collapse =", "))) %>% message()
+               list(n = length(isofiles), ratios = str_c(ratios, collapse =", "))) %>% message()
   }
   
   # make sure data is provided
@@ -52,10 +53,9 @@ calculate_ratios <- function(isofiles, ratios, quiet = setting("quiet")) {
   }
   
   # apply calculations
-  isofiles_out <- as_isofile_list(isofiles) %>% 
-    lapply(calculate_isofile_ratios)
+  isofiles <- isofiles %>% lapply(calculate_isofile_ratios) %>% as_isofile_list()
     
   # return single (if passed in as single) 
-  if (is_isofile(isofiles)) return (isofiles_out[[1]])
-  return(isofiles_out)
+  if (single_file) return (isofiles[[1]])
+  return(isofiles)
 }
