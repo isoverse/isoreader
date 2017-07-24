@@ -17,7 +17,8 @@ aggregate_raw_data(isofiles, gather = FALSE, quiet = setting("quiet"))
 Aggregate raw data
 }
 \seealso{
-Other data aggregation functions: \code{\link{aggregate_file_info}},
+Other data retrieval functions: \code{\link{aggregate_file_info}},
   \code{\link{aggregate_standards_info}},
-  \code{\link{aggregate_vendor_data_table}}
+  \code{\link{aggregate_vendor_data_table}},
+  \code{\link{get_file_id}}
 }

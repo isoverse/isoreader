@@ -4,7 +4,7 @@
 \alias{aggregate_standards_info}
 \title{Aggregate standards from methods info}
 \usage{
-aggregate_standards_info(isofiles, with_ratios = TRUE,
+aggregate_standards_info(isofiles, with_ratios = FALSE,
   quiet = setting("quiet"))
 }
 \arguments{
@@ -18,7 +18,8 @@ aggregate_standards_info(isofiles, with_ratios = TRUE,
 Aggregates the isotopic standard information recovered from the provided isofiles. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios.
 }
 \seealso{
-Other data aggregation functions: \code{\link{aggregate_file_info}},
+Other data retrieval functions: \code{\link{aggregate_file_info}},
   \code{\link{aggregate_raw_data}},
-  \code{\link{aggregate_vendor_data_table}}
+  \code{\link{aggregate_vendor_data_table}},
+  \code{\link{get_file_id}}
 }

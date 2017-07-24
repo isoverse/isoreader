@@ -24,5 +24,5 @@ plot_dual_inlet(isofiles, datasets, panel_by = "dataset", color_by = "file",
 Plot mass data from dual inlet files
 }
 \note{
-not entirely clear if a normalization parameter would be useful
+normalization is not useful for dual inlet data, except potentially between standard and sample - however, for this it is more meaningful to simply plot the relevant ratios together
 }

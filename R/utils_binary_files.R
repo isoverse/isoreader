@@ -548,7 +548,8 @@ parse_raw_data <- function(raw, type, n = full_raw(), ignore_trailing_zeros = FA
     
     # check all data 
     for (i in 1:length(type)) {
-      if (class(data[[i]]) != class(sensible[[i]])) 
+      if (class(data[[i]]) != class(sensible[[i]]) && 
+          class(data[[i]]) != "integer" && class(sensible[[i]]) != "numeric" ) # allow integer to numeric comparison
         stop(sprintf("%scannot compare data (%s) to expected values (%s), data type mismatch", 
                      error_prefix, class(data[[i]]), class(sensible[[i]])), call. = FALSE)
       if (is.character(sensible[[i]]) && !all(good_data <- str_detect(sensible[[i]], data[[i]]))) 

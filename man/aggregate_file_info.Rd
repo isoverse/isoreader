@@ -16,7 +16,8 @@ Note file info entries with multiple values are concatenated for this general pu
 To get access to a specific multi-value file info, access using $file_info[['INFO_NAME']]
 }
 \seealso{
-Other data aggregation functions: \code{\link{aggregate_raw_data}},
+Other data retrieval functions: \code{\link{aggregate_raw_data}},
   \code{\link{aggregate_standards_info}},
-  \code{\link{aggregate_vendor_data_table}}
+  \code{\link{aggregate_vendor_data_table}},
+  \code{\link{get_file_id}}
 }

@@ -18,7 +18,8 @@ aggregate_vendor_data_table(isofiles, with_units = TRUE,
 Aggregate vendor computed table data
 }
 \seealso{
-Other data aggregation functions: \code{\link{aggregate_file_info}},
+Other data retrieval functions: \code{\link{aggregate_file_info}},
   \code{\link{aggregate_raw_data}},
-  \code{\link{aggregate_standards_info}}
+  \code{\link{aggregate_standards_info}},
+  \code{\link{get_file_id}}
 }

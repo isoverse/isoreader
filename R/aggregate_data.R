@@ -1,4 +1,4 @@
-# File info and data aggregation functions 
+# File info and data retrieval functions 
 
 # Specific file info calls ======
 
@@ -6,32 +6,34 @@
 #' 
 #' Retrieve basic file information form an isotope file (isofile) object.
 #' 
-#' @details \code{get_isofile_id()}: retrieve the file ID (this is typially the file name)
+#' @details \code{get_file_id()}: retrieve the file ID (this is typially the file name)
 #' @param isofile an isofile to retrieve basic file information from
-#' @rdname get_isofile_info
+#' @rdname get_file_info
+#' @aliases get_file_info
+#' @family data retrieval functions
 #' @export
-get_isofile_id <- function(isofile) {
+get_file_id <- function(isofile) {
   check_iso_file_param(isofile)
   return(isofile$file_info$file_id)
 }
 
-#' @details \code{get_isofile_path()}: retrieve the file path (this is the path to the file in case of single file formats such as .dxf or .did and the path to the archieve file in case of collective file formats such as .iarc)
-#' @rdname get_isofile_info
-get_isofile_path <- function(isofile) {
+#' @details \code{get_file_path()}: retrieve the file path (this is the path to the file in case of single file formats such as .dxf or .did and the path to the archieve file in case of collective file formats such as .iarc)
+#' @rdname get_file_info
+get_file_path <- function(isofile) {
   check_iso_file_param(isofile)
   return(isofile$file_info$file_path)
 }
 
-#' @details \code{get_isofile_subpath()}: retrieve the file subpath (this only exists for collective file formats such as .iarc and is the name of the metadata file inside the .iarc archive). Returns NA for isofile without subpath.
-#' @rdname get_isofile_info
-get_isofile_subpath <- function(isofile) {
+#' @details \code{get_file_subpath()}: retrieve the file subpath (this only exists for collective file formats such as .iarc and is the name of the metadata file inside the .iarc archive). Returns NA for isofile without subpath.
+#' @rdname get_file_info
+get_file_subpath <- function(isofile) {
   check_iso_file_param(isofile)
   return(isofile$file_info$file_subpath)
 }
 
-#' @details \code{get_isofile_datetime()}: retrieve the run date and time
-#' @rdname get_isofile_info
-get_isofile_datetime <- function(isofile) {
+#' @details \code{get_file_datetime()}: retrieve the run date and time in \code{\link[base]{POSIXct}} format
+#' @rdname get_file_info
+get_file_datetime <- function(isofile) {
   check_iso_file_param(isofile)
   return(isofile$file_info$file_datetime)
 }
@@ -49,7 +51,7 @@ check_iso_file_param <- function(isofile) {
 #' @inheritParams isoread_files
 #' @param isofiles collection of isofile objects
 #' @param gather whether to gather data into long format after aggregation (e.g. for plotting)
-#' @family data aggregation functions
+#' @family data retrieval functions
 #' @export
 aggregate_raw_data <- function(isofiles, gather = FALSE, quiet = setting("quiet")) {
   isofiles <- as_isofile_list(isofiles)
@@ -92,7 +94,7 @@ aggregate_raw_data <- function(isofiles, gather = FALSE, quiet = setting("quiet"
 #' To get access to a specific multi-value file info, access using $file_info[['INFO_NAME']]
 #'
 #' @inheritParams aggregate_raw_data
-#' @family data aggregation functions
+#' @family data retrieval functions
 #' @export
 aggregate_file_info <- function(isofiles, quiet = setting("quiet")) {
   isofiles <- as_isofile_list(isofiles)
@@ -112,9 +114,9 @@ aggregate_file_info <- function(isofiles, quiet = setting("quiet")) {
 #'
 #' @inheritParams aggregate_raw_data
 #' @param with_ratios whether to include ratios or just standard delta values
-#' @family data aggregation functions
+#' @family data retrieval functions
 #' @export
-aggregate_standards_info <- function(isofiles, with_ratios = TRUE, quiet = setting("quiet")) {
+aggregate_standards_info <- function(isofiles, with_ratios = FALSE, quiet = setting("quiet")) {
   isofiles <- as_isofile_list(isofiles)
   if (!quiet) sprintf("Info: aggregating standards info from %d data file(s)", length(isofiles)) %>% message()
   check_read_options(isofiles, "method_info")
@@ -141,7 +143,7 @@ aggregate_standards_info <- function(isofiles, with_ratios = TRUE, quiet = setti
 #' 
 #' @inheritParams aggregate_raw_data
 #' @param with_units whether to include units in the column headers or not
-#' @family data aggregation functions
+#' @family data retrieval functions
 #' @export
 aggregate_vendor_data_table <- function(isofiles, with_units = TRUE, quiet = setting("quiet")) {
   isofiles <- as_isofile_list(isofiles)
