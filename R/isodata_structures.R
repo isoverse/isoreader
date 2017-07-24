@@ -222,6 +222,7 @@ print.continuous_flow <- function(x, ..., show_problems = TRUE) {
 
 # print info
 get_raw_data_info <- function(x) {
+  stopifnot(is_isofile(x))
   if (x$read_options$raw_data) {
     sprintf(
       "%d recordings of %s",
@@ -234,6 +235,7 @@ get_raw_data_info <- function(x) {
   }
 }
 get_file_info_info <- function(x) {
+  stopifnot(is_isofile(x))
   if (x$read_options$file_info) {
     sprintf(
       "%d file info entries",
@@ -248,7 +250,7 @@ get_file_info_info <- function(x) {
 
 # set data structure file path
 set_ds_file_path <- function(ds, file_path, file_id = basename(file_path), file_subpath = NA_character_) {
-  if (!is(ds, "isofile")) stop("can only set path for isofile data structures", call. = FALSE)
+  if (!is_isofile(ds)) stop("can only set path for isofile data structures", call. = FALSE)
   if (!file.exists(file_path)) stop("file/folder does not exist: ", file_path, call. = FALSE)
   ds$file_info$file_path <- file_path
   ds$file_info$file_id <- file_id
