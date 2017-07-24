@@ -282,7 +282,7 @@ generate_cache_file_path <- function(ds) {
     # generate numeric fingerprint has and combine to generate cache filename
     unf() %>% {.$hash} %>% str_c(collapse = "") %>% 
     # combine with file name
-    { file.path(setting("cache_dir"), str_c("isofile_", ., ".RData")) }
+    { file.path(setting("cache_dir"), str_c("isofile_", ., ".rda")) }
 }
 
 #' Cleanup old cached files
@@ -291,7 +291,7 @@ generate_cache_file_path <- function(ds) {
 #' @param all if set to TRUE, all cached files will be removed regardless of their version
 #' @export
 cleanup_isoreader_cache <- function(all = FALSE) {
-  files <- list.files(setting("cache_dir"), pattern = "isofile_[^.]+\\.RData", full.names = TRUE)
+  files <- list.files(setting("cache_dir"), pattern = "isofile_[^.]+\\.rda", full.names = TRUE)
   if (all) {
     file.remove(files)
     if (!setting("quiet")) message("Info: removed all (", length(files), ") cached isoreader files.")

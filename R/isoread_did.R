@@ -134,12 +134,12 @@ extract_did_vendor_data_table <- function(ds) {
   
   # safety checks
   if (length(column_header_positions) == 0) {
-    op_er(ds$binary, "no column headers found")
+    op_error(ds$binary, "no column headers found")
   } else if (length(column_header_positions) != length(column_data_positions)) {
-    op_er(ds$binary, sprintf("unequal number of column headers (%d) and data entries (%d) found", 
+    op_error(ds$binary, sprintf("unequal number of column headers (%d) and data entries (%d) found", 
                              length(column_header_positions), length(column_data_positions)))
   } else if (!all(column_header_positions < column_data_positions)) {
-    op_er(ds$binary, "found column headers not interspersed with data entries")
+    op_error(ds$binary, "found column headers not interspersed with data entries")
   }
   
   # read the data

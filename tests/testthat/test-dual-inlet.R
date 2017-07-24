@@ -2,7 +2,7 @@ context("Dual Inlet Files")
 
 test_that("test that supported di files are correct", {
   expect_is(exts <- isoreader:::get_supported_di_files(), "data.frame")
-  expect_equal(exts$extension, c("did", "di.Rda"))
+  expect_equal(exts$extension, c("did", "di.rda"))
   expect_true(all(exts$fun %>% sapply(class) == "character"))
   
   # check for existence in names sapce
@@ -22,10 +22,10 @@ test_that("test that did files can be read", {
   # test specific files
   
   expect_true(file.exists(file <- system.file(package = "isoreader", "extdata", "dual_inlet_example.did")))
-  expect_is(did <- isoread_dual_inlet(file, cache = FALSE), "dual_inlet")
+  expect_is(did <- read_dual_inlet(file, cache = FALSE), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
   
   expect_true(file.exists(file <- "did_example_CO2_clumped_01.did"))
-  expect_is(did <- isoread_dual_inlet(file, cache = FALSE), "dual_inlet")
+  expect_is(did <- read_dual_inlet(file, cache = FALSE), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
 })

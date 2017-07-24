@@ -16,9 +16,9 @@ show_supported_file_types <- function() {
   description <- NULL
   sprintf(
     c("Isoreader supported file types",
-      "Dual Inlet | 'isoread_dual_inlet()':",
+      "Dual Inlet | 'read_dual_inlet()':",
       "   %s", 
-      "Continuous flow | 'isoread_continuous_flow()':",
+      "Continuous flow | 'read_continuous_flow()':",
       "   %s") %>% str_c(collapse = "\n"),
     get_supported_di_files() %>% 
       mutate(label = str_c(".", extension, " = ", description)) %>% 

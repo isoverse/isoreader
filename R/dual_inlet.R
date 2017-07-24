@@ -7,7 +7,7 @@
 #' @param read_vendor_data_table whether to read the vendor computed data table
 #' @family isoread functions for different types of IRMS data
 #' @export
-isoread_dual_inlet <- function(
+read_dual_inlet <- function(
   paths, read_raw_data = TRUE, read_file_info = TRUE, read_method_info = TRUE, read_vendor_data_table = FALSE,
   discard_duplicates = TRUE, quiet = setting("quiet"), cache = setting("cache")) {
   
@@ -32,6 +32,6 @@ get_supported_di_files <- function() {
     ~id,    ~extension,    ~fun,              ~cache,   ~description,
     "did",  "did",         "isoread_did",     TRUE,     "Isodat Dual Inlet file format",
     #"zip", "feather.zip", "isoread_feather", FALSE,     "Isoreader cached data format (for R+python)", # potential future expansion
-    "Rda",   "di.Rda",      "isoread_rda",     FALSE,    "Isoreader cached data (for R)"
+    "rda",   "di.rda",      "isoread_rda",     FALSE,    "Isoreader R Data Archive"
   )
 }

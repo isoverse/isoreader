@@ -66,6 +66,7 @@ aggregate_raw_data <- function(isofiles, gather = FALSE, quiet = setting("quiet"
   
   # if gathering
   if (gather) {
+    column <- value <- extra_parens <- category <- NULL # global vars
     masses_ratios_re <- "^([vir])(\\d+/?\\d*)(\\.(.+))?$"
     data %>% 
       # gather all masses and ratios

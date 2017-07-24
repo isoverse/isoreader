@@ -10,5 +10,5 @@ isoread(...)
 \item{...}{original isoread parameters}
 }
 \description{
-Deprecated, use \link{isoread_dual_inlet}, \link{isoread_continuous_flow} and \link{isoread_scan} instead.
+Deprecated, use \link{read_dual_inlet}, \link{read_continuous_flow} and \link{read_scan} instead.
 }

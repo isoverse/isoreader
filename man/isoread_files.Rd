@@ -21,11 +21,11 @@ isoread_files(paths, supported_extensions, data_structure, ...,
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 
-\item{cache}{whether to cache isofiles and attempt to reload from cache (will only reload if a file was previously read with the same read options and has NOT been modified since). Note that previously exported R Data Archives (di.Rda, cf.Rda) are never cached since they are already essentially in cached form.}
+\item{cache}{whether to cache isofiles and attempt to reload from cache (will only reload if a file was previously read with the same read options and has NOT been modified since). Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
 }
 \value{
 single isofile object (if single file) or list of isofiles (isofile_list)
 }
 \description{
-This function takes care of extracting basic information about isofiles, dealing with problems and making sure only valid fire formats are processed. This function is not typicaly called directly but indirectly by calling \link{isoread_dual_inlet}, \link{isoread_continuous_flow} and \link{isoread_scan}. It is exported because it can be very useful for testing new file readers.
+This function takes care of extracting basic information about isofiles, dealing with problems and making sure only valid fire formats are processed. This function is not typicaly called directly but indirectly by calling \link{read_dual_inlet}, \link{read_continuous_flow} and \link{read_scan}. It is exported because it can be very useful for testing new file readers.
 }
