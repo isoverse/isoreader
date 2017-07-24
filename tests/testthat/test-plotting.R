@@ -19,9 +19,11 @@ test_that("test that plot continuous flow works properly", {
   expect_error(plot_raw_data(cf, color_by = "42"), "unknown layout specification")
   expect_error(plot_raw_data(cf, linetype_by = "42"), "unknown layout specification")
   cf <- calculate_ratios(cf, "46/44")
-  expect_message(p <- plot_raw_data(cf, c("44", "46/44"), quiet = FALSE), "plotting data")
+  expect_message(p <- plot_raw_data(cf, c("46/44", "44"), quiet = FALSE), "plotting data")
   expect_true(is.ggplot(p))
   expect_silent(plot_raw_data(cf, "44", quiet = TRUE))
+  expect_true(all(p$data$dataset %in% c("44 [mV]", "46/44"))) # only these datasets selected
+  expect_true(identical(p$data$dataset %>% levels(), c("46/44", "44 [mV]")))
   
   # aesthetics, mapping, panelling formatting tests - defaults first
   expect_true(all(names(p$mapping) %in% c("colour", "x", "y", "group")))
@@ -33,7 +35,8 @@ test_that("test that plot continuous flow works properly", {
   expect_equal(names(p$facet$params$cols), NULL)
   
   # then custom specifications
-  expect_true(is.ggplot(p <- plot_raw_data(cf, "44", panel_by = "none", color_by = "dataset", linetype_by = "file")))
+  expect_true(is.ggplot(p <- plot_raw_data(cf, panel_by = "none", color_by = "dataset", linetype_by = "file")))
+  expect_true(all(p$data$dataset %in% c("44 [mV]", "46 [mV]", "46/44"))) # all selected by default
   expect_true(all(names(p$mapping) %in% c("colour", "x", "y", "group", "linetype")))
   expect_equal(as.character(p$mapping$colour), "dataset")
   expect_equal(as.character(p$mapping$linetype), "file_id")
