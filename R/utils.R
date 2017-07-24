@@ -3,11 +3,14 @@
 magrittr::`%>%`
 
 # helper to make sure columns exist
+# NOTE: is this used?
 col_check <- function(cols, data, fun = sys.call(-1), msg = "You may have to change the parameters in your function call") {
   if (!is.null(cols) && length(missing <- setdiff(cols, names(data))) > 0) 
     stop("column(s) not in data: '", str_c(missing, collapse = "', '"), 
          "'. ", msg, ". Function: ", fun, call. = FALSE)
 }
+
+# file types and paths ====
 
 #' Show supported file types
 #' @export
@@ -78,6 +81,8 @@ retrieve_file_paths <- function(paths, extensions = c()) {
   return(filepaths)
 }
 
+# function execution with error catching =====
+
 # execute function with catch if not in debug mode
 # @param func can be either function name or function call
 # problems are reported in obj
@@ -111,3 +116,16 @@ find_parent_call <- function(current_func) {
   if (has_func[1] == 1) return("") # called from top-level
   calls[[has_func[1] - 1]][1]
 }
+
+# formattng =====
+
+# convience function for information message
+get_info_message_concat <- function(variable, prefix = "", suffix = "", quotes = TRUE){
+  if (!is.null(variable) > 0) {
+    quotes <- if(quotes) "'" else ""
+    vars <- str_c(variable, collapse = str_c(quotes, ", ", quotes, collapse = ""))
+    return(str_c(prefix, quotes, vars, quotes, suffix))
+  } else
+    return("")
+}
+

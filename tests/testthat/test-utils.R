@@ -45,3 +45,12 @@ test_that("test that error catching works correctly", {
   expect_equal(problems(y) %>% select(type, details), data_frame(type = "error", details = "problem"))
 })
 
+
+test_that("test that info concatenation works", {
+  expect_equal(isoreader:::get_info_message_concat(1:2), "'1', '2'")
+  expect_equal(isoreader:::get_info_message_concat(1:2, quotes = FALSE), "1, 2")
+  expect_equal(isoreader:::get_info_message_concat(prefix = "hello ", 1:2), "hello '1', '2'")
+  expect_equal(isoreader:::get_info_message_concat(1:2, suffix = " world"), "'1', '2' world")
+  expect_equal(isoreader:::get_info_message_concat(c()), "")
+  expect_equal(isoreader:::get_info_message_concat(NULL), "")
+})
