@@ -10,6 +10,7 @@ calculate_ratios <- function(isofiles, ratios, quiet = setting("quiet")) {
   # safety checks
   if(!is_iso_object(isofiles)) stop("can only calculate ratios for iso files", call. = FALSE)
   if(missing(ratios) || is.null(ratios)) stop("no ratios provided for ratio calculations", call. = FALSE)
+  if(!is.logical(quiet)) stop("quiet must be TRUE or FALSE - make sure to pass ratios as a vector, not separate arguments", call. = FALSE)
   single_file <- is_isofile(isofiles) # to make sure return is the same as supplied
   isofiles <- as_isofile_list(isofiles)
   

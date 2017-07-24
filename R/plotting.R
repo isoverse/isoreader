@@ -201,7 +201,7 @@ plot_continuous_flow <- function(
 #' @inheritParams plot_continuous_flow
 #' @param panel_by whether to panel data by anything, options are "none" (overlay all), "dataset" (by mass/ratio dataset), "file" (panel by files), "SA|STD" (panel by sample|standard). The default is "dataset"
 #' @param shape_by whether to shape data points by anything, options are the same as for panel_by but the default is "SA|STD" (sample|standard)
-#' @note not entirely clear if a normalization parameter would be useful
+#' @note normalization is not useful for dual inlet data, except potentially between standard and sample - however, for this it is more meaningful to simply plot the relevant ratios together
 plot_dual_inlet <- function(
   isofiles, datasets, 
   panel_by = "dataset", color_by = "file", linetype_by = "none", shape_by = "SA|STD") {
@@ -210,7 +210,7 @@ plot_dual_inlet <- function(
   if(!is_dual_inlet(isofiles)) stop("can only plot dual inlet isofiles", call. = FALSE)
   if (!all(ok <- c(panel_by, color_by, linetype_by, shape_by) %in% c("none", "dataset", "file", "SA|STD")))
     stop("unknown layout specification: '", str_c(c(panel_by, color_by, linetype_by, shape_by)[!ok], collapse = "', '"),
-         "'. Please use 'none', 'dataset' or 'file' for panel_by, color_by, shape_by and linetype_by specifications.", call. = FALSE)
+         "'. Please use 'none', 'dataset', 'file' or 'SA|STD' for panel_by, color_by, shape_by and linetype_by specifications.", call. = FALSE)
   
   # global vars
   #time <- type <- column <- value <- file_id <- label_with_units <- NULL
@@ -219,168 +219,71 @@ plot_dual_inlet <- function(
   # collect raw data
   raw_data <- aggregate_raw_data(isofiles, gather = TRUE, quiet = TRUE)
   if (nrow(raw_data) == 0) stop("no raw data in supplied isofiles", call. = FALSE)
-  
-  # collect raw data
-  raw_data <- aggregate_raw_data(isofiles, gather = TRUE, quiet = TRUE)
-  if (nrow(raw_data) == 0) stop("no raw data in supplied isofiles", call. = FALSE)
-  
+
   # only work with desired datasets (masses and ratios)
   datasets <- if(missing(datasets)) unique(raw_data$dataset) else as.character(datasets)
   if ( length(missing <- setdiff(datasets, unique(raw_data$dataset))) > 0 ) 
     stop("dataset(s) not available in the provided isofiles: ", str_c(missing, collapse = ", "), call. = FALSE)
   raw_data <- filter(raw_data, dataset %in% datasets)
   
-  
-  # masses and ratios
-  all_columns <- get_mass_and_ratio_definitions(raw_data, masses, ratios)
-  raw_data <- calculate_plot_ratios(raw_data, filter(all_columns, type == "ratio"))
-  
   # plot data
   plot_data <- 
-    # relevant columns
-    raw_data[c("file_id", "type", "cycle", all_columns$column)] %>% 
-    # gather everything
-    gather(column, value, -file_id, -type, -cycle) %>% 
-    filter(!is.na(value)) %>% 
-    # normalize
-    # {
-    #   if (normalize) {
-    #     group_by(., file_id, column, type) %>% # what should be grouped by?? can make arguments by panel but since standard and sample are all separate and offset depending on pressure, it's not so clear what makes most sense - can just plot ratios instead of normalizing to anything
-    #       mutate(value = (value - min(value, na.rm = TRUE))/
-    #                (max(value, na.rm = TRUE) - min(value, na.rm = TRUE))) %>% 
-    #       ungroup()
-    #   } else .
-    # } %>% 
-    # labeling information
-    left_join(select(all_columns, column, label_with_units), by = "column")
+    raw_data %>% 
+    # dataset with units and in correct order
+    mutate(
+      dataset_with_units = ifelse(!is.na(units), str_c(dataset, " [", units, "]"), dataset)
+    ) %>% {
+      dataset_levels <- deframe(select(., dataset, dataset_with_units))[datasets]
+      mutate(., dataset = factor(dataset_with_units, levels = dataset_levels))
+    }
   
   # generate plot
   p <- plot_data %>% 
     ggplot() + 
-    aes(cycle, value, group = paste(file_id, type, column)) +
+    aes(cycle, value, group = paste(file_id, type, dataset)) +
     geom_line() +
     geom_point(size = 2) +
     scale_x_continuous("Cycle", breaks = c(0:max(plot_data$cycle))) +
     scale_y_continuous("Signal") +
     theme_bw() 
   
-  # normalize plot y axis
-  # if (normalize)
-  #   p <- p + theme(axis.ticks.y = element_blank(), axis.text.y = element_blank())
-  
   # labels
-  dataset_label <- "Traces"
-  files_label <- "Files"
+  datasets_label <- "Dataset"
+  files_label <- "File"
   types_label <- "Data Type"
-   
+  
   # paneling
   if (panel_by == "dataset") 
-    p <- p + facet_wrap(~label_with_units, scales = "free_y") 
-  else if (panel_by == "files") 
+    p <- p + facet_wrap(~dataset, scales = "free_y") 
+  else if (panel_by == "file") 
     p <- p + facet_wrap(~file_id, scales = "free_y") 
-  else if (panel_by == "types")
+  else if (panel_by == "SA|STD")
     p <- p + facet_wrap(~type, scales = "free_y") 
   
   # color_by
   if (color_by == "dataset") 
-    p <- p %+% aes(color = label_with_units) + labs(color = dataset_label)
-  else if (color_by == "files") 
+    p <- p %+% aes(color = dataset) + labs(color = datasets_label)
+  else if (color_by == "file") 
     p <- p %+% aes(color = file_id) + labs(color = files_label)
-  else if (color_by == "types") 
+  else if (color_by == "SA|STD") 
     p <- p %+% aes(color = type) + labs(color = types_label)
   
   # linetype_by
   if (linetype_by == "dataset") 
-    p <- p %+% aes(linetype = label_with_units) + labs(linetype = dataset_label)
-  else if (linetype_by == "files") 
+    p <- p %+% aes(linetype = dataset) + labs(linetype = datasets_label)
+  else if (linetype_by == "file") 
     p <- p %+% aes(linetype = file_id) + labs(linetype = files_label)
-  else if (linetype_by == "types") 
+  else if (linetype_by == "SA|STD") 
     p <- p %+% aes(linetype = type) + labs(linetype = types_label)
   
   # shape_by
   if (shape_by == "dataset") 
-    p <- p %+% aes(shape = label_with_units) + labs(shape = dataset_label)
-  else if (shape_by == "files") 
+    p <- p %+% aes(shape = dataset) + labs(shape = datasets_label)
+  else if (shape_by == "file") 
     p <- p %+% aes(shape = file_id) + labs(shape = files_label)
-  else if (shape_by == "types") 
+  else if (shape_by == "SA|STD") 
     p <- p %+% aes(shape = type) + labs(shape = types_label)
   
   # return plot
   return(p)
-}
-
-# calculation functions for plotting =====
-
-# helper function to process mass and ratio requests for plotting functions
-# peforms all the necessary safety checks
-# @return a data frame with all requested masses and ratios
-get_mass_and_ratio_definitions <- function(raw_data, masses, ratios) {
-  
-  # global vars
-  mass <- column <- ratio <- top <- bot <- label <- NULL
-  
-  # masses
-  mass_column_pattern <- "^[vi](\\d+)\\.(.*)$"
-  mass_columns <- names(raw_data) %>% 
-    str_subset(mass_column_pattern) %>% 
-    str_match(mass_column_pattern) %>%  
-    { data_frame(column = .[,1], mass = .[,2], units = .[,3]) }
-  mass_lookup <- select(mass_columns, mass, column) %>% deframe()
-  
-  # get alll masses if none provided
-  if (!is.null(masses) &&  is.na(masses)) masses <- mass_columns$mass
-  else masses <- as.character(masses)
-  
-  # safety check
-  if(length(masses) == 0 && length(ratios) == 0) stop("must specify at least one mass or ratio", call. = FALSE)
-  
-  # ratios
-  ratio_pattern <- "^(\\d+)/(\\d+)$"
-  if (!all(ok <- str_detect(ratios, ratio_pattern))) {
-    stop("invalid ratio(s): ", str_c(ratios[!ok], collapse = ", "), call. = FALSE)
-  }
-  if (length(ratios) > 0) {
-    ratio_columns <- ratios %>% 
-      str_match(ratio_pattern) %>% 
-      { data_frame(column = str_c("ratio.",.[,1]), ratio = .[,1], top = .[,2], bot = .[,3], units = "") }
-  } else {
-    ratio_columns <- data_frame(column = "", ratio = "", top = "", bot = "", units = "")[0,]
-  }
-  
-  # more safety checks
-  all_needed_masses <- unique(c(masses, ratio_columns$top, ratio_columns$bot))
-  if ( length(missing <- setdiff(all_needed_masses, mass_columns$mass)) > 0 ) {
-    stop("mass(es) not available in the provided isofiles: ", str_c(missing, collapse = ", "), call. = FALSE)
-  }
-  
-  # all data columns to plot (mass and ratio)
-  bind_rows(
-    mass_columns %>% 
-      filter(mass %in% masses) %>% 
-      rename(label = mass) %>% 
-      mutate(type = "mass"),
-    ratio_columns %>% 
-      rename(label = ratio) %>% 
-      mutate(type = "ratio",
-             top = mass_lookup[top],
-             bot = mass_lookup[bot])
-  ) %>% mutate(
-    label_with_units = ifelse(nchar(units) > 0, str_c(label, " [", units, "]"), label)
-  )
-}
-
-# calculate derived ratios in mass data
-# @param ratio_columns is a data frame with columns 'column', 'top' and 'bot' for calculating the resulting ratio of top/bot and storing it in the new column 'column'
-calculate_plot_ratios <- function(raw_data, ratio_columns) {
-  if(!all(c("column", "top", "bot") %in% names(ratio_columns))) stop("columns missing", call. = FALSE)
-  if(any(is.na(ratio_columns$column)) || any(is.na(ratio_columns$top)) || any(is.na(ratio_columns$bot)))
-    stop("missing values", call. = FALSE)
- 
-  # generate ratios
-  if (nrow(ratio_columns) > 0) {
-    for (i in 1:nrow(ratio_columns)) {
-      raw_data[[ratio_columns$column[i]]] <- raw_data[[ratio_columns$top[i]]] / raw_data[[ratio_columns$bot[i]]]
-    }
-  }
-  return(raw_data)
 }
