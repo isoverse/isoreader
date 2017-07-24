@@ -50,7 +50,27 @@ test_that("test that time scaling works", {
 
 test_that("test that time conversion works for isofiles", {
   expect_error(convert_time(42), "can only convert time in continuous flow isofiles")
-  expect_error(convert_time(isoreader:::make_cf_data_structure()), "no time unit to convert to specified")
+  cf <- isoreader:::make_cf_data_structure()
+  expect_error(convert_time(cf), "no time unit to convert to specified")
+  expect_warning(convert_time(cf, to = "min"), "read without extracting the raw data")
+  
+  # test data
+  cf$read_options$raw_data <- TRUE
+  cf$raw_data <- data_frame(tp = 1:10, time.s = tp*0.2)
+  expect_message(convert_time(cf, to = "min", quiet = FALSE), "converting time")
+  expect_silent(convert_time(cf, to = "min", quiet = TRUE))
+  expect_equal(convert_time(cf, to = "min")$raw_data$time.min, cf$raw_data$time.s/60)
+  expect_equal(convert_time(cf, to = "s")$raw_data$time.s, cf$raw_data$time.s)
+  
+  # multiple files
+  isofiles <- c(modifyList(cf, list(file_info = list(file_id = "a"))),
+                modifyList(cf, list(file_info = list(file_id = "b"))))
+  isofiles$b$raw_data$time.min <- isofiles$b$raw_data$time.s/60
+  isofiles$b$raw_data$time.min <- NULL
+  isofiles_in_hrs <- convert_time(isofiles, to = "hours")
+  expect_equal(isofiles_in_hrs$a$raw_data$time.hours, cf$raw_data$time.s/3600)
+  expect_equal(isofiles_in_hrs$b$raw_data$time.hours, cf$raw_data$time.s/3600)
+  
 })
 
 # Voltage/current conversion ==== 
