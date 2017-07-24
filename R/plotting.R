@@ -26,41 +26,40 @@ plot_raw_data <- function(isofiles, ..., quiet = setting("quiet")) {
 #' Plot chromatogram from continuous flow data
 #'
 #' @inheritParams plot_raw_data
-#' @param masses which masses to plot (e.g. c("45", "44")), NULL (the default) means that all masses will be plotted
-#' @param ratios which ratios to plot (e.g. c("45/44", "46/44")), not affected by zoom parameter
+#' @param datasets which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using \code{\link{calculate_ratios}} prior to plotting.
 #' @param time_interval which time interval to plot
 #' @param time_interval_units which units the time interval is in, default is "seconds"
-#' @param normalize whether to normalize all traces (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if \code{zoom} is set) is applied after normalizing.
-#' @param zoom if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values > 1 are zoom in, values < 1 are zoom out, baseline always remains the anchor point. Note that for overlay plots (\code{panels = "none"}) zooming is relative to the max in each panel (potentially across different traces). Also note that zooming only affects masses, ratios are not zoomed.
-#' @param panels whether to panel data by anything, options are "none" (overlay all), "traces" (by mass/ratio traces), "files" (panel by files). The default is "traces"
-#' @param colors whether to color data by anything, options are the same as for panels but the default is "files"
-#' @param linetypes whether to differentiate data by linetype, options are the same as for panels but the default is "none". Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}
+#' @param normalize whether to normalize all dataset (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if \code{zoom} is set) is applied after normalizing.
+#' @param zoom if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values > 1 are zoom in, values < 1 are zoom out, baseline always remains the anchor point. Note that for overlay plots (\code{panel_bu = "none"}) zooming is relative to the max in each panel (potentially across different dataset). Also note that zooming only affects masses, ratios are not zoomed.
+#' @param panel_by whether to panel data by anything, options are "none" (overlay all), "dataset" (by mass/ratio dataset), "file" (panel by files). The default is "dataset"
+#' @param color_by whether to color data by anything, options are the same as for \code{panel_by} but the default is "file"
+#' @param linetype_by whether to differentiate data by linetype, options are the same as for \code{panel_by} but the default is "none". Note that a limited number of linetype_by (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}
 #' @family plot functions
 #' @export
 plot_continuous_flow <- function(
-  isofiles, masses = NA, ratios = c(), time_interval = c(), time_interval_units = "seconds", normalize = FALSE, zoom = NULL, 
-  panels = c("none", "traces", "files"), colors = c("none", "traces", "files"), linetypes = c("none", "traces", "files")) {
+  isofiles, datasets, time_interval = c(), time_interval_units = "seconds", normalize = FALSE, zoom = NULL, 
+  panel_by = "dataset", color_by = "file", linetype_by = "none") {
   
   # checks and defaults
   if(!is_continuous_flow(isofiles)) stop("can only plot continuous flow isofiles", call. = FALSE)
-  if (missing(panels)) panels <- "traces"
-  if (missing(colors)) colors <- "files"
-  if (missing(linetypes)) linetypes <- "none"
-  if (!all(ok <- c(panels, colors, linetypes) %in% c("none", "traces", "files")))
-    stop("unknown layout specification ", str_c(c(panels, colors, linetypes)[!ok], collapse = ", "), call. = FALSE)
+  if (!all(ok <- c(panel_by, color_by, linetype_by) %in% c("none", "dataset", "file")))
+    stop("unknown layout specification: '", str_c(c(panel_by, color_by, linetype_by)[!ok], collapse = "', '"),
+         "'. Please use 'none', 'dataset' or 'file' for panel_by, color_by and linetype_by specifications.", call. = FALSE)
   
   # global vars
-  time <- type <- column <- value <- file_id <- label_with_units <- NULL
-  is_ratio <- max_signal <- baseline <- cutoff <- discard <- change <- border <- gap <- NULL
+  #time <- type <- column <- value <- file_id <- label_with_units <- NULL
+  #is_ratio <- max_signal <- baseline <- cutoff <- discard <- change <- border <- gap <- NULL
   
   # collect raw data
-  raw_data <- aggregate_raw_data(isofiles)
+  raw_data <- aggregate_raw_data(isofiles, gather = TRUE, quiet = TRUE)
   if (nrow(raw_data) == 0) stop("no raw data in supplied isofiles", call. = FALSE)
   
-  # masses and ratios
-  all_columns <- get_mass_and_ratio_definitions(raw_data, masses, ratios)
-  raw_data <- calculate_plot_ratios(raw_data, filter(all_columns, type == "ratio"))
-
+  # only work with desired datasets (masses and ratios)
+  datasets <- if(missing(datasets)) unique(raw_data$dataset) else as.character(datasets)
+  if ( length(missing <- setdiff(datasets, unique(raw_data$dataset))) > 0 ) 
+    stop("dataset(s) not available in the provided isofiles: ", str_c(missing, collapse = ", "), call. = FALSE)
+  raw_data <- filter(raw_data, dataset %in% datasets)
+  
   # time column
   time_pattern <- "^time\\.(.*)$"
   time_column <- str_subset(names(raw_data), time_pattern)
@@ -91,21 +90,18 @@ plot_continuous_flow <- function(
   
   # normalize data
   normalize_data <- function(data) {
-    group_by(data, column) %>%
+    group_by(data, dataset) %>%
       mutate(value = (value - min(value, na.rm = TRUE))/
                (max(value, na.rm = TRUE) - min(value, na.rm = TRUE))) %>% 
       ungroup()
   }
   
   # plot data
-  zoom_grouping <- if(panels == "traces") "column" else if (panels == "files") "file_id" else c()
+  zoom_grouping <- if(panel_by == "dataset") "dataset" else if (panel_by == "file") "file_id" else c()
   plot_data <- 
-    # relevant columns
-    raw_data[c("file_id", "time", all_columns$column)] %>% 
-    # gather everything
-    gather(column, value, -file_id, -time) %>% 
-    filter(!is.na(value)) %>% 
-    mutate(is_ratio = grepl("ratio", column)) %>% 
+    raw_data %>% 
+    # make ratio identification simple
+    mutate(is_ratio = category == "ratio") %>% 
     arrange(time) %>% 
     # find global zoom cutoffs per panel before time filtering (don't consider ratios)
     { 
@@ -131,7 +127,7 @@ plot_continuous_flow <- function(
     { 
       if (!is.null(zoom)) {
         # extrapolate data (multi-panel requires this instead of coord_cartesian)
-        group_by(., file_id, column) %>% 
+        group_by(., file_id, dataset) %>% 
           mutate(
             cutoff = 1/zoom * max_signal + (1 - 1/zoom) * baseline, # cutoffs
             discard = ifelse(!is_ratio, value > cutoff, FALSE), # never zoom ratios
@@ -149,13 +145,18 @@ plot_continuous_flow <- function(
           }
       } else . 
     } %>% 
-    # labeling information
-    left_join(all_columns, by = "column")
+    # dataset with units and in correct order
+    mutate(
+      dataset_with_units = ifelse(!is.na(units), str_c(dataset, " [", units, "]"), dataset)
+    ) %>% {
+      dataset_levels <- deframe(select(., dataset, dataset_with_units))[datasets]
+      mutate(., dataset = factor(dataset_with_units, levels = dataset_levels))
+    }
   
   # generate plot
   p <- plot_data %>% 
     ggplot() + 
-    aes(time, value, group = paste(file_id, column)) +
+    aes(time, value, group = paste(file_id, dataset)) +
     geom_line() +
     scale_x_continuous(str_c("Time ", time_unit), expand = c(0, 0)) +
     scale_y_continuous(if(normalize) "Normalized Signal" else "Signal", expand = c(0, 0)) +
@@ -170,25 +171,25 @@ plot_continuous_flow <- function(
     p <- p + theme(axis.ticks.y = element_blank(), axis.text.y = element_blank())
   
   # labels
-  traces_label <- "Traces"
-  files_label <- "Files"
+  datasets_label <- "Dataset"
+  files_label <- "File"
   
   # paneling
-  if ( panels == "traces") 
-    p <- p + facet_grid(label_with_units~., scales = "free_y") 
-  else if (panels == "files") 
+  if ( panel_by == "dataset") 
+    p <- p + facet_grid(dataset~., scales = "free_y") 
+  else if (panel_by == "file") 
     p <- p + facet_grid(file_id~., scales = "free_y")
 
-  # colors
-  if (colors == "traces") 
-    p <- p %+% aes(color = label_with_units) + labs(color = traces_label)
-  else if (colors == "files") 
+  # color_by
+  if (color_by == "dataset") 
+    p <- p %+% aes(color = dataset) + labs(color = datasets_label)
+  else if (color_by == "file") 
     p <- p %+% aes(color = file_id) + labs(color = files_label)
   
-  # linetypes
-  if (linetypes == "traces") 
-    p <- p %+% aes(linetype = label_with_units) + labs(linetype = traces_label)
-  else if (linetypes == "files") 
+  # linetype_by
+  if (linetype_by == "dataset") 
+    p <- p %+% aes(linetype = dataset) + labs(linetype = datasets_label)
+  else if (linetype_by == "file") 
     p <- p %+% aes(linetype = file_id) + labs(linetype = files_label)
   
   # return plot
@@ -198,26 +199,37 @@ plot_continuous_flow <- function(
 #' Plot mass data from dual inlet files
 #' 
 #' @inheritParams plot_continuous_flow
-#' @param panels whether to panel data by anything, options are "none" (overlay all), "traces" (by mass/ratio traces), "files" (panel by files), "types" (panel by standard vs. sample). The default is "traces"
-#' @param shapes whether to shape data points by anything, options are the same as for panels but the default is "types"
+#' @param panel_by whether to panel data by anything, options are "none" (overlay all), "dataset" (by mass/ratio dataset), "file" (panel by files), "SA|STD" (panel by sample|standard). The default is "dataset"
+#' @param shape_by whether to shape data points by anything, options are the same as for panel_by but the default is "SA|STD" (sample|standard)
 #' @note not entirely clear if a normalization parameter would be useful
 plot_dual_inlet <- function(
-  isofiles, masses = NA, ratios = c(), 
-  panels = c("none", "traces", "files", "types"), colors = c("none", "traces", "files", "types"), 
-  linetypes = c("none", "traces", "files", "types"), shapes = c("none", "traces", "files", "types")) {
+  isofiles, datasets, 
+  panel_by = "dataset", color_by = "file", linetype_by = "none", shape_by = "SA|STD") {
   
   # checks
   if(!is_dual_inlet(isofiles)) stop("can only plot dual inlet isofiles", call. = FALSE)
-  if (missing(panels)) panels <- "traces"
-  if (missing(colors)) colors <- "files"
-  if (missing(linetypes)) linetypes <- "none"
-  if (missing(shapes)) shapes <- "types"
-  if (!all(ok <- c(panels, colors, linetypes, shapes) %in% c("none", "traces", "files", "types")))
-    stop("unknown layout specification ", str_c(c(panels, colors, linetypes, shapes)[!ok], collapse = ", "), call. = FALSE)
+  if (!all(ok <- c(panel_by, color_by, linetype_by, shape_by) %in% c("none", "dataset", "file", "SA|STD")))
+    stop("unknown layout specification: '", str_c(c(panel_by, color_by, linetype_by, shape_by)[!ok], collapse = "', '"),
+         "'. Please use 'none', 'dataset' or 'file' for panel_by, color_by, shape_by and linetype_by specifications.", call. = FALSE)
+  
+  # global vars
+  #time <- type <- column <- value <- file_id <- label_with_units <- NULL
+  #is_ratio <- max_signal <- baseline <- cutoff <- discard <- change <- border <- gap <- NULL
   
   # collect raw data
-  raw_data <- aggregate_raw_data(isofiles)
+  raw_data <- aggregate_raw_data(isofiles, gather = TRUE, quiet = TRUE)
   if (nrow(raw_data) == 0) stop("no raw data in supplied isofiles", call. = FALSE)
+  
+  # collect raw data
+  raw_data <- aggregate_raw_data(isofiles, gather = TRUE, quiet = TRUE)
+  if (nrow(raw_data) == 0) stop("no raw data in supplied isofiles", call. = FALSE)
+  
+  # only work with desired datasets (masses and ratios)
+  datasets <- if(missing(datasets)) unique(raw_data$dataset) else as.character(datasets)
+  if ( length(missing <- setdiff(datasets, unique(raw_data$dataset))) > 0 ) 
+    stop("dataset(s) not available in the provided isofiles: ", str_c(missing, collapse = ", "), call. = FALSE)
+  raw_data <- filter(raw_data, dataset %in% datasets)
+  
   
   # masses and ratios
   all_columns <- get_mass_and_ratio_definitions(raw_data, masses, ratios)
@@ -257,40 +269,40 @@ plot_dual_inlet <- function(
   #   p <- p + theme(axis.ticks.y = element_blank(), axis.text.y = element_blank())
   
   # labels
-  traces_label <- "Traces"
+  dataset_label <- "Traces"
   files_label <- "Files"
   types_label <- "Data Type"
    
   # paneling
-  if (panels == "traces") 
+  if (panel_by == "dataset") 
     p <- p + facet_wrap(~label_with_units, scales = "free_y") 
-  else if (panels == "files") 
+  else if (panel_by == "files") 
     p <- p + facet_wrap(~file_id, scales = "free_y") 
-  else if (panels == "types")
+  else if (panel_by == "types")
     p <- p + facet_wrap(~type, scales = "free_y") 
   
-  # colors
-  if (colors == "traces") 
-    p <- p %+% aes(color = label_with_units) + labs(color = traces_label)
-  else if (colors == "files") 
+  # color_by
+  if (color_by == "dataset") 
+    p <- p %+% aes(color = label_with_units) + labs(color = dataset_label)
+  else if (color_by == "files") 
     p <- p %+% aes(color = file_id) + labs(color = files_label)
-  else if (colors == "types") 
+  else if (color_by == "types") 
     p <- p %+% aes(color = type) + labs(color = types_label)
   
-  # linetypes
-  if (linetypes == "traces") 
-    p <- p %+% aes(linetype = label_with_units) + labs(linetype = traces_label)
-  else if (linetypes == "files") 
+  # linetype_by
+  if (linetype_by == "dataset") 
+    p <- p %+% aes(linetype = label_with_units) + labs(linetype = dataset_label)
+  else if (linetype_by == "files") 
     p <- p %+% aes(linetype = file_id) + labs(linetype = files_label)
-  else if (linetypes == "types") 
+  else if (linetype_by == "types") 
     p <- p %+% aes(linetype = type) + labs(linetype = types_label)
   
-  # shapes
-  if (shapes == "traces") 
-    p <- p %+% aes(shape = label_with_units) + labs(shape = traces_label)
-  else if (shapes == "files") 
+  # shape_by
+  if (shape_by == "dataset") 
+    p <- p %+% aes(shape = label_with_units) + labs(shape = dataset_label)
+  else if (shape_by == "files") 
     p <- p %+% aes(shape = file_id) + labs(shape = files_label)
-  else if (shapes == "types") 
+  else if (shape_by == "types") 
     p <- p %+% aes(shape = type) + labs(shape = types_label)
   
   # return plot
