@@ -48,7 +48,7 @@ check_iso_file_param <- function(isofile) {
 
 #' Aggregate file info
 #'
-#' Combine file information from multiple isofiles. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included.
+#' Combine file information from multiple isofiles. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included. File information beyond \code{file_id} and \code{file_path} is only available if the isofiles were read with parameter \code{read_file_info=TRUE}.
 #'
 #' @inheritParams aggregate_raw_data
 #' @param select which file information to select. All by default.
@@ -86,6 +86,8 @@ aggregate_file_info <- function(isofiles, select = all_info(), quiet = setting("
 }
 
 #' Aggregate raw data
+#' 
+#' Aggregate the raw ion data from the provided isofiles. Can aggregate either in a wide table (for easy overview) or a gathered long table (for plotting and further data processing). The raw data is only available if the isofiles were read with parameter \code{read_raw_data=TRUE}.
 #' 
 #' @inheritParams isoread_files
 #' @param isofiles collection of isofile objects
@@ -139,7 +141,7 @@ aggregate_raw_data <- function(isofiles, gather = FALSE, include_file_info = c()
 
 #' Aggregate standards from methods info
 #'
-#' Aggregates the isotopic standard information recovered from the provided isofiles. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios.
+#' Aggregates the isotopic standard information recovered from the provided isofiles. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios. This information is only available if the isofiles were read with parameter \code{read_method_info=TRUE}.
 #'
 #' @inheritParams aggregate_raw_data
 #' @param with_ratios whether to include ratios or just standard delta values
@@ -183,8 +185,47 @@ aggregate_standards_info <- function(isofiles, with_ratios = FALSE, include_file
   return(data)
 }
 
+#' Aggregate resistors from methods info
+#'
+#' Aggregates the resistor information recovered from the provided isofiles. This information is only available if the isofiles were read with parameter \code{read_method_info=TRUE} and only linked to specific masses if the isofiles were additionally read with parametr \coe{read_raw_data=TRUE}.
+#'
+#' @inheritParams aggregate_raw_data
+#' @family data retrieval functions
+#' @export
+aggregate_resistors_info <- function(isofiles, include_file_info = c(), quiet = setting("quiet")) {
+  isofiles <- as_isofile_list(isofiles)
+  if (!quiet) { 
+    sprintf("Info: aggregating resistors info from %d data file(s)%s", length(isofiles),
+            get_info_message_concat(include_file_info, prefix = ", including file info ")) %>% message()
+  }
+  
+  check_read_options(isofiles, "method_info")
+  
+  # aggregate standards info
+  data <- lapply(isofiles, function(isofile) {
+    Rs <- isofile$method_info$resistors
+    
+    # check if there is any data
+    if(is.null(Rs) || nrow(Rs) == 0) return(data_frame())
+    
+    # return with file_id included
+    file_id <- NULL # global vars
+    Rs %>% 
+      mutate(file_id = isofile$file_info$file_id) %>% 
+      select(file_id, everything())
+  }) %>% bind_rows()
+  
+  # if file info
+  if (!is.null(include_file_info)) {
+    info <- aggregate_file_info(isofiles, include_file_info, quiet = TRUE)
+    data <- right_join(info, data, by = "file_id")
+  }
+  return(data)
+}
 
 #' Aggregate vendor computed table data
+#' 
+#' Aggregate data from the vendor-computed data table. This information is only available if the isofiles were read with parameter \code{read_vendor_data_table=TRUE}.
 #' 
 #' @inheritParams aggregate_raw_data
 #' @param with_units whether to include units in the column headers (if there are any) or not

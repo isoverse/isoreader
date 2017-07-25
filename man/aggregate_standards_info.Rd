@@ -17,11 +17,12 @@ aggregate_standards_info(isofiles, with_ratios = FALSE,
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }
 \description{
-Aggregates the isotopic standard information recovered from the provided isofiles. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios.
+Aggregates the isotopic standard information recovered from the provided isofiles. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios. This information is only available if the isofiles were read with parameter \code{read_method_info=TRUE}.
 }
 \seealso{
 Other data retrieval functions: \code{\link{aggregate_file_info}},
   \code{\link{aggregate_raw_data}},
+  \code{\link{aggregate_resistors_info}},
   \code{\link{aggregate_vendor_data_table}},
   \code{\link{get_file_id}}
 }

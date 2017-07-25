@@ -14,13 +14,14 @@ aggregate_file_info(isofiles, select = all_info(), quiet = setting("quiet"))
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }
 \description{
-Combine file information from multiple isofiles. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included.
+Combine file information from multiple isofiles. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included. File information beyond \code{file_id} and \code{file_path} is only available if the isofiles were read with parameter \code{read_file_info=TRUE}.
 }
 \note{
 File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using \code{isofile$file_info[['INFO_NAME']]} on the isofile object directly.
 }
 \seealso{
 Other data retrieval functions: \code{\link{aggregate_raw_data}},
+  \code{\link{aggregate_resistors_info}},
   \code{\link{aggregate_standards_info}},
   \code{\link{aggregate_vendor_data_table}},
   \code{\link{get_file_id}}

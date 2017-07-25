@@ -169,6 +169,44 @@ test_that("test that aggregating of methods standards works", {
   
 })
 
+
+## check resistors aggreation ====
+
+test_that("test that aggregating of resistors works", {
+  
+  isofile <- isoreader:::make_isofile_data_structure()
+  expect_warning(aggregate_resistors_info(isofile), "read without extracting the method info")
+  
+  # test data
+  isofile$read_options$method_info <- TRUE
+  isofile$read_options$file_info <- TRUE
+  isofile1 <- modifyList(isofile, list(file_info = list(file_id = "a"), 
+                                       method_info = list(resistors = data_frame(cup = 1:3, R.Ohm = c(1e9, 1e10, 1e11)))))
+  isofile2 <- modifyList(isofile, list(file_info = list(file_id = "b"),
+                                       method_info = list(resistors = data_frame(cup = 1:3, R.Ohm = c(3e9, 1e11, 1e12)))))
+  
+  expect_message(aggregate_resistors_info(c(isofile1, isofile2), quiet = FALSE), "aggregating")
+  expect_silent(aggregate_resistors_info(c(isofile1, isofile2), quiet = TRUE))
+  expect_equal(aggregate_resistors_info(c(isofile1, isofile2)), 
+               data <- bind_rows(mutate(isofile1$method_info$resistors, file_id="a"), 
+                                 mutate(isofile2$method_info$resistors, file_id="b")))
+  # include file info
+  isofile1 <- modifyList(isofile1, list(file_info = list(test_info = "x")))
+  isofile2 <- modifyList(isofile2, list(file_info = list(test_info = "y")))
+  expect_true("test_info" %in% names(agg <- aggregate_resistors_info(c(isofile1, isofile2), include_file_info = c("test_info"))))
+  expect_equal(unique(agg$test_info), c("x", "y"))
+  
+  # make sure that files that have no raw data do not get added back in by including file info
+  expect_equal(
+    suppressWarnings(aggregate_resistors_info(
+      c(isoreader:::make_isofile_data_structure(), isofile1, isofile2), 
+      include_file_info = c("test_info")))$test_info %>% unique(),
+    c("x", "y")
+  )
+  
+})
+
+
 ## check vendor data table aggreation ====
 
 test_that("test that aggregating of vendor data table works", {
@@ -186,7 +224,7 @@ test_that("test that aggregating of vendor data table works", {
   
   # unit information
   expect_warning(aggregate_vendor_data_table(isofile1), "do not have unit information")
-  expect_message(aggregate_vendor_data_table(isofile1, with_units = FALSE), "aggregating")
+  expect_message(aggregate_vendor_data_table(isofile1, with_units = FALSE, quiet = FALSE), "aggregating")
   expect_silent(aggregate_vendor_data_table(isofile1, with_units = FALSE, quiet = TRUE))
   
   attr(isofile1$vendor_data_table, "units") <- attr(isofile2$vendor_data_table, "units") <- 

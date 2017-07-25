@@ -16,14 +16,15 @@ isoread_did <- function(ds, ...) {
     ds <- exec_func_with_error_catch(extract_isodat_datetime, ds)
   }
   
-  # process method info
-  if (ds$read_options$method_info) {
-    ds <- exec_func_with_error_catch(extract_isodat_reference_values, ds)
-  }
-  
   # process raw data
   if (ds$read_option$raw_data)
     ds <- exec_func_with_error_catch(extract_did_raw_voltage_data, ds)
+  
+  # process method info
+  if (ds$read_options$method_info) {
+    ds <- exec_func_with_error_catch(extract_isodat_reference_values, ds)
+    ds <- exec_func_with_error_catch(extract_isodat_resistors, ds)
+  }
   
   # process pre-evaluated data table
   if (ds$read_options$vendor_data_table)

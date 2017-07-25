@@ -221,7 +221,7 @@ re_text <- function(text) {
 }
 
 # plain regexp (default size is an estimate)
-re_direct <- function(regexp, label = regexp, size = ceiling(nchar(regexp)/4)) {
+re_direct <- function(regexp, label = regexp, size = length(charToRaw(regexp))) {
   structure(
     list(
       label = sprintf("[%s]", label),

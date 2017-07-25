@@ -20,11 +20,12 @@ aggregate_vendor_data_table(isofiles, with_units = TRUE,
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }
 \description{
-Aggregate vendor computed table data
+Aggregate data from the vendor-computed data table. This information is only available if the isofiles were read with parameter \code{read_vendor_data_table=TRUE}.
 }
 \seealso{
 Other data retrieval functions: \code{\link{aggregate_file_info}},
   \code{\link{aggregate_raw_data}},
+  \code{\link{aggregate_resistors_info}},
   \code{\link{aggregate_standards_info}},
   \code{\link{get_file_id}}
 }

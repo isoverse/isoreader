@@ -4,12 +4,62 @@
 extract_isodat_datetime <- function(ds) {
   # find date time
   ds$binary <- ds$binary %>% 
+    set_binary_file_error_prefix("cannot recover run datetime") %>% 
     move_to_C_block("CTimeObject") %>%
     move_to_next_pattern(re_null(4), re_block("x-000")) %>% 
     capture_n_data("date", "integer", 1, sensible = c(0,1000*365*24*3600)) # 1000 years as sensible limit
   
   # store as POSIXct
   ds$file_info$file_datetime <- as.POSIXct(ds$binary$data$date, origin = "1970-01-01")
+  return(ds)
+}
+
+# extract resistor information
+extract_isodat_resistors <- function(ds) {
+  # move to resistor information
+  ds$binary <- ds$binary %>% 
+    set_binary_file_error_prefix("cannot recover resistors") %>% 
+    move_to_C_block("CEvalIntegrationUnitHWInfo")
+  
+  # cap depends on dxf vs did
+  if (is_continuous_flow(ds)) {
+    ds$binary <- cap_at_next_C_block(ds$binary, "CConfiguration")
+  } else if (is_dual_inlet(ds)) {
+    ds$binary <- cap_at_next_C_block(ds$binary, "CGasConfiguration")
+  }
+  
+  # find resistors
+  R_pre_re <- re_combine(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(4), 
+                         re_block("x-000"), re_null(4), re_direct(".{3}\x40", size = 4))
+  
+  positions <- find_next_patterns(ds$binary, R_pre_re)
+  resistors <- list()
+  for (pos in positions) {
+    ds$binary <- ds$binary %>% 
+      move_to_pos(pos + R_pre_re$size) %>% 
+      capture_n_data("cup", "integer", n = 1) %>% 
+      capture_n_data("R.Ohm", "double", n = 1) 
+    resistors <- c(resistors, list(ds$binary$data[c("cup", "R.Ohm")]))
+  }
+  ds$method_info$resistors <- bind_rows(resistors) %>% 
+    mutate(cup = cup+1)
+  
+  # if mass data is read, include the information in the resistors
+  if (ds$read_options$raw_data) {
+    mass_column_pattern <- "^[vi](\\d+)\\.(.*)$"
+    masses <- ds$raw_data %>% 
+      names() %>%
+      str_subset(mass_column_pattern) %>%
+      str_match(mass_column_pattern) %>%
+      { .[,2] }
+    if (length(masses) != nrow(ds$method_info$resistors)) {
+      op_error(ds$binary, 
+               sprintf("found inconsistent number of resistors (%d) compared to ion dataset (%d)",
+                       nrow(ds$method_info$resistors), length(masses)))
+    }
+    ds$method_info$resistors <- ds$method_info$resistors %>% 
+      mutate(mass = masses) %>% select(cup, mass, R.Ohm)
+  }
   return(ds)
 }
 
@@ -157,8 +207,6 @@ extract_isodat_sequence_line_info <- function(ds) {
   
   return(ds)
 }
-
-
 
 # extracts the measurement information for isodat files
 extract_isodat_measurement_info = function(ds) {

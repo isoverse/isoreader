@@ -34,6 +34,7 @@ Retrieve basic file information form an isotope file (isofile) object. All of th
 \seealso{
 Other data retrieval functions: \code{\link{aggregate_file_info}},
   \code{\link{aggregate_raw_data}},
+  \code{\link{aggregate_resistors_info}},
   \code{\link{aggregate_standards_info}},
   \code{\link{aggregate_vendor_data_table}}
 }
