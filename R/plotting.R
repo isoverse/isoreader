@@ -47,8 +47,8 @@ plot_continuous_flow <- function(
          "'. Please use 'none', 'dataset' or 'file' for panel_by, color_by and linetype_by specifications.", call. = FALSE)
   
   # global vars
-  #time <- type <- column <- value <- file_id <- label_with_units <- NULL
-  #is_ratio <- max_signal <- baseline <- cutoff <- discard <- change <- border <- gap <- NULL
+  time <- type <- dataset <- value <- file_id <- category <- dataset_with_units <- NULL
+  is_ratio <- max_signal <- baseline <- cutoff <- discard <- change <- border <- gap <- NULL
   
   # collect raw data
   raw_data <- aggregate_raw_data(isofiles, gather = TRUE, quiet = TRUE)
@@ -213,8 +213,7 @@ plot_dual_inlet <- function(
          "'. Please use 'none', 'dataset', 'file' or 'SA|STD' for panel_by, color_by, shape_by and linetype_by specifications.", call. = FALSE)
   
   # global vars
-  #time <- type <- column <- value <- file_id <- label_with_units <- NULL
-  #is_ratio <- max_signal <- baseline <- cutoff <- discard <- change <- border <- gap <- NULL
+  cycle <- value <- file_id <- type <- dataset <- dataset_with_units <- NULL
   
   # collect raw data
   raw_data <- aggregate_raw_data(isofiles, gather = TRUE, quiet = TRUE)

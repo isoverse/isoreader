@@ -19,7 +19,8 @@ make_isofile_data_structure <- function() {
       ),
       method_info = list(), # all methods information
       raw_data = data_frame(), # all mass data (Note: maybe not top-level b/c of scans?)
-      vendor_data_table = data_frame() # vendor computed data table
+      vendor_data_table = data_frame() %>% # vendor computed data table (no units)
+        { attr(., "units") <- NA; . }
     ),
     class = c("isofile")
   ) %>% 
@@ -126,7 +127,7 @@ as_isofile_list <- function(..., discard_duplicates = TRUE) {
     { do.call(c, .) }
     
     # check if al ellements are the same data type
-    classes <<- lapply(iso_list, class) 
+    classes <- lapply(iso_list, class) 
     if (!all(sapply(classes, function(x) all(x == classes[[1]])))) {
       str_interp("can only combine isofile objects with the same data type (first: ${ref_dt}), encountered: ${wrong_dt}", 
                  list(ref_dt = classes[[1]][1], 

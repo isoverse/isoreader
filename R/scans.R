@@ -1,6 +1,6 @@
 #' Load scan data
 #' 
 #' @export
-isoread_scan <- function() {
-  
+read_scan <- function() {
+  stop("sorry, this functionality is not implemented yet", call. = FALSE)
 }

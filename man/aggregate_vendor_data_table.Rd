@@ -11,7 +11,7 @@ aggregate_vendor_data_table(isofiles, with_units = TRUE,
 \arguments{
 \item{isofiles}{collection of isofile objects}
 
-\item{with_units}{whether to include units in the column headers or not}
+\item{with_units}{whether to include units in the column headers (if there are any) or not}
 
 \item{select}{which vendor table columns select. All by default.}
 

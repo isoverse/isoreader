@@ -187,7 +187,7 @@ aggregate_standards_info <- function(isofiles, with_ratios = FALSE, include_file
 #' Aggregate vendor computed table data
 #' 
 #' @inheritParams aggregate_raw_data
-#' @param with_units whether to include units in the column headers or not
+#' @param with_units whether to include units in the column headers (if there are any) or not
 #' @param select which vendor table columns select. All by default.
 #' @family data retrieval functions
 #' @export
@@ -217,7 +217,7 @@ aggregate_vendor_data_table <- function(isofiles, with_units = TRUE, select = al
     if (nrow(df) == 0) return(df)
     
     # use units 
-    if (with_units && !is.null(attr(df, "units")))  {
+    if (with_units && !is.null(attr(df, "units")) && !is.na(attr(df, "units")))  {
       cols_with_units <- attr(df, "units")[c("column", "units")] %>% 
         mutate(units = ifelse(nchar(units) > 0, str_c(column, " ", units), column)) %>% 
         deframe()
