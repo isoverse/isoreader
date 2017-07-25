@@ -4,7 +4,7 @@
 
 #' Get file information
 #' 
-#' Retrieve basic file information form an isotope file (isofile) object.
+#' Retrieve basic file information form an isotope file (isofile) object. All of these can also be recoverd for an entire set of files using \code{\link{aggregate_file_info}} and specifiying which info to recover, for example, \code{include = c("file_id", "file_path", "file_datetime")}
 #' 
 #' @details \code{get_file_id()}: retrieve the file ID (this is typially the file name)
 #' @param isofile an isofile to retrieve basic file information from
@@ -46,16 +46,59 @@ check_iso_file_param <- function(isofile) {
 
 # Specific data aggregation calls =====
 
+#' Aggregate file info
+#'
+#' Combine file information from multiple isofiles. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included.
+#'
+#' @inheritParams aggregate_raw_data
+#' @param select which file information to select. All by default.
+#' @family data retrieval functions
+#' @note File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using \code{isofile$file_info[['INFO_NAME']]} on the isofile object directly.
+#' @export
+aggregate_file_info <- function(isofiles, select = all_info(), quiet = setting("quiet")) {
+  isofiles <- as_isofile_list(isofiles)
+  if (!quiet) sprintf("Info: aggregating file info from %d data file(s)", length(isofiles)) %>% message()
+  check_read_options(isofiles, "file_info")
+  
+  # retrieve info
+  info <- lapply(isofiles, function(isofile) {
+    lapply(isofile$file_info, function(entry) {
+      if (length(entry) > 1) str_c(entry, collapse = "; ") else entry
+    })  %>% as_data_frame()
+  }) %>% bind_rows()
+  
+  # safety check (probably not necessary because of isofile combination checks but consequences would be too problematic not to check)
+  if (any(duplicated(info$file_id))) {
+    stop("duplicate file ids are not permitted as they can lead to unexpected consequences in data processing", call. = FALSE)
+  }
+  
+  # get include information
+  all_info <- function() names(info)
+  select_cols <- select %>% { .[. %in% all_info()] }
+  if (length(missing <- setdiff(select, select_cols)) > 0) {
+    warning("some requested file info entries do not exist in any of the provided isofiles and are omitted: '",
+            str_c(missing, collapse = "', '"), "'", call. = FALSE, immediate. = TRUE)
+  }
+  if (!"file_id" %in% select_cols) 
+    select_cols <- c("file_id", select_cols) # file info always included
+  
+  return(info[select_cols])
+}
+
 #' Aggregate raw data
 #' 
 #' @inheritParams isoread_files
 #' @param isofiles collection of isofile objects
 #' @param gather whether to gather data into long format after aggregation (e.g. for plotting)
+#' @param include_file_info if provided, will include the requested file information (see \code{\link{aggregate_file_info}}) with the raw data
 #' @family data retrieval functions
 #' @export
-aggregate_raw_data <- function(isofiles, gather = FALSE, quiet = setting("quiet")) {
+aggregate_raw_data <- function(isofiles, gather = FALSE, include_file_info = c(), quiet = setting("quiet")) {
   isofiles <- as_isofile_list(isofiles)
-  if (!quiet) sprintf("Info: aggregating raw data from %d data file(s)", length(isofiles)) %>% message()
+  if (!quiet) { 
+    sprintf("Info: aggregating raw data from %d data file(s)%s", length(isofiles),
+            get_info_message_concat(include_file_info, prefix = ", including file info ")) %>% message()
+  }
   check_read_options(isofiles, "raw_data")
   
   file_id <- NULL # global vars
@@ -73,7 +116,7 @@ aggregate_raw_data <- function(isofiles, gather = FALSE, quiet = setting("quiet"
   if (gather) {
     column <- value <- extra_parens <- category <- NULL # global vars
     masses_ratios_re <- "^([vir])(\\d+/?\\d*)(\\.(.+))?$"
-    data %>% 
+    data <- data %>% 
       # gather all masses and ratios
       gather(column, value, matches(masses_ratios_re)) %>% 
       # extract unit information
@@ -83,30 +126,16 @@ aggregate_raw_data <- function(isofiles, gather = FALSE, quiet = setting("quiet"
       filter(!is.na(value)) %>% 
       # assign category
       mutate(category = ifelse(category == "r", "ratio", "mass"))
-  } else {
-    data
+  } 
+  
+  # if file info
+  if (!is.null(include_file_info)) {
+    info <- aggregate_file_info(isofiles, include_file_info, quiet = TRUE)
+    data <- right_join(info, data, by = "file_id")
   }
+  return(data)
 }
 
-#' Aggregate file info
-#'
-#' Note file info entries with multiple values are concatenated for this general purpose function.
-#' To get access to a specific multi-value file info, access using $file_info[['INFO_NAME']]
-#'
-#' @inheritParams aggregate_raw_data
-#' @family data retrieval functions
-#' @export
-aggregate_file_info <- function(isofiles, quiet = setting("quiet")) {
-  isofiles <- as_isofile_list(isofiles)
-  if (!quiet) sprintf("Info: aggregating file info from %d data file(s)", length(isofiles)) %>% message()
-  check_read_options(isofiles, "file_info")
-  
-  lapply(isofiles, function(isofile) {
-    lapply(isofile$file_info, function(entry) {
-      if (length(entry) > 1) str_c(entry, collapse = "; ") else entry
-    })  %>% as_data_frame()
-  }) %>% bind_rows()
-}
 
 #' Aggregate standards from methods info
 #'
@@ -116,12 +145,17 @@ aggregate_file_info <- function(isofiles, quiet = setting("quiet")) {
 #' @param with_ratios whether to include ratios or just standard delta values
 #' @family data retrieval functions
 #' @export
-aggregate_standards_info <- function(isofiles, with_ratios = FALSE, quiet = setting("quiet")) {
+aggregate_standards_info <- function(isofiles, with_ratios = FALSE, include_file_info = c(), quiet = setting("quiet")) {
   isofiles <- as_isofile_list(isofiles)
-  if (!quiet) sprintf("Info: aggregating standards info from %d data file(s)", length(isofiles)) %>% message()
+  if (!quiet) { 
+    sprintf("Info: aggregating standards info from %d data file(s)%s", length(isofiles),
+            get_info_message_concat(include_file_info, prefix = ", including file info ")) %>% message()
+  }
+  
   check_read_options(isofiles, "method_info")
   
-  lapply(isofiles, function(isofile) {
+  # aggregate standards info
+  data <- lapply(isofiles, function(isofile) {
     if(with_ratios) {
       stds <- left_join(
         isofile$method_info$standards,
@@ -131,11 +165,22 @@ aggregate_standards_info <- function(isofiles, with_ratios = FALSE, quiet = sett
       stds <- isofile$method_info$standards
     }
     
+    # check if there is any data
+    if(is.null(stds) || nrow(stds) == 0) return(data_frame())
+    
+    # return with file_id included
     file_id <- NULL # global vars
     stds %>% 
       mutate(file_id = isofile$file_info$file_id) %>% 
       select(file_id, everything())
   }) %>% bind_rows()
+  
+  # if file info
+  if (!is.null(include_file_info)) {
+    info <- aggregate_file_info(isofiles, include_file_info, quiet = TRUE)
+    data <- right_join(info, data, by = "file_id")
+  }
+  return(data)
 }
 
 
@@ -143,27 +188,69 @@ aggregate_standards_info <- function(isofiles, with_ratios = FALSE, quiet = sett
 #' 
 #' @inheritParams aggregate_raw_data
 #' @param with_units whether to include units in the column headers or not
+#' @param select which vendor table columns select. All by default.
 #' @family data retrieval functions
 #' @export
-aggregate_vendor_data_table <- function(isofiles, with_units = TRUE, quiet = setting("quiet")) {
+aggregate_vendor_data_table <- function(isofiles, with_units = TRUE, select = all_columns(), include_file_info = c(), 
+                                        quiet = setting("quiet")) {
   isofiles <- as_isofile_list(isofiles)
-  if (!quiet) sprintf("Info: aggregating vendor data table from %d data file(s)", length(isofiles)) %>% message()
+  if (!quiet) { 
+    sprintf("Info: aggregating vendor data table %s from %d data file(s)%s", 
+            if (with_units) "with units" else "without units",
+            length(isofiles),
+            get_info_message_concat(include_file_info, prefix = ", including file info ")) %>% message()
+  }
   check_read_options(isofiles, "vendor_data_table")
   
-  column <- column_with_units <- file_id <- NULL # global vars
-  lapply(isofiles, function(isofile) {
+  # check for missing with units
+  if (with_units && (no_units <- sum(sapply(isofiles, function(isofile) is.null(attr(isofile$vendor_data_table, "units"))))) > 0) {
+    sprintf("%d/%d files do not have unit information for their vendor data table and will have missing units",
+            no_units, length(isofiles)) %>% warning(call. = FALSE, immediate. = TRUE)
+  }
+  
+  # get vendor data
+  column <- units <- file_id <- NULL # global vars
+  data <- lapply(isofiles, function(isofile) {
     df <- isofile$vendor_data_table
+    
+    # see if there is any data at all
     if (nrow(df) == 0) return(df)
-    if (with_units && is.null(attr(df, "units")))  {
-      warning("isofile ", isofile$file_info$file_id, " does not have unit information in its vendor data table", call. = FALSE, immediate. = TRUE)
-    } else if (with_units) {
-      cols_with_units <- attr(df, "units") %>% select(column, column_with_units) %>% deframe()
+    
+    # use units 
+    if (with_units && !is.null(attr(df, "units")))  {
+      cols_with_units <- attr(df, "units")[c("column", "units")] %>% 
+        mutate(units = ifelse(nchar(units) > 0, str_c(column, " ", units), column)) %>% 
+        deframe()
       names(df) <- cols_with_units[names(df)]
     }
+    
+    # include file id
     df %>% 
       mutate(file_id = isofile$file_info$file_id) %>% 
-      select(file_id, everything())
+      dplyr::select(file_id, everything())
   }) %>% bind_rows()
+  
+  # check for any rows
+  if (nrow(data) == 0) return(data)
+  
+  # get select information
+  all_columns <- function() names(data)
+  select_cols <- select %>% { .[. %in% all_columns()] }
+  if (length(missing <- setdiff(select, select_cols)) > 0) {
+    warning("some requested vendor data table columns do not exist in any of the provided isofiles and are omitted: '",
+            str_c(missing, collapse = "', '"), "'", call. = FALSE, immediate. = TRUE)
+  }
+  if (!"file_id" %in% select_cols) 
+    select_cols <- c("file_id", select_cols) # file info always included
+  data <- data[select_cols]
+  
+  # include file info
+  if (!is.null(include_file_info)) {
+    info <- aggregate_file_info(isofiles, include_file_info, quiet = TRUE)
+    data <- right_join(info, data, by = "file_id")
+  }
+  
+  return(data)
 }
 
 # check if read options are compatible

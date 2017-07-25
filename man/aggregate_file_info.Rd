@@ -4,16 +4,20 @@
 \alias{aggregate_file_info}
 \title{Aggregate file info}
 \usage{
-aggregate_file_info(isofiles, quiet = setting("quiet"))
+aggregate_file_info(isofiles, select = all_info(), quiet = setting("quiet"))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
 
+\item{select}{which file information to select. All by default.}
+
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }
 \description{
-Note file info entries with multiple values are concatenated for this general purpose function.
-To get access to a specific multi-value file info, access using $file_info[['INFO_NAME']]
+Combine file information from multiple isofiles. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included.
+}
+\note{
+File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using \code{isofile$file_info[['INFO_NAME']]} on the isofile object directly.
 }
 \seealso{
 Other data retrieval functions: \code{\link{aggregate_raw_data}},

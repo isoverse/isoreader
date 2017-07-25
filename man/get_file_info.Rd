@@ -20,7 +20,7 @@ get_file_datetime(isofile)
 \item{isofile}{an isofile to retrieve basic file information from}
 }
 \description{
-Retrieve basic file information form an isotope file (isofile) object.
+Retrieve basic file information form an isotope file (isofile) object. All of these can also be recoverd for an entire set of files using \code{\link{aggregate_file_info}} and specifiying which info to recover, for example, \code{include = c("file_id", "file_path", "file_datetime")}
 }
 \details{
 \code{get_file_id()}: retrieve the file ID (this is typially the file name)

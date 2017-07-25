@@ -15,7 +15,7 @@ make_isofile_data_structure <- function() {
         file_id = NA_character_, # unique identifer
         file_path = NA_character_, # path to file (file extension is key for processing)
         file_subpath = NA_character_, # sub path in case file is an archieve
-        file_datetime = NA_real_ # the run date and time of the file
+        file_datetime = NA # the run date and time of the file
       ),
       method_info = list(), # all methods information
       raw_data = data_frame(), # all mass data (Note: maybe not top-level b/c of scans?)
@@ -126,11 +126,13 @@ as_isofile_list <- function(..., discard_duplicates = TRUE) {
     { do.call(c, .) }
     
     # check if al ellements are the same data type
-    classes <- lapply(iso_list, class) 
+    classes <<- lapply(iso_list, class) 
     if (!all(sapply(classes, function(x) all(x == classes[[1]])))) {
-      stop("can only combine isofile objects with the same data type, encountered: ", 
-           unlist(classes) %>% { .[.!="isofile"] } %>% 
-           { str_c(unique(.), collapse = ", ")}, call. = FALSE)
+      str_interp("can only combine isofile objects with the same data type (first: ${ref_dt}), encountered: ${wrong_dt}", 
+                 list(ref_dt = classes[[1]][1], 
+                      wrong_dt = classes %>% sapply(`[`, 1) %>% { .[.!=classes[[1]][1]] } %>% 
+                        { str_c(unique(.), collapse = ", ")})) %>% 
+        stop(call. = FALSE)
     }
     
     # check for name duplicates and register a warning if there are any
@@ -194,11 +196,11 @@ print.isofile <- function(x, ..., show_problems = TRUE) {
   if (is.na(data_type)) data_type <- "Iso"
   sprintf("%s data '%s' (%s; %s) from %s%s\n", 
           data_type,
-          get_isofile_id(x),
+          get_file_id(x),
           get_raw_data_info(x),
           get_file_info_info(x),
-          get_isofile_path(x),
-          get_isofile_subpath(x) %>% { if(!is.na(.)) str_c("|", .) else "" }
+          get_file_path(x),
+          get_file_subpath(x) %>% { if(!is.na(.)) str_c("|", .) else "" }
   ) %>% cat()
   if (show_problems && n_problems(x) > 0) {
     cat("Problems:\n")

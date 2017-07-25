@@ -41,7 +41,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
   
   # overview
   if (!setting("quiet")) {
-    message("Info: preparing to process ", length(filepaths), " data file(s)...")
+    message("Info: preparing to read ", length(filepaths), " data file(s)...")
   }
   
   # extension to reader map

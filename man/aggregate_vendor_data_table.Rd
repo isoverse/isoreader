@@ -5,12 +5,17 @@
 \title{Aggregate vendor computed table data}
 \usage{
 aggregate_vendor_data_table(isofiles, with_units = TRUE,
+  select = all_columns(), include_file_info = c(),
   quiet = setting("quiet"))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
 
 \item{with_units}{whether to include units in the column headers or not}
+
+\item{select}{which vendor table columns select. All by default.}
+
+\item{include_file_info}{if provided, will include the requested file information (see \code{\link{aggregate_file_info}}) with the raw data}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }

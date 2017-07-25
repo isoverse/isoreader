@@ -13,6 +13,7 @@ isoread_did <- function(ds, ...) {
   if(ds$read_options$file_info) {
     ds <- exec_func_with_error_catch(extract_isodat_sequence_line_info, ds)
     ds <- exec_func_with_error_catch(extract_isodat_measurement_info, ds)
+    ds <- exec_func_with_error_catch(extract_isodat_datetime, ds)
   }
   
   # process method info

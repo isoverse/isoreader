@@ -5,12 +5,14 @@
 \title{Aggregate standards from methods info}
 \usage{
 aggregate_standards_info(isofiles, with_ratios = FALSE,
-  quiet = setting("quiet"))
+  include_file_info = c(), quiet = setting("quiet"))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
 
 \item{with_ratios}{whether to include ratios or just standard delta values}
+
+\item{include_file_info}{if provided, will include the requested file information (see \code{\link{aggregate_file_info}}) with the raw data}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }

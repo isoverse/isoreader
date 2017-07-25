@@ -13,6 +13,7 @@ isoread_dxf <- function(ds, ...) {
   if(ds$read_options$file_info) {
     ds <- exec_func_with_error_catch(extract_isodat_sequence_line_info, ds)
     ds <- exec_func_with_error_catch(extract_isodat_measurement_info, ds)
+    ds <- exec_func_with_error_catch(extract_isodat_datetime, ds)
   }
   
   # process method info
@@ -290,7 +291,7 @@ extract_dxf_vendor_data_table <- function(ds) {
       data_frame(column = c("Start", "Rt", "End"), units = "[s]"),
       data_frame(column = peaks %>% select(starts_with("Ampl"), starts_with("BGD")) %>% names(), units = "[mV]")
     ) %>% 
-    mutate(column_with_units = ifelse(!units %in% c("", " "), str_c(column, " ", units), column))
+    mutate(units = ifelse(units == " ", "", units))
   
   return(ds)
 }
