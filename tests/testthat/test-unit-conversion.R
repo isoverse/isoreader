@@ -89,3 +89,95 @@ test_that("test that time conversion works for isofiles", {
 })
 
 # Voltage/current conversion ==== 
+
+context("Voltage/Current conversion")
+
+test_that("test that singal scaling works", {
+  #data frame supplied
+  expect_error(isoreader:::scale_signals(), "data has to be supplied as a data frame")
+  expect_error(isoreader:::scale_signals(5), "data has to be supplied as a data frame")
+  
+  # other parameters  supplied
+  expect_error(isoreader:::scale_signals(data_frame()), ".* parameters required")
+  expect_error(isoreader:::scale_signals(data_frame(), c()), ".* required")
+  expect_error(isoreader:::scale_signals(data_frame(), "v44.mV"), ".* required")
+  expect_error(isoreader:::scale_signals(data_frame(), "v44.mV", "nA", c()), "resistance values have to be a named numeric vector")
+  expect_error(isoreader:::scale_signals(data_frame(), "v44.mV", "nA", c(1)), "resistance values have to be a named numeric vector")
+  expect_error(isoreader:::scale_signals(data_frame(), "v44.mV", "nA", c(R2 = "text")), "resistance values have to be a named numeric vector")
+  
+  # signal columns
+  test_data <-
+    data_frame(
+      v44.mV = c(1:10)*1000,
+      v45.mV = c(1:10)*5000,
+      v46.V = c(1:10),
+      i47.nA = c(1:10)
+    )
+  Rs <- c(R44 = 1, R45 = 1e3)
+  
+  expect_error(isoreader:::scale_signals(test_data, c("v44", "44.mV"), to = "nA", R = Rs), 
+               "some signal columns do not fit the expected pattern")
+  expect_error(isoreader:::scale_signals(test_data, c("v44.mV", "v46.mV", "v47.mV"), to = "nA", R = Rs), 
+               "some signal columns do not exist")
+  expect_error(isoreader:::scale_signals(
+    rename(test_data, v44.blaV = v44.mV), "v44.blaV", to = "nA", R = Rs), 
+    "Encountered unrecognized units")
+  expect_error(isoreader:::scale_signals(test_data, "v44.mV", to = "blaA", R = Rs), 
+               "Encountered unrecognized units")
+  expect_error(isoreader:::scale_signals(test_data, "v44.mV", to = "blaA", R = Rs, R_units = "blaOhm"), 
+               "Encountered unrecognized units")
+  expect_error(isoreader:::scale_signals(test_data, c("v44.mV", "v46.V", "i47.nA"), to = "nA", R = Rs),
+               "not all resistors required .* missing: R46")
+  expect_error(isoreader:::scale_signals(test_data, c("v44.mV", "v46.V", "i47.nA"), to = "mV", R = Rs),
+               "not all resistors required .* missing: R47")
+  
+  # test conversion - mixed voltage to current conversion and scaling 
+  Rs <- c(R44 = 5, R45 = 1e3, R46 = 10, R47 = 10)
+  expect_is(
+    conv_data <- isoreader:::scale_signals(
+      test_data, c("v44.mV", "v46.V", "i47.nA"), to = "pA", R = Rs), "tbl_df")
+  expect_equal(conv_data$i44.pA, test_data$v44.mV*1e-3/(5*1e9 * 1e-12)) # mV to pA
+  expect_equal(conv_data$v45.mV, conv_data$v45.mV) # no convertion, was not included
+  expect_equal(conv_data$i46.pA, test_data$v46.V/(10*1e9 * 1e-12)) # mV to pA
+  expect_equal(conv_data$i47.pA, test_data$i47.nA*1000) # simple scaling
+  
+  # test conversion - mixed current to voltage and scaling
+  expect_is(
+    conv_data <- isoreader:::scale_signals(
+      test_data, c("v45.mV", "v46.V", "i47.nA"), to = "kV", R = Rs, R_units = "MOhm"), "tbl_df")
+  expect_equal(conv_data$v44.mV, test_data$v44.mV) # no convertion, was not included
+  expect_equal(conv_data$v45.kV, test_data$v45.mV/1e6) # mV to kV, scaling
+  expect_equal(conv_data$v46.kV, test_data$v46.V/1e3) # V to kV, scaling
+  expect_equal(conv_data$v47.kV, test_data$i47.nA*1e-9*10*1e6/1e3) # nA to kV
+  
+  # test - scaling only
+  expect_is(conv_data <- isoreader:::scale_signals(test_data, c("v44.mV", "v45.mV", "v46.V"), to = "V"), "tbl_df")
+  expect_equal(conv_data$v44.V, test_data$v44.mV/1e3) # mV to V, scaling
+  expect_equal(conv_data$v45.V, test_data$v45.mV/1e3) # mV to V, scaling
+  expect_equal(conv_data$v46.V, test_data$v46.V) # V to V, scaling
+  expect_equal(conv_data$i47.nA, test_data$i47.nA) # no conversion, was not included not included
+  
+})
+
+test_that("test that signal conversion works in isofiles", {
+  
+  expect_error(convert_signals(42), "can only convert signals in .* isofiles")
+  cf <- isoreader:::make_cf_data_structure() # use continuous flow example, but dual inlet would work too
+  expect_error(convert_signals(cf), "no unit to convert to specified")
+  expect_error(convert_signals(cf, to = "42"), "encountered invalid signal unit")
+  expect_error(convert_signals(cf, to = "blaV"), "Encountered unrecognized units")
+  
+  
+  # expect_warning(convert_time(cf, to = "min"), "read without extracting the raw data")
+  # 
+  # # test data
+  # cf$read_options$raw_data <- TRUE
+  # cf$raw_data <- data_frame(tp = 1:10, time.s = tp*0.2)
+  # expect_message(result <- convert_time(cf, to = "min", quiet = FALSE), "converting time")
+  # expect_true(is_isofile(result))
+  # expect_silent(convert_time(cf, to = "min", quiet = TRUE))
+  # expect_equal(convert_time(cf, to = "min")$raw_data$time.min, cf$raw_data$time.s/60)
+  # expect_equal(convert_time(cf, to = "s")$raw_data$time.s, cf$raw_data$time.s)
+  # 
+  
+})
