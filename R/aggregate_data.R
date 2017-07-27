@@ -4,11 +4,11 @@
 
 #' Get file information
 #' 
-#' Retrieve basic file information form an isotope file (isofile) object. All of these can also be recoverd for an entire set of files using \code{\link{aggregate_file_info}} and specifiying which info to recover, for example, \code{include = c("file_id", "file_path", "file_datetime")}
+#' Retrieve basic file information form an individual isotope file (isofile) object. All of these can also be recoverd for an entire set of files using \code{\link{aggregate_file_info}} and specifiying which info to recover, for example, \code{include = c("file_id", "file_path", "file_datetime")}
 #' 
 #' @details \code{get_file_id()}: retrieve the file ID (this is typially the file name)
 #' @param isofile an isofile to retrieve basic file information from
-#' @rdname get_file_info
+#' @rdname file_info
 #' @aliases get_file_info
 #' @family data retrieval functions
 #' @export
@@ -18,21 +18,21 @@ get_file_id <- function(isofile) {
 }
 
 #' @details \code{get_file_path()}: retrieve the file path (this is the path to the file in case of single file formats such as .dxf or .did and the path to the archieve file in case of collective file formats such as .iarc)
-#' @rdname get_file_info
+#' @rdname file_info
 get_file_path <- function(isofile) {
   check_iso_file_param(isofile)
   return(isofile$file_info$file_path)
 }
 
 #' @details \code{get_file_subpath()}: retrieve the file subpath (this only exists for collective file formats such as .iarc and is the name of the metadata file inside the .iarc archive). Returns NA for isofile without subpath.
-#' @rdname get_file_info
+#' @rdname file_data
 get_file_subpath <- function(isofile) {
   check_iso_file_param(isofile)
   return(isofile$file_info$file_subpath)
 }
 
 #' @details \code{get_file_datetime()}: retrieve the run date and time in \code{\link[base]{POSIXct}} format
-#' @rdname get_file_info
+#' @rdname file_info
 get_file_datetime <- function(isofile) {
   check_iso_file_param(isofile)
   return(isofile$file_info$file_datetime)
@@ -187,7 +187,7 @@ aggregate_standards_info <- function(isofiles, with_ratios = FALSE, include_file
 
 #' Aggregate resistors from methods info
 #'
-#' Aggregates the resistor information recovered from the provided isofiles. This information is only available if the isofiles were read with parameter \code{read_method_info=TRUE} and only linked to specific masses if the isofiles were additionally read with parametr \coe{read_raw_data=TRUE}.
+#' Aggregates the resistor information recovered from the provided isofiles. This information is only available if the isofiles were read with parameter \code{read_method_info=TRUE} and only linked to specific masses if the isofiles were additionally read with parametr \code{read_raw_data=TRUE}.
 #'
 #' @inheritParams aggregate_raw_data
 #' @family data retrieval functions
