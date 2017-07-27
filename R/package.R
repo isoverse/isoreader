@@ -18,7 +18,7 @@
 NULL
 
 ## quiets concerns of R CMD check about . that appears in pipelines
-utils::globalVariables(c(".", "y"))
+utils::globalVariables(c(".", "file_id"))
 
 # release questions 
 release_questions <- function() {

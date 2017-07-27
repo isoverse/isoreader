@@ -207,16 +207,16 @@ extract_dxf_vendor_data_table <- function(ds) {
     ds$binary <- ds$binary %>% 
       move_to_pos(pos + pre_column_re$size) %>% 
       move_to_next_pattern(re_block("fef-x")) %>% # skip ID column since it is not unique in peak jumping files
-      capture_data("col", "raw", re_block("fef-x"), move_past_dots = TRUE, ignore_trailing_zeros = FALSE) %>% 
+      capture_data("column", "raw", re_block("fef-x"), move_past_dots = TRUE, ignore_trailing_zeros = FALSE) %>% 
       capture_data("format", "text", re_block("fef-x"), move_past_dots = TRUE) # retrieve format (!not always the same)
     
     # skip data columns without formatting infromation right away
     if(ds$binary$data$format %in% c("", " ")) next # skip 
     
     # check for columns starting with delta symbol, replace with d instead of delta symbol
-    if (identical(ds$binary$data$col[1:2], as.raw(c(180, 03)))) 
-      ds$binary$data$col[1:2] <- as.raw(c(100, 00)) 
-    col <- ds$binary$data$col <- parse_raw_data(ds$binary$data$col, "text")
+    if (identical(ds$binary$data$column[1:2], as.raw(c(180, 03)))) 
+      ds$binary$data$column[1:2] <- as.raw(c(100, 00)) 
+    col <- ds$binary$data$column <- parse_raw_data(ds$binary$data$column, "text")
     
     # store information about new column if not already stored
     if (!col %in% names(columns)) {
@@ -235,7 +235,7 @@ extract_dxf_vendor_data_table <- function(ds) {
                             ds$binary$data$format, col))
       
       # store
-      new_col <- c(list(pos = ds$binary$pos, type = type), ds$binary$data[c("col", "format", "units")])
+      new_col <- c(list(pos = ds$binary$pos, type = type), ds$binary$data[c("column", "format", "units")])
       columns[[col]] <- new_col
     } else if (ds$binary$data$format != columns[[col]]$format) {
       # double check formatting
@@ -266,11 +266,6 @@ extract_dxf_vendor_data_table <- function(ds) {
         op_error(ds$binary, sprintf("found cell value '%s' for cell '%s' which is not a sensible numeric value", str_c(ds$binary$data$value), col))
       }
     }
-    if (length(ds$binary$data$value) > 1) {
-      print(ds$binary$pos)
-      print(ds$binary$data$format)
-      stop("stopped")
-    }
     rows[[rows_i]][[col]] <- ds$binary$data$value
   }
   
@@ -278,7 +273,7 @@ extract_dxf_vendor_data_table <- function(ds) {
   cols <- bind_rows(columns)
   
   # store vendor data table
-  .check. <- column <- NULL # global var
+  .check. <- NULL # global var
   data_table <- full_join(peaks, mutate(bind_rows(rows), .check. = TRUE), by = "Nr.")
   if (any(is.na(data_table$Start) || any(is.na(data_table$.check.)))) {
     ds <- register_warning(ds, details = "vendor data table has unexpected empty cells, process vendor table with care")
@@ -288,7 +283,7 @@ extract_dxf_vendor_data_table <- function(ds) {
   # safe information on the column units
   attr(ds$vendor_data_table, "units") <- 
     bind_rows(
-      select(cols, column = col, units),
+      select_(cols, .dots = c("column", "units")),
       data_frame(column = c("Start", "Rt", "End"), units = "[s]"),
       data_frame(column = peaks %>% select(starts_with("Ampl"), starts_with("BGD")) %>% names(), units = "[mV]")
     ) %>% 

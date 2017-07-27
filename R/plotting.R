@@ -213,7 +213,7 @@ plot_dual_inlet <- function(
          "'. Please use 'none', 'dataset', 'file' or 'SA|STD' for panel_by, color_by, shape_by and linetype_by specifications.", call. = FALSE)
   
   # global vars
-  cycle <- value <- file_id <- type <- dataset <- dataset_with_units <- NULL
+  cycle <- value <- type <- dataset <- dataset_with_units <- NULL
   
   # collect raw data
   raw_data <- aggregate_raw_data(isofiles, gather = TRUE, quiet = TRUE)

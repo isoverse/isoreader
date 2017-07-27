@@ -75,6 +75,8 @@ aggregate_file_info <- function(isofiles, select = all_info(), quiet = setting("
   # get include information
   all_info <- function() names(info)
   select_cols <- select %>% { .[. %in% all_info()] }
+  if (!is.character(select_cols)) 
+    stop("'select' parameter must be omitted or a character vector of file info entry names", call. = FALSE)
   if (length(missing <- setdiff(select, select_cols)) > 0) {
     warning("some requested file info entries do not exist in any of the provided isofiles and are omitted: '",
             str_c(missing, collapse = "', '"), "'", call. = FALSE, immediate. = TRUE)
@@ -103,12 +105,12 @@ aggregate_raw_data <- function(isofiles, gather = FALSE, include_file_info = c()
   }
   check_read_options(isofiles, "raw_data")
   
-  file_id <- NULL # global vars
   data <- 
     lapply(isofiles, function(isofile) {
-      as_data_frame(isofile$raw_data) %>% 
+      data <- as_data_frame(isofile$raw_data) %>% 
         mutate(file_id = isofile$file_info$file_id) %>% 
         select(file_id, everything())
+      return(data)
     }) %>% bind_rows()
   
   # check for rows
@@ -171,7 +173,6 @@ aggregate_standards_info <- function(isofiles, with_ratios = FALSE, include_file
     if(is.null(stds) || nrow(stds) == 0) return(data_frame())
     
     # return with file_id included
-    file_id <- NULL # global vars
     stds %>% 
       mutate(file_id = isofile$file_info$file_id) %>% 
       select(file_id, everything())
@@ -209,7 +210,6 @@ aggregate_resistors_info <- function(isofiles, include_file_info = c(), quiet = 
     if(is.null(Rs) || nrow(Rs) == 0) return(data_frame())
     
     # return with file_id included
-    file_id <- NULL # global vars
     Rs %>% 
       mutate(file_id = isofile$file_info$file_id) %>% 
       select(file_id, everything())
@@ -250,7 +250,7 @@ aggregate_vendor_data_table <- function(isofiles, with_units = TRUE, select = al
   }
   
   # get vendor data
-  column <- units <- file_id <- NULL # global vars
+  column <- units <- NULL # global vars
   data <- lapply(isofiles, function(isofile) {
     df <- isofile$vendor_data_table
     
@@ -260,7 +260,7 @@ aggregate_vendor_data_table <- function(isofiles, with_units = TRUE, select = al
     # use units 
     if (with_units && !is.null(attr(df, "units")) && !is.na(attr(df, "units")))  {
       cols_with_units <- attr(df, "units")[c("column", "units")] %>% 
-        mutate(units = ifelse(nchar(units) > 0, str_c(column, " ", units), column)) %>% 
+        mutate(units = ifelse(!is.na(units) & nchar(units) > 0, str_c(column, " ", units), column)) %>% 
         deframe()
       names(df) <- cols_with_units[names(df)]
     }

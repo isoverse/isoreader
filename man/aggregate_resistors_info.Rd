@@ -15,7 +15,7 @@ aggregate_resistors_info(isofiles, include_file_info = c(),
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }
 \description{
-Aggregates the resistor information recovered from the provided isofiles. This information is only available if the isofiles were read with parameter \code{read_method_info=TRUE} and only linked to specific masses if the isofiles were additionally read with parametr \coe{read_raw_data=TRUE}.
+Aggregates the resistor information recovered from the provided isofiles. This information is only available if the isofiles were read with parameter \code{read_method_info=TRUE} and only linked to specific masses if the isofiles were additionally read with parametr \code{read_raw_data=TRUE}.
 }
 \seealso{
 Other data retrieval functions: \code{\link{aggregate_file_info}},
