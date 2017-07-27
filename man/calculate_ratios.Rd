@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculate_ratios.R
 \name{calculate_ratios}
 \alias{calculate_ratios}
-\title{Calculate ratios from primary data}
+\title{Calculate ratios}
 \usage{
 calculate_ratios(isofiles, ratios, quiet = setting("quiet"))
 }
@@ -17,5 +17,5 @@ calculate_ratios(isofiles, ratios, quiet = setting("quiet"))
 ithe passed in isofile(s) with ratios added
 }
 \description{
-Calculate ratios from primary data
+Calculate ratios from raw data. Note that these are recorded ratios and are not normalized against any standards yet. The ratios are calculated straight from the raw data without any unit conversions, i.e. if the raw data is in mV, the ratio is mV/mV, if in nA the ratio is nA/nA, etc. These raw ratios are subsequently NOT identical to absolute ratios, in fact they are usually not even close (especially if raw data recorded as voltages with different resistors). If raw data is first converted to identical current units (\code{\link{convert_signals}}), the ratios may be close to their true values (+instrument fractionation), however, isotope ratios should always be calibrated against reference ratios measured in the same data file.
 }
