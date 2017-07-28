@@ -25,7 +25,7 @@ get_file_path <- function(isofile) {
 }
 
 #' @details \code{get_file_subpath()}: retrieve the file subpath (this only exists for collective file formats such as .iarc and is the name of the metadata file inside the .iarc archive). Returns NA for isofile without subpath.
-#' @rdname file_data
+#' @rdname file_info
 get_file_subpath <- function(isofile) {
   check_iso_file_param(isofile)
   return(isofile$file_info$file_subpath)

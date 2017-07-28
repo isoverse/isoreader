@@ -1,3 +1,16 @@
+#' @title Problem Functions
+#' @description The following functions to check for and deal with problems are available.
+#' 
+#' \code{\link[readr]{problems}}
+#' 
+#' \code{\link[readr]{stop_for_problems}}
+#' 
+#' \code{\link{omit_files_with_problems}}
+#' @name problem_functions
+#' @rdname problem_function.Rd
+#' @family problem_functions
+NULL
+
 #' @importFrom readr problems
 #' @export
 readr::problems
@@ -5,6 +18,33 @@ readr::problems
 #' @importFrom readr stop_for_problems
 #' @export
 readr::stop_for_problems
+
+#' Remove problematic files
+#' 
+#' Removes the files that have encountered problems, either errors, warnings or both and returns the remaining isofiles. For additional functions available to check for and deal with problems, see the \link{problem_functions}.
+#' @inheritParams aggregate_raw_data
+#' @param type what type of problem causes removal of the file - error, warning or both
+#' @family problem functions
+#' @export
+omit_files_with_problems <- function(isofiles, type = c("error", "warning", "both"), quiet = setting("quiet")) {
+  if (missing(isofiles) || !is_iso_object(isofiles)) stop("please provide a list of isofiles", call. = FALSE)
+  if (!type %in% c("error", "warning", "both")) stop("unknown problem type specified: ", type, call. = FALSE)
+  types <- if (type == "both") c("error", "warning") else type
+  isofiles <- as_isofile_list(isofiles)
+  
+  # find trouble file ids
+  trouble_files <- problems(isofiles) %>% 
+    filter(type %in% types) %>% 
+    { unique(.$file_id) }
+
+  # exclude
+  exclude <- names(isofiles) %in% trouble_files
+  if (!quiet) sprintf("Info: removing %d/%d files that have %ss", 
+                      sum(exclude), length(isofiles), 
+                      if (type == "both") "errors or warning" else type) %>% message()
+  
+  return(isofiles[!exclude])
+}
 
 # register a problem during isoreader operations
 # helper function to standardize problems for file reads

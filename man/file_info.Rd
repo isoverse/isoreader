@@ -4,12 +4,15 @@
 \alias{get_file_id}
 \alias{get_file_info}
 \alias{get_file_path}
+\alias{get_file_subpath}
 \alias{get_file_datetime}
 \title{Get file information}
 \usage{
 get_file_id(isofile)
 
 get_file_path(isofile)
+
+get_file_subpath(isofile)
 
 get_file_datetime(isofile)
 }
@@ -23,6 +26,8 @@ Retrieve basic file information form an individual isotope file (isofile) object
 \code{get_file_id()}: retrieve the file ID (this is typially the file name)
 
 \code{get_file_path()}: retrieve the file path (this is the path to the file in case of single file formats such as .dxf or .did and the path to the archieve file in case of collective file formats such as .iarc)
+
+\code{get_file_subpath()}: retrieve the file subpath (this only exists for collective file formats such as .iarc and is the name of the metadata file inside the .iarc archive). Returns NA for isofile without subpath.
 
 \code{get_file_datetime()}: retrieve the run date and time in \code{\link[base]{POSIXct}} format
 }

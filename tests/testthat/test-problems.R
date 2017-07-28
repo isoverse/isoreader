@@ -81,3 +81,26 @@ test_that("Combing problems works properly", {
   expect_equal(isoreader:::combined_problems(x, y, z), isoreader:::combined_problems(x, y))  
 })
 
+test_that("removing files with errors works properly", {
+  
+  isofile <- isoreader:::make_isofile_data_structure()
+  expect_warning(iso_warn <- isoreader:::register_warning(isofile, "test warning"))
+  expect_warning(iso_err <- isoreader:::register_error(isofile, "test error"))
+  isofile$file_info$file_id <- "A"
+  iso_warn$file_info$file_id <- "B"
+  iso_err$file_info$file_id <- "C"
+  isofiles <- c(isofile, iso_err, iso_warn)
+  expect_error(omit_files_with_problems(42), "provide a list of isofiles")
+  expect_error(omit_files_with_problems(isofiles, "all"), "unknown problem type specified")
+  expect_message(omit_files_with_problems(isofiles, "warning", quiet = FALSE), "removing")
+  expect_silent(omit_files_with_problems(isofiles, "warning", quiet = TRUE))
+  expect_equal(omit_files_with_problems(isofiles, "warning") %>% 
+                 sapply(function(x) x$file_info$file_id) %>% as.character(), 
+               c("A", "C"))
+  expect_equal(omit_files_with_problems(isofiles, "error") %>% 
+                 sapply(function(x) x$file_info$file_id) %>% as.character(), 
+               c("A", "B"))
+  expect_equal(omit_files_with_problems(isofiles, "both") %>% 
+                 sapply(function(x) x$file_info$file_id) %>% as.character(), 
+               c("A"))
+})

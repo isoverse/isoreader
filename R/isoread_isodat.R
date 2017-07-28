@@ -16,6 +16,7 @@ extract_isodat_datetime <- function(ds) {
 
 # extract resistor information
 extract_isodat_resistors <- function(ds) {
+  
   # move to resistor information
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot recover resistors") %>% 
@@ -45,13 +46,14 @@ extract_isodat_resistors <- function(ds) {
     mutate(cup = cup+1)
   
   # if mass data is read, include the information in the resistors
-  if (ds$read_options$raw_data) {
+  if (ds$read_options$raw_data && nrow(ds$raw_data) > 0) {
     mass_column_pattern <- "^[vi](\\d+)\\.(.*)$"
     masses <- ds$raw_data %>% 
       names() %>%
       str_subset(mass_column_pattern) %>%
-      str_match(mass_column_pattern) %>%
-      { .[,2] }
+      { if(length(.) == 0) return (NULL) else 
+        str_match(., mass_column_pattern) %>%  { .[,2] }
+      }
     if (length(masses) != nrow(ds$method_info$resistors)) {
       op_error(ds$binary, 
                sprintf("found inconsistent number of resistors (%d) compared to ion dataset (%d)",
