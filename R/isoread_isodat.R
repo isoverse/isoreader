@@ -42,8 +42,8 @@ extract_isodat_resistors <- function(ds) {
       capture_n_data("R.Ohm", "double", n = 1) 
     resistors <- c(resistors, list(ds$binary$data[c("cup", "R.Ohm")]))
   }
-  ds$method_info$resistors <- bind_rows(resistors) %>% 
-    mutate(cup = cup+1)
+  ds$method_info$resistors <- bind_rows(resistors)
+  ds$method_info$resistors$cup <- ds$method_info$resistors$cup + 1L # re-index from 1 instead of 0
   
   # if mass data is read, include the information in the resistors
   if (ds$read_options$raw_data && nrow(ds$raw_data) > 0) {
@@ -60,7 +60,7 @@ extract_isodat_resistors <- function(ds) {
                        nrow(ds$method_info$resistors), length(masses)))
     }
     ds$method_info$resistors <- ds$method_info$resistors %>% 
-      mutate(mass = masses) %>% select(cup, mass, R.Ohm)
+      mutate(mass = masses) %>% select_(.dots = c("cup", "mass", "R.Ohm"))
   }
   return(ds)
 }

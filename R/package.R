@@ -17,8 +17,9 @@
 #' @importFrom UNF unf
 NULL
 
-## quiets concerns of R CMD check about . that appears in pipelines
-utils::globalVariables(c(".", "file_id"))
+# quiets concerns of R CMD check about . that appears in pipelines 
+# and some very commonly used variable names used in NSE commands
+utils::globalVariables(c(".", "file_id", "mass"))
 
 # release questions 
 release_questions <- function() {

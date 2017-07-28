@@ -171,7 +171,7 @@ extract_dxf_vendor_data_table <- function(ds) {
   rts_df <- bind_rows(rts) 
   
   # retention times
-  peak <- start <- rt <- end <- mass <- amp <- Ampl <- bg <- BGD <- NULL
+  peak <- start <- rt <- end <- amp <- Ampl <- bg <- BGD <- NULL
   peaks <- rts_df %>% 
     select(peak, Start = start, Rt = rt, End = end) %>% 
     distinct(peak, .keep_all = TRUE) %>% 

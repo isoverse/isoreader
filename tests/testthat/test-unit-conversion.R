@@ -164,9 +164,11 @@ test_that("test that signal conversion works in isofiles", {
   expect_error(convert_signals(42), "can only convert signals in .* isofiles")
   cf <- isoreader:::make_cf_data_structure() # use continuous flow example, but dual inlet would work too
   expect_error(convert_signals(cf), "no unit to convert to specified")
-  expect_error(convert_signals(cf, to = "42"), "encountered invalid signal unit")
-  expect_error(convert_signals(cf, to = "blaV"), "Encountered unrecognized units")
   
+  #FIXME continue here
+  # expect_error(convert_signals(cf, to = "42"), "encountered invalid signal unit")
+  # expect_error(convert_signals(cf, to = "blaV"), "Encountered unrecognized units")
+  # 
   
   # expect_warning(convert_time(cf, to = "min"), "read without extracting the raw data")
   # 
