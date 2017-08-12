@@ -10,7 +10,7 @@ omit_files_with_problems(isofiles, type = c("error", "warning", "both"),
 \arguments{
 \item{isofiles}{collection of isofile objects}
 
-\item{type}{what type of problem causes removal of the file - error, warning or both}
+\item{type}{what type of problem causes removal of the file: \code{"error"}, \code{"warning"} or \code{"both"}}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }

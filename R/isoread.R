@@ -36,7 +36,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
   
   # expand & safety check paths (will error if non-suppored file types are included
   # or same filename occurs multiple times)
-  if (missing(paths)) stop("file path(s) required", call. = FALSE)
+  if (missing(paths) || is.null(paths) || is.na(paths)) stop("file path(s) required", call. = FALSE)
   filepaths <- retrieve_file_paths(paths, supported_extensions$extension)
   
   # overview

@@ -23,11 +23,13 @@ readr::stop_for_problems
 #' 
 #' Removes the files that have encountered problems, either errors, warnings or both and returns the remaining isofiles. For additional functions available to check for and deal with problems, see the \link{problem_functions}.
 #' @inheritParams aggregate_raw_data
-#' @param type what type of problem causes removal of the file - error, warning or both
+#' @param type what type of problem causes removal of the file: \code{"error"}, \code{"warning"} or \code{"both"}
 #' @family problem functions
 #' @export
 omit_files_with_problems <- function(isofiles, type = c("error", "warning", "both"), quiet = setting("quiet")) {
   if (missing(isofiles) || !is_iso_object(isofiles)) stop("please provide a list of isofiles", call. = FALSE)
+  if (missing(type)) type <- "both"
+  if (length(type) > 1) stop("more than one type specified", call. = FALSE)
   if (!type %in% c("error", "warning", "both")) stop("unknown problem type specified: ", type, call. = FALSE)
   types <- if (type == "both") c("error", "warning") else type
   isofiles <- as_isofile_list(isofiles)
@@ -39,10 +41,11 @@ omit_files_with_problems <- function(isofiles, type = c("error", "warning", "bot
 
   # exclude
   exclude <- names(isofiles) %in% trouble_files
-  if (!quiet) sprintf("Info: removing %d/%d files that have %ss", 
+  if (!quiet) {
+    sprintf("Info: removing %d/%d files that have %ss", 
                       sum(exclude), length(isofiles), 
                       if (type == "both") "errors or warning" else type) %>% message()
-  
+  }
   return(isofiles[!exclude])
 }
 
