@@ -86,8 +86,10 @@ process_iarc_samples <- function(isofile_template, tasks, gas_configs, folder_pa
     str_c(task$info$Id, "_", task$info$Name)
   }
   
-  # sort task to process in order
-  tasks <- tasks %>% sort_by(generate_task_sample_id)
+  # sort task to process in order 
+  #FIXME: sorting no longer works because purrr removed the function
+  #not sorting at all right now but revisit this
+  #tasks <- tasks %>% sort_by(generate_task_sample_id)
   
   # loop through and process info and data
   sapply(tasks, function(task) {
