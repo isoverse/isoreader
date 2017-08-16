@@ -35,7 +35,7 @@ export_to_rda <- function(isofiles, filepath, quiet = setting("quiet")) {
 
 #' Export data to Excel
 #' 
-#' Convenience function for exporting isoreader data to Excel. The different kinds of data (raw data, file info, methods info, etc.) is only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{read_dual_inlet}}, \code{\link{read_continuous_flow}} for details on read parameters). 
+#' This function exports the passed in isofiles to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file but they are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{read_dual_inlet}}, \code{\link{read_continuous_flow}} for details on read parameters). 
 #' 
 #' @inheritParams export_to_rda
 #' @param include_raw_data whether to include the raw data in the export (if available)
@@ -98,6 +98,54 @@ export_to_excel <- function(isofiles, filepath,
 }
 
 
+#' Export to feather
+#' 
+#' This function exports the passed in isofiles to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided \code{filepath_prefix} as prefix. All are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{read_dual_inlet}}, \code{\link{read_continuous_flow}} for details on read parameters). 
+#' 
+#' @inheritParams export_to_excel
+#' @param filepath_prefix the path (folder and filename) prefix for the exported feather files. The correct suffix for different kinds of data and file extension is automatically added
+#' @family export functions
+#' @return returns the isofiles object invisibly for use in pipelines
+#' @export
+export_to_feather <- function(isofiles, filepath_prefix, zip = FALSE,
+                              include_raw_data = TRUE, include_file_info = TRUE, include_method_info = TRUE, include_vendor_data_table = TRUE,
+                              quiet = setting("quiet")) {
+  
+  # safety checks
+  if(!is_iso_object(isofiles)) stop("can only export iso files or lists of iso files", call. = FALSE)
+  else if (is_continuous_flow(isofiles))
+    ext <- ".cf.feather"
+  else if (is_dual_inlet(isofiles))
+    ext <- ".di.feather"
+  else
+    stop("Feather export of this type of isofiles not yet supported", call. = FALSE) 
+  # note: not sure yet how to best implement different data types such as scan here
+  
+  # save isofiles
+  filepath <- get_export_filepath(filepath_prefix, NULL)
+  if (!quiet) {
+    sprintf("Info: exporting data from %d files into %s files at '%s'", length(as_isofile_list(isofiles)), 
+            ext, str_replace(filepath, "^\\.(/|\\\\)", "")) %>% message()
+  }
+  
+  # make feather files in temporary dir
+  if (include_raw_data) 
+    write_feather(aggregate_raw_data(isofiles, quiet = TRUE), str_c(filepath, "_raw_data", ext))
+  
+  if (include_file_info) 
+    write_feather(aggregate_file_info(isofiles, quiet = TRUE), str_c(filepath, "_file_info", ext))
+  
+  if (include_method_info) {
+    write_feather(aggregate_standards_info(isofiles, quiet = TRUE), str_c(filepath, "_method_info-standards", ext))
+    write_feather(aggregate_resistors_info(isofiles, quiet = TRUE), str_c(filepath, "_method_info-resistors", ext))
+  }
+  
+  if (include_vendor_data_table) 
+    write_feather(aggregate_vendor_data_table(isofiles, quiet = TRUE), str_c(filepath, "_vendor_data_table", ext))
+  
+  return(invisible(isofiles))
+}
+
 # convenience function for export file paths (extension checks and addition)
 get_export_filepath <- function(filepath, ext) {
   # file name and folder
@@ -105,6 +153,7 @@ get_export_filepath <- function(filepath, ext) {
   filename <- basename(filepath)
   folder <- dirname(filepath)
   if (!file.exists(folder)) stop("the folder '", folder, "' does not exist", call. = FALSE)
-  filename_w_ext <- filename %>% str_replace(fixed(ext), "") %>% str_c(ext) # to make sure correct extension
-  return(file.path(folder, filename_w_ext)) 
+  if (!is.null(ext))
+    filename <- filename %>% str_replace(fixed(ext), "") %>% str_c(ext) # to make sure correct extension
+  return(file.path(folder, filename)) 
 }

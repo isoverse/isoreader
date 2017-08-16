@@ -27,8 +27,9 @@ export_to_excel(isofiles, filepath, include_raw_data = TRUE,
 returns the isofiles object invisibly for use in pipelines
 }
 \description{
-Convenience function for exporting isoreader data to Excel. The different kinds of data (raw data, file info, methods info, etc.) is only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{read_dual_inlet}}, \code{\link{read_continuous_flow}} for details on read parameters).
+This function exports the passed in isofiles to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file but they are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{read_dual_inlet}}, \code{\link{read_continuous_flow}} for details on read parameters).
 }
 \seealso{
-Other export functions: \code{\link{export_to_rda}}
+Other export functions: \code{\link{export_to_feather}},
+  \code{\link{export_to_rda}}
 }

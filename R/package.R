@@ -16,6 +16,7 @@
 #' @importFrom lazyeval as.lazy
 #' @importFrom UNF unf
 #' @importFrom openxlsx createWorkbook createStyle addWorksheet writeData saveWorkbook
+#' @importFrom feather write_feather
 NULL
 
 # quiets concerns of R CMD check about . that appears in pipelines 

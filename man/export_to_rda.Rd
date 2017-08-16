@@ -20,5 +20,6 @@ returns the isofiles object invisibly for use in pipelines
 This function exports the passed in isofiles to an R Data Archive (.rda) file, which is a fairly efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard \code{\link{read_continuous_flow}} and \code{\link{read_dual_inlet}} functions or by simply double-clicking the .rda file which will open in an R console and restore the data into variable \code{isofiles}.
 }
 \seealso{
-Other export functions: \code{\link{export_to_excel}}
+Other export functions: \code{\link{export_to_excel}},
+  \code{\link{export_to_feather}}
 }
