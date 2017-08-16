@@ -19,19 +19,15 @@ export_to_rda <- function(isofiles, filepath, quiet = setting("quiet")) {
     ext <- ".di.rda"
   else
     stop("R data archive export of this type of isofiles not supported", call. = FALSE) 
-  
-  # file name and folder
-  if (missing(filepath)) stop("no filepath provided", call. = FALSE)
-  filename <- basename(filepath)
-  folder <- dirname(filepath)
-  if (!file.exists(folder)) stop("the folder '", folder, "' does not exist", call. = FALSE)
+  filepath <- get_export_filepath(filepath, ext)
   
   # save isofiles
-  isofiles <- as_isofile_list(isofiles)
-  filename_w_ext <- filename %>% str_replace(fixed(ext), "") %>% str_c(ext) # to make sure correct extension
-  filepath <- file.path(folder, filename_w_ext)
-  if (!setting("quiet")) 
-    sprintf("Info: exporting data from %d files into '%s'", length(isofiles), str_replace(filepath, "^\\.(/|\\\\)", "")) %>% message()
+  if (!quiet) {
+    sprintf("Info: exporting data from %d files into R Data Archive '%s'", 
+            length(as_isofile_list(isofiles)), 
+            str_replace(filepath, "^\\.(/|\\\\)", "")) %>% message()
+  }
+  
   save(isofiles, file = filepath)
   return(invisible(isofiles))
 }
@@ -39,14 +35,76 @@ export_to_rda <- function(isofiles, filepath, quiet = setting("quiet")) {
 
 #' Export data to Excel
 #' 
-#' Convenience function for exporting isoreader data to Excel.
+#' Convenience function for exporting isoreader data to Excel. The different kinds of data (raw data, file info, methods info, etc.) is only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{read_dual_inlet}}, \code{\link{read_continuous_flow}} for details on read parameters). 
 #' 
 #' @inheritParams export_to_rda
-#' @param filename the name of the file to export (without the Rda ending)
-#' @param folder the folder where to save the rda file
+#' @param include_raw_data whether to include the raw data in the export (if available)
+#' @param include_file_info whether to include the file info in the export (if available)
+#' @param include_method whether to include methods infor in the export (if available)
+#' @param include_vendor_data_table whether to include the vendor data table in the export (if available)
 #' @family export functions
 #' @return returns the isofiles object invisibly for use in pipelines
 #' @export
-export_to_excel <- function(isofiles, filenname, folder = ".", quiet = setting("quiet")) {
+export_to_excel <- function(isofiles, filepath, 
+                            include_raw_data = TRUE, include_file_info = TRUE, include_method_info = TRUE, include_vendor_data_table = TRUE,
+                            quiet = setting("quiet")) {
   
+  # safety checks
+  if(!is_iso_object(isofiles)) stop("can only export iso files or lists of iso files", call. = FALSE)
+  else if (is_continuous_flow(isofiles))
+    ext <- ".cf.xlsx"
+  else if (is_dual_inlet(isofiles))
+    ext <- ".di.xlsx"
+  else
+    stop("Excel export of this type of isofiles not yet supported", call. = FALSE) 
+  # note: not sure yet how to best implement different data types such as scan here
+  filepath <- get_export_filepath(filepath, ext)
+  
+  # save isofiles
+  export_isofiles <- as_isofile_list(isofiles)
+  if (!quiet) {
+    sprintf("Info: exporting data from %d files into Excel '%s'", length(export_isofiles), 
+            str_replace(filepath, "^\\.(/|\\\\)", "")) %>% message()
+  }
+  
+  # make excel workbook
+  wb <- createWorkbook()
+  hs <- createStyle(textDecoration = "bold")
+  if (include_raw_data) {
+    addWorksheet(wb, "raw data")
+    writeData(wb, "raw data", aggregate_raw_data(export_isofiles, quiet = TRUE),
+              headerStyle = hs)
+  }
+  if (include_file_info) {
+    addWorksheet(wb, "file info")
+    writeData(wb, "file info", aggregate_file_info(export_isofiles, quiet = TRUE),
+              headerStyle = hs)
+  }
+  if (include_method_info) {
+    addWorksheet(wb, "method info")
+    standards <- aggregate_standards_info(export_isofiles, quiet = TRUE)
+    resistors <- aggregate_resistors_info(export_isofiles, quiet = TRUE)
+    writeData(wb, "method info", standards, headerStyle = hs)
+    writeData(wb, "method info", resistors, startRow = nrow(standards) + 3, headerStyle = hs)
+  }
+  if (include_vendor_data_table) {
+    addWorksheet(wb, "vendor data table")
+    writeData(wb, "vendor data table", aggregate_vendor_data_table(export_isofiles, quiet = TRUE),
+              headerStyle = hs)
+  }
+  saveWorkbook(wb, filepath, overwrite = TRUE)
+  
+  return(invisible(isofiles))
+}
+
+
+# convenience function for export file paths (extension checks and addition)
+get_export_filepath <- function(filepath, ext) {
+  # file name and folder
+  if (missing(filepath)) stop("no filepath provided", call. = FALSE)
+  filename <- basename(filepath)
+  folder <- dirname(filepath)
+  if (!file.exists(folder)) stop("the folder '", folder, "' does not exist", call. = FALSE)
+  filename_w_ext <- filename %>% str_replace(fixed(ext), "") %>% str_c(ext) # to make sure correct extension
+  return(file.path(folder, filename_w_ext)) 
 }

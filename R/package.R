@@ -15,6 +15,7 @@
 #' @importFrom rhdf5 h5ls h5read h5readAttributes H5close
 #' @importFrom lazyeval as.lazy
 #' @importFrom UNF unf
+#' @importFrom openxlsx createWorkbook createStyle addWorksheet writeData saveWorkbook
 NULL
 
 # quiets concerns of R CMD check about . that appears in pipelines 
