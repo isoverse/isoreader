@@ -15,13 +15,25 @@ test_that("test that export to rda works properly", {
   cf$vendor_data_table <- data_frame(x = 1:5, y = letters[1:5]) %>% { attr(., "units") <- c(x="a", y = "b"); . }
   filepath <- file.path(tempdir(), "test")
   
-  # export and reimport
+  # export and reimport single file
   expect_message(cf_out <- export_to_rda(cf, filepath, quiet = FALSE), "exporting data .* into R Data Archive")
   expect_equal(cf, cf_out)
   expect_true(file.exists(str_c(filepath, ".cf.rda")))
   expect_message(cf_back <- read_continuous_flow(str_c(filepath, ".cf.rda"), quiet = FALSE), "reading file")
   expect_equal(cf, cf_back)  
   expect_true(file.remove(str_c(filepath, ".cf.rda")))
+  
+  # export and reimport multiple isofiles
+  cf2 <- cf
+  cf2$file_info$file_id <- "B"
+  cfs <- c(cf, cf2)
+  expect_message(cfs_out <- export_to_rda(cfs, filepath, quiet = FALSE), "exporting data .* into R Data Archive")
+  expect_equal(cfs, cfs_out)
+  expect_true(file.exists(str_c(filepath, ".cf.rda")))
+  expect_message(cfs_back <- read_continuous_flow(str_c(filepath, ".cf.rda"), quiet = FALSE), "reading file")
+  expect_equal(cfs, cfs_back)  
+  expect_true(file.remove(str_c(filepath, ".cf.rda")))
+  
 })
 
 library(readxl)

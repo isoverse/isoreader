@@ -10,7 +10,7 @@ isoread_rda <- function(ds, ...) {
   load(ds$file_info$file_path) 
   
   # make sure object in file was loaded properly
-  if (!exists("isofiles", inherits = FALSE) || !(is_isofile(isofiles))) 
+  if (!exists("isofiles", inherits = FALSE) || !(is_iso_object(isofiles))) 
     stop("R Data Archive did not contain isofile data", call. = FALSE)
   isofiles <- as_isofile_list(isofiles)
   
