@@ -40,7 +40,7 @@ export_to_rda <- function(isofiles, filepath, quiet = setting("quiet")) {
 #' @inheritParams export_to_rda
 #' @param include_raw_data whether to include the raw data in the export (if available)
 #' @param include_file_info whether to include the file info in the export (if available)
-#' @param include_method whether to include methods infor in the export (if available)
+#' @param include_method_info whether to include methods infor in the export (if available)
 #' @param include_vendor_data_table whether to include the vendor data table in the export (if available)
 #' @family export functions
 #' @return returns the isofiles object invisibly for use in pipelines
@@ -107,7 +107,7 @@ export_to_excel <- function(isofiles, filepath,
 #' @family export functions
 #' @return returns the isofiles object invisibly for use in pipelines
 #' @export
-export_to_feather <- function(isofiles, filepath_prefix, zip = FALSE,
+export_to_feather <- function(isofiles, filepath_prefix, 
                               include_raw_data = TRUE, include_file_info = TRUE, include_method_info = TRUE, include_vendor_data_table = TRUE,
                               quiet = setting("quiet")) {
   

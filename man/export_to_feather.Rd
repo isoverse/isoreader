@@ -4,10 +4,9 @@
 \alias{export_to_feather}
 \title{Export to feather}
 \usage{
-export_to_feather(isofiles, filepath_prefix, zip = FALSE,
-  include_raw_data = TRUE, include_file_info = TRUE,
-  include_method_info = TRUE, include_vendor_data_table = TRUE,
-  quiet = setting("quiet"))
+export_to_feather(isofiles, filepath_prefix, include_raw_data = TRUE,
+  include_file_info = TRUE, include_method_info = TRUE,
+  include_vendor_data_table = TRUE, quiet = setting("quiet"))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
@@ -17,6 +16,8 @@ export_to_feather(isofiles, filepath_prefix, zip = FALSE,
 \item{include_raw_data}{whether to include the raw data in the export (if available)}
 
 \item{include_file_info}{whether to include the file info in the export (if available)}
+
+\item{include_method_info}{whether to include methods infor in the export (if available)}
 
 \item{include_vendor_data_table}{whether to include the vendor data table in the export (if available)}
 

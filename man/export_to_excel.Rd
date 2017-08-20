@@ -17,11 +17,11 @@ export_to_excel(isofiles, filepath, include_raw_data = TRUE,
 
 \item{include_file_info}{whether to include the file info in the export (if available)}
 
+\item{include_method_info}{whether to include methods infor in the export (if available)}
+
 \item{include_vendor_data_table}{whether to include the vendor data table in the export (if available)}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
-
-\item{include_method}{whether to include methods infor in the export (if available)}
 }
 \value{
 returns the isofiles object invisibly for use in pipelines

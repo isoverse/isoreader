@@ -20,6 +20,7 @@ Imports:
     readr,
     xml2,
     rhdf5,
+    feather,
     UNF,
     openxlsx,
     ggplot2,
