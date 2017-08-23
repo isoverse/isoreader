@@ -108,7 +108,7 @@ extract_did_raw_voltage_data <- function(ds) {
   
   # voltages data frame
   type <- cycle <- NULL
-  ds$raw_data <- bind_rows(voltages) %>% arrange(desc(type), cycle)
+  ds$raw_data <- bind_rows(voltages) %>% mutate(cycle = as.integer(cycle)) %>% arrange(desc(type), cycle)
   return(ds)
 }
 
