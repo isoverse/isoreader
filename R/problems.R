@@ -3,6 +3,8 @@
 #' 
 #' \code{\link[readr]{problems}}
 #' 
+#' \code{\link{problems_summary}}
+#' 
 #' \code{\link[readr]{stop_for_problems}}
 #' 
 #' \code{\link{omit_files_with_problems}}
@@ -19,6 +21,43 @@ readr::problems
 #' @export
 readr::stop_for_problems
 
+#' Retrieve a summary of the problems
+#'
+#' Returns a data frame listing how many errors and warnings were encountered for each file. For details on each error/warning, see \link[readr]{problems} and the \link{problem_functions}.
+#' @inheritParams aggregate_raw_data
+#' @family problem functions
+#' @return data frame with file_id and number of encountered errors and warnings
+#' @export
+problems_summary <- function(isofiles) {
+  # safety checks
+  if (missing(isofiles) || !is_iso_object(isofiles)) stop("please provide isofiles", call. = FALSE)
+  isofiles <- as_isofile_list(isofiles)
+  
+  # tally up problems
+  probs_templ <- data_frame(file_id = character(0), error = integer(0), warning = integer(0))
+  if (n_problems(isofiles) > 0) {
+    probs <- problems(isofiles) %>% 
+      # tally up number of warnings/errors per file
+      group_by(file_id, type) %>%
+      tally() %>% 
+      spread(type, n) %>%
+      # to ensure these columns exists
+      bind_rows(probs_templ)
+  } else {
+    probs <- probs_templ
+  }
+  
+  # merge with file list
+  data_frame(
+    file_id = names(isofiles)
+  ) %>%
+    left_join(probs, by = "file_id") %>%
+    mutate(
+      warning = ifelse(!is.na(warning), warning, 0L),
+      error = ifelse(!is.na(error), error, 0L)
+    ) 
+}
+ 
 #' Remove problematic files
 #' 
 #' Removes the files that have encountered problems, either errors, warnings or both and returns the remaining isofiles. For additional functions available to check for and deal with problems, see the \link{problem_functions}.

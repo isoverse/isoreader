@@ -8,6 +8,8 @@ The following functions to check for and deal with problems are available.
 
 \code{\link[readr]{problems}}
 
+\code{\link{problems_summary}}
+
 \code{\link[readr]{stop_for_problems}}
 
 \code{\link{omit_files_with_problems}}

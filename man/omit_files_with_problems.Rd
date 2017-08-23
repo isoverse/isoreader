@@ -17,3 +17,6 @@ omit_files_with_problems(isofiles, type = c("error", "warning", "both"),
 \description{
 Removes the files that have encountered problems, either errors, warnings or both and returns the remaining isofiles. For additional functions available to check for and deal with problems, see the \link{problem_functions}.
 }
+\seealso{
+Other problem functions: \code{\link{problems_summary}}
+}
