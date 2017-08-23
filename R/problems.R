@@ -33,6 +33,9 @@ problems_summary <- function(isofiles) {
   if (missing(isofiles) || !is_iso_object(isofiles)) stop("please provide isofiles", call. = FALSE)
   isofiles <- as_isofile_list(isofiles)
   
+  # global vars
+  error <- warning <- type <- NULL
+  
   # tally up problems
   probs_templ <- data_frame(file_id = character(0), error = integer(0), warning = integer(0))
   if (n_problems(isofiles) > 0) {
