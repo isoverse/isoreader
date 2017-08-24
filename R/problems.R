@@ -84,9 +84,10 @@ omit_files_with_problems <- function(isofiles, type = c("error", "warning", "bot
   # exclude
   exclude <- names(isofiles) %in% trouble_files
   if (!quiet) {
-    sprintf("Info: removing %d/%d files that have %ss", 
-                      sum(exclude), length(isofiles), 
-                      if (type == "both") "errors or warning" else type) %>% message()
+    sprintf("Info: removing %d/%d files that have %ss (keeping %d)", 
+            sum(exclude), length(isofiles), 
+            if (type == "both") "errors or warning" else type,
+            length(isofiles) - sum(exclude)) %>% message()
   }
   return(isofiles[!exclude])
 }

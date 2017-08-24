@@ -6,6 +6,7 @@
 #' 
 #' @inheritParams plot_raw_data
 #' @param to what time units to convert to
+#' @export
 #' @return the passed in isofile(s) with changed time units
 convert_time <- function(isofiles, to, quiet = setting("quiet")) {
   
