@@ -4,24 +4,24 @@
 \alias{plot_continuous_flow}
 \title{Plot chromatogram from continuous flow data}
 \usage{
-plot_continuous_flow(isofiles, datasets, time_interval = c(),
+plot_continuous_flow(isofiles, data = c(), time_interval = c(),
   time_interval_units = "seconds", normalize = FALSE, zoom = NULL,
-  panel_by = "dataset", color_by = "file", linetype_by = "none")
+  panel_by = "data", color_by = "file", linetype_by = "none")
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
 
-\item{datasets}{which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using \code{\link{calculate_ratios}} prior to plotting.}
+\item{data}{which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using \code{\link{calculate_ratios}} prior to plotting.}
 
 \item{time_interval}{which time interval to plot}
 
 \item{time_interval_units}{which units the time interval is in, default is "seconds"}
 
-\item{normalize}{whether to normalize all dataset (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if \code{zoom} is set) is applied after normalizing.}
+\item{normalize}{whether to normalize all data (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if \code{zoom} is set) is applied after normalizing.}
 
-\item{zoom}{if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values > 1 are zoom in, values < 1 are zoom out, baseline always remains the anchor point. Note that for overlay plots (\code{panel_bu = "none"}) zooming is relative to the max in each panel (potentially across different dataset). Also note that zooming only affects masses, ratios are not zoomed.}
+\item{zoom}{if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values > 1 are zoom in, values < 1 are zoom out, baseline always remains the anchor point. Note that for overlay plots (\code{panel_bu = "none"}) zooming is relative to the max in each panel (potentially across different data traces). Also note that zooming only affects masses, ratios are not zoomed.}
 
-\item{panel_by}{whether to panel data by anything, options are "none" (overlay all), "dataset" (by mass/ratio dataset), "file" (panel by files). The default is "dataset"}
+\item{panel_by}{whether to panel data by anything, options are "none" (overlay all), "data" (by mass/ratio data), "file" (panel by files). The default is "data"}
 
 \item{color_by}{whether to color data by anything, options are the same as for \code{panel_by} but the default is "file"}
 

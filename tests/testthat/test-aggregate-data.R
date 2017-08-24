@@ -113,7 +113,7 @@ test_that("test that aggregeting raw data works", {
                  left_join(data_frame(
                    column = c("v44.mV", "v45.mV", "v46.mV", "r46/44"),
                    category = c("mass", "mass", "mass", "ratio"),
-                   dataset = c("44", "45", "46", "46/44"),
+                   data = c("44", "45", "46", "46/44"),
                    units = c("mV", "mV", "mV", NA_character_)
                  ), by = "column") %>% select(-column) %>% filter(!is.na(value)))
   

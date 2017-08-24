@@ -4,15 +4,15 @@
 \alias{plot_dual_inlet}
 \title{Plot mass data from dual inlet files}
 \usage{
-plot_dual_inlet(isofiles, datasets, panel_by = "dataset", color_by = "file",
-  linetype_by = "none", shape_by = "SA|STD")
+plot_dual_inlet(isofiles, data = c(), panel_by = "data",
+  color_by = "file", linetype_by = "none", shape_by = "SA|STD")
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
 
-\item{datasets}{which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using \code{\link{calculate_ratios}} prior to plotting.}
+\item{data}{which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using \code{\link{calculate_ratios}} prior to plotting.}
 
-\item{panel_by}{whether to panel data by anything, options are "none" (overlay all), "dataset" (by mass/ratio dataset), "file" (panel by files), "SA|STD" (panel by sample|standard). The default is "dataset"}
+\item{panel_by}{whether to panel data by anything, options are "none" (overlay all), "data" (by mass/ratio data), "file" (panel by files), "SA|STD" (panel by sample|standard). The default is "data"}
 
 \item{color_by}{whether to color data by anything, options are the same as for \code{panel_by} but the default is "file"}
 

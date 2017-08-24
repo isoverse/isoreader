@@ -26,8 +26,8 @@ test_that("test that plot continuous flow works properly", {
   expect_message(p <- plot_raw_data(cf, c("46/44", "44"), quiet = FALSE), "plotting data")
   expect_true(is.ggplot(p))
   expect_silent(plot_raw_data(cf, "44", quiet = TRUE))
-  expect_true(all(p$data$dataset %in% c("44 [mV]", "46/44"))) # only these datasets selected
-  expect_true(identical(p$data$dataset %>% levels(), c("46/44", "44 [mV]")))
+  expect_true(all(p$data$data %in% c("44 [mV]", "46/44"))) # only these datas selected
+  expect_true(identical(p$data$data %>% levels(), c("46/44", "44 [mV]")))
   
   # aesthetics, mapping, panelling formatting tests - defaults first
   expect_true(all(names(p$mapping) %in% c("colour", "x", "y", "group")))
@@ -35,19 +35,19 @@ test_that("test that plot continuous flow works properly", {
   expect_equal(as.character(p$mapping$x), "time")
   expect_equal(as.character(p$mapping$y), "value")
   expect_equal(class(p$facet)[1], "FacetGrid")
-  expect_equal(names(p$facet$params$rows), "dataset")
+  expect_equal(names(p$facet$params$rows), "data")
   expect_equal(names(p$facet$params$cols), NULL)
   
   # then custom specifications
-  expect_true(is.ggplot(p <- plot_raw_data(cf, panel_by = "none", color_by = "dataset", linetype_by = "file")))
-  expect_true(all(p$data$dataset %in% c("44 [mV]", "46 [mV]", "46/44"))) # all selected by default
+  expect_true(is.ggplot(p <- plot_raw_data(cf, panel_by = "none", color_by = "data", linetype_by = "file")))
+  expect_true(all(p$data$data %in% c("44 [mV]", "46 [mV]", "46/44"))) # all selected by default
   expect_true(all(names(p$mapping) %in% c("colour", "x", "y", "group", "linetype")))
-  expect_equal(as.character(p$mapping$colour), "dataset")
+  expect_equal(as.character(p$mapping$colour), "data")
   expect_equal(as.character(p$mapping$linetype), "file_id")
   expect_equal(class(p$facet)[1], "FacetNull")
-  expect_true(is.ggplot(p <- plot_raw_data(cf, "44", panel_by = "file", color_by = "none", linetype_by = "dataset")))
+  expect_true(is.ggplot(p <- plot_raw_data(cf, "44", panel_by = "file", color_by = "none", linetype_by = "data")))
   expect_true(all(names(p$mapping) %in% c("x", "y", "group", "linetype")))
-  expect_equal(as.character(p$mapping$linetype), "dataset")
+  expect_equal(as.character(p$mapping$linetype), "data")
   expect_equal(class(p$facet)[1], "FacetGrid")
   expect_equal(names(p$facet$params$rows), "file_id")
   expect_equal(names(p$facet$params$cols), NULL)
@@ -74,8 +74,8 @@ test_that("test that plot dual inlet works properly", {
   expect_message(p <- plot_raw_data(di, c("46/44", "44"), quiet = FALSE), "plotting data")
   expect_true(is.ggplot(p))
   expect_silent(plot_raw_data(di, "44", quiet = TRUE))
-  expect_true(all(p$data$dataset %in% c("44 [mV]", "46/44"))) # only these datasets selected
-  expect_true(identical(p$data$dataset %>% levels(), c("46/44", "44 [mV]")))
+  expect_true(all(p$data$data %in% c("44 [mV]", "46/44"))) # only these datas selected
+  expect_true(identical(p$data$data %>% levels(), c("46/44", "44 [mV]")))
   
   # aesthetics, mapping, panelling formatting tests - defaults first
   expect_true(all(names(p$mapping) %in% c("colour", "x", "y", "group", "shape")))
@@ -84,21 +84,20 @@ test_that("test that plot dual inlet works properly", {
   expect_equal(as.character(p$mapping$y), "value")
   expect_equal(as.character(p$mapping$shape), "type")
   expect_equal(class(p$facet)[1], "FacetWrap")
-  expect_equal(names(p$facet$params$facets), "dataset")
+  expect_equal(names(p$facet$params$facets), "data")
   
   # then custom specifications
-  expect_true(is.ggplot(p <- plot_raw_data(di, panel_by = "none", color_by = "dataset", linetype_by = "file", shape_by = "none")))
-  expect_true(all(p$data$dataset %in% c("44 [mV]", "46 [mV]", "46/44"))) # all selected by default
+  expect_true(is.ggplot(p <- plot_raw_data(di, panel_by = "none", color_by = "data", linetype_by = "file", shape_by = "none")))
+  expect_true(all(p$data$data %in% c("44 [mV]", "46 [mV]", "46/44"))) # all selected by default
   expect_true(all(names(p$mapping) %in% c("colour", "x", "y", "group", "linetype")))
-  expect_equal(as.character(p$mapping$colour), "dataset")
+  expect_equal(as.character(p$mapping$colour), "data")
   expect_equal(as.character(p$mapping$linetype), "file_id")
   expect_equal(class(p$facet)[1], "FacetNull")
-  expect_true(is.ggplot(p <- plot_raw_data(di, "44", panel_by = "file", color_by = "SA|STD", linetype_by = "dataset", shape_by = "file")))
+  expect_true(is.ggplot(p <- plot_raw_data(di, "44", panel_by = "file", color_by = "SA|STD", linetype_by = "data", shape_by = "file")))
   expect_true(all(names(p$mapping) %in% c("x", "y", "group", "colour", "linetype", "shape")))
   expect_equal(as.character(p$mapping$colour), "type")
-  expect_equal(as.character(p$mapping$linetype), "dataset")
+  expect_equal(as.character(p$mapping$linetype), "data")
   expect_equal(as.character(p$mapping$shape), "file_id")
   expect_equal(class(p$facet)[1], "FacetWrap")
   expect_equal(names(p$facet$params$facets), "file_id")
-  
 })

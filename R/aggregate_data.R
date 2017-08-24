@@ -124,7 +124,7 @@ aggregate_raw_data <- function(isofiles, gather = FALSE, include_file_info = c()
       # gather all masses and ratios
       gather(column, value, matches(masses_ratios_re)) %>% 
       # extract unit information
-      extract(column, into = c("category", "dataset", "extra_parens", "units"), regex = masses_ratios_re) %>% 
+      extract(column, into = c("category", "data", "extra_parens", "units"), regex = masses_ratios_re) %>% 
       select(-extra_parens) %>% 
       # remove unknown data
       filter(!is.na(value)) %>% 
