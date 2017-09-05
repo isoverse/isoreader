@@ -38,7 +38,7 @@ calculate_ratios <- function(isofiles, ratios, quiet = setting("quiet")) {
   mass_column_pattern <- "^[vi](\\d+)\\.(.*)$"
   calculate_isofile_ratios <- function(isofile) {
     
-    if (isofile$read_options$raw_data) {
+    if (isofile$read_options$raw_data && nrow(isofile$raw_data) > 0) {
       # generate mass lookup
       mass_lookup <- names(isofile$raw_data) %>%
         str_subset(mass_column_pattern) %>%
