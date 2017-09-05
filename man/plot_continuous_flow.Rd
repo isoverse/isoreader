@@ -19,7 +19,7 @@ plot_continuous_flow(isofiles, data = c(), time_interval = c(),
 
 \item{normalize}{whether to normalize all data (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if \code{zoom} is set) is applied after normalizing.}
 
-\item{zoom}{if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values > 1 are zoom in, values < 1 are zoom out, baseline always remains the anchor point. Note that for overlay plots (\code{panel_bu = "none"}) zooming is relative to the max in each panel (potentially across different data traces). Also note that zooming only affects masses, ratios are not zoomed.}
+\item{zoom}{if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values > 1 are zoom in, values < 1 are zoom out, baseline always remains the bottom anchor point, zooming is always relative to the max in the plot (even if that is outside visible frame). Note that for overlay plots (\code{panel_bu = "none"}) zooming is relative to the max in each panel (potentially across different data traces). Also note that zooming only affects masses, ratios are not zoomed.}
 
 \item{panel_by}{whether to panel data by anything, options are "none" (overlay all), "data" (by mass/ratio data), "file" (panel by files). The default is "data"}
 

@@ -30,7 +30,7 @@ plot_raw_data <- function(isofiles, ..., quiet = setting("quiet")) {
 #' @param time_interval which time interval to plot
 #' @param time_interval_units which units the time interval is in, default is "seconds"
 #' @param normalize whether to normalize all data (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if \code{zoom} is set) is applied after normalizing.
-#' @param zoom if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values > 1 are zoom in, values < 1 are zoom out, baseline always remains the anchor point. Note that for overlay plots (\code{panel_bu = "none"}) zooming is relative to the max in each panel (potentially across different data traces). Also note that zooming only affects masses, ratios are not zoomed.
+#' @param zoom if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values > 1 are zoom in, values < 1 are zoom out, baseline always remains the bottom anchor point, zooming is always relative to the max in the plot (even if that is outside visible frame). Note that for overlay plots (\code{panel_bu = "none"}) zooming is relative to the max in each panel (potentially across different data traces). Also note that zooming only affects masses, ratios are not zoomed.
 #' @param panel_by whether to panel data by anything, options are "none" (overlay all), "data" (by mass/ratio data), "file" (panel by files). The default is "data"
 #' @param color_by whether to color data by anything, options are the same as for \code{panel_by} but the default is "file"
 #' @param linetype_by whether to differentiate data by linetype, options are the same as for \code{panel_by} but the default is "none". Note that a limited number of linetype_by (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}
@@ -162,6 +162,21 @@ plot_continuous_flow <- function(
     scale_y_continuous(if(normalize) "Normalized Signal" else "Signal", expand = c(0, 0)) +
     theme_bw()
   
+  # zoom ghost points to make sure the zooming frame remains the same (if zoom is set)
+  if (!is.null(zoom)) {
+    p <- p +
+      geom_point(data = function(df) group_by_(df, .dots = zoom_grouping) %>% 
+                   summarize(time = mean(time, na.omit = TRUE), value = min(baseline, na.omit = TRUE)) %>% 
+                   filter(!is.na(value)),
+                 map = aes(x = time, y = value), inherit.aes = FALSE,
+                 size = 0, alpha = 1, show.legend = FALSE) +
+      geom_point(data = function(df) group_by_(df, .dots = zoom_grouping) %>% 
+                   summarize(time = mean(time, na.omit = TRUE), value = max(cutoff, na.omit = TRUE)) %>% 
+                   filter(!is.na(value)),
+                 map = aes(x = time, y = value), inherit.aes = FALSE,
+                 size = 0, alpha = 1, show.legend = FALSE)
+  }
+
   # display full time scale
   if (length(time_interval) == 2)
     p <- p + expand_limits(x = time_interval)
