@@ -6,7 +6,8 @@
 \usage{
 export_to_feather(isofiles, filepath_prefix, include_raw_data = TRUE,
   include_file_info = TRUE, include_method_info = TRUE,
-  include_vendor_data_table = TRUE, quiet = setting("quiet"))
+  include_vendor_data_table = TRUE, include_problems = TRUE,
+  quiet = setting("quiet"))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
@@ -20,6 +21,8 @@ export_to_feather(isofiles, filepath_prefix, include_raw_data = TRUE,
 \item{include_method_info}{whether to include methods infor in the export (if available)}
 
 \item{include_vendor_data_table}{whether to include the vendor data table in the export (if available)}
+
+\item{include_problems}{whether to include the problems table}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }

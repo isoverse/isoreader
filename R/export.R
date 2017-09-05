@@ -35,11 +35,14 @@ export_to_rda <- function(isofiles, filepath, quiet = setting("quiet")) {
 #' @param include_file_info whether to include the file info in the export (if available)
 #' @param include_method_info whether to include methods infor in the export (if available)
 #' @param include_vendor_data_table whether to include the vendor data table in the export (if available)
+#' @param include_problems whether to include the problems table
 #' @family export functions
 #' @return returns the isofiles object invisibly for use in pipelines
 #' @export
 export_to_excel <- function(isofiles, filepath, 
-                            include_raw_data = TRUE, include_file_info = TRUE, include_method_info = TRUE, include_vendor_data_table = TRUE,
+                            include_raw_data = TRUE, include_file_info = TRUE, 
+                            include_method_info = TRUE, include_vendor_data_table = TRUE,
+                            include_problems = TRUE,
                             quiet = setting("quiet")) {
   
   # safety checks
@@ -78,6 +81,10 @@ export_to_excel <- function(isofiles, filepath,
     writeData(wb, "vendor data table", aggregate_vendor_data_table(export_isofiles, quiet = TRUE),
               headerStyle = hs)
   }
+  if (include_problems) {
+    addWorksheet(wb, "problems")
+    writeData(wb, "problems", problems(isofiles), headerStyle = hs)
+  }
   saveWorkbook(wb, filepath, overwrite = TRUE)
   
   return(invisible(isofiles))
@@ -94,7 +101,9 @@ export_to_excel <- function(isofiles, filepath,
 #' @return returns the isofiles object invisibly for use in pipelines
 #' @export
 export_to_feather <- function(isofiles, filepath_prefix, 
-                              include_raw_data = TRUE, include_file_info = TRUE, include_method_info = TRUE, include_vendor_data_table = TRUE,
+                              include_raw_data = TRUE, include_file_info = TRUE, 
+                              include_method_info = TRUE, include_vendor_data_table = TRUE,
+                              include_problems = TRUE,
                               quiet = setting("quiet")) {
   
   # safety checks
@@ -122,6 +131,9 @@ export_to_feather <- function(isofiles, filepath_prefix,
   
   if (include_vendor_data_table) 
     write_feather(aggregate_vendor_data_table(isofiles, quiet = TRUE), filepaths[['vendor_data_table']])
+  
+  if (include_problems) 
+    write_feather(problems(isofiles), filepaths[['problems']])
   
   return(invisible(isofiles))
 }
@@ -180,7 +192,8 @@ get_feather_export_filepaths <- function(isofiles, filepath) {
       file_info = str_c(filepath, "_file_info", ext),
       method_info_standards = str_c(filepath, "_method_info-standards", ext),
       method_info_resistors = str_c(filepath, "_method_info-resistors", ext),
-      vendor_data_table = str_c(filepath, "_vendor_data_table", ext)
+      vendor_data_table = str_c(filepath, "_vendor_data_table", ext),
+      problems = str_c(filepath, "_problems", ext)
     )
   )
 }
