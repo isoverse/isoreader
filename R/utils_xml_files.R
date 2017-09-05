@@ -64,6 +64,8 @@ process_iarc_info_xml <- function(filepath) {
 # process iarc methods xml files
 process_iarc_methods_xml <- function(filepaths) {
   
+  if (length(filepaths) == 0) return(data_frame())
+  
   method_params <- 
     filepaths %>% 
     lapply(function(methods_file) {
@@ -108,18 +110,22 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
         "CompletionState", "MethodId", "ProcessingListTypeIdentifier") %>% 
       sapply(function(child) task_xml %>% xml_child(child) %>% xml_text() %>% list())
     
-    # retrieve task values based on methods information
-    task_values <-
-      task_xml %>% 
-      xml_find_all(".//SerialisableTaskValue") %>% 
-      map_xml_children() %>% 
-      # link with parameters defined in methods
-      mutate_(
-        .dots = list(
-          MethodId = ~task_info[["MethodId"]],
-          GlobalIdentifier = ~task_info[["GlobalIdentifier"]]
-        )) %>% 
-      full_join(method_parameters, by = c("MethodId" = "MethodId", "ParameterIdentifier" = "Id"))
+    # retrieve task values based on methods information (if there is any)
+    if (nrow(method_parameters) > 0) {
+      task_values <-
+        task_xml %>% 
+        xml_find_all(".//SerialisableTaskValue") %>% 
+        map_xml_children() %>% 
+        # link with parameters defined in methods
+        mutate_(
+          .dots = list(
+            MethodId = ~task_info[["MethodId"]],
+            GlobalIdentifier = ~task_info[["GlobalIdentifier"]]
+          )) %>% 
+        left_join(method_parameters, by = c("MethodId" = "MethodId", "ParameterIdentifier" = "Id"))
+    } else {
+      task_values <- data_frame()
+    }
     
     # @NOTE: TypeIdentifier in the method_parameters holds the data type but even for numbers it seems to always be "String", currently not processed further (i.e. not turned into a different data type)
     
@@ -135,17 +141,25 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
         )) %>% 
       { .[names(.) != "Id"] }
     
-    # return
+    # prepare return
+    Value <- NULL # global variabls
     list(
       filename = basename(task_file),
       # combine task info with task values 
       info = 
         task_info %>% as_data_frame() %>% 
-        left_join(
-          # wide format for task values
-          task_values %>% select_("GlobalIdentifier", "DisplayName", "Value") %>% 
-            spread_("DisplayName", "Value"), 
-          by = "GlobalIdentifier"),
+        {
+          if (nrow(task_values) > 0) {
+            left_join(., 
+              # wide format for task values
+              task_values %>% select_("GlobalIdentifier", "DisplayName", "Value") %>% 
+                group_by_(.dots = c("GlobalIdentifier", "DisplayName")) %>% 
+                summarize(Value = str_c(Value, collapse = ", ")) %>% # make sure multiple values are collapsed properly
+                ungroup() %>% 
+                spread_("DisplayName", "Value"), 
+              by = "GlobalIdentifier")
+          } else .
+        },
       # task data
       data_files = task_data
     )

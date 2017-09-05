@@ -29,9 +29,9 @@ isoread_flow_iarc <- function(ds, ...) {
   # methods files ====
   method_files <- list.files(folder_path, pattern = "^Method", full.names = T)
   if (length(method_files) == 0) {
-    stop("no Method xml file(s) found in iarc", call. = FALSE)
+    warning("found no Method xml file(s) in iarc, proceeding without method information", call. = FALSE, immediate. = TRUE)
   }
-  method_params <- process_iarc_methods_xml(method_files)
+  method_params <- process_iarc_methods_xml(method_files) 
   
   # tasks files ====
   task_files <- list.files(folder_path, pattern = "^Task", full.names = T)
@@ -103,7 +103,7 @@ process_iarc_samples <- function(isofile_template, tasks, gas_configs, folder_pa
     
     # processing info
     if (!setting("quiet")) {
-      sprintf("      processing sample '%s' (IRMS data %s)",
+      sprintf("      processing sample '%s' (IRMS data '%s')",
               generate_task_sample_id(task), 
               task$data_files %>% 
                 filter_(.dots = list(~TypeIdentifier == "Acquire")) %>% 
@@ -130,6 +130,10 @@ process_iarc_samples <- function(isofile_template, tasks, gas_configs, folder_pa
 # @param isofile task
 process_iarc_sample_info <- function(isofile, task) {
   isofile$file_info <- c(isofile$file_info, as.list(task$info))
+  if (!is.null(isofile$file_info$AcquisitionStartDate)) {
+    # use AcquisitionStartDate as file_dattime (OS = with fractional seconds - Q: what is the time-zone? using GMT for now)
+    isofile$file_info$file_datetime <- as.POSIXct(isofile$file_info$AcquisitionStartDate, "%Y-%m-%dT%H:%M:%OS", tz = "GMT")
+  }
   return(isofile)
 }
 
@@ -147,7 +151,7 @@ process_iarc_sample_data <- function(isofile, task, gas_configs, folder_path) {
   gas_config <- gas_configs[[task$info$ProcessingListTypeIdentifier]]
   
   # read data
-  dt_format <- "%Y-%m-%dT%H:%M:%OS" # with fractional seconds
+  dt_format <- "%Y-%m-%dT%H:%M:%OS" # with fractional seconds - Q: what is the time-zone
   for (i in 1:nrow(irms_data)) {
     isofile <- with(irms_data[i,], {
       filepath <- file.path(folder_path, DataFile)
@@ -178,12 +182,19 @@ read_irms_data_file <- function(isofile, filepath, gas_config, run_time.s, data_
   # read irms data and determine which beams are used
   irms_data <- h5read(filepath, "DataSet") %>% as_data_frame()
   H5close() # garbage collect
+  
+  if (!"Scan" %in% names(irms_data)) 
+    stop("Scan column missing from data file ", basename(filepath), call. = FALSE)
+  
   data_channels <- irms_data %>% names() %>% str_subset("^Beam")
   config_channels <- config$channels %>% filter(channel %in% data_channels)
   
-  # safety check for channels
-  if ( length(missing <- setdiff(data_channels, config_channels$channel)) > 0)
+  # safety check for channels (if no channels defined in the config at all, we've got problems)
+  if ( nrow(config_channels) == 0)
     stop("no channel information in gas configuration for ", data_channels %>% str_c(collapse = ", "), call. = FALSE)
+  
+  # proceed only with the channels that are config defined
+  irms_data <- irms_data[c("Scan", config_channels$channel)]
   
   multiple <- config_channels %>% group_by(channel) %>% summarize(n = n(), masses = str_c(mass, collapse = ", "))
   if (any(multiple$n > 1)) {

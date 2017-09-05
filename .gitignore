@@ -36,4 +36,4 @@ vignettes/*.pdf
 # Auxiliary package files
 /docs/
 /tmp/
-
+/inst/extdata/
