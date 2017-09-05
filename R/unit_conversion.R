@@ -87,14 +87,34 @@ convert_signals <- function(isofiles, to, R, R_units = NA, quiet = setting("quie
   # apply signal conversion
   func <- "convert_signals"
   signal_pattern <- sprintf("^[iv](\\d+)\\.(\\w+)$")
+  to_units <- get_unit_scaling(to, c("V", "A"))
   R_name <- R.Ohm <- NULL # global vars
   isofiles <- isofiles %>% lapply(function(isofile) {
     
     # don't try to convert if raw data not present or otherwise empty
     if (!isofile$read_options$raw_data || nrow(isofile$raw_data) == 0) return(isofile)
     
-    # find resistors from files
-    if (auto_R) {
+    # column names
+    col_names <- names(isofile$raw_data) %>% str_subset(signal_pattern)
+    if (length(col_names) == 0) {
+      return(register_warning(
+        isofile, func = func, details = "could not find any voltage or current data columns"))
+    }
+    
+    # see if resistors are required (i.e. any columns are v/i and 'to' is not the same)
+    base_units <- col_names %>% str_match(signal_pattern) %>% {.[,3]} %>% 
+      lapply(get_unit_scaling, base_units = c("V", "A")) %>% sapply(`[[`, "base_unit")
+    scaling_only <- all(base_units == to_units$base_unit)
+    
+    # resistors
+    if (scaling_only) {
+      # scaling only
+      isofile$raw_data <- scale_signals(isofile$raw_data, col_names, to = to, quiet = TRUE)
+      return(isofile)
+    } 
+    
+    if (!scaling_only && auto_R) {
+      # find resistors from files
       if (!isofile$read_options$method_info) {
         return(register_warning(
           isofile, func = func,
@@ -108,21 +128,14 @@ convert_signals <- function(isofiles, to, R, R_units = NA, quiet = setting("quie
           isofile, func = func,
           details = "cannot automatically determine resistor values, resistor data not linked to masses"))
       } else {
-          R <- isofile$method_info$resistors %>% 
-                  mutate(R_name = str_c("R", mass)) %>% 
-                  select(R_name, R.Ohm) %>% deframe()
-          R_units <- "Ohm"
+        R <- isofile$method_info$resistors %>% 
+          mutate(R_name = str_c("R", mass)) %>% 
+          select(R_name, R.Ohm) %>% deframe()
+        R_units <- "Ohm"
       }
     }
     
-    # column names
-    col_names <- names(isofile$raw_data) %>% str_subset(signal_pattern)
-    if (length(col_names) == 0) {
-      return(register_warning(
-        isofile, func = func, details = "could not find any voltage or current data columns"))
-    }
-    
-    # scale signals
+    # convert signals
     isofile$raw_data <- scale_signals(isofile$raw_data, col_names, to = to, R = R, R_units = R_units, quiet = TRUE)
     return(isofile)
   }) %>% as_isofile_list()
