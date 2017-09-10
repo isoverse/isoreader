@@ -13,7 +13,6 @@ read_binary_file <- function(filepath) {
     structure(
       list(
         raw = raw(),
-        keys = data_frame(),
         C_blocks = data_frame(),
         data = list(),
         pos = 1L, # current position within the file
@@ -326,7 +325,7 @@ capture_data <- function(bfile, id, type, ..., data_bytes_max = NULL, move_past_
   start <- bfile$pos
   bfile <- move_to_next_pattern(bfile, ..., max_gap = data_bytes_max, move_to_end = FALSE)
   end <- bfile$pos - 1
-  
+
   # store data
   if (end > start) {
     id_text <- sprintf("'%s' capture failed: ", id)

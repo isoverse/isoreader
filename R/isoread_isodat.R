@@ -66,22 +66,25 @@ extract_isodat_resistors <- function(ds) {
 }
 
 # extract the reference deltas and ratios for isodat files
-extract_isodat_reference_values <- function(ds) {
+extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   # get secondar standard values
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot recover references") %>% 
     move_to_C_block("CSecondaryStandardMethodPart", reset_cap = TRUE) 
   
-  # cap at CResultArray for dxf files
-  if (is(ds, "continuous_flow")) {
-    ds$binary <- cap_at_next_C_block(ds$binary, "CResultArray")
+  # run cap at function if provided
+  if (!is.null(cap_at_fun)) {
+    ds$binary <- cap_at_fun(ds$binary)
   }
   
   # global vars
   delta_code <- delta_format <- ratio_code <- ratio_format <- NULL
   
+  # global vars
+  delta_code <- delta_format <- ratio_code <- ratio_format <- NULL
+  
   # find instrument reference names
-  instrument_pre1 <- re_combine(re_block("etx"), re_or(re_text("/"), re_text(",")), re_block("fef-0"), re_block("fef-x"))
+  instrument_pre1 <- re_combine(re_block("etx"), re_or(re_text("/"), re_text(","), re_text("-")), re_block("fef-0"), re_block("fef-x")) ###
   instrument_pre2 <- re_combine(re_null(4), re_block("stx"), re_block("nl"), re_text("Instrument"))
   ref_names <- ref_configs <- ref_pos <- c()
   positions <- find_next_patterns(ds$binary, re_combine(instrument_pre1, re_block("text"), instrument_pre2))
@@ -131,11 +134,10 @@ extract_isodat_reference_values <- function(ds) {
       capture_data("delta_format", "text", re_block("fef-x"), move_past_dots = TRUE) %>% 
       capture_data("gas", "text", re_block("fef-0"), re_block("fef-x"), move_past_dots = TRUE) %>%
       #capture_data("delta_units", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
-      move_to_next_pattern(re_block("stx"), re_block("x-000")) %>% 
-      capture_data("delta_value", "double", re_null(2), re_block("x-000"), move_past_dots = TRUE) %>% 
-      move_to_next_pattern(re_block("stx"), re_block("fef-x"), max_gap = 0) %>% 
-      capture_data("reference", "text", re_null(12), re_direct("([^\\x00]{2})?"), re_block("x-000")) %>% 
-      identity()
+      move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>%  ###
+      capture_n_data("delta_value", "double", 1) %>%  ###
+      move_to_next_pattern(re_block("stx"), re_block("fef-x")) %>% 
+      capture_data("reference", "text", re_null(12), re_direct("([^\\x00]{2})?"), re_block("x-000")) 
     deltas <- c(deltas, list(c(standard = ref_names[max(which(ds$binary$pos > ref_pos))],
                                #config = ref_configs[max(which(ds$binary$pos > ref_pos))], # not actually used, usually the same as the $gas
                                ds$binary$data[c("gas", "delta_code", "delta_name", "delta_value", "delta_format", "reference")])))
@@ -164,9 +166,8 @@ extract_isodat_reference_values <- function(ds) {
       capture_data("ratio_name", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
       capture_data("ratio_format", "text", re_block("fef-0"), re_block("fef-x"), move_past_dots = TRUE) %>% 
       capture_data("element", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
-      move_to_next_pattern(re_block("stx"), re_block("x-000")) %>% 
-      capture_data("ratio_value", "double", re_null(2), re_block("x-000")) %>% 
-      identity()
+      move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>%  ###
+      capture_n_data("ratio_value", "double", 1) 
     ratios <- c(ratios, list(c(reference = ref_names[max(which(ds$binary$pos > ref_pos))],
                                ds$binary$data[c("ratio_code", "element", "ratio_name", "ratio_value", "ratio_format")])))
   }
@@ -176,8 +177,8 @@ extract_isodat_reference_values <- function(ds) {
     select(-ratio_format) # format does not realy hold information that isn't contained in the values themselves
   
   # store information
-  ds$method_info$standards <- deltas
-  ds$method_info$reference_ratios <- ratios
+  ds$method_info$standards <- unique(deltas)
+  ds$method_info$reference_ratios <- unique(ratios)
   
   return(ds)
 }

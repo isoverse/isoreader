@@ -23,7 +23,7 @@ isoread_dxf <- function(ds, ...) {
   
   # process method info
   if (ds$read_options$method_info) {
-    ds <- exec_func_with_error_catch(extract_isodat_reference_values, ds)
+    ds <- exec_func_with_error_catch(extract_isodat_reference_values, ds, function(bin) cap_at_next_C_block(bin, "CResultArray"))
     ds <- exec_func_with_error_catch(extract_isodat_resistors, ds)
   }
   
@@ -36,7 +36,7 @@ isoread_dxf <- function(ds, ...) {
 }
 
 
-# extract voltage data in did file
+# extract voltage data in dxf file
 extract_dxf_raw_voltage_data <- function(ds) {
   
   # move to beginning of intensity information (the larger block coming 
