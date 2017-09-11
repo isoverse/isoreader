@@ -315,7 +315,7 @@ move_to_next_pattern <- function(bfile, ..., max_gap = NULL, move_to_end = TRUE)
 # uses parse_raw_data and therefore can handle multiple data types
 # @inheritParams parse_raw_data
 # note: consider renaming to capture_data_till_pattern
-capture_data <- function(bfile, id, type, ..., data_bytes_max = NULL, move_past_dots = FALSE,
+capture_data <- function(bfile, id, type, ..., data_bytes_min = 0, data_bytes_max = NULL, move_past_dots = FALSE,
                          ignore_trailing_zeros = TRUE, exact_length = TRUE, sensible = NULL) {
   
   # reset existing data in this field
@@ -324,17 +324,18 @@ capture_data <- function(bfile, id, type, ..., data_bytes_max = NULL, move_past_
   # move to begining of target ... after the data
   if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
   start <- bfile$pos
+  bfile$pos <- bfile$pos + data_bytes_min # offset until starting to look for next pattern
   bfile <- move_to_next_pattern(bfile, ..., max_gap = data_bytes_max, move_to_end = FALSE)
   end <- bfile$pos - 1
 
   # store data
   if (end > start) {
     id_text <- sprintf("'%s' capture failed: ", id)
-    bfile$data[[id]] <- 
+    bfile$data[[id]] <-
       parse_raw_data(bfile$raw[start:end], type,
                      ignore_trailing_zeros = ignore_trailing_zeros,
                      exact_length = exact_length, sensible = sensible,
-                     errors = str_c(bfile$error_prefix, id_text)) 
+                     errors = str_c(bfile$error_prefix, id_text))
   }
   
   # whether to move past the dots
@@ -586,7 +587,10 @@ remove_trailing_zeros <- function(raw, size) {
   
   # find number of trailing 0s (i.e. everything after the highest byte that is not 00)
   is_null_block <- raw == as.raw(0)
-  trailing_00s <- is_null_block %>% { length(.) - max(which(. == FALSE)) } 
+  if (any(is_null_block == FALSE))
+    trailing_00s <- is_null_block %>% { length(.) - max(which(. == FALSE)) } 
+  else
+    trailing_00s <- length(is_null_block)
   
   # leave at least 1 data length
   take_off_00s <- min(trailing_00s, length(raw) - size) 
