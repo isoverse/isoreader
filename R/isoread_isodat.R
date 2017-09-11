@@ -30,22 +30,29 @@ extract_isodat_resistors <- function(ds) {
   }
   
   # find resistors
-  R_pre_re <- re_combine(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(4), 
-                         re_block("x-000"), re_null(4), re_direct(".{3}\x40", size = 4))
+  R_pre_re <- re_combine(re_or(re_text("/"), re_text("-"), size = 2), re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("x-000"))
+  R_post_re <- re_combine(re_block("x-000"))
   
-  positions <- find_next_patterns(ds$binary, R_pre_re)
+  positions <- find_next_patterns(ds$binary, R_pre_re, re_direct(".{20}"), R_post_re)
   resistors <- list()
   for (pos in positions) {
     ds$binary <- ds$binary %>% 
       move_to_pos(pos + R_pre_re$size) %>% 
+      capture_n_data("mass", "double", n =  1) %>% 
       capture_n_data("cup", "integer", n = 1) %>% 
       capture_n_data("R.Ohm", "double", n = 1) 
-    resistors <- c(resistors, list(ds$binary$data[c("cup", "R.Ohm")]))
+    resistors <- c(resistors, list(ds$binary$data[c("cup", "R.Ohm", "mass")]))
   }
   ds$method_info$resistors <- bind_rows(resistors)
-  ds$method_info$resistors$cup <- ds$method_info$resistors$cup + 1L # re-index from 1 instead of 0
+  if (nrow(ds$method_info$resistors) > 0) {
+    ds$method_info$resistors$cup <- ds$method_info$resistors$cup + 1L # re-index from 1 instead of 0
+    ds$method_info$resistors$mass <- as.character(ds$method_info$resistors$mass) # resistors as character
+    resistor_masses <- ds$method_info$resistors$mass
+  } else {
+    resistor_masses <- c()
+  }
   
-  # if mass data is read, include the information in the resistors
+  # if mass data is read, double check that it's the right number of resistors
   if (ds$read_options$raw_data && nrow(ds$raw_data) > 0) {
     mass_column_pattern <- "^[vi](\\d+)\\.(.*)$"
     masses <- ds$raw_data %>% 
@@ -54,13 +61,14 @@ extract_isodat_resistors <- function(ds) {
       { if(length(.) == 0) return (NULL) else 
         str_match(., mass_column_pattern) %>%  { .[,2] }
       }
-    if (length(masses) != nrow(ds$method_info$resistors)) {
-      op_error(ds$binary, 
-               sprintf("found inconsistent number of resistors (%d) compared to ion dataset (%d)",
-                       nrow(ds$method_info$resistors), length(masses)))
+    
+    if (!setequal(masses, resistor_masses)) {
+      ds <- register_warning(
+        ds, func = "extract_isodat_resistors",
+        details = sprintf("masses found for resistors (%s) do not match those found for the raw data (%s)",
+                          resistor_masses %>% { if (length(.) > 0) str_c(., collapse = ",") else "none" },
+                          masses %>% { if (length(.) > 0) str_c(., collapse = ",") else "none" }))
     }
-    ds$method_info$resistors <- ds$method_info$resistors %>% 
-      mutate(mass = masses) %>% select_(.dots = c("cup", "mass", "R.Ohm"))
   }
   return(ds)
 }

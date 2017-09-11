@@ -19,13 +19,12 @@ test_that("Test that problem registration and reporting works properly", {
   
   # add a problem
   expect_equal({
-    y <- isoreader:::register_problem(x, details = "problem")
+    y <- isoreader:::register_problem(x, func = "testing", details = "problem")
     as.character(y)
   }, x)
   
   expect_equal(isoreader:::n_problems(y), 1)
-  expect_equal(problems(y) %>% select(func, details), 
-               data_frame(func = "compare(object, expected, ...)", details = "problem"))
+  expect_equal(problems(y) %>% select(func, details), data_frame(func = "testing", details = "problem"))
   
   # add another problem
   expect_equal({

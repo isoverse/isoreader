@@ -231,15 +231,16 @@ re_direct <- function(regexp, label = regexp, size = length(charToRaw(regexp))) 
 }
 
 # or regexp
-re_or <- function(...) {
+re_or <- function(..., size = estimate_size()) {
   regexps <- list(...)
   if(!all(sapply(regexps, is, "binary_regexp"))) stop("needs binary regexps for re_or", call. = FALSE)
+  estimate_size <- function() sum(map_dbl(regexps, "size")) 
   structure(
     list(
       label = sprintf("(%s)", str_c(map_chr(regexps, "label"), collapse = "|")),
       # NOTE: on windows, the following command with str_c instead of paste or map_chr instead of sapply strangly leads to the regexp not getting recognized anymore in grepRaw
       regexp = paste0("((", paste(sapply(regexps, `[[`, "regexp"), collapse = ")|("), "))"),
-      size = sum(map_dbl(regexps, "size")) # estimate
+      size = size
     ),
     class = "binary_regexp")
 }

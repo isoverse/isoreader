@@ -98,7 +98,7 @@ omit_files_with_problems <- function(isofiles, type = c("error", "warning", "bot
 # will propage the problem to all underlying files
 # @obj isofile or isofile_list
 register_problem <- function(obj, type = NA_character_, details = NA_character_, ..., 
-                                  func = deparse(sys.call(-1))) {
+                                  func = find_parent_call("register_problem")) {
   if (func == "NULL") func <- NA_character_
   problem <- data_frame(type = type, func = func, details = details, ...)
   if (is_isofile_list(obj)) {
