@@ -32,7 +32,6 @@ test_that("info messages can be switched for just one function", {
 })
 
 test_that("info message functions can be part of a pipeline", {
-  library(dplyr)
   df <- data_frame(a = 1:5)
   expect_equal(df %>% turn_info_messages_on(), df)
   expect_equal(df %>% turn_info_messages_off(), df)
