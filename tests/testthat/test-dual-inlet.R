@@ -25,7 +25,7 @@ test_that("test that did files can be read", {
   expect_is(did <- read_dual_inlet(file, cache = FALSE, read_vendor_data_table = TRUE), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
   
-  expect_true(file.exists(file <- "did_example_CO2_clumped_01.did"))
+  expect_true(file.exists(file <- file.path("test_data", "did_example_CO2_clumped_01.did")))
   expect_is(did <- read_dual_inlet(file, cache = FALSE, read_vendor_data_table = TRUE), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
 })
