@@ -204,6 +204,22 @@ re_null <- function(n) {
     class = "binary_regexp")
 }
 
+# regular expression for control sequences (00-0f)
+re_control <- function(raw) {
+  # can't easily assemble so it's hard copy for now
+  hex <- c(`00` = "\\x00", `01` = "\x01", `02` = "\x02", `03` = "\x03", `04` = "\x04", `05` = "\x05", `06` = "\x06", `07` = "\x07", `08` = "\x08", `09` = "\x09", `0a` = "\x0a", `0b` = "\x0b", `0c` = "\x0c", `0d` = "\x0d", `0e` = "\x0e", `0f` = "\x0f")
+ 
+  # return hex regexps of the control sequence
+  ctrls <- as.character(raw)
+  structure(
+    list(
+      label = sprintf("{%s}", str_c(ctrls, collapse = " ")),
+      regexp = hex[ctrls] %>% str_c(collapse = ""),
+      size = length(raw)
+    ),
+    class = "binary_regexp")
+}
+
 # regular expression for text (unicode) elements
 re_text <- function(text) {
   # can't easily assemble the \x5a structure so using a hard copy
@@ -327,7 +343,7 @@ capture_data <- function(bfile, id, type, ..., data_bytes_min = 0, data_bytes_ma
   bfile$pos <- bfile$pos + data_bytes_min # offset until starting to look for next pattern
   bfile <- move_to_next_pattern(bfile, ..., max_gap = data_bytes_max, move_to_end = FALSE)
   end <- bfile$pos - 1
-
+  
   # store data
   if (end > start) {
     id_text <- sprintf("'%s' capture failed: ", id)
@@ -435,6 +451,7 @@ get_ctrl_blocks_config <- function() {
     etx        = list(size = 4L, auto = TRUE, regexp = "\x03\\x00{3}"), # end of text
     `x-000`    = list(size = 4L, auto = TRUE, regexp = "[\x01-\x1f]\\x00{3}", replace = # meaning = ? maybe 1-000 has special meaning?
                      function(b) str_c(str_replace(readBin(b[1], "raw"), "^0", ""), "-000")),
+    `f-000`    = list(size = 4L, auto = TRUE, regexp = "\xff\\x00{3}"), # unclear
     
     # c block (not auto processed because Cblocks are found separately)
     `C-block`  = list(size = 20L, auto = FALSE, regexp = "\xff\xff(\\x00|[\x01-\x0f])\\x00.\\x00\x43[\x20-\x7e]+"),
@@ -858,3 +875,4 @@ generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, lin
 print.binary_structure_map <- function(x, ..., data_as_raw = FALSE, line_break_blocks = c("cblock", "stx", "etx"), pos_info = TRUE) {
   cat("# Binary data structure: ", generate_binary_structure_map_printout(x, data_as_raw, line_break_blocks, pos_info))
 }
+
