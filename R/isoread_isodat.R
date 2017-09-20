@@ -340,8 +340,21 @@ extract_isodat_cf_vendor_data_table <- function(ds, cap_at_fun = NULL) {
       ds$binary <- ds$binary %>%
         # skip what looks like it might be the gas configuration and an unknown piece of information
         move_to_next_pattern(re_block("text0"), re_block("fef-x"), re_block("text0"), re_block("fef-x")) %>% 
-        capture_data("units", "text", re_block("fef-x"), move_past_dots = TRUE) # retrieve units
+        capture_data("units", "raw", re_block("fef-x"), move_past_dots = TRUE, ignore_trailing_zeros = FALSE) # retrieve units
       
+      # check for permil symbol (which is non-ASCII)
+      permil <- as.raw(c(48, 32))
+      units <- ds$binary$data$units
+      if (length(units) >= length(permil) && any(apply(embed(units,length(units)-length(permil)+1),2,identical,permil))) {
+        ds$binary$data$units <- "[permil]"
+      } else {
+        ds$binary$data$units <- parse_raw_data(ds$binary$data$units, "text")
+      }
+      
+      # standardize the units
+      if (ds$binary$data$units == "[per mil]")
+        ds$binary$data$units <- "[permil]"
+    
       # data format
       type <- 
         if (ds$binary$data$format == "%s") { "text"
