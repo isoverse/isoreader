@@ -8,7 +8,7 @@
 #' @importFrom lubridate interval duration
 #' @import stringr
 #' @import ggplot2
-#' @importFrom stats setNames
+#' @importFrom stats setNames embed
 #' @importFrom methods is
 #' @importFrom utils unzip head tail modifyList packageVersion
 #' @import xml2

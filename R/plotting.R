@@ -168,12 +168,12 @@ plot_continuous_flow <- function(
       geom_point(data = function(df) group_by_(df, .dots = zoom_grouping) %>% 
                    summarize(time = mean(time, na.omit = TRUE), value = min(baseline, na.omit = TRUE)) %>% 
                    filter(!is.na(value)),
-                 map = aes(x = time, y = value), inherit.aes = FALSE,
+                 mapping = aes(x = time, y = value), inherit.aes = FALSE,
                  size = 0, alpha = 1, show.legend = FALSE) +
       geom_point(data = function(df) group_by_(df, .dots = zoom_grouping) %>% 
                    summarize(time = mean(time, na.omit = TRUE), value = max(cutoff, na.omit = TRUE)) %>% 
                    filter(!is.na(value)),
-                 map = aes(x = time, y = value), inherit.aes = FALSE,
+                 mapping =aes(x = time, y = value), inherit.aes = FALSE,
                  size = 0, alpha = 1, show.legend = FALSE)
   }
 
