@@ -30,6 +30,7 @@ isoread_cf <- function(ds, ...) {
   }
   
   # process pre-evaluated data table
+  block <- start <- NULL # global vars
   if (ds$read_options$vendor_data_table) {
     ds <- exec_func_with_error_catch(
       extract_isodat_cf_vendor_data_table, ds, 
@@ -67,6 +68,7 @@ extract_cf_file_info <- function(ds) {
   
   # extract information
   positions <- find_next_patterns(ds$binary, re_entry_start)
+  label <- value <- NULL # global vars
   labels <- list(list(label = "Line", label_marker = NA_character_))
   values <- list()
   reached_values <- FALSE
