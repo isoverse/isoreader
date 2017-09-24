@@ -164,11 +164,15 @@ extract_cf_raw_voltage_data <- function(ds) {
   
   masses <- c()
   for (pos in mass_positions) {
-    masses <- c(masses,
-                ds$binary %>% move_to_pos(pos + mass_re$size) %>% 
-                  capture_data("mass", "text", re_direct("[\x01-\xff]{2}")) %>% 
-                  { .$data$mass })
+    # a bit tricky to capture but this should do the trick reliably
+    raw_mass <- 
+      ds$binary %>% move_to_pos(pos + mass_re$size) %>% 
+      capture_data("mass", "raw", re_block("fef-x"), ignore_trailing_zeros = FALSE) %>% 
+      { .$data$mass }
+    text_mass <- parse_raw_data(grepRaw("^([0-9]\\x00)+", raw_mass, value = TRUE), type = "text")
+    masses <- c(masses, text_mass)
   }
+  
   if (is.null(masses)) stop("could not identify measured ions for gas ", gas_config, call. = FALSE)
   masses_columns <- str_c("v", masses, ".mV")
   

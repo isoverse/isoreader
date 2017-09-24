@@ -55,5 +55,9 @@ test_that("test that dxf files can be read", {
   expect_true(file.exists(file <- file.path("test_data", "cf_example_H_05.cf")))
   expect_is(dxf <- read_continuous_flow(file, cache = FALSE, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
+  
+  expect_true(file.exists(file <- file.path("test_data", "cf_example_H_06.cf")))
+  expect_is(dxf <- read_continuous_flow(file, cache = FALSE, read_vendor_data_table = TRUE), "continuous_flow")
+  expect_equal(nrow(problems(dxf)), 0)
 })
 
