@@ -61,8 +61,8 @@ export_to_excel <- function(isofiles, filepath,
   hs <- createStyle(textDecoration = "bold")
   if (include_raw_data) {
     addWorksheet(wb, "raw data")
-    writeData(wb, "raw data", aggregate_raw_data(export_isofiles, quiet = TRUE),
-              headerStyle = hs)
+    raw_data <- aggregate_raw_data(export_isofiles, quiet = TRUE)
+    if (ncol(raw_data) > 0) writeData(wb, "raw data", raw_data, headerStyle = hs)
   }
   if (include_file_info) {
     addWorksheet(wb, "file info")
@@ -73,13 +73,13 @@ export_to_excel <- function(isofiles, filepath,
     addWorksheet(wb, "method info")
     standards <- aggregate_standards_info(export_isofiles, quiet = TRUE)
     resistors <- aggregate_resistors_info(export_isofiles, quiet = TRUE)
-    writeData(wb, "method info", standards, headerStyle = hs)
-    writeData(wb, "method info", resistors, startRow = nrow(standards) + 3, headerStyle = hs)
+    if (ncol(standards) > 0) writeData(wb, "method info", standards, headerStyle = hs)
+    if (ncol(resistors) > 0) writeData(wb, "method info", resistors, startRow = nrow(standards) + 3, headerStyle = hs)
   }
   if (include_vendor_data_table) {
     addWorksheet(wb, "vendor data table")
-    writeData(wb, "vendor data table", aggregate_vendor_data_table(export_isofiles, quiet = TRUE),
-              headerStyle = hs)
+    vendor_data <- aggregate_vendor_data_table(export_isofiles, quiet = TRUE)
+    if (ncol(vendor_data) > 0) writeData(wb, "vendor data table", vendor_data, headerStyle = hs)
   }
   if (include_problems) {
     addWorksheet(wb, "problems")
