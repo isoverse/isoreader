@@ -100,6 +100,11 @@ plot_continuous_flow <- function(
   zoom_grouping <- if(panel_by == "data") "data" else if (panel_by == "file") "file_id" else c()
   plot_data <- 
     raw_data %>% 
+    # add units to data for proper grouping
+    mutate(
+      data_without_units = data,
+      data = ifelse(!is.na(units), str_c(data, " [", units, "]"), data)
+    ) %>% 
     # make ratio identification simple
     mutate(is_ratio = category == "ratio") %>% 
     arrange(time) %>% 
@@ -145,12 +150,13 @@ plot_continuous_flow <- function(
           }
       } else . 
     } %>% 
-    # data with units and in correct order
+    # switch to factors for proper grouping
     mutate(
       data_with_units = ifelse(!is.na(units), str_c(data, " [", units, "]"), data)
     ) %>% {
-      data_levels <- deframe(select(., data, data_with_units))[select_data]
-      mutate(., data = factor(data_with_units, levels = data_levels))
+      data_levels <- deframe(select(., data, data_without_units) %>% unique())
+      data_sorting <- sapply(select_data, function(x) which(data_levels == x)) %>% unlist(use.names = F)
+      mutate(., data = factor(data, levels = names(data_levels)[data_sorting]))
     }
   
   # generate plot
@@ -245,12 +251,14 @@ plot_dual_inlet <- function(
     raw_data %>% 
     # data with units and in correct order
     mutate(
-      data_with_units = ifelse(!is.na(units), str_c(data, " [", units, "]"), data)
+      data_without_units = data,
+      data = ifelse(!is.na(units), str_c(data, " [", units, "]"), data)
     ) %>% {
-      data_levels <- deframe(select(., data, data_with_units))[select_data]
-      mutate(., data = factor(data_with_units, levels = data_levels))
-    }
-  
+      data_levels <- deframe(select(., data, data_without_units) %>% unique())
+      data_sorting <- sapply(select_data, function(x) which(data_levels == x)) %>% unlist(use.names = F)
+      mutate(., data = factor(data, levels = names(data_levels)[data_sorting]))
+    } 
+
   # generate plot
   p <- plot_data %>% 
     ggplot() + 
