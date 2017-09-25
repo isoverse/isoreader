@@ -14,6 +14,7 @@ isoread_cf <- function(ds, ...) {
     ds <- exec_func_with_error_catch(extract_cf_file_info, ds)
     # NOTE: measurement info (see dxf) does not seem to be stored in cf files
     ds <- exec_func_with_error_catch(extract_isodat_datetime, ds)
+    ds <- exec_func_with_error_catch(extract_H3_factor_info, ds)
   }
    
   # process raw data
@@ -127,18 +128,6 @@ extract_cf_file_info <- function(ds) {
     ds$file_info, 
     file_info %>% select(label, value) %>% tibble::deframe() %>% as.list()
   )
-  
-  # H3 factor
-  if ("CH3FactorResult" %in% ds$binary$C_blocks$block) {
-    # extract H3 factor value (note H3 stability is not present)
-    ds$binary <- ds$binary %>% 
-      set_binary_file_error_prefix("cannot extract H3 factor") %>% 
-      move_to_C_block("CH3FactorResult") %>% 
-      move_to_next_pattern(re_text("H3 Factor")) %>% 
-      move_to_next_pattern(re_block("x-000")) %>% 
-      capture_n_data("H3_factor", "double", 1)
-    ds$file_info$`H3 Factor` <- ds$binary$data$H3_factor
-  }
   
   return(ds)
 }

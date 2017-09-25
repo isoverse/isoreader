@@ -14,6 +14,7 @@ isoread_dxf <- function(ds, ...) {
     ds <- exec_func_with_error_catch(extract_isodat_sequence_line_info, ds)
     ds <- exec_func_with_error_catch(extract_isodat_measurement_info, ds)
     ds <- exec_func_with_error_catch(extract_isodat_datetime, ds)
+    ds <- exec_func_with_error_catch(extract_H3_factor_info, ds)
   }
   
   # process raw data

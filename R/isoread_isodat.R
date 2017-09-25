@@ -220,7 +220,7 @@ extract_isodat_sequence_line_info <- function(ds) {
 }
 
 # extracts the measurement information for isodat files
-extract_isodat_measurement_info = function(ds) {
+extract_isodat_measurement_info <- function(ds) {
   
   # find measurement info
   ds$binary <- ds$binary %>% 
@@ -239,6 +239,22 @@ extract_isodat_measurement_info = function(ds) {
   # store all in one information set
   ds$file_info$measurement_info <- isl_info_msgs
   
+  return(ds)
+}
+
+# extract H3 factor info
+extract_H3_factor_info <- function(ds) {
+  # H3 factor (if available)
+  if ("CH3FactorResult" %in% ds$binary$C_blocks$block) {
+    # extract H3 factor value (note H3 stability is not present)
+    ds$binary <- ds$binary %>% 
+      set_binary_file_error_prefix("cannot extract H3 factor") %>% 
+      move_to_C_block("CH3FactorResult") %>% 
+      move_to_next_pattern(re_text("H3 Factor")) %>% 
+      move_to_next_pattern(re_block("x-000")) %>% 
+      capture_n_data("H3_factor", "double", 1)
+    ds$file_info$`H3 Factor` <- ds$binary$data$H3_factor
+  }
   return(ds)
 }
 
