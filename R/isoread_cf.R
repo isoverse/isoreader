@@ -64,7 +64,12 @@ extract_cf_file_info <- function(ds) {
   # regular expressions
   re_entry_start <- re_control(ds$binary$data$info_marker)
   label_pre_re <- re_combine(re_direct(".{2,8}", size = 8), re_block("fef-x"))
-  label_post_re <- re_or(re_combine(re_null(7), re_direct("\xff\\x00{3}")), re_or(re_direct(".\\x00{3}", size = 4), re_block("fef-x")))
+  # NOTE: all of these seem to be valid end blocks for text segements in this part of the file, any way to make this simpler?
+  label_post_re <- re_or(re_combine(re_null(7), re_direct("\xff\\x00{3}")), 
+                         re_combine(re_block("x-000"), re_block("fef-x")),
+                         re_combine(re_null(4), re_block("fef-x")),
+                         re_combine(re_null(4), re_block("x-000")),
+                         re_combine(re_null(4), re_direct("\xff{3}\\x00", size = 4)))
   
   # extract information
   positions <- find_next_patterns(ds$binary, re_entry_start)
