@@ -253,7 +253,7 @@ extract_H3_factor_info <- function(ds) {
       move_to_next_pattern(re_text("H3 Factor")) %>% 
       move_to_next_pattern(re_block("x-000")) %>% 
       capture_n_data("H3_factor", "double", 1)
-    ds$file_info$`H3 Factor` <- ds$binary$data$H3_factor
+    ds$file_info$`H3 Factor` <- as.character(ds$binary$data$H3_factor)
   }
   return(ds)
 }
