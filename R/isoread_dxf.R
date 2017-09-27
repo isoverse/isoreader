@@ -49,37 +49,54 @@ extract_dxf_raw_voltage_data <- function(ds) {
   # afterwards is not always present so not used as max pos here)
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot identify measured masses") %>%  
-    move_to_C_block("CEvalDataItemTransferPart") 
+    move_to_C_block_range("CEvalDataItemTransferPart", "CBinary") 
   
   configs <- list()
-  while(!is.null(find_next_pattern(ds$binary, re_text("Overwritten")))) {
-    
+  gas_config_re <- re_text("Overwritten")
+  config_positions <- ds$binary %>% find_next_patterns(gas_config_re)
+  if (length(config_positions) == 0) stop("could not find gas configurations", call. = FALSE)
+  config_caps <- c(config_positions[-1], ds$binary$max_pos)
+  
+  for(i in 1:length(config_positions)) {
+
     # find name of gas configuration
     ds$binary <- ds$binary %>% 
-      move_to_next_pattern(re_text("Overwritten")) %>% 
+      move_to_pos(config_positions[i] + gas_config_re$size) %>% 
       move_to_next_pattern(re_block("etx"), re_text("/"), re_block("fef-0")) %>% 
       move_to_next_pattern(re_block("fef-x"), re_block("text"), re_block("fef-0"), re_block("fef-x"), move_to_end = FALSE) %>% 
       move_to_next_pattern(re_block("fef-x"), max_gap = 0) %>% 
       capture_data("gas", "text", re_block("fef-0"), re_block("fef-x")) 
     
-    # don't double process if same gas configuration listed twice
-    if (ds$binary$data$gas %in% names(configs)) next
-    configs[[ds$binary$data$gas]] <- c()
-    
-    # find all masses
-    intensity_id <- 1
-    while(!is.null(find_next_pattern(ds$binary, re_text(str_c("rIntensity", intensity_id))))) {
-      ds$binary <- ds$binary %>% 
-        move_to_next_pattern(re_text(str_c("rIntensity", intensity_id))) %>% 
-        move_to_next_pattern(re_block("fef-x"), re_text("rIntensity "), max_gap = 0) %>% 
-        capture_data("mass", "text", re_block("fef-x"), move_past_dots = TRUE)
-      configs[[ds$binary$data$gas]] <- c(configs[[ds$binary$data$gas]], ds$binary$data$mass)
-      intensity_id <- intensity_id + 1
+    # make sure we have the right starts and caps for each configuration
+    if (ds$binary$data$gas %in% names(configs)) {
+      # raise cap on previous
+      configs[[ds$binary$data$gas]]$cap <- config_caps[i]
+    } else {
+      # new config
+      configs[[ds$binary$data$gas]] <- list(pos = config_positions[i], cap = config_caps[i], masses = c())
     }
-    
   }  
   
-  # move to beginning of original data
+  # find all masses
+  for (config in names(configs)) {
+    if (setting("debug")) 
+      message("processing ", config, " (", configs[[config]]$pos, "-", configs[[config]]$cap, ")")
+    ds$binary <- ds$binary %>% 
+      move_to_pos(configs[[config]]$pos) %>% 
+      cap_at_pos(configs[[config]]$cap)
+    
+    intensity_id <- 1
+    while(!is.null(find_next_pattern(ds$binary, re_text(str_c("rIntensity", intensity_id))))) {
+      ds$binary <- ds$binary %>%
+        move_to_next_pattern(re_text(str_c("rIntensity", intensity_id))) %>%
+        move_to_next_pattern(re_block("fef-x"), re_text("rIntensity "), max_gap = 0) %>%
+        capture_data("mass", "text", re_block("fef-x"), move_past_dots = TRUE)
+      configs[[config]]$masses <- c(configs[[config]]$masses, ds$binary$data$mass)
+      intensity_id <- intensity_id + 1
+    }
+  }
+  
+  # move to beginning of original data to get voltages
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot recover raw voltages") %>% 
     move_to_C_block_range("CAllMoleculeWeights", "CMethod") %>% 
@@ -104,7 +121,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
       capture_data("gas", "text", re_block("fef-0"), data_bytes_max = 50) %>% { .$data$gas }
     
     # find gas configuration masses
-    masses <- configs[[gas_config]]
+    masses <- configs[[gas_config]]$masses
     if (is.null(masses)) stop("could not identify measured ions for gas ", gas_config, call. = FALSE)
     masses_columns <- str_c("v", masses, ".mV")
     
@@ -117,13 +134,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
   }
   
   # check for data
-  if (nrow(voltages) == 0) {
-    if (setting("debug")) { # debug
-      message("DEBUG: found gas configurations: ")
-      print(configs)
-    }
-    stop("could not find raw voltage data", call. = FALSE)
-  }
+  if (nrow(voltages) == 0) stop("could not find raw voltage data", call. = FALSE)
   
   # add time point column
   tp <- time.s <- NULL # global vars
