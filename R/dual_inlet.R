@@ -9,7 +9,7 @@
 #' @export
 read_dual_inlet <- function(
   paths, read_raw_data = TRUE, read_file_info = TRUE, read_method_info = TRUE, read_vendor_data_table = FALSE,
-  discard_duplicates = TRUE, quiet = setting("quiet"), cache = setting("cache")) {
+  discard_duplicates = TRUE, cache = setting("cache"), read_cache = setting("cache"), quiet = setting("quiet")) {
   
   # process data
   isoread_files(
@@ -21,8 +21,9 @@ read_dual_inlet <- function(
     read_method_info = read_method_info,
     read_vendor_data_table = read_vendor_data_table,
     discard_duplicates = discard_duplicates,
-    quiet = quiet,
-    cache = cache
+    cache = cache,
+    read_cache = read_cache,
+    quiet = quiet
   )
 }
 

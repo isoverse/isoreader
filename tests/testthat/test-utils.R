@@ -2,21 +2,21 @@ context("Utility functions")
 
 test_that("test that retrieving file paths works correctly", {
   
-  expect_error(isoreader:::retrieve_file_paths())
-  expect_error(isoreader:::retrieve_file_paths("DOESNOTEXIST"), "not exist")
-  expect_error(isoreader:::retrieve_file_paths(c("DOESNOTEXIST", "NOTEITHER")), "not exist")
-  expect_error(isoreader:::retrieve_file_paths(system.file("extdata", package = "isoreader")), "no extensions")
-  expect_error(isoreader:::retrieve_file_paths(system.file("extdata", package = "isoreader") %>% list.files(full.names = TRUE), "did"), 
+  expect_error(isoreader:::expand_file_paths())
+  expect_error(isoreader:::expand_file_paths("DOESNOTEXIST"), "not exist")
+  expect_error(isoreader:::expand_file_paths(c("DOESNOTEXIST", "NOTEITHER")), "not exist")
+  expect_error(isoreader:::expand_file_paths(system.file("extdata", package = "isoreader")), "no extensions")
+  expect_error(isoreader:::expand_file_paths(system.file("extdata", package = "isoreader") %>% list.files(full.names = TRUE), "did"), 
                "do not have one of the supported extensions")
   
   # check expected result
   expect_identical(
     direct_list <- system.file("extdata", package = "isoreader") %>% list.files(full.names = T, pattern = "\\.(dxf|did|cf)$"),
-    system.file("extdata", package = "isoreader") %>% isoreader:::retrieve_file_paths(c("did", "dxf", "cf"))
+    system.file("extdata", package = "isoreader") %>% isoreader:::expand_file_paths(c("did", "dxf", "cf"))
   )
   expect_identical(
     system.file("extdata", package = "isoreader") %>% list.files(full.names = T, pattern = "\\.(dxf|did|cf)$") %>% {.[c(2,1,3:length(.))]},
-    c(direct_list[2], system.file("extdata", package = "isoreader")) %>% isoreader:::retrieve_file_paths(c("did", "dxf", "cf"))
+    c(direct_list[2], system.file("extdata", package = "isoreader")) %>% isoreader:::expand_file_paths(c("did", "dxf", "cf"))
   )
   
   # test duplicated file names error

@@ -4,7 +4,7 @@
 #' @import dplyr
 #' @import tidyr
 #' @importFrom purrr map map_lgl map_chr map_df map_int map_dbl
-#' @importFrom tibble tribble deframe
+#' @importFrom tibble tribble deframe rownames_to_column
 #' @importFrom lubridate interval duration
 #' @import stringr
 #' @import ggplot2

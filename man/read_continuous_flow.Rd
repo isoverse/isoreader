@@ -6,8 +6,8 @@
 \usage{
 read_continuous_flow(paths, read_raw_data = TRUE, read_file_info = TRUE,
   read_method_info = TRUE, read_vendor_data_table = FALSE,
-  discard_duplicates = TRUE, quiet = setting("quiet"),
-  cache = setting("cache"))
+  discard_duplicates = TRUE, cache = setting("cache"),
+  read_cache = setting("cache"), quiet = setting("quiet"))
 }
 \arguments{
 \item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
@@ -22,9 +22,11 @@ read_continuous_flow(paths, read_raw_data = TRUE, read_file_info = TRUE,
 
 \item{discard_duplicates}{whether to automatically discard duplicate file_ids (only first one is kept)}
 
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
+\item{cache}{whether to cache isofiles. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
 
-\item{cache}{whether to cache isofiles and attempt to reload from cache (will only reload if a file was previously read with the same read options and has NOT been modified since). Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
+\item{read_cache}{whether to reload from cache if a cached version exists. Note that it will only read from cache if the file was previously read with the exact same isoreader version and read options and has not been modified since.}
+
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 }
 \description{
 Load continuous flow data

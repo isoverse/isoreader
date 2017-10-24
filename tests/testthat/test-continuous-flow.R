@@ -24,48 +24,50 @@ test_that("test that parameter checks are performed", {
 test_that("test that dxf files can be read", {
   # test specific files
   
+  turn_caching_off()
+  
   expect_true(file.exists(file <- system.file(package = "isoreader", "extdata", "continuous_flow_example.dxf")))
-  expect_is(dxf <- read_continuous_flow(file, cache = FALSE, read_vendor_data_table = TRUE), "continuous_flow")
+  expect_is(dxf <- read_continuous_flow(file, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- system.file(package = "isoreader", "extdata", "peak_jump_example.dxf")))
-  expect_is(dxf <- read_continuous_flow(file, cache = FALSE, read_vendor_data_table = TRUE), "continuous_flow")
+  expect_is(dxf <- read_continuous_flow(file, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- file.path("test_data", "dxf_example_H_01.dxf")))
-  expect_is(dxf <- read_continuous_flow(file, cache = FALSE, read_vendor_data_table = TRUE), "continuous_flow")
+  expect_is(dxf <- read_continuous_flow(file, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- file.path("test_data", "dxf_example_HO_01.dxf")))
-  expect_is(dxf <- read_continuous_flow(file, cache = FALSE, read_vendor_data_table = TRUE), "continuous_flow")
+  expect_is(dxf <- read_continuous_flow(file, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- file.path("test_data", "cf_example_H_01.cf")))
-  expect_is(dxf <- read_continuous_flow(file, cache = FALSE, read_vendor_data_table = TRUE), "continuous_flow")
+  expect_is(dxf <- read_continuous_flow(file, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- file.path("test_data", "cf_example_H_02.cf")))
-  expect_is(dxf <- read_continuous_flow(file, cache = FALSE, read_vendor_data_table = TRUE), "continuous_flow")
+  expect_is(dxf <- read_continuous_flow(file, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- file.path("test_data", "cf_example_H_03.cf")))
-  expect_is(dxf <- read_continuous_flow(file, cache = FALSE, read_vendor_data_table = TRUE), "continuous_flow")
+  expect_is(dxf <- read_continuous_flow(file, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- file.path("test_data", "cf_example_H_04.cf")))
-  expect_is(dxf <- read_continuous_flow(file, cache = FALSE, read_vendor_data_table = TRUE), "continuous_flow")
+  expect_is(dxf <- read_continuous_flow(file, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- file.path("test_data", "cf_example_H_05.cf")))
-  expect_is(dxf <- read_continuous_flow(file, cache = FALSE, read_vendor_data_table = TRUE), "continuous_flow")
+  expect_is(dxf <- read_continuous_flow(file, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- file.path("test_data", "cf_example_H_06.cf")))
-  expect_is(dxf <- read_continuous_flow(file, cache = FALSE, read_vendor_data_table = TRUE), "continuous_flow")
+  expect_is(dxf <- read_continuous_flow(file, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- file.path("test_data", "cf_example_H_07.cf")))
-  expect_is(dxf <- read_continuous_flow(file, cache = FALSE, read_vendor_data_table = TRUE), "continuous_flow")
+  expect_is(dxf <- read_continuous_flow(file, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
 })
 
