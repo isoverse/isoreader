@@ -10,27 +10,53 @@ col_check <- function(cols, data, fun = sys.call(-1), msg = "You may have to cha
          "'. ", msg, ". Function: ", fun, call. = FALSE)
 }
 
+
+# example files ====
+
+#' Example files
+#' 
+#' @description The isoreader package comes with a few example files to make it easy to illustrate the functionality.
+#' 
+#' @details \code{isoreader_example}: retrieve the path to an isoreader example file
+#' @export
+isoreader_example <- function(filename) {
+  system.file(package = "isoreader", "extdata", filename)
+}
+
+#' @rdname isoreader_example
+#' @details \code{get_isoreader_examples}: list of all available isoreader example files
+get_isoreader_examples <- function() {
+  
+  supported_files <- get_supported_file_types()
+  all_examples <- expand_file_paths(system.file(package = "isoreader", "extdata"), supported_files$extension)
+  
+  # extensions
+  ext_regexps <- supported_files$extension %>% str_c("$")
+  find_extension <- function(filename) min(which(str_detect(filename, ext_regexps)))
+  data_frame(
+    filename = basename(all_examples),
+    ext_id = sapply(filename, find_extension),
+    extension = supported_files$extension[ext_id]
+  ) %>% 
+    left_join(supported_files, by = "extension") %>% 
+    arrange(extension, filename) %>% 
+    select(filename, extension, format)
+}
+
 # file types and paths ====
 
-#' Show supported file types
+#' Supported file types
+#' 
+#' Get an overview of all the file types currently supported by the isoreader package.
+#' 
 #' @export
-show_supported_file_types <- function() {
-  extension <- NULL
-  description <- NULL
-  sprintf(
-    c("Isoreader supported file types",
-      "Dual Inlet | 'read_dual_inlet()':",
-      "   %s", 
-      "Continuous flow | 'read_continuous_flow()':",
-      "   %s") %>% str_c(collapse = "\n"),
-    get_supported_di_files() %>% 
-      mutate(label = str_c(".", extension, " = ", description)) %>% 
-      { str_c(.$label, collapse = "\n   ") },
-    get_supported_cf_files() %>% 
-      mutate(label = str_c(".", extension, " = ", description)) %>% 
-      { str_c(.$label, collapse = "\n   ") }
+get_supported_file_types <- function() {
+  bind_rows(
+    get_supported_di_files() %>% mutate(type = "Dual Inlet", call = "read_dual_inlet()"),
+    get_supported_cf_files() %>% mutate(type = "Continuous flow", call = "read_continuous_flow()")
   ) %>% 
-    cat()
+    mutate(extension = str_c(".", extension)) %>% 
+    select(extension, format = description, type, call) 
 }
 
 # get file extension
@@ -39,7 +65,7 @@ get_file_ext <- function(filepath) {
 }
 
 # expand the file paths in supplied folders that fit the provided data types
-# @param extensions regular extensions (without the dots), will be turned into regexp pattern
+# @param extensions regular extensions (with or without the dots), will be turned into regexp pattern
 expand_file_paths <- function(paths, extensions = c()) {
   
   # existence check
@@ -50,7 +76,7 @@ expand_file_paths <- function(paths, extensions = c()) {
   # extensions check
   if(length(extensions) == 0) stop("no extensions provided for retrieving file paths", call. = FALSE)
   isdir <- paths %>% lapply(file.info) %>% map_lgl("isdir")
-  pattern <- extensions %>% str_c(collapse = "|") %>% { str_c("\\.(", ., ")$") }
+  pattern <- extensions %>% str_replace("^(\\.)?", "\\\\.") %>% str_c(collapse = "|") %>% { str_c("(", ., ")$") }
   has_ext <- paths[!isdir] %>% str_detect(pattern)
   if (!all(has_ext))
     stop("some file(s) do not have one of the supported extensions (", 
@@ -118,24 +144,7 @@ find_parent_call <- function(current_func) {
   calls[[has_func[1] - 1]][1]
 }
 
-# Caching ====
-
-# generates the cash file path for an isofile
-# @deprecated
-generate_cache_file_path <- function(ds) {
-  file_info <- file.info(ds$file_info$file_path)
-  # combine filepath, file size and last modified date to generate universal numeric fingerprint
-  list(
-    filepath = ds$file_info$file_path,
-    size = file_info$size,
-    modified = file_info$mtime,
-    read_options = ds$read_options
-  ) %>% 
-    # generate numeric fingerprint has and combine to generate cache filename
-    unf() %>% {.$hash} %>% str_c(collapse = "") %>% 
-    # combine with file name
-    { file.path(setting("cache_dir"), str_c("isofile_", ., ".rda")) }
-}
+# caching ====
 
 # generates the cash file paths for isofiles
 generate_cache_filepaths <- function(filepaths, ...) {
@@ -215,7 +224,7 @@ cleanup_isoreader_cache <- function(all = FALSE) {
   invisible(NULL)
 }
 
-# formattng =====
+# formatting =====
 
 # convience function for information message
 get_info_message_concat <- function(variable, prefix = "", suffix = "", quotes = TRUE){

@@ -1,5 +1,13 @@
 context("Utility functions")
 
+test_that("retrieving example files works correctly", {
+  
+  expect_true(is.data.frame(get_isoreader_examples()))
+  expect_equal(system.file(package = "isoreader", "extdata", "continuous_flow_example.dxf"), path <- isoreader_example("continuous_flow_example.dxf"))
+  expect_true(file.exists(path))
+  
+})
+
 test_that("test that retrieving file paths works correctly", {
   
   expect_error(isoreader:::expand_file_paths())
@@ -31,8 +39,8 @@ test_that("test that column name checks work correctly", {
 })
 
 
-test_that("test that support file types are listed", {
-  expect_output(show_supported_file_types(), "supported file types")
+test_that("test that get support file types are listed", {
+  expect_true(is.data.frame(get_supported_file_types()))
 })
 
 test_that("test that error catching works correctly", {

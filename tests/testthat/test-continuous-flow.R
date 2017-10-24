@@ -6,9 +6,8 @@ test_that("test that supported cf files are correct", {
   expect_true(all(exts$fun %>% sapply(class) == "character"))
   
   # check for existence in namespace
-  expect_true(exists("show_supported_file_types"))
-  expect_true(all(exts$fun %>% sapply(exists, where = environment(show_supported_file_types))))
-  expect_true(all(exts$fun %>% sapply(get, envir = environment(show_supported_file_types)) %>% sapply(class) == "function"))
+  expect_true(all(exts$fun %>% sapply(exists, where = environment(get_supported_file_types))))
+  expect_true(all(exts$fun %>% sapply(get, envir = environment(get_supported_file_types)) %>% sapply(class) == "function"))
 })
 
 test_that("test that parameter checks are performed", {
@@ -26,11 +25,11 @@ test_that("test that dxf files can be read", {
   
   turn_caching_off()
   
-  expect_true(file.exists(file <- system.file(package = "isoreader", "extdata", "continuous_flow_example.dxf")))
+  expect_true(file.exists(file <- isoreader_example("continuous_flow_example.dxf")))
   expect_is(dxf <- read_continuous_flow(file, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
-  expect_true(file.exists(file <- system.file(package = "isoreader", "extdata", "peak_jump_example.dxf")))
+  expect_true(file.exists(file <- isoreader_example("peak_jump_example.dxf")))
   expect_is(dxf <- read_continuous_flow(file, read_vendor_data_table = TRUE), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
