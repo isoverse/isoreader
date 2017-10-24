@@ -26,11 +26,11 @@ isoread_rda <- function(ds, ...) {
   # check for version warning
   ok_version <- sapply(isofiles, function(i) i$version == packageVersion("isoreader"))
   for (idx in which(!ok_version)) {
-    isofiles[[idx]] <- register_warning(isofiles[[idx]], details = "file created by a different version of the isoreader package", warn = FALSE)
+    isofiles[[idx]] <- register_warning(isofiles[[idx]], details = sprintf("file created by a different version of the isoreader package (%s)", as.character(isofiles[[idx]]$version)), warn = FALSE)
   }
 
   if (any(!ok_version)) {
-    sprintf("%.0f of the %.0f data files stored in the R Data Archive ('%s') were created by a different version of the isoreader package. This may lead to processing problems.\nConsider reloading the original data files with the newest version of isoreader and re-exporting to this R Data File. ", sum(!ok_version), length(isofiles), ds$file_info$file_id) %>% 
+    sprintf("%.0f of the %.0f data files stored in the R Data Archive ('%s') were created by a different version of the isoreader package. This may lead to processing problems.\nConsider re-reading the original data files using the 'reread_files()' function and re-exporting to this R Data File. ", sum(!ok_version), length(isofiles), ds$file_info$file_id) %>% 
     warning(call. = FALSE, immediate. = TRUE)
   }
 

@@ -20,15 +20,23 @@ col_check <- function(cols, data, fun = sys.call(-1), msg = "You may have to cha
 #' @details \code{isoreader_example}: retrieve the path to an isoreader example file
 #' @export
 isoreader_example <- function(filename) {
-  system.file(package = "isoreader", "extdata", filename)
+  filepath <- system.file(package = "isoreader", "extdata", filename)
+  if(!file.exists(filepath)) 
+    sprintf("The example file '%s' does not exist. Please use get_isoreader_examples() to see a list of all available example files.", filename) %>% 
+    stop(call. = FALSE)
+  return(filepath)
 }
 
 #' @rdname isoreader_example
 #' @details \code{get_isoreader_examples}: list of all available isoreader example files
+#' @export
 get_isoreader_examples <- function() {
   
   supported_files <- get_supported_file_types()
   all_examples <- expand_file_paths(system.file(package = "isoreader", "extdata"), supported_files$extension)
+  
+  # global vars
+  filename <- extension <- ext_id <- format <- NULL
   
   # extensions
   ext_regexps <- supported_files$extension %>% str_c("$")
@@ -51,6 +59,8 @@ get_isoreader_examples <- function() {
 #' 
 #' @export
 get_supported_file_types <- function() {
+  # global vars
+  extension <- description <- type <- call <- description <- NULL
   bind_rows(
     get_supported_di_files() %>% mutate(type = "Dual Inlet", call = "read_dual_inlet()"),
     get_supported_cf_files() %>% mutate(type = "Continuous flow", call = "read_continuous_flow()")
@@ -107,41 +117,12 @@ expand_file_paths <- function(paths, extensions = c()) {
   return(filepaths)
 }
 
-# function execution with error catching =====
-
-# execute function with catch if not in debug mode
-# @param func can be either function name or function call
-# problems are reported in obj
-# @note: maybe could use tidyverse::safely for this at some point?
-exec_func_with_error_catch <- function(func, obj, ...) {
-  if (is.character(func)) func_name <- func
-  else func_name <- substitute(func) %>% deparse()
-  if (!setting("catch_errors")) {
-    # debug mode, don't catch any errors
-    obj <- do.call(func, args = c(list(obj), list(...)))
-  } else {
-    # regular mode, catch errors and report them as problems
-    obj <- 
-      tryCatch({
-        do.call(func, args = c(list(obj), list(...)))
-      }, error = function(e){
-        return(register_error(obj, e$message, func = func_name))
-      })
-  }
-  return(obj)
-}
-
-# find parent call regardless of if it's called by piping or traditional
-# ignores tryCatch calls
-# @param current_func the name of the function this is called from (character)
-find_parent_call <- function(current_func) {
-  calls <- sys.calls()
-  calls <- sapply(calls, as.character)
-  is_trycatch <- sapply(calls, function(x) any(str_detect(x, "tryCatch")))
-  calls <- calls[!is_trycatch]
-  has_func <- sapply(calls, function(x) any(str_detect(x, current_func))) %>% which()
-  if (has_func[1] == 1) return("") # called from top-level
-  calls[[has_func[1] - 1]][1]
+# get re-read filepaths
+get_reread_filepaths <- function(isofiles) {
+  if(!is_iso_object(isofiles)) stop("can only re-read isofiles", call. = FALSE)
+  isofiles <- as_isofile_list(isofiles)
+  info <- lapply(isofiles, function(i) i$file_info[c("file_id", "file_path", "file_subpath")])
+  return(info %>% map_chr("file_path") %>% unique())
 }
 
 # caching ====
@@ -149,6 +130,9 @@ find_parent_call <- function(current_func) {
 # generates the cash file paths for isofiles
 generate_cache_filepaths <- function(filepaths, ...) {
   params <- list(...)
+  
+  # global vars
+  rowname <- size <- mtime <- filepath <- modified <- hash <- cache_file <- NULL
   
   calculate_unf_hash <- function(filepath, size, modified) {
     obj <- c(list(filepath, size, modified), params)
@@ -222,6 +206,43 @@ cleanup_isoreader_cache <- function(all = FALSE) {
     if (!setting("quiet")) message("Info: removed ", sum(remove), " cached isoreader files.")
   }
   invisible(NULL)
+}
+
+# function execution with error catching =====
+
+# execute function with catch if not in debug mode
+# @param func can be either function name or function call
+# problems are reported in obj
+# @note: maybe could use tidyverse::safely for this at some point?
+exec_func_with_error_catch <- function(func, obj, ...) {
+  if (is.character(func)) func_name <- func
+  else func_name <- substitute(func) %>% deparse()
+  if (!setting("catch_errors")) {
+    # debug mode, don't catch any errors
+    obj <- do.call(func, args = c(list(obj), list(...)))
+  } else {
+    # regular mode, catch errors and report them as problems
+    obj <- 
+      tryCatch({
+        do.call(func, args = c(list(obj), list(...)))
+      }, error = function(e){
+        return(register_error(obj, e$message, func = func_name))
+      })
+  }
+  return(obj)
+}
+
+# find parent call regardless of if it's called by piping or traditional
+# ignores tryCatch calls
+# @param current_func the name of the function this is called from (character)
+find_parent_call <- function(current_func) {
+  calls <- sys.calls()
+  calls <- sapply(calls, as.character)
+  is_trycatch <- sapply(calls, function(x) any(str_detect(x, "tryCatch")))
+  calls <- calls[!is_trycatch]
+  has_func <- sapply(calls, function(x) any(str_detect(x, current_func))) %>% which()
+  if (has_func[1] == 1) return("") # called from top-level
+  calls[[has_func[1] - 1]][1]
 }
 
 # formatting =====

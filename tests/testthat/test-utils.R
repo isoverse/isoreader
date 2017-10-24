@@ -3,6 +3,7 @@ context("Utility functions")
 test_that("retrieving example files works correctly", {
   
   expect_true(is.data.frame(get_isoreader_examples()))
+  expect_error(isoreader_example("DNE"), "does not exist")
   expect_equal(system.file(package = "isoreader", "extdata", "continuous_flow_example.dxf"), path <- isoreader_example("continuous_flow_example.dxf"))
   expect_true(file.exists(path))
   

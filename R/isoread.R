@@ -35,6 +35,9 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
   if(!is(data_structure, "isofile")) stop("data structure must include class 'isofile'", call. = FALSE)
   col_check(c("file_info"), data_structure)
   
+  # global vars
+  filepath <- ext <- NULL
+  
   # read options update in data structure
   data_structure <- update_read_options(data_structure, ...)
   
@@ -77,7 +80,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
     # check for cache
     if (read_cache && cacheable && file.exists(cachepath)) {
       ## cache available  
-      if (!setting("quiet")) sprintf("Info: restoring file %s from cache", filepath) %>% message()
+      if (!setting("quiet")) sprintf("Info: reading file %s from cache", filepath) %>% message()
       isofile <- load_cached_isofile(cachepath)
     } else {
       ## read file anew using extension-specific function to read file
@@ -112,3 +115,64 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
   if (length(isofiles) == 1) return (isofiles[[1]])
   return(isofiles)
 }
+
+#' Re-read isofiles
+#' 
+#' Reload the isotope files from their original data files. This is only possible for isofile objects whose file paths still points to the original raw data file.
+#' @inheritParams aggregate_raw_data
+#' @param ... additional read parameters that should be used for re-reading the isofiles, see \code{\link{read_dual_inlet}} and \code{\link{read_continuous_flow}} for details
+#' @param stop_if_missing whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files but read those that do exist)
+#' @export
+reread_files <- function(isofiles, ..., stop_if_missing = FALSE, quiet = setting("quiet")) {
+  
+  # checks
+  if(!is_iso_object(isofiles)) stop("can only re-read isofiles", call. = FALSE)
+  single_file <- is_isofile(isofiles) # to make sure return is the same as supplied
+  isofiles <- as_isofile_list(isofiles)
+  
+  # reread
+  filepaths <- get_reread_filepaths(isofiles)
+  files_exist <- filepaths %>% map_lgl(file.exists)
+  
+  # overview
+  if (!setting("quiet")) {
+    message("Info: re-reading ", length(filepaths), " data file(s)...")
+  }
+  
+  # safety check for non existent data files
+  if (!all(files_exist)) {
+    msg <- sprintf("%d file(s) do no longer exist at the referenced location and can not be re-read:\n - %s\n",
+                   sum(!files_exist), str_c(filepaths[!files_exist], collapse = "\n - "))
+    if (stop_if_missing)
+      stop(msg, call. = FALSE)
+    else 
+      warning(msg, call. = FALSE, immediate. = TRUE)
+  }
+  
+  # reread files
+  if (any(files_exist)) {
+    args <- c(list(paths = filepaths[files_exist]), list(...))
+    if (is_continuous_flow(isofiles)) {
+      # read continuous flow
+      new_isofiles <- do.call(read_continuous_flow, args = args)
+    } else if (is_dual_inlet(isofiles)) {
+      # read dual inlet
+      new_isofiles <- do.call(read_dual_inlet, args = args)
+    } else {
+      stop("re-reading isofiles objects of type ", class(isofiles[[1]])[1], " is not yet supported", call. = FALSE)
+    }
+    
+    # replace the ones that were re-read (and add new files in case there were any e.g. from updated iarc archives)
+    overlap_ids <- names(isofiles)[names(isofiles) %in% names(new_isofiles)]
+    new_ids <- names(new_isofiles)[!names(new_isofiles) %in% names(isofiles)]
+    for(id in overlap_ids) isofiles[[id]] <- new_isofiles[[id]]
+    if (length(new_ids) > 0) isofiles <- c(isofiles, new_isofiles[new_ids])
+  }
+  
+  # return single (if passed in as single) 
+  if (single_file && length(isofiles) == 1) return (isofiles[[1]])
+  return(isofiles)
+}
+
+
+
