@@ -9,6 +9,7 @@
 ^docs$
 ^cache$
 ^tests/testthat/cache$
+^inst/other$
 ^tmp$
 ^README-.*\.png$
 ^README\.Rmd$

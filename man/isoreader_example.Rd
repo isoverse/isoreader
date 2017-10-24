@@ -9,6 +9,9 @@ isoreader_example(filename)
 
 get_isoreader_examples()
 }
+\arguments{
+\item{filename}{the name of the example file for which to retrieve the system path}
+}
 \description{
 The isoreader package comes with a few example files to make it easy to illustrate the functionality.
 }

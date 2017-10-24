@@ -18,6 +18,7 @@ col_check <- function(cols, data, fun = sys.call(-1), msg = "You may have to cha
 #' @description The isoreader package comes with a few example files to make it easy to illustrate the functionality.
 #' 
 #' @details \code{isoreader_example}: retrieve the path to an isoreader example file
+#' @param filename the name of the example file for which to retrieve the system path
 #' @export
 isoreader_example <- function(filename) {
   filepath <- system.file(package = "isoreader", "extdata", filename)
