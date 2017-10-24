@@ -23,10 +23,10 @@ test_that("test that did files can be read", {
   turn_caching_off()
   
   expect_true(file.exists(file <- isoreader_example("dual_inlet_example.did")))
-  expect_is(did <- read_dual_inlet(file, read_vendor_data_table = TRUE), "dual_inlet")
+  expect_is(did <- read_dual_inlet(file), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
   
   expect_true(file.exists(file <- file.path("test_data", "did_example_CO2_clumped_01.did")))
-  expect_is(did <- read_dual_inlet(file, read_vendor_data_table = TRUE), "dual_inlet")
+  expect_is(did <- read_dual_inlet(file), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
 })
