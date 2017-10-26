@@ -118,12 +118,17 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
 
 #' Re-read isofiles
 #' 
-#' Reload the isotope files from their original data files. This is only possible for isofile objects whose file paths still points to the original raw data file.
+#' Sometimes it is useful to reload isotope files from their original data files (e.g. after upgrading to a newer version of the isoreader package). 
+#' The functions described below are intended to make this very easy. 
+#' However, it is only possible for isofile objects whose file paths still point to the original raw data files.
+#' 
+#' @details \code{reread_isofiles} will re-read all the original data files for the passed in \code{isofiles} object
 #' @inheritParams aggregate_raw_data
 #' @param ... additional read parameters that should be used for re-reading the isofiles, see \code{\link{read_dual_inlet}} and \code{\link{read_continuous_flow}} for details
-#' @param stop_if_missing whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files but read those that do exist)
+#' @param stop_if_missing whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files and keep them unchanged but re-read those that do exist)
+#' @return isofiles object
 #' @export
-reread_files <- function(isofiles, ..., stop_if_missing = FALSE, quiet = setting("quiet")) {
+reread_isofiles <- function(isofiles, ..., stop_if_missing = FALSE, quiet = setting("quiet")) {
   
   # checks
   if(!is_iso_object(isofiles)) stop("can only re-read isofiles", call. = FALSE)
@@ -173,6 +178,7 @@ reread_files <- function(isofiles, ..., stop_if_missing = FALSE, quiet = setting
   if (single_file && length(isofiles) == 1) return (isofiles[[1]])
   return(isofiles)
 }
+
 
 
 

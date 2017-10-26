@@ -81,7 +81,7 @@ test_that("test that dxf files can be read", {
     isofiles %>% get_reread_filepaths(),
     isofiles %>% sapply(function(i) i$file_info$file_path) %>% as.character()
   )
-  expect_true(is_continuous_flow(reread_dxf <- reread_files(isofiles)))
+  expect_true(is_continuous_flow(reread_dxf <- reread_isofiles(isofiles)))
   expect_equal(nrow(problems(reread_dxf)), 0)
   
   
