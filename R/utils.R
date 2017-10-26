@@ -32,22 +32,8 @@ isoreader_example <- function(filename) {
 #' @details \code{get_isoreader_examples}: list of all available isoreader example files
 #' @export
 get_isoreader_examples <- function() {
-  
-  supported_files <- get_supported_file_types()
-  all_examples <- expand_file_paths(system.file(package = "isoreader", "extdata"), supported_files$extension)
-  
-  # global vars
-  filename <- extension <- ext_id <- format <- NULL
-  
-  # extensions
-  ext_regexps <- supported_files$extension %>% str_c("$")
-  find_extension <- function(filename) min(which(str_detect(filename, ext_regexps)))
-  data_frame(
-    filename = basename(all_examples),
-    ext_id = sapply(filename, find_extension),
-    extension = supported_files$extension[ext_id]
-  ) %>% 
-    left_join(supported_files, by = "extension") %>% 
+  expand_file_paths(system.file(package = "isoreader", "extdata"), get_supported_file_types()$extension) %>% 
+    match_to_supported_file_types() %>% 
     arrange(extension, filename) %>% 
     select(filename, extension, format)
 }
@@ -68,6 +54,24 @@ get_supported_file_types <- function() {
   ) %>% 
     mutate(extension = str_c(".", extension)) %>% 
     select(extension, format = description, type, call) 
+}
+
+# match files to supported file types
+match_to_supported_file_types <- function(filepaths) {
+  # global vars
+  filename <- extension <- ext_id <- format <- NULL
+  supported_files <- get_supported_file_types()
+  
+  # extensions
+  ext_regexps <- supported_files$extension %>% str_c("$")
+  find_extension <- function(filename) which(str_detect(filename, ext_regexps)) %>% { if(length(.) >0) min(.) else NA_integer_ }
+  data_frame(
+    filename = basename(filepaths),
+    ext_id = sapply(filename, find_extension),
+    extension = supported_files$extension[ext_id]
+  ) %>% 
+    left_join(supported_files, by = "extension") %>% 
+    select(-ext_id)
 }
 
 # get file extension
