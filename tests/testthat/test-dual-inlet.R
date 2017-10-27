@@ -20,6 +20,8 @@ test_that("test that parameter checks are performed", {
 test_that("test that did files can be read", {
   # test specific files
   
+  #skip("Currently not testing all dual inlet data files.")
+  
   turn_caching_off()
   
   expect_true(file.exists(file <- isoreader_example("dual_inlet_example.did")))

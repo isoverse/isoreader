@@ -23,6 +23,8 @@ test_that("test that parameter checks are performed", {
 test_that("test that dxf files can be read", {
   # test specific files
   
+  #skip("Currently not testing all continuous flow data files.")
+  
   turn_caching_off()
   
   expect_true(file.exists(file <- isoreader_example("continuous_flow_example.dxf")))

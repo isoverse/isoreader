@@ -122,11 +122,10 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
 #' The functions described below are intended to make this very easy. 
 #' However, it is only possible for isofile objects whose file paths still point to the original raw data files.
 #' 
-#' @details \code{reread_isofiles} will re-read all the original data files for the passed in \code{isofiles} object
+#' @details \code{reread_isofiles} will re-read all the original data files for the passed in \code{isofiles} object. Returns the reread isofile objects.
 #' @inheritParams aggregate_raw_data
 #' @param ... additional read parameters that should be used for re-reading the isofiles, see \code{\link{read_dual_inlet}} and \code{\link{read_continuous_flow}} for details
 #' @param stop_if_missing whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files and keep them unchanged but re-read those that do exist)
-#' @return isofiles object
 #' @export
 reread_isofiles <- function(isofiles, ..., stop_if_missing = FALSE, quiet = setting("quiet")) {
   
@@ -159,10 +158,10 @@ reread_isofiles <- function(isofiles, ..., stop_if_missing = FALSE, quiet = sett
     args <- c(list(paths = filepaths[files_exist]), list(...))
     if (is_continuous_flow(isofiles)) {
       # read continuous flow
-      new_isofiles <- do.call(read_continuous_flow, args = args)
+      new_isofiles <- as_isofile_list(do.call(read_continuous_flow, args = args))
     } else if (is_dual_inlet(isofiles)) {
       # read dual inlet
-      new_isofiles <- do.call(read_dual_inlet, args = args)
+      new_isofiles <- as_isofile_list(do.call(read_dual_inlet, args = args))
     } else {
       stop("re-reading isofiles objects of type ", class(isofiles[[1]])[1], " is not yet supported", call. = FALSE)
     }
@@ -179,6 +178,34 @@ reread_isofiles <- function(isofiles, ..., stop_if_missing = FALSE, quiet = sett
   return(isofiles)
 }
 
-
+#' @details \code{reread_isofiles_archive} is a convenience function for refreshing saved isofile collections. It will load a specific isofiles R Data Archive (\code{rda_filepath}), re-read all the data from the original data files and save the collection back to the same rda file. The isofiles are returned invisibly.
+#' @rdname reread_isofiles
+#' @param rda_filepaths the path(s) to the isofiles R data archive(s) to re-read (can be a single file or vector of files)
+#' @export
+reread_isofiles_archive <- function(rda_filepaths, ..., stop_if_missing = FALSE, quiet = setting("quiet")) {
+  
+  file_types <- match_to_supported_file_types(rda_filepaths)
+  
+  # global vars
+  extension <- NULL
+  
+  if (nrow(missing <- filter(file_types, is.na(extension))) > 0)
+    stop("unrecognized file type(s): ", str_c(missing$filename, collapse = ", "), call. = FALSE)
+  
+  if (any(missing <- !file.exists(rda_filepaths))) 
+    stop("file(s) do not exist: ", str_c(rda_filepaths[missing], collapse = ", "), call. = FALSE)
+  
+  reread_archive <- function(filepath, call) {
+    if(!quiet) message("Info: loading R Data Archive ", basename(filepath), "...")
+    suppressWarnings(do.call(call, args = list(paths = filepath, quiet=TRUE))) %>% 
+      reread_isofiles(..., stop_if_missing = stop_if_missing, quiet=quiet) %>% 
+      export_to_rda(filepath = filepath, quiet=quiet)
+    return(TRUE)
+  }
+  
+  # note: cannot combine these in case some of them are dual inlet while others are continuous flow
+  with(file_types, mapply(reread_archive, filepath, call))
+  invisible(NULL)
+}
 
 

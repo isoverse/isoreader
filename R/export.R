@@ -17,7 +17,7 @@ export_to_rda <- function(isofiles, filepath, quiet = setting("quiet")) {
   
   # save isofiles
   if (!quiet) {
-    sprintf("Info: exporting data from %d files into R Data Archive '%s'", 
+    sprintf("Info: exporting data from %d isofiles into R Data Archive '%s'", 
             length(as_isofile_list(isofiles)), 
             str_replace(filepath, "^\\.(/|\\\\)", "")) %>% message()
   }
@@ -52,7 +52,7 @@ export_to_excel <- function(isofiles, filepath,
   # save isofiles
   export_isofiles <- as_isofile_list(isofiles)
   if (!quiet) {
-    sprintf("Info: exporting data from %d files into Excel '%s'", length(export_isofiles), 
+    sprintf("Info: exporting data from %d isofiles into Excel '%s'", length(export_isofiles), 
             str_replace(filepath, "^\\.(/|\\\\)", "")) %>% message()
   }
   
@@ -113,7 +113,7 @@ export_to_feather <- function(isofiles, filepath_prefix,
   # note: not sure yet how to best implement different data types such as scan here
   filepaths <- get_feather_export_filepaths(isofiles, filepath_prefix)
   if (!quiet) {
-    sprintf("Info: exporting data from %d files into %s files at '%s'", length(as_isofile_list(isofiles)), 
+    sprintf("Info: exporting data from %d isofiles into %s files at '%s'", length(as_isofile_list(isofiles)), 
             filepaths[['ext']], str_replace(filepaths[['base']], "^\\.(/|\\\\)", "")) %>% message()
   }
   

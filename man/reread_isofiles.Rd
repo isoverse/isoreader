@@ -8,7 +8,7 @@
 reread_isofiles(isofiles, ..., stop_if_missing = FALSE,
   quiet = setting("quiet"))
 
-reread_isofiles_archive(rda_filepath, ..., stop_if_missing = FALSE,
+reread_isofiles_archive(rda_filepaths, ..., stop_if_missing = FALSE,
   quiet = setting("quiet"))
 }
 \arguments{
@@ -20,10 +20,7 @@ reread_isofiles_archive(rda_filepath, ..., stop_if_missing = FALSE,
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}}
 
-\item{rda_filepath}{the path to the isofiles R data archive to re-read}
-}
-\value{
-isofiles object
+\item{rda_filepaths}{the path(s) to the isofiles R data archive(s) to re-read (can be a single file or vector of files)}
 }
 \description{
 Sometimes it is useful to reload isotope files from their original data files (e.g. after upgrading to a newer version of the isoreader package). 
@@ -31,7 +28,7 @@ The functions described below are intended to make this very easy.
 However, it is only possible for isofile objects whose file paths still point to the original raw data files.
 }
 \details{
-\code{reread_isofiles} will re-read all the original data files for the passed in \code{isofiles} object
+\code{reread_isofiles} will re-read all the original data files for the passed in \code{isofiles} object. Returns the reread isofile objects.
 
 \code{reread_isofiles_archive} is a convenience function for refreshing saved isofile collections. It will load a specific isofiles R Data Archive (\code{rda_filepath}), re-read all the data from the original data files and save the collection back to the same rda file. The isofiles are returned invisibly.
 }

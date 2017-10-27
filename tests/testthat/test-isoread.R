@@ -17,3 +17,11 @@ test_that("test that parameter checks are performed when reading binary file", {
     "file path\\(s\\) required")
 })
   
+
+test_that("test that checks are run when re-reading isofiles", {
+  
+  expect_warning(reread_isofiles(make_cf_data_structure()), "no longer exist at the referenced location")
+  expect_error(reread_isofiles(make_cf_data_structure(), stop_if_missing = TRUE), "no longer exist at the referenced location")
+  expect_error(reread_isofiles_archive("test.csv"), "unrecognized file type")
+  expect_error(reread_isofiles_archive("DNE.dxf"), "file\\(s\\) do not exist")
+})
