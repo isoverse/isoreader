@@ -21,12 +21,16 @@ isoread_rda <- function(ds, ...) {
     stop(call. = FALSE)
   
   # information
-  if (!setting("quiet")) sprintf("Info: loaded data for %d data files from R Data Archive", length(isofiles)) %>% message()
+  if (!setting("quiet")) {
+    sprintf("Info: loaded data for %d data files from R Data Archive - checking loaded files for content consistency...", length(isofiles)) %>% message()
+  }
   
   # check for version warning
-  ok_version <- sapply(isofiles, function(i) i$version == packageVersion("isoreader"))
-  for (idx in which(!ok_version)) {
-    isofiles[[idx]] <- register_warning(isofiles[[idx]], details = sprintf("file created by a different version of the isoreader package (%s)", as.character(isofiles[[idx]]$version)), warn = FALSE)
+  versions <- map(isofiles, `[[`, "version")
+  ok_version <- map_lgl(versions, identical, packageVersion("isoreader"))
+  if (any(!ok_version)) {
+    messages <- sprintf("file created by a different version of the isoreader package (%s)", map_chr(versions[!ok_version], as.character))
+    isofiles[!ok_version] <- map2(isofiles[!ok_version], messages, register_warning, func = "isoread_rda", warn = FALSE)
   }
 
   if (any(!ok_version)) {
