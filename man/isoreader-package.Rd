@@ -11,8 +11,8 @@ R interface to IRMS (isotope ratio mass spectrometry) file formats typically use
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/kopflab/isorunner}
-  \item Report bugs at \url{https://github.com/kopflab/isorunner/issues}
+  \item \url{https://github.com/kopflab/isoreader}
+  \item Report bugs at \url{https://github.com/kopflab/isoreader/issues}
 }
 
 }
