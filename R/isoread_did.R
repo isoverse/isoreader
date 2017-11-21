@@ -22,7 +22,9 @@ isoread_did <- function(ds, ...) {
   
   # process method info
   if (ds$read_options$method_info) {
-    ds <- exec_func_with_error_catch(extract_isodat_reference_values, ds)
+    ds <- exec_func_with_error_catch(
+      extract_isodat_reference_values, ds, 
+      cap_at_fun = function(bin) cap_at_next_C_block(bin, "CBinary"))
     ds <- exec_func_with_error_catch(extract_isodat_resistors, ds)
   }
   
@@ -43,14 +45,15 @@ extract_did_raw_voltage_data <- function(ds) {
     move_to_next_C_block_range("CTraceInfoEntry", "CPlotRange") 
   
   # read all masses
-  masses <- c()
-  while(!is.null(find_next_pattern(ds$binary, re_block("fef-x"), re_text("Mass ")))) {
-    ds$binary <- ds$binary %>%
-      move_to_next_pattern(re_block("fef-x"), re_text("Mass ")) %>% 
+  masses_re <- re_combine(re_block("fef-x"), re_text("Mass "))
+  masses_positions <- find_next_patterns(ds$binary, masses_re)
+  masses <- map_chr(masses_positions, function(pos) {
+    ds$binary %>%
+      move_to_pos(pos + masses_re$size) %>%  
       capture_data("mass", "text", re_or(re_block("fef-x"), re_block("C-block")), 
-                   data_bytes_max = 8, move_past_dots = FALSE) 
-    masses <- c(masses, ds$binary$data$mass)
-  }
+                   data_bytes_max = 8, move_past_dots = FALSE) %>% 
+      { .$data$mass }
+  })
   
   # mass column formatting
   masses_columns <- str_c("v", masses, ".mV")
@@ -68,47 +71,46 @@ extract_did_raw_voltage_data <- function(ds) {
   standard_positions <- find_next_patterns(ds$binary, standard_voltage_start_re)
   sample_voltage_start_re <- re_combine(re_text("/"), re_block("fef-0"), re_block("fef-x"), re_text("Sample "))
   sample_positions <- find_next_patterns(ds$binary, sample_voltage_start_re)
-  
-  # process standards
-  for(pos in standard_positions) {
-    ds$binary <- ds$binary %>% 
-      move_to_pos(pos + standard_voltage_start_re$size) %>% 
+
+  # function to capture voltages
+  capture_voltages <- function(pos) {
+    
+    bin <- ds$binary %>% 
+      move_to_pos(pos) %>% 
       capture_data("cycle", "text", re_null(4), re_block("stx"), move_past_dots = TRUE) %>% 
       move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("stx")) %>%
       move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>% 
       capture_data("voltage", "double", re_null(6),re_block("x-000"), sensible = c(-1000, 100000))
     
-    if (length(ds$binary$data$voltage) != length(masses)) 
-      stop("incorrect number of voltage measurements supplied for standard ", ds$binary$data$cycle, call. = FALSE)
-    measurement <- list(
-      c(list(
-        type = "standard",
-        cycle = if (ds$binary$data$cycle == "Pre") 0 else as.integer(ds$binary$data$cycle) + 1
-      ), setNames(as.list(ds$binary$data$voltage), masses_columns)))
-    voltages <- c(voltages, measurement)
+    # safety check
+    if (length(bin$data$voltage) != length(masses)) {
+      op_error(bind, glue("inconsistent number of voltage measurements encountered ({length(bin$data$voltage)}), expected {length(masses)}"))
+    }
+
+    # return voltage data
+    return(data_frame(cycle = bin$data$cycle, cup = 1:length(bin$data$voltage), voltage = bin$data$voltage))
   }
   
-  # process samples
-  for(pos in sample_positions) {
-    ds$binary <- ds$binary %>% 
-      move_to_pos(pos + sample_voltage_start_re$size) %>% 
-      capture_data("cycle", "text", re_null(4), re_block("stx"), move_past_dots = TRUE) %>% 
-      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("stx")) %>%
-      move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>% 
-      capture_data("voltage", "double", re_null(6),re_block("x-000"), sensible = c(-1000, 100000))
-    if (length(ds$binary$data$voltage) != length(masses)) 
-      stop("incorrect number of voltage measurements supplied for sample ", ds$binary$data$cycle, call. = FALSE)
-    measurement <- list(
-      c(list(
-        type = "sample",
-        cycle = as.integer(ds$binary$data$cycle) + 1
-      ), setNames(as.list(ds$binary$data$voltage), masses_columns)))
-    voltages <- c(voltages, measurement)
-  }
+  # assemble voltages data frame
+  voltages <- 
+    bind_rows(
+      data_frame(pos = standard_positions + standard_voltage_start_re$size, type = "standard"),
+      data_frame(pos = sample_positions + sample_voltage_start_re$size, type = "sample")
+    ) %>% 
+    mutate(
+      voltages = map(pos, capture_voltages)
+    ) %>% 
+    unnest(voltages) %>% 
+    # join in the mass information
+    left_join(data_frame(cup = 1:length(masses), mass = masses_columns), by = "cup") %>% 
+    # spread out the volrages
+    select(-pos, -cup) %>% spread(mass, voltage) %>% 
+    # update cycle
+    mutate(cycle = as.integer(ifelse(cycle == "Pre", -1, cycle)) + 1L)
   
   # voltages data frame
   type <- cycle <- NULL
-  ds$raw_data <- bind_rows(voltages) %>% mutate(cycle = as.integer(cycle)) %>% arrange(desc(type), cycle)
+  ds$raw_data <- arrange(voltages, desc(type), cycle)
   return(ds)
 }
 
