@@ -141,7 +141,7 @@ extract_cf_raw_voltage_data <- function(ds) {
   
   # get gas name (only used for error reporting)
   ds$binary <- ds$binary %>% 
-    move_to_next_pattern(re_block("etx"), re_or(re_text("/"), re_text("-")), re_block("fef-0"), re_block("fef-x"), 
+    move_to_next_pattern(re_block("etx"), re_or(re_text("/"), re_text("-"), re_text(".")), re_block("fef-0"), re_block("fef-x"), 
                          re_text("Trace Data "), max_gap = 0) %>% 
     capture_data("gas", "text", re_null(4), re_block("stx"))
   gas_config <- ds$binary$data$gas
