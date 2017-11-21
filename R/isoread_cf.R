@@ -11,7 +11,7 @@ isoread_cf <- function(ds, ...) {
   
   # process file info
   if(ds$read_options$file_info) {
-    ds <- exec_func_with_error_catch(extract_cf_file_info, ds)
+    ds <- exec_func_with_error_catch(extract_isodat_old_sequence_line_info, ds)
     # NOTE: measurement info (see dxf) does not seem to be stored in cf files
     ds <- exec_func_with_error_catch(extract_isodat_datetime, ds)
     ds <- exec_func_with_error_catch(extract_H3_factor_info, ds)
@@ -44,91 +44,6 @@ isoread_cf <- function(ds, ...) {
       })
   }
      
-  return(ds)
-}
-
-# extract file info from cf files
-extract_cf_file_info <- function(ds) {
-  
-  # find sequence line information
-  ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot process sequence line info") %>% 
-    move_to_C_block("CSequenceLineInformationGridStorage") %>% 
-    move_to_next_pattern(re_direct("\xff{12}"))
-  
-  # first line marker
-  line_re <- re_combine(re_block("x-000"), re_direct(".{2,8}"), re_block("fef-x"), re_text("Line"))
-  ds$binary <- ds$binary %>% 
-    move_to_next_pattern(line_re, move_to_end = FALSE) %>% 
-    capture_n_data("info_marker", "raw", 4)
-  
-  # regular expressions
-  re_entry_start <- re_control(ds$binary$data$info_marker)
-  label_pre_re <- re_combine(re_direct(".{2,8}", size = 8), re_block("fef-x"))
-  # NOTE: all of these seem to be valid end blocks for text segements in this part of the file, any way to make this simpler?
-  label_post_re <- re_or(re_combine(re_null(7), re_direct("\xff\\x00{3}")), 
-                         re_combine(re_block("x-000"), re_block("fef-x")),
-                         re_combine(re_null(4), re_block("fef-x")),
-                         re_combine(re_null(4), re_block("x-000")),
-                         re_combine(re_null(4), re_direct("\xff{3}\\x00", size = 4)))
-  
-  # extract information
-  positions <- find_next_patterns(ds$binary, re_entry_start)
-  label <- value <- NULL # global vars
-  labels <- list(list(label = "Line", label_marker = NA_character_))
-  values <- list()
-  reached_values <- FALSE
-  for (pos in positions) {
-    ds$binary <- ds$binary %>% move_to_pos(pos + re_entry_start$size)
-    if (!is.null(find_next_pattern(ds$binary, label_pre_re, max_gap = 0))) {
-      ds$binary <- ds$binary %>% 
-        move_to_next_pattern(label_pre_re) %>%
-        { move_to_pos(., .$pos - 1) } %>% 
-        capture_n_data("marker", "raw", 1) %>% 
-        capture_data("text", "text", label_post_re)
-      text <- ds$binary$data$text
-      marker <- as.character(ds$binary$data$marker)
-    } else {
-      text <- marker <- NA_character_
-    }
-    
-    # check for values
-    if (!reached_values && marker %in% c("01", "02")) {
-      # NOTE: is there any better way to detect where the value starts??
-      reached_values <- TRUE
-    }
-    
-    # add to values/labels
-    if (is.null(text)) text <- NA_character_
-    
-    if (reached_values)
-      values <- c(values, list(list(value = text, value_marker = marker)))
-    else
-      labels <- c(labels, list(list(label = text, label_marker = marker)))
-  }
-  
-  if (length(values) != length(labels)) {
-    if(setting("debug")) {
-      print(bind_rows(labels))
-      print(bind_rows(values))
-    }
-    stop(sprintf("unequal number of file info labels (%d) and file info values (%d)", 
-                 length(labels), length(values)), call. = FALSE)
-  }
-  
-  # store file info
-  file_info <- left_join(
-    bind_rows(labels) %>% mutate(n = 1:n()),
-    bind_rows(values) %>% mutate(n = 1:n()),
-    by = "n"
-  )
-  
-  # in file object
-  ds$file_info <- modifyList(
-    ds$file_info, 
-    file_info %>% select(label, value) %>% tibble::deframe() %>% as.list()
-  )
-  
   return(ds)
 }
 
