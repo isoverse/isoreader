@@ -22,9 +22,7 @@ isoread_did <- function(ds, ...) {
   
   # process method info
   if (ds$read_options$method_info) {
-    ds <- exec_func_with_error_catch(
-      extract_isodat_reference_values, ds, 
-      cap_at_fun = function(bin) cap_at_next_C_block(bin, "CBinary"))
+    ds <- exec_func_with_error_catch(extract_isodat_reference_values, ds) # NOTE: no cap for these
     ds <- exec_func_with_error_catch(extract_isodat_resistors, ds)
   }
   

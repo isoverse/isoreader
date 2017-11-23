@@ -88,40 +88,40 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   # global vars
   delta_code <- delta_format <- ratio_code <- ratio_format <- NULL
   
-  # global vars
-  delta_code <- delta_format <- ratio_code <- ratio_format <- NULL
-  
-  # find instrument reference names
+  # instrument reference name reg exps
   instrument_pre1 <- re_combine(re_block("etx"), re_or(re_text("/"), re_text(","), re_text("-")), re_block("fef-0"), re_block("fef-x")) ###
   instrument_pre2 <- re_combine(re_null(4), re_block("stx"), re_block("nl"), re_text("Instrument"))
-  ref_names <- ref_configs <- ref_pos <- c()
-  positions <- find_next_patterns(ds$binary, re_combine(instrument_pre1, re_block("text"), instrument_pre2))
-  for (pos in positions) {
-    ds$binary <- ds$binary %>% 
+  instrument_post2 <- re_combine(re_null(4), re_direct("[^\\x00]{2}"), re_block("etx"))
+  
+  # capture reference names
+  capture_ref_names <- function(pos) {
+    bin <- ds$binary %>% 
       move_to_pos(pos) %>% 
       move_to_next_pattern(instrument_pre1, max_gap = 0) %>% 
       capture_data("ref_name", "text", instrument_pre2, move_past_dots = TRUE) 
     
-    instrument_post1 <- re_combine(re_block("etx"), re_block("fef-x"), re_text(ds$binary$data$ref_name), re_block("fef-x"))
-    instrument_post2 <- re_combine(re_null(4), re_direct("[^\\x00]{2}"), re_block("etx"))
+    instrument_post1 <- re_combine(re_block("etx"), re_block("fef-x"), re_text(bin$data$ref_name), re_block("fef-x"))
     
     # check for gas configuration name
-    if(!is.null(pos <- find_next_pattern(ds$binary, re_combine(instrument_post1, re_block("text"), instrument_post2), max_gap = 0))) {
-      ds$binary <- ds$binary %>% 
+    if(!is.null(pos <- find_next_pattern(bin, re_combine(instrument_post1, re_block("text"), instrument_post2), max_gap = 0))) {
+      bin <- bin %>% 
         move_to_pos(pos) %>% 
         move_to_next_pattern(instrument_post1, max_gap = 0) %>% 
         capture_data("config", "text", instrument_post2) 
     } else {
-      ds$binary$data$config <- ""
+      bin$data$config <- ""
     }
     
     # store information
-    ref_names <- c(ref_names, ds$binary$data$ref_name)
-    ref_configs <- c(ref_configs, ds$binary$data$config)
-    ref_pos <- c(ref_pos, ds$binary$pos)
+    data_frame(name = bin$data$ref_name, config = bin$data$config, pos = bin$pos)
   }
-  # references (not saved, just for troubleshooting and for delta+ratio assignments)
-  refs <- data_frame(name = ref_names, config = ref_configs, pos = ref_pos)
+  
+  # run refs capture
+  refs <- data_frame(
+    start_pos = find_next_patterns(
+      ds$binary, re_combine(instrument_pre1, re_block("text"), instrument_pre2)),
+    data = map(start_pos, capture_ref_names)
+  ) %>% unnest(data)
   
   ### deltas
   # get reference delta values
@@ -131,12 +131,12 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   
   # find delta values
   delta_re <- re_combine(re_null(4), re_block("x-000"), re_block("fef-x"), re_text("Delta "))
-  deltas <- list()
-  
   positions <- find_next_patterns(ds$binary, delta_re)
-  for (pos in positions) {
-    ds$binary <- ds$binary %>% 
-      move_to_pos(pos + delta_re$size) %>% 
+  
+  # capture delta values
+  capture_delta_values <- function(pos) {
+    bin <- ds$binary %>% 
+      move_to_pos(pos) %>% 
       capture_data("delta_code", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
       capture_data("delta_name", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
       capture_data("delta_format", "text", re_block("fef-x"), move_past_dots = TRUE) %>% 
@@ -146,14 +146,24 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
       capture_n_data("delta_value", "double", 1) %>%  
       move_to_next_pattern(re_block("stx"), re_block("fef-x")) %>% 
       capture_data("reference", "text", re_null(12), re_direct("([^\\x00]{2})?"), re_block("x-000")) 
-    deltas <- c(deltas, list(c(standard = ref_names[max(which(ds$binary$pos > ref_pos))],
-                               #config = ref_configs[max(which(ds$binary$pos > ref_pos))], # not actually used, usually the same as the $gas
-                               ds$binary$data[c("gas", "delta_code", "delta_name", "delta_value", "delta_format", "reference")])))
+    
+    # return as data frame
+    as_data_frame(
+      bin$data[c("gas", "delta_code", "delta_name", "delta_value", "delta_format", "reference")]
+    ) %>% mutate(
+      standard = refs$name[max(which(bin$pos > refs$pos))]
+      #config = refs$config[max(which(bin$pos > refs$pos))], # not actually used, usually the same as the $gas
+    )
   }
   
-  deltas <- bind_rows(deltas) %>% 
-    select(-delta_code) %>%  # code is very isodat specific and not stored in final
-    select(-delta_format) # format does not realy hold information that isn't contained in the values themselves
+  # run delta capture
+  deltas <- data_frame(
+    pos = positions + delta_re$size,
+    data = map(pos, capture_delta_values)
+  ) %>% unnest(data) %>% 
+    # delta_code is very isodat specific and not stored in final, delta_format does not really hold additional information
+    select(standard, gas, delta_name, delta_value, reference)
+  
   
   ### ratios
   
@@ -164,25 +174,32 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   
   # find ratios
   ratio_re <- re_combine(re_null(4), re_block("x-000"), re_block("fef-x"), re_text("Ratio "))
-  ratios <- list()
-  
   positions <- find_next_patterns(ds$binary, ratio_re)
-  for (pos in positions) {
-    ds$binary <- ds$binary %>% 
-      move_to_pos(pos + delta_re$size) %>% 
+  
+  # capture ratio values
+  capture_ratio_values <- function(pos) {
+    bin <- ds$binary %>% 
+      move_to_pos(pos) %>% 
       capture_data("ratio_code", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
       capture_data("ratio_name", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
       capture_data("ratio_format", "text", re_block("fef-0"), re_block("fef-x"), move_past_dots = TRUE) %>% 
       capture_data("element", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
       move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>%  ###
       capture_n_data("ratio_value", "double", 1) 
-    ratios <- c(ratios, list(c(reference = ref_names[max(which(ds$binary$pos > ref_pos))],
-                               ds$binary$data[c("ratio_code", "element", "ratio_name", "ratio_value", "ratio_format")])))
+    
+    # return as data frame
+    as_data_frame(bin$data[c("ratio_code", "element", "ratio_name", "ratio_value", "ratio_format")]) %>% 
+      mutate(
+        reference = refs$name[max(which(bin$pos > refs$pos))]
+      )
   }
   
-  ratios <- bind_rows(ratios) %>% unique() %>% 
-    select(-ratio_code) %>%  # code is very isodat specific and not stored in final
-    select(-ratio_format) # format does not realy hold information that isn't contained in the values themselves
+  # run ratio capture
+  ratios <- data_frame(
+    pos = positions + ratio_re$size,
+    data = map(pos, capture_ratio_values)
+  ) %>% unnest(data) %>% 
+    select(reference, element, ratio_name, ratio_value)
   
   # store information
   ds$method_info$standards <- unique(deltas)
@@ -350,9 +367,8 @@ extract_H3_factor_info <- function(ds) {
   return(ds)
 }
 
-
 # extract vendor computed data table for continuous flow files
-extract_isodat_cf_vendor_data_table <- function(ds, cap_at_fun = NULL) {
+extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NULL) {
   # find vendor data table
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot process vendor identified peaks") %>% 
@@ -414,10 +430,41 @@ extract_isodat_cf_vendor_data_table <- function(ds, cap_at_fun = NULL) {
     rename(`Nr.` = peak)
   
   ### rest of data table
+  cells <- extract_isodat_main_vendor_data_table(ds, cap_at_fun)
+  
+  # store vendor data table
+  .check. <- NULL # global var
+  data_table <- full_join(peaks, mutate(cells$cell_values, .check. = TRUE), by = "Nr.")
+  if (any(is.na(data_table$Start) || any(is.na(data_table$.check.)))) {
+    ds <- register_warning(ds, details = "vendor data table has unexpected empty cells, process vendor table with care")
+  }
+  ds$vendor_data_table <- select(data_table, -.check.)
+  
+  # safe information on the column units
+  attr(ds$vendor_data_table, "units") <- 
+    bind_rows(
+      select_(cells$columns, .dots = c("column", "units")),
+      data_frame(column = c("Start", "Rt", "End"), units = "[s]"),
+      data_frame(column = peaks %>% select(starts_with("Ampl"), starts_with("BGD")) %>% names(), units = "[mV]")
+    ) %>% 
+    mutate(units = ifelse(units == " ", "", units))
+  
+  return(ds)
+}
+
+
+# extract the main (recurring portion of the vendor data table)
+extract_isodat_main_vendor_data_table <- function(ds, cap_at_fun = NULL) {
+  # main data table
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot process vendor data table") %>% 
     move_to_C_block("CGCPeakList", reset_cap = FALSE) %>% # important to NOT reset position cap
     move_to_next_C_block("CEvalDataIntTransferPart")
+  
+  # run cap at function if provided
+  if (!is.null(cap_at_fun)) {
+    ds$binary <- cap_at_fun(ds$binary)
+  }
   
   # find columns and row data for the whole data table
   columns <- list()
@@ -462,7 +509,7 @@ extract_isodat_cf_vendor_data_table <- function(ds, cap_at_fun = NULL) {
       # standardize the units
       if (ds$binary$data$units == "[per mil]")
         ds$binary$data$units <- "[permil]"
-    
+      
       # data format
       type <- 
         if (ds$binary$data$format == "%s") { "text"
@@ -513,23 +560,161 @@ extract_isodat_cf_vendor_data_table <- function(ds, cap_at_fun = NULL) {
   # data column information
   cols <- bind_rows(columns)
   
-  # store vendor data table
-  .check. <- NULL # global var
-  data_table <- full_join(peaks, mutate(bind_rows(rows), .check. = TRUE), by = "Nr.")
-  if (any(is.na(data_table$Start) || any(is.na(data_table$.check.)))) {
-    ds <- register_warning(ds, details = "vendor data table has unexpected empty cells, process vendor table with care")
-  }
-  ds$vendor_data_table <- select(data_table, -.check.)
-  
-  # safe information on the column units
-  attr(ds$vendor_data_table, "units") <- 
-    bind_rows(
-      select_(cols, .dots = c("column", "units")),
-      data_frame(column = c("Start", "Rt", "End"), units = "[s]"),
-      data_frame(column = peaks %>% select(starts_with("Ampl"), starts_with("BGD")) %>% names(), units = "[mV]")
-    ) %>% 
-    mutate(units = ifelse(units == " ", "", units))
-  
-  return(ds)
+  return(list(columns = cols, cell_values = bind_rows(rows)))
 }
 
+# ALTERNATIVE - too slow! ========
+
+# alternative implementation
+# @note: cleaner but slower than extract_isodat_main_vendor_data_table
+# @note: either make faster or deprecate!
+extract_isodat_main_vendor_data_table2 <- function(ds, C_block, cap_at_fun = NULL) {
+  
+  # main data table
+  ds$binary <- ds$binary %>% 
+    set_binary_file_error_prefix("cannot process vendor data table") %>% 
+    move_to_C_block(C_block, reset_cap = TRUE) %>% 
+    move_to_next_C_block("CEvalDataIntTransferPart")
+  
+  # run cap at function if provided
+  if (!is.null(cap_at_fun)) {
+    ds$binary <- cap_at_fun(ds$binary)
+  }
+  
+  columns <- extract_isodat_main_vendor_data_table_cells(ds)
+  cell_values <- extract_isodat_main_vendor_data_table_cell_values(ds, cells)
+  
+  return(list(columns = columns, cell_values = cell_values))
+}
+
+# extract the main (recurring) portion of the vendor data table
+extract_isodat_main_vendor_data_table_cells <- function(ds) {
+  
+  # find columns and row data for the whole data table
+  pre_column_re <- re_combine(
+    re_or(re_text("/"), re_text("-"), size = 2), 
+    re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("x-000"), re_block("fef-x")) 
+  positions <- find_next_patterns(ds$binary, pre_column_re)
+  
+  # capture the table cells
+  # NOTES: this is the SLOWEST part taking ~4s for 300 entries (the actual column/format capture)
+  # is there a way to optimize this further?
+  # - lapply instead of map?
+  # - otimizing the capture data operations?
+  capture_table_cell <- function(pos, bin) {
+    bin <- bin %>% 
+      move_to_pos(pos) %>% 
+      move_to_next_pattern(re_block("fef-x")) %>% # skip ID column since it is not unique in peak jumping files
+      capture_data("column", "raw", re_block("fef-x"), move_past_dots = TRUE) %>% 
+      capture_data("format", "text", re_block("fef-x"), move_past_dots = TRUE) # retrieve format (!not always the same)
+      
+    # skip data columns without formatting infromation right away
+    if(bin$data$format %in% c("", " ")) return(data_frame())
+
+    # check for columns starting with delta symbol, replace with d instead of delta symbol
+    if (identical(bin$data$column[1:2], as.raw(c(180, 03))))
+      bin$data$column[1:2] <- as.raw(c(100, 00))
+    col <- bin$data$column <- parse_raw_data(bin$data$column, "text")
+
+    # return column information
+    data_frame(column = col, format = bin$data$format, continue_pos = bin$pos)
+  }
+  
+  # capture the table cell details
+  # NOTES: very quick
+  capture_table_cell_units <- function(pos, bin) {
+    bin <- bin %>%
+      move_to_pos(pos) %>% 
+      # skip what looks like it might be the gas configuration and an unknown piece of information
+      move_to_next_pattern(re_block("text0"), re_block("fef-x"), re_block("text0"), re_block("fef-x")) %>% 
+      capture_data("units", "raw", re_block("fef-x"), move_past_dots = TRUE, ignore_trailing_zeros = FALSE) # retrieve units
+    
+    # check for permil symbol (which is non-ASCII)
+    permil <- as.raw(c(48, 32))
+    units <- bin$data$units
+    if (length(units) >= length(permil) && any(apply(embed(units,length(units)-length(permil)+1),2,identical,permil))) {
+      units <- "[permil]"
+    } else {
+      units <- parse_raw_data(units, "text")
+    }
+    
+    # standardize the units
+    if (units == "[per mil]") units <- "[permil]"
+    return(units)
+  }
+  
+  # cells (NOTE: lapply is faster than map+unnest in this situation)
+  cells <- 
+    # retrieve cell information
+    lapply(positions + pre_column_re$size, capture_table_cell, bin = ds$binary) %>% 
+    bind_rows() %>% 
+    # row numbers
+    mutate(row = cumsum(column == column[1])) %>%
+    # nest by column and expand column details
+    nest(-column) %>%
+    mutate(
+      n_formats = map_int(data, ~length(unique(.x$format))),
+      column_format = map_chr(data, ~.x$format[1]),
+      units = map_chr(data, ~capture_table_cell_units(min(.x$continue_pos), bin = ds$binary)),
+      type = ifelse (column_format == "%s", "text",
+                     ifelse(column_format %in% c("%u", "%d"), "integer",
+                            ifelse(str_detect(column_format, "\\%[0-9.]+f"), "double", NA_character_)))
+    ) 
+
+  # safety check: to make sure all columns have the same format specification
+  if (!all(ok <- cells$n_formats == 1)) {
+    formats <- map_chr(cells$data[!ok], ~collapse(unique(.x$format), ", "))
+    problems <- glue("column {cells$column[!ok]} has multiple formats '{formats}'")
+    op_error(ds$binary, glue("mismatched data column formats:\n{collapse(problems, '\n')}"))
+  }
+
+  # safety check: to make sure all formats are resolved
+  if (!all(ok <- !is.na(cells$type))) {
+    problems <- glue("column {cells$column[!ok]} has unknown format '{cells$column_format[!ok]}'")
+    op_error(ds$binary, glue("unknown column formats:\n{collapse(problems, '\n')}"))
+  }
+  
+  return(cells)
+}
+
+# extract the cell values
+extract_isodat_main_vendor_data_table_cell_values <- function(ds, cells) {
+  
+  # capture cell value 
+  # NOTES: adds about 1s to a 300 cell table)
+  capture_table_cell_value <- function(pos, type) {
+    # capture data
+    bin <- ds$binary %>% move_to_pos(pos)
+    if (type == "text") {
+      bin <-
+        bin %>% move_to_next_pattern(re_block("x-000"), re_direct("\\x00{4,6}"), re_block("x-000"), re_block("x-000")) %>%
+        capture_data("value", "text", re_null(2), re_direct(".."), re_block("etx"))
+    } else {
+      bin <- 
+        bin %>% move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>% 
+        capture_data("value", type, re_block("x-000"),
+                     data_bytes_min = 4) # read at least one number
+      
+      # sanity checks
+      if (length(bin$data$value) > 1) {
+        op_error(ds$binary, sprintf("expected one cell value but found %d", length(bin$data$value)))
+      } else if (bin$data$value != 0 && (abs(bin$data$value) < 1e-100 || abs(bin$data$value) > 1e100)) {
+        op_error(ds$binary, sprintf("found cell value '%s' which is not a sensible numeric value", str_c(ds$binary$data$value)))
+      }
+    }
+    return(bin$data$value)
+  }
+  
+  # get cell values
+  cells %>% 
+    unnest(data) %>% 
+    select(column, continue_pos, type, row) %>% 
+    nest(-row) %>% 
+    mutate(
+      data = map(data, function(row) {
+        # note: have to do it this way (by row instead of in long format) to keep correct data types for each column
+        mapply(function(x,y,z) list(capture_table_cell_value(y, z)), row$column, row$continue_pos, row$type)
+      })
+    ) %>% 
+    { bind_rows(.$data) }
+}

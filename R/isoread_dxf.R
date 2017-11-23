@@ -33,7 +33,7 @@ isoread_dxf <- function(ds, ...) {
   # process pre-evaluated data table
   if (ds$read_options$vendor_data_table) {
     ds <- exec_func_with_error_catch(
-      extract_isodat_cf_vendor_data_table, ds, 
+      extract_isodat_continuous_flow_vendor_data_table, ds, 
       cap_at_fun = function(bin) cap_at_pos(bin, find_next_pattern(bin, re_text("DetectorDataBlock"))))
   }
   

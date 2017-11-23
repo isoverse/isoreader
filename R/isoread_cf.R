@@ -34,7 +34,7 @@ isoread_cf <- function(ds, ...) {
   block <- start <- NULL # global vars
   if (ds$read_options$vendor_data_table) {
     ds <- exec_func_with_error_catch(
-      extract_isodat_cf_vendor_data_table, ds, 
+      extract_isodat_continuous_flow_vendor_data_table, ds, 
       cap_at_fun = function(bin) {
         C_blocks <- filter(bin$C_blocks, block == "CRawData", start >= bin$pos)
         if (nrow(C_blocks) > 0)

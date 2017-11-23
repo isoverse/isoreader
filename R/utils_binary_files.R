@@ -78,6 +78,7 @@ move_to_pos <- function(bfile, pos) {
 
 # cap at position
 cap_at_pos <- function(bfile, pos) {
+  if(is.null(pos)) stop("cannot cap at position NULL", call. = FALSE)
   if (pos < bfile$pos) {
     op_error(
       bfile, sprintf("cannot cap at position %.0f as it is smaller than current position %.0f", 
@@ -331,33 +332,46 @@ move_to_next_pattern <- function(bfile, ..., max_gap = NULL, move_to_end = TRUE)
 # uses parse_raw_data and therefore can handle multiple data types
 # @inheritParams parse_raw_data
 # note: consider renaming to capture_data_till_pattern
-capture_data <- function(bfile, id, type, ..., data_bytes_min = 0, data_bytes_max = NULL, move_past_dots = FALSE,
+capture_data <- function(bfile, id, type, ..., data_bytes_min = 0, data_bytes_max = NULL, 
+                         move_past_dots = FALSE, re_size_exact = TRUE,
                          ignore_trailing_zeros = TRUE, exact_length = TRUE, sensible = NULL) {
   
   # reset existing data in this field
   bfile$data[[id]] <- NULL
   
+  # regexp
+  regexps <- re_combine(...)
+  
   # move to begining of target ... after the data
   if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
   start <- bfile$pos
   bfile$pos <- bfile$pos + data_bytes_min # offset until starting to look for next pattern
-  bfile <- move_to_next_pattern(bfile, ..., max_gap = data_bytes_max, move_to_end = FALSE)
+  bfile <- move_to_next_pattern(bfile, regexps, max_gap = data_bytes_max, move_to_end = FALSE)
   end <- bfile$pos - 1
   
   # store data
   if (end > start) {
-    id_text <- sprintf("'%s' capture failed: ", id)
-    bfile$data[[id]] <-
-      parse_raw_data(bfile$raw[start:end], type,
-                     ignore_trailing_zeros = ignore_trailing_zeros,
-                     exact_length = exact_length, sensible = sensible,
-                     errors = str_c(bfile$error_prefix, id_text))
+    if (length(type) == 1 && type[1] == "raw"){
+      # simplify for speed
+      bfile$data[[id]] <- bfile$raw[start:end]
+    } else {
+      id_text <- sprintf("'%s' capture failed: ", id)
+      bfile$data[[id]] <-
+        parse_raw_data(bfile$raw[start:end], type,
+                       ignore_trailing_zeros = ignore_trailing_zeros,
+                       exact_length = exact_length, sensible = sensible,
+                       errors = str_c(bfile$error_prefix, id_text))
+    }
   }
   
   # whether to move past the dots
-  if(move_past_dots)
-    bfile <- move_to_next_pattern(bfile, ..., max_gap = 0)
-    
+  if(move_past_dots) {
+    if (re_size_exact)
+      bfile <- move_to_pos(bfile, end + 1 + regexps$size)
+    else
+      bfile <- move_to_next_pattern(bfile, regexps, max_gap = 0)
+  }
+  
   return(bfile)
 }
 
