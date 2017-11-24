@@ -11,6 +11,7 @@ Depends:
 Imports:
     methods,
     magrittr,
+    rlang,
     glue,
     tidyselect,
     dplyr (>= 0.7.0),

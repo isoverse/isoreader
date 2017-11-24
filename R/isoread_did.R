@@ -113,6 +113,7 @@ extract_did_raw_voltage_data <- function(ds) {
 }
 
 # extract vendor computed data table
+# @note this could potentially also use the more universal data table functions in isoread_isodat
 extract_did_vendor_data_table <- function(ds) {
   
   # find vendor data table

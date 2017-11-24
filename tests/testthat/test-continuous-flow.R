@@ -23,6 +23,7 @@ test_that("test that parameter checks are performed", {
 test_that("test that dxf files can be read", {
   # test specific files
   
+  # FIXME: re-enable for commits
   #skip("Currently not testing all continuous flow data files.")
   
   turn_caching_off()
@@ -31,10 +32,9 @@ test_that("test that dxf files can be read", {
   expect_is(dxf <- read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
 
-  # FIXME: this file does NOT work for its voltages!  
-  # expect_true(file.exists(file <- isoreader_example("continuous_flow_example.cf")))
-  # expect_is(dxf <- read_continuous_flow(file), "continuous_flow")
-  # expect_equal(nrow(problems(dxf)), 0)
+  expect_true(file.exists(file <- isoreader_example("continuous_flow_example.cf")))
+  expect_is(dxf <- read_continuous_flow(file), "continuous_flow")
+  expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- isoreader_example("peak_jump_example.dxf")))
   expect_is(dxf <- read_continuous_flow(file), "continuous_flow")

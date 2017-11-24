@@ -2,7 +2,7 @@ context("Dual Inlet Files")
 
 test_that("test that supported di files are correct", {
   expect_is(exts <- isoreader:::get_supported_di_files(), "data.frame")
-  expect_equal(exts$extension, c("did", "di.rda"))
+  expect_equal(exts$extension, c("did", "caf", "di.rda"))
   expect_true(all(exts$fun %>% sapply(class) == "character"))
   
   # check for existence in names sapce
@@ -20,6 +20,7 @@ test_that("test that parameter checks are performed", {
 test_that("test that did files can be read", {
   # test specific files
   
+  # FIXME: re-enable for commits
   #skip("Currently not testing all dual inlet data files.")
   
   turn_caching_off()
@@ -31,4 +32,10 @@ test_that("test that did files can be read", {
   expect_true(file.exists(file <- file.path("test_data", "did_example_CO2_clumped_01.did")))
   expect_is(did <- read_dual_inlet(file), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
+  
+  # .caf files
+  expect_true(file.exists(file <- file.path("test_data", "caf_example_CO2_01.caf")))
+  expect_is(did <- read_dual_inlet(file), "dual_inlet")
+  expect_equal(nrow(problems(did)), 0)
+  
 })

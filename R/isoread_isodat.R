@@ -430,11 +430,11 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
     rename(`Nr.` = peak)
   
   ### rest of data table
-  cells <- extract_isodat_main_vendor_data_table(ds, cap_at_fun)
+  extracted_dt <- extract_isodat_main_vendor_data_table(ds, C_block = "CGCPeakList", cap_at_fun = cap_at_fun)
   
   # store vendor data table
   .check. <- NULL # global var
-  data_table <- full_join(peaks, mutate(cells$cell_values, .check. = TRUE), by = "Nr.")
+  data_table <- full_join(peaks, mutate(extracted_dt$cell_values, .check. = TRUE), by = "Nr.")
   if (any(is.na(data_table$Start) || any(is.na(data_table$.check.)))) {
     ds <- register_warning(ds, details = "vendor data table has unexpected empty cells, process vendor table with care")
   }
@@ -443,7 +443,7 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   # safe information on the column units
   attr(ds$vendor_data_table, "units") <- 
     bind_rows(
-      select_(cells$columns, .dots = c("column", "units")),
+      select_(extracted_dt$columns, .dots = c("column", "units")),
       data_frame(column = c("Start", "Rt", "End"), units = "[s]"),
       data_frame(column = peaks %>% select(starts_with("Ampl"), starts_with("BGD")) %>% names(), units = "[mV]")
     ) %>% 
@@ -454,11 +454,17 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
 
 
 # extract the main (recurring portion of the vendor data table)
-extract_isodat_main_vendor_data_table <- function(ds, cap_at_fun = NULL) {
+# @param C_block which C_block to start at
+# @param col_include regexp to decide which columns to include (all by default)
+# @param skip_row_check function to check whether to skip a row based on the most recent column and column value
+# @note: doing this in a for loop actually turned out faster than with apply, epecially with the skip_row parameter
+extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL, col_include = "*",
+                                                  skip_row_check = function(column, value) FALSE) {
+  
   # main data table
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot process vendor data table") %>% 
-    move_to_C_block("CGCPeakList", reset_cap = FALSE) %>% # important to NOT reset position cap
+    move_to_C_block(C_block, reset_cap = FALSE) %>% # important to NOT reset position cap
     move_to_next_C_block("CEvalDataIntTransferPart")
   
   # run cap at function if provided
@@ -467,28 +473,48 @@ extract_isodat_main_vendor_data_table <- function(ds, cap_at_fun = NULL) {
   }
   
   # find columns and row data for the whole data table
-  columns <- list()
-  rows <- list()
-  rows_i <- 0
   pre_column_re <- re_combine(
     re_or(re_text("/"), re_text("-"), size = 2), 
     re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("x-000"), re_block("fef-x")) 
   positions <- find_next_patterns(ds$binary, pre_column_re)
+  
+  # collection variables
+  columns <- list()
+  rows <- list()
+  rows_i <- 0
+  skip_row <- FALSE
+  
   for(pos in positions) {
-    # get column id
+    # get column name
     ds$binary <- ds$binary %>% 
       move_to_pos(pos + pre_column_re$size) %>% 
       move_to_next_pattern(re_block("fef-x")) %>% # skip ID column since it is not unique in peak jumping files
-      capture_data("column", "raw", re_block("fef-x"), move_past_dots = TRUE, ignore_trailing_zeros = FALSE) %>% 
-      capture_data("format", "text", re_block("fef-x"), move_past_dots = TRUE) # retrieve format (!not always the same)
-    
-    # skip data columns without formatting infromation right away
-    if(ds$binary$data$format %in% c("", " ")) next # skip 
+      capture_data("column", "raw", re_block("fef-x"), move_past_dots = TRUE, ignore_trailing_zeros = FALSE) 
     
     # check for columns starting with delta symbol, replace with d instead of delta symbol
     if (identical(ds$binary$data$column[1:2], as.raw(c(180, 03)))) 
       ds$binary$data$column[1:2] <- as.raw(c(100, 00)) 
-    col <- ds$binary$data$column <- parse_raw_data(ds$binary$data$column, "text")
+    col <- parse_raw_data(ds$binary$data$column, "text")
+    
+    # skip columns that don't fit the include criteria right away
+    if (!grepl(col_include, col)) next #skip
+    
+    # check for new row
+    if (length(columns) == 0 || col == names(columns)[1]) {
+      rows_i <- rows_i + 1 
+      rows[[rows_i]] <- list()
+      skip_row <- FALSE
+    }
+    
+    # check whether still in row skip
+    if (skip_row) next # skip
+    
+    # get column formatting
+    ds$binary <- ds$binary %>% 
+      capture_data("format", "text", re_block("fef-x"), move_past_dots = TRUE) # retrieve format (!not always the same)
+    
+    # skip data columns without formatting infromation right away
+    if(ds$binary$data$format %in% c("", " ")) next # skip 
     
     # store information about new column if not already stored
     if (!col %in% names(columns)) {
@@ -521,19 +547,13 @@ extract_isodat_main_vendor_data_table <- function(ds, cap_at_fun = NULL) {
         }
       
       # store
-      new_col <- c(list(pos = ds$binary$pos, type = type), ds$binary$data[c("column", "format", "units")])
+      new_col <- c(list(pos = ds$binary$pos, type = type, column = col), ds$binary$data[c("format", "units")])
       columns[[col]] <- new_col
     } else if (ds$binary$data$format != columns[[col]]$format) {
       # double check formatting
       op_error(ds$binary, 
                sprintf("mismatched data column format for column '%s', found '%s' but expected '%s'",
                        col, ds$binary$data$format, columns[[col]]$format))
-    }
-    
-    # new row
-    if (col == names(columns)[1]) {
-      rows_i <- rows_i + 1 
-      rows[[rows_i]] <- list()
     }
     
     # capture data
@@ -548,19 +568,28 @@ extract_isodat_main_vendor_data_table <- function(ds, cap_at_fun = NULL) {
                      data_bytes_min = 4) # read at least one number
       
       # sanity checks
-      if (length(ds$binary$data$value) > 1) {
+      if (is.nan(ds$binary$data$value)) {
+        ds$binary$data$value <- NA # safety to catch things that are not valid numbers at all
+      } else if (length(ds$binary$data$value) > 1) {
         op_error(ds$binary, sprintf("expected one value for cell '%s' but found %d", col, length(ds$binary$data$value)))
       } else if (ds$binary$data$value != 0 && (abs(ds$binary$data$value) < 1e-100 || abs(ds$binary$data$value) > 1e100)) {
         op_error(ds$binary, sprintf("found cell value '%s' for cell '%s' which is not a sensible numeric value", str_c(ds$binary$data$value), col))
       }
     }
-    rows[[rows_i]][[col]] <- ds$binary$data$value
+    
+    # check whether row should be skipped
+    skip_row <- do.call(skip_row_check, args = list(col, ds$binary$data$value))
+    if (skip_row) {
+      rows[[rows_i]] <- NULL
+    } else {
+      rows[[rows_i]][[col]] <- ds$binary$data$value
+    }
   }
   
-  # data column information
-  cols <- bind_rows(columns)
+  cols <<- bind_rows(columns)
+  cells <<- bind_rows(rows)
   
-  return(list(columns = cols, cell_values = bind_rows(rows)))
+  return(list(columns = cols, cell_values = cells))
 }
 
 # ALTERNATIVE - too slow! ========
@@ -568,6 +597,7 @@ extract_isodat_main_vendor_data_table <- function(ds, cap_at_fun = NULL) {
 # alternative implementation
 # @note: cleaner but slower than extract_isodat_main_vendor_data_table
 # @note: either make faster or deprecate!
+# @note: does not support the newer include and skip row parameters
 extract_isodat_main_vendor_data_table2 <- function(ds, C_block, cap_at_fun = NULL) {
   
   # main data table
@@ -582,12 +612,14 @@ extract_isodat_main_vendor_data_table2 <- function(ds, C_block, cap_at_fun = NUL
   }
   
   columns <- extract_isodat_main_vendor_data_table_cells(ds)
-  cell_values <- extract_isodat_main_vendor_data_table_cell_values(ds, cells)
+  cell_values <- extract_isodat_main_vendor_data_table_cell_values(ds, columns)
   
   return(list(columns = columns, cell_values = cell_values))
 }
 
 # extract the main (recurring) portion of the vendor data table
+# @note part of extract_isodat_main_vendor_data_table2
+# @note too slow (slower than the loop in this case)
 extract_isodat_main_vendor_data_table_cells <- function(ds) {
   
   # find columns and row data for the whole data table
@@ -678,6 +710,8 @@ extract_isodat_main_vendor_data_table_cells <- function(ds) {
 }
 
 # extract the cell values
+# extract the main (recurring) portion of the vendor data table
+# @note part of extract_isodat_main_vendor_data_table2
 extract_isodat_main_vendor_data_table_cell_values <- function(ds, cells) {
   
   # capture cell value 
