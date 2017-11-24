@@ -4,14 +4,14 @@
 \alias{aggregate_vendor_data_table}
 \title{Aggregate vendor computed table data}
 \usage{
-aggregate_vendor_data_table(isofiles, with_units = TRUE,
+aggregate_vendor_data_table(isofiles, with_units = FALSE,
   select = all_columns(), include_file_info = c(),
   quiet = setting("quiet"))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}
 
-\item{with_units}{whether to include units in the column headers (if there are any) or not}
+\item{with_units}{whether to include units in the column headers (if there are any) or not (default is FALSE)}
 
 \item{select}{which vendor table columns select. All by default.}
 

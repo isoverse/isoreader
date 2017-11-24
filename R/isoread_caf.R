@@ -170,7 +170,7 @@ extract_caf_vendor_data_table <- function(ds) {
   second_block_cols <- vendor_dt[1,] %>% map_lgl(~is.na(.x))
   if (sum(second_block_cols) > 0) {
     # separate and merge the two blocks
-    condition <- as.name(names(vendor_dt)[which(empty_cols)[1]])
+    condition <- as.name(names(vendor_dt)[which(second_block_cols)[1]])
     first_block <- filter(vendor_dt, is.na(!!condition))[!second_block_cols]
     second_block_cols['Nr.'] <- TRUE
     second_block <- filter(vendor_dt, !is.na(!!condition))[second_block_cols]

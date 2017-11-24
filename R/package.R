@@ -4,7 +4,7 @@
 #' @import tidyr
 #' @importFrom rlang quo quos UQ UQE !! !!!
 #' @importFrom tidyselect everything starts_with ends_with matches
-#' @importFrom dplyr select select_ rename rename_ arrange mutate mutate_ filter distinct as_data_frame left_join right_join full_join data_frame bind_rows bind_cols
+#' @importFrom dplyr select select_ rename rename_ arrange mutate mutate_ filter distinct as_data_frame left_join right_join full_join data_frame bind_rows bind_cols group_by group_by_ ungroup
 #' @importFrom glue glue collapse
 #' @importFrom purrr map map2 map_lgl map_chr map_df map_int map_dbl
 #' @importFrom tibble tribble deframe rownames_to_column

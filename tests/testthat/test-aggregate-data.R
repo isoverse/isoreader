@@ -223,7 +223,7 @@ test_that("test that aggregating of vendor data table works", {
   isofile2$vendor_data_table <- data_frame(column1 = "col1 b", column2 = "col2 b")
   
   # unit information
-  expect_warning(aggregate_vendor_data_table(isofile1), "do not have unit information")
+  expect_warning(aggregate_vendor_data_table(isofile1, with_units = TRUE), "do not have unit information")
   expect_message(aggregate_vendor_data_table(isofile1, with_units = FALSE, quiet = FALSE), "aggregating")
   expect_silent(aggregate_vendor_data_table(isofile1, with_units = FALSE, quiet = TRUE))
   
