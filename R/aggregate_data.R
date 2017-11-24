@@ -1,4 +1,6 @@
 # File info and data retrieval functions 
+# @note: should make the aggregation functions type safe?
+# @note: need an "aggregate_data()" funtion that nests everything together
 
 # Specific file info calls ======
 
@@ -228,11 +230,11 @@ aggregate_resistors_info <- function(isofiles, include_file_info = c(), quiet = 
 #' Aggregate data from the vendor-computed data table. This information is only available if the isofiles were read with parameter \code{read_vendor_data_table=TRUE}.
 #' 
 #' @inheritParams aggregate_raw_data
-#' @param with_units whether to include units in the column headers (if there are any) or not
+#' @param with_units whether to include units in the column headers (if there are any) or not (default is FALSE)
 #' @param select which vendor table columns select. All by default.
 #' @family data retrieval functions
 #' @export
-aggregate_vendor_data_table <- function(isofiles, with_units = TRUE, select = all_columns(), include_file_info = c(), 
+aggregate_vendor_data_table <- function(isofiles, with_units = FALSE, select = all_columns(), include_file_info = c(), 
                                         quiet = setting("quiet")) {
   isofiles <- as_isofile_list(isofiles)
   if (!quiet) { 
