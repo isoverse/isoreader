@@ -6,10 +6,10 @@
 \title{Re-read isofiles}
 \usage{
 reread_isofiles(isofiles, ..., stop_if_missing = FALSE,
-  quiet = setting(quiet))
+  quiet = default(quiet))
 
 reread_isofiles_archive(rda_filepaths, ..., stop_if_missing = FALSE,
-  quiet = setting(quiet))
+  quiet = default(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

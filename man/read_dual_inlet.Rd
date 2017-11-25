@@ -4,12 +4,12 @@
 \alias{read_dual_inlet}
 \title{Load dual inlet data}
 \usage{
-read_dual_inlet(paths, read_raw_data = setting(read_raw_data),
-  read_file_info = setting(read_file_info),
-  read_method_info = setting(read_method_info),
-  read_vendor_data_table = setting(read_vendor_data_table),
-  discard_duplicates = TRUE, cache = setting(cache),
-  read_cache = setting(cache), quiet = setting(quiet))
+read_dual_inlet(paths, read_raw_data = default(read_raw_data),
+  read_file_info = default(read_file_info),
+  read_method_info = default(read_method_info),
+  read_vendor_data_table = default(read_vendor_data_table),
+  discard_duplicates = TRUE, cache = default(cache),
+  read_cache = default(cache), quiet = default(quiet))
 }
 \arguments{
 \item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}

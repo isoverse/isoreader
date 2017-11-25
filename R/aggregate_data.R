@@ -57,7 +57,7 @@ check_iso_file_param <- function(isofile) {
 #' @family data retrieval functions
 #' @note File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using \code{isofile$file_info[['INFO_NAME']]} on the isofile object directly.
 #' @export
-aggregate_file_info <- function(isofiles, select = all_info(), quiet = setting(quiet)) {
+aggregate_file_info <- function(isofiles, select = all_info(), quiet = default(quiet)) {
   isofiles <- as_isofile_list(isofiles)
   if (!quiet) sprintf("Info: aggregating file info from %d data file(s)", length(isofiles)) %>% message()
   check_read_options(isofiles, "file_info")
@@ -99,7 +99,7 @@ aggregate_file_info <- function(isofiles, select = all_info(), quiet = setting(q
 #' @param include_file_info if provided, will include the requested file information (see \code{\link{aggregate_file_info}}) with the raw data
 #' @family data retrieval functions
 #' @export
-aggregate_raw_data <- function(isofiles, gather = FALSE, include_file_info = c(), quiet = setting(quiet)) {
+aggregate_raw_data <- function(isofiles, gather = FALSE, include_file_info = c(), quiet = default(quiet)) {
   isofiles <- as_isofile_list(isofiles)
   if (!quiet) { 
     sprintf("Info: aggregating raw data from %d data file(s)%s", length(isofiles),
@@ -151,7 +151,7 @@ aggregate_raw_data <- function(isofiles, gather = FALSE, include_file_info = c()
 #' @param with_ratios whether to include ratios or just standard delta values
 #' @family data retrieval functions
 #' @export
-aggregate_standards_info <- function(isofiles, with_ratios = FALSE, include_file_info = c(), quiet = setting(quiet)) {
+aggregate_standards_info <- function(isofiles, with_ratios = FALSE, include_file_info = c(), quiet = default(quiet)) {
   isofiles <- as_isofile_list(isofiles)
   if (!quiet) { 
     sprintf("Info: aggregating standards info from %d data file(s)%s", length(isofiles),
@@ -195,7 +195,7 @@ aggregate_standards_info <- function(isofiles, with_ratios = FALSE, include_file
 #' @inheritParams aggregate_raw_data
 #' @family data retrieval functions
 #' @export
-aggregate_resistors_info <- function(isofiles, include_file_info = c(), quiet = setting(quiet)) {
+aggregate_resistors_info <- function(isofiles, include_file_info = c(), quiet = default(quiet)) {
   isofiles <- as_isofile_list(isofiles)
   if (!quiet) { 
     sprintf("Info: aggregating resistors info from %d data file(s)%s", length(isofiles),
@@ -235,7 +235,7 @@ aggregate_resistors_info <- function(isofiles, include_file_info = c(), quiet = 
 #' @family data retrieval functions
 #' @export
 aggregate_vendor_data_table <- function(isofiles, with_units = FALSE, select = all_columns(), include_file_info = c(), 
-                                        quiet = setting(quiet)) {
+                                        quiet = default(quiet)) {
   isofiles <- as_isofile_list(isofiles)
   if (!quiet) { 
     sprintf("Info: aggregating vendor data table %s from %d data file(s)%s", 

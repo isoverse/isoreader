@@ -8,7 +8,7 @@
 #' @param to what time units to convert to
 #' @export
 #' @return the passed in isofile(s) with changed time units
-convert_time <- function(isofiles, to, quiet = setting(quiet)) {
+convert_time <- function(isofiles, to, quiet = default(quiet)) {
   
   # checks
   if(!is_continuous_flow(isofiles)) stop("can only convert time in continuous flow isofiles", call. = FALSE)
@@ -60,7 +60,7 @@ convert_time <- function(isofiles, to, quiet = setting(quiet)) {
 #' @param R_units determined what units resistor values (\code{R}) are in, if they are specified. Example \code{R_units = "GOhm"} designates that the resistor values provided in \code{R} parameter are in Giga-Ohm, i.e. 10^9 Ohm.
 #' @export
 #' @return the passed in isofile(s) with changed signal units
-convert_signals <- function(isofiles, to, R, R_units = NA, quiet = setting(quiet)) {
+convert_signals <- function(isofiles, to, R, R_units = NA, quiet = default(quiet)) {
   
   # checks
   if(!is_continuous_flow(isofiles) && !is_dual_inlet(isofiles)) stop("can only convert signals in continuous flow and dual inlet isofiles", call. = FALSE)
@@ -227,7 +227,7 @@ get_unit_scaling <- function(unit, base_units) {
 # @param V_pattern regular expression pattern how to recognize voltage columns and detect the masses they belong to (default is v followed by a number, e.g. v45)
 # @param I_prefix prefix for the newly created current columns, the suffix is automatically the current units
 # @note consider exporting this function
-scale_signals <- function(data, signal_cols, to, R = c(), R_units = "GOhm", quiet = setting(quiet)) {
+scale_signals <- function(data, signal_cols, to, R = c(), R_units = "GOhm", quiet = default(quiet)) {
   
   # safety checks
   if(missing(data) || !is.data.frame(data))  stop("data has to be supplied as a data frame to ", sys.call(0), call. = FALSE)
@@ -286,7 +286,7 @@ scale_signals <- function(data, signal_cols, to, R = c(), R_units = "GOhm", quie
     )
   
   # show scaling if in debug mode
-  if (setting(debug)) {
+  if (default(debug)) {
     message("DEBUG MSG: Using the following conversion table for signal scaling:")
     print(signal_scaling)
   }

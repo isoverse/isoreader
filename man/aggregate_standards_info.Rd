@@ -5,7 +5,7 @@
 \title{Aggregate standards from methods info}
 \usage{
 aggregate_standards_info(isofiles, with_ratios = FALSE,
-  include_file_info = c(), quiet = setting(quiet))
+  include_file_info = c(), quiet = default(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

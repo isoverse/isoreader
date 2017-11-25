@@ -7,7 +7,7 @@
 export_to_excel(isofiles, filepath, include_raw_data = TRUE,
   include_file_info = TRUE, include_method_info = TRUE,
   include_vendor_data_table = TRUE, include_problems = TRUE,
-  quiet = setting(quiet))
+  quiet = default(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

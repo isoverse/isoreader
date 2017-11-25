@@ -4,7 +4,7 @@
 \alias{convert_signals}
 \title{Convert signal units in continuous flow and dual inlet files}
 \usage{
-convert_signals(isofiles, to, R, R_units = NA, quiet = setting(quiet))
+convert_signals(isofiles, to, R, R_units = NA, quiet = default(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

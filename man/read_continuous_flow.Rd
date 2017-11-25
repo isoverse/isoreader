@@ -4,10 +4,12 @@
 \alias{read_continuous_flow}
 \title{Load continuous flow data}
 \usage{
-read_continuous_flow(paths, read_raw_data = TRUE, read_file_info = TRUE,
-  read_method_info = TRUE, read_vendor_data_table = TRUE,
-  discard_duplicates = TRUE, cache = setting(cache),
-  read_cache = setting(cache), quiet = setting(quiet))
+read_continuous_flow(paths, read_raw_data = default(read_raw_data),
+  read_file_info = default(read_file_info),
+  read_method_info = default(read_method_info),
+  read_vendor_data_table = default(read_vendor_data_table),
+  discard_duplicates = TRUE, cache = default(cache),
+  read_cache = default(cache), quiet = default(quiet))
 }
 \arguments{
 \item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}

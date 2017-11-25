@@ -5,7 +5,7 @@
 \title{Set default read options}
 \usage{
 set_default_read_parameters(data, read_raw_data, read_file_info,
-  read_method_info, read_vendor_data_table, quiet = setting(quiet))
+  read_method_info, read_vendor_data_table, quiet = default(quiet))
 }
 \arguments{
 \item{data}{a data frame - returned invisibly as is if provided (e.g. in the middle of a pipeline)}

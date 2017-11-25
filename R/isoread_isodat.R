@@ -304,7 +304,7 @@ extract_isodat_old_sequence_line_info <- function(ds) {
   }
   
   if (length(values) != length(labels)) {
-    if(setting(debug)) {
+    if(default(debug)) {
       print(bind_rows(labels))
       print(bind_rows(values))
     }

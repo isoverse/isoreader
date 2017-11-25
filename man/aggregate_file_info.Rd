@@ -4,7 +4,7 @@
 \alias{aggregate_file_info}
 \title{Aggregate file info}
 \usage{
-aggregate_file_info(isofiles, select = all_info(), quiet = setting(quiet))
+aggregate_file_info(isofiles, select = all_info(), quiet = default(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

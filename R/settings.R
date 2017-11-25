@@ -1,5 +1,5 @@
 # retrieve package settings, internal function, not exported
-setting <- function(name) {
+default <- function(name) {
   name <- enquo(name) %>% quos_to_text(variable = "setting")
   value <- getOption(str_c("isoreader.", name))
   if (is.null(value)) stop("isoreader setting '", name, "' does not exist", call. = FALSE)
@@ -7,7 +7,7 @@ setting <- function(name) {
 }
 
 # set package setting, internal function, not exported
-set_setting <- function(name, value, overwrite = TRUE) {
+set_default <- function(name, value, overwrite = TRUE) {
   if (overwrite || !str_c("isoreader.", name) %in% names(options()))
     options(list(value) %>% setNames(str_c("isoreader.", name)))
   return(invisible(value))
@@ -22,7 +22,7 @@ show_isoreader_parameters <- function(data = NULL) {
   message("Info: isoreader package current default parameters")
   current <- 
     c("quiet", "cache", "cache_dir", "read_raw_data", "read_file_info", "read_method_info", "read_vendor_data_table") %>% 
-    sapply(function(x) list(setting(!!x))) %>% 
+    sapply(function(x) list(default(!!x))) %>% 
     {
       data_frame(parameter = names(.),
                     value = as.character(unlist(.)))
@@ -45,16 +45,16 @@ NULL
 #' @rdname caching
 #' @export
 turn_caching_on <- function(data) {
-  set_setting("cache", TRUE)
-  if (!setting(quiet)) message("Info: caching turned on")
+  set_default("cache", TRUE)
+  if (!default(quiet)) message("Info: caching turned on")
   if (!missing(data)) return(invisible(data))
 }
 
 #' @rdname caching
 #' @export
 turn_caching_off <- function(data) {
-  set_setting("cache", FALSE)
-  if (!setting(quiet)) message("Info: caching turned off")
+  set_default("cache", FALSE)
+  if (!default(quiet)) message("Info: caching turned off")
   if (!missing(data)) return(invisible(data))
 }
 
@@ -66,7 +66,7 @@ turn_caching_off <- function(data) {
 #' @param read_vendor_data_table if provided, set as the default for `read_vendor_data_tabl` parameters
 #' @export
 #' @family settings functions
-set_default_read_parameters <- function(data, read_raw_data, read_file_info, read_method_info, read_vendor_data_table, quiet = setting(quiet)) {
+set_default_read_parameters <- function(data, read_raw_data, read_file_info, read_method_info, read_vendor_data_table, quiet = default(quiet)) {
   
   read_params <- list()
   
@@ -88,7 +88,7 @@ set_default_read_parameters <- function(data, read_raw_data, read_file_info, rea
   }
 
   # set values
-  mapply(set_setting, names(read_params), read_params)
+  mapply(set_default, names(read_params), read_params)
     
   if (!missing(data)) return(invisible(data))
 }
@@ -105,7 +105,7 @@ NULL
 #' @family settings functions
 #' @export
 turn_info_messages_on <- function(data) {
-  set_setting("quiet", FALSE)
+  set_default("quiet", FALSE)
   message("Info: information messages turned on")
   if (!missing(data)) return(invisible(data))
 }
@@ -113,16 +113,16 @@ turn_info_messages_on <- function(data) {
 #' @rdname info_messages
 #' @export
 turn_info_messages_off <- function(data) {
-  set_setting("quiet", TRUE)
+  set_default("quiet", TRUE)
   if (!missing(data)) return(invisible(data))
 }
 
 # update quiet returns update function for on.exit
 update_quiet <- function(quiet) {
-  if (quiet != setting(quiet)) {
-    quiet_setting <- setting(quiet)
-    set_setting("quiet", quiet)
-    return(function() set_setting("quiet", quiet_setting))
+  if (quiet != default(quiet)) {
+    quiet_setting <- default(quiet)
+    set_default("quiet", quiet)
+    return(function() set_default("quiet", quiet_setting))
   } else {
     return(function() {})
   }
@@ -132,15 +132,15 @@ update_quiet <- function(quiet) {
 # not exported, used for internal debugging
 # @param catch_errors whether to still catch errors in debug mode or whether to throw them
 turn_debug_on <- function(data, catch_errors = TRUE) {
-  set_setting("debug", TRUE)
-  set_setting("catch_errors", catch_errors)
+  set_default("debug", TRUE)
+  set_default("catch_errors", catch_errors)
   message("Info: debug mode turned on, error catching turned ", if(catch_errors) "on" else "off")
   if (!missing(data)) return(data)
 }
 
 turn_debug_off <- function(data) {
-  set_setting("debug", FALSE)
-  set_setting("catch_errors", TRUE)
+  set_default("debug", FALSE)
+  set_default("catch_errors", TRUE)
   message("Info: debug mode turned off")
   if (!missing(data)) return(data)
 }

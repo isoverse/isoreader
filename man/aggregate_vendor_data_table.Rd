@@ -5,7 +5,7 @@
 \title{Aggregate vendor computed table data}
 \usage{
 aggregate_vendor_data_table(isofiles, with_units = FALSE,
-  select = all_columns(), include_file_info = c(), quiet = setting(quiet))
+  select = all_columns(), include_file_info = c(), quiet = default(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

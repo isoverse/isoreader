@@ -5,7 +5,7 @@
 \title{Aggregate raw data}
 \usage{
 aggregate_raw_data(isofiles, gather = FALSE, include_file_info = c(),
-  quiet = setting(quiet))
+  quiet = default(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

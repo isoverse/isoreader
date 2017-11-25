@@ -9,9 +9,9 @@
 #' @export
 read_dual_inlet <- function(
   paths, 
-  read_raw_data = setting(read_raw_data), read_file_info = setting(read_file_info), 
-  read_method_info = setting(read_method_info), read_vendor_data_table = setting(read_vendor_data_table),
-  discard_duplicates = TRUE, cache = setting(cache), read_cache = setting(cache), quiet = setting(quiet)) {
+  read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
+  read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
+  discard_duplicates = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
   isoread_files(

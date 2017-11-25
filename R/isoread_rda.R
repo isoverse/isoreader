@@ -21,7 +21,7 @@ isoread_rda <- function(ds, ...) {
     stop(call. = FALSE)
   
   # information
-  if (!setting(quiet)) {
+  if (!default(quiet)) {
     sprintf("Info: loaded data for %d data files from R Data Archive - checking loaded files for content consistency...", length(isofiles)) %>% message()
   }
   

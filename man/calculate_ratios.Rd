@@ -4,7 +4,7 @@
 \alias{calculate_ratios}
 \title{Calculate ratios}
 \usage{
-calculate_ratios(isofiles, ratios, quiet = setting(quiet))
+calculate_ratios(isofiles, ratios, quiet = default(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

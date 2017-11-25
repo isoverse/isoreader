@@ -5,7 +5,7 @@
 \title{Remove problematic files}
 \usage{
 omit_files_with_problems(isofiles, type = c("error", "warning", "both"),
-  quiet = setting(quiet))
+  quiet = default(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

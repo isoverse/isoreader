@@ -24,7 +24,7 @@ isoread <- function(...) {
 #' @param ... additional parameters passed to the specific processing functions for the different file extensions
 #' @return single isofile object (if single file) or list of isofiles (isofile_list)
 #' @export
-isoread_files <- function(paths, supported_extensions, data_structure, ..., discard_duplicates = TRUE, cache = setting(cache), read_cache = setting(cache), quiet = setting(quiet)) {
+isoread_files <- function(paths, supported_extensions, data_structure, ..., discard_duplicates = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
 
   # set quiet for the current and sub-calls and reset back to previous setting on exit
   on_exit_quiet <- update_quiet(quiet)
@@ -67,7 +67,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
     )
   
   # overview
-  if (!setting(quiet)) {
+  if (!default(quiet)) {
     message("Info: preparing to read ", nrow(files), " data file(s)...")
   }
   
@@ -80,16 +80,16 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
     # check for cache
     if (read_cache && cacheable && file.exists(cachepath)) {
       ## cache available  
-      if (!setting(quiet)) sprintf("Info: reading file %s from cache", filepath) %>% message()
+      if (!default(quiet)) sprintf("Info: reading file %s from cache", filepath) %>% message()
       isofile <- load_cached_isofile(cachepath)
     } else {
       ## read file anew using extension-specific function to read file
       caching <- if (cache && cacheable) " and caching" else ""
-      if (!setting(quiet)) sprintf("Info: reading%s file %s with '%s' reader", caching, filepath, ext) %>% message()
+      if (!default(quiet)) sprintf("Info: reading%s file %s with '%s' reader", caching, filepath, ext) %>% message()
       isofile <- exec_func_with_error_catch(reader_fun, isofile, ...)
       
       # cleanup any binary content depending on debug setting
-      if (!setting(debug)) isofile$binary <- NULL
+      if (!default(debug)) isofile$binary <- NULL
       
       # store in cached file
       if (cache && cacheable) cache_isofile(isofile, cachepath)
@@ -105,7 +105,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
   isofiles <- as_isofile_list(unname(isofiles), discard_duplicates = discard_duplicates) 
 
   # report problems
-  if (!setting(quiet) && n_problems(isofiles) > 0) {
+  if (!default(quiet) && n_problems(isofiles) > 0) {
     message(sprintf("Info: encountered %.0f problems in total.", n_problems(isofiles)))
     print(problems(isofiles))
     cat("\n")
@@ -127,7 +127,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
 #' @param ... additional read parameters that should be used for re-reading the isofiles, see \code{\link{read_dual_inlet}} and \code{\link{read_continuous_flow}} for details
 #' @param stop_if_missing whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files and keep them unchanged but re-read those that do exist)
 #' @export
-reread_isofiles <- function(isofiles, ..., stop_if_missing = FALSE, quiet = setting(quiet)) {
+reread_isofiles <- function(isofiles, ..., stop_if_missing = FALSE, quiet = default(quiet)) {
   
   # checks
   if(!is_iso_object(isofiles)) stop("can only re-read isofiles", call. = FALSE)
@@ -139,7 +139,7 @@ reread_isofiles <- function(isofiles, ..., stop_if_missing = FALSE, quiet = sett
   files_exist <- filepaths %>% map_lgl(file.exists)
   
   # overview
-  if (!setting(quiet)) {
+  if (!default(quiet)) {
     message("Info: re-reading ", length(filepaths), " data file(s)...")
   }
   
@@ -182,7 +182,7 @@ reread_isofiles <- function(isofiles, ..., stop_if_missing = FALSE, quiet = sett
 #' @rdname reread_isofiles
 #' @param rda_filepaths the path(s) to the isofiles R data archive(s) to re-read (can be a single file or vector of files)
 #' @export
-reread_isofiles_archive <- function(rda_filepaths, ..., stop_if_missing = FALSE, quiet = setting(quiet)) {
+reread_isofiles_archive <- function(rda_filepaths, ..., stop_if_missing = FALSE, quiet = default(quiet)) {
   
   file_types <- match_to_supported_file_types(rda_filepaths)
   

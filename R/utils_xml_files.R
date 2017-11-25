@@ -51,7 +51,7 @@ process_iarc_info_xml <- function(filepath) {
   }
   
   # information
-  if (!setting(quiet)) {
+  if (!default(quiet)) {
     sprintf("      found %d processing list(s) in .iarc: '%s'", 
             nrow(processing_lists), 
             str_c("ProcessingList_", processing_lists$ProcessingListId, collapse = "', '")) %>% 
@@ -82,7 +82,7 @@ process_iarc_methods_xml <- function(filepaths) {
     bind_rows()
   
   # info
-  if (!setting(quiet)) {
+  if (!default(quiet)) {
     method_files <- method_params$MethodFile %>% unique()
     sprintf("      found %d method(s) in .iarc: '%s'", 
             method_files %>% length(), 
@@ -168,7 +168,7 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
   # for all task files, run the processing function
   tasks <- filepaths %>% lapply(process_iarc_task_xml)
   
-  if (!setting(quiet)) {
+  if (!default(quiet)) {
     sprintf("      found %d sample(s) in .iarc", length(tasks)) %>% 
       message()
   }
@@ -180,7 +180,7 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
 # process iarc tasks xml files
 process_iarc_processing_xml <- function(processing_list_id, filepath) {
   if (!file.exists(filepath)) stop("invalid processing list file path: ", filepath, call. = FALSE)
-  if (!setting(quiet)) {
+  if (!default(quiet)) {
     sprintf("      searching processing list '%s' for gas configurations...", basename(filepath)) %>% 
       message()
   }
@@ -260,14 +260,14 @@ process_iarc_processing_xml <- function(processing_list_id, filepath) {
     })
   
   # info
-  if (!setting(quiet)) {
+  if (!default(quiet)) {
     sprintf("      found configurations for '%s'", 
             species_config %>% names() %>% str_c(collapse = "', '")) %>% 
       message()
   }
   
   # debug
-  if (setting(debug)) {
+  if (default(debug)) {
     message("DEBUG: species configurations: ")
     print(species_config)
   }

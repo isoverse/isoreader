@@ -155,7 +155,7 @@ generate_cache_filepaths <- function(filepaths, ...) {
       version = packageVersion("isoreader") %>% as.character(),
       hash = mapply(calculate_unf_hash, filepath, size, modified),
       cache_file = sprintf("isofile_v-%s_f-%s_h-%s.rds", version, basename(filepath), hash),
-      cache_filepath = file.path(setting("cache_dir"), cache_file)
+      cache_filepath = file.path(default("cache_dir"), cache_file)
     )
   
   return(file_info$cache_filepath)
@@ -163,7 +163,7 @@ generate_cache_filepaths <- function(filepaths, ...) {
 
 # Cache isofile
 cache_isofile <- function(isofile, cachepath) {
-  if (!file.exists(setting("cache_dir"))) dir.create(setting("cache_dir"))
+  if (!file.exists(default("cache_dir"))) dir.create(default("cache_dir"))
   saveRDS(isofile, file = cachepath)
 }
 
@@ -196,10 +196,10 @@ load_cached_isofile <- function(filepath, check_version = TRUE) {
 #' @param all if set to TRUE, all cached files will be removed regardless of their version
 #' @export
 cleanup_isoreader_cache <- function(all = FALSE) {
-  files <- list.files(setting("cache_dir"), pattern = "isofile_[^.]+\\.rds", full.names = TRUE)
+  files <- list.files(default("cache_dir"), pattern = "isofile_[^.]+\\.rds", full.names = TRUE)
   if (all) {
     file.remove(files)
-    if (!setting(quiet)) message("Info: removed all (", length(files), ") cached isoreader files.")
+    if (!default(quiet)) message("Info: removed all (", length(files), ") cached isoreader files.")
   } else {
     isofile <- NULL
     remove <- sapply(files, function(file){
@@ -211,7 +211,7 @@ cleanup_isoreader_cache <- function(all = FALSE) {
     })
     if (any(remove))
       file.remove(files[remove])
-    if (!setting(quiet)) message("Info: removed ", sum(remove), " cached isoreader files.")
+    if (!default(quiet)) message("Info: removed ", sum(remove), " cached isoreader files.")
   }
   invisible(NULL)
 }
@@ -225,7 +225,7 @@ cleanup_isoreader_cache <- function(all = FALSE) {
 exec_func_with_error_catch <- function(func, obj, ...) {
   if (is.character(func)) func_name <- func
   else func_name <- substitute(func) %>% deparse()
-  if (!setting(catch_errors)) {
+  if (!default(catch_errors)) {
     # debug mode, don't catch any errors
     obj <- do.call(func, args = c(list(obj), list(...)))
   } else {

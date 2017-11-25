@@ -68,7 +68,7 @@ problems_summary <- function(isofiles) {
 #' @param type what type of problem causes removal of the file: \code{"error"}, \code{"warning"} or \code{"both"}
 #' @family problem functions
 #' @export
-omit_files_with_problems <- function(isofiles, type = c("error", "warning", "both"), quiet = setting(quiet)) {
+omit_files_with_problems <- function(isofiles, type = c("error", "warning", "both"), quiet = default(quiet)) {
   if (missing(isofiles) || !is_iso_object(isofiles)) stop("please provide a list of isofiles", call. = FALSE)
   if (missing(type)) type <- "both"
   if (length(type) > 1) stop("more than one type specified", call. = FALSE)
