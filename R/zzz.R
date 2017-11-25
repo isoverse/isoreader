@@ -5,7 +5,11 @@
     isoreader.catch_errors = TRUE,
     isoreader.debug = FALSE,
     isoreader.cache = TRUE,
-    isoreader.cache_dir = "cache"
+    isoreader.cache_dir = "cache",
+    isoreader.read_raw_data = TRUE,
+    isoreader.read_file_info = TRUE,
+    isoreader.read_method_info = TRUE,
+    isoreader.read_vendor_data_table = TRUE
   )
   options(default_options)
   invisible()

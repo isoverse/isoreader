@@ -11,8 +11,13 @@ turn_caching_on(data)
 turn_caching_off(data)
 }
 \arguments{
-\item{data}{a data frame - returned as is if provided (e.g. in the middle of a pipeline)}
+\item{data}{a data frame - returned invisibly as is if provided (e.g. in the middle of a pipeline)}
 }
 \description{
 These functions turn caching of data files (and reading from cache) on/off in all subsequent isoread calls by changing the global settings for the \code{cache} parameter. Can be called stand alone or within a pipeline.
+}
+\seealso{
+Other settings functions: \code{\link{info_messages}},
+  \code{\link{set_default_read_parameters}},
+  \code{\link{show_isoreader_parameters}}
 }

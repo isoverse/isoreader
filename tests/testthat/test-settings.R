@@ -61,6 +61,20 @@ test_that("test that debug mode can be activated", {
   expect_equal(isoreader:::setting(catch_errors), TRUE)
 })
 
+test_that("setting default read_parameters", {
+  expect_error(set_default_read_parameters(read_raw_data = "NAN"), "must be TRUE or FALSE")
+  
+  expect_silent(set_default_read_parameters(read_file_info = FALSE, quiet=TRUE))
+  expect_message(set_default_read_parameters(read_method_info = FALSE, quiet=FALSE))
+  expect_false(setting(read_file_info))
+  expect_false(setting(read_method_info))
+  df <- data_frame(a = 1:5)
+  expect_equal(set_default_read_parameters(df, read_file_info = TRUE, read_method_info = TRUE, quiet=TRUE), df)
+  expect_true(setting(read_file_info))
+  expect_true(setting(read_method_info))
+  
+})
+
 ## this seems to break covr::package_coverage() because of the reload and is therefore commented out for now
 # test_that("default values restored on package load", {
 #   expect_true({turn_info_messages_off(); isoreader:::setting(quiet)})

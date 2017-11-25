@@ -8,7 +8,9 @@
 #' @family isoread functions for different types of IRMS data
 #' @export
 read_dual_inlet <- function(
-  paths, read_raw_data = TRUE, read_file_info = TRUE, read_method_info = TRUE, read_vendor_data_table = TRUE,
+  paths, 
+  read_raw_data = setting(read_raw_data), read_file_info = setting(read_file_info), 
+  read_method_info = setting(read_method_info), read_vendor_data_table = setting(read_vendor_data_table),
   discard_duplicates = TRUE, cache = setting(cache), read_cache = setting(cache), quiet = setting(quiet)) {
   
   # process data

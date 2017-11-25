@@ -13,12 +13,33 @@ set_setting <- function(name, value, overwrite = TRUE) {
   return(invisible(value))
 }
 
+#' Show the current default parameters
+#' Shows a table with the default function parameters for this package.
+#' @inheritParams turn_caching_on
+#' @family settings functions
+#' @export
+show_isoreader_parameters <- function(data = NULL) {
+  message("Info: isoreader package current default parameters")
+  current <- 
+    c("quiet", "cache", "cache_dir", "read_raw_data", "read_file_info", "read_method_info", "read_vendor_data_table") %>% 
+    sapply(function(x) list(setting(!!x))) %>% 
+    {
+      data_frame(parameter = names(.),
+                    value = as.character(unlist(.)))
+    } %>% 
+    print()
+    
+  # for pipeline
+  return(invisible(data))
+}
+
 #' Turn caching on/off
 #' 
 #' These functions turn caching of data files (and reading from cache) on/off in all subsequent isoread calls by changing the global settings for the \code{cache} parameter. Can be called stand alone or within a pipeline.
 #' 
-#' @param data a data frame - returned as is if provided (e.g. in the middle of a pipeline)
+#' @param data a data frame - returned invisibly as is if provided (e.g. in the middle of a pipeline)
 #' @name caching
+#' @family settings functions
 NULL
 
 #' @rdname caching
@@ -26,7 +47,7 @@ NULL
 turn_caching_on <- function(data) {
   set_setting("cache", TRUE)
   if (!setting(quiet)) message("Info: caching turned on")
-  if (!missing(data)) return(data)
+  if (!missing(data)) return(invisible(data))
 }
 
 #' @rdname caching
@@ -34,32 +55,66 @@ turn_caching_on <- function(data) {
 turn_caching_off <- function(data) {
   set_setting("cache", FALSE)
   if (!setting(quiet)) message("Info: caching turned off")
-  if (!missing(data)) return(data)
+  if (!missing(data)) return(invisible(data))
 }
 
+#' Set default read options
+#' @inheritParams turn_caching_on
+#' @param read_raw_data if provided, set as the default for `read_raw_data` parameters
+#' @param read_file_info if provided, set as the default for `read_file_info` parameters
+#' @param read_method_info if provided, set as the default for `read_method_info` parameters
+#' @param read_vendor_data_table if provided, set as the default for `read_vendor_data_tabl` parameters
+#' @export
+#' @family settings functions
+set_default_read_parameters <- function(data, read_raw_data, read_file_info, read_method_info, read_vendor_data_table, quiet = setting(quiet)) {
+  
+  read_params <- list()
+  
+  if (!missing(read_raw_data)) read_params <- c(read_params, list(read_raw_data = read_raw_data))
+  if (!missing(read_file_info)) read_params <- c(read_params, list(read_file_info = read_file_info))
+  if (!missing(read_method_info)) read_params <- c(read_params, list(read_method_info = read_method_info))
+  if (!missing(read_vendor_data_table)) read_params <- c(read_params, list(read_vendor_data_table = read_vendor_data_table))
+  
+  # safety check
+  if (!all(ok <- map_lgl(read_params, is.logical))){
+    glue("read parameters must be TRUE or FALSE, provided: {collapse(as.character(unlist(read_params[!ok])), ', ')}") %>% 
+      stop(call. = FALSE)
+  }
+  
+  # info message
+  if(!quiet) {
+    params <- sprintf("%s = %s", names(read_params), read_params)
+    glue("Info: setting read parameter(s) '{collapse(params, \"', '\", last = \"' and '\")}'") %>% message()
+  }
 
+  # set values
+  mapply(set_setting, names(read_params), read_params)
+    
+  if (!missing(data)) return(invisible(data))
+}
 
 #' Turn information messages on/off
 #' 
 #' These functions turn information messages on/off in all subsequent function calls by changing the global settings for the \code{quiet} parameter of most isoreader functions. These functions can be called stand alone or within a pipeline to turn messages on/off at a certain point during the pipeline.
 #' 
-#' @param data a data frame - returned as is if provided (e.g. in the middle of a pipeline)
+#' @inheritParams turn_caching_on
 #' @name info_messages
 NULL
 
 #' @rdname info_messages
+#' @family settings functions
 #' @export
 turn_info_messages_on <- function(data) {
   set_setting("quiet", FALSE)
   message("Info: information messages turned on")
-  if (!missing(data)) return(data)
+  if (!missing(data)) return(invisible(data))
 }
 
 #' @rdname info_messages
 #' @export
 turn_info_messages_off <- function(data) {
   set_setting("quiet", TRUE)
-  if (!missing(data)) return(data)
+  if (!missing(data)) return(invisible(data))
 }
 
 # update quiet returns update function for on.exit
