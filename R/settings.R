@@ -1,5 +1,6 @@
 # retrieve package settings, internal function, not exported
 setting <- function(name) {
+  name <- enquo(name) %>% quos_to_text(variable = "setting")
   value <- getOption(str_c("isoreader.", name))
   if (is.null(value)) stop("isoreader setting '", name, "' does not exist", call. = FALSE)
   return(value)

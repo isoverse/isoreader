@@ -2,11 +2,11 @@
 "_PACKAGE"
 
 #' @import tidyr
-#' @importFrom rlang quo quos UQ UQE !! !!!
+#' @importFrom rlang enquo quo quos UQ UQE !! !!! quo_expr quo_text quo_is_symbol is_quosure
 #' @importFrom tidyselect everything starts_with ends_with matches
 #' @importFrom dplyr select select_ rename rename_ arrange mutate mutate_ filter distinct as_data_frame left_join right_join full_join data_frame bind_rows bind_cols group_by group_by_ ungroup
 #' @importFrom glue glue collapse
-#' @importFrom purrr map map2 map_lgl map_chr map_df map_int map_dbl
+#' @importFrom purrr map map_lgl map_chr map_df map_int map_dbl map2 map2_chr
 #' @importFrom tibble tribble deframe rownames_to_column
 #' @importFrom lubridate interval duration
 #' @import stringr
