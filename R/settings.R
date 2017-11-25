@@ -25,7 +25,7 @@ NULL
 #' @export
 turn_caching_on <- function(data) {
   set_setting("cache", TRUE)
-  if (!setting("quiet")) message("Info: caching turned on")
+  if (!setting(quiet)) message("Info: caching turned on")
   if (!missing(data)) return(data)
 }
 
@@ -33,7 +33,7 @@ turn_caching_on <- function(data) {
 #' @export
 turn_caching_off <- function(data) {
   set_setting("cache", FALSE)
-  if (!setting("quiet")) message("Info: caching turned off")
+  if (!setting(quiet)) message("Info: caching turned off")
   if (!missing(data)) return(data)
 }
 
@@ -64,8 +64,8 @@ turn_info_messages_off <- function(data) {
 
 # update quiet returns update function for on.exit
 update_quiet <- function(quiet) {
-  if (quiet != setting("quiet")) {
-    quiet_setting <- setting("quiet")
+  if (quiet != setting(quiet)) {
+    quiet_setting <- setting(quiet)
     set_setting("quiet", quiet)
     return(function() set_setting("quiet", quiet_setting))
   } else {

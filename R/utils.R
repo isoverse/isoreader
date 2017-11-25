@@ -199,7 +199,7 @@ cleanup_isoreader_cache <- function(all = FALSE) {
   files <- list.files(setting("cache_dir"), pattern = "isofile_[^.]+\\.rds", full.names = TRUE)
   if (all) {
     file.remove(files)
-    if (!setting("quiet")) message("Info: removed all (", length(files), ") cached isoreader files.")
+    if (!setting(quiet)) message("Info: removed all (", length(files), ") cached isoreader files.")
   } else {
     isofile <- NULL
     remove <- sapply(files, function(file){
@@ -211,7 +211,7 @@ cleanup_isoreader_cache <- function(all = FALSE) {
     })
     if (any(remove))
       file.remove(files[remove])
-    if (!setting("quiet")) message("Info: removed ", sum(remove), " cached isoreader files.")
+    if (!setting(quiet)) message("Info: removed ", sum(remove), " cached isoreader files.")
   }
   invisible(NULL)
 }
@@ -225,7 +225,7 @@ cleanup_isoreader_cache <- function(all = FALSE) {
 exec_func_with_error_catch <- function(func, obj, ...) {
   if (is.character(func)) func_name <- func
   else func_name <- substitute(func) %>% deparse()
-  if (!setting("catch_errors")) {
+  if (!setting(catch_errors)) {
     # debug mode, don't catch any errors
     obj <- do.call(func, args = c(list(obj), list(...)))
   } else {

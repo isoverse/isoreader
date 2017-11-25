@@ -7,7 +7,7 @@
 #' @param ratios which ratios to calculate (e.g. c("45/44", "46/44")), will only be calculated in files that have the necessary mass column
 #' @return ithe passed in isofile(s) with ratios added
 #' @export
-calculate_ratios <- function(isofiles, ratios, quiet = setting("quiet")) {
+calculate_ratios <- function(isofiles, ratios, quiet = setting(quiet)) {
   
   # safety checks
   if(!is_iso_object(isofiles)) stop("can only calculate ratios for iso files", call. = FALSE)

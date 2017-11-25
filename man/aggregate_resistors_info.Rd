@@ -5,7 +5,7 @@
 \title{Aggregate resistors from methods info}
 \usage{
 aggregate_resistors_info(isofiles, include_file_info = c(),
-  quiet = setting("quiet"))
+  quiet = setting(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

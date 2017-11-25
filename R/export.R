@@ -9,7 +9,7 @@
 #' @family export functions
 #' @return returns the isofiles object invisibly for use in pipelines
 #' @export
-export_to_rda <- function(isofiles, filepath, quiet = setting("quiet")) {
+export_to_rda <- function(isofiles, filepath, quiet = setting(quiet)) {
   
   # safety checks
   if(!is_iso_object(isofiles)) stop("can only export iso files or lists of iso files", call. = FALSE)
@@ -43,7 +43,7 @@ export_to_excel <- function(isofiles, filepath,
                             include_raw_data = TRUE, include_file_info = TRUE, 
                             include_method_info = TRUE, include_vendor_data_table = TRUE,
                             include_problems = TRUE,
-                            quiet = setting("quiet")) {
+                            quiet = setting(quiet)) {
   
   # safety checks
   if(!is_iso_object(isofiles)) stop("can only export iso files or lists of iso files", call. = FALSE)
@@ -104,7 +104,7 @@ export_to_feather <- function(isofiles, filepath_prefix,
                               include_raw_data = TRUE, include_file_info = TRUE, 
                               include_method_info = TRUE, include_vendor_data_table = TRUE,
                               include_problems = TRUE,
-                              quiet = setting("quiet")) {
+                              quiet = setting(quiet)) {
   
   # safety checks
   if(!is_iso_object(isofiles)) stop("can only export iso files or lists of iso files", call. = FALSE)

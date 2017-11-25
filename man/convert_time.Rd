@@ -4,7 +4,7 @@
 \alias{convert_time}
 \title{Convert time units in continuous flow files}
 \usage{
-convert_time(isofiles, to, quiet = setting("quiet"))
+convert_time(isofiles, to, quiet = setting(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

@@ -4,7 +4,7 @@
 #' @inheritParams aggregate_raw_data
 #' @param ... filter conditions applied based on each file's file_info (see \code{\link{aggregate_file_info}})
 #' @export 
-filter_files <- function(isofiles, ..., quiet = setting("quiet")) {
+filter_files <- function(isofiles, ..., quiet = setting(quiet)) {
   # safety checks
   if(!is_iso_object(isofiles)) stop("can only calculate ratios for iso files", call. = FALSE)
   isofiles <- as_isofile_list(isofiles)

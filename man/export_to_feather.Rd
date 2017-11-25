@@ -7,7 +7,7 @@
 export_to_feather(isofiles, filepath_prefix, include_raw_data = TRUE,
   include_file_info = TRUE, include_method_info = TRUE,
   include_vendor_data_table = TRUE, include_problems = TRUE,
-  quiet = setting("quiet"))
+  quiet = setting(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

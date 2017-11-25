@@ -4,7 +4,7 @@
 \alias{filter_files}
 \title{Filter isofiles}
 \usage{
-filter_files(isofiles, ..., quiet = setting("quiet"))
+filter_files(isofiles, ..., quiet = setting(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

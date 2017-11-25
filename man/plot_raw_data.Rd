@@ -4,7 +4,7 @@
 \alias{plot_raw_data}
 \title{Plot raw data from isoreader files}
 \usage{
-plot_raw_data(isofiles, ..., quiet = setting("quiet"))
+plot_raw_data(isofiles, ..., quiet = setting(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

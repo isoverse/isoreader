@@ -4,7 +4,7 @@
 \alias{export_to_rda}
 \title{Export data to R Data Archive (.rda)}
 \usage{
-export_to_rda(isofiles, filepath, quiet = setting("quiet"))
+export_to_rda(isofiles, filepath, quiet = setting(quiet))
 }
 \arguments{
 \item{isofiles}{collection of isofile objects}

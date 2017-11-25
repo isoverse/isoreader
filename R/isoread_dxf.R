@@ -79,7 +79,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
   
   # find all masses
   for (config in names(configs)) {
-    if (setting("debug")) 
+    if (setting(debug)) 
       message("processing ", config, " (", configs[[config]]$pos, "-", configs[[config]]$cap, ")")
     ds$binary <- ds$binary %>% 
       move_to_pos(configs[[config]]$pos) %>% 
