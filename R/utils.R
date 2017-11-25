@@ -152,9 +152,9 @@ generate_cache_filepaths <- function(filepaths, ...) {
     rownames_to_column() %>% 
     select(filepath = rowname, size = size, modified = mtime) %>% 
     mutate(
-      version = packageVersion("isoreader") %>% as.character(),
+      iso_v = packageVersion("isoreader"),
       hash = mapply(calculate_unf_hash, filepath, size, modified),
-      cache_file = sprintf("isofile_v-%s_f-%s_h-%s.rds", version, basename(filepath), hash),
+      cache_file = sprintf("isofile_v%d.%d_%s_%s.rds", iso_v$major, iso_v$minor, basename(filepath), hash),
       cache_filepath = file.path(default("cache_dir"), cache_file)
     )
   
@@ -180,7 +180,7 @@ load_cached_isofile <- function(filepath, check_version = TRUE) {
   
   # check version
   cached_version <- if(is_isofile_list(isofile)) isofile[[1]]$version else isofile$version
-  if (cached_version != packageVersion("isoreader")) {
+  if (!same_as_isoreader_version(cached_version)) {
     isofile <- register_warning(isofile, details = "file created by a different version of the isoreader package")
   }
   
@@ -188,6 +188,13 @@ load_cached_isofile <- function(filepath, check_version = TRUE) {
   return(isofile)
 }
 
+# check for difference in isoreader version
+# @note: this function determines which version difference causes caching differences
+same_as_isoreader_version <- function(version, isoreader_version = packageVersion("isoreader")) {
+  version <- version$major * 10 + version$minor
+  isoreader_version <- isoreader_version$major * 10 + isoreader_version$minor
+  return(version == isoreader_version)
+}
 
 
 #' Cleanup old cached files
@@ -196,22 +203,22 @@ load_cached_isofile <- function(filepath, check_version = TRUE) {
 #' @param all if set to TRUE, all cached files will be removed regardless of their version
 #' @export
 cleanup_isoreader_cache <- function(all = FALSE) {
-  files <- list.files(default("cache_dir"), pattern = "isofile_[^.]+\\.rds", full.names = TRUE)
+  files <- list.files(default("cache_dir"), pattern = "^isofile_.*\\.rds$", full.names = TRUE)
   if (all) {
     file.remove(files)
     if (!default(quiet)) message("Info: removed all (", length(files), ") cached isoreader files.")
   } else {
     isofile <- NULL
     remove <- sapply(files, function(file){
-      load(file)
-      if (!exists("isofile", inherits = FALSE) || !(is_iso_object(isofile))) return(TRUE) # always remove non-iso object files
+      isofile <- readRDS(file)
+      if (!(is_iso_object(isofile))) return(TRUE) # always remove non-iso object files
       cached_version <- if(is_isofile_list(isofile)) isofile[[1]]$version else isofile$version  
-      if (cached_version != packageVersion("isoreader")) return(TRUE)
-      return(FALSE)
+      return(!same_as_isoreader_version(cached_version))
     })
-    if (any(remove))
-      file.remove(files[remove])
-    if (!default(quiet)) message("Info: removed ", sum(remove), " cached isoreader files.")
+    # remove files
+    if (any(remove)) file.remove(files[remove])
+    # info message
+    if (!default(quiet)) message("Info: removed ", sum(unlist(remove)), " cached isoreader files.")
   }
   invisible(NULL)
 }

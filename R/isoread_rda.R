@@ -27,7 +27,7 @@ isoread_rda <- function(ds, ...) {
   
   # check for version warning
   versions <- map(isofiles, `[[`, "version")
-  ok_version <- map_lgl(versions, identical, packageVersion("isoreader"))
+  ok_version <- map_lgl(versions, same_as_isoreader_version, packageVersion("isoreader"))
   if (any(!ok_version)) {
     messages <- sprintf("file created by a different version of the isoreader package (%s)", map_chr(versions[!ok_version], as.character))
     isofiles[!ok_version] <- map2(isofiles[!ok_version], messages, register_warning, func = "isoread_rda", warn = FALSE)
