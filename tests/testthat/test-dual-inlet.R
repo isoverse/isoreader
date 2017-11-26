@@ -25,7 +25,7 @@ test_that("test that did files can be read", {
   
   iso_turn_reader_caching_off()
   
-  expect_true(file.exists(file <- isoreader_example("dual_inlet_example.did")))
+  expect_true(file.exists(file <- iso_get_reader_example("dual_inlet_example.did")))
   expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
   

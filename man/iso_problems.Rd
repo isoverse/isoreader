@@ -11,6 +11,6 @@ This is a re-export of the readr \code{\link[readr]{problems}} function.
 }
 \seealso{
 Other problem functions: \code{\link{iso_omit_files_with_problems}},
-  \code{\link{iso_problems_summary}},
-  \code{\link{problem_functions}}
+  \code{\link{iso_problem_functions}},
+  \code{\link{iso_problems_summary}}
 }

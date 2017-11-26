@@ -17,10 +17,10 @@ col_check <- function(cols, data, fun = sys.call(-1), msg = "You may have to cha
 #' 
 #' @description The isoreader package comes with a few example files to make it easy to illustrate the functionality.
 #' 
-#' @details \code{isoreader_example}: retrieve the path to an isoreader example file
+#' @details \code{iso_get_reader_example}: retrieve the path to an isoreader example file
 #' @param filename the name of the example file for which to retrieve the system path
 #' @export
-isoreader_example <- function(filename) {
+iso_get_reader_example <- function(filename) {
   filepath <- system.file(package = "isoreader", "extdata", filename)
   if(!file.exists(filepath)) 
     sprintf("The example file '%s' does not exist. Please use iso_get_reader_examples() to see a list of all available example files.", filename) %>% 
@@ -28,7 +28,7 @@ isoreader_example <- function(filename) {
   return(filepath)
 }
 
-#' @rdname isoreader_example
+#' @rdname iso_get_reader_example
 #' @details \code{iso_get_reader_examples}: list of all available isoreader example files
 #' @export
 iso_get_reader_examples <- function() {

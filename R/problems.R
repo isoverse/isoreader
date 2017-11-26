@@ -8,7 +8,7 @@
 #' \code{\link[readr]{stop_for_problems}}
 #' 
 #' \code{\link{iso_omit_files_with_problems}}
-#' @name problem_functions
+#' @name iso_problem_functions
 #' @family problem functions
 NULL
 

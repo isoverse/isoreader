@@ -17,6 +17,6 @@ Returns a data frame listing how many errors and warnings were encountered for e
 }
 \seealso{
 Other problem functions: \code{\link{iso_omit_files_with_problems}},
-  \code{\link{iso_problems}},
-  \code{\link{problem_functions}}
+  \code{\link{iso_problem_functions}},
+  \code{\link{iso_problems}}
 }
