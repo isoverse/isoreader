@@ -63,26 +63,26 @@ test_that("test that time scaling works", {
 })
 
 test_that("test that time conversion works for isofiles", {
-  expect_error(convert_time(42), "can only convert time in continuous flow isofiles")
+  expect_error(iso_convert_time(42), "can only convert time in continuous flow isofiles")
   cf <- isoreader:::make_cf_data_structure()
-  expect_error(convert_time(cf), "no time unit to convert to specified")
-  expect_warning(convert_time(cf, to = "min"), "read without extracting the raw data")
+  expect_error(iso_convert_time(cf), "no time unit to convert to specified")
+  expect_warning(iso_convert_time(cf, to = "min"), "read without extracting the raw data")
   
   # test data
   cf$read_options$raw_data <- TRUE
   cf$raw_data <- data_frame(tp = 1:10, time.s = tp*0.2)
-  expect_message(result <- convert_time(cf, to = "min", quiet = FALSE), "converting time")
-  expect_true(is_isofile(result))
-  expect_silent(convert_time(cf, to = "min", quiet = TRUE))
-  expect_equal(convert_time(cf, to = "min")$raw_data$time.min, cf$raw_data$time.s/60)
-  expect_equal(convert_time(cf, to = "s")$raw_data$time.s, cf$raw_data$time.s)
+  expect_message(result <- iso_convert_time(cf, to = "min", quiet = FALSE), "converting time")
+  expect_true(iso_is_file(result))
+  expect_silent(iso_convert_time(cf, to = "min", quiet = TRUE))
+  expect_equal(iso_convert_time(cf, to = "min")$raw_data$time.min, cf$raw_data$time.s/60)
+  expect_equal(iso_convert_time(cf, to = "s")$raw_data$time.s, cf$raw_data$time.s)
   
   # multiple files
   isofiles <- c(modifyList(cf, list(file_info = list(file_id = "a"))),
                 modifyList(cf, list(file_info = list(file_id = "b"))))
   isofiles$b$raw_data$time.min <- isofiles$b$raw_data$time.s/60
   isofiles$b$raw_data$time.min <- NULL
-  expect_true(is_isofile_list(isofiles_in_hrs <- convert_time(isofiles, to = "hours")))
+  expect_true(iso_is_file_list(isofiles_in_hrs <- iso_convert_time(isofiles, to = "hours")))
   expect_equal(isofiles_in_hrs$a$raw_data$time.hours, cf$raw_data$time.s/3600)
   expect_equal(isofiles_in_hrs$b$raw_data$time.hours, cf$raw_data$time.s/3600)
   
@@ -161,19 +161,19 @@ test_that("test that singal scaling works", {
 
 test_that("test that signal conversion works in isofiles", {
   
-  expect_error(convert_signals(42), "can only convert signals in .* isofiles")
+  expect_error(iso_convert_signals(42), "can only convert signals in .* isofiles")
   cf <- isoreader:::make_cf_data_structure() # use continuous flow example, but dual inlet would work too
-  expect_error(convert_signals(cf), "no unit to convert to specified")
+  expect_error(iso_convert_signals(cf), "no unit to convert to specified")
   
   cf$read_options$raw_data <- TRUE
   cf$raw_data <- data_frame(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), `r46/44` = v46.mV/v44.mV)
-  expect_error(convert_signals(cf, to = "42"), "encountered invalid unit")
-  expect_error(convert_signals(cf, to = "blaV"), "Encountered unrecognized units")
+  expect_error(iso_convert_signals(cf, to = "42"), "encountered invalid unit")
+  expect_error(iso_convert_signals(cf, to = "blaV"), "Encountered unrecognized units")
 
   # test scaling without resistors
-  expect_message(result <- convert_signals(cf, to = "nV", quiet = FALSE), "converting signals")
-  expect_true(is_isofile(result))
-  expect_silent(convert_signals(cf, to = "nV", quiet = TRUE))
+  expect_message(result <- iso_convert_signals(cf, to = "nV", quiet = FALSE), "converting signals")
+  expect_true(iso_is_file(result))
+  expect_silent(iso_convert_signals(cf, to = "nV", quiet = TRUE))
   expect_equal(result$raw_data$v44.nV, cf$raw_data$v44.mV*1e6)
 
   # FIXME: continug here - conversion with resistors

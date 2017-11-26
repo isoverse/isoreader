@@ -1,30 +1,31 @@
 #' Read isotope data file
 #' 
-#' Deprecated, use \link{read_dual_inlet}, \link{read_continuous_flow} and \link{read_scan} instead.
+#' This function from the original isoread package is deprecated, please use \link{iso_read_dual_inlet}, \link{iso_read_continuous_flow} and \link{iso_read_scan} instead.
 #'
 #' @param ... original isoread parameters
 #' @export
 isoread <- function(...) {
   stop(
-    "Deprecated, use read_dual_inlet(), read_continuous_flow() or read_scan() instead.",
+    "Deprecated, use iso_read_dual_inlet(), iso_read_continuous_flow() or iso_read_scan() instead.",
     call. = FALSE)
 }
 
-#' Main function to read isotope data files
+#' Core function to read isotope data files
 #' 
-#' This function takes care of extracting basic information about isofiles, dealing with problems and making sure only valid fire formats are processed. This function is not typicaly called directly but indirectly by calling \link{read_dual_inlet}, \link{read_continuous_flow} and \link{read_scan}. It is exported because it can be very useful for testing new file readers.
+#' This function takes care of extracting basic information about isofiles, dealing with problems and making sure only valid fire formats are processed. 
+#' This function is not typicaly called directly but indirectly by calling \link{iso_read_dual_inlet}, \link{iso_read_continuous_flow} and \link{iso_read_scan}. 
+#' It is made available outside the package because it can be very useful for testing new file readers.
 #' 
 #' @param paths one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).
 #' @param supported_extensions data frame with supported extensions and corresponding reader functions
 #' @param data_structure the basic data structure for the type of isofile
 #' @param discard_duplicates whether to automatically discard duplicate file_ids (only first one is kept)
-#' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=info_messages]{turn_info_message_on} and \link[=info_messages]{turn_info_message_off}
+#' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}
 #' @param cache whether to cache isofiles. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.
 #' @param read_cache whether to reload from cache if a cached version exists. Note that it will only read from cache if the file was previously read with the exact same isoreader version and read options and has not been modified since.
 #' @param ... additional parameters passed to the specific processing functions for the different file extensions
 #' @return single isofile object (if single file) or list of isofiles (isofile_list)
-#' @export
-isoread_files <- function(paths, supported_extensions, data_structure, ..., discard_duplicates = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
+iso_read_files <- function(paths, supported_extensions, data_structure, ..., discard_duplicates = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
 
   # set quiet for the current and sub-calls and reset back to previous setting on exit
   on_exit_quiet <- update_quiet(quiet)
@@ -102,7 +103,7 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
   isofiles <- with(files, mapply(read_isofile, filepath = filepath, cachepath = cachepath, ext = ext, reader_fun = reader_fun, cacheable = cacheable))
   
   # turn into isofile list
-  isofiles <- as_isofile_list(unname(isofiles), discard_duplicates = discard_duplicates) 
+  isofiles <- iso_as_file_list(unname(isofiles), discard_duplicates = discard_duplicates) 
 
   # report problems
   if (!default(quiet) && n_problems(isofiles) > 0) {
@@ -122,17 +123,17 @@ isoread_files <- function(paths, supported_extensions, data_structure, ..., disc
 #' The functions described below are intended to make this very easy. 
 #' However, it is only possible for isofile objects whose file paths still point to the original raw data files.
 #' 
-#' @details \code{reread_isofiles} will re-read all the original data files for the passed in \code{isofiles} object. Returns the reread isofile objects.
-#' @inheritParams aggregate_raw_data
-#' @param ... additional read parameters that should be used for re-reading the isofiles, see \code{\link{read_dual_inlet}} and \code{\link{read_continuous_flow}} for details
+#' @details \code{iso_reread_files} will re-read all the original data files for the passed in \code{isofiles} object. Returns the reread isofile objects.
+#' @inheritParams iso_aggregate_raw_data
+#' @param ... additional read parameters that should be used for re-reading the isofiles, see \code{\link{iso_read_dual_inlet}} and \code{\link{iso_read_continuous_flow}} for details
 #' @param stop_if_missing whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files and keep them unchanged but re-read those that do exist)
 #' @export
-reread_isofiles <- function(isofiles, ..., stop_if_missing = FALSE, quiet = default(quiet)) {
+iso_reread_files <- function(isofiles, ..., stop_if_missing = FALSE, quiet = default(quiet)) {
   
   # checks
-  if(!is_iso_object(isofiles)) stop("can only re-read isofiles", call. = FALSE)
-  single_file <- is_isofile(isofiles) # to make sure return is the same as supplied
-  isofiles <- as_isofile_list(isofiles)
+  if(!iso_is_object(isofiles)) stop("can only re-read isofiles", call. = FALSE)
+  single_file <- iso_is_file(isofiles) # to make sure return is the same as supplied
+  isofiles <- iso_as_file_list(isofiles)
   
   # reread
   filepaths <- get_reread_filepaths(isofiles)
@@ -156,12 +157,12 @@ reread_isofiles <- function(isofiles, ..., stop_if_missing = FALSE, quiet = defa
   # reread files
   if (any(files_exist)) {
     args <- c(list(paths = filepaths[files_exist]), list(...))
-    if (is_continuous_flow(isofiles)) {
+    if (iso_is_continuous_flow(isofiles)) {
       # read continuous flow
-      new_isofiles <- as_isofile_list(do.call(read_continuous_flow, args = args))
-    } else if (is_dual_inlet(isofiles)) {
+      new_isofiles <- iso_as_file_list(do.call(iso_read_continuous_flow, args = args))
+    } else if (iso_is_dual_inlet(isofiles)) {
       # read dual inlet
-      new_isofiles <- as_isofile_list(do.call(read_dual_inlet, args = args))
+      new_isofiles <- iso_as_file_list(do.call(iso_read_dual_inlet, args = args))
     } else {
       stop("re-reading isofiles objects of type ", class(isofiles[[1]])[1], " is not yet supported", call. = FALSE)
     }
@@ -178,11 +179,11 @@ reread_isofiles <- function(isofiles, ..., stop_if_missing = FALSE, quiet = defa
   return(isofiles)
 }
 
-#' @details \code{reread_isofiles_archive} is a convenience function for refreshing saved isofile collections. It will load a specific isofiles R Data Archive (\code{rda_filepath}), re-read all the data from the original data files and save the collection back to the same rda file. The isofiles are returned invisibly.
-#' @rdname reread_isofiles
+#' @details \code{iso_reread_archive} is a convenience function for refreshing saved isofile collections. It will load a specific isofiles R Data Archive (\code{rda_filepath}), re-read all the data from the original data files and save the collection back to the same rda file. The isofiles are returned invisibly.
+#' @rdname iso_reread_files
 #' @param rda_filepaths the path(s) to the isofiles R data archive(s) to re-read (can be a single file or vector of files)
 #' @export
-reread_isofiles_archive <- function(rda_filepaths, ..., stop_if_missing = FALSE, quiet = default(quiet)) {
+iso_reread_archive <- function(rda_filepaths, ..., stop_if_missing = FALSE, quiet = default(quiet)) {
   
   file_types <- match_to_supported_file_types(rda_filepaths)
   
@@ -198,8 +199,8 @@ reread_isofiles_archive <- function(rda_filepaths, ..., stop_if_missing = FALSE,
   reread_archive <- function(filepath, call) {
     if(!quiet) message("Info: loading R Data Archive ", basename(filepath), "...")
     suppressWarnings(do.call(call, args = list(paths = filepath, quiet=TRUE))) %>% 
-      reread_isofiles(..., stop_if_missing = stop_if_missing, quiet=quiet) %>% 
-      export_to_rda(filepath = filepath, quiet=quiet)
+      iso_reread_files(..., stop_if_missing = stop_if_missing, quiet=quiet) %>% 
+      iso_export_to_rda(filepath = filepath, quiet=quiet)
     return(TRUE)
   }
   

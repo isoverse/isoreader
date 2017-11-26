@@ -6,25 +6,25 @@ test_that("test that basic isofile data structure is correct", {
   expect_equal(names(isofile), c("version", "read_options", "file_info", "method_info", "raw_data", "vendor_data_table"))
   expect_equal(names(isofile$read_options), c("file_info", "method_info", "raw_data", "vendor_data_table"))
   expect_equal(isofile$version, packageVersion("isoreader"))
-  expect_false(is_isofile(42))
-  expect_false(is_isofile(as_isofile_list()))
-  expect_true(is_isofile(isofile))
-  expect_false(is_iso_object(42))
-  expect_true(is_iso_object(isofile))
+  expect_false(iso_is_file(42))
+  expect_false(iso_is_file(iso_as_file_list()))
+  expect_true(iso_is_file(isofile))
+  expect_false(iso_is_object(42))
+  expect_true(iso_is_object(isofile))
 })
 
 # dual inlet data structure is correct ====
 test_that("test that dual inlet data structure is correct", {
   expect_is(di <- isoreader:::make_di_data_structure(), "isofile")
   expect_is(di, "dual_inlet")
-  expect_false(is_dual_inlet(42))
-  expect_false(is_continuous_flow(di))
-  expect_true(is_dual_inlet(di))
+  expect_false(iso_is_dual_inlet(42))
+  expect_false(iso_is_continuous_flow(di))
+  expect_true(iso_is_dual_inlet(di))
   expect_true({
     di1 <- di2 <- di
     di1$file_info$file_id <- "A"
     di2$file_info$file_id <- "B"
-    is_dual_inlet(c(di1, di2))
+    iso_is_dual_inlet(c(di1, di2))
   })
   # FIXME: expand
 })
@@ -33,26 +33,26 @@ test_that("test that dual inlet data structure is correct", {
 test_that("test that continuous data structure is correct", {
   expect_is(cf <- isoreader:::make_cf_data_structure(), "isofile")
   expect_is(cf, "continuous_flow")
-  expect_false(is_continuous_flow(42))
-  expect_false(is_dual_inlet(cf))
-  expect_true(is_continuous_flow(cf))
+  expect_false(iso_is_continuous_flow(42))
+  expect_false(iso_is_dual_inlet(cf))
+  expect_true(iso_is_continuous_flow(cf))
   expect_true({
     cf1 <- cf2 <- cf
     cf1$file_info$file_id <- "A"
     cf2$file_info$file_id <- "B"
-    is_continuous_flow(c(cf1, cf2))
+    iso_is_continuous_flow(c(cf1, cf2))
   })
   # FIXME: expand
 })
 
 # isofile list checks work ====
 test_that("test that isofile list checks work", {
-  expect_is(isofiles <- as_isofile_list(), "isofile_list")
-  expect_error(as_isofile_list(1, error = "test"), "encountered incompatible data type")
-  expect_false(is_isofile_list(42))
-  expect_false(is_isofile_list(isoreader:::make_isofile_data_structure()))
-  expect_true(is_isofile_list(isofiles))
-  expect_true(is_iso_object(isofiles))
+  expect_is(isofiles <- iso_as_file_list(), "isofile_list")
+  expect_error(iso_as_file_list(1, error = "test"), "encountered incompatible data type")
+  expect_false(iso_is_file_list(42))
+  expect_false(iso_is_file_list(isoreader:::make_isofile_data_structure()))
+  expect_true(iso_is_file_list(isofiles))
+  expect_true(iso_is_object(isofiles))
 })
 
 # can set file path for data structures ====
@@ -104,7 +104,7 @@ test_that("test that isofils objects can be combined and subset", {
   expect_equal(c(isofilesAB, isofileC), c(isofileA, isofileB, isofileC))
   
   ## problems combining identical files (without discarding duplicates!)
-  expect_warning(isofilesABA <- as_isofile_list(isofileA, isofileB, isofileA, discard_duplicates = FALSE), 
+  expect_warning(isofilesABA <- iso_as_file_list(isofileA, isofileB, isofileA, discard_duplicates = FALSE), 
                  "duplicate files kept, may interfere with data processing")
   expect_is(isofilesABA, "isofile_list")
   expect_equal(problems(isofilesABA) %>% select(file_id, type), data_frame(file_id = "A", type = "warning"))

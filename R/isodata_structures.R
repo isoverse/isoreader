@@ -52,60 +52,60 @@ make_cf_data_structure <- function() {
 
 #' Isoreader data structure functions
 #' 
-#' @description \code{is_isofile} tests if the object is an isofile 
+#' @description \code{iso_is_file} tests if the object is an isofile 
 #'
 #' @param x an object to test whether it has the specific class
-#' @rdname data_structure
+#' @rdname iso_data_structure
 #' @export
-is_isofile <- function(x) {
+iso_is_file <- function(x) {
   "isofile" %in% class(x)
 }
 
-#' @description \code{is_isofile_list} tests if the object is an isofile list (collection of isofiles)
-#' @rdname data_structure
+#' @description \code{iso_is_file_list} tests if the object is an isofile list (collection of isofiles)
+#' @rdname iso_data_structure
 #' @export
-is_isofile_list <- function(x) {
+iso_is_file_list <- function(x) {
   "isofile_list" %in% class(x)
 }
 
-#' @description \code{is_iso_object} test if the object is an iso-object (isofile or isofile list)
-#' @rdname data_structure
+#' @description \code{iso_is_object} test if the object is an iso-object (isofile or isofile list)
+#' @rdname iso_data_structure
 #' @export
-is_iso_object <- function(x) {
-  is_isofile(x) || is_isofile_list(x)
+iso_is_object <- function(x) {
+  iso_is_file(x) || iso_is_file_list(x)
 }
 
-#' @description \code{is_dual_inlet} tests if an isofile or isofile list consists exclusively of dual inlet file objects
-#' @rdname data_structure
+#' @description \code{iso_is_dual_inlet} tests if an isofile or isofile list consists exclusively of dual inlet file objects
+#' @rdname iso_data_structure
 #' @export
-is_dual_inlet <- function(x) {
-  if(!is_iso_object(x)) return(FALSE)
-  all(sapply(as_isofile_list(x), is, "dual_inlet"))
+iso_is_dual_inlet <- function(x) {
+  if(!iso_is_object(x)) return(FALSE)
+  all(sapply(iso_as_file_list(x), is, "dual_inlet"))
 }
 
-#' @description \code{is_continuous_flow} tests if an isofile or isofile list consists exclusively of continuous flow file objects
-#' @rdname data_structure
+#' @description \code{iso_is_continuous_flow} tests if an isofile or isofile list consists exclusively of continuous flow file objects
+#' @rdname iso_data_structure
 #' @export
-is_continuous_flow <- function(x) {
-  if(!is_iso_object(x)) return(FALSE)
-  all(sapply(as_isofile_list(x), is, "continuous_flow"))
+iso_is_continuous_flow <- function(x) {
+  if(!iso_is_object(x)) return(FALSE)
+  all(sapply(iso_as_file_list(x), is, "continuous_flow"))
 }
 
 
 # Iso file list ----
 
-#' @description \code{as_isofile_list} concatenates isofile and isofile list object(s) into one combined isofile list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within isofile lists have to be the same type of isofile, issues warnings if there are duplicate file ids and summarizes all problems in the isofile list
+#' @description \code{iso_as_file_list} concatenates isofile and isofile list object(s) into one combined isofile list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within isofile lists have to be the same type of isofile, issues warnings if there are duplicate file ids and summarizes all problems in the isofile list
 #' @param ... isofile and isofile_list objects to concatenate
 #' @param discard_duplicates whether to discard encountered file id duplicates
-#' @rdname data_structure
+#' @rdname iso_data_structure
 #' @export
-as_isofile_list <- function(..., discard_duplicates = TRUE) {
+iso_as_file_list <- function(..., discard_duplicates = TRUE) {
 
   # dots passed in
   iso_objs <- list(...)
   
   # allow simple list to be passed in
-  if (length(iso_objs) == 1 && !is_iso_object(..1) && is.list(..1)) iso_objs <- ..1
+  if (length(iso_objs) == 1 && !iso_is_object(..1) && is.list(..1)) iso_objs <- ..1
   
   if (length(iso_objs) == 0) {
     # empty list
@@ -113,7 +113,7 @@ as_isofile_list <- function(..., discard_duplicates = TRUE) {
     iso_problems <- get_problems_structure() %>% mutate(file_id = character())
   } else {
     # combine everything
-    if(!all(is_iso <- sapply(iso_objs, is_iso_object))) {
+    if(!all(is_iso <- sapply(iso_objs, iso_is_object))) {
       stop("can only combine isofile and isofile_list objects, encountered incompatible data type(s): ",
            unlist(lapply(iso_objs, class)[!is_iso]) %>% 
            { str_c(unique(.), collapse = ", ")}, call. = FALSE)
@@ -121,7 +121,7 @@ as_isofile_list <- function(..., discard_duplicates = TRUE) {
     
     # combine iso objects
     iso_list <- lapply(iso_objs, function(obj) {
-      if (is_isofile_list(obj)) as.list(obj) # iso lists already have named entries
+      if (iso_is_file_list(obj)) as.list(obj) # iso lists already have named entries
       else setNames(list(obj), obj$file_info$file_id) # use file_id to name new files
     }) %>% 
     { do.call(c, .) }
@@ -225,7 +225,7 @@ print.continuous_flow <- function(x, ..., show_problems = TRUE) {
 
 # print info
 get_raw_data_info <- function(x) {
-  stopifnot(is_isofile(x))
+  stopifnot(iso_is_file(x))
   if (x$read_options$raw_data) {
     sprintf(
       "%d recordings of %s",
@@ -238,7 +238,7 @@ get_raw_data_info <- function(x) {
   }
 }
 get_file_info_info <- function(x) {
-  stopifnot(is_isofile(x))
+  stopifnot(iso_is_file(x))
   if (x$read_options$file_info) {
     sprintf(
       "%d file info entries",
@@ -253,7 +253,7 @@ get_file_info_info <- function(x) {
 
 # set data structure file path
 set_ds_file_path <- function(ds, file_path, file_id = basename(file_path), file_subpath = NA_character_) {
-  if (!is_isofile(ds)) stop("can only set path for isofile data structures", call. = FALSE)
+  if (!iso_is_file(ds)) stop("can only set path for isofile data structures", call. = FALSE)
   if (!file.exists(file_path)) stop("file/folder does not exist: ", file_path, call. = FALSE)
   ds$file_info$file_path <- file_path
   ds$file_info$file_id <- file_id
@@ -294,33 +294,33 @@ as.list.isofile_list <- function(x, ...) {
   # remove NULL entries
   l <- unname(l[!map_lgl(l, is.null)])
   # make isofile list from the subset
-  as_isofile_list(l)
+  iso_as_file_list(l)
 }
 
 #' @export
 `[<-.isofile_list` <- function(x, i, value) {
   # regular replacement
   l <- NextMethod("[<-")
-  # as_isofile_list with the replaced item
-  as_isofile_list(unname(as.list(l)))
+  # iso_as_file_list with the replaced item
+  iso_as_file_list(unname(as.list(l)))
 }
 
 #' @export
 `[[<-.isofile_list` <- function(x, i, value) {
   # regular replacement
   l <- NextMethod("[<-")
-  # as_isofile_list with the replaced item
-  as_isofile_list(unname(as.list(l)))
+  # iso_as_file_list with the replaced item
+  iso_as_file_list(unname(as.list(l)))
 }
 
 # combine isofile with other things
 #' @export
 c.isofile <- function(...) {
-  as_isofile_list(...)
+  iso_as_file_list(...)
 }
 
 # combine isofile other things
 #' @export
 c.isofile_list <- function(...) {
-  as_isofile_list(...)
+  iso_as_file_list(...)
 }

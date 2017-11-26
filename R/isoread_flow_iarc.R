@@ -3,7 +3,7 @@
 isoread_flow_iarc <- function(ds, ...) {
   
   # safety checks
-  if(!is_isofile(ds) || !is(ds, "continuous_flow")) 
+  if(!iso_is_file(ds) || !is(ds, "continuous_flow")) 
     stop("data structure must be a 'continuous_flow' isofile", call. = FALSE)
   
   # global variables for NSE
@@ -76,7 +76,7 @@ isoread_flow_iarc <- function(ds, ...) {
   }
   
   # turn into isofiles list and return
-  return(as_isofile_list(isofiles))
+  return(iso_as_file_list(isofiles))
 }
 
 # process iarc samples

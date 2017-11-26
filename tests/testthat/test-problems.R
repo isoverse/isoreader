@@ -89,17 +89,17 @@ test_that("removing files with errors works properly", {
   iso_warn$file_info$file_id <- "B"
   iso_err$file_info$file_id <- "C"
   isofiles <- c(isofile, iso_err, iso_warn)
-  expect_error(omit_files_with_problems(42), "provide a list of isofiles")
-  expect_error(omit_files_with_problems(isofiles, "all"), "unknown problem type specified")
-  expect_message(omit_files_with_problems(isofiles, "warning", quiet = FALSE), "removing")
-  expect_silent(omit_files_with_problems(isofiles, "warning", quiet = TRUE))
-  expect_equal(omit_files_with_problems(isofiles, "warning") %>% 
+  expect_error(iso_omit_files_with_problems(42), "provide a list of isofiles")
+  expect_error(iso_omit_files_with_problems(isofiles, "all"), "unknown problem type specified")
+  expect_message(iso_omit_files_with_problems(isofiles, "warning", quiet = FALSE), "removing")
+  expect_silent(iso_omit_files_with_problems(isofiles, "warning", quiet = TRUE))
+  expect_equal(iso_omit_files_with_problems(isofiles, "warning") %>% 
                  sapply(function(x) x$file_info$file_id) %>% as.character(), 
                c("A", "C"))
-  expect_equal(omit_files_with_problems(isofiles, "error") %>% 
+  expect_equal(iso_omit_files_with_problems(isofiles, "error") %>% 
                  sapply(function(x) x$file_info$file_id) %>% as.character(), 
                c("A", "B"))
-  expect_equal(omit_files_with_problems(isofiles, "both") %>% 
+  expect_equal(iso_omit_files_with_problems(isofiles, "both") %>% 
                  sapply(function(x) x$file_info$file_id) %>% as.character(), 
                c("A"))
 })

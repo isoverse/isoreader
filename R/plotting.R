@@ -2,31 +2,31 @@
 
 #' Plot raw data from isoreader files
 #' 
-#' Convenience function for making standard plots for raw isoreader data. Calls \code{\link{plot_continuous_flow}} and \code{\link{plot_dual_inlet}} for data specific plotting (see those functions for parameter details).
+#' Convenience function for making standard plots for raw isoreader data. Calls \code{\link{iso_plot_continuous_flow}} and \code{\link{iso_plot_dual_inlet}} for data specific plotting (see those functions for parameter details).
 #' 
-#' @inheritParams aggregate_raw_data
+#' @inheritParams iso_aggregate_raw_data
 #' @param ... parameters for the data specific plotting functions
 #' @family plot functions
 #' @export
-plot_raw_data <- function(isofiles, ..., quiet = default(quiet)) {
-  if(!is_iso_object(isofiles)) stop("can only plot iso files or lists of iso files", call. = FALSE)
+iso_plot_raw_data <- function(isofiles, ..., quiet = default(quiet)) {
+  if(!iso_is_object(isofiles)) stop("can only plot iso files or lists of iso files", call. = FALSE)
   
-  isofiles <- as_isofile_list(isofiles)
+  isofiles <- iso_as_file_list(isofiles)
   
   if (!quiet) sprintf("Info: plotting data from %d data file(s)", length(isofiles)) %>% message()
   
-  if (is_continuous_flow(isofiles))
-    plot_continuous_flow (isofiles, ...)
-  else if (is_dual_inlet(isofiles))
-    plot_dual_inlet (isofiles, ...)
+  if (iso_is_continuous_flow(isofiles))
+    iso_plot_continuous_flow (isofiles, ...)
+  else if (iso_is_dual_inlet(isofiles))
+    iso_plot_dual_inlet (isofiles, ...)
   else
     stop("plotting of this type of isofiles not yet supported", call. = FALSE) 
 }
 
 #' Plot chromatogram from continuous flow data
 #'
-#' @inheritParams plot_raw_data
-#' @param data which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using \code{\link{calculate_ratios}} prior to plotting.
+#' @inheritParams iso_plot_raw_data
+#' @param data which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using \code{\link{iso_calculate_ratios}} prior to plotting.
 #' @param time_interval which time interval to plot
 #' @param time_interval_units which units the time interval is in, default is "seconds"
 #' @param normalize whether to normalize all data (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if \code{zoom} is set) is applied after normalizing.
@@ -36,12 +36,12 @@ plot_raw_data <- function(isofiles, ..., quiet = default(quiet)) {
 #' @param linetype_by whether to differentiate data by linetype, options are the same as for \code{panel_by} but the default is "none". Note that a limited number of linetype_by (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}
 #' @family plot functions
 #' @export
-plot_continuous_flow <- function(
+iso_plot_continuous_flow <- function(
   isofiles, data = c(), time_interval = c(), time_interval_units = "seconds", normalize = FALSE, zoom = NULL, 
   panel_by = "data", color_by = "file", linetype_by = "none") {
   
   # checks and defaults
-  if(!is_continuous_flow(isofiles)) stop("can only plot continuous flow isofiles", call. = FALSE)
+  if(!iso_is_continuous_flow(isofiles)) stop("can only plot continuous flow isofiles", call. = FALSE)
   if (!all(ok <- c(panel_by, color_by, linetype_by) %in% c("none", "data", "file")))
     stop("unknown layout specification: '", str_c(c(panel_by, color_by, linetype_by)[!ok], collapse = "', '"),
          "'. Please use 'none', 'data' or 'file' for panel_by, color_by and linetype_by specifications.", call. = FALSE)
@@ -51,7 +51,7 @@ plot_continuous_flow <- function(
   is_ratio <- max_signal <- baseline <- cutoff <- discard <- change <- border <- gap <- NULL
   
   # collect raw data
-  raw_data <- aggregate_raw_data(isofiles, gather = TRUE, quiet = TRUE)
+  raw_data <- iso_aggregate_raw_data(isofiles, gather = TRUE, quiet = TRUE)
   if (nrow(raw_data) == 0) stop("no raw data in supplied isofiles", call. = FALSE)
   
   # only work with desired data (masses and ratios)
@@ -64,7 +64,7 @@ plot_continuous_flow <- function(
   time_pattern <- "^time\\.(.*)$"
   time_column <- str_subset(names(raw_data), time_pattern)
   if (length(time_column) != 1) 
-    stop("unclear which column is the time column, consider an explicit 'convert_time' call before plotting, found: ", 
+    stop("unclear which column is the time column, consider an explicit 'iso_convert_time' call before plotting, found: ", 
          str_c(time_column, collapse = ", "), call. = FALSE)
   time_unit <- str_match(time_column, time_pattern) %>% {.[2] }
   raw_data$time <- raw_data[[time_column]]
@@ -219,16 +219,17 @@ plot_continuous_flow <- function(
 
 #' Plot mass data from dual inlet files
 #' 
-#' @inheritParams plot_continuous_flow
+#' @inheritParams iso_plot_continuous_flow
 #' @param panel_by whether to panel data by anything, options are "none" (overlay all), "data" (by mass/ratio data), "file" (panel by files), "SA|STD" (panel by sample|standard). The default is "data"
 #' @param shape_by whether to shape data points by anything, options are the same as for panel_by but the default is "SA|STD" (sample|standard)
 #' @note normalization is not useful for dual inlet data, except potentially between standard and sample - however, for this it is more meaningful to simply plot the relevant ratios together
-plot_dual_inlet <- function(
+#' @export
+iso_plot_dual_inlet <- function(
   isofiles, data = c(), 
   panel_by = "data", color_by = "file", linetype_by = "none", shape_by = "SA|STD") {
   
   # checks
-  if(!is_dual_inlet(isofiles)) stop("can only plot dual inlet isofiles", call. = FALSE)
+  if(!iso_is_dual_inlet(isofiles)) stop("can only plot dual inlet isofiles", call. = FALSE)
   if (!all(ok <- c(panel_by, color_by, linetype_by, shape_by) %in% c("none", "data", "file", "SA|STD")))
     stop("unknown layout specification: '", str_c(c(panel_by, color_by, linetype_by, shape_by)[!ok], collapse = "', '"),
          "'. Please use 'none', 'data', 'file' or 'SA|STD' for panel_by, color_by, shape_by and linetype_by specifications.", call. = FALSE)
@@ -237,7 +238,7 @@ plot_dual_inlet <- function(
   cycle <- value <- type <- data_without_units <- NULL
   
   # collect raw data
-  raw_data <- aggregate_raw_data(isofiles, gather = TRUE, quiet = TRUE)
+  raw_data <- iso_aggregate_raw_data(isofiles, gather = TRUE, quiet = TRUE)
   if (nrow(raw_data) == 0) stop("no raw data in supplied isofiles", call. = FALSE)
 
   # only work with desired data (masses and ratios)

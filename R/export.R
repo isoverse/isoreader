@@ -2,23 +2,23 @@
 
 #' Export data to R Data Archive (.rda)
 #' 
-#' This function exports the passed in isofiles to an R Data Archive (.rda) file, which is a fairly efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard \code{\link{read_continuous_flow}} and \code{\link{read_dual_inlet}} functions or by simply double-clicking the .rda file which will open in an R console and restore the data into variable \code{isofiles}.
+#' This function exports the passed in isofiles to an R Data Archive (.rda) file, which is a fairly efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard \code{\link{iso_read_continuous_flow}} and \code{\link{iso_read_dual_inlet}} functions or by simply double-clicking the .rda file which will open in an R console and restore the data into variable \code{isofiles}.
 #' 
-#' @inheritParams aggregate_raw_data
+#' @inheritParams iso_aggregate_raw_data
 #' @param filepath the path (folder and filename) to the export file. The correct file extension is automatically added if not already in the filename, i.e. filename can be provided with or without extension.
 #' @family export functions
 #' @return returns the isofiles object invisibly for use in pipelines
 #' @export
-export_to_rda <- function(isofiles, filepath, quiet = default(quiet)) {
+iso_export_to_rda <- function(isofiles, filepath, quiet = default(quiet)) {
   
   # safety checks
-  if(!is_iso_object(isofiles)) stop("can only export iso files or lists of iso files", call. = FALSE)
+  if(!iso_is_object(isofiles)) stop("can only export iso files or lists of iso files", call. = FALSE)
   filepath <- get_rda_export_filepath(isofiles, filepath)
   
   # save isofiles
   if (!quiet) {
     sprintf("Info: exporting data from %d isofiles into R Data Archive '%s'", 
-            length(as_isofile_list(isofiles)), 
+            length(iso_as_file_list(isofiles)), 
             str_replace(filepath, "^\\.(/|\\\\)", "")) %>% message()
   }
   
@@ -28,9 +28,9 @@ export_to_rda <- function(isofiles, filepath, quiet = default(quiet)) {
 
 #' Export data to Excel
 #' 
-#' This function exports the passed in isofiles to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file but they are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{read_dual_inlet}}, \code{\link{read_continuous_flow}} for details on read parameters). 
+#' This function exports the passed in isofiles to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file but they are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters). 
 #' 
-#' @inheritParams export_to_rda
+#' @inheritParams iso_export_to_rda
 #' @param include_raw_data whether to include the raw data in the export (if available)
 #' @param include_file_info whether to include the file info in the export (if available)
 #' @param include_method_info whether to include methods infor in the export (if available)
@@ -39,18 +39,18 @@ export_to_rda <- function(isofiles, filepath, quiet = default(quiet)) {
 #' @family export functions
 #' @return returns the isofiles object invisibly for use in pipelines
 #' @export
-export_to_excel <- function(isofiles, filepath, 
+iso_export_to_excel <- function(isofiles, filepath, 
                             include_raw_data = TRUE, include_file_info = TRUE, 
                             include_method_info = TRUE, include_vendor_data_table = TRUE,
                             include_problems = TRUE,
                             quiet = default(quiet)) {
   
   # safety checks
-  if(!is_iso_object(isofiles)) stop("can only export iso files or lists of iso files", call. = FALSE)
+  if(!iso_is_object(isofiles)) stop("can only export iso files or lists of iso files", call. = FALSE)
   filepath <- get_excel_export_filepath(isofiles, filepath)
   
   # save isofiles
-  export_isofiles <- as_isofile_list(isofiles)
+  export_isofiles <- iso_as_file_list(isofiles)
   if (!quiet) {
     sprintf("Info: exporting data from %d isofiles into Excel '%s'", length(export_isofiles), 
             str_replace(filepath, "^\\.(/|\\\\)", "")) %>% message()
@@ -61,24 +61,24 @@ export_to_excel <- function(isofiles, filepath,
   hs <- createStyle(textDecoration = "bold")
   if (include_raw_data) {
     addWorksheet(wb, "raw data")
-    raw_data <- aggregate_raw_data(export_isofiles, quiet = TRUE)
+    raw_data <- iso_aggregate_raw_data(export_isofiles, quiet = TRUE)
     if (ncol(raw_data) > 0) writeData(wb, "raw data", raw_data, headerStyle = hs)
   }
   if (include_file_info) {
     addWorksheet(wb, "file info")
-    writeData(wb, "file info", aggregate_file_info(export_isofiles, quiet = TRUE),
+    writeData(wb, "file info", iso_aggregate_file_info(export_isofiles, quiet = TRUE),
               headerStyle = hs)
   }
   if (include_method_info) {
     addWorksheet(wb, "method info")
-    standards <- aggregate_standards_info(export_isofiles, quiet = TRUE)
-    resistors <- aggregate_resistors_info(export_isofiles, quiet = TRUE)
+    standards <- iso_aggregate_standards_info(export_isofiles, quiet = TRUE)
+    resistors <- iso_aggregate_resistors_info(export_isofiles, quiet = TRUE)
     if (ncol(standards) > 0) writeData(wb, "method info", standards, headerStyle = hs)
     if (ncol(resistors) > 0) writeData(wb, "method info", resistors, startRow = nrow(standards) + 3, headerStyle = hs)
   }
   if (include_vendor_data_table) {
     addWorksheet(wb, "vendor data table")
-    vendor_data <- aggregate_vendor_data_table(export_isofiles, quiet = TRUE)
+    vendor_data <- iso_aggregate_vendor_data_table(export_isofiles, quiet = TRUE)
     if (ncol(vendor_data) > 0) writeData(wb, "vendor data table", vendor_data, headerStyle = hs)
   }
   if (include_problems) {
@@ -93,44 +93,44 @@ export_to_excel <- function(isofiles, filepath,
 
 #' Export to feather
 #' 
-#' This function exports the passed in isofiles to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided \code{filepath_prefix} as prefix. All are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{read_dual_inlet}}, \code{\link{read_continuous_flow}} for details on read parameters). 
+#' This function exports the passed in isofiles to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided \code{filepath_prefix} as prefix. All are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters). 
 #' 
-#' @inheritParams export_to_excel
+#' @inheritParams iso_export_to_excel
 #' @param filepath_prefix the path (folder and filename) prefix for the exported feather files. The correct suffix for different kinds of data and file extension is automatically added
 #' @family export functions
 #' @return returns the isofiles object invisibly for use in pipelines
 #' @export
-export_to_feather <- function(isofiles, filepath_prefix, 
+iso_export_to_feather <- function(isofiles, filepath_prefix, 
                               include_raw_data = TRUE, include_file_info = TRUE, 
                               include_method_info = TRUE, include_vendor_data_table = TRUE,
                               include_problems = TRUE,
                               quiet = default(quiet)) {
   
   # safety checks
-  if(!is_iso_object(isofiles)) stop("can only export iso files or lists of iso files", call. = FALSE)
+  if(!iso_is_object(isofiles)) stop("can only export iso files or lists of iso files", call. = FALSE)
   
   # save isofiles
   # note: not sure yet how to best implement different data types such as scan here
   filepaths <- get_feather_export_filepaths(isofiles, filepath_prefix)
   if (!quiet) {
-    sprintf("Info: exporting data from %d isofiles into %s files at '%s'", length(as_isofile_list(isofiles)), 
+    sprintf("Info: exporting data from %d isofiles into %s files at '%s'", length(iso_as_file_list(isofiles)), 
             filepaths[['ext']], str_replace(filepaths[['base']], "^\\.(/|\\\\)", "")) %>% message()
   }
   
   # make feather files in temporary dir
   if (include_raw_data) 
-    write_feather(aggregate_raw_data(isofiles, quiet = TRUE), filepaths[['raw_data']])
+    write_feather(iso_aggregate_raw_data(isofiles, quiet = TRUE), filepaths[['raw_data']])
   
   if (include_file_info) 
-    write_feather(aggregate_file_info(isofiles, quiet = TRUE), filepaths[['file_info']])
+    write_feather(iso_aggregate_file_info(isofiles, quiet = TRUE), filepaths[['file_info']])
   
   if (include_method_info) {
-    write_feather(aggregate_standards_info(isofiles, quiet = TRUE), filepaths[['method_info_standards']])
-    write_feather(aggregate_resistors_info(isofiles, quiet = TRUE), filepaths[['method_info_resistors']])
+    write_feather(iso_aggregate_standards_info(isofiles, quiet = TRUE), filepaths[['method_info_standards']])
+    write_feather(iso_aggregate_resistors_info(isofiles, quiet = TRUE), filepaths[['method_info_resistors']])
   }
   
   if (include_vendor_data_table) 
-    write_feather(aggregate_vendor_data_table(isofiles, quiet = TRUE), filepaths[['vendor_data_table']])
+    write_feather(iso_aggregate_vendor_data_table(isofiles, quiet = TRUE), filepaths[['vendor_data_table']])
   
   if (include_problems) 
     write_feather(problems(isofiles), filepaths[['problems']])
@@ -154,9 +154,9 @@ get_export_filepath <- function(filepath, ext) {
 
 # rda export filepath
 get_rda_export_filepath <- function(isofiles, filepath) {
-  if (is_continuous_flow(isofiles))
+  if (iso_is_continuous_flow(isofiles))
     ext <- ".cf.rda"
-  else if (is_dual_inlet(isofiles))
+  else if (iso_is_dual_inlet(isofiles))
     ext <- ".di.rda"
   else
     stop("R data archive export of this type of isofiles not supported", call. = FALSE)
@@ -165,9 +165,9 @@ get_rda_export_filepath <- function(isofiles, filepath) {
 
 # excel export filephat
 get_excel_export_filepath <- function(isofiles, filepath) {
-  if (is_continuous_flow(isofiles))
+  if (iso_is_continuous_flow(isofiles))
     ext <- ".cf.xlsx"
-  else if (is_dual_inlet(isofiles))
+  else if (iso_is_dual_inlet(isofiles))
     ext <- ".di.xlsx"
   else
     stop("Excel export of this type of isofiles not yet supported", call. = FALSE) 
@@ -176,9 +176,9 @@ get_excel_export_filepath <- function(isofiles, filepath) {
 
 # feather export filepath
 get_feather_export_filepaths <- function(isofiles, filepath) {
-  if (is_continuous_flow(isofiles))
+  if (iso_is_continuous_flow(isofiles))
     ext <- ".cf.feather"
-  else if (is_dual_inlet(isofiles))
+  else if (iso_is_dual_inlet(isofiles))
     ext <- ".di.feather"
   else
     stop("Feather export of this type of isofiles not yet supported", call. = FALSE) 

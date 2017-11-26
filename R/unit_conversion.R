@@ -4,17 +4,17 @@
 #' 
 #' This function can be used to convert the time units of a collection of isofiles to a new common time unit. The original time units are inferred from the naming of the time column. New time units are very flexible and can be anything that \code{\link[lubridate]{duration}} understands, i.e. "s", "seconds", "min", "minutes", "hours", "days", etc. are all valid units.
 #' 
-#' @inheritParams plot_raw_data
+#' @inheritParams iso_plot_raw_data
 #' @param to what time units to convert to
 #' @export
 #' @return the passed in isofile(s) with changed time units
-convert_time <- function(isofiles, to, quiet = default(quiet)) {
+iso_convert_time <- function(isofiles, to, quiet = default(quiet)) {
   
   # checks
-  if(!is_continuous_flow(isofiles)) stop("can only convert time in continuous flow isofiles", call. = FALSE)
+  if(!iso_is_continuous_flow(isofiles)) stop("can only convert time in continuous flow isofiles", call. = FALSE)
   if(missing(to)) stop("no time unit to convert to specified", call. = FALSE)
-  single_file <- is_isofile(isofiles) # to make sure return is the same as supplied
-  isofiles <- as_isofile_list(isofiles)
+  single_file <- iso_is_file(isofiles) # to make sure return is the same as supplied
+  isofiles <- iso_as_file_list(isofiles)
   
   if (!quiet) 
     sprintf("Info: converting time to '%s' for %d continuous flow data file(s)", to, length(isofiles)) %>% message()
@@ -52,25 +52,25 @@ convert_time <- function(isofiles, to, quiet = default(quiet)) {
 
 #' Convert signal units in continuous flow and dual inlet files
 #' 
-#' This function can be used to convert the intensity units of a collection of isofiles to a scaled unit (e.g. from mV to V, or nA to mA) or different unit (e.g. from mV to nA or vice-versa). The original signal intensity units are inferred from the naming of the intensity columns. The new units must be a voltage (V) or current (A) but can have any valid SI prefix. Conversion from voltage to current and vice versa requires information about the resistors used in the op amp. This information is automatically retrieved during file read for file formats that contain resistors values (e.g. dxf and did) and are read with the \code{read_method_info=TRUE} parameter (see \code{\link{aggregate_resistors_info}} for details on how to access resistor values in read files). If resistor values are not set in a file, it will not allow automatic conversion between voltage and current. Instead, the \code{R} and \code{R_units} parameters can be used to provide specific resistor values. However, if \code{R} is set, these values will be used for all passed in \code{isofiles}. 
+#' This function can be used to convert the intensity units of a collection of isofiles to a scaled unit (e.g. from mV to V, or nA to mA) or different unit (e.g. from mV to nA or vice-versa). The original signal intensity units are inferred from the naming of the intensity columns. The new units must be a voltage (V) or current (A) but can have any valid SI prefix. Conversion from voltage to current and vice versa requires information about the resistors used in the op amp. This information is automatically retrieved during file read for file formats that contain resistors values (e.g. dxf and did) and are read with the \code{read_method_info=TRUE} parameter (see \code{\link{iso_aggregate_resistors_info}} for details on how to access resistor values in read files). If resistor values are not set in a file, it will not allow automatic conversion between voltage and current. Instead, the \code{R} and \code{R_units} parameters can be used to provide specific resistor values. However, if \code{R} is set, these values will be used for all passed in \code{isofiles}. 
 #' 
-#' @inheritParams plot_raw_data
+#' @inheritParams iso_plot_raw_data
 #' @param to what signal unit to convert to
 #' @param R resistor value(s). If not specified, will use resitor values from individual isofiles. If specified, must be a named vector with Rm (m=mass) as names (e.g. \code{c(R45=0.3, R46=3)}), in units of \code{R_units}. If specified, will be used for ALL provided isofiles.
 #' @param R_units determined what units resistor values (\code{R}) are in, if they are specified. Example \code{R_units = "GOhm"} designates that the resistor values provided in \code{R} parameter are in Giga-Ohm, i.e. 10^9 Ohm.
 #' @export
 #' @return the passed in isofile(s) with changed signal units
-convert_signals <- function(isofiles, to, R, R_units = NA, quiet = default(quiet)) {
+iso_convert_signals <- function(isofiles, to, R, R_units = NA, quiet = default(quiet)) {
   
   # checks
-  if(!is_continuous_flow(isofiles) && !is_dual_inlet(isofiles)) stop("can only convert signals in continuous flow and dual inlet isofiles", call. = FALSE)
+  if(!iso_is_continuous_flow(isofiles) && !iso_is_dual_inlet(isofiles)) stop("can only convert signals in continuous flow and dual inlet isofiles", call. = FALSE)
   if(missing(to)) stop("no unit to convert to specified", call. = FALSE)
   if(!missing(R) && is.na(R_units)) stop("resistor values (R) are specified but their units (R_units) are not", call. = FALSE)
   if(missing(R) && !is.na(R_units)) stop("resistor units (R_units) are specified but resistor values (R) are not", call. = FALSE)
   if(!missing(R) && ( !is.vector(R, "numeric") || is.null(names(R)) || any(names(R) == ""))) 
     stop("specified resistance values have to be a named numeric vector - e.g., c(R45=0.3)", call. = FALSE)
-  single_file <- is_isofile(isofiles) # to make sure return is the same as supplied
-  isofiles <- as_isofile_list(isofiles)
+  single_file <- iso_is_file(isofiles) # to make sure return is the same as supplied
+  isofiles <- iso_as_file_list(isofiles)
   auto_R <- missing(R)
   
   if (!quiet) {
@@ -85,7 +85,7 @@ convert_signals <- function(isofiles, to, R, R_units = NA, quiet = default(quiet
   check_read_options(isofiles, "raw_data")
   
   # apply signal conversion
-  func <- "convert_signals"
+  func <- "iso_convert_signals"
   signal_pattern <- sprintf("^[iv](\\d+)\\.(\\w+)$")
   to_units <- get_unit_scaling(to, c("V", "A"))
   R_name <- R.Ohm <- NULL # global vars
@@ -138,7 +138,7 @@ convert_signals <- function(isofiles, to, R, R_units = NA, quiet = default(quiet
     # convert signals
     isofile$raw_data <- scale_signals(isofile$raw_data, col_names, to = to, R = R, R_units = R_units, quiet = TRUE)
     return(isofile)
-  }) %>% as_isofile_list()
+  }) %>% iso_as_file_list()
   
   # report problems from this particular function
   convert_signal_problems <- problems(isofiles) %>% filter(func == func)

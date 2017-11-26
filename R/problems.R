@@ -1,21 +1,25 @@
 #' @title Problem Functions
 #' @description The following functions to check for and deal with problems are available.
 #' 
-#' \code{\link[readr]{problems}}
+#' \code{iso_problems} is a re-export of \code{\link[readr]{problems}}
 #' 
-#' \code{\link{problems_summary}}
+#' \code{\link{iso_problems_summary}}
 #' 
 #' \code{\link[readr]{stop_for_problems}}
 #' 
-#' \code{\link{omit_files_with_problems}}
+#' \code{\link{iso_omit_files_with_problems}}
 #' @name problem_functions
-#' @rdname problem_function.Rd
-#' @family problem_functions
+#' @family problem functions
 NULL
 
+#' Retrieve parsing problems
+#' 
+#' This is a re-export of the readr \code{\link[readr]{problems}} function.
+#' 
 #' @importFrom readr problems
+#' @family problem functions
 #' @export
-readr::problems
+iso_problems <- readr::problems
 
 #' @importFrom readr stop_for_problems
 #' @export
@@ -24,14 +28,14 @@ readr::stop_for_problems
 #' Retrieve a summary of the problems
 #'
 #' Returns a data frame listing how many errors and warnings were encountered for each file. For details on each error/warning, see \link[readr]{problems} and the \link{problem_functions}.
-#' @inheritParams aggregate_raw_data
+#' @inheritParams iso_aggregate_raw_data
 #' @family problem functions
 #' @return data frame with file_id and number of encountered errors and warnings
 #' @export
-problems_summary <- function(isofiles) {
+iso_problems_summary <- function(isofiles) {
   # safety checks
-  if (missing(isofiles) || !is_iso_object(isofiles)) stop("please provide isofiles", call. = FALSE)
-  isofiles <- as_isofile_list(isofiles)
+  if (missing(isofiles) || !iso_is_object(isofiles)) stop("please provide isofiles", call. = FALSE)
+  isofiles <- iso_as_file_list(isofiles)
   
   # global vars
   error <- warning <- type <- NULL
@@ -64,17 +68,17 @@ problems_summary <- function(isofiles) {
 #' Remove problematic files
 #' 
 #' Removes the files that have encountered problems, either errors, warnings or both and returns the remaining isofiles. For additional functions available to check for and deal with problems, see the \link{problem_functions}.
-#' @inheritParams aggregate_raw_data
+#' @inheritParams iso_aggregate_raw_data
 #' @param type what type of problem causes removal of the file: \code{"error"}, \code{"warning"} or \code{"both"}
 #' @family problem functions
 #' @export
-omit_files_with_problems <- function(isofiles, type = c("error", "warning", "both"), quiet = default(quiet)) {
-  if (missing(isofiles) || !is_iso_object(isofiles)) stop("please provide a list of isofiles", call. = FALSE)
+iso_omit_files_with_problems <- function(isofiles, type = c("error", "warning", "both"), quiet = default(quiet)) {
+  if (missing(isofiles) || !iso_is_object(isofiles)) stop("please provide a list of isofiles", call. = FALSE)
   if (missing(type)) type <- "both"
   if (length(type) > 1) stop("more than one type specified", call. = FALSE)
   if (!type %in% c("error", "warning", "both")) stop("unknown problem type specified: ", type, call. = FALSE)
   types <- if (type == "both") c("error", "warning") else type
-  isofiles <- as_isofile_list(isofiles)
+  isofiles <- iso_as_file_list(isofiles)
   
   # find trouble file ids
   trouble_files <- problems(isofiles) %>% 
@@ -101,13 +105,13 @@ register_problem <- function(obj, type = NA_character_, details = NA_character_,
                                   func = find_parent_call("register_problem")) {
   if (func == "NULL") func <- NA_character_
   problem <- data_frame(type = type, func = func, details = details, ...)
-  if (is_isofile_list(obj)) {
+  if (iso_is_file_list(obj)) {
     obj <- as.list(obj)
     for (i in 1:length(obj)) {
       existing_problems <- get_problems(obj[[i]])
       obj[[i]] <- set_problems(obj[[i]], suppressWarnings(bind_rows(existing_problems, problem)))
     } 
-    obj <- as_isofile_list(obj)
+    obj <- iso_as_file_list(obj)
   } else {
     obj <- obj %>% set_problems(
         suppressWarnings(bind_rows(get_problems(obj), problem)))

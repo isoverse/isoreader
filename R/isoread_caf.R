@@ -3,7 +3,7 @@
 isoread_caf <- function(ds, ...) {
   
   # safety checks
-  if(!is_dual_inlet(ds)) 
+  if(!iso_is_dual_inlet(ds)) 
     stop("data structure must be a 'dual_inlet' isofile", call. = FALSE)
   
   # read binary file

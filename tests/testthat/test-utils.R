@@ -2,7 +2,7 @@ context("Utility functions")
 
 test_that("retrieving example files works correctly", {
   
-  expect_true(is.data.frame(get_isoreader_examples()))
+  expect_true(is.data.frame(iso_get_reader_examples()))
   expect_error(isoreader_example("DNE"), "does not exist")
   expect_equal(system.file(package = "isoreader", "extdata", "continuous_flow_example.dxf"), path <- isoreader_example("continuous_flow_example.dxf"))
   expect_true(file.exists(path))
@@ -41,15 +41,15 @@ test_that("test that column name checks work correctly", {
 
 
 test_that("test that get support file types are listed", {
-  expect_true(is.data.frame(get_supported_file_types()))
+  expect_true(is.data.frame(iso_get_supported_file_types()))
 })
 
 test_that("test that error catching works correctly", {
-  expect_equal( {suppressMessages(isoreader:::turn_debug_on(catch_errors = TRUE)); isoreader:::default(debug)}, TRUE)
+  expect_equal( {suppressMessages(isoreader:::iso_turn_debug_on(catch_errors = TRUE)); isoreader:::default(debug)}, TRUE)
   expect_warning(y <- isoreader:::exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
-  expect_equal( {suppressMessages(isoreader:::turn_debug_on(catch_errors = FALSE)); isoreader:::default(debug)}, TRUE)
+  expect_equal( {suppressMessages(isoreader:::iso_turn_debug_on(catch_errors = FALSE)); isoreader:::default(debug)}, TRUE)
   expect_error(isoreader:::exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
-  expect_equal( {suppressMessages(isoreader:::turn_debug_off()); isoreader:::default(debug)}, FALSE)
+  expect_equal( {suppressMessages(isoreader:::iso_turn_debug_off()); isoreader:::default(debug)}, FALSE)
   expect_warning(y <- isoreader:::exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
   expect_equal(problems(y) %>% select(type, details), data_frame(type = "error", details = "problem"))
 })

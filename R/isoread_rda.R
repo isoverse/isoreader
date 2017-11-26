@@ -3,16 +3,16 @@
 isoread_rda <- function(ds, ...) {
   
   # safety checks
-  if(!is_isofile(ds)) stop("data structure must be an isofile", call. = FALSE)
+  if(!iso_is_file(ds)) stop("data structure must be an isofile", call. = FALSE)
   
   # load rda file
   if (exists("isofiles", inherits = FALSE)) rm("isofiles") 
   load(ds$file_info$file_path) 
   
   # make sure object in file was loaded properly
-  if (!exists("isofiles", inherits = FALSE) || !(is_iso_object(isofiles))) 
+  if (!exists("isofiles", inherits = FALSE) || !(iso_is_object(isofiles))) 
     stop("R Data Archive did not contain isofile data", call. = FALSE)
-  isofiles <- as_isofile_list(isofiles)
+  isofiles <- iso_as_file_list(isofiles)
   
   # make sure all are the appropriate classes
   if (!all(ok <- lapply(isofiles, class) %>% sapply(identical, class(ds)))) 
@@ -34,7 +34,7 @@ isoread_rda <- function(ds, ...) {
   }
 
   if (any(!ok_version)) {
-    sprintf("%.0f of the %.0f data files stored in the R Data Archive ('%s') were created by a different version of the isoreader package. This may lead to processing problems.\nConsider re-reading the original data files using the 'reread_isofiles()' or 'reread_isofiles_archive()' function. ", sum(!ok_version), length(isofiles), ds$file_info$file_id) %>% 
+    sprintf("%.0f of the %.0f data files stored in the R Data Archive ('%s') were created by a different version of the isoreader package. This may lead to processing problems.\nConsider re-reading the original data files using the 'iso_reread_files()' or 'iso_reread_archive()' function. ", sum(!ok_version), length(isofiles), ds$file_info$file_id) %>% 
     warning(call. = FALSE, immediate. = TRUE)
   }
 

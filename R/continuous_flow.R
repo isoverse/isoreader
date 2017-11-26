@@ -1,16 +1,16 @@
 #' Load continuous flow data
 #' 
-#' @inheritParams read_dual_inlet
+#' @inheritParams iso_read_dual_inlet
 #' @family isoread functions for different types of IRMS data
 #' @export
-read_continuous_flow <- function(
+iso_read_continuous_flow <- function(
   paths, 
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
   discard_duplicates = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
 
   # process data
-  isoread_files(
+  iso_read_files(
     paths,
     supported_extensions = get_supported_cf_files(),
     data_structure = make_cf_data_structure(),

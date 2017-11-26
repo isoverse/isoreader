@@ -23,9 +23,9 @@ extract_isodat_resistors <- function(ds) {
     move_to_C_block("CEvalIntegrationUnitHWInfo")
   
   # cap depends on dxf vs did
-  if (is_continuous_flow(ds)) {
+  if (iso_is_continuous_flow(ds)) {
     ds$binary <- cap_at_next_C_block(ds$binary, "CConfiguration")
-  } else if (is_dual_inlet(ds)) {
+  } else if (iso_is_dual_inlet(ds)) {
     ds$binary <- cap_at_next_C_block(ds$binary, "CGasConfiguration")
   }
   

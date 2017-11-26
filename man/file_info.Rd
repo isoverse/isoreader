@@ -20,7 +20,7 @@ get_file_datetime(isofile)
 \item{isofile}{an isofile to retrieve basic file information from}
 }
 \description{
-Retrieve basic file information form an individual isotope file (isofile) object. All of these can also be recoverd for an entire set of files using \code{\link{aggregate_file_info}} and specifiying which info to recover, for example, \code{include = c("file_id", "file_path", "file_datetime")}
+Retrieve basic file information form an individual isotope file (isofile) object. All of these can also be recoverd for an entire set of files using \code{\link{iso_aggregate_file_info}} and specifiying which info to recover, for example, \code{include = c("file_id", "file_path", "file_datetime")}
 }
 \details{
 \code{get_file_id()}: retrieve the file ID (this is typially the file name)
@@ -32,9 +32,9 @@ Retrieve basic file information form an individual isotope file (isofile) object
 \code{get_file_datetime()}: retrieve the run date and time in \code{\link[base]{POSIXct}} format
 }
 \seealso{
-Other data retrieval functions: \code{\link{aggregate_file_info}},
-  \code{\link{aggregate_raw_data}},
-  \code{\link{aggregate_resistors_info}},
-  \code{\link{aggregate_standards_info}},
-  \code{\link{aggregate_vendor_data_table}}
+Other data retrieval functions: \code{\link{iso_aggregate_file_info}},
+  \code{\link{iso_aggregate_raw_data}},
+  \code{\link{iso_aggregate_resistors_info}},
+  \code{\link{iso_aggregate_standards_info}},
+  \code{\link{iso_aggregate_vendor_data_table}}
 }

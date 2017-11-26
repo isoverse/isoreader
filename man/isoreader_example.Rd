@@ -2,12 +2,12 @@
 % Please edit documentation in R/utils.R
 \name{isoreader_example}
 \alias{isoreader_example}
-\alias{get_isoreader_examples}
+\alias{iso_get_reader_examples}
 \title{Example files}
 \usage{
 isoreader_example(filename)
 
-get_isoreader_examples()
+iso_get_reader_examples()
 }
 \arguments{
 \item{filename}{the name of the example file for which to retrieve the system path}
@@ -18,5 +18,5 @@ The isoreader package comes with a few example files to make it easy to illustra
 \details{
 \code{isoreader_example}: retrieve the path to an isoreader example file
 
-\code{get_isoreader_examples}: list of all available isoreader example files
+\code{iso_get_reader_examples}: list of all available isoreader example files
 }

@@ -4,7 +4,7 @@ context("File info")
 
 test_that("test that file information can be recovered from isofiles", {
   
-  expect_true(is_isofile(isofile <- isoreader:::make_isofile_data_structure()))
+  expect_true(iso_is_file(isofile <- isoreader:::make_isofile_data_structure()))
   
   expect_error(get_file_id(), "no isofile provided")
   expect_error(get_file_id(42), "can only retrieve file information from an isofile object")
@@ -49,10 +49,10 @@ test_that("test that read option checks work properly", {
 ## check aggregate functions' errors ====
 
 test_that("test that aggregation functions refuse to work with non isofiles", {
-  expect_error(aggregate_raw_data(1), "encountered incompatible data type")
-  expect_error(aggregate_file_info(1), "encountered incompatible data type")
-  expect_error(aggregate_standards_info(1), "encountered incompatible data type")
-  expect_error(aggregate_vendor_data_table(1), "encountered incompatible data type")
+  expect_error(iso_aggregate_raw_data(1), "encountered incompatible data type")
+  expect_error(iso_aggregate_file_info(1), "encountered incompatible data type")
+  expect_error(iso_aggregate_standards_info(1), "encountered incompatible data type")
+  expect_error(iso_aggregate_vendor_data_table(1), "encountered incompatible data type")
 })
 
 ## check aggregating file info works
@@ -60,7 +60,7 @@ test_that("test that aggregation functions refuse to work with non isofiles", {
 test_that("test that aggregating file info works", {
 
   isofile <- isoreader:::make_isofile_data_structure()
-  expect_warning(aggregate_file_info(isofile), "read without extracting the file info")
+  expect_warning(iso_aggregate_file_info(isofile), "read without extracting the file info")
   
   # test data
   isofile$read_options$file_info <- TRUE
@@ -69,10 +69,10 @@ test_that("test that aggregating file info works", {
   isofile2 <- modifyList(isofile, list(
     file_info = list(file_id = "b", test_info = "y", multi_value = 1:3)))
   
-  expect_message(aggregate_file_info(c(isofile1, isofile2), quiet = FALSE), "aggregating")
-  expect_silent(agg <- aggregate_file_info(c(isofile1, isofile2), quiet = TRUE))
+  expect_message(iso_aggregate_file_info(c(isofile1, isofile2), quiet = FALSE), "aggregating")
+  expect_silent(agg <- iso_aggregate_file_info(c(isofile1, isofile2), quiet = TRUE))
   expect_equal(names(agg), unique(names(isofile1$file_info), names(isofile2$file_info)))
-  expect_equal(aggregate_file_info(c(isofile1, isofile2)), 
+  expect_equal(iso_aggregate_file_info(c(isofile1, isofile2)), 
                {
                   # check for multi value collapse functionality
                   isofile1$file_info$multi_value <- str_c(isofile1$file_info$multi_value, collapse = "; ")
@@ -81,8 +81,8 @@ test_that("test that aggregating file info works", {
                })
   
   # check selecte functionality
-  expect_equal(names(aggregate_file_info(isofile1, select = c("file_datetime", "only_a"))), c("file_id", "file_datetime", "only_a"))
-  expect_warning(agg <- aggregate_file_info(isofile2, select = c("file_datetime", "only_a")), "file info entries do not exist")
+  expect_equal(names(iso_aggregate_file_info(isofile1, select = c("file_datetime", "only_a"))), c("file_id", "file_datetime", "only_a"))
+  expect_warning(agg <- iso_aggregate_file_info(isofile2, select = c("file_datetime", "only_a")), "file info entries do not exist")
   expect_equal(names(agg), c("file_id", "file_datetime"))
 })
 
@@ -92,7 +92,7 @@ test_that("test that aggregating file info works", {
 test_that("test that aggregeting raw data works", {
   
   isofile <- isoreader:::make_isofile_data_structure()
-  expect_warning(aggregate_raw_data(isofile), "read without extracting the raw data")
+  expect_warning(iso_aggregate_raw_data(isofile), "read without extracting the raw data")
   
   # test data
   isofile$read_options$raw_data <- TRUE
@@ -102,13 +102,13 @@ test_that("test that aggregeting raw data works", {
   isofile1$raw_data <- data_frame(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), `r46/44` = v46.mV/v44.mV)
   isofile2$raw_data <- data_frame(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), v45.mV = runif(10))
   
-  expect_message(aggregate_raw_data(c(isofile1, isofile2), quiet = FALSE), "aggregating")
-  expect_silent(aggregate_raw_data(c(isofile1, isofile2), quiet = TRUE))
-  expect_equal(aggregate_raw_data(c(isofile1, isofile2)), 
+  expect_message(iso_aggregate_raw_data(c(isofile1, isofile2), quiet = FALSE), "aggregating")
+  expect_silent(iso_aggregate_raw_data(c(isofile1, isofile2), quiet = TRUE))
+  expect_equal(iso_aggregate_raw_data(c(isofile1, isofile2)), 
                data <- bind_rows(mutate(isofile1$raw_data, file_id="a"), 
                                  mutate(isofile2$raw_data, file_id = "b")))
   
-  expect_equal(aggregate_raw_data(c(isofile1, isofile2), gather = TRUE), 
+  expect_equal(iso_aggregate_raw_data(c(isofile1, isofile2), gather = TRUE), 
                data %>% gather(column, value, starts_with("v"), starts_with("r")) %>% 
                  left_join(data_frame(
                    column = c("v44.mV", "v45.mV", "v46.mV", "r46/44"),
@@ -120,12 +120,12 @@ test_that("test that aggregeting raw data works", {
   # include file info
   isofile1 <- modifyList(isofile1, list(file_info = list(test_info = "x")))
   isofile2 <- modifyList(isofile2, list(file_info = list(test_info = "y")))
-  expect_true("test_info" %in% names(agg <- aggregate_raw_data(c(isofile1, isofile2), include_file_info = c("test_info"))))
+  expect_true("test_info" %in% names(agg <- iso_aggregate_raw_data(c(isofile1, isofile2), include_file_info = c("test_info"))))
   expect_equal(unique(agg$test_info), c("x", "y"))
   
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
-    suppressWarnings(aggregate_raw_data(
+    suppressWarnings(iso_aggregate_raw_data(
       c(isoreader:::make_isofile_data_structure(), isofile1, isofile2), 
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
@@ -138,7 +138,7 @@ test_that("test that aggregeting raw data works", {
 test_that("test that aggregating of methods standards works", {
   
   isofile <- isoreader:::make_isofile_data_structure()
-  expect_warning(aggregate_standards_info(isofile), "read without extracting the method info")
+  expect_warning(iso_aggregate_standards_info(isofile), "read without extracting the method info")
   
   # test data
   isofile$read_options$method_info <- TRUE
@@ -148,20 +148,20 @@ test_that("test that aggregating of methods standards works", {
   isofile2 <- modifyList(isofile, list(file_info = list(file_id = "b"),
                                        method_info = list(standards = data_frame(standard = "test a"))))
   
-  expect_message(aggregate_standards_info(c(isofile1, isofile2), quiet = FALSE), "aggregating")
-  expect_silent(aggregate_standards_info(c(isofile1, isofile2), quiet = TRUE))
-  expect_equal(aggregate_standards_info(c(isofile1, isofile2)), 
+  expect_message(iso_aggregate_standards_info(c(isofile1, isofile2), quiet = FALSE), "aggregating")
+  expect_silent(iso_aggregate_standards_info(c(isofile1, isofile2), quiet = TRUE))
+  expect_equal(iso_aggregate_standards_info(c(isofile1, isofile2)), 
                data <- bind_rows(mutate(isofile1$method_info$standards, file_id="a"), 
                                  mutate(isofile2$method_info$standards, file_id="b")))
   # include file info
   isofile1 <- modifyList(isofile1, list(file_info = list(test_info = "x")))
   isofile2 <- modifyList(isofile2, list(file_info = list(test_info = "y")))
-  expect_true("test_info" %in% names(agg <- aggregate_standards_info(c(isofile1, isofile2), include_file_info = c("test_info"))))
+  expect_true("test_info" %in% names(agg <- iso_aggregate_standards_info(c(isofile1, isofile2), include_file_info = c("test_info"))))
   expect_equal(unique(agg$test_info), c("x", "y"))
   
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
-    suppressWarnings(aggregate_standards_info(
+    suppressWarnings(iso_aggregate_standards_info(
       c(isoreader:::make_isofile_data_structure(), isofile1, isofile2), 
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
@@ -175,7 +175,7 @@ test_that("test that aggregating of methods standards works", {
 test_that("test that aggregating of resistors works", {
   
   isofile <- isoreader:::make_isofile_data_structure()
-  expect_warning(aggregate_resistors_info(isofile), "read without extracting the method info")
+  expect_warning(iso_aggregate_resistors_info(isofile), "read without extracting the method info")
   
   # test data
   isofile$read_options$method_info <- TRUE
@@ -185,20 +185,20 @@ test_that("test that aggregating of resistors works", {
   isofile2 <- modifyList(isofile, list(file_info = list(file_id = "b"),
                                        method_info = list(resistors = data_frame(cup = 1:3, R.Ohm = c(3e9, 1e11, 1e12)))))
   
-  expect_message(aggregate_resistors_info(c(isofile1, isofile2), quiet = FALSE), "aggregating")
-  expect_silent(aggregate_resistors_info(c(isofile1, isofile2), quiet = TRUE))
-  expect_equal(aggregate_resistors_info(c(isofile1, isofile2)), 
+  expect_message(iso_aggregate_resistors_info(c(isofile1, isofile2), quiet = FALSE), "aggregating")
+  expect_silent(iso_aggregate_resistors_info(c(isofile1, isofile2), quiet = TRUE))
+  expect_equal(iso_aggregate_resistors_info(c(isofile1, isofile2)), 
                data <- bind_rows(mutate(isofile1$method_info$resistors, file_id="a"), 
                                  mutate(isofile2$method_info$resistors, file_id="b")))
   # include file info
   isofile1 <- modifyList(isofile1, list(file_info = list(test_info = "x")))
   isofile2 <- modifyList(isofile2, list(file_info = list(test_info = "y")))
-  expect_true("test_info" %in% names(agg <- aggregate_resistors_info(c(isofile1, isofile2), include_file_info = c("test_info"))))
+  expect_true("test_info" %in% names(agg <- iso_aggregate_resistors_info(c(isofile1, isofile2), include_file_info = c("test_info"))))
   expect_equal(unique(agg$test_info), c("x", "y"))
   
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
-    suppressWarnings(aggregate_resistors_info(
+    suppressWarnings(iso_aggregate_resistors_info(
       c(isoreader:::make_isofile_data_structure(), isofile1, isofile2), 
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
@@ -212,7 +212,7 @@ test_that("test that aggregating of resistors works", {
 test_that("test that aggregating of vendor data table works", {
   
   isofile <- isoreader:::make_isofile_data_structure()
-  expect_warning(aggregate_vendor_data_table(isofile), "read without extracting the vendor data table")
+  expect_warning(iso_aggregate_vendor_data_table(isofile), "read without extracting the vendor data table")
   
   # test data
   isofile$read_options$vendor_data_table <- TRUE
@@ -223,32 +223,32 @@ test_that("test that aggregating of vendor data table works", {
   isofile2$vendor_data_table <- data_frame(column1 = "col1 b", column2 = "col2 b")
   
   # unit information
-  expect_warning(aggregate_vendor_data_table(isofile1, with_units = TRUE), "do not have unit information")
-  expect_message(aggregate_vendor_data_table(isofile1, with_units = FALSE, quiet = FALSE), "aggregating")
-  expect_silent(aggregate_vendor_data_table(isofile1, with_units = FALSE, quiet = TRUE))
+  expect_warning(iso_aggregate_vendor_data_table(isofile1, with_units = TRUE), "do not have unit information")
+  expect_message(iso_aggregate_vendor_data_table(isofile1, with_units = FALSE, quiet = FALSE), "aggregating")
+  expect_silent(iso_aggregate_vendor_data_table(isofile1, with_units = FALSE, quiet = TRUE))
   
   attr(isofile1$vendor_data_table, "units") <- attr(isofile2$vendor_data_table, "units") <- 
     data_frame(column = c("column1", "column2", "col_a_only"), units = c("[1]", "[2]", ""))
   
   # aggregated with and without units
-  expect_message(agg <- aggregate_vendor_data_table(c(isofile1, isofile2), with_units = TRUE, quiet = FALSE), "aggregating")
+  expect_message(agg <- iso_aggregate_vendor_data_table(c(isofile1, isofile2), with_units = TRUE, quiet = FALSE), "aggregating")
   expect_equal(agg, 
                bind_rows(mutate(isofile1$vendor_data_table, file_id="a"),
                               mutate(isofile2$vendor_data_table, file_id="b")) %>% 
                  rename(`column1 [1]` = column1, `column2 [2]` = column2))
-  expect_equal(aggregate_vendor_data_table(c(isofile1, isofile2), with_units = FALSE), 
+  expect_equal(iso_aggregate_vendor_data_table(c(isofile1, isofile2), with_units = FALSE), 
                bind_rows(mutate(isofile1$vendor_data_table, file_id="a"),
                          mutate(isofile2$vendor_data_table, file_id="b")))
   
   # include file info
   isofile1 <- modifyList(isofile1, list(file_info = list(test_info = "x")))
   isofile2 <- modifyList(isofile2, list(file_info = list(test_info = "y")))
-  expect_true("test_info" %in% names(agg <- aggregate_vendor_data_table(c(isofile1, isofile2), include_file_info = c("test_info"))))
+  expect_true("test_info" %in% names(agg <- iso_aggregate_vendor_data_table(c(isofile1, isofile2), include_file_info = c("test_info"))))
   expect_equal(unique(agg$test_info), c("x", "y"))
   
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
-    suppressWarnings(aggregate_vendor_data_table(
+    suppressWarnings(iso_aggregate_vendor_data_table(
       c(isoreader:::make_isofile_data_structure(), isofile1, isofile2),
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")

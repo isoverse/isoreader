@@ -1,20 +1,20 @@
 
 #' Calculate ratios
 #' 
-#' Calculate ratios from raw data. Note that these are recorded ratios and are not normalized against any standards yet. The ratios are calculated straight from the raw data without any unit conversions, i.e. if the raw data is in mV, the ratio is mV/mV, if in nA the ratio is nA/nA, etc. These raw ratios are subsequently NOT identical to absolute ratios, in fact they are usually not even close (especially if raw data recorded as voltages with different resistors). If raw data is first converted to identical current units (\code{\link{convert_signals}}), the ratios may be close to their true values (+instrument fractionation), however, isotope ratios should always be calibrated against reference ratios measured in the same data file.
+#' Calculate ratios from raw data. Note that these are recorded ratios and are not normalized against any standards yet. The ratios are calculated straight from the raw data without any unit conversions, i.e. if the raw data is in mV, the ratio is mV/mV, if in nA the ratio is nA/nA, etc. These raw ratios are subsequently NOT identical to absolute ratios, in fact they are usually not even close (especially if raw data recorded as voltages with different resistors). If raw data is first converted to identical current units (\code{\link{iso_convert_signals}}), the ratios may be close to their true values (+instrument fractionation), however, isotope ratios should always be calibrated against reference ratios measured in the same data file.
 #' 
-#' @inheritParams aggregate_raw_data
+#' @inheritParams iso_aggregate_raw_data
 #' @param ratios which ratios to calculate (e.g. c("45/44", "46/44")), will only be calculated in files that have the necessary mass column
 #' @return ithe passed in isofile(s) with ratios added
 #' @export
-calculate_ratios <- function(isofiles, ratios, quiet = default(quiet)) {
+iso_calculate_ratios <- function(isofiles, ratios, quiet = default(quiet)) {
   
   # safety checks
-  if(!is_iso_object(isofiles)) stop("can only calculate ratios for iso files", call. = FALSE)
+  if(!iso_is_object(isofiles)) stop("can only calculate ratios for iso files", call. = FALSE)
   if(missing(ratios) || is.null(ratios)) stop("no ratios provided for ratio calculations", call. = FALSE)
   if(!is.logical(quiet)) stop("quiet must be TRUE or FALSE - make sure to pass ratios as a vector, not separate arguments", call. = FALSE)
-  single_file <- is_isofile(isofiles) # to make sure return is the same as supplied
-  isofiles <- as_isofile_list(isofiles)
+  single_file <- iso_is_file(isofiles) # to make sure return is the same as supplied
+  isofiles <- iso_as_file_list(isofiles)
   
   # ratios
   ratio_pattern <- "^(\\d+)/(\\d+)$"
@@ -56,7 +56,7 @@ calculate_ratios <- function(isofiles, ratios, quiet = default(quiet)) {
   }
   
   # apply calculations
-  isofiles <- isofiles %>% lapply(calculate_isofile_ratios) %>% as_isofile_list()
+  isofiles <- isofiles %>% lapply(calculate_isofile_ratios) %>% iso_as_file_list()
     
   # return single (if passed in as single) 
   if (single_file) return (isofiles[[1]])
