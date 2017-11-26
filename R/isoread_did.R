@@ -4,7 +4,7 @@ isoread_did <- function(ds, ...) {
   
   # safety checks
   if(!iso_is_dual_inlet(ds)) 
-    stop("data structure must be a 'dual_inlet' isofile", call. = FALSE)
+    stop("data structure must be a 'dual_inlet' iso_file", call. = FALSE)
   
   # read binary file
   ds$binary <- read_binary_file(ds$file_info$file_path)

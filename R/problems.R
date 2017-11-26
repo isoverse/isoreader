@@ -32,18 +32,18 @@ readr::stop_for_problems
 #' @family problem functions
 #' @return data frame with file_id and number of encountered errors and warnings
 #' @export
-iso_problems_summary <- function(isofiles) {
+iso_problems_summary <- function(iso_files) {
   # safety checks
-  if (missing(isofiles) || !iso_is_object(isofiles)) stop("please provide isofiles", call. = FALSE)
-  isofiles <- iso_as_file_list(isofiles)
+  if (missing(iso_files) || !iso_is_object(iso_files)) stop("please provide iso_files", call. = FALSE)
+  iso_files <- iso_as_file_list(iso_files)
   
   # global vars
   error <- warning <- type <- NULL
   
   # tally up problems
   probs_templ <- data_frame(file_id = character(0), error = integer(0), warning = integer(0))
-  if (n_problems(isofiles) > 0) {
-    probs <- problems(isofiles) %>% 
+  if (n_problems(iso_files) > 0) {
+    probs <- problems(iso_files) %>% 
       # tally up number of warnings/errors per file
       group_by(file_id, type) %>%
       tally() %>% 
@@ -56,7 +56,7 @@ iso_problems_summary <- function(isofiles) {
   
   # merge with file list
   data_frame(
-    file_id = names(isofiles)
+    file_id = names(iso_files)
   ) %>%
     left_join(probs, by = "file_id") %>%
     mutate(
@@ -67,40 +67,40 @@ iso_problems_summary <- function(isofiles) {
  
 #' Remove problematic files
 #' 
-#' Removes the files that have encountered problems, either errors, warnings or both and returns the remaining isofiles. For additional functions available to check for and deal with problems, see the \link{problem_functions}.
+#' Removes the files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the \link{problem_functions}.
 #' @inheritParams iso_aggregate_raw_data
 #' @param type what type of problem causes removal of the file: \code{"error"}, \code{"warning"} or \code{"both"}
 #' @family problem functions
 #' @export
-iso_omit_files_with_problems <- function(isofiles, type = c("error", "warning", "both"), quiet = default(quiet)) {
-  if (missing(isofiles) || !iso_is_object(isofiles)) stop("please provide a list of isofiles", call. = FALSE)
+iso_omit_files_with_problems <- function(iso_files, type = c("error", "warning", "both"), quiet = default(quiet)) {
+  if (missing(iso_files) || !iso_is_object(iso_files)) stop("please provide a list of iso_files", call. = FALSE)
   if (missing(type)) type <- "both"
   if (length(type) > 1) stop("more than one type specified", call. = FALSE)
   if (!type %in% c("error", "warning", "both")) stop("unknown problem type specified: ", type, call. = FALSE)
   types <- if (type == "both") c("error", "warning") else type
-  isofiles <- iso_as_file_list(isofiles)
+  iso_files <- iso_as_file_list(iso_files)
   
   # find trouble file ids
-  trouble_files <- problems(isofiles) %>% 
+  trouble_files <- problems(iso_files) %>% 
     filter(type %in% types) %>% 
     { unique(.$file_id) }
 
   # exclude
-  exclude <- names(isofiles) %in% trouble_files
+  exclude <- names(iso_files) %in% trouble_files
   if (!quiet) {
     sprintf("Info: removing %d/%d files that have %ss (keeping %d)", 
-            sum(exclude), length(isofiles), 
+            sum(exclude), length(iso_files), 
             if (type == "both") "errors or warning" else type,
-            length(isofiles) - sum(exclude)) %>% message()
+            length(iso_files) - sum(exclude)) %>% message()
   }
-  return(isofiles[!exclude])
+  return(iso_files[!exclude])
 }
 
 # register a problem during isoreader operations
 # helper function to standardize problems for file reads
 # with a filename, type and details
 # will propage the problem to all underlying files
-# @obj isofile or isofile_list
+# @obj iso_file or iso_file_list
 register_problem <- function(obj, type = NA_character_, details = NA_character_, ..., 
                                   func = find_parent_call("register_problem")) {
   if (func == "NULL") func <- NA_character_

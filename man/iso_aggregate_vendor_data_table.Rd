@@ -4,11 +4,11 @@
 \alias{iso_aggregate_vendor_data_table}
 \title{Aggregate vendor computed table data}
 \usage{
-iso_aggregate_vendor_data_table(isofiles, with_units = FALSE,
+iso_aggregate_vendor_data_table(iso_files, with_units = FALSE,
   select = all_columns(), include_file_info = c(), quiet = default(quiet))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 
 \item{with_units}{whether to include units in the column headers (if there are any) or not (default is FALSE)}
 
@@ -19,7 +19,7 @@ iso_aggregate_vendor_data_table(isofiles, with_units = FALSE,
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }
 \description{
-Aggregate data from the vendor-computed data table. This information is only available if the isofiles were read with parameter \code{read_vendor_data_table=TRUE}.
+Aggregate data from the vendor-computed data table. This information is only available if the iso_files were read with parameter \code{read_vendor_data_table=TRUE}.
 }
 \seealso{
 Other data retrieval functions: \code{\link{get_file_id}},

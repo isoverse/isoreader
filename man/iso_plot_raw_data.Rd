@@ -4,10 +4,10 @@
 \alias{iso_plot_raw_data}
 \title{Plot raw data from isoreader files}
 \usage{
-iso_plot_raw_data(isofiles, ..., quiet = default(quiet))
+iso_plot_raw_data(iso_files, ..., quiet = default(quiet))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 
 \item{...}{parameters for the data specific plotting functions}
 

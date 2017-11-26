@@ -4,11 +4,11 @@
 \alias{iso_aggregate_standards_info}
 \title{Aggregate standards from methods info}
 \usage{
-iso_aggregate_standards_info(isofiles, with_ratios = FALSE,
+iso_aggregate_standards_info(iso_files, with_ratios = FALSE,
   include_file_info = c(), quiet = default(quiet))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 
 \item{with_ratios}{whether to include ratios or just standard delta values}
 
@@ -17,7 +17,7 @@ iso_aggregate_standards_info(isofiles, with_ratios = FALSE,
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }
 \description{
-Aggregates the isotopic standard information recovered from the provided isofiles. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios. This information is only available if the isofiles were read with parameter \code{read_method_info=TRUE}.
+Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios. This information is only available if the iso_files were read with parameter \code{read_method_info=TRUE}.
 }
 \seealso{
 Other data retrieval functions: \code{\link{get_file_id}},

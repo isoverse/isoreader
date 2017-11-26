@@ -126,16 +126,16 @@ expand_file_paths <- function(paths, extensions = c()) {
 }
 
 # get re-read filepaths
-get_reread_filepaths <- function(isofiles) {
-  if(!iso_is_object(isofiles)) stop("can only re-read isofiles", call. = FALSE)
-  isofiles <- iso_as_file_list(isofiles)
-  info <- lapply(isofiles, function(i) i$file_info[c("file_id", "file_path", "file_subpath")])
+get_reread_filepaths <- function(iso_files) {
+  if(!iso_is_object(iso_files)) stop("can only re-read iso_files", call. = FALSE)
+  iso_files <- iso_as_file_list(iso_files)
+  info <- lapply(iso_files, function(i) i$file_info[c("file_id", "file_path", "file_subpath")])
   return(info %>% map_chr("file_path") %>% unique())
 }
 
 # caching ====
 
-# generates the cash file paths for isofiles
+# generates the cash file paths for iso_files
 generate_cache_filepaths <- function(filepaths, ...) {
   params <- list(...)
   
@@ -154,38 +154,38 @@ generate_cache_filepaths <- function(filepaths, ...) {
     mutate(
       iso_v = packageVersion("isoreader"),
       hash = mapply(calculate_unf_hash, filepath, size, modified),
-      cache_file = sprintf("isofile_v%d.%d_%s_%s.rds", iso_v$major, iso_v$minor, basename(filepath), hash),
+      cache_file = sprintf("iso_file_v%d.%d_%s_%s.rds", iso_v$major, iso_v$minor, basename(filepath), hash),
       cache_filepath = file.path(default("cache_dir"), cache_file)
     )
   
   return(file_info$cache_filepath)
 }
 
-# Cache isofile
-cache_isofile <- function(isofile, cachepath) {
+# Cache iso_file
+cache_iso_file <- function(iso_file, cachepath) {
   if (!file.exists(default("cache_dir"))) dir.create(default("cache_dir"))
-  saveRDS(isofile, file = cachepath)
+  saveRDS(iso_file, file = cachepath)
 }
 
-# Load cached isofile
-load_cached_isofile <- function(filepath, check_version = TRUE) {
+# Load cached iso_file
+load_cached_iso_file <- function(filepath, check_version = TRUE) {
   # safety check (should never be a problem)
   if (!file.exists(filepath)) stop("cached file does not exist: ", filepath, call. = FALSE) 
   
   # load
-  isofile <- readRDS(filepath)
+  iso_file <- readRDS(filepath)
   
   # make sure object in file was loaded properly
-  if (!(iso_is_object(isofile))) stop("cached file did not contain isofile(s)", call. = FALSE)
+  if (!(iso_is_object(iso_file))) stop("cached file did not contain iso_file(s)", call. = FALSE)
   
   # check version
-  cached_version <- if(iso_is_file_list(isofile)) isofile[[1]]$version else isofile$version
+  cached_version <- if(iso_is_file_list(iso_file)) iso_file[[1]]$version else iso_file$version
   if (!same_as_isoreader_version(cached_version)) {
-    isofile <- register_warning(isofile, details = "file created by a different version of the isoreader package")
+    iso_file <- register_warning(iso_file, details = "file created by a different version of the isoreader package")
   }
   
   # return
-  return(isofile)
+  return(iso_file)
 }
 
 # check for difference in isoreader version
@@ -203,16 +203,16 @@ same_as_isoreader_version <- function(version, isoreader_version = packageVersio
 #' @param all if set to TRUE, all cached files will be removed regardless of their version
 #' @export
 iso_cleanup_reader_cache <- function(all = FALSE) {
-  files <- list.files(default("cache_dir"), pattern = "^isofile_.*\\.rds$", full.names = TRUE)
+  files <- list.files(default("cache_dir"), pattern = "^iso_file_.*\\.rds$", full.names = TRUE)
   if (all) {
     file.remove(files)
     if (!default(quiet)) message("Info: removed all (", length(files), ") cached isoreader files.")
   } else {
-    isofile <- NULL
+    iso_file <- NULL
     remove <- sapply(files, function(file){
-      isofile <- readRDS(file)
-      if (!(iso_is_object(isofile))) return(TRUE) # always remove non-iso object files
-      cached_version <- if(iso_is_file_list(isofile)) isofile[[1]]$version else isofile$version  
+      iso_file <- readRDS(file)
+      if (!(iso_is_object(iso_file))) return(TRUE) # always remove non-iso object files
+      cached_version <- if(iso_is_file_list(iso_file)) iso_file[[1]]$version else iso_file$version  
       return(!same_as_isoreader_version(cached_version))
     })
     # remove files

@@ -4,21 +4,21 @@
 \alias{iso_aggregate_file_info}
 \title{Aggregate file info}
 \usage{
-iso_aggregate_file_info(isofiles, select = all_info(),
+iso_aggregate_file_info(iso_files, select = all_info(),
   quiet = default(quiet))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 
 \item{select}{which file information to select. All by default.}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }
 \description{
-Combine file information from multiple isofiles. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included. File information beyond \code{file_id} and \code{file_path} is only available if the isofiles were read with parameter \code{read_file_info=TRUE}.
+Combine file information from multiple iso_files. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included. File information beyond \code{file_id} and \code{file_path} is only available if the iso_files were read with parameter \code{read_file_info=TRUE}.
 }
 \note{
-File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using \code{isofile$file_info[['INFO_NAME']]} on the isofile object directly.
+File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using \code{iso_file$file_info[['INFO_NAME']]} on the iso_file object directly.
 }
 \seealso{
 Other data retrieval functions: \code{\link{get_file_id}},

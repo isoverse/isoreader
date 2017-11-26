@@ -14,7 +14,7 @@ test_that("test that parameter checks are performed", {
   
   # flow iarc
   expect_error(isoreader:::isoread_flow_iarc (isoreader:::make_di_data_structure()), 
-               "data structure must be a \\'continuous_flow\\' isofile")
+               "data structure must be a \\'continuous_flow\\' iso_file")
   
   
 })
@@ -78,12 +78,12 @@ test_that("test that dxf files can be read", {
   
   # test re-reading
   # NOTE: ideally this should also include an iarc file
-  isofiles <- c(dxf1, dxf2, dxf3)
+  iso_files <- c(dxf1, dxf2, dxf3)
   expect_equal(
-    isofiles %>% get_reread_filepaths(),
-    isofiles %>% sapply(function(i) i$file_info$file_path) %>% as.character()
+    iso_files %>% get_reread_filepaths(),
+    iso_files %>% sapply(function(i) i$file_info$file_path) %>% as.character()
   )
-  expect_true(iso_is_continuous_flow(reread_dxf <- iso_reread_files(isofiles)))
+  expect_true(iso_is_continuous_flow(reread_dxf <- iso_reread_files(iso_files)))
   expect_equal(nrow(problems(reread_dxf)), 0)
   
   

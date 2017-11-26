@@ -4,12 +4,12 @@
 \alias{iso_plot_continuous_flow}
 \title{Plot chromatogram from continuous flow data}
 \usage{
-iso_plot_continuous_flow(isofiles, data = c(), time_interval = c(),
+iso_plot_continuous_flow(iso_files, data = c(), time_interval = c(),
   time_interval_units = "seconds", normalize = FALSE, zoom = NULL,
   panel_by = "data", color_by = "file", linetype_by = "none")
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 
 \item{data}{which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using \code{\link{iso_calculate_ratios}} prior to plotting.}
 

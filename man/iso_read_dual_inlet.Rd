@@ -24,7 +24,7 @@ iso_read_dual_inlet(paths, read_raw_data = default(read_raw_data),
 
 \item{discard_duplicates}{whether to automatically discard duplicate file_ids (only first one is kept)}
 
-\item{cache}{whether to cache isofiles. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
+\item{cache}{whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
 
 \item{read_cache}{whether to reload from cache if a cached version exists. Note that it will only read from cache if the file was previously read with the exact same isoreader version and read options and has not been modified since.}
 

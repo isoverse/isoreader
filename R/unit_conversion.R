@@ -2,103 +2,103 @@
 
 #' Convert time units in continuous flow files
 #' 
-#' This function can be used to convert the time units of a collection of isofiles to a new common time unit. The original time units are inferred from the naming of the time column. New time units are very flexible and can be anything that \code{\link[lubridate]{duration}} understands, i.e. "s", "seconds", "min", "minutes", "hours", "days", etc. are all valid units.
+#' This function can be used to convert the time units of a collection of iso_files to a new common time unit. The original time units are inferred from the naming of the time column. New time units are very flexible and can be anything that \code{\link[lubridate]{duration}} understands, i.e. "s", "seconds", "min", "minutes", "hours", "days", etc. are all valid units.
 #' 
 #' @inheritParams iso_plot_raw_data
 #' @param to what time units to convert to
 #' @export
-#' @return the passed in isofile(s) with changed time units
-iso_convert_time <- function(isofiles, to, quiet = default(quiet)) {
+#' @return the passed in iso_file(s) with changed time units
+iso_convert_time <- function(iso_files, to, quiet = default(quiet)) {
   
   # checks
-  if(!iso_is_continuous_flow(isofiles)) stop("can only convert time in continuous flow isofiles", call. = FALSE)
+  if(!iso_is_continuous_flow(iso_files)) stop("can only convert time in continuous flow iso_files", call. = FALSE)
   if(missing(to)) stop("no time unit to convert to specified", call. = FALSE)
-  single_file <- iso_is_file(isofiles) # to make sure return is the same as supplied
-  isofiles <- iso_as_file_list(isofiles)
+  single_file <- iso_is_file(iso_files) # to make sure return is the same as supplied
+  iso_files <- iso_as_file_list(iso_files)
   
   if (!quiet) 
-    sprintf("Info: converting time to '%s' for %d continuous flow data file(s)", to, length(isofiles)) %>% message()
+    sprintf("Info: converting time to '%s' for %d continuous flow data file(s)", to, length(iso_files)) %>% message()
   
   # make sure data is provided
-  check_read_options(isofiles, "raw_data")
+  check_read_options(iso_files, "raw_data")
   
   # find time from units
   time_pattern <- "^time\\.(.*)$"
-  time_from <- sapply(isofiles, function(isofile) {
-    time_column <- str_subset(names(isofile$raw_data), time_pattern)
+  time_from <- sapply(iso_files, function(iso_file) {
+    time_column <- str_subset(names(iso_file$raw_data), time_pattern)
     if(length(time_column) == 0) return(NA_character_) # no time column (potentially data not read)
     if (length(time_column) != 1) 
-      stop("unclear which column is the time column in '", isofile$file_info$file_id, 
+      stop("unclear which column is the time column in '", iso_file$file_info$file_id, 
           "', found: ", str_c(time_column, collapse = ", "), call. = FALSE)
     str_match(time_column, time_pattern) %>% {.[2]}
   })
   
   # for each file convert the time units
-  for (i in 1:length(isofiles)) {
+  for (i in 1:length(iso_files)) {
     if (!is.na(time_from[i])) {
       old_time <- str_c("time.", time_from[i])
       new_time <- str_c("time.", to)
-      isofiles[[i]]$raw_data[[old_time]] <- scale_time(isofiles[[i]]$raw_data[[old_time]], to = to, from = time_from[i])
-      isofiles[[i]]$raw_data <- isofiles[[i]]$raw_data %>% rename_(.dots = setNames(old_time, new_time))
+      iso_files[[i]]$raw_data[[old_time]] <- scale_time(iso_files[[i]]$raw_data[[old_time]], to = to, from = time_from[i])
+      iso_files[[i]]$raw_data <- iso_files[[i]]$raw_data %>% rename_(.dots = setNames(old_time, new_time))
     }
   }
   
   # return single (if passed in as single) 
-  if (single_file) return (isofiles[[1]])
-  return(isofiles)
+  if (single_file) return (iso_files[[1]])
+  return(iso_files)
 }
 
 
 
 #' Convert signal units in continuous flow and dual inlet files
 #' 
-#' This function can be used to convert the intensity units of a collection of isofiles to a scaled unit (e.g. from mV to V, or nA to mA) or different unit (e.g. from mV to nA or vice-versa). The original signal intensity units are inferred from the naming of the intensity columns. The new units must be a voltage (V) or current (A) but can have any valid SI prefix. Conversion from voltage to current and vice versa requires information about the resistors used in the op amp. This information is automatically retrieved during file read for file formats that contain resistors values (e.g. dxf and did) and are read with the \code{read_method_info=TRUE} parameter (see \code{\link{iso_aggregate_resistors_info}} for details on how to access resistor values in read files). If resistor values are not set in a file, it will not allow automatic conversion between voltage and current. Instead, the \code{R} and \code{R_units} parameters can be used to provide specific resistor values. However, if \code{R} is set, these values will be used for all passed in \code{isofiles}. 
+#' This function can be used to convert the intensity units of a collection of iso_files to a scaled unit (e.g. from mV to V, or nA to mA) or different unit (e.g. from mV to nA or vice-versa). The original signal intensity units are inferred from the naming of the intensity columns. The new units must be a voltage (V) or current (A) but can have any valid SI prefix. Conversion from voltage to current and vice versa requires information about the resistors used in the op amp. This information is automatically retrieved during file read for file formats that contain resistors values (e.g. dxf and did) and are read with the \code{read_method_info=TRUE} parameter (see \code{\link{iso_aggregate_resistors_info}} for details on how to access resistor values in read files). If resistor values are not set in a file, it will not allow automatic conversion between voltage and current. Instead, the \code{R} and \code{R_units} parameters can be used to provide specific resistor values. However, if \code{R} is set, these values will be used for all passed in \code{iso_files}. 
 #' 
 #' @inheritParams iso_plot_raw_data
 #' @param to what signal unit to convert to
-#' @param R resistor value(s). If not specified, will use resitor values from individual isofiles. If specified, must be a named vector with Rm (m=mass) as names (e.g. \code{c(R45=0.3, R46=3)}), in units of \code{R_units}. If specified, will be used for ALL provided isofiles.
+#' @param R resistor value(s). If not specified, will use resitor values from individual iso_files. If specified, must be a named vector with Rm (m=mass) as names (e.g. \code{c(R45=0.3, R46=3)}), in units of \code{R_units}. If specified, will be used for ALL provided iso_files.
 #' @param R_units determined what units resistor values (\code{R}) are in, if they are specified. Example \code{R_units = "GOhm"} designates that the resistor values provided in \code{R} parameter are in Giga-Ohm, i.e. 10^9 Ohm.
 #' @export
-#' @return the passed in isofile(s) with changed signal units
-iso_convert_signals <- function(isofiles, to, R, R_units = NA, quiet = default(quiet)) {
+#' @return the passed in iso_file(s) with changed signal units
+iso_convert_signals <- function(iso_files, to, R, R_units = NA, quiet = default(quiet)) {
   
   # checks
-  if(!iso_is_continuous_flow(isofiles) && !iso_is_dual_inlet(isofiles)) stop("can only convert signals in continuous flow and dual inlet isofiles", call. = FALSE)
+  if(!iso_is_continuous_flow(iso_files) && !iso_is_dual_inlet(iso_files)) stop("can only convert signals in continuous flow and dual inlet iso_files", call. = FALSE)
   if(missing(to)) stop("no unit to convert to specified", call. = FALSE)
   if(!missing(R) && is.na(R_units)) stop("resistor values (R) are specified but their units (R_units) are not", call. = FALSE)
   if(missing(R) && !is.na(R_units)) stop("resistor units (R_units) are specified but resistor values (R) are not", call. = FALSE)
   if(!missing(R) && ( !is.vector(R, "numeric") || is.null(names(R)) || any(names(R) == ""))) 
     stop("specified resistance values have to be a named numeric vector - e.g., c(R45=0.3)", call. = FALSE)
-  single_file <- iso_is_file(isofiles) # to make sure return is the same as supplied
-  isofiles <- iso_as_file_list(isofiles)
+  single_file <- iso_is_file(iso_files) # to make sure return is the same as supplied
+  iso_files <- iso_as_file_list(iso_files)
   auto_R <- missing(R)
   
   if (!quiet) {
     sprintf("Info: converting signals to '%s' for %d continuous flow data file(s) with %s", 
-            to, length(isofiles), 
-            if (auto_R) "automatic resistor values from individual isofiles"
+            to, length(iso_files), 
+            if (auto_R) "automatic resistor values from individual iso_files"
             else str_c("specific resistor value(s): ", str_c(str_c(names(R),"=",R, R_units), collapse = ", "))
             ) %>% message()
   }
   
   # make sure data is available
-  check_read_options(isofiles, "raw_data")
+  check_read_options(iso_files, "raw_data")
   
   # apply signal conversion
   func <- "iso_convert_signals"
   signal_pattern <- sprintf("^[iv](\\d+)\\.(\\w+)$")
   to_units <- get_unit_scaling(to, c("V", "A"))
   R_name <- R.Ohm <- NULL # global vars
-  isofiles <- isofiles %>% lapply(function(isofile) {
+  iso_files <- iso_files %>% lapply(function(iso_file) {
     
     # don't try to convert if raw data not present or otherwise empty
-    if (!isofile$read_options$raw_data || nrow(isofile$raw_data) == 0) return(isofile)
+    if (!iso_file$read_options$raw_data || nrow(iso_file$raw_data) == 0) return(iso_file)
     
     # column names
-    col_names <- names(isofile$raw_data) %>% str_subset(signal_pattern)
+    col_names <- names(iso_file$raw_data) %>% str_subset(signal_pattern)
     if (length(col_names) == 0) {
       return(register_warning(
-        isofile, func = func, details = "could not find any voltage or current data columns"))
+        iso_file, func = func, details = "could not find any voltage or current data columns"))
     }
     
     # see if resistors are required (i.e. any columns are v/i and 'to' is not the same)
@@ -109,26 +109,26 @@ iso_convert_signals <- function(isofiles, to, R, R_units = NA, quiet = default(q
     # resistors
     if (scaling_only) {
       # scaling only
-      isofile$raw_data <- scale_signals(isofile$raw_data, col_names, to = to, quiet = TRUE)
-      return(isofile)
+      iso_file$raw_data <- scale_signals(iso_file$raw_data, col_names, to = to, quiet = TRUE)
+      return(iso_file)
     } 
     
     if (!scaling_only && auto_R) {
       # find resistors from files
-      if (!isofile$read_options$method_info) {
+      if (!iso_file$read_options$method_info) {
         return(register_warning(
-          isofile, func = func,
+          iso_file, func = func,
           details = "cannot automatically determine resistor values, method info not available (read_method_info = FALSE)"))
-      } else if (is.null(isofile$method_info$resistors) || nrow(isofile$method_info$resistors) == 0) {
+      } else if (is.null(iso_file$method_info$resistors) || nrow(iso_file$method_info$resistors) == 0) {
         return(register_warning(
-          isofile, func = func,
+          iso_file, func = func,
           details = "cannot automatically determine resistor values, no resistor data available"))
-      } else if (!"mass" %in% names(isofile$method_info$resistors)) {
+      } else if (!"mass" %in% names(iso_file$method_info$resistors)) {
         return(register_warning(
-          isofile, func = func,
+          iso_file, func = func,
           details = "cannot automatically determine resistor values, resistor data not linked to masses"))
       } else {
-        R <- isofile$method_info$resistors %>% 
+        R <- iso_file$method_info$resistors %>% 
           mutate(R_name = str_c("R", mass)) %>% 
           select(R_name, R.Ohm) %>% deframe()
         R_units <- "Ohm"
@@ -136,23 +136,23 @@ iso_convert_signals <- function(isofiles, to, R, R_units = NA, quiet = default(q
     }
     
     # convert signals
-    isofile$raw_data <- scale_signals(isofile$raw_data, col_names, to = to, R = R, R_units = R_units, quiet = TRUE)
-    return(isofile)
+    iso_file$raw_data <- scale_signals(iso_file$raw_data, col_names, to = to, R = R, R_units = R_units, quiet = TRUE)
+    return(iso_file)
   }) %>% iso_as_file_list()
   
   # report problems from this particular function
-  convert_signal_problems <- problems(isofiles) %>% filter(func == func)
+  convert_signal_problems <- problems(iso_files) %>% filter(func == func)
   if (!quiet && nrow(convert_signal_problems) > 0) {
     sprintf("Warning: encountered %d problem(s) during signal conversion (%d total problems):",
-            nrow(convert_signal_problems), n_problems(isofiles)) %>% 
+            nrow(convert_signal_problems), n_problems(iso_files)) %>% 
     message()
     print(convert_signal_problems)
     cat("\n")
   }
   
   # return single (if passed in as single) 
-  if (single_file) return (isofiles[[1]])
-  return(isofiles)
+  if (single_file) return (iso_files[[1]])
+  return(iso_files)
 }
 
 

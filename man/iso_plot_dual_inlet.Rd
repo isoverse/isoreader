@@ -4,11 +4,11 @@
 \alias{iso_plot_dual_inlet}
 \title{Plot mass data from dual inlet files}
 \usage{
-iso_plot_dual_inlet(isofiles, data = c(), panel_by = "data",
+iso_plot_dual_inlet(iso_files, data = c(), panel_by = "data",
   color_by = "file", linetype_by = "none", shape_by = "SA|STD")
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 
 \item{data}{which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using \code{\link{iso_calculate_ratios}} prior to plotting.}
 

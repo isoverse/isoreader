@@ -4,20 +4,20 @@
 \alias{iso_export_to_rda}
 \title{Export data to R Data Archive (.rda)}
 \usage{
-iso_export_to_rda(isofiles, filepath, quiet = default(quiet))
+iso_export_to_rda(iso_files, filepath, quiet = default(quiet))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 
 \item{filepath}{the path (folder and filename) to the export file. The correct file extension is automatically added if not already in the filename, i.e. filename can be provided with or without extension.}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }
 \value{
-returns the isofiles object invisibly for use in pipelines
+returns the iso_files object invisibly for use in pipelines
 }
 \description{
-This function exports the passed in isofiles to an R Data Archive (.rda) file, which is a fairly efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard \code{\link{iso_read_continuous_flow}} and \code{\link{iso_read_dual_inlet}} functions or by simply double-clicking the .rda file which will open in an R console and restore the data into variable \code{isofiles}.
+This function exports the passed in iso_files to an R Data Archive (.rda) file, which is a fairly efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard \code{\link{iso_read_continuous_flow}} and \code{\link{iso_read_dual_inlet}} functions or by simply double-clicking the .rda file which will open in an R console and restore the data into variable \code{iso_files}.
 }
 \seealso{
 Other export functions: \code{\link{iso_export_to_excel}},

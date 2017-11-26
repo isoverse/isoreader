@@ -23,7 +23,7 @@ test_that("test that export to rda works properly", {
   expect_equal(cf, cf_back)  
   expect_true(file.remove(str_c(filepath, ".cf.rda")))
   
-  # export and reimport multiple isofiles
+  # export and reimport multiple iso_files
   cf2 <- cf
   cf2$file_info$file_id <- "B"
   cfs <- c(cf, cf2)

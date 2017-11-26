@@ -24,20 +24,20 @@ iso_as_file_list(..., discard_duplicates = TRUE)
 \arguments{
 \item{x}{an object to test whether it has the specific class}
 
-\item{...}{isofile and isofile_list objects to concatenate}
+\item{...}{iso_file and iso_file_list objects to concatenate}
 
 \item{discard_duplicates}{whether to discard encountered file id duplicates}
 }
 \description{
-\code{iso_is_file} tests if the object is an isofile
+\code{iso_is_file} tests if the object is an iso_file
 
-\code{iso_is_file_list} tests if the object is an isofile list (collection of isofiles)
+\code{iso_is_file_list} tests if the object is an iso_file list (collection of iso_files)
 
-\code{iso_is_object} test if the object is an iso-object (isofile or isofile list)
+\code{iso_is_object} test if the object is an iso-object (iso_file or iso_file list)
 
-\code{iso_is_dual_inlet} tests if an isofile or isofile list consists exclusively of dual inlet file objects
+\code{iso_is_dual_inlet} tests if an iso_file or iso_file list consists exclusively of dual inlet file objects
 
-\code{iso_is_continuous_flow} tests if an isofile or isofile list consists exclusively of continuous flow file objects
+\code{iso_is_continuous_flow} tests if an iso_file or iso_file list consists exclusively of continuous flow file objects
 
-\code{iso_as_file_list} concatenates isofile and isofile list object(s) into one combined isofile list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within isofile lists have to be the same type of isofile, issues warnings if there are duplicate file ids and summarizes all problems in the isofile list
+\code{iso_as_file_list} concatenates iso_file and iso_file list object(s) into one combined iso_file list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within iso_file lists have to be the same type of iso_file, issues warnings if there are duplicate file ids and summarizes all problems in the iso_file list
 }

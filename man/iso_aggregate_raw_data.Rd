@@ -4,11 +4,11 @@
 \alias{iso_aggregate_raw_data}
 \title{Aggregate raw data}
 \usage{
-iso_aggregate_raw_data(isofiles, gather = FALSE, include_file_info = c(),
+iso_aggregate_raw_data(iso_files, gather = FALSE, include_file_info = c(),
   quiet = default(quiet))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 
 \item{gather}{whether to gather data into long format after aggregation (e.g. for plotting)}
 
@@ -17,7 +17,7 @@ iso_aggregate_raw_data(isofiles, gather = FALSE, include_file_info = c(),
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }
 \description{
-Aggregate the raw ion data from the provided isofiles. Can aggregate either in a wide table (for easy overview) or a gathered long table (for plotting and further data processing). The raw data is only available if the isofiles were read with parameter \code{read_raw_data=TRUE}.
+Aggregate the raw ion data from the provided iso_files. Can aggregate either in a wide table (for easy overview) or a gathered long table (for plotting and further data processing). The raw data is only available if the iso_files were read with parameter \code{read_raw_data=TRUE}.
 }
 \seealso{
 Other data retrieval functions: \code{\link{get_file_id}},

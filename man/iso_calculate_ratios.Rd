@@ -4,17 +4,17 @@
 \alias{iso_calculate_ratios}
 \title{Calculate ratios}
 \usage{
-iso_calculate_ratios(isofiles, ratios, quiet = default(quiet))
+iso_calculate_ratios(iso_files, ratios, quiet = default(quiet))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 
 \item{ratios}{which ratios to calculate (e.g. c("45/44", "46/44")), will only be calculated in files that have the necessary mass column}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }
 \value{
-ithe passed in isofile(s) with ratios added
+ithe passed in iso_file(s) with ratios added
 }
 \description{
 Calculate ratios from raw data. Note that these are recorded ratios and are not normalized against any standards yet. The ratios are calculated straight from the raw data without any unit conversions, i.e. if the raw data is in mV, the ratio is mV/mV, if in nA the ratio is nA/nA, etc. These raw ratios are subsequently NOT identical to absolute ratios, in fact they are usually not even close (especially if raw data recorded as voltages with different resistors). If raw data is first converted to identical current units (\code{\link{iso_convert_signals}}), the ratios may be close to their true values (+instrument fractionation), however, isotope ratios should always be calibrated against reference ratios measured in the same data file.

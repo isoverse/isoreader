@@ -4,18 +4,18 @@
 \alias{iso_convert_time}
 \title{Convert time units in continuous flow files}
 \usage{
-iso_convert_time(isofiles, to, quiet = default(quiet))
+iso_convert_time(iso_files, to, quiet = default(quiet))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 
 \item{to}{what time units to convert to}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }
 \value{
-the passed in isofile(s) with changed time units
+the passed in iso_file(s) with changed time units
 }
 \description{
-This function can be used to convert the time units of a collection of isofiles to a new common time unit. The original time units are inferred from the naming of the time column. New time units are very flexible and can be anything that \code{\link[lubridate]{duration}} understands, i.e. "s", "seconds", "min", "minutes", "hours", "days", etc. are all valid units.
+This function can be used to convert the time units of a collection of iso_files to a new common time unit. The original time units are inferred from the naming of the time column. New time units are very flexible and can be anything that \code{\link[lubridate]{duration}} understands, i.e. "s", "seconds", "min", "minutes", "hours", "days", etc. are all valid units.
 }

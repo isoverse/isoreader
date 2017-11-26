@@ -2,17 +2,17 @@
 % Please edit documentation in R/filtering.R
 \name{iso_filter_files}
 \alias{iso_filter_files}
-\title{Filter isofiles}
+\title{Filter iso_files}
 \usage{
-iso_filter_files(isofiles, ..., quiet = default(quiet))
+iso_filter_files(iso_files, ..., quiet = default(quiet))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 
 \item{...}{filter conditions applied based on each file's file_info (see \code{\link{iso_aggregate_file_info}})}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }
 \description{
-Filter for specific isofiles using file info parameters, most commonlty file_id and file_datetime but others can be used as well if they exist.
+Filter for specific iso_files using file info parameters, most commonlty file_id and file_datetime but others can be used as well if they exist.
 }

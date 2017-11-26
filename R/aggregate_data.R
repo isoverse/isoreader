@@ -6,70 +6,70 @@
 
 #' Get file information
 #' 
-#' Retrieve basic file information form an individual isotope file (isofile) object. All of these can also be recoverd for an entire set of files using \code{\link{iso_aggregate_file_info}} and specifiying which info to recover, for example, \code{include = c("file_id", "file_path", "file_datetime")}
+#' Retrieve basic file information form an individual isotope file (iso_file) object. All of these can also be recoverd for an entire set of files using \code{\link{iso_aggregate_file_info}} and specifiying which info to recover, for example, \code{include = c("file_id", "file_path", "file_datetime")}
 #' 
 #' @details \code{get_file_id()}: retrieve the file ID (this is typially the file name)
-#' @param isofile an isofile to retrieve basic file information from
+#' @param iso_file an iso_file to retrieve basic file information from
 #' @rdname file_info
 #' @aliases get_file_info
 #' @family data retrieval functions
 #' @export
-get_file_id <- function(isofile) {
-  check_iso_file_param(isofile)
-  return(isofile$file_info$file_id)
+get_file_id <- function(iso_file) {
+  check_iso_file_param(iso_file)
+  return(iso_file$file_info$file_id)
 }
 
 #' @details \code{get_file_path()}: retrieve the file path (this is the path to the file in case of single file formats such as .dxf or .did and the path to the archieve file in case of collective file formats such as .iarc)
 #' @rdname file_info
-get_file_path <- function(isofile) {
-  check_iso_file_param(isofile)
-  return(isofile$file_info$file_path)
+get_file_path <- function(iso_file) {
+  check_iso_file_param(iso_file)
+  return(iso_file$file_info$file_path)
 }
 
-#' @details \code{get_file_subpath()}: retrieve the file subpath (this only exists for collective file formats such as .iarc and is the name of the metadata file inside the .iarc archive). Returns NA for isofile without subpath.
+#' @details \code{get_file_subpath()}: retrieve the file subpath (this only exists for collective file formats such as .iarc and is the name of the metadata file inside the .iarc archive). Returns NA for iso_file without subpath.
 #' @rdname file_info
-get_file_subpath <- function(isofile) {
-  check_iso_file_param(isofile)
-  return(isofile$file_info$file_subpath)
+get_file_subpath <- function(iso_file) {
+  check_iso_file_param(iso_file)
+  return(iso_file$file_info$file_subpath)
 }
 
 #' @details \code{get_file_datetime()}: retrieve the run date and time in \code{\link[base]{POSIXct}} format
 #' @rdname file_info
-get_file_datetime <- function(isofile) {
-  check_iso_file_param(isofile)
-  return(isofile$file_info$file_datetime)
+get_file_datetime <- function(iso_file) {
+  check_iso_file_param(iso_file)
+  return(iso_file$file_info$file_datetime)
 }
 
 # internal convenience function
-check_iso_file_param <- function(isofile) {
-  if(missing(isofile)) stop("no isofile provided to retrieve file information from", call. = FALSE)
-  if(!iso_is_file(isofile)) stop("can only retrieve file information from an isofile object, not from '", class(isofile)[1], "'", call. = FALSE)
+check_iso_file_param <- function(iso_file) {
+  if(missing(iso_file)) stop("no iso_file provided to retrieve file information from", call. = FALSE)
+  if(!iso_is_file(iso_file)) stop("can only retrieve file information from an iso_file object, not from '", class(iso_file)[1], "'", call. = FALSE)
 }
 
 # Specific data aggregation calls =====
 
 #' Aggregate file info
 #'
-#' Combine file information from multiple isofiles. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included. File information beyond \code{file_id} and \code{file_path} is only available if the isofiles were read with parameter \code{read_file_info=TRUE}.
+#' Combine file information from multiple iso_files. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included. File information beyond \code{file_id} and \code{file_path} is only available if the iso_files were read with parameter \code{read_file_info=TRUE}.
 #'
 #' @inheritParams iso_aggregate_raw_data
 #' @param select which file information to select. All by default.
 #' @family data retrieval functions
-#' @note File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using \code{isofile$file_info[['INFO_NAME']]} on the isofile object directly.
+#' @note File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using \code{iso_file$file_info[['INFO_NAME']]} on the iso_file object directly.
 #' @export
-iso_aggregate_file_info <- function(isofiles, select = all_info(), quiet = default(quiet)) {
-  isofiles <- iso_as_file_list(isofiles)
-  if (!quiet) sprintf("Info: aggregating file info from %d data file(s)", length(isofiles)) %>% message()
-  check_read_options(isofiles, "file_info")
+iso_aggregate_file_info <- function(iso_files, select = all_info(), quiet = default(quiet)) {
+  iso_files <- iso_as_file_list(iso_files)
+  if (!quiet) sprintf("Info: aggregating file info from %d data file(s)", length(iso_files)) %>% message()
+  check_read_options(iso_files, "file_info")
   
   # retrieve info
-  info <- lapply(isofiles, function(isofile) {
-    lapply(isofile$file_info, function(entry) {
+  info <- lapply(iso_files, function(iso_file) {
+    lapply(iso_file$file_info, function(entry) {
       if (length(entry) > 1) str_c(entry, collapse = "; ") else entry
     })  %>% as_data_frame()
   }) %>% bind_rows()
   
-  # safety check (probably not necessary because of isofile combination checks but consequences would be too problematic not to check)
+  # safety check (probably not necessary because of iso_file combination checks but consequences would be too problematic not to check)
   if (any(duplicated(info$file_id))) {
     stop("duplicate file ids are not permitted as they can lead to unexpected consequences in data processing", call. = FALSE)
   }
@@ -80,7 +80,7 @@ iso_aggregate_file_info <- function(isofiles, select = all_info(), quiet = defau
   if (!is.character(select_cols)) 
     stop("'select' parameter must be omitted or a character vector of file info entry names", call. = FALSE)
   if (length(missing <- setdiff(select, select_cols)) > 0) {
-    warning("some requested file info entries do not exist in any of the provided isofiles and are omitted: '",
+    warning("some requested file info entries do not exist in any of the provided iso_files and are omitted: '",
             str_c(missing, collapse = "', '"), "'", call. = FALSE, immediate. = TRUE)
   }
   if (!"file_id" %in% select_cols) 
@@ -91,26 +91,26 @@ iso_aggregate_file_info <- function(isofiles, select = all_info(), quiet = defau
 
 #' Aggregate raw data
 #' 
-#' Aggregate the raw ion data from the provided isofiles. Can aggregate either in a wide table (for easy overview) or a gathered long table (for plotting and further data processing). The raw data is only available if the isofiles were read with parameter \code{read_raw_data=TRUE}.
+#' Aggregate the raw ion data from the provided iso_files. Can aggregate either in a wide table (for easy overview) or a gathered long table (for plotting and further data processing). The raw data is only available if the iso_files were read with parameter \code{read_raw_data=TRUE}.
 #' 
 #' @inheritParams iso_read_files
-#' @param isofiles collection of isofile objects
+#' @param iso_files collection of iso_file objects
 #' @param gather whether to gather data into long format after aggregation (e.g. for plotting)
 #' @param include_file_info if provided, will include the requested file information (see \code{\link{iso_aggregate_file_info}}) with the raw data
 #' @family data retrieval functions
 #' @export
-iso_aggregate_raw_data <- function(isofiles, gather = FALSE, include_file_info = c(), quiet = default(quiet)) {
-  isofiles <- iso_as_file_list(isofiles)
+iso_aggregate_raw_data <- function(iso_files, gather = FALSE, include_file_info = c(), quiet = default(quiet)) {
+  iso_files <- iso_as_file_list(iso_files)
   if (!quiet) { 
-    sprintf("Info: aggregating raw data from %d data file(s)%s", length(isofiles),
+    sprintf("Info: aggregating raw data from %d data file(s)%s", length(iso_files),
             get_info_message_concat(include_file_info, prefix = ", including file info ")) %>% message()
   }
-  check_read_options(isofiles, "raw_data")
+  check_read_options(iso_files, "raw_data")
   
   data <- 
-    lapply(isofiles, function(isofile) {
-      data <- as_data_frame(isofile$raw_data) %>% 
-        mutate(file_id = isofile$file_info$file_id) %>% 
+    lapply(iso_files, function(iso_file) {
+      data <- as_data_frame(iso_file$raw_data) %>% 
+        mutate(file_id = iso_file$file_info$file_id) %>% 
         select(file_id, everything())
       return(data)
     }) %>% bind_rows()
@@ -136,7 +136,7 @@ iso_aggregate_raw_data <- function(isofiles, gather = FALSE, include_file_info =
   
   # if file info
   if (!is.null(include_file_info)) {
-    info <- iso_aggregate_file_info(isofiles, include_file_info, quiet = TRUE)
+    info <- iso_aggregate_file_info(iso_files, include_file_info, quiet = TRUE)
     data <- right_join(info, data, by = "file_id")
   }
   return(data)
@@ -145,30 +145,30 @@ iso_aggregate_raw_data <- function(isofiles, gather = FALSE, include_file_info =
 
 #' Aggregate standards from methods info
 #'
-#' Aggregates the isotopic standard information recovered from the provided isofiles. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios. This information is only available if the isofiles were read with parameter \code{read_method_info=TRUE}.
+#' Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios. This information is only available if the iso_files were read with parameter \code{read_method_info=TRUE}.
 #'
 #' @inheritParams iso_aggregate_raw_data
 #' @param with_ratios whether to include ratios or just standard delta values
 #' @family data retrieval functions
 #' @export
-iso_aggregate_standards_info <- function(isofiles, with_ratios = FALSE, include_file_info = c(), quiet = default(quiet)) {
-  isofiles <- iso_as_file_list(isofiles)
+iso_aggregate_standards_info <- function(iso_files, with_ratios = FALSE, include_file_info = c(), quiet = default(quiet)) {
+  iso_files <- iso_as_file_list(iso_files)
   if (!quiet) { 
-    sprintf("Info: aggregating standards info from %d data file(s)%s", length(isofiles),
+    sprintf("Info: aggregating standards info from %d data file(s)%s", length(iso_files),
             get_info_message_concat(include_file_info, prefix = ", including file info ")) %>% message()
   }
   
-  check_read_options(isofiles, "method_info")
+  check_read_options(iso_files, "method_info")
   
   # aggregate standards info
-  data <- lapply(isofiles, function(isofile) {
+  data <- lapply(iso_files, function(iso_file) {
     if(with_ratios) {
       stds <- left_join(
-        isofile$method_info$standards,
-        isofile$method_info$reference_ratios,
+        iso_file$method_info$standards,
+        iso_file$method_info$reference_ratios,
         by = "reference")
     } else {
-      stds <- isofile$method_info$standards
+      stds <- iso_file$method_info$standards
     }
     
     # check if there is any data
@@ -176,13 +176,13 @@ iso_aggregate_standards_info <- function(isofiles, with_ratios = FALSE, include_
     
     # return with file_id included
     stds %>% 
-      mutate(file_id = isofile$file_info$file_id) %>% 
+      mutate(file_id = iso_file$file_info$file_id) %>% 
       select(file_id, everything())
   }) %>% bind_rows()
   
   # if file info
   if (!is.null(include_file_info)) {
-    info <- iso_aggregate_file_info(isofiles, include_file_info, quiet = TRUE)
+    info <- iso_aggregate_file_info(iso_files, include_file_info, quiet = TRUE)
     data <- right_join(info, data, by = "file_id")
   }
   return(data)
@@ -190,36 +190,36 @@ iso_aggregate_standards_info <- function(isofiles, with_ratios = FALSE, include_
 
 #' Aggregate resistors from methods info
 #'
-#' Aggregates the resistor information recovered from the provided isofiles. This information is only available if the isofiles were read with parameter \code{read_method_info=TRUE} and only linked to specific masses if the isofiles were additionally read with parametr \code{read_raw_data=TRUE}.
+#' Aggregates the resistor information recovered from the provided iso_files. This information is only available if the iso_files were read with parameter \code{read_method_info=TRUE} and only linked to specific masses if the iso_files were additionally read with parametr \code{read_raw_data=TRUE}.
 #'
 #' @inheritParams iso_aggregate_raw_data
 #' @family data retrieval functions
 #' @export
-iso_aggregate_resistors_info <- function(isofiles, include_file_info = c(), quiet = default(quiet)) {
-  isofiles <- iso_as_file_list(isofiles)
+iso_aggregate_resistors_info <- function(iso_files, include_file_info = c(), quiet = default(quiet)) {
+  iso_files <- iso_as_file_list(iso_files)
   if (!quiet) { 
-    sprintf("Info: aggregating resistors info from %d data file(s)%s", length(isofiles),
+    sprintf("Info: aggregating resistors info from %d data file(s)%s", length(iso_files),
             get_info_message_concat(include_file_info, prefix = ", including file info ")) %>% message()
   }
   
-  check_read_options(isofiles, "method_info")
+  check_read_options(iso_files, "method_info")
   
   # aggregate standards info
-  data <- lapply(isofiles, function(isofile) {
-    Rs <- isofile$method_info$resistors
+  data <- lapply(iso_files, function(iso_file) {
+    Rs <- iso_file$method_info$resistors
     
     # check if there is any data
     if(is.null(Rs) || nrow(Rs) == 0) return(data_frame())
     
     # return with file_id included
     Rs %>% 
-      mutate(file_id = isofile$file_info$file_id) %>% 
+      mutate(file_id = iso_file$file_info$file_id) %>% 
       select(file_id, everything())
   }) %>% bind_rows()
   
   # if file info
   if (!is.null(include_file_info)) {
-    info <- iso_aggregate_file_info(isofiles, include_file_info, quiet = TRUE)
+    info <- iso_aggregate_file_info(iso_files, include_file_info, quiet = TRUE)
     data <- right_join(info, data, by = "file_id")
   }
   return(data)
@@ -227,34 +227,34 @@ iso_aggregate_resistors_info <- function(isofiles, include_file_info = c(), quie
 
 #' Aggregate vendor computed table data
 #' 
-#' Aggregate data from the vendor-computed data table. This information is only available if the isofiles were read with parameter \code{read_vendor_data_table=TRUE}.
+#' Aggregate data from the vendor-computed data table. This information is only available if the iso_files were read with parameter \code{read_vendor_data_table=TRUE}.
 #' 
 #' @inheritParams iso_aggregate_raw_data
 #' @param with_units whether to include units in the column headers (if there are any) or not (default is FALSE)
 #' @param select which vendor table columns select. All by default.
 #' @family data retrieval functions
 #' @export
-iso_aggregate_vendor_data_table <- function(isofiles, with_units = FALSE, select = all_columns(), include_file_info = c(), 
+iso_aggregate_vendor_data_table <- function(iso_files, with_units = FALSE, select = all_columns(), include_file_info = c(), 
                                         quiet = default(quiet)) {
-  isofiles <- iso_as_file_list(isofiles)
+  iso_files <- iso_as_file_list(iso_files)
   if (!quiet) { 
     sprintf("Info: aggregating vendor data table %s from %d data file(s)%s", 
             if (with_units) "with units" else "without units",
-            length(isofiles),
+            length(iso_files),
             get_info_message_concat(include_file_info, prefix = ", including file info ")) %>% message()
   }
-  check_read_options(isofiles, "vendor_data_table")
+  check_read_options(iso_files, "vendor_data_table")
   
   # check for missing with units
-  if (with_units && (no_units <- sum(sapply(isofiles, function(isofile) is.null(attr(isofile$vendor_data_table, "units"))))) > 0) {
+  if (with_units && (no_units <- sum(sapply(iso_files, function(iso_file) is.null(attr(iso_file$vendor_data_table, "units"))))) > 0) {
     sprintf("%d/%d files do not have unit information for their vendor data table and will have missing units",
-            no_units, length(isofiles)) %>% warning(call. = FALSE, immediate. = TRUE)
+            no_units, length(iso_files)) %>% warning(call. = FALSE, immediate. = TRUE)
   }
   
   # get vendor data
   column <- units <- NULL # global vars
-  data <- lapply(isofiles, function(isofile) {
-    df <- isofile$vendor_data_table
+  data <- lapply(iso_files, function(iso_file) {
+    df <- iso_file$vendor_data_table
     
     # see if there is any data at all
     if (nrow(df) == 0) return(df)
@@ -269,7 +269,7 @@ iso_aggregate_vendor_data_table <- function(isofiles, with_units = FALSE, select
     
     # include file id
     df %>% 
-      mutate(file_id = isofile$file_info$file_id) %>% 
+      mutate(file_id = iso_file$file_info$file_id) %>% 
       dplyr::select(file_id, everything())
   }) %>% bind_rows()
   
@@ -280,7 +280,7 @@ iso_aggregate_vendor_data_table <- function(isofiles, with_units = FALSE, select
   all_columns <- function() names(data)
   select_cols <- select %>% { .[. %in% all_columns()] }
   if (length(missing <- setdiff(select, select_cols)) > 0) {
-    warning("some requested vendor data table columns do not exist in any of the provided isofiles and are omitted: '",
+    warning("some requested vendor data table columns do not exist in any of the provided iso_files and are omitted: '",
             str_c(missing, collapse = "', '"), "'", call. = FALSE, immediate. = TRUE)
   }
   if (!"file_id" %in% select_cols) 
@@ -289,7 +289,7 @@ iso_aggregate_vendor_data_table <- function(isofiles, with_units = FALSE, select
   
   # include file info
   if (!is.null(include_file_info)) {
-    info <- iso_aggregate_file_info(isofiles, include_file_info, quiet = TRUE)
+    info <- iso_aggregate_file_info(iso_files, include_file_info, quiet = TRUE)
     data <- right_join(info, data, by = "file_id")
   }
   
@@ -297,11 +297,11 @@ iso_aggregate_vendor_data_table <- function(isofiles, with_units = FALSE, select
 }
 
 # check if read options are compatible
-check_read_options <- function(isofiles, option) {
-  isofiles <- iso_as_file_list(isofiles)
-  option_values <- map(isofiles, "read_options") %>% map_lgl(option)
+check_read_options <- function(iso_files, option) {
+  iso_files <- iso_as_file_list(iso_files)
+  option_values <- map(iso_files, "read_options") %>% map_lgl(option)
   if (!all(option_values)) {
-    warning(sum(!option_values), "/", length(isofiles), 
+    warning(sum(!option_values), "/", length(iso_files), 
             " files were read without extracting the ", str_replace_all(option, "_", " "), 
             " (parameter '", str_c("read_", option), 
             "=FALSE') and will have missing values",

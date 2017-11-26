@@ -62,8 +62,8 @@ test_that("test that time scaling works", {
   expect_equal(isoreader:::scale_time(lubridate::duration(time, "hours"), to = "minutes"), time*60)
 })
 
-test_that("test that time conversion works for isofiles", {
-  expect_error(iso_convert_time(42), "can only convert time in continuous flow isofiles")
+test_that("test that time conversion works for iso_files", {
+  expect_error(iso_convert_time(42), "can only convert time in continuous flow iso_files")
   cf <- isoreader:::make_cf_data_structure()
   expect_error(iso_convert_time(cf), "no time unit to convert to specified")
   expect_warning(iso_convert_time(cf, to = "min"), "read without extracting the raw data")
@@ -78,13 +78,13 @@ test_that("test that time conversion works for isofiles", {
   expect_equal(iso_convert_time(cf, to = "s")$raw_data$time.s, cf$raw_data$time.s)
   
   # multiple files
-  isofiles <- c(modifyList(cf, list(file_info = list(file_id = "a"))),
+  iso_files <- c(modifyList(cf, list(file_info = list(file_id = "a"))),
                 modifyList(cf, list(file_info = list(file_id = "b"))))
-  isofiles$b$raw_data$time.min <- isofiles$b$raw_data$time.s/60
-  isofiles$b$raw_data$time.min <- NULL
-  expect_true(iso_is_file_list(isofiles_in_hrs <- iso_convert_time(isofiles, to = "hours")))
-  expect_equal(isofiles_in_hrs$a$raw_data$time.hours, cf$raw_data$time.s/3600)
-  expect_equal(isofiles_in_hrs$b$raw_data$time.hours, cf$raw_data$time.s/3600)
+  iso_files$b$raw_data$time.min <- iso_files$b$raw_data$time.s/60
+  iso_files$b$raw_data$time.min <- NULL
+  expect_true(iso_is_file_list(iso_files_in_hrs <- iso_convert_time(iso_files, to = "hours")))
+  expect_equal(iso_files_in_hrs$a$raw_data$time.hours, cf$raw_data$time.s/3600)
+  expect_equal(iso_files_in_hrs$b$raw_data$time.hours, cf$raw_data$time.s/3600)
   
 })
 
@@ -159,9 +159,9 @@ test_that("test that singal scaling works", {
   
 })
 
-test_that("test that signal conversion works in isofiles", {
+test_that("test that signal conversion works in iso_files", {
   
-  expect_error(iso_convert_signals(42), "can only convert signals in .* isofiles")
+  expect_error(iso_convert_signals(42), "can only convert signals in .* iso_files")
   cf <- isoreader:::make_cf_data_structure() # use continuous flow example, but dual inlet would work too
   expect_error(iso_convert_signals(cf), "no unit to convert to specified")
   

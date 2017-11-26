@@ -4,18 +4,18 @@
 \alias{iso_aggregate_resistors_info}
 \title{Aggregate resistors from methods info}
 \usage{
-iso_aggregate_resistors_info(isofiles, include_file_info = c(),
+iso_aggregate_resistors_info(iso_files, include_file_info = c(),
   quiet = default(quiet))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 
 \item{include_file_info}{if provided, will include the requested file information (see \code{\link{iso_aggregate_file_info}}) with the raw data}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }
 \description{
-Aggregates the resistor information recovered from the provided isofiles. This information is only available if the isofiles were read with parameter \code{read_method_info=TRUE} and only linked to specific masses if the isofiles were additionally read with parametr \code{read_raw_data=TRUE}.
+Aggregates the resistor information recovered from the provided iso_files. This information is only available if the iso_files were read with parameter \code{read_method_info=TRUE} and only linked to specific masses if the iso_files were additionally read with parametr \code{read_raw_data=TRUE}.
 }
 \seealso{
 Other data retrieval functions: \code{\link{get_file_id}},

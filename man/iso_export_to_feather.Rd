@@ -4,13 +4,13 @@
 \alias{iso_export_to_feather}
 \title{Export to feather}
 \usage{
-iso_export_to_feather(isofiles, filepath_prefix, include_raw_data = TRUE,
+iso_export_to_feather(iso_files, filepath_prefix, include_raw_data = TRUE,
   include_file_info = TRUE, include_method_info = TRUE,
   include_vendor_data_table = TRUE, include_problems = TRUE,
   quiet = default(quiet))
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 
 \item{filepath_prefix}{the path (folder and filename) prefix for the exported feather files. The correct suffix for different kinds of data and file extension is automatically added}
 
@@ -27,10 +27,10 @@ iso_export_to_feather(isofiles, filepath_prefix, include_raw_data = TRUE,
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }
 \value{
-returns the isofiles object invisibly for use in pipelines
+returns the iso_files object invisibly for use in pipelines
 }
 \description{
-This function exports the passed in isofiles to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided \code{filepath_prefix} as prefix. All are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters).
+This function exports the passed in iso_files to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided \code{filepath_prefix} as prefix. All are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters).
 }
 \seealso{
 Other export functions: \code{\link{iso_export_to_excel}},

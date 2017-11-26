@@ -4,7 +4,7 @@ isoread_dxf <- function(ds, ...) {
 
   # safety checks
   if(!iso_is_continuous_flow(ds)) 
-    stop("data structure must be a 'continuous_flow' isofile", call. = FALSE)
+    stop("data structure must be a 'continuous_flow' iso_file", call. = FALSE)
   
   # read binary file
   ds$binary <- read_binary_file(ds$file_info$file_path)

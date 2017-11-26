@@ -4,10 +4,10 @@
 \alias{iso_problems_summary}
 \title{Retrieve a summary of the problems}
 \usage{
-iso_problems_summary(isofiles)
+iso_problems_summary(iso_files)
 }
 \arguments{
-\item{isofiles}{collection of isofile objects}
+\item{iso_files}{collection of iso_file objects}
 }
 \value{
 data frame with file_id and number of encountered errors and warnings

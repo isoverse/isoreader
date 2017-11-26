@@ -1,10 +1,10 @@
 # read ionos .iarc archieves for their continuous flow data
-# @param ds the isofile data structure to fill
+# @param ds the iso_file data structure to fill
 isoread_flow_iarc <- function(ds, ...) {
   
   # safety checks
   if(!iso_is_file(ds) || !is(ds, "continuous_flow")) 
-    stop("data structure must be a 'continuous_flow' isofile", call. = FALSE)
+    stop("data structure must be a 'continuous_flow' iso_file", call. = FALSE)
   
   # global variables for NSE
   samples <- NULL
@@ -65,22 +65,22 @@ isoread_flow_iarc <- function(ds, ...) {
     file.path(folder_path, str_c("ProcessingList_", used_processing_lists$ProcessingListId)))
   
   # read sample/task data ====
-  isofiles <- process_iarc_samples(ds, tasks, gas_configs, folder_path)
+  iso_files <- process_iarc_samples(ds, tasks, gas_configs, folder_path)
   
   # propagate problems =====
   iarc_problems <- combined_problems(processing_lists, method_params, tasks, gas_configs)
-  for (i in 1:length(isofiles)) {
+  for (i in 1:length(iso_files)) {
     # add general iarc problems to individual files
-    isofiles[[i]] <- set_problems(
-      isofiles[[i]], bind_rows(iarc_problems, get_problems(isofiles[[i]])))
+    iso_files[[i]] <- set_problems(
+      iso_files[[i]], bind_rows(iarc_problems, get_problems(iso_files[[i]])))
   }
   
-  # turn into isofiles list and return
-  return(iso_as_file_list(isofiles))
+  # turn into iso_files list and return
+  return(iso_as_file_list(iso_files))
 }
 
 # process iarc samples
-process_iarc_samples <- function(isofile_template, tasks, gas_configs, folder_path) {
+process_iarc_samples <- function(iso_file_template, tasks, gas_configs, folder_path) {
   # function to generate sample id
   generate_task_sample_id <- function(task) {
     str_c(task$info$Id, "_", task$info$Name)
@@ -93,11 +93,11 @@ process_iarc_samples <- function(isofile_template, tasks, gas_configs, folder_pa
   
   # loop through and process info and data
   sapply(tasks, function(task) {
-    # prepare isofile object
-    isofile <- isofile_template %>% 
+    # prepare iso_file object
+    iso_file <- iso_file_template %>% 
       # set file path parameters
       set_ds_file_path(
-        file_path = isofile_template$file_info$file_path, 
+        file_path = iso_file_template$file_info$file_path, 
         file_id = generate_task_sample_id(task), 
         file_subpath = task$filename)
     
@@ -114,33 +114,33 @@ process_iarc_samples <- function(isofile_template, tasks, gas_configs, folder_pa
     }
     
     # process task info
-    if(isofile$read_options$file_info)
-      isofile <- exec_func_with_error_catch(process_iarc_sample_info, isofile, task)
+    if(iso_file$read_options$file_info)
+      iso_file <- exec_func_with_error_catch(process_iarc_sample_info, iso_file, task)
     
     # process task data
-    if (isofile$read_option$raw_data)
-      isofile <- exec_func_with_error_catch(process_iarc_sample_data, isofile, task, 
+    if (iso_file$read_option$raw_data)
+      iso_file <- exec_func_with_error_catch(process_iarc_sample_data, iso_file, task, 
                                             gas_configs, folder_path)
       
-    return(list(isofile))
+    return(list(iso_file))
   })
 }
 
 # process iarc task info
-# @param isofile task
-process_iarc_sample_info <- function(isofile, task) {
-  isofile$file_info <- c(isofile$file_info, as.list(task$info))
-  if (!is.null(isofile$file_info$AcquisitionStartDate)) {
+# @param iso_file task
+process_iarc_sample_info <- function(iso_file, task) {
+  iso_file$file_info <- c(iso_file$file_info, as.list(task$info))
+  if (!is.null(iso_file$file_info$AcquisitionStartDate)) {
     # use AcquisitionStartDate as file_dattime (OS = with fractional seconds - Q: what is the time-zone? using GMT for now)
-    isofile$file_info$file_datetime <- as.POSIXct(isofile$file_info$AcquisitionStartDate, "%Y-%m-%dT%H:%M:%OS", tz = "GMT")
+    iso_file$file_info$file_datetime <- as.POSIXct(iso_file$file_info$AcquisitionStartDate, "%Y-%m-%dT%H:%M:%OS", tz = "GMT")
   }
-  return(isofile)
+  return(iso_file)
 }
 
 # process iarc task data
 # @param temp_dir the temporary directory where the files are unzipped
 # @param gas_configs the gas configurations
-process_iarc_sample_data <- function(isofile, task, gas_configs, folder_path) {
+process_iarc_sample_data <- function(iso_file, task, gas_configs, folder_path) {
   # aquire = IRMS data
   irms_data <- task$data_files %>% filter_(.dots = list(~TypeIdentifier == "Acquire")) 
   if (nrow(irms_data) == 0) stop("no IRMS acquisitions associated with this sample", call. = FALSE)
@@ -153,20 +153,20 @@ process_iarc_sample_data <- function(isofile, task, gas_configs, folder_path) {
   # read data
   dt_format <- "%Y-%m-%dT%H:%M:%OS" # with fractional seconds - Q: what is the time-zone
   for (i in 1:nrow(irms_data)) {
-    isofile <- with(irms_data[i,], {
+    iso_file <- with(irms_data[i,], {
       filepath <- file.path(folder_path, DataFile)
       run_time.s <- interval(strptime(AcquireStartDate, dt_format), strptime(AcquireEndDate, dt_format) ) / duration(1, "s")
-      read_irms_data_file(isofile, filepath, gas_config, run_time.s, data_units = "nA")
+      read_irms_data_file(iso_file, filepath, gas_config, run_time.s, data_units = "nA")
     })
   }
   
-  return(isofile)
+  return(iso_file)
 }
 
 # read irms data file and convert the scan to column format tp, time.s, iXX.[data_units] based on gas configuration
 # will also add H3 factor if part of the gas configuration
-# @param isofile
-read_irms_data_file <- function(isofile, filepath, gas_config, run_time.s, data_units = "nA") {
+# @param iso_file
+read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data_units = "nA") {
   if (!"DataSet" %in% h5ls(filepath)$name)
     stop("expected DataSet attribute not present in HDF5 data file", call. = FALSE)
   
@@ -205,7 +205,7 @@ read_irms_data_file <- function(isofile, filepath, gas_config, run_time.s, data_
   
   # h3 factor
   if (!is.null(config$H3_factor))
-    isofile$file_info$H3_factor <- config$H3_factor
+    iso_file$file_info$H3_factor <- config$H3_factor
   
   # rename channels
   rename_dots <- config_channels %>% { setNames(.$channel, str_c("i", .$mass, ".", data_units)) }
@@ -224,14 +224,14 @@ read_irms_data_file <- function(isofile, filepath, gas_config, run_time.s, data_
     select(tp, time.s, everything())
   
   # store mass data
-  if (nrow(isofile$raw_data) > 0) {
-    existing <- isofile$raw_data %>% select(starts_with("i")) %>% names()
+  if (nrow(iso_file$raw_data) > 0) {
+    existing <- iso_file$raw_data %>% select(starts_with("i")) %>% names()
     if ( any(dups <- existing %in% names(irms_data)) )
       stop("same ions reported in multiple data files, cannot reconcile duplicate data: ", 
            str_c(existing[dups], collapse = ", "), call. = FALSE)
   } else {
-    isofile$raw_data <- irms_data
+    iso_file$raw_data <- irms_data
   }
   
-  return(isofile)
+  return(iso_file)
 }

@@ -13,23 +13,23 @@ iso_read_files(paths, supported_extensions, data_structure, ...,
 
 \item{supported_extensions}{data frame with supported extensions and corresponding reader functions}
 
-\item{data_structure}{the basic data structure for the type of isofile}
+\item{data_structure}{the basic data structure for the type of iso_file}
 
 \item{...}{additional parameters passed to the specific processing functions for the different file extensions}
 
 \item{discard_duplicates}{whether to automatically discard duplicate file_ids (only first one is kept)}
 
-\item{cache}{whether to cache isofiles. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
+\item{cache}{whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
 
 \item{read_cache}{whether to reload from cache if a cached version exists. Note that it will only read from cache if the file was previously read with the exact same isoreader version and read options and has not been modified since.}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }
 \value{
-single isofile object (if single file) or list of isofiles (isofile_list)
+single iso_file object (if single file) or list of iso_files (iso_file_list)
 }
 \description{
-This function takes care of extracting basic information about isofiles, dealing with problems and making sure only valid fire formats are processed. 
+This function takes care of extracting basic information about iso_files, dealing with problems and making sure only valid fire formats are processed. 
 This function is not typicaly called directly but indirectly by calling \link{iso_read_dual_inlet}, \link{iso_read_continuous_flow} and \link{iso_read_scan}. 
 It is made available outside the package because it can be very useful for testing new file readers.
 }
