@@ -62,4 +62,6 @@ test_that("test that info concatenation works", {
   expect_equal(isoreader:::get_info_message_concat(1:2, suffix = " world"), "'1', '2' world")
   expect_equal(isoreader:::get_info_message_concat(c()), "")
   expect_equal(isoreader:::get_info_message_concat(NULL), "")
+  expect_equal(isoreader:::get_info_message_concat(quo(NULL)), "")
+  expect_equal(isoreader:::get_info_message_concat(quo(xyz)), "'xyz'")
 })

@@ -15,7 +15,7 @@ iso_get_raw_data(iso_files, gather = FALSE, include_file_info = NULL,
 \item{include_file_info}{if provided, will include the requested file information (see \code{\link{iso_get_file_info}}) with the raw data. 
 Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax.}
 
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
 \description{
 Aggregate the raw ion data from the provided iso_files. Can aggregate either in a wide table (for easy overview) or a gathered long table (for plotting and further data processing). The raw data is only available if the iso_files were read with parameter \code{read_raw_data=TRUE}.

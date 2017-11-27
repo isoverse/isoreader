@@ -11,11 +11,14 @@ iso_plot_raw_data(iso_files, ..., quiet = default(quiet))
 
 \item{...}{parameters for the data specific plotting functions}
 
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
 \description{
-Convenience function for making standard plots for raw isoreader data. Calls \code{\link{iso_plot_continuous_flow}} and \code{\link{iso_plot_dual_inlet}} for data specific plotting (see those functions for parameter details).
+Convenience function for making quick standard plots for raw isoreader data. 
+Calls \code{\link{iso_plot_continuous_flow_data}} and \code{\link{iso_plot_dual_inlet_data}} for data specific plotting (see those functions for parameter details). 
+For customizing plotting calls, it is easier to use \code{\link{iso_plot_continuous_flow_data}} and \code{\link{iso_plot_dual_inlet_data}} directly.
 }
 \seealso{
-Other plot functions: \code{\link{iso_plot_continuous_flow}}
+Other plot functions: \code{\link{iso_plot_continuous_flow_data}},
+  \code{\link{iso_plot_dual_inlet_data}}
 }

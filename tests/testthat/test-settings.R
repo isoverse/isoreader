@@ -62,14 +62,14 @@ test_that("test that debug mode can be activated", {
 })
 
 test_that("setting default read_parameters", {
-  expect_error(iso_set_default_reader_parameters(read_raw_data = "NAN"), "must be TRUE or FALSE")
+  expect_error(iso_set_default_read_parameters(read_raw_data = "NAN"), "must be TRUE or FALSE")
   
-  expect_silent(iso_set_default_reader_parameters(read_file_info = FALSE, quiet=TRUE))
-  expect_message(iso_set_default_reader_parameters(read_method_info = FALSE, quiet=FALSE))
+  expect_silent(iso_set_default_read_parameters(read_file_info = FALSE, quiet=TRUE))
+  expect_message(iso_set_default_read_parameters(read_method_info = FALSE, quiet=FALSE))
   expect_false(default(read_file_info))
   expect_false(default(read_method_info))
   df <- data_frame(a = 1:5)
-  expect_equal(iso_set_default_reader_parameters(df, read_file_info = TRUE, read_method_info = TRUE, quiet=TRUE), df)
+  expect_equal(iso_set_default_read_parameters(df, read_file_info = TRUE, read_method_info = TRUE, quiet=TRUE), df)
   expect_true(default(read_file_info))
   expect_true(default(read_method_info))
   

@@ -11,7 +11,7 @@ iso_convert_time(iso_files, to, quiet = default(quiet))
 
 \item{to}{what time units to convert to}
 
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
 \value{
 the passed in iso_file(s) with changed time units

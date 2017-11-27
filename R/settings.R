@@ -16,7 +16,7 @@ set_default <- function(name, value, overwrite = TRUE) {
 #' Get the current default parameters
 #' 
 #' Retrieve a table with all default function parameters for this package. 
-#' To set reader parameters, see \code{\link{iso_set_default_reader_parameters}}.
+#' To set reader parameters, see \code{\link{iso_set_default_read_parameters}}.
 #' For a piping compatible version of this function, see \link{iso_show_default_reader_parameters}.
 #' @family settings functions
 #' @export
@@ -33,7 +33,8 @@ iso_get_default_reader_parameters <- function() {
 #' 
 #' Shows a table with the default function parameters for this package.
 #' @inheritParams iso_turn_reader_caching_on
-#' @param func function to use for formatting the reader parameters table
+#' @param func function to use for formatting the reader parameters table, e.g. \code{\link[knitr]{kable}}. 
+#' Note that if the output is in RMarkdown chunks, the chunk option must have \code{results="asis"} for the table to be correctly formatted.
 #' @param ... additional parameters to forward to the \code{func} function
 #' @family settings functions
 #' @export
@@ -83,7 +84,7 @@ iso_turn_reader_caching_off <- function(data = NULL) {
 #' @param read_vendor_data_table if provided, set as the default for `read_vendor_data_tabl` parameters
 #' @export
 #' @family settings functions
-iso_set_default_reader_parameters <- function(data = NULL, read_raw_data, read_file_info, read_method_info, read_vendor_data_table, quiet = default(quiet)) {
+iso_set_default_read_parameters <- function(data = NULL, read_raw_data, read_file_info, read_method_info, read_vendor_data_table, quiet = default(quiet)) {
   
   read_params <- list()
   

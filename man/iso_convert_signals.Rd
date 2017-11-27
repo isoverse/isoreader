@@ -15,7 +15,7 @@ iso_convert_signals(iso_files, to, R, R_units = NA, quiet = default(quiet))
 
 \item{R_units}{determined what units resistor values (\code{R}) are in, if they are specified. Example \code{R_units = "GOhm"} designates that the resistor values provided in \code{R} parameter are in Giga-Ohm, i.e. 10^9 Ohm.}
 
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
 \value{
 the passed in iso_file(s) with changed signal units

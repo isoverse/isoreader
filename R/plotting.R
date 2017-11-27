@@ -2,7 +2,9 @@
 
 #' Plot raw data from isoreader files
 #' 
-#' Convenience function for making standard plots for raw isoreader data. Calls \code{\link{iso_plot_continuous_flow}} and \code{\link{iso_plot_dual_inlet}} for data specific plotting (see those functions for parameter details).
+#' Convenience function for making quick standard plots for raw isoreader data. 
+#' Calls \code{\link{iso_plot_continuous_flow_data}} and \code{\link{iso_plot_dual_inlet_data}} for data specific plotting (see those functions for parameter details). 
+#' For customizing plotting calls, it is easier to use \code{\link{iso_plot_continuous_flow_data}} and \code{\link{iso_plot_dual_inlet_data}} directly.
 #' 
 #' @inheritParams iso_get_raw_data
 #' @param ... parameters for the data specific plotting functions
@@ -16,9 +18,9 @@ iso_plot_raw_data <- function(iso_files, ..., quiet = default(quiet)) {
   if (!quiet) sprintf("Info: plotting data from %d data file(s)", length(iso_files)) %>% message()
   
   if (iso_is_continuous_flow(iso_files))
-    iso_plot_continuous_flow (iso_files, ...)
+    iso_plot_continuous_flow_data (iso_files, ...)
   else if (iso_is_dual_inlet(iso_files))
-    iso_plot_dual_inlet (iso_files, ...)
+    iso_plot_dual_inlet_data (iso_files, ...)
   else
     stop("plotting of this type of iso_files not yet supported", call. = FALSE) 
 }
@@ -36,7 +38,7 @@ iso_plot_raw_data <- function(iso_files, ..., quiet = default(quiet)) {
 #' @param linetype_by whether to differentiate data by linetype, options are the same as for \code{panel_by} but the default is "none". Note that a limited number of linetype_by (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}
 #' @family plot functions
 #' @export
-iso_plot_continuous_flow <- function(
+iso_plot_continuous_flow_data <- function(
   iso_files, data = c(), time_interval = c(), time_interval_units = "seconds", normalize = FALSE, zoom = NULL, 
   panel_by = "data", color_by = "file", linetype_by = "none") {
   
@@ -219,12 +221,13 @@ iso_plot_continuous_flow <- function(
 
 #' Plot mass data from dual inlet files
 #' 
-#' @inheritParams iso_plot_continuous_flow
+#' @inheritParams iso_plot_continuous_flow_data
 #' @param panel_by whether to panel data by anything, options are "none" (overlay all), "data" (by mass/ratio data), "file" (panel by files), "SA|STD" (panel by sample|standard). The default is "data"
 #' @param shape_by whether to shape data points by anything, options are the same as for panel_by but the default is "SA|STD" (sample|standard)
 #' @note normalization is not useful for dual inlet data, except potentially between standard and sample - however, for this it is more meaningful to simply plot the relevant ratios together
+#' @family plot functions
 #' @export
-iso_plot_dual_inlet <- function(
+iso_plot_dual_inlet_data <- function(
   iso_files, data = c(), 
   panel_by = "data", color_by = "file", linetype_by = "none", shape_by = "SA|STD") {
   

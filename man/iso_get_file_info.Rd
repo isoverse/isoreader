@@ -11,7 +11,7 @@ iso_get_file_info(iso_files, select = everything(), quiet = default(quiet))
 
 \item{select}{which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. Includes all columns by default. File id is always included no matter what selection parameters.}
 
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
 \description{
 Combine file information from multiple iso_files. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included. File information beyond \code{file_id} and \code{file_path} is only available if the iso_files were read with parameter \code{read_file_info=TRUE}.

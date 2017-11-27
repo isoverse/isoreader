@@ -18,7 +18,7 @@ iso_reread_archive(rda_filepaths, ..., stop_if_missing = FALSE,
 
 \item{stop_if_missing}{whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files and keep them unchanged but re-read those that do exist)}
 
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 
 \item{rda_filepaths}{the path(s) to the iso_files R data archive(s) to re-read (can be a single file or vector of files)}
 }
