@@ -96,7 +96,7 @@ test_that("test that aggregating file info works", {
   
   # check selecte functionality
   expect_equal(names(iso_get_file_info(iso_file1, select = c("file_datetime", "only_a"))), c("file_id", "file_datetime", "only_a"))
-  expect_warning(agg <- iso_get_file_info(iso_file2, select = c("file_datetime", "only_a")), "file info entries do not exist")
+  expect_warning(agg <- iso_get_file_info(iso_file2, select = c("file_datetime", "only_a")), "refers to unknown column")
   expect_equal(names(agg), c("file_id", "file_datetime"))
 })
 
@@ -243,6 +243,12 @@ test_that("test that aggregating of vendor data table works", {
   
   attr(iso_file1$vendor_data_table, "units") <- attr(iso_file2$vendor_data_table, "units") <- 
     data_frame(column = c("column1", "column2", "col_a_only"), units = c("[1]", "[2]", ""))
+  
+  # selecting subsets
+  expect_warning(agg <- iso_get_vendor_data_table(c(iso_file1, iso_file2), select = "bla"), "unknown column")
+  expect_equal(names(agg), "file_id")
+  expect_equal(iso_get_vendor_data_table(c(iso_file1, iso_file2), select = c(file_id, column1), with_units = FALSE) %>% 
+                 names(), c("file_id", "column1"))
   
   # aggregated with and without units
   expect_message(agg <- iso_get_vendor_data_table(c(iso_file1, iso_file2), with_units = TRUE, quiet = FALSE), "aggregating")

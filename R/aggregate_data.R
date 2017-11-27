@@ -143,40 +143,33 @@ get_vendor_data_table_info <- function(x) {
 #' Combine file information from multiple iso_files. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included. File information beyond \code{file_id} and \code{file_path} is only available if the iso_files were read with parameter \code{read_file_info=TRUE}.
 #'
 #' @inheritParams iso_get_raw_data
-#' @param select which file information to select. All by default.
+#' @param select which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. Includes all columns by default. File id is always included no matter what selection parameters. 
 #' @family data retrieval functions
 #' @note File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using \code{iso_file$file_info[['INFO_NAME']]} on the iso_file object directly.
 #' @export
-iso_get_file_info <- function(iso_files, select = all_info(), quiet = default(quiet)) {
+iso_get_file_info <- function(iso_files, select = everything(), quiet = default(quiet)) {
   iso_files <- iso_as_file_list(iso_files)
   if (!quiet) sprintf("Info: aggregating file info from %d data file(s)", length(iso_files)) %>% message()
   check_read_options(iso_files, "file_info")
   
   # retrieve info
-  info <- lapply(iso_files, function(iso_file) {
+  file_info <- lapply(iso_files, function(iso_file) {
     lapply(iso_file$file_info, function(entry) {
       if (length(entry) > 1) str_c(entry, collapse = "; ") else entry
     })  %>% as_data_frame()
   }) %>% bind_rows()
   
-  # safety check (probably not necessary because of iso_file combination checks but consequences would be too problematic not to check)
-  if (any(duplicated(info$file_id))) {
+    # safety check (probably not necessary because of iso_file combination checks but consequences would be too problematic not to check)
+  if (any(duplicated(file_info$file_id))) {
     stop("duplicate file ids are not permitted as they can lead to unexpected consequences in data processing", call. = FALSE)
   }
   
   # get include information
-  all_info <- function() names(info)
-  select_cols <- select %>% { .[. %in% all_info()] }
-  if (!is.character(select_cols)) 
-    stop("'select' parameter must be omitted or a character vector of file info entry names", call. = FALSE)
-  if (length(missing <- setdiff(select, select_cols)) > 0) {
-    warning("some requested file info entries do not exist in any of the provided iso_files and are omitted: '",
-            str_c(missing, collapse = "', '"), "'", call. = FALSE, immediate. = TRUE)
-  }
+  select_cols <- get_column_names(file_info, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
   if (!"file_id" %in% select_cols) 
     select_cols <- c("file_id", select_cols) # file info always included
   
-  return(info[select_cols])
+  return(file_info[select_cols])
 }
 
 #' Aggregate raw data
@@ -186,14 +179,16 @@ iso_get_file_info <- function(iso_files, select = all_info(), quiet = default(qu
 #' @inheritParams iso_read_files
 #' @param iso_files collection of iso_file objects
 #' @param gather whether to gather data into long format after aggregation (e.g. for plotting)
-#' @param include_file_info if provided, will include the requested file information (see \code{\link{iso_get_file_info}}) with the raw data
+#' @param include_file_info if provided, will include the requested file information (see \code{\link{iso_get_file_info}}) with the raw data. 
+#' Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax.
 #' @family data retrieval functions
 #' @export
-iso_get_raw_data <- function(iso_files, gather = FALSE, include_file_info = c(), quiet = default(quiet)) {
+iso_get_raw_data <- function(iso_files, gather = FALSE, include_file_info = NULL, quiet = default(quiet)) {
   iso_files <- iso_as_file_list(iso_files)
+  include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
     sprintf("Info: aggregating raw data from %d data file(s)%s", length(iso_files),
-            get_info_message_concat(include_file_info, prefix = ", including file info ")) %>% message()
+            get_info_message_concat(include_file_info_quo, prefix = ", including file info ")) %>% message()
   }
   check_read_options(iso_files, "raw_data")
   
@@ -225,8 +220,8 @@ iso_get_raw_data <- function(iso_files, gather = FALSE, include_file_info = c(),
   } 
   
   # if file info
-  if (!is.null(include_file_info)) {
-    info <- iso_get_file_info(iso_files, include_file_info, quiet = TRUE)
+  if (!quo_is_null(include_file_info_quo)) {
+    info <- iso_get_file_info(iso_files, select = !!include_file_info_quo, quiet = TRUE)
     data <- right_join(info, data, by = "file_id")
   }
   return(data)
@@ -241,11 +236,12 @@ iso_get_raw_data <- function(iso_files, gather = FALSE, include_file_info = c(),
 #' @param with_ratios whether to include ratios or just standard delta values
 #' @family data retrieval functions
 #' @export
-iso_get_standards_info <- function(iso_files, with_ratios = FALSE, include_file_info = c(), quiet = default(quiet)) {
+iso_get_standards_info <- function(iso_files, with_ratios = FALSE, include_file_info = NULL, quiet = default(quiet)) {
   iso_files <- iso_as_file_list(iso_files)
+  include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
     sprintf("Info: aggregating standards info from %d data file(s)%s", length(iso_files),
-            get_info_message_concat(include_file_info, prefix = ", including file info ")) %>% message()
+            get_info_message_concat(include_file_info_quo, prefix = ", including file info ")) %>% message()
   }
   
   check_read_options(iso_files, "method_info")
@@ -271,8 +267,8 @@ iso_get_standards_info <- function(iso_files, with_ratios = FALSE, include_file_
   }) %>% bind_rows()
   
   # if file info
-  if (!is.null(include_file_info)) {
-    info <- iso_get_file_info(iso_files, include_file_info, quiet = TRUE)
+  if (!quo_is_null(include_file_info_quo)) {
+    info <- iso_get_file_info(iso_files, select = !!include_file_info_quo, quiet = TRUE)
     data <- right_join(info, data, by = "file_id")
   }
   return(data)
@@ -285,11 +281,12 @@ iso_get_standards_info <- function(iso_files, with_ratios = FALSE, include_file_
 #' @inheritParams iso_get_raw_data
 #' @family data retrieval functions
 #' @export
-iso_get_resistors_info  <- function(iso_files, include_file_info = c(), quiet = default(quiet)) {
+iso_get_resistors_info  <- function(iso_files, include_file_info = NULL, quiet = default(quiet)) {
   iso_files <- iso_as_file_list(iso_files)
+  include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
     sprintf("Info: aggregating resistors info from %d data file(s)%s", length(iso_files),
-            get_info_message_concat(include_file_info, prefix = ", including file info ")) %>% message()
+            get_info_message_concat(include_file_info_quo, prefix = ", including file info ")) %>% message()
   }
   
   check_read_options(iso_files, "method_info")
@@ -308,8 +305,8 @@ iso_get_resistors_info  <- function(iso_files, include_file_info = c(), quiet = 
   }) %>% bind_rows()
   
   # if file info
-  if (!is.null(include_file_info)) {
-    info <- iso_get_file_info(iso_files, include_file_info, quiet = TRUE)
+  if (!quo_is_null(include_file_info_quo)) {
+    info <- iso_get_file_info(iso_files, select = !!include_file_info_quo, quiet = TRUE)
     data <- right_join(info, data, by = "file_id")
   }
   return(data)
@@ -320,18 +317,19 @@ iso_get_resistors_info  <- function(iso_files, include_file_info = c(), quiet = 
 #' Aggregate data from the vendor-computed data table. This information is only available if the iso_files were read with parameter \code{read_vendor_data_table=TRUE}.
 #' 
 #' @inheritParams iso_get_raw_data
+#' @inheritParams iso_get_file_info
 #' @param with_units whether to include units in the column headers (if there are any) or not (default is FALSE)
-#' @param select which vendor table columns select. All by default.
 #' @family data retrieval functions
 #' @export
-iso_get_vendor_data_table <- function(iso_files, with_units = FALSE, select = all_columns(), include_file_info = c(), 
+iso_get_vendor_data_table <- function(iso_files, with_units = FALSE, select = everything(), include_file_info = NULL, 
                                         quiet = default(quiet)) {
   iso_files <- iso_as_file_list(iso_files)
+  include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
     sprintf("Info: aggregating vendor data table %s from %d data file(s)%s", 
             if (with_units) "with units" else "without units",
             length(iso_files),
-            get_info_message_concat(include_file_info, prefix = ", including file info ")) %>% message()
+            get_info_message_concat(include_file_info_quo, prefix = ", including file info ")) %>% message()
   }
   check_read_options(iso_files, "vendor_data_table")
   
@@ -343,7 +341,7 @@ iso_get_vendor_data_table <- function(iso_files, with_units = FALSE, select = al
   
   # get vendor data
   column <- units <- NULL # global vars
-  data <- lapply(iso_files, function(iso_file) {
+  vendor_data_table <- lapply(iso_files, function(iso_file) {
     df <- iso_file$vendor_data_table
     
     # see if there is any data at all
@@ -364,26 +362,24 @@ iso_get_vendor_data_table <- function(iso_files, with_units = FALSE, select = al
   }) %>% bind_rows()
   
   # check for any rows
-  if (nrow(data) == 0) return(data)
+  if (nrow(vendor_data_table) == 0) return(vendor_data_table)
   
   # get select information
-  all_columns <- function() names(data)
-  select_cols <- select %>% { .[. %in% all_columns()] }
-  if (length(missing <- setdiff(select, select_cols)) > 0) {
-    warning("some requested vendor data table columns do not exist in any of the provided iso_files and are omitted: '",
-            str_c(missing, collapse = "', '"), "'", call. = FALSE, immediate. = TRUE)
-  }
+  # ASDFSD=====
+  
+  # get include information
+  select_cols <- get_column_names(vendor_data_table, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
   if (!"file_id" %in% select_cols) 
     select_cols <- c("file_id", select_cols) # file info always included
-  data <- data[select_cols]
+  vendor_data_table <- vendor_data_table[select_cols]
   
   # include file info
-  if (!is.null(include_file_info)) {
-    info <- iso_get_file_info(iso_files, include_file_info, quiet = TRUE)
-    data <- right_join(info, data, by = "file_id")
+  if (!quo_is_null(include_file_info_quo)) {
+    info <- iso_get_file_info(iso_files, select = !!include_file_info_quo, quiet = TRUE)
+    vendor_data_table <- right_join(info, vendor_data_table, by = "file_id")
   }
   
-  return(data)
+  return(vendor_data_table)
 }
 
 # check if read options are compatible
