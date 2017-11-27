@@ -4,7 +4,7 @@
 \alias{iso_read_continuous_flow}
 \title{Load continuous flow data}
 \usage{
-iso_read_continuous_flow(paths, read_raw_data = default(read_raw_data),
+iso_read_continuous_flow(..., read_raw_data = default(read_raw_data),
   read_file_info = default(read_file_info),
   read_method_info = default(read_method_info),
   read_vendor_data_table = default(read_vendor_data_table),
@@ -12,7 +12,7 @@ iso_read_continuous_flow(paths, read_raw_data = default(read_raw_data),
   read_cache = default(cache), quiet = default(quiet))
 }
 \arguments{
-\item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
+\item{...}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
 
 \item{read_raw_data}{whether to read the raw mass/ion data from the file}
 

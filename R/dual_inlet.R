@@ -1,6 +1,7 @@
 #' Load dual inlet data
 #' 
 #' @inheritParams iso_read_files
+#' @param ... one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).
 #' @param read_raw_data whether to read the raw mass/ion data from the file
 #' @param read_file_info whether to read auxiliary file information (file id, sequence information, etc.)
 #' @param read_method_info whether to read methods information (standards, processing info)
@@ -8,14 +9,14 @@
 #' @family isoread functions for different types of IRMS data
 #' @export
 iso_read_dual_inlet <- function(
-  paths, 
+  ..., 
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
   discard_duplicates = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
   iso_read_files(
-    paths,
+    unlist(list(...), use.names = FALSE),
     supported_extensions = get_supported_di_files(),
     data_structure = make_di_data_structure(),
     read_raw_data = read_raw_data,
