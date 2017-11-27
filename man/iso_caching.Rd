@@ -17,7 +17,8 @@ iso_turn_reader_caching_off(data = NULL)
 These functions turn caching of data files (and reading from cache) on/off in all subsequent isoread calls by changing the global settings for the \code{cache} parameter. Can be called stand alone or within a pipeline.
 }
 \seealso{
-Other settings functions: \code{\link{iso_info_messages}},
+Other settings functions: \code{\link{iso_get_default_reader_parameters}},
+  \code{\link{iso_info_messages}},
   \code{\link{iso_set_default_reader_parameters}},
-  \code{\link{iso_show_reader_parameters}}
+  \code{\link{iso_show_default_reader_parameters}}
 }

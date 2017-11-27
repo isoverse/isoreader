@@ -4,7 +4,7 @@
 \alias{iso_get_raw_data}
 \title{Aggregate raw data}
 \usage{
-iso_get_raw_data(iso_files, gather = FALSE, include_file_info = c(),
+iso_get_raw_data(iso_files, gather = FALSE, include_file_info = NULL,
   quiet = default(quiet))
 }
 \arguments{
@@ -12,7 +12,8 @@ iso_get_raw_data(iso_files, gather = FALSE, include_file_info = c(),
 
 \item{gather}{whether to gather data into long format after aggregation (e.g. for plotting)}
 
-\item{include_file_info}{if provided, will include the requested file information (see \code{\link{iso_get_file_info}}) with the raw data}
+\item{include_file_info}{if provided, will include the requested file information (see \code{\link{iso_get_file_info}}) with the raw data. 
+Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax.}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }

@@ -5,14 +5,15 @@
 \title{Aggregate standards from methods info}
 \usage{
 iso_get_standards_info(iso_files, with_ratios = FALSE,
-  include_file_info = c(), quiet = default(quiet))
+  include_file_info = NULL, quiet = default(quiet))
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
 \item{with_ratios}{whether to include ratios or just standard delta values}
 
-\item{include_file_info}{if provided, will include the requested file information (see \code{\link{iso_get_file_info}}) with the raw data}
+\item{include_file_info}{if provided, will include the requested file information (see \code{\link{iso_get_file_info}}) with the raw data. 
+Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax.}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }

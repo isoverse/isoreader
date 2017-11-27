@@ -5,16 +5,17 @@
 \title{Aggregate vendor computed table data}
 \usage{
 iso_get_vendor_data_table(iso_files, with_units = FALSE,
-  select = all_columns(), include_file_info = c(), quiet = default(quiet))
+  select = everything(), include_file_info = NULL, quiet = default(quiet))
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
 \item{with_units}{whether to include units in the column headers (if there are any) or not (default is FALSE)}
 
-\item{select}{which vendor table columns select. All by default.}
+\item{select}{which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. Includes all columns by default. File id is always included no matter what selection parameters.}
 
-\item{include_file_info}{if provided, will include the requested file information (see \code{\link{iso_get_file_info}}) with the raw data}
+\item{include_file_info}{if provided, will include the requested file information (see \code{\link{iso_get_file_info}}) with the raw data. 
+Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax.}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }

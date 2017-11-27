@@ -4,12 +4,12 @@
 \alias{iso_get_file_info}
 \title{Aggregate file info}
 \usage{
-iso_get_file_info(iso_files, select = all_info(), quiet = default(quiet))
+iso_get_file_info(iso_files, select = everything(), quiet = default(quiet))
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
-\item{select}{which file information to select. All by default.}
+\item{select}{which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. Includes all columns by default. File id is always included no matter what selection parameters.}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }
