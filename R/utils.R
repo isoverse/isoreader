@@ -264,7 +264,11 @@ find_parent_call <- function(current_func) {
 
 # convience function for information message
 get_info_message_concat <- function(variable, prefix = "", suffix = "", quotes = TRUE){
-  if (!is.null(variable) > 0) {
+  if (is_quosure(variable)) {
+    if (quo_is_null(variable)) return("")
+    variable <- quo_text(variable)
+  }
+  if (!is_empty(variable) && !all(nchar(variable) == 0)) {
     quotes <- if(quotes) "'" else ""
     vars <- str_c(variable, collapse = str_c(quotes, ", ", quotes, collapse = ""))
     return(str_c(prefix, quotes, vars, quotes, suffix))

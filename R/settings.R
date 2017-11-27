@@ -13,21 +13,37 @@ set_default <- function(name, value, overwrite = TRUE) {
   return(invisible(value))
 }
 
-#' Show the current default parameters
-#' Shows a table with the default function parameters for this package.
-#' @inheritParams iso_turn_reader_caching_on
+#' Get the current default parameters
+#' 
+#' Retrieve a table with all default function parameters for this package. 
+#' To set reader parameters, see \code{\link{iso_set_default_reader_parameters}}.
+#' For a piping compatible version of this function, see \link{iso_show_default_reader_parameters}.
 #' @family settings functions
 #' @export
-iso_show_reader_parameters <- function(data = NULL) {
-  message("Info: isoreader package current default parameters")
-  current <- 
+iso_get_default_reader_parameters <- function() {
     c("quiet", "cache", "cache_dir", "read_raw_data", "read_file_info", "read_method_info", "read_vendor_data_table") %>% 
     sapply(function(x) list(default(!!x))) %>% 
     {
       data_frame(parameter = names(.),
-                    value = as.character(unlist(.)))
-    } %>% 
-    print()
+                 value = as.character(unlist(.)))
+    }
+}
+
+#' Show the current default parameters
+#' 
+#' Shows a table with the default function parameters for this package.
+#' @inheritParams iso_turn_reader_caching_on
+#' @param func function to use for formatting the reader parameters table
+#' @param ... additional parameters to forward to the \code{func} function
+#' @family settings functions
+#' @export
+iso_show_default_reader_parameters <- function(data = NULL, func = NULL, ...) {
+  if (!default("quiet")) message("Info: isoreader package current default parameters")
+  
+  if (!is.null(func))
+    print(do.call(func, args = c(list(x = iso_get_default_reader_parameters()), list(...))))
+  else
+    print(iso_get_default_reader_parameters())
     
   # for pipeline
   return(invisible(data))
