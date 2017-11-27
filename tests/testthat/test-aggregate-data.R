@@ -49,10 +49,24 @@ test_that("test that read option checks work properly", {
 ## check aggregate functions' errors ====
 
 test_that("test that aggregation functions refuse to work with non iso_files", {
+  expect_error(iso_get_data_summary(1), "encountered incompatible data type")
   expect_error(iso_aggregate_raw_data(1), "encountered incompatible data type")
   expect_error(iso_aggregate_file_info(1), "encountered incompatible data type")
   expect_error(iso_aggregate_standards_info(1), "encountered incompatible data type")
   expect_error(iso_aggregate_vendor_data_table(1), "encountered incompatible data type")
+})
+
+## check data summary ====
+
+test_that("test that data summary is accessible", {
+  
+  iso_file <- isoreader:::make_iso_file_data_structure()
+  expect_true(is.data.frame(iso_get_data_summary(iso_file)))
+  
+  # test data
+  iso_file1 <- modifyList(iso_file, list(file_info = list(file_id = "a")))
+  iso_file2 <- modifyList(iso_file, list(file_info = list(file_id = "b")))
+  expect_equal(nrow(iso_get_data_summary(c(iso_file1, iso_file2))), 2)
 })
 
 ## check aggregating file info works

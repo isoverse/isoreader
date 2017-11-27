@@ -2,9 +2,9 @@
 "_PACKAGE"
 
 #' @import tidyr
-#' @importFrom rlang enquo quo quos UQ UQE !! !!! quo_expr quo_text quo_is_symbol is_quosure
+#' @importFrom rlang enquo quo quos UQ UQE !! !!! quo_expr quo_text quo_is_symbol is_quosure is_empty
 #' @importFrom tidyselect everything starts_with ends_with matches
-#' @importFrom dplyr select select_ rename rename_ arrange mutate mutate_ filter distinct as_data_frame left_join right_join full_join data_frame bind_rows bind_cols group_by group_by_ ungroup
+#' @importFrom dplyr vars select select_ rename rename_ arrange mutate mutate_ mutate_at filter filter_ distinct as_data_frame left_join right_join full_join data_frame bind_rows bind_cols group_by group_by_ ungroup tally summarize
 #' @importFrom glue glue collapse
 #' @importFrom purrr map map_lgl map_chr map_df map_int map_dbl map2 map2_chr
 #' @importFrom tibble tribble deframe rownames_to_column

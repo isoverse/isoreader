@@ -18,7 +18,7 @@ iso_omit_files_with_problems(iso_files, type = c("error", "warning", "both"),
 Removes the files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the \link{problem_functions}.
 }
 \seealso{
-Other problem functions: \code{\link{iso_problem_functions}},
-  \code{\link{iso_problems_summary}},
-  \code{\link{iso_problems}}
+Other problem functions: \code{\link{iso_get_problems_summary}},
+  \code{\link{iso_get_problems}},
+  \code{\link{iso_problem_functions}}
 }

@@ -110,7 +110,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
   if (length(iso_objs) == 0) {
     # empty list
     iso_list <- list()
-    iso_problems <- get_problems_structure() %>% mutate(file_id = character())
+    iso_get_problems <- get_problems_structure() %>% mutate(file_id = character())
   } else {
     # combine everything
     if(!all(is_iso <- sapply(iso_objs, iso_is_object))) {
@@ -150,14 +150,14 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     }
     
     # propagate problems
-    iso_problems <- lapply(iso_list, function(iso_file) {
+    iso_get_problems <- lapply(iso_list, function(iso_file) {
       get_problems(iso_file) %>% 
         mutate_(.dots = list(file_id = ~iso_file$file_info$file_id))
     }) %>% bind_rows()
   }
   
   # problems
-  iso_problems <- iso_problems %>% 
+  iso_get_problems <- iso_get_problems %>% 
     unique() %>% # remove duplicate entries
     { select_(., .dots = c("file_id", names(.))) }
   
@@ -165,7 +165,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
   structure(
     iso_list,
     class = c("iso_file_list")
-  ) %>% set_problems(iso_problems)
+  ) %>% set_problems(iso_get_problems)
 }
 
 
@@ -176,15 +176,21 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
 #' Print summary of individual iso_files (dual inlet or continuous flow) or collection of iso_files.
 #' @param x Object to show.
 #' @param ... additional parameters passed to print.default
+#' @param n_max how many file lines to print maximally
 #' @rdname iso_printing
 #' @export
 print.iso_file_list <- function(x, ...) {
-  sprintf("# data from %d iso_files:\n", length(x)) %>% 
-    cat()
-  sapply(x, print, show_problems = FALSE)
+  
+  # what type of iso files
+  data_type <- class(x[[1]]) %>% { .[.!="iso_file"][1] } %>% str_replace("_", " ")
+  
+  # print summary
+  glue("Data from {length(x)} {data_type} iso files:") %>% cat("\n")
+  print(iso_get_data_summary(x, quiet = TRUE))
+  
   if (n_problems(x) > 0) {
-    cat("Problems:\n", sep = "")
-    print(problems(x), ...)
+    cat("\nProblem summary:\n", sep = "")
+    print(iso_get_problems_summary(x), ...)
     cat("\n")
   }
   invisible(x)
@@ -197,17 +203,17 @@ print.iso_file <- function(x, ..., show_problems = TRUE) {
   data_type <- class(x) %>% { .[.!="iso_file"][1] } %>% 
     str_to_title() %>% str_replace("_", " ")
   if (is.na(data_type)) data_type <- "Iso"
-  sprintf("%s data '%s' (%s; %s) from %s%s\n", 
+  sprintf("%s iso file '%s': %s", #; file_info: %s method_info: %s; vendor_data_table: %s", 
           data_type,
           get_file_id(x),
-          get_raw_data_info(x),
-          get_file_info_info(x),
-          get_file_path(x),
-          get_file_subpath(x) %>% { if(!is.na(.)) str_c("|", .) else "" }
-  ) %>% cat()
+          get_raw_data_info(x)
+          #get_file_info_info(x),
+          #get_method_info_info(x),
+          #get_vendor_data_table_info(x)
+  ) %>% cat("\n")
   if (show_problems && n_problems(x) > 0) {
     cat("Problems:\n")
-    print(problems(x), ...)
+    print(iso_get_problems(x), ...)
     cat("\n")
   }
   invisible(x)
@@ -225,31 +231,6 @@ print.continuous_flow <- function(x, ..., show_problems = TRUE) {
   NextMethod("print", x, ..., show_problems = show_problems)
 }
 
-# print info
-get_raw_data_info <- function(x) {
-  stopifnot(iso_is_file(x))
-  if (x$read_options$raw_data) {
-    sprintf(
-      "%d recordings of %s",
-      x$raw_data %>% nrow(),
-      x$raw_data %>% select(matches("^[iIvV]")) %>% names() %>% 
-      { if(length(.) == 0) "0 ions" else str_c(., collapse = ", ") }
-    )
-  } else {
-    "raw data not read"
-  }
-}
-get_file_info_info <- function(x) {
-  stopifnot(iso_is_file(x))
-  if (x$read_options$file_info) {
-    sprintf(
-      "%d file info entries",
-      length(x$file_info)
-    )
-  } else {
-    "file info not read"
-  }
-}
 
 # Update structures =====
 

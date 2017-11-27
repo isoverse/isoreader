@@ -1,9 +1,9 @@
 #' @title Problem Functions
 #' @description The following functions to check for and deal with problems are available.
 #' 
-#' \code{iso_problems} is a re-export of \code{\link[readr]{problems}}
+#' \code{iso_get_problems} is a re-export of \code{\link[readr]{problems}}
 #' 
-#' \code{\link{iso_problems_summary}}
+#' \code{\link{iso_get_problems_summary}}
 #' 
 #' \code{\link[readr]{stop_for_problems}}
 #' 
@@ -19,7 +19,7 @@ NULL
 #' @importFrom readr problems
 #' @family problem functions
 #' @export
-iso_problems <- readr::problems
+iso_get_problems <- readr::problems
 
 #' @importFrom readr stop_for_problems
 #' @export
@@ -29,10 +29,11 @@ readr::stop_for_problems
 #'
 #' Returns a data frame listing how many errors and warnings were encountered for each file. For details on each error/warning, see \link[readr]{problems} and the \link{problem_functions}.
 #' @inheritParams iso_aggregate_raw_data
+#' @param problem_files_only whether to list only problem files or all files
 #' @family problem functions
 #' @return data frame with file_id and number of encountered errors and warnings
 #' @export
-iso_problems_summary <- function(iso_files) {
+iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE) {
   # safety checks
   if (missing(iso_files) || !iso_is_object(iso_files)) stop("please provide iso_files", call. = FALSE)
   iso_files <- iso_as_file_list(iso_files)
@@ -49,16 +50,21 @@ iso_problems_summary <- function(iso_files) {
       tally() %>% 
       spread(type, n) %>%
       # to ensure these columns exists
-      bind_rows(probs_templ)
+      bind_rows(probs_templ) %>% 
+      ungroup()
   } else {
     probs <- probs_templ
   }
   
-  # merge with file list
-  data_frame(
-    file_id = names(iso_files)
-  ) %>%
-    left_join(probs, by = "file_id") %>%
+  if (!problem_files_only) {
+    # merge with file list to get all listed
+    probs <- data_frame(
+      file_id = names(iso_files)
+    ) %>%
+      left_join(probs, by = "file_id") 
+  }
+  
+  probs %>%
     mutate(
       warning = ifelse(!is.na(warning), warning, 0L),
       error = ifelse(!is.na(error), error, 0L)

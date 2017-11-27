@@ -46,7 +46,7 @@ isoread_flow_iarc <- function(ds, ...) {
   all_processing_lists <- 
     tasks %>% map("info") %>% bind_rows() %>% 
     group_by_(.dots = "ProcessingListTypeIdentifier") %>% 
-    summarise(samples=n()) %>% 
+    summarize(samples=n()) %>% 
     full_join(processing_lists, by = c("ProcessingListTypeIdentifier" = "DefinitionUniqueIdentifier"))
   
   # safety check on processing lists (make sure all processing lists defined in tasks have a ProcessingListId)
@@ -132,7 +132,7 @@ process_iarc_sample_info <- function(iso_file, task) {
   iso_file$file_info <- c(iso_file$file_info, as.list(task$info))
   if (!is.null(iso_file$file_info$AcquisitionStartDate)) {
     # use AcquisitionStartDate as file_dattime (OS = with fractional seconds - Q: what is the time-zone? using GMT for now)
-    iso_file$file_info$file_datetime <- as.POSIXct(iso_file$file_info$AcquisitionStartDate, "%Y-%m-%dT%H:%M:%OS", tz = "GMT")
+    iso_file$file_info$file_datetime <- strptime(iso_file$file_info$AcquisitionStartDate, format = "%Y-%m-%dT%H:%M:%OS", tz = "GMT")
   }
   return(iso_file)
 }
@@ -155,7 +155,7 @@ process_iarc_sample_data <- function(iso_file, task, gas_configs, folder_path) {
   for (i in 1:nrow(irms_data)) {
     iso_file <- with(irms_data[i,], {
       filepath <- file.path(folder_path, DataFile)
-      run_time.s <- interval(strptime(AcquireStartDate, dt_format), strptime(AcquireEndDate, dt_format) ) / duration(1, "s")
+      run_time.s <- interval(strptime(AcquireStartDate, format = dt_format, tz = "GMT"), strptime(AcquireEndDate, format = dt_format, tz = "GMT") ) / duration(1, "s")
       read_irms_data_file(iso_file, filepath, gas_config, run_time.s, data_units = "nA")
     })
   }

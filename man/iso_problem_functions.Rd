@@ -6,16 +6,16 @@
 \description{
 The following functions to check for and deal with problems are available.
 
-\code{iso_problems} is a re-export of \code{\link[readr]{problems}}
+\code{iso_get_problems} is a re-export of \code{\link[readr]{problems}}
 
-\code{\link{iso_problems_summary}}
+\code{\link{iso_get_problems_summary}}
 
 \code{\link[readr]{stop_for_problems}}
 
 \code{\link{iso_omit_files_with_problems}}
 }
 \seealso{
-Other problem functions: \code{\link{iso_omit_files_with_problems}},
-  \code{\link{iso_problems_summary}},
-  \code{\link{iso_problems}}
+Other problem functions: \code{\link{iso_get_problems_summary}},
+  \code{\link{iso_get_problems}},
+  \code{\link{iso_omit_files_with_problems}}
 }

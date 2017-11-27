@@ -46,6 +46,94 @@ check_iso_file_param <- function(iso_file) {
   if(!iso_is_file(iso_file)) stop("can only retrieve file information from an iso_file object, not from '", class(iso_file)[1], "'", call. = FALSE)
 }
 
+
+# Data summary information =====
+
+#' Get data summary
+#' 
+#' Summarize the data information from one or multiple iso files. 
+#' @param iso_files single iso file or collection of iso_file objects
+#' @return a \code{\link[tibble]{data_frame}} that summarizes the data in the \code{iso_files}
+#' @export
+iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
+  iso_files <- iso_as_file_list(iso_files)
+  if (!quiet) {
+    glue("Info: aggregating data summary from {length(iso_files)} data file(s)") %>% 
+      message()
+  }
+  
+  # @note speed this up by vectorizing the get info functions more efficiently
+  lapply(iso_files, function(iso_file) {
+    data_frame(file_id = iso_file$file_info$file_id,
+               raw_data = get_raw_data_info(iso_file),
+               file_info = get_file_info_info(iso_file),
+               method_info = get_method_info_info(iso_file),
+               vendor_data_table = get_vendor_data_table_info(iso_file),
+               file_path = sprintf("%s%s", iso_file$file_info$file_path, 
+                                   iso_file$file_info$file_subpath %>% { if(!is.na(.)) str_c("|", .) else "" })
+    )
+  }) %>% bind_rows()
+}
+
+# summary of raw data info
+get_raw_data_info <- function(x) {
+  stopifnot(iso_is_file(x))
+  if (x$read_options$raw_data) {
+    cols <- names(x$raw_data) %>% str_subset("^[iIvV](\\d+)\\.") %>% str_match("^[iIvV](\\d+)\\.") %>% {.[,2] } %>% sort()
+    if (length(cols) == 0) return("no ions")
+    rows <- 
+      if (iso_is_dual_inlet(x)) glue("{floor(nrow(x$raw_data)/2)} cycles")
+      else if (iso_is_continuous_flow(x)) glue("{nrow(x$raw_data)} time points")
+      else glue("{nrow(x$raw_data} rows")
+    glue("{rows}, {length(cols)} ions ({collapse(cols, ',')})") %>% 
+      as.character()
+  } else {
+    "raw data not read"
+  }
+}
+
+# summary of file info
+get_file_info_info <- function(x) {
+  stopifnot(iso_is_file(x))
+  if (x$read_options$file_info) {
+    glue("{length(x$file_info)} entries") %>% 
+      as.character()
+  } else {
+    "file info not read"
+  }
+}
+
+# summary of method info
+# @note: this needs manual update depending on method information (to keep things compact in summary)
+get_method_info_info <- function(x) {
+  stopifnot(iso_is_file(x))
+  if (x$read_options$method_info) {
+    method_info <- c()
+    if (!is.null(x$method_info$standards)) method_info <- c(method_info, "standards")
+    if (!is.null(x$method_info$resistors)) method_info <- c(method_info, "resistors")
+    if (!is_empty(method_info)) 
+      glue("{collapse(method_info, ', ')}") %>% as.character()
+    else
+      "no method info"
+  } else {
+    "method info not read"
+  }
+}
+
+# summary of vendor data table
+get_vendor_data_table_info <- function(x) {
+  stopifnot(iso_is_file(x))
+  if (x$read_options$vendor_data_table) {
+    if (nrow(x$vendor_data_table) > 0 || ncol(x$vendor_data_table) > 0)
+      glue("{nrow(x$vendor_data_table)} rows, {ncol(x$vendor_data_table)} columns") %>% as.character()
+    else
+      "no vendor data table"
+  } else {
+    "vendor data table not read"
+  }
+}
+
+
 # Specific data aggregation calls =====
 
 #' Aggregate file info
