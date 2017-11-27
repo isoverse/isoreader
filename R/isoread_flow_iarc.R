@@ -171,7 +171,7 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
     stop("expected DataSet attribute not present in HDF5 data file", call. = FALSE)
   
   # global variables to allow NSE
-  channel <- masses <- Scan <- tp <- time.s <- NULL
+  channel <- masses <- Scan <- tp <- time.s <- n <- NULL
   
   # attributes (NOTE: not sure what to do with the $Tuning information (usually not filled))
   dataset_attributes <- h5readAttributes(filepath, "DataSet")

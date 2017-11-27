@@ -58,14 +58,14 @@ test_that("test that export to Excel works properly", {
   expect_equal(cf, cf_out)
   expect_true(file.exists(str_c(filepath, ".cf.xlsx")))
   # note for comparisons: rounding is necessary because storage is not perfect numerically
-  expect_equal(iso_aggregate_raw_data(cf) %>% 
+  expect_equal(iso_get_raw_data(cf) %>% 
                  mutate(time = signif(time), m44 = signif(m44), m45 = signif(m45)), 
                read_excel(str_c(filepath, ".cf.xlsx"), "raw data") %>% 
                  mutate(time = signif(time), m44 = signif(m44), m45 = signif(m45))) 
-  expect_equal(iso_aggregate_file_info(cf), 
+  expect_equal(iso_get_file_info(cf), 
                read_excel(str_c(filepath, ".cf.xlsx"), "file info",
                           col_types = c("text", "text", "text", "logical"))) 
-  expect_equal(iso_aggregate_vendor_data_table(cf), 
+  expect_equal(iso_get_vendor_data_table(cf), 
                read_excel(str_c(filepath, ".cf.xlsx"), "vendor data table") %>% 
                  mutate(x = as.integer(x))) 
   # TODO: also test the standards and resistor values (from the same tab)
@@ -99,10 +99,10 @@ test_that("test that export to Feather works properly", {
   expect_true(file.exists(str_c(filepath, "_method_info-resistors.cf.feather")))
   expect_true(file.exists(str_c(filepath, "_vendor_data_table.cf.feather")))
   # note for comparisons: rounding is NOT necessary because storage is equivalent to values in R
-  expect_equal(iso_aggregate_raw_data(cf), read_feather(str_c(filepath, "_raw_data.cf.feather")))
-  expect_equal(iso_aggregate_file_info(cf), read_feather(str_c(filepath, "_file_info.cf.feather")))
-  expect_equal(iso_aggregate_standards_info(cf), read_feather(str_c(filepath, "_method_info-standards.cf.feather")))
-  expect_equal(iso_aggregate_resistors_info(cf), read_feather(str_c(filepath, "_method_info-resistors.cf.feather")))
-  expect_equal(iso_aggregate_vendor_data_table(cf), read_feather(str_c(filepath, "_vendor_data_table.cf.feather")))
+  expect_equal(iso_get_raw_data(cf), read_feather(str_c(filepath, "_raw_data.cf.feather")))
+  expect_equal(iso_get_file_info(cf), read_feather(str_c(filepath, "_file_info.cf.feather")))
+  expect_equal(iso_get_standards_info(cf), read_feather(str_c(filepath, "_method_info-standards.cf.feather")))
+  expect_equal(iso_get_resistors_info (cf), read_feather(str_c(filepath, "_method_info-resistors.cf.feather")))
+  expect_equal(iso_get_vendor_data_table(cf), read_feather(str_c(filepath, "_vendor_data_table.cf.feather")))
   expect_true(all(file.remove(list.files(dirname(filepath), pattern = "\\.cf\\.feather$", full.names = TRUE))))
 })

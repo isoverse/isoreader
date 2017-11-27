@@ -4,7 +4,7 @@
 #' 
 #' Convenience function for making standard plots for raw isoreader data. Calls \code{\link{iso_plot_continuous_flow}} and \code{\link{iso_plot_dual_inlet}} for data specific plotting (see those functions for parameter details).
 #' 
-#' @inheritParams iso_aggregate_raw_data
+#' @inheritParams iso_get_raw_data
 #' @param ... parameters for the data specific plotting functions
 #' @family plot functions
 #' @export
@@ -51,7 +51,7 @@ iso_plot_continuous_flow <- function(
   is_ratio <- max_signal <- baseline <- cutoff <- discard <- change <- border <- gap <- NULL
   
   # collect raw data
-  raw_data <- iso_aggregate_raw_data(iso_files, gather = TRUE, quiet = TRUE)
+  raw_data <- iso_get_raw_data(iso_files, gather = TRUE, quiet = TRUE)
   if (nrow(raw_data) == 0) stop("no raw data in supplied iso_files", call. = FALSE)
   
   # only work with desired data (masses and ratios)
@@ -238,7 +238,7 @@ iso_plot_dual_inlet <- function(
   cycle <- value <- type <- data_without_units <- NULL
   
   # collect raw data
-  raw_data <- iso_aggregate_raw_data(iso_files, gather = TRUE, quiet = TRUE)
+  raw_data <- iso_get_raw_data(iso_files, gather = TRUE, quiet = TRUE)
   if (nrow(raw_data) == 0) stop("no raw data in supplied iso_files", call. = FALSE)
 
   # only work with desired data (masses and ratios)

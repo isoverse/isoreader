@@ -124,7 +124,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
 #' However, it is only possible for iso_file objects whose file paths still point to the original raw data files.
 #' 
 #' @details \code{iso_reread_files} will re-read all the original data files for the passed in \code{iso_files} object. Returns the reread iso_file objects.
-#' @inheritParams iso_aggregate_raw_data
+#' @inheritParams iso_get_raw_data
 #' @param ... additional read parameters that should be used for re-reading the iso_files, see \code{\link{iso_read_dual_inlet}} and \code{\link{iso_read_continuous_flow}} for details
 #' @param stop_if_missing whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files and keep them unchanged but re-read those that do exist)
 #' @export

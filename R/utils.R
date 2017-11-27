@@ -140,7 +140,7 @@ generate_cache_filepaths <- function(filepaths, ...) {
   params <- list(...)
   
   # global vars
-  rowname <- size <- mtime <- filepath <- modified <- hash <- cache_file <- NULL
+  rowname <- size <- mtime <- filepath <- iso_v <- modified <- hash <- cache_file <- NULL
   
   calculate_unf_hash <- function(filepath, size, modified) {
     obj <- c(list(filepath, size, modified), params)
@@ -232,7 +232,7 @@ iso_cleanup_reader_cache <- function(all = FALSE) {
 exec_func_with_error_catch <- function(func, obj, ...) {
   if (is.character(func)) func_name <- func
   else func_name <- substitute(func) %>% deparse()
-  if (!default(catch_errors)) {
+  if (!default("catch_errors")) {
     # debug mode, don't catch any errors
     obj <- do.call(func, args = c(list(obj), list(...)))
   } else {

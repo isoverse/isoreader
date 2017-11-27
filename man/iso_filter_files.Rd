@@ -9,7 +9,7 @@ iso_filter_files(iso_files, ..., quiet = default(quiet))
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
-\item{...}{filter conditions applied based on each file's file_info (see \code{\link{iso_aggregate_file_info}})}
+\item{...}{filter conditions applied based on each file's file_info (see \code{\link{iso_get_file_info}})}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }

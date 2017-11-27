@@ -24,7 +24,7 @@ NULL
 
 # quiets concerns of R CMD check about . that appears in pipelines 
 # and some very commonly used variable names used in NSE commands
-utils::globalVariables(c(".", "file_id", "mass"))
+utils::globalVariables(c(".", "file_id", "mass", "quiet"))
 
 # release questions 
 release_questions <- function() {

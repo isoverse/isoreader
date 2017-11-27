@@ -4,7 +4,7 @@
 #' 
 #' This function exports the passed in iso_files to an R Data Archive (.rda) file, which is a fairly efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard \code{\link{iso_read_continuous_flow}} and \code{\link{iso_read_dual_inlet}} functions or by simply double-clicking the .rda file which will open in an R console and restore the data into variable \code{iso_files}.
 #' 
-#' @inheritParams iso_aggregate_raw_data
+#' @inheritParams iso_get_raw_data
 #' @param filepath the path (folder and filename) to the export file. The correct file extension is automatically added if not already in the filename, i.e. filename can be provided with or without extension.
 #' @family export functions
 #' @return returns the iso_files object invisibly for use in pipelines
@@ -61,24 +61,24 @@ iso_export_to_excel <- function(iso_files, filepath,
   hs <- createStyle(textDecoration = "bold")
   if (include_raw_data) {
     addWorksheet(wb, "raw data")
-    raw_data <- iso_aggregate_raw_data(export_iso_files, quiet = TRUE)
+    raw_data <- iso_get_raw_data(export_iso_files, quiet = TRUE)
     if (ncol(raw_data) > 0) writeData(wb, "raw data", raw_data, headerStyle = hs)
   }
   if (include_file_info) {
     addWorksheet(wb, "file info")
-    writeData(wb, "file info", iso_aggregate_file_info(export_iso_files, quiet = TRUE),
+    writeData(wb, "file info", iso_get_file_info(export_iso_files, quiet = TRUE),
               headerStyle = hs)
   }
   if (include_method_info) {
     addWorksheet(wb, "method info")
-    standards <- iso_aggregate_standards_info(export_iso_files, quiet = TRUE)
-    resistors <- iso_aggregate_resistors_info(export_iso_files, quiet = TRUE)
+    standards <- iso_get_standards_info(export_iso_files, quiet = TRUE)
+    resistors <- iso_get_resistors_info (export_iso_files, quiet = TRUE)
     if (ncol(standards) > 0) writeData(wb, "method info", standards, headerStyle = hs)
     if (ncol(resistors) > 0) writeData(wb, "method info", resistors, startRow = nrow(standards) + 3, headerStyle = hs)
   }
   if (include_vendor_data_table) {
     addWorksheet(wb, "vendor data table")
-    vendor_data <- iso_aggregate_vendor_data_table(export_iso_files, quiet = TRUE)
+    vendor_data <- iso_get_vendor_data_table(export_iso_files, quiet = TRUE)
     if (ncol(vendor_data) > 0) writeData(wb, "vendor data table", vendor_data, headerStyle = hs)
   }
   if (include_problems) {
@@ -119,18 +119,18 @@ iso_export_to_feather <- function(iso_files, filepath_prefix,
   
   # make feather files in temporary dir
   if (include_raw_data) 
-    write_feather(iso_aggregate_raw_data(iso_files, quiet = TRUE), filepaths[['raw_data']])
+    write_feather(iso_get_raw_data(iso_files, quiet = TRUE), filepaths[['raw_data']])
   
   if (include_file_info) 
-    write_feather(iso_aggregate_file_info(iso_files, quiet = TRUE), filepaths[['file_info']])
+    write_feather(iso_get_file_info(iso_files, quiet = TRUE), filepaths[['file_info']])
   
   if (include_method_info) {
-    write_feather(iso_aggregate_standards_info(iso_files, quiet = TRUE), filepaths[['method_info_standards']])
-    write_feather(iso_aggregate_resistors_info(iso_files, quiet = TRUE), filepaths[['method_info_resistors']])
+    write_feather(iso_get_standards_info(iso_files, quiet = TRUE), filepaths[['method_info_standards']])
+    write_feather(iso_get_resistors_info (iso_files, quiet = TRUE), filepaths[['method_info_resistors']])
   }
   
   if (include_vendor_data_table) 
-    write_feather(iso_aggregate_vendor_data_table(iso_files, quiet = TRUE), filepaths[['vendor_data_table']])
+    write_feather(iso_get_vendor_data_table(iso_files, quiet = TRUE), filepaths[['vendor_data_table']])
   
   if (include_problems) 
     write_feather(problems(iso_files), filepaths[['problems']])

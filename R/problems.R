@@ -28,7 +28,7 @@ readr::stop_for_problems
 #' Retrieve a summary of the problems
 #'
 #' Returns a data frame listing how many errors and warnings were encountered for each file. For details on each error/warning, see \link[readr]{problems} and the \link{problem_functions}.
-#' @inheritParams iso_aggregate_raw_data
+#' @inheritParams iso_get_raw_data
 #' @param problem_files_only whether to list only problem files or all files
 #' @family problem functions
 #' @return data frame with file_id and number of encountered errors and warnings
@@ -74,7 +74,7 @@ iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE) {
 #' Remove problematic files
 #' 
 #' Removes the files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the \link{problem_functions}.
-#' @inheritParams iso_aggregate_raw_data
+#' @inheritParams iso_get_raw_data
 #' @param type what type of problem causes removal of the file: \code{"error"}, \code{"warning"} or \code{"both"}
 #' @family problem functions
 #' @export
