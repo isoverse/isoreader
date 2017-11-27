@@ -15,7 +15,7 @@ iso_omit_files_with_problems(iso_files, type = c("error", "warning", "both"),
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{turn_info_message_on} and \link[=iso_info_messages]{turn_info_message_off}}
 }
 \description{
-Removes the files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the \link{problem_functions}.
+Removes the files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the \link{iso_problem_functions}.
 }
 \seealso{
 Other problem functions: \code{\link{iso_get_problems_summary}},

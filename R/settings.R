@@ -60,6 +60,7 @@ iso_turn_reader_caching_off <- function(data = NULL) {
 
 #' Set default read options
 #' @inheritParams iso_turn_reader_caching_on
+#' @inheritParams iso_read_files
 #' @param read_raw_data if provided, set as the default for `read_raw_data` parameters
 #' @param read_file_info if provided, set as the default for `read_file_info` parameters
 #' @param read_method_info if provided, set as the default for `read_method_info` parameters

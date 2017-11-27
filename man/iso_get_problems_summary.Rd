@@ -15,7 +15,7 @@ iso_get_problems_summary(iso_files, problem_files_only = TRUE)
 data frame with file_id and number of encountered errors and warnings
 }
 \description{
-Returns a data frame listing how many errors and warnings were encountered for each file. For details on each error/warning, see \link[readr]{problems} and the \link{problem_functions}.
+Returns a data frame listing how many errors and warnings were encountered for each file. For details on each error/warning, see \link[readr]{problems} and the \link{iso_problem_functions}.
 }
 \seealso{
 Other problem functions: \code{\link{iso_get_problems}},

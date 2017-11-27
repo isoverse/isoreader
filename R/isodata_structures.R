@@ -176,7 +176,6 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
 #' Print summary of individual iso_files (dual inlet or continuous flow) or collection of iso_files.
 #' @param x Object to show.
 #' @param ... additional parameters passed to print.default
-#' @param n_max how many file lines to print maximally
 #' @rdname iso_printing
 #' @export
 print.iso_file_list <- function(x, ...) {

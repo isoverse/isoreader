@@ -36,6 +36,9 @@ isoread_did <- function(ds, ...) {
 # extract voltage data in did file
 extract_did_raw_voltage_data <- function(ds) {
   
+  # global vars
+  type <- cycle <- pos <- cup <- voltage <- NULL
+  
   # mass information
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot identify measured masses") %>% 
@@ -82,7 +85,7 @@ extract_did_raw_voltage_data <- function(ds) {
     
     # safety check
     if (length(bin$data$voltage) != length(masses)) {
-      op_error(bind, glue("inconsistent number of voltage measurements encountered ({length(bin$data$voltage)}), expected {length(masses)}"))
+      op_error(bin, glue("inconsistent number of voltage measurements encountered ({length(bin$data$voltage)}), expected {length(masses)}"))
     }
 
     # return voltage data
@@ -107,7 +110,6 @@ extract_did_raw_voltage_data <- function(ds) {
     mutate(cycle = as.integer(ifelse(cycle == "Pre", -1, cycle)) + 1L)
   
   # voltages data frame
-  type <- cycle <- NULL
   ds$raw_data <- arrange(voltages, desc(type), cycle)
   return(ds)
 }

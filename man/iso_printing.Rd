@@ -21,8 +21,6 @@
 \item{...}{additional parameters passed to print.default}
 
 \item{show_problems}{whether to show encountered problems}
-
-\item{n_max}{how many file lines to print maximally}
 }
 \description{
 Print summary of individual iso_files (dual inlet or continuous flow) or collection of iso_files.

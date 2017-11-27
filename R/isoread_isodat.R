@@ -75,6 +75,10 @@ extract_isodat_resistors <- function(ds) {
 
 # extract the reference deltas and ratios for isodat files
 extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
+  
+  #global vars
+  data <- start_pos <- pos <- NULL
+    
   # get secondar standard values
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot recover references") %>% 
@@ -84,9 +88,6 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   if (!is.null(cap_at_fun)) {
     ds$binary <- cap_at_fun(ds$binary)
   }
-  
-  # global vars
-  delta_code <- delta_format <- ratio_code <- ratio_format <- NULL
   
   # instrument reference name reg exps
   instrument_pre1 <- re_combine(re_block("etx"), re_or(re_text("/"), re_text(","), re_text("-")), re_block("fef-0"), re_block("fef-x")) ###
@@ -162,7 +163,7 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
     data = map(pos, capture_delta_values)
   ) %>% unnest(data) %>% 
     # delta_code is very isodat specific and not stored in final, delta_format does not really hold additional information
-    select(standard, gas, delta_name, delta_value, reference)
+    select(!!!c("standard", "gas", "delta_name", "delta_value", "reference"))
   
   
   ### ratios
@@ -199,7 +200,7 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
     pos = positions + ratio_re$size,
     data = map(pos, capture_ratio_values)
   ) %>% unnest(data) %>% 
-    select(reference, element, ratio_name, ratio_value)
+    select(!!!c("reference", "element", "ratio_name", "ratio_value"))
   
   # store information
   ds$method_info$standards <- unique(deltas)
@@ -461,6 +462,9 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
 extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL, col_include = "*",
                                                   skip_row_check = function(column, value) FALSE) {
   
+  # global vars
+  column <- continue_pos <- NULL
+  
   # main data table
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot process vendor data table") %>% 
@@ -586,8 +590,8 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
     }
   }
   
-  cols <<- bind_rows(columns)
-  cells <<- bind_rows(rows)
+  cols <- bind_rows(columns)
+  cells <- bind_rows(rows)
   
   return(list(columns = cols, cell_values = cells))
 }
@@ -621,6 +625,9 @@ extract_isodat_main_vendor_data_table2 <- function(ds, C_block, cap_at_fun = NUL
 # @note part of extract_isodat_main_vendor_data_table2
 # @note too slow (slower than the loop in this case)
 extract_isodat_main_vendor_data_table_cells <- function(ds) {
+  
+  # global vars
+  data <- column <- column_format <- NULL
   
   # find columns and row data for the whole data table
   pre_column_re <- re_combine(
@@ -713,6 +720,9 @@ extract_isodat_main_vendor_data_table_cells <- function(ds) {
 # extract the main (recurring) portion of the vendor data table
 # @note part of extract_isodat_main_vendor_data_table2
 extract_isodat_main_vendor_data_table_cell_values <- function(ds, cells) {
+  
+  # global vars
+  data <- column <- continue_pos <- type <- NULL
   
   # capture cell value 
   # NOTES: adds about 1s to a 300 cell table)

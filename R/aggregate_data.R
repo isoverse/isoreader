@@ -53,6 +53,7 @@ check_iso_file_param <- function(iso_file) {
 #' Get data summary
 #' 
 #' Summarize the data information from one or multiple iso files. 
+#' @inheritParams iso_read_files
 #' @param iso_files single iso file or collection of iso_file objects
 #' @return a \code{\link[tibble]{data_frame}} that summarizes the data in the \code{iso_files}
 #' @export

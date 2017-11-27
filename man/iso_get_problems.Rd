@@ -4,7 +4,10 @@
 \alias{iso_get_problems}
 \title{Retrieve parsing problems}
 \usage{
-iso_get_problems(x)
+iso_get_problems(iso_files)
+}
+\arguments{
+\item{iso_files}{collection of iso_file objects}
 }
 \description{
 This is a re-export of the readr \code{\link[readr]{problems}} function.

@@ -41,7 +41,7 @@ isoread_caf <- function(ds, ...) {
 # extract voltage data in caf file
 extract_caf_raw_voltage_data <- function(ds) {
   # global vars
-  pos <- cup <- data <- NULL
+  pos <- cup <- data <- type <- column <- bin <- voltage <- cycle <- NULL
   
   # locate masses
   ds$binary <- ds$binary %>% 
@@ -146,6 +146,9 @@ extract_caf_raw_voltage_data <- function(ds) {
 
 # extract data table
 extract_caf_vendor_data_table <- function(ds) {
+  
+  # global vars
+  column <- NULL
   
   # reset navigation
   ds$binary <- reset_binary_file_navigation(ds$binary)
