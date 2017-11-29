@@ -46,7 +46,11 @@ test_that("Test that problems set for iso_file lists get propagated to all files
   iso_file2 <- iso_file %>% { .$file_info$file_id <- "B"; . }
   expect_is(iso_files <- c(iso_file1, iso_file2), "iso_file_list")
   expect_equal(problems(iso_files) %>% nrow(), 0L)
+  expect_error(iso_has_problems(), "provide iso_files")
+  expect_false(iso_has_problems(iso_files))
+  
   expect_is(iso_files_w_probs <- register_problem(iso_files, type = "test"), "iso_file_list")
+  expect_true(iso_has_problems(iso_files_w_probs))
   expect_equal(problems(iso_files_w_probs) %>% select(file_id, type),
                data_frame(file_id = c("A", "B"), type = c("test")))
   expect_equal(problems(iso_files_w_probs[[1]]) %>% select(type), data_frame(type = "test"))

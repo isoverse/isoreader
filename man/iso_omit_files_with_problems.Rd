@@ -20,5 +20,6 @@ Removes the files that have encountered problems, either errors, warnings or bot
 \seealso{
 Other problem functions: \code{\link{iso_get_problems_summary}},
   \code{\link{iso_get_problems}},
+  \code{\link{iso_has_problems}},
   \code{\link{iso_problem_functions}}
 }

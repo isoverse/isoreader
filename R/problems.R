@@ -1,9 +1,12 @@
 #' @title Problem Functions
 #' @description The following functions to check for and deal with problems are available.
 #' 
+#' 
 #' \code{iso_get_problems} is a re-export of \code{\link[readr]{problems}}
 #' 
 #' \code{\link{iso_get_problems_summary}}
+#' 
+#' \code{\link{iso_has_problems}}
 #' 
 #' \code{\link[readr]{stop_for_problems}}
 #' 
@@ -11,6 +14,20 @@
 #' @name iso_problem_functions
 #' @family problem functions
 NULL
+
+#' Check for parsing problems
+#' @inheritParams iso_get_raw_data
+#' @family problem functions
+#' @return boolean
+#' @export
+iso_has_problems <- function(iso_files) {
+ 
+  # safety checks
+  if (missing(iso_files) || !iso_is_object(iso_files)) stop("please provide iso_files", call. = FALSE)
+  iso_files <- iso_as_file_list(iso_files)
+  
+  return(n_problems(iso_files) > 0)
+}
 
 #' Retrieve parsing problems
 #' 
