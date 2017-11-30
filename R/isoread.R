@@ -78,8 +78,6 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
     # prepare iso_file object
     iso_file <- set_ds_file_path(data_structure, filepath)
     
-    message("cachepath: ", cachepath, " exists: ", file.exists(cachepath))
-    
     # check for cache
     if (read_cache && cacheable && file.exists(cachepath)) {
       ## cache available  
