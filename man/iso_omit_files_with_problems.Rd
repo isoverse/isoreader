@@ -4,13 +4,15 @@
 \alias{iso_omit_files_with_problems}
 \title{Remove problematic files}
 \usage{
-iso_omit_files_with_problems(iso_files, type = c("error", "warning", "both"),
-  quiet = default(quiet))
+iso_omit_files_with_problems(iso_files, remove_files_with_errors = TRUE,
+  remove_files_with_warnings = TRUE, quiet = default(quiet))
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
-\item{type}{what type of problem causes removal of the file: \code{"error"}, \code{"warning"} or \code{"both"}}
+\item{remove_files_with_errors}{whether to remove files with errors (default is TRUE)}
+
+\item{remove_files_with_warnings}{whether to remove files with warnings (default is TRUE)}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }

@@ -95,15 +95,16 @@ iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE) {
 #' 
 #' Removes the files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the \link{iso_problem_functions}.
 #' @inheritParams iso_get_raw_data
-#' @param type what type of problem causes removal of the file: \code{"error"}, \code{"warning"} or \code{"both"}
+#' @param remove_files_with_errors whether to remove files with errors (default is TRUE)
+#' @param remove_files_with_warnings whether to remove files with warnings (default is FALSE)
 #' @family problem functions
 #' @export
-iso_omit_files_with_problems <- function(iso_files, type = c("error", "warning", "both"), quiet = default(quiet)) {
+iso_omit_files_with_problems <- function(iso_files, remove_files_with_errors = TRUE, remove_files_with_warnings = FALSE, quiet = default(quiet)) {
   if (missing(iso_files) || !iso_is_object(iso_files)) stop("please provide a list of iso_files", call. = FALSE)
-  if (missing(type)) type <- "both"
-  if (length(type) > 1) stop("more than one type specified", call. = FALSE)
-  if (!type %in% c("error", "warning", "both")) stop("unknown problem type specified: ", type, call. = FALSE)
-  types <- if (type == "both") c("error", "warning") else type
+  types <- c()
+  if (remove_files_with_errors) types <- c(types, "error")
+  if (remove_files_with_warnings) types <- c(types, "warning")
+  if (length(types) == 0) stop("removing neither errors nor warnings - nothing to remove", call. = FALSE)
   iso_files <- iso_as_file_list(iso_files)
   
   # find trouble file ids
@@ -114,9 +115,9 @@ iso_omit_files_with_problems <- function(iso_files, type = c("error", "warning",
   # exclude
   exclude <- names(iso_files) %in% trouble_files
   if (!quiet) {
-    sprintf("Info: removing %d/%d files that have %ss (keeping %d)", 
+    sprintf("Info: removing %d/%d files that have any %s (keeping %d)", 
             sum(exclude), length(iso_files), 
-            if (type == "both") "errors or warning" else type,
+            collapse(types, ", ", last = " or "),
             length(iso_files) - sum(exclude)) %>% message()
   }
   return(iso_files[!exclude])
