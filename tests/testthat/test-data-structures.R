@@ -45,6 +45,14 @@ test_that("test that continuous data structure is correct", {
   # FIXME: expand
 })
 
+# printing of data structure works ====
+test_that("test that data structure can be printed", {
+  cf <- isoreader:::make_cf_data_structure()
+  expect_output(print(cf), "raw data not read")
+  cf$read_options$raw_data <- TRUE
+  expect_output(print(cf), "no ions")
+})
+
 # iso_file list checks work ====
 test_that("test that iso_file list checks work", {
   expect_is(iso_files <- iso_as_file_list(), "iso_file_list")

@@ -81,8 +81,9 @@ iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
 get_raw_data_info <- function(x) {
   stopifnot(iso_is_file(x))
   if (x$read_options$raw_data) {
-    cols <- names(x$raw_data) %>% str_subset("^[iIvV](\\d+)\\.") %>% str_match("^[iIvV](\\d+)\\.") %>% {.[,2] } %>% sort()
+    cols <- names(x$raw_data) %>% str_subset("^[iIvV](\\d+)\\.") 
     if (length(cols) == 0) return("no ions")
+    cols <- cols %>% str_match("^[iIvV](\\d+)\\.") %>% {.[,2] } %>% sort()
     rows <- 
       if (iso_is_dual_inlet(x)) glue("{floor(nrow(x$raw_data)/2)} cycles")
       else if (iso_is_continuous_flow(x)) glue("{nrow(x$raw_data)} time points")
