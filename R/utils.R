@@ -136,14 +136,13 @@ get_reread_filepaths <- function(iso_files) {
 # caching ====
 
 # generates the cash file paths for iso_files
-generate_cache_filepaths <- function(filepaths, ...) {
-  params <- list(...)
+generate_cache_filepaths <- function(filepaths, read_options = list()) {
   
   # global vars
   rowname <- size <- mtime <- filepath <- iso_v <- modified <- hash <- cache_file <- NULL
   
   calculate_unf_hash <- function(filepath, size, modified) {
-    obj <- c(list(filepath, size, modified), params)
+    obj <- c(list(filepath, size, modified), read_options)
     unf(obj)$hash %>% str_c(collapse = "")
   }
   

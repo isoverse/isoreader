@@ -38,10 +38,6 @@ make_di_data_structure <- function() {
 # basic continuous flow data structure
 make_cf_data_structure <- function() {
   struct <- make_iso_file_data_structure()
-  
-  # add data_table read option
-  struct$read_options <- struct$read_options %>% 
-    modifyList(list(data_table = FALSE))
   class(struct) <- c("continuous_flow", class(struct))
   return(struct)
 }

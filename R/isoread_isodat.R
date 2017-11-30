@@ -9,7 +9,7 @@ extract_isodat_datetime <- function(ds) {
     move_to_next_pattern(re_null(4), re_block("x-000")) %>% 
     capture_n_data("date", "integer", 1, sensible = c(0,1000*365*24*3600)) # 1000 years as sensible limit
   
-  # store as POSIXct
+  # store as POSIXctm
   ds$file_info$file_datetime <- as.POSIXct(ds$binary$data$date, origin = "1970-01-01")
   return(ds)
 }
