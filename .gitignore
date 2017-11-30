@@ -5,6 +5,7 @@
 # Session Data files
 .RData
 .Rproj.user
+.Rprofile
 
 # Example code in package build process
 *-Ex.R
@@ -34,7 +35,6 @@ vignettes/*.pdf
 *.knit.md
 
 # Auxiliary package files
-/docs/
 /tmp/
 /inst/extdata/
 /inst/other/

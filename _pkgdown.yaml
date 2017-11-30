@@ -1,0 +1,96 @@
+title: Isoreader
+url: http://kopflab.github.io/isoreader
+template:
+  params:
+    bootswatch: simplex
+    
+home:
+  strip_header: true    
+
+navbar:
+  title: isoreader
+  type: default
+  left:
+  - text: Home
+    href: index.html
+  - text: Vignettes
+    href: articles/index.html
+  - text: Reference
+    href: reference/index.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/kopflab/isoreader
+
+articles:
+- title: All vignettes
+  desc: ~
+  contents: '``'
+
+reference:
+- title: Read IRMS data files
+  desc: >
+    These functions provide the core functionality for the package. They parse the raw isotope ratio mass spectrometry data files.
+  contents:
+  - '`iso_read_continuous_flow`'
+  - '`iso_read_dual_inlet`'
+
+- title: Aggregate data
+  desc: >
+    These functions aggregate the data collected from IRMS data files.
+  contents:
+  - '`iso_get_file_info`'
+  - '`iso_get_raw_data`'
+  - '`iso_get_vendor_data_table`'
+  - '`iso_get_resistors_info`'
+  - '`iso_get_standards_info`'
+
+- title: Package information
+  desc: >
+    These functions provide information about the package capabilities.
+  contents:
+  - '`iso_get_supported_file_types`'
+
+- title: Low-level IO and debugging tools
+  desc: >
+    These functions can be develop readers for new file formats.
+  contents:
+  - '`iso_read_files`'
+
+- title: All other functions
+  desc: >
+    TODO: sort
+  contents:
+  - '`iso_caching`'
+  - '`iso_calculate_ratios`'
+  - '`iso_cleanup_reader_cache`'
+  - '`iso_convert_signals`'
+  - '`iso_convert_time`'
+  - '`iso_is_file`'
+  - '`iso_export_to_excel`'
+  - '`iso_export_to_feather`'
+  - '`iso_export_to_rda`'
+  - '`iso_filter_files`'
+  - '`iso_get_data_summary`'
+  - '`iso_get_default_reader_parameters`'
+  - '`iso_get_problems_summary`'
+  - '`iso_get_problems`'
+  - '`iso_get_reader_example`'
+  - '`iso_has_problems`'
+  - '`iso_info_messages`'
+  - '`iso_omit_files_with_problems`'
+  - '`iso_plot_continuous_flow_data`'
+  - '`iso_plot_dual_inlet_data`'
+  - '`iso_plot_raw_data`'
+  - '`print.iso_file_list`'
+  - '`iso_problem_functions`'
+  - '`iso_read_scan`'
+  - '`iso_reread_files`'
+  - '`iso_set_default_read_parameters`'
+  - '`iso_show_default_reader_parameters`'
+  - '`isoread`'
+  - '`print.binary_structure_map`'
+
+
+# additional modification notes on 
+# https://www.r-bloggers.com/building-a-website-with-pkgdown-a-short-guide/
+# http://hadley.github.io/pkgdown/articles/pkgdown.html
