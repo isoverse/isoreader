@@ -1,0 +1,40 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+# Illustrate basic functionality
+
+
+This document was generated with isoreader version `r packageVersion("isoreader")`.
+
+
+```{r}
+#iso_omit_files_with_problems()
+```
+
+```{r}
+#iso_cleanup_reader_cache()
+```
+
+The underlying isoreader package requires unique file names within a dataset so files with the same name cannot be combined into a list of iso_files. Appropriate warnings will be triggered if this happens accidentally. It is generally recommended as a best practice to setup IRMS instrumentation such that data files are automatically generated with a unique prefix (e.g. an incremental universal run number).
+
+
+
+```{r}
+set.seed(123)
+data_frame(
+  analysis = 1:10,
+  prep = c(rep("a", 3), rep("b", 4), rep("a", 3))
+) %>% 
+  arrange(analysis) %>% 
+  mutate(
+    new_sample = prep != c("", head(prep, -1)),
+    batch = cumsum(new_sample)
+  ) %>% 
+  group_by(batch) %>% 
+  summarize(
+    avg = mean(analysis)
+  )
+```
+

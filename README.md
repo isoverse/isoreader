@@ -5,7 +5,7 @@
 Installation
 ------------
 
-You can install isoreader from github with:
+You can install isoreader from github with the devtools package (version &gt; 1.13.2 required for bioconductor support).
 
 ``` r
 # install.packages("devtools")
