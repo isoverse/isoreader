@@ -29,10 +29,10 @@ iso_read_continuous_flow <- function(
 get_supported_cf_files <- function() {
   tribble(
     ~id,     ~extension,    ~fun,                ~cache,   ~description,
-    "cf",    "cf",          "isoread_cf",        TRUE,     "Isodat Continuous Flow file format (older)",
-    "dxf",   "dxf",         "isoread_dxf",       TRUE,     "Isodat Continuous Flow file format (newer)",
-    "iarc",  "iarc",        "isoread_flow_iarc", TRUE,     "IonOS Continous Flow data archieve",
-    #"zip",  "feather.zip", "isoread_feather",   FALSE,    "Isoreader cached data format (for R+python)", # potential future expansion
-    "rda",   "cf.rda",      "isoread_rda",       FALSE,    "Isoreader R Data Archive"
+    "cf",    "cf",          "iso_read_cf",        TRUE,     "Isodat Continuous Flow file format (older)",
+    "dxf",   "dxf",         "iso_read_dxf",       TRUE,     "Isodat Continuous Flow file format (newer)",
+    "iarc",  "iarc",        "iso_read_flow_iarc", TRUE,     "IonOS Continous Flow data archieve",
+    #"zip",  "feather.zip", "iso_read_feather",   FALSE,    "Isoreader cached data format (for R+python)", # potential future expansion
+    "rda",   "cf.rda",      "iso_read_rda",       FALSE,    "Isoreader R Data Archive"
   )
 }

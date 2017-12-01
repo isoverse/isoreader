@@ -1,6 +1,6 @@
 # read isodat .did file
 # @param ds the data structure to fill
-isoread_did <- function(ds, ...) {
+iso_read_did <- function(ds, ...) {
   
   # safety checks
   if(!iso_is_dual_inlet(ds)) 
@@ -115,7 +115,7 @@ extract_did_raw_voltage_data <- function(ds) {
 }
 
 # extract vendor computed data table
-# @note this could potentially also use the more universal data table functions in isoread_isodat
+# @note this could potentially also use the more universal data table functions in iso_read_isodat
 extract_did_vendor_data_table <- function(ds) {
   
   # find vendor data table

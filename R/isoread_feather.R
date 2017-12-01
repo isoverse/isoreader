@@ -1,6 +1,6 @@
 # read cached .feather.zip archieves
 # @param ds the iso_file data structure to fill
-isoread_feather <- function(ds, ...) {
+iso_read_feather <- function(ds, ...) {
  
    
   
