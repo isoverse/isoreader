@@ -20,7 +20,6 @@ readr::parse_double
 #' in the data frames returned by the data retrievel functions (\code{\link{iso_get_raw_data}}, \code{\link{iso_get_file_info}}, \code{\link{iso_get_vendor_data_table}}, etc.).
 #' For simultaneous extraction of pure text data into multiple columns, please see the \code{\link[tidyr]{extract}} function from the \link{tidyr} package.
 #' 
-#' @details
 #' \itemize{
 #' \item \code{\link{extract_substring}} is a generic convience function to extract parts of textual data (based on regular expression matches). 
 #' Can be used in combination with the parsing functions to turn extracted substrings into numerical or logical data.

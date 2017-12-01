@@ -14,7 +14,7 @@ For simultaneous extraction of pure text data into multiple columns, please see 
 \item \code{\link{extract_substring}} is a generic convience function to extract parts of textual data (based on regular expression matches). 
 Can be used in combination with the parsing functions to turn extracted substrings into numerical or logical data.
 
-\item \code{\link{extract_word}} is a more specific convenience function to extract the 1st/2nd/3rd word from textual data. 
+\item \code{\link{extract_word}} is a more specific convenience function to extract the 1st/2nd/3rd word from textual data.
 
 \item \code{\link[readr]{parse_number}} is a convenience function to extract a number even if it is surrouded by text (re-exported from the \link{readr} package)
 
