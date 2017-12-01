@@ -27,77 +27,87 @@ articles:
   contents: '``'
 
 reference:
-- title: Read IRMS data files
+- title: Reading IRMS data files
   desc: >
     These functions provide the core functionality for the package. They parse the raw isotope ratio mass spectrometry data files.
   contents:
   - '`iso_read_continuous_flow`'
   - '`iso_read_dual_inlet`'
+  - '`iso_read_scan`'
+  - '`iso_reread_files`'
 
-- title: Aggregate data
+- title: "Processing the data: file selection, calculations, unit conversion and scaling"
   desc: >
-    These functions aggregate the data collected from IRMS data files.
+    These functions provide tools to easily filter read files, calculate ratios, scale time and convert signal units. 
+    The package also provides a few functions that expand on useful text processing provided by the readr package (summarized in `extract_data`).
   contents:
+  - '`iso_filter_files`'
+  - '`iso_calculate_ratios`'
+  - '`iso_convert_signals`'
+  - '`iso_convert_time`'
+  - '`extract_data`'
+  - '`extract_substring`'
+  - '`extract_word`'
+
+- title: Aggregating the data
+  desc: >
+    These functions aggregate the data collected from one or many IRMS data files.
+  contents:
+  - '`iso_get_data_summary`'
   - '`iso_get_file_info`'
   - '`iso_get_raw_data`'
   - '`iso_get_vendor_data_table`'
   - '`iso_get_resistors_info`'
   - '`iso_get_standards_info`'
-
-- title: Extract data
+  
+- title: Plotting the data
   desc: >
-    Data conversion functions.
+    These functions provide basic plots for visualizing the raw data stored in one or many IRMS data files.
   contents:
-  - '`extract_data`'
-  - '`extract_substring`'
-  - '`extract_word`'
+  - '`iso_plot_continuous_flow_data`'
+  - '`iso_plot_dual_inlet_data`'
+  - '`iso_plot_raw_data`'
 
-- title: Package information
+- title: "Exporting the data: Feather, Excel, and R Data Archives"
   desc: >
-    These functions provide information about the package capabilities.
+    These functions provide tools to export the data to specific file formats.
+  contents:
+  - '`iso_export_to_excel`'
+  - '`iso_export_to_feather`'
+  - '`iso_export_to_rda`'
+
+- title: Package information and default parameters
+  desc: >
+    These functions provide information about the package capabilities, easy access to example files, and ways to set default parameters across the package.
   contents:
   - '`iso_get_supported_file_types`'
+  - '`iso_get_reader_example`'
+  - '`iso_caching`'
+  - '`iso_cleanup_reader_cache`'
+  - '`iso_info_messages`'
+  - '`iso_set_default_read_parameters`'
+  - '`iso_get_default_reader_parameters`'
+  - '`iso_show_default_reader_parameters`'
+
+- title: Dealing with read problems
+  desc: >
+    
+  contents:
+  - '`iso_problem_functions`'
+  - '`iso_has_problems`'
+  - '`iso_get_problems_summary`'
+  - '`iso_get_problems`'
+  - '`iso_omit_files_with_problems`'
 
 - title: Low-level IO and debugging tools
   desc: >
     These functions can be develop readers for new file formats.
   contents:
   - '`iso_read_files`'
-
-- title: All other functions
-  desc: >
-    TODO: sort
-  contents:
-  - '`iso_caching`'
-  - '`iso_calculate_ratios`'
-  - '`iso_cleanup_reader_cache`'
-  - '`iso_convert_signals`'
-  - '`iso_convert_time`'
   - '`iso_is_file`'
-  - '`iso_export_to_excel`'
-  - '`iso_export_to_feather`'
-  - '`iso_export_to_rda`'
-  - '`iso_filter_files`'
-  - '`iso_get_data_summary`'
-  - '`iso_get_default_reader_parameters`'
-  - '`iso_get_problems_summary`'
-  - '`iso_get_problems`'
-  - '`iso_get_reader_example`'
-  - '`iso_has_problems`'
-  - '`iso_info_messages`'
-  - '`iso_omit_files_with_problems`'
-  - '`iso_plot_continuous_flow_data`'
-  - '`iso_plot_dual_inlet_data`'
-  - '`iso_plot_raw_data`'
-  - '`print.iso_file_list`'
-  - '`iso_problem_functions`'
-  - '`iso_read_scan`'
-  - '`iso_reread_files`'
-  - '`iso_set_default_read_parameters`'
-  - '`iso_show_default_reader_parameters`'
-  - '`isoread`'
   - '`print.binary_structure_map`'
-
+  - '`print.iso_file_list`'
+  - '`print.iso_file`'
 
 # additional modification notes on 
 # https://www.r-bloggers.com/building-a-website-with-pkgdown-a-short-guide/

@@ -97,7 +97,7 @@
       <tbody>
         <tr>
           <th colspan="2">
-            <h2 id="section-read-irms-data-files" class="hasAnchor"><a href="#section-read-irms-data-files" class="anchor"></a>Read IRMS data files</h2>
+            <h2 id="section-reading-irms-data-files" class="hasAnchor"><a href="#section-reading-irms-data-files" class="anchor"></a>Reading IRMS data files</h2>
             <p class="section-desc"><p>These functions provide the core functionality for the package. They parse the raw isotope ratio mass spectrometry data files.</p></p>
           </th>
         </tr>
@@ -113,15 +113,83 @@
             <p><code><a href="iso_read_dual_inlet.html">iso_read_dual_inlet</a></code> </p>
           </td>
           <td><p>Load dual inlet data</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_read_scan.html">iso_read_scan</a></code> </p>
+          </td>
+          <td><p>Load scan data</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_reread_files.html">iso_reread_files</a></code> <code><a href="iso_reread_files.html">iso_reread_archive</a></code> </p>
+          </td>
+          <td><p>Re-read iso_files</p></td>
         </tr>
       </tbody><tbody>
         <tr>
           <th colspan="2">
-            <h2 id="section-aggregate-data" class="hasAnchor"><a href="#section-aggregate-data" class="anchor"></a>Aggregate data</h2>
-            <p class="section-desc"><p>These functions aggregate the data collected from IRMS data files.</p></p>
+            <h2 id="section-processing-the-data-file-selection-calculations-unit-conversion-and-scaling" class="hasAnchor"><a href="#section-processing-the-data-file-selection-calculations-unit-conversion-and-scaling" class="anchor"></a>Processing the data: file selection, calculations, unit conversion and scaling</h2>
+            <p class="section-desc"><p>These functions provide tools to easily filter read files, calculate ratios, scale time and convert signal units. The package also provides a few functions that expand on useful text processing provided by the readr package (summarized in <code>extract_data</code>).</p></p>
           </th>
         </tr>
         <tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_filter_files.html">iso_filter_files</a></code> </p>
+          </td>
+          <td><p>Filter iso_files</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_calculate_ratios.html">iso_calculate_ratios</a></code> </p>
+          </td>
+          <td><p>Calculate ratios</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_convert_signals.html">iso_convert_signals</a></code> </p>
+          </td>
+          <td><p>Convert signal units in continuous flow and dual inlet files</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_convert_time.html">iso_convert_time</a></code> </p>
+          </td>
+          <td><p>Convert time units in continuous flow files</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="extract_data.html">extract_data</a></code> </p>
+          </td>
+          <td><p>Extract data from text</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="extract_substring.html">extract_substring</a></code> </p>
+          </td>
+          <td><p>Extract a substring from text</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="extract_word.html">extract_word</a></code> </p>
+          </td>
+          <td><p>Extract words from text</p></td>
+        </tr>
+      </tbody><tbody>
+        <tr>
+          <th colspan="2">
+            <h2 id="section-aggregating-the-data" class="hasAnchor"><a href="#section-aggregating-the-data" class="anchor"></a>Aggregating the data</h2>
+            <p class="section-desc"><p>These functions aggregate the data collected from one or many IRMS data files.</p></p>
+          </th>
+        </tr>
+        <tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_get_data_summary.html">iso_get_data_summary</a></code> </p>
+          </td>
+          <td><p>Get data summary</p></td>
+        </tr><tr>
           <!--  -->
           <td>
             <p><code><a href="iso_get_file_info.html">iso_get_file_info</a></code> </p>
@@ -155,173 +223,11 @@
       </tbody><tbody>
         <tr>
           <th colspan="2">
-            <h2 id="section-extract-data" class="hasAnchor"><a href="#section-extract-data" class="anchor"></a>Extract data</h2>
-            <p class="section-desc"><p>Data conversion functions.</p></p>
+            <h2 id="section-plotting-the-data" class="hasAnchor"><a href="#section-plotting-the-data" class="anchor"></a>Plotting the data</h2>
+            <p class="section-desc"><p>These functions provide basic plots for visualizing the raw data stored in one or many IRMS data files.</p></p>
           </th>
         </tr>
         <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="extract_data.html">extract_data</a></code> </p>
-          </td>
-          <td><p>Extract data from text</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="extract_substring.html">extract_substring</a></code> </p>
-          </td>
-          <td><p>Extract a substring from text</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="extract_word.html">extract_word</a></code> </p>
-          </td>
-          <td><p>Extract words from text</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-package-information" class="hasAnchor"><a href="#section-package-information" class="anchor"></a>Package information</h2>
-            <p class="section-desc"><p>These functions provide information about the package capabilities.</p></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_get_supported_file_types.html">iso_get_supported_file_types</a></code> </p>
-          </td>
-          <td><p>Supported file types</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-low-level-io-and-debugging-tools" class="hasAnchor"><a href="#section-low-level-io-and-debugging-tools" class="anchor"></a>Low-level IO and debugging tools</h2>
-            <p class="section-desc"><p>These functions can be develop readers for new file formats.</p></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_read_files.html">iso_read_files</a></code> </p>
-          </td>
-          <td><p>Core function to read isotope data files</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-all-other-functions" class="hasAnchor"><a href="#section-all-other-functions" class="anchor"></a>All other functions</h2>
-            <p class="section-desc"><p>TODO: sort</p></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_caching.html">iso_turn_reader_caching_on</a></code> <code><a href="iso_caching.html">iso_turn_reader_caching_off</a></code> </p>
-          </td>
-          <td><p>Turn caching on/off</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_calculate_ratios.html">iso_calculate_ratios</a></code> </p>
-          </td>
-          <td><p>Calculate ratios</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_cleanup_reader_cache.html">iso_cleanup_reader_cache</a></code> </p>
-          </td>
-          <td><p>Cleanup old cached files</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_convert_signals.html">iso_convert_signals</a></code> </p>
-          </td>
-          <td><p>Convert signal units in continuous flow and dual inlet files</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_convert_time.html">iso_convert_time</a></code> </p>
-          </td>
-          <td><p>Convert time units in continuous flow files</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_data_structure.html">iso_is_file</a></code> <code><a href="iso_data_structure.html">iso_is_file_list</a></code> <code><a href="iso_data_structure.html">iso_is_object</a></code> <code><a href="iso_data_structure.html">iso_is_dual_inlet</a></code> <code><a href="iso_data_structure.html">iso_is_continuous_flow</a></code> <code><a href="iso_data_structure.html">iso_as_file_list</a></code> </p>
-          </td>
-          <td><p>Isoreader data structure functions</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_export_to_excel.html">iso_export_to_excel</a></code> </p>
-          </td>
-          <td><p>Export data to Excel</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_export_to_feather.html">iso_export_to_feather</a></code> </p>
-          </td>
-          <td><p>Export to feather</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_export_to_rda.html">iso_export_to_rda</a></code> </p>
-          </td>
-          <td><p>Export data to R Data Archive (.rda)</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_filter_files.html">iso_filter_files</a></code> </p>
-          </td>
-          <td><p>Filter iso_files</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_get_data_summary.html">iso_get_data_summary</a></code> </p>
-          </td>
-          <td><p>Get data summary</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_get_default_reader_parameters.html">iso_get_default_reader_parameters</a></code> </p>
-          </td>
-          <td><p>Get the current default parameters</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_get_problems_summary.html">iso_get_problems_summary</a></code> </p>
-          </td>
-          <td><p>Retrieve a summary of the problems</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_get_problems.html">iso_get_problems</a></code> </p>
-          </td>
-          <td><p>Retrieve parsing problems</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_get_reader_example.html">iso_get_reader_example</a></code> <code><a href="iso_get_reader_example.html">iso_get_reader_examples</a></code> </p>
-          </td>
-          <td><p>Example files</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_has_problems.html">iso_has_problems</a></code> </p>
-          </td>
-          <td><p>Check for parsing problems</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_info_messages.html">iso_turn_info_messages_on</a></code> <code><a href="iso_info_messages.html">iso_turn_info_messages_off</a></code> </p>
-          </td>
-          <td><p>Turn information messages on/off</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iso_omit_files_with_problems.html">iso_omit_files_with_problems</a></code> </p>
-          </td>
-          <td><p>Remove problematic files</p></td>
-        </tr><tr>
           <!--  -->
           <td>
             <p><code><a href="iso_plot_continuous_flow_data.html">iso_plot_continuous_flow_data</a></code> </p>
@@ -339,30 +245,70 @@
             <p><code><a href="iso_plot_raw_data.html">iso_plot_raw_data</a></code> </p>
           </td>
           <td><p>Plot raw data from isoreader files</p></td>
+        </tr>
+      </tbody><tbody>
+        <tr>
+          <th colspan="2">
+            <h2 id="section-exporting-the-data-feather-excel-and-r-data-archives" class="hasAnchor"><a href="#section-exporting-the-data-feather-excel-and-r-data-archives" class="anchor"></a>Exporting the data: Feather, Excel, and R Data Archives</h2>
+            <p class="section-desc"><p>These functions provide tools to export the data to specific file formats.</p></p>
+          </th>
+        </tr>
+        <tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_export_to_excel.html">iso_export_to_excel</a></code> </p>
+          </td>
+          <td><p>Export data to Excel</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="iso_printing.html">print</a></code> </p>
+            <p><code><a href="iso_export_to_feather.html">iso_export_to_feather</a></code> </p>
           </td>
-          <td><p>Isofile printing</p></td>
+          <td><p>Export to feather</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="iso_problem_functions.html">iso_problem_functions</a></code> </p>
+            <p><code><a href="iso_export_to_rda.html">iso_export_to_rda</a></code> </p>
           </td>
-          <td><p>Problem Functions</p></td>
+          <td><p>Export data to R Data Archive (.rda)</p></td>
+        </tr>
+      </tbody><tbody>
+        <tr>
+          <th colspan="2">
+            <h2 id="section-package-information-and-default-parameters" class="hasAnchor"><a href="#section-package-information-and-default-parameters" class="anchor"></a>Package information and default parameters</h2>
+            <p class="section-desc"><p>These functions provide information about the package capabilities, easy access to example files, and ways to set default parameters across the package.</p></p>
+          </th>
+        </tr>
+        <tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_get_supported_file_types.html">iso_get_supported_file_types</a></code> </p>
+          </td>
+          <td><p>Supported file types</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="iso_read_scan.html">iso_read_scan</a></code> </p>
+            <p><code><a href="iso_get_reader_example.html">iso_get_reader_example</a></code> <code><a href="iso_get_reader_example.html">iso_get_reader_examples</a></code> </p>
           </td>
-          <td><p>Load scan data</p></td>
+          <td><p>Example files</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="iso_reread_files.html">iso_reread_files</a></code> <code><a href="iso_reread_files.html">iso_reread_archive</a></code> </p>
+            <p><code><a href="iso_caching.html">iso_turn_reader_caching_on</a></code> <code><a href="iso_caching.html">iso_turn_reader_caching_off</a></code> </p>
           </td>
-          <td><p>Re-read iso_files</p></td>
+          <td><p>Turn caching on/off</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_cleanup_reader_cache.html">iso_cleanup_reader_cache</a></code> </p>
+          </td>
+          <td><p>Cleanup old cached files</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_info_messages.html">iso_turn_info_messages_on</a></code> <code><a href="iso_info_messages.html">iso_turn_info_messages_off</a></code> </p>
+          </td>
+          <td><p>Turn information messages on/off</p></td>
         </tr><tr>
           <!--  -->
           <td>
@@ -372,21 +318,85 @@
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="iso_show_default_reader_parameters.html">iso_show_default_reader_parameters</a></code> </p>
+            <p><code><a href="iso_get_default_reader_parameters.html">iso_get_default_reader_parameters</a></code> </p>
           </td>
-          <td><p>Show the current default parameters</p></td>
+          <td><p>Get the current default parameters</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="isoread.html">isoread</a></code> </p>
+            <p><code><a href="iso_show_default_reader_parameters.html">iso_show_default_reader_parameters</a></code> </p>
           </td>
-          <td><p>Read isotope data file</p></td>
+          <td><p>Show the current default parameters</p></td>
+        </tr>
+      </tbody><tbody>
+        <tr>
+          <th colspan="2">
+            <h2 id="section-dealing-with-read-problems" class="hasAnchor"><a href="#section-dealing-with-read-problems" class="anchor"></a>Dealing with read problems</h2>
+            <p class="section-desc"></p>
+          </th>
+        </tr>
+        <tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_problem_functions.html">iso_problem_functions</a></code> </p>
+          </td>
+          <td><p>Problem Functions</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_has_problems.html">iso_has_problems</a></code> </p>
+          </td>
+          <td><p>Check for parsing problems</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_get_problems_summary.html">iso_get_problems_summary</a></code> </p>
+          </td>
+          <td><p>Retrieve a summary of the problems</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_get_problems.html">iso_get_problems</a></code> </p>
+          </td>
+          <td><p>Retrieve parsing problems</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_omit_files_with_problems.html">iso_omit_files_with_problems</a></code> </p>
+          </td>
+          <td><p>Remove problematic files</p></td>
+        </tr>
+      </tbody><tbody>
+        <tr>
+          <th colspan="2">
+            <h2 id="section-low-level-io-and-debugging-tools" class="hasAnchor"><a href="#section-low-level-io-and-debugging-tools" class="anchor"></a>Low-level IO and debugging tools</h2>
+            <p class="section-desc"><p>These functions can be develop readers for new file formats.</p></p>
+          </th>
+        </tr>
+        <tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_read_files.html">iso_read_files</a></code> </p>
+          </td>
+          <td><p>Core function to read isotope data files</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_data_structure.html">iso_is_file</a></code> <code><a href="iso_data_structure.html">iso_is_file_list</a></code> <code><a href="iso_data_structure.html">iso_is_object</a></code> <code><a href="iso_data_structure.html">iso_is_dual_inlet</a></code> <code><a href="iso_data_structure.html">iso_is_continuous_flow</a></code> <code><a href="iso_data_structure.html">iso_as_file_list</a></code> </p>
+          </td>
+          <td><p>Isoreader data structure functions</p></td>
         </tr><tr>
           <!--  -->
           <td>
             <p><code><a href="print.binary_structure_map.html">print</a></code> </p>
           </td>
           <td><p>Print binary structure map</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="iso_printing.html">print</a></code> </p>
+          </td>
+          <td><p>Isofile printing</p></td>
         </tr>
       </tbody>
       </table>
@@ -396,12 +406,14 @@
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-read-irms-data-files">Read IRMS data files</a></li>
-      <li><a href="#section-aggregate-data">Aggregate data</a></li>
-      <li><a href="#section-extract-data">Extract data</a></li>
-      <li><a href="#section-package-information">Package information</a></li>
+      <li><a href="#section-reading-irms-data-files">Reading IRMS data files</a></li>
+      <li><a href="#section-processing-the-data-file-selection-calculations-unit-conversion-and-scaling">Processing the data: file selection, calculations, unit conversion and scaling</a></li>
+      <li><a href="#section-aggregating-the-data">Aggregating the data</a></li>
+      <li><a href="#section-plotting-the-data">Plotting the data</a></li>
+      <li><a href="#section-exporting-the-data-feather-excel-and-r-data-archives">Exporting the data: Feather, Excel, and R Data Archives</a></li>
+      <li><a href="#section-package-information-and-default-parameters">Package information and default parameters</a></li>
+      <li><a href="#section-dealing-with-read-problems">Dealing with read problems</a></li>
       <li><a href="#section-low-level-io-and-debugging-tools">Low-level IO and debugging tools</a></li>
-      <li><a href="#section-all-other-functions">All other functions</a></li>
     </ul>
   </div>
 </div>
