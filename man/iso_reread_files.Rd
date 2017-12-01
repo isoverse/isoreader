@@ -16,7 +16,7 @@ iso_reread_archive(rda_filepaths, ..., stop_if_missing = FALSE,
 
 \item{...}{additional read parameters that should be used for re-reading the iso_files, see \code{\link{iso_read_dual_inlet}} and \code{\link{iso_read_continuous_flow}} for details}
 
-\item{stop_if_missing}{whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files and keep them unchanged but re-read those that do exist)}
+\item{stop_if_missing}{whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files adding a warning to them, but also re-read those that do exist)}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 

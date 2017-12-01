@@ -106,7 +106,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   iso_files <- iso_as_file_list(unname(iso_files), discard_duplicates = discard_duplicates) 
 
   # report problems
-  if (!default(quiet) && n_problems(iso_files) > 0) {
+  if (!default(quiet) && iso_has_problems(iso_files)) {
     message(sprintf("Info: encountered %.0f problems in total.", n_problems(iso_files)))
     print(problems(iso_files))
     cat("\n")
@@ -126,7 +126,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
 #' @details \code{iso_reread_files} will re-read all the original data files for the passed in \code{iso_files} object. Returns the reread iso_file objects.
 #' @inheritParams iso_get_raw_data
 #' @param ... additional read parameters that should be used for re-reading the iso_files, see \code{\link{iso_read_dual_inlet}} and \code{\link{iso_read_continuous_flow}} for details
-#' @param stop_if_missing whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files and keep them unchanged but re-read those that do exist)
+#' @param stop_if_missing whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files adding a warning to them, but also re-read those that do exist)
 #' @export
 iso_reread_files <- function(iso_files, ..., stop_if_missing = FALSE, quiet = default(quiet)) {
   
@@ -148,10 +148,15 @@ iso_reread_files <- function(iso_files, ..., stop_if_missing = FALSE, quiet = de
   if (!all(files_exist)) {
     msg <- sprintf("%d file(s) do no longer exist at the referenced location and can not be re-read:\n - %s\n",
                    sum(!files_exist), str_c(filepaths[!files_exist], collapse = "\n - "))
-    if (stop_if_missing)
+    if (stop_if_missing) {
       stop(msg, call. = FALSE)
-    else 
+    } else {
       warning(msg, call. = FALSE, immediate. = TRUE)
+      iso_files[!files_exist] <- map(iso_files[!files_exist], register_warning, func = "iso_reread_files", 
+                                     details = "file does not exist at its original location and can not be re-read",
+                                     warn = FALSE)
+      
+    }
   }
   
   # reread files

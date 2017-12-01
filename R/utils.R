@@ -178,9 +178,12 @@ load_cached_iso_file <- function(filepath, check_version = TRUE) {
   if (!(iso_is_object(iso_file))) stop("cached file did not contain iso_file(s)", call. = FALSE)
   
   # check version
+  # NOTE: this should technially no be possible because the filename of a cached file contains the version
+  # however, it is a good safety precaution
   cached_version <- if(iso_is_file_list(iso_file)) iso_file[[1]]$version else iso_file$version
   if (!same_as_isoreader_version(cached_version)) {
-    iso_file <- register_warning(iso_file, details = "file created by a different version of the isoreader package")
+    iso_file <- register_warning(iso_file, details = 
+      sprintf("file created by a different version of the isoreader package (%s)", as.character(cached_version)))
   }
   
   # return
@@ -194,7 +197,6 @@ same_as_isoreader_version <- function(version, isoreader_version = packageVersio
   isoreader_version <- isoreader_version$major * 10 + isoreader_version$minor
   return(version == isoreader_version)
 }
-
 
 #' Cleanup old cached files
 #'

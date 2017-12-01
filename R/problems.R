@@ -31,16 +31,20 @@ iso_has_problems <- function(iso_files) {
   return(n_problems(iso_files) > 0)
 }
 
+#' @importFrom readr problems
+#' @export
+readr::problems
+
 #' Retrieve parsing problems
 #' 
-#' This is a re-export of the readr \code{\link[readr]{problems}} function.
+#' This is identical to the readr \code{\link[readr]{problems}} function.
 #' 
 #' @importFrom readr problems
 #' @inheritParams iso_get_raw_data
 #' @family problem functions
 #' @export
 iso_get_problems <- function(iso_files) {
-  readr::problems(iso_files)
+  problems(iso_files)
 }
 
 #' @importFrom readr stop_for_problems
@@ -130,20 +134,24 @@ iso_omit_files_with_problems <- function(iso_files, remove_files_with_errors = T
 # with a filename, type and details
 # will propage the problem to all underlying files
 # @obj iso_file or iso_file_list
+# @param keep_duplicats - whether to keep identical copies of the same problems 
 register_problem <- function(obj, type = NA_character_, details = NA_character_, ..., 
-                                  func = find_parent_call("register_problem")) {
+                                  func = find_parent_call("register_problem"), keep_duplicates = FALSE) {
   if (func == "NULL") func <- NA_character_
   problem <- data_frame(type = type, func = func, details = details, ...)
   if (iso_is_file_list(obj)) {
     obj <- as.list(obj)
     for (i in 1:length(obj)) {
       existing_problems <- get_problems(obj[[i]])
-      obj[[i]] <- set_problems(obj[[i]], suppressWarnings(bind_rows(existing_problems, problem)))
+      all_problems <- suppressWarnings(bind_rows(existing_problems, problem))
+      if (!keep_duplicates) all_problems <- unique(all_problems)
+      obj[[i]] <- set_problems(obj[[i]], all_problems)
     } 
     obj <- iso_as_file_list(obj)
   } else {
-    obj <- obj %>% set_problems(
-        suppressWarnings(bind_rows(get_problems(obj), problem)))
+    all_problems <- suppressWarnings(bind_rows(get_problems(obj), problem))
+    if (!keep_duplicates) all_problems <- unique(all_problems)
+    obj <- obj %>% set_problems(all_problems)
   }
   return(obj)
 }

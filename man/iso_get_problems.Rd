@@ -10,7 +10,7 @@ iso_get_problems(iso_files)
 \item{iso_files}{collection of iso_file objects}
 }
 \description{
-This is a re-export of the readr \code{\link[readr]{problems}} function.
+This is identical to the readr \code{\link[readr]{problems}} function.
 }
 \seealso{
 Other problem functions: \code{\link{iso_get_problems_summary}},
