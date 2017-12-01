@@ -13,7 +13,7 @@ readr::parse_integer
 #' @export
 readr::parse_double
 
-#' Extract data from text
+#' Overview of text data extraction functions
 #' 
 #' The following functions are intened to make it easy to extract relevant information from textual data. 
 #' These functions can be used inside the filtering conditions passed to \code{\link{iso_filter_files}} or can be used to extract data from columns 

@@ -6,7 +6,7 @@ vignettes:
 check:
 	Rscript -e "devtools::check()"
 
-document:
+docu:
 	Rscript -e "devtools::document(roclets=c('rd', 'collate', 'namespace'))"
 	Rscript -e "pkgdown::build_site()"
 

@@ -1,16 +1,18 @@
-#' @title Problem Functions
+#' @title Problem Functions Overview
 #' @description The following functions to check for and deal with problems are available.
 #' 
+#' #' @details
+#' \itemize{
+#' \item \code{iso_get_problems} is a re-export of \code{\link[readr]{problems}}
 #' 
-#' \code{iso_get_problems} is a re-export of \code{\link[readr]{problems}}
+#' \item \code{\link{iso_get_problems_summary}}
 #' 
-#' \code{\link{iso_get_problems_summary}}
+#' \item \code{\link{iso_has_problems}}
 #' 
-#' \code{\link{iso_has_problems}}
+#' \item \code{\link[readr]{stop_for_problems}}
 #' 
-#' \code{\link[readr]{stop_for_problems}}
-#' 
-#' \code{\link{iso_omit_files_with_problems}}
+#' \item \code{\link{iso_omit_files_with_problems}}
+#' }
 #' @name iso_problem_functions
 #' @family problem functions
 NULL
