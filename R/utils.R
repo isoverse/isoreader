@@ -202,7 +202,7 @@ same_as_isoreader_version <- function(version, isoreader_version = packageVersio
 #' @param all if set to TRUE, all cached files will be removed regardless of their version
 #' @export
 iso_cleanup_reader_cache <- function(all = FALSE) {
-  files <- list.files(default("cache_dir"), pattern = "^iso_file_.*\\.rds$", full.names = TRUE)
+  files <- list.files(default("cache_dir"), pattern = "^iso_?file_.*\\.rds$", full.names = TRUE)
   if (all) {
     file.remove(files)
     if (!default(quiet)) message("Info: removed all (", length(files), ") cached isoreader files.")

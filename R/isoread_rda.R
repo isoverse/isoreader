@@ -6,10 +6,12 @@ isoread_rda <- function(ds, ...) {
   if(!iso_is_file(ds)) stop("data structure must be an iso_file", call. = FALSE)
   
   # load rda file
-  if (exists("iso_files", inherits = FALSE)) rm("iso_files") 
+  if (exists("iso_files", inherits = FALSE)) rm("iso_files")
+  if (exists("isofiles", inherits = FALSE)) rm("isofiles") # backwards compatibility
   load(ds$file_info$file_path) 
   
   # make sure object in file was loaded properly
+  if (exists("isofiles", inherits = FALSE)) iso_files <- isofiles # backwards compatibility
   if (!exists("iso_files", inherits = FALSE) || !(iso_is_object(iso_files))) 
     stop("R Data Archive did not contain iso_file data", call. = FALSE)
   iso_files <- iso_as_file_list(iso_files)
