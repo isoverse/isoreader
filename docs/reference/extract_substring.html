@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Objects exported from other packages — reexports • Isoreader</title>
+<title>Extract a substring from text — extract_substring • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -80,25 +80,63 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Objects exported from other packages</h1>
+    <h1>Extract a substring from text</h1>
     </div>
 
     
-    <p>These objects are imported from other packages. Follow the links
-below to see their documentation.</p><dl class='dl-horizontal'>
-  <dt>magrittr</dt><dd><p><code>%&gt;%</code></p></dd>
-
-    <dt>readr</dt><dd><p><code><a href='http://www.rdocumentation.org/packages/readr/topics/parse_number'>parse_number</a></code>, <code><a href='http://www.rdocumentation.org/packages/readr/topics/parse_atomic'>parse_logical</a></code>, <code><a href='http://www.rdocumentation.org/packages/readr/topics/parse_atomic'>parse_integer</a></code>, <code><a href='http://www.rdocumentation.org/packages/readr/topics/parse_atomic'>parse_double</a></code>, <code><a href='http://www.rdocumentation.org/packages/readr/topics/problems'>stop_for_problems</a></code></p></dd>
-</dl>
+    <p>This is a convenience function to capture substrings from textual data. 
+Uses <code><a href='http://www.rdocumentation.org/packages/stringr/topics/str_match'>str_match_all</a></code> internally but instead of returning everything, always returns only one single part of the match, depending on parameters <code>capture_n</code> and <code>capture_group</code>.</p>
     
 
-        
+    <pre class="usage"><span class='fu'>extract_substring</span>(<span class='no'>string</span>, <span class='no'>pattern</span>, <span class='kw'>capture_n</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>capture_bracket</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>missing</span> <span class='kw'>=</span> <span class='fl'>NA_character_</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>string</th>
+      <td><p>string to extract</p></td>
+    </tr>
+    <tr>
+      <th>pattern</th>
+      <td><p>regular expression pattern to search for</p></td>
+    </tr>
+    <tr>
+      <th>capture_n</th>
+      <td><p>within each string, which match of the <code>pattern</code> should be extracted? e.g. if the pattern searches for words, should the first, second or third word be captured?</p></td>
+    </tr>
+    <tr>
+      <th>capture_bracket</th>
+      <td><p>for the captured match, which capture group should be extracted? i.e. which parentheses-enclosed segment of the <code>pattern</code>? 
+by default captures the whole pattern (<code>capture_bracket = 0</code>).</p></td>
+    </tr>
+    <tr>
+      <th>missing</th>
+      <td><p>what to replace missing values with? Note that values can be missing because there are not enough captured matches or because the actual capture_bracket is empty.</p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>character vector of same length as <code>string</code> with the extracted substrings</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p>Other data extraction functions: <code><a href='extract_data.html'>extract_data</a></code>,
+  <code><a href='extract_word.html'>extract_word</a></code></p>
+    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-                </ul>
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>

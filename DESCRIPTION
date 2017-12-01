@@ -10,10 +10,10 @@ Depends:
 Imports:
     methods,
     magrittr,
-    rlang,
+    rlang (>= 0.1.4),
     glue,
-    tidyselect,
-    dplyr (>= 0.7.0),
+    tidyselect (>= 0.2.3),
+    dplyr (>= 0.7.4),
     tidyr,
     stringr,
     purrr,
