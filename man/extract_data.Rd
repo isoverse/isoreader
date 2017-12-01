@@ -2,7 +2,7 @@
 % Please edit documentation in R/cleanup.R
 \name{extract_data}
 \alias{extract_data}
-\title{Extract data from text}
+\title{Overview of text data extraction functions}
 \description{
 The following functions are intened to make it easy to extract relevant information from textual data. 
 These functions can be used inside the filtering conditions passed to \code{\link{iso_filter_files}} or can be used to extract data from columns 
