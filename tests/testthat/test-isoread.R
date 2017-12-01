@@ -5,7 +5,7 @@ test_that("test that parameter checks are performed when reading binary file", {
   expect_error(isoreader:::iso_read_files(), "missing")
   expect_error(isoreader:::iso_read_files(supported_extensions = data_frame()), "not in data\\: \\'extension\\', \\'fun\\'")
   expect_error(isoreader:::iso_read_files(
-    supported_extensions = data_frame(extension = "did", fun = list(isoreader:::isoread_did)), 
+    supported_extensions = data_frame(extension = "did", fun = list(isoreader:::iso_read_did)), 
     data_structure = structure(list())), "data structure must include class \\'iso_file\\'")
   expect_error(isoreader:::iso_read_files(
     supported_extensions = isoreader:::get_supported_di_files(), # func tested in test-dual-inlet 

@@ -1,6 +1,6 @@
 # read ionos .iarc archieves for their continuous flow data
 # @param ds the iso_file data structure to fill
-isoread_flow_iarc <- function(ds, ...) {
+iso_read_flow_iarc <- function(ds, ...) {
   
   # safety checks
   if(!iso_is_file(ds) || !is(ds, "continuous_flow")) 

@@ -1,6 +1,6 @@
 # read cached isoreader files
 # @param ds the data structure to fill
-isoread_rda <- function(ds, ...) {
+iso_read_rda <- function(ds, ...) {
   
   # safety checks
   if(!iso_is_file(ds)) stop("data structure must be an iso_file", call. = FALSE)
@@ -40,7 +40,7 @@ isoread_rda <- function(ds, ...) {
   ok_version <- map_lgl(versions, same_as_isoreader_version, packageVersion("isoreader"))
   if (any(!ok_version)) {
     messages <- sprintf("file created by a different version of the isoreader package (%s)", map_chr(versions[!ok_version], as.character))
-    iso_files[!ok_version] <- map2(iso_files[!ok_version], messages, register_warning, func = "isoread_rda", warn = FALSE)
+    iso_files[!ok_version] <- map2(iso_files[!ok_version], messages, register_warning, func = "iso_read_rda", warn = FALSE)
   }
 
   if (any(!ok_version)) {
