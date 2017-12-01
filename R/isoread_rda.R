@@ -11,7 +11,15 @@ isoread_rda <- function(ds, ...) {
   load(ds$file_info$file_path) 
   
   # make sure object in file was loaded properly
-  if (exists("isofiles", inherits = FALSE)) iso_files <- isofiles # backwards compatibility
+  if (exists("isofiles", inherits = FALSE)) { 
+    if (!is.list(isofiles)) isofiles <- as.list(isofiles)
+    is_old_isofile <- map_lgl(isofiles, ~is(.x, "isofile"))
+    isofiles[is_old_isofile] <- map(isofiles[is_old_isofile], function(isofile) {
+      class(isofile) <- class(isofile) %>% { .[.!="isofile"] } %>% c("iso_file")
+      return(isofile)
+    })
+    iso_files <- iso_as_file_list(isofiles)
+  }
   if (!exists("iso_files", inherits = FALSE) || !(iso_is_object(iso_files))) 
     stop("R Data Archive did not contain iso_file data", call. = FALSE)
   iso_files <- iso_as_file_list(iso_files)
