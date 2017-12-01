@@ -44,6 +44,14 @@ reference:
   - '`iso_get_resistors_info`'
   - '`iso_get_standards_info`'
 
+- title: Extract data
+  desc: >
+    Data conversion functions.
+  contents:
+  - '`extract_data`'
+  - '`extract_substring`'
+  - '`extract_word`'
+
 - title: Package information
   desc: >
     These functions provide information about the package capabilities.

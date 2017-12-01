@@ -7,7 +7,8 @@ check:
 	Rscript -e "devtools::check()"
 
 document:
-	Rscript -e "devtools::check_doc()"
+	Rscript -e "devtools::document(roclets=c('rd', 'collate', 'namespace'))"
+	Rscript -e "pkgdown::build_site()"
 
 auto_test:
 	R -q -e "rm(list = ls()); testthat::auto_test_package()"

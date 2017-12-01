@@ -11,7 +11,7 @@
 ^cache$
 ^tests/testthat/cache$
 ^inst/other$
-^tmp$
+^tmp.*$
 ^README-.*\.png$
 ^README\.Rmd$
 ^logo\.png$
