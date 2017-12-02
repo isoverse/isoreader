@@ -2,6 +2,7 @@ context("Settings and default values")
 
 test_that("default values can be set and retrieved", {
   expect_error(isoreader:::default("don't know"), "setting .* does not exist")
+  expect_null(isoreader:::default("don't know", allow_null = TRUE))
   expect_true(isoreader:::set_default("quiet", TRUE))
   expect_true(isoreader:::default("quiet"))
   expect_true(isoreader:::default(quiet))
