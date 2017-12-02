@@ -7,7 +7,7 @@
 # Allowed values are a specific number 1,2,3,4, etc. "*" for any number, "?" for 0 or 1 and "+" for at least one.
 # @param type_reqs named list to specify what types certain columns must be, allowed: "list", "numeric", "integer", "character"
 # @param cols_must_exist - if TRUE, will throw an error if a column does not exist, otherwise just  warning
-# @return list of column names for each entry (may contain multiple depending on selection doncitoins)
+# @return list of column names for each entry (may contain multiple depending on selection conditions)
 get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_must_exist = TRUE) {
   
   # df name and data frame test
