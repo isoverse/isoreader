@@ -94,7 +94,7 @@ test_that("removing files with errors works properly", {
   iso_err$file_info$file_id <- "C"
   iso_files <- c(iso_file, iso_err, iso_warn)
   expect_error(iso_omit_files_with_problems(42), "provide a list of iso_files")
-  expect_error(iso_omit_files_with_problems(iso_files, remove_files_with_errors = FALSE, remove_files_with_warnings = FALSE), "nothing to remove")
+  expect_equal(iso_omit_files_with_problems(iso_files, remove_files_with_errors = FALSE, remove_files_with_warnings = FALSE), iso_files)
   expect_message(iso_omit_files_with_problems(iso_files, quiet = FALSE), "removing")
   expect_silent(iso_omit_files_with_problems(iso_files, quiet = TRUE))
   expect_equal(iso_omit_files_with_problems(iso_files) %>% # default parameters

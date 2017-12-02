@@ -110,7 +110,7 @@ iso_omit_files_with_problems <- function(iso_files, remove_files_with_errors = T
   types <- c()
   if (remove_files_with_errors) types <- c(types, "error")
   if (remove_files_with_warnings) types <- c(types, "warning")
-  if (length(types) == 0) stop("removing neither errors nor warnings - nothing to remove", call. = FALSE)
+  if (length(types) == 0) return(iso_files)
   iso_files <- iso_as_file_list(iso_files)
   
   # find trouble file ids
