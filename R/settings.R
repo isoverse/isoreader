@@ -16,7 +16,8 @@ set_default <- function(name, value, overwrite = TRUE) {
 #' Get the current default parameters
 #' 
 #' Retrieve a table with all default function parameters for this package. 
-#' To set reader parameters, see \code{\link{iso_set_default_read_parameters}}.
+#' To set read parameters, see \code{\link{iso_set_default_read_parameters}}. 
+#' To set messaging and caching parameters see \code{\link{iso_info_messages}} and see \code{\link{iso_caching}}.
 #' For a piping compatible version of this function, see \link{iso_show_default_reader_parameters}.
 #' @family settings functions
 #' @export

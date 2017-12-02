@@ -1,4 +1,4 @@
-.onLoad <- function(libname, pkgname) {
+initialize_options <- function() {
   # set default package options (always resets options to force deliberate change of settings)
   default_options <- list(
     isoreader.quiet = FALSE,
@@ -13,5 +13,9 @@
     isoreader.read_file_event = quo(NULL)
   )
   options(default_options)
+}
+
+.onLoad <- function(libname, pkgname) {
+  initialize_options()
   invisible()
 }
