@@ -32,3 +32,6 @@ However, it is only possible for iso_file objects whose file paths still point t
 
 \code{iso_reread_archive} is a convenience function for refreshing saved iso_file collections. It will load a specific iso_files R Data Archive (\code{rda_filepath}), re-read all the data from the original data files and save the collection back to the same rda file. The iso_files are returned invisibly.
 }
+\note{
+re-reading files with their original read parameters is not yet supported
+}

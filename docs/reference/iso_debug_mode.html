@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Re-read iso_files — iso_reread_files • Isoreader</title>
+<title>Debugging functions — iso_debug_mode • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -80,54 +80,35 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Re-read iso_files</h1>
+    <h1>Debugging functions</h1>
     </div>
 
     
-    <p>Sometimes it is useful to reload isotope files from their original data files (e.g. after upgrading to a newer version of the isoreader package). 
-The functions described below are intended to make this very easy. 
-However, it is only possible for iso_file objects whose file paths still point to the original raw data files.</p>
+    <p>For troubleshooting. Not exported.</p>
     
 
-    <pre class="usage"><span class='fu'>iso_reread_files</span>(<span class='no'>iso_files</span>, <span class='no'>...</span>, <span class='kw'>stop_if_missing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))
+    <pre class="usage"><span class='fu'>iso_turn_debug_on</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>catch_errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
-<span class='fu'>iso_reread_archive</span>(<span class='no'>rda_filepaths</span>, <span class='no'>...</span>, <span class='kw'>stop_if_missing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+<span class='fu'>iso_turn_debug_off</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>set_read_file_event_expr</span>(<span class='kw'>event_expr</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>iso_files</th>
-      <td><p>collection of iso_file objects</p></td>
+      <th>data</th>
+      <td><p>a data frame - returned invisibly as is if provided (e.g. in the middle of a pipeline)</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>additional read parameters that should be used for re-reading the iso_files, see <code><a href='iso_read_dual_inlet.html'>iso_read_dual_inlet</a></code> and <code><a href='iso_read_continuous_flow.html'>iso_read_continuous_flow</a></code> for details</p></td>
+      <th>catch_errors</th>
+      <td><p>whether to still catch errors in debug mode or whether to throw them</p></td>
     </tr>
     <tr>
-      <th>stop_if_missing</th>
-      <td><p>whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files adding a warning to them, but also re-read those that do exist)</p></td>
-    </tr>
-    <tr>
-      <th>quiet</th>
-      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
-    </tr>
-    <tr>
-      <th>rda_filepaths</th>
-      <td><p>the path(s) to the iso_files R data archive(s) to re-read (can be a single file or vector of files)</p></td>
+      <th>event_expr</th>
+      <td><p>an expression to evaluate in the context of reading individual iso files (evaluated in the local environment of the read function!)</p></td>
     </tr>
     </table>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p><code>iso_reread_files</code> will re-read all the original data files for the passed in <code>iso_files</code> object. Returns the reread iso_file objects.
-    <code>iso_reread_archive</code> is a convenience function for refreshing saved iso_file collections. It will load a specific iso_files R Data Archive (<code>rda_filepath</code>), re-read all the data from the original data files and save the collection back to the same rda file. The iso_files are returned invisibly.</p>
-    
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
-    <p>re-reading files with their original read parameters is not yet supported</p>
     
 
   </div>
@@ -135,11 +116,7 @@ However, it is only possible for iso_file objects whose file paths still point t
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#details">Details</a></li>
-
-      <li><a href="#note">Note</a></li>
-          </ul>
+                </ul>
 
   </div>
 </div>

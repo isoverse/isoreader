@@ -105,6 +105,7 @@ reference:
   contents:
   - '`iso_read_files`'
   - '`iso_is_file`'
+  - '`iso_debug_mode`'
   - '`print.binary_structure_map`'
   - '`print.iso_file_list`'
   - '`print.iso_file`'

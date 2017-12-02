@@ -9,7 +9,8 @@
     isoreader.read_raw_data = TRUE,
     isoreader.read_file_info = TRUE,
     isoreader.read_method_info = TRUE,
-    isoreader.read_vendor_data_table = TRUE
+    isoreader.read_vendor_data_table = TRUE,
+    isoreader.read_file_event = quo(NULL)
   )
   options(default_options)
   invisible()

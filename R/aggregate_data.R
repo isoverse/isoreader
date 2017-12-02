@@ -1,6 +1,10 @@
 # File info and data retrieval functions 
 # @note: should make the aggregation functions type safe?
-# @note: need an "iso_get_data()" funtion that nests everything together
+# @note: need an "iso_get_nested_data()" funtion that nests everything together for people who would like to use that
+# @note: --> maybe provide the nest and unnest data functions from isoprocessor?
+# @note: --> maybe allow plotting and exporting functions to also work with nested data sets? 
+#            that would allow people to manipulate them easily to change certain naming fields and then go plotting?
+# @note: consider supporting the nested data sets in the plot functions
 # @note: simplify the get_file_id/path/subpath/datetime function or cut them entirely? it's all possible with the select functions anyways...
 
 # Specific file info calls ======
@@ -160,7 +164,9 @@ iso_get_file_info <- function(iso_files, select = everything(), quiet = default(
     })  %>% as_data_frame()
   }) %>% bind_rows()
   
-    # safety check (probably not necessary because of iso_file combination checks but consequences would be too problematic not to check)
+  if (nrow(file_info) == 0) return(file_info)
+  
+  # safety check (probably not necessary because of iso_file combination checks but consequences would be too problematic not to check)
   if (any(duplicated(file_info$file_id))) {
     stop("duplicate file ids are not permitted as they can lead to unexpected consequences in data processing", call. = FALSE)
   }

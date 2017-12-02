@@ -55,7 +55,18 @@ test_that("test that data structure can be printed", {
 
 # iso_file list checks work ====
 test_that("test that iso_file list checks work", {
+  # empty iso file list doesn't break anything
   expect_is(iso_files <- iso_as_file_list(), "iso_file_list")
+  expect_equal(iso_as_file_list() %>% iso_get_problems() %>% nrow(), 0)
+  expect_equal(iso_as_file_list() %>% iso_get_problems() %>% names(), c("file_id", "type", "func", "details"))
+  expect_equal(iso_as_file_list() %>% iso_get_data_summary() %>% nrow(), 0)
+  expect_equal(iso_as_file_list() %>% iso_get_raw_data() %>% nrow(), 0)
+  expect_equal(iso_as_file_list() %>% iso_get_file_info() %>% nrow(), 0)
+  expect_equal(iso_as_file_list() %>% iso_get_vendor_data_table() %>% nrow(), 0)
+  expect_equal(iso_as_file_list() %>% iso_get_resistors_info() %>% nrow(), 0)
+  expect_equal(iso_as_file_list() %>% iso_get_standards_info() %>% nrow(), 0)
+  
+  # expected errors
   expect_error(iso_as_file_list(1, error = "test"), "encountered incompatible data type")
   expect_false(iso_is_file_list(42))
   expect_false(iso_is_file_list(isoreader:::make_iso_file_data_structure()))
