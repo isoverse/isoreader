@@ -24,7 +24,10 @@ use \code{\link[readr]{parse_number}} instead if this is not the case (re-export
 \item \code{\link[readr]{parse_integer}} parses text that holds integer (whole number) numerical values without any extraneous text around - 
 use \code{\link[readr]{parse_number}} instead if this is not the case (re-exported from the \link{readr} packag)
 
-\item \code{\link[readr]{parse_logical}} parses text that holds logical (boolean, i.e. TRUE/FALSE) values (re-exported from the \link{readr} packag)
+\item \code{\link[readr]{parse_logical}} parses text that holds logical (boolean, i.e. TRUE/FALSE) values (re-exported from the \link{readr} package)
+
+\item \code{\link[readr]{parse_datetime}} parses text that holds date and time information (re-exported from the \link{readr} package)
+
 }
 }
 \seealso{

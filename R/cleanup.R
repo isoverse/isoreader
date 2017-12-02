@@ -1,6 +1,6 @@
 # cleanup functions of data read from files
 
-#' @importFrom readr parse_number parse_logical parse_integer parse_double
+#' @importFrom readr parse_number parse_logical parse_integer parse_double parse_datetime
 #' @export
 readr::parse_number
 
@@ -12,6 +12,9 @@ readr::parse_integer
 
 #' @export
 readr::parse_double
+
+#' @export
+readr::parse_datetime
 
 #' Overview of text data extraction functions
 #' 
@@ -34,7 +37,10 @@ readr::parse_double
 #' \item \code{\link[readr]{parse_integer}} parses text that holds integer (whole number) numerical values without any extraneous text around - 
 #' use \code{\link[readr]{parse_number}} instead if this is not the case (re-exported from the \link{readr} packag)
 #' 
-#' \item \code{\link[readr]{parse_logical}} parses text that holds logical (boolean, i.e. TRUE/FALSE) values (re-exported from the \link{readr} packag)
+#' \item \code{\link[readr]{parse_logical}} parses text that holds logical (boolean, i.e. TRUE/FALSE) values (re-exported from the \link{readr} package)
+#' 
+#' \item \code{\link[readr]{parse_datetime}} parses text that holds date and time information (re-exported from the \link{readr} package)
+#' 
 #' }
 #' @name extract_data
 #' @family data extraction functions
