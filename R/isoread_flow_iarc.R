@@ -132,7 +132,7 @@ process_iarc_sample_info <- function(iso_file, task) {
   iso_file$file_info <- c(iso_file$file_info, as.list(task$info))
   if (!is.null(iso_file$file_info$AcquisitionStartDate)) {
     # use AcquisitionStartDate as file_dattime (OS = with fractional seconds - Q: what is the time-zone? using GMT for now)
-    iso_file$file_info$file_datetime <- strptime(iso_file$file_info$AcquisitionStartDate, format = "%Y-%m-%dT%H:%M:%OS", tz = "GMT")
+    iso_file$file_info$file_datetime <- parse_datetime(iso_file$file_info$AcquisitionStartDate, format = "%Y-%m-%dT%H:%M:%OS")
   }
   return(iso_file)
 }
@@ -155,7 +155,7 @@ process_iarc_sample_data <- function(iso_file, task, gas_configs, folder_path) {
   for (i in 1:nrow(irms_data)) {
     iso_file <- with(irms_data[i,], {
       filepath <- file.path(folder_path, DataFile)
-      run_time.s <- interval(strptime(AcquireStartDate, format = dt_format, tz = "GMT"), strptime(AcquireEndDate, format = dt_format, tz = "GMT") ) / duration(1, "s")
+      run_time.s <- difftime(parse_datetime(AcquireStartDate, format = dt_format), parse_datetime(AcquireEndDate, format = dt_format), units = "s") %>% as.numeric()
       read_irms_data_file(iso_file, filepath, gas_config, run_time.s, data_units = "nA")
     })
   }

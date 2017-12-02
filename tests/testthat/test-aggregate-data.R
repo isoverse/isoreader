@@ -25,7 +25,7 @@ test_that("test that file information can be recovered from iso_files", {
   iso_file$file_info$file_id <- "id"
   iso_file$file_info$file_path <- "path"
   iso_file$file_info$file_subpath <- "subpath"
-  iso_file$file_info$file_datetime <- as.POSIXct("2010-11-12 13:14:15", tz = "UTC")
+  iso_file$file_info$file_datetime <- parse_datetime("2010-11-12 13:14:15")
   
   expect_equal(get_file_id(iso_file), iso_file$file_info$file_id)
   expect_equal(get_file_path(iso_file), iso_file$file_info$file_path)
