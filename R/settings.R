@@ -146,9 +146,16 @@ update_quiet <- function(quiet) {
   }
 }
 
-# turn debug messages on/off
-# not exported, used for internal debugging
-# @param catch_errors whether to still catch errors in debug mode or whether to throw them
+#' Debugging functions
+#' 
+#' For troubleshooting. Not exported.
+#' 
+#' @inheritParams iso_turn_reader_caching_on
+#' @name iso_debug_mode
+NULL
+
+#' @param catch_errors whether to still catch errors in debug mode or whether to throw them
+#' @rdname iso_debug_mode
 iso_turn_debug_on <- function(data = NULL, catch_errors = TRUE) {
   set_default("debug", TRUE)
   set_default("catch_errors", catch_errors)
@@ -156,9 +163,16 @@ iso_turn_debug_on <- function(data = NULL, catch_errors = TRUE) {
   if (!missing(data)) return(data)
 }
 
+#' @rdname iso_debug_mode
 iso_turn_debug_off <- function(data = NULL) {
   set_default("debug", FALSE)
   set_default("catch_errors", TRUE)
   message("Info: debug mode turned off")
   if (!missing(data)) return(data)
+}
+
+#' @param event_expr an expression to evaluate in the context of reading individual iso files (evaluated in the local environment of the read function!)
+#' @rdname iso_debug_mode
+set_read_file_event_expr <- function(event_expr = NULL) {
+  set_default("read_file_event", enquo(event_expr))
 }

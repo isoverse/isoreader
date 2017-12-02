@@ -106,7 +106,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
   if (length(iso_objs) == 0) {
     # empty list
     iso_list <- list()
-    iso_get_problems <- get_problems_structure() %>% mutate(file_id = character())
+    all_problems <- get_problems_structure() %>% mutate(file_id = character()) %>% select(!!as.name("file_id"), everything())
   } else {
     # combine everything
     if(!all(is_iso <- sapply(iso_objs, iso_is_object))) {
@@ -146,22 +146,24 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     }
     
     # propagate problems
-    iso_get_problems <- lapply(iso_list, function(iso_file) {
+    all_problems <- lapply(iso_list, function(iso_file) {
       get_problems(iso_file) %>% 
         mutate_(.dots = list(file_id = ~iso_file$file_info$file_id))
     }) %>% bind_rows()
   }
   
   # problems
-  iso_get_problems <- iso_get_problems %>% 
-    unique() %>% # remove duplicate entries
-    { select_(., .dots = c("file_id", names(.))) }
+  if (nrow(all_problems)) {
+    all_problems <- all_problems %>% 
+      unique() %>% # remove duplicate entries
+      { select_(., .dots = c("file_id", names(.))) }
+  }
   
   # generate structure
   structure(
     iso_list,
     class = c("iso_file_list")
-  ) %>% set_problems(iso_get_problems)
+  ) %>% set_problems(all_problems)
 }
 
 
@@ -177,7 +179,8 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
 print.iso_file_list <- function(x, ...) {
   
   # what type of iso files
-  data_type <- class(x[[1]]) %>% { .[.!="iso_file"][1] } %>% str_replace("_", " ")
+  if (length(x) == 0) data_type <- "unknown"
+  else data_type <- class(x[[1]]) %>% { .[.!="iso_file"][1] } %>% str_replace("_", " ")
   
   # print summary
   glue("Data from {length(x)} {data_type} iso files:") %>% cat("\n")

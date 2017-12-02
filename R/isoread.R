@@ -78,6 +78,12 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
     # prepare iso_file object
     iso_file <- set_ds_file_path(data_structure, filepath)
     
+    # evaluate read file event quosure if it exists
+    read_file_event <- getOption("isoreader.read_file_event")
+    if (!is.null(read_file_event) && is_quosure(read_file_event) && !quo_is_null(read_file_event)) {
+      eval_tidy(UQE(read_file_event))
+    }
+    
     # check for cache
     if (read_cache && cacheable && file.exists(cachepath)) {
       ## cache available  
@@ -127,6 +133,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
 #' @inheritParams iso_get_raw_data
 #' @param ... additional read parameters that should be used for re-reading the iso_files, see \code{\link{iso_read_dual_inlet}} and \code{\link{iso_read_continuous_flow}} for details
 #' @param stop_if_missing whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files adding a warning to them, but also re-read those that do exist)
+#' @note re-reading files with their original read parameters is not yet supported
 #' @export
 iso_reread_files <- function(iso_files, ..., stop_if_missing = FALSE, quiet = default(quiet)) {
   
@@ -160,6 +167,7 @@ iso_reread_files <- function(iso_files, ..., stop_if_missing = FALSE, quiet = de
   }
   
   # reread files
+  # @FIXME: if no read parameters are supplied, re-read with the original ones
   if (any(files_exist)) {
     args <- c(list(paths = filepaths[files_exist]), list(...))
     if (iso_is_continuous_flow(iso_files)) {
