@@ -155,7 +155,7 @@ process_iarc_sample_data <- function(iso_file, task, gas_configs, folder_path) {
   for (i in 1:nrow(irms_data)) {
     iso_file <- with(irms_data[i,], {
       filepath <- file.path(folder_path, DataFile)
-      run_time.s <- difftime(parse_datetime(AcquireStartDate, format = dt_format), parse_datetime(AcquireEndDate, format = dt_format), units = "s") %>% as.numeric()
+      run_time.s <- difftime(parse_datetime(AcquireEndDate, format = dt_format), parse_datetime(AcquireStartDate, format = dt_format), units = "s") %>% as.numeric()
       read_irms_data_file(iso_file, filepath, gas_config, run_time.s, data_units = "nA")
     })
   }
