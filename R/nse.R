@@ -103,7 +103,7 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
     
     # find type requirement problems
     all_type_reqs <- rep(NA_character_, length(cols)) %>% as.list() %>% setNames(names(cols)) %>% modifyList(type_reqs) %>% { .[names(cols)] }
-    all_df_types <- map_chr(df, class)
+    all_df_types <- map_chr(df, ~class(.x)[1])
     col_meets_type_reqs <- map2_lgl(cols, all_type_reqs, function(col, req) {
       if (is.na(req)) return(TRUE)
       else if (all(all_df_types[col] == req)) return(TRUE)
