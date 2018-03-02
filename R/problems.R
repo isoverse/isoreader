@@ -115,7 +115,7 @@ iso_omit_files_with_problems <- function(iso_files, remove_files_with_errors = T
   
   # find trouble file ids
   trouble_files <- problems(iso_files) %>% 
-    filter(UQE(as.name("type")) %in% types) %>% 
+    filter(type %in% types) %>% 
     { unique(.$file_id) }
 
   # exclude

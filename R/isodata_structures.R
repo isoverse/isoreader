@@ -100,13 +100,16 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
   # dots passed in
   iso_objs <- list(...)
   
+  # return iso file list right away if it's the only thing passed in
+  if (length(iso_objs) == 1 && iso_is_file_list(..1)) return (..1)
+  
   # allow simple list to be passed in
   if (length(iso_objs) == 1 && !iso_is_object(..1) && is.list(..1)) iso_objs <- ..1
   
   if (length(iso_objs) == 0) {
     # empty list
     iso_list <- list()
-    all_problems <- get_problems_structure() %>% mutate(file_id = character()) %>% select(!!as.name("file_id"), everything())
+    all_problems <- get_problems_structure() %>% mutate(file_id = character()) %>% select(file_id, everything())
   } else {
     # combine everything
     if(!all(is_iso <- sapply(iso_objs, iso_is_object))) {
