@@ -131,7 +131,8 @@ process_iarc_samples <- function(iso_file_template, tasks, gas_configs, folder_p
 process_iarc_sample_info <- function(iso_file, task) {
   iso_file$file_info <- c(iso_file$file_info, as.list(task$info))
   if (!is.null(iso_file$file_info$AcquisitionStartDate)) {
-    # use AcquisitionStartDate as file_dattime (OS = with fractional seconds - Q: what is the time-zone? using GMT for now)
+    # use AcquisitionStartDate as file_dattime (OS = with fractional seconds)
+    # Problem: what is the time-zone? assuming UTC for now
     iso_file$file_info$file_datetime <- parse_datetime(iso_file$file_info$AcquisitionStartDate, format = "%Y-%m-%dT%H:%M:%OS")
   }
   return(iso_file)

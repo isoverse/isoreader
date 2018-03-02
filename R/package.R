@@ -8,7 +8,7 @@
 #' @importFrom glue glue collapse
 #' @importFrom purrr map map_lgl map_chr map_df map_int map_dbl map2 map2_chr map2_lgl safely
 #' @importFrom tibble tribble deframe rownames_to_column
-#' @importFrom lubridate interval duration
+#' @importFrom lubridate interval duration as_datetime
 #' @import stringr
 #' @import ggplot2
 #' @importFrom stats setNames embed
