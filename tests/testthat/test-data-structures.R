@@ -57,6 +57,9 @@ test_that("test that data structure can be printed", {
 test_that("test that iso_file list checks work", {
   # empty iso file list doesn't break anything
   expect_is(iso_files <- iso_as_file_list(), "iso_file_list")
+  expect_is(isoreader:::make_cf_data_structure() %>% iso_as_file_list(), "iso_file_list")
+  expect_is(isoreader:::make_cf_data_structure() %>% iso_as_file_list() %>% 
+              iso_as_file_list(), "iso_file_list")
   expect_equal(iso_as_file_list() %>% iso_get_problems() %>% nrow(), 0)
   expect_equal(iso_as_file_list() %>% iso_get_problems() %>% names(), c("file_id", "type", "func", "details"))
   expect_equal(iso_as_file_list() %>% iso_get_data_summary() %>% nrow(), 0)

@@ -661,11 +661,12 @@ map_C_block_structure <- function(bfile, C_block, occurence = 1, length = 100, c
   map_binary_structure(bfile, length = length, start = cblock$start, ctrl_blocks = ctrl_blocks)
 }
 
+# Map isodat file binary structure.
+# 
 # map out binary structure for easy visualization (used mostly for error messages and debugging)
 # @param length how many bytes to map
 # @param start at which byte positio to start mapping (index 1 based)
 # @param ctrl_blocks named list of block patterns with size, regexp and [optional] replace function
-# @FIXME: testing
 map_binary_structure <- function(bfile, length = 100, start = bfile$pos, ctrl_blocks = get_ctrl_blocks_config()) {
   
   if(!is(bfile, "binary_file")) 

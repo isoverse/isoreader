@@ -10,12 +10,31 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "README-"
 )
+
+version <- as.vector(read.dcf('DESCRIPTION')[, 'Version'])
+version <- gsub('-', '.', version)
+
+dep <- as.vector(read.dcf('DESCRIPTION')[, 'Depends'])
+m <- regexpr('R *\\(>= \\d+.\\d+.\\d+\\)', dep)
+rm <- regmatches(dep, m)
+rvers <- gsub('.*(\\d+.\\d+.\\d+).*', '\\1', rm)
 ```
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
-[![Build Status](https://travis-ci.org/KopfLab/isoreader.svg?branch=master)](https://travis-ci.org/KopfLab/isoreader)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/KopfLab/isoreader?branch=master&svg=true)](https://ci.appveyor.com/project/KopfLab/isoreader)
+[![packageversion](https://img.shields.io/badge/Package%20version-1.0-orange.svg?style=flat-square)](/commits)
+[![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-yellowgreen.svg)](/commits)
+[![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://kopflab.github.io/isoreader/reference/)
+[![minimal R version](https://img.shields.io/badge/R%3E%3D-`r rvers`-6666ff.svg)](https://cran.r-project.org/
 [![codecov.io](https://codecov.io/github/KopfLab/isoreader/coverage.svg?branch=master)](https://codecov.io/github/KopfLab/isoreader?branch=master)
+
+Branch | Travis                                                                                                                | AppVeyor
+-------|-----------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+master | [![Build Status](https://travis-ci.org/KopfLab/isoreader.svg?branch=master)](https://travis-ci.org/KopfLab/isoreader) | [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/KopfLab/isoreader?branch=master&svg=true)](https://ci.appveyor.com/project/KopfLab/isoreader)
+dev    | [![Build Status](https://travis-ci.org/KopfLab/isoreader.svg?branch=dev)](https://travis-ci.org/KopfLab/isoreader)    | [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/KopfLab/isoreader?branch=dev&svg=true)](https://ci.appveyor.com/project/KopfLab/isoreader)
+
+
+
+
 
 
 ## Installation
@@ -28,4 +47,3 @@ devtools::install_github("KopfLab/isoreader")
 ```
 
 ## Example
-
