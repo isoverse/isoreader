@@ -25,3 +25,13 @@ test_that("test that checks are run when re-reading iso_files", {
   expect_error(iso_reread_archive("test.csv"), "unrecognized file type")
   expect_error(iso_reread_archive("DNE.dxf"), "file\\(s\\) do not exist")
 })
+
+
+test_that("test that read file event expression works", {
+  
+  minimal_files <- file.path("test_data", "minimal_files") %>% 
+    list.files(pattern = "\\.did", full.names = TRUE)
+  isoreader::set_read_file_event_expr({ print(file_n*-1) })
+  expect_output(iso_read_dual_inlet(minimal_files[1:3], quiet = TRUE), "-1.*-2.*-3")
+  isoreader::set_read_file_event_expr({})
+})

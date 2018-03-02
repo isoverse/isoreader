@@ -51,7 +51,8 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
     data_frame(
       filepath = filepaths,
       cachepath = generate_cache_filepaths(filepath, data_structure$read_options),
-      ext = get_file_ext(filepath)
+      ext = get_file_ext(filepath),
+      file_n = 1:length(filepaths)
     )
   
   # extension to reader map & safety checks
@@ -73,7 +74,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   }
   
   # read function
-  read_iso_file <- function(filepath, cachepath, ext, reader_fun, cacheable) {
+  read_iso_file <- function(filepath, cachepath, ext, reader_fun, cacheable, file_n) {
     
     # prepare iso_file object
     iso_file <- set_ds_file_path(data_structure, filepath)
@@ -81,18 +82,22 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
     # evaluate read file event quosure if it exists
     read_file_event <- getOption("isoreader.read_file_event")
     if (!is.null(read_file_event) && is_quosure(read_file_event) && !quo_is_null(read_file_event)) {
-      eval_tidy(UQE(read_file_event))
+      eval_tidy(get_expr(read_file_event))
     }
     
     # check for cache
     if (read_cache && cacheable && file.exists(cachepath)) {
       ## cache available  
-      if (!default(quiet)) sprintf("Info: reading file %s from cache", filepath) %>% message()
+      if (!default(quiet)) {
+        glue("Info: reading file {file_n}/{nrow(files)} '{filepath}' from cache...") %>% message()
+      }
       iso_file <- load_cached_iso_file(cachepath)
     } else {
       ## read file anew using extension-specific function to read file
       caching <- if (cache && cacheable) " and caching" else ""
-      if (!default(quiet)) sprintf("Info: reading%s file %s with '%s' reader", caching, filepath, ext) %>% message()
+      if (!default(quiet)) {
+        glue("Info: reading{caching} file {file_n}/{nrow(files)} '{filepath}' with '{ext}' reader...") %>% message()
+      }
       iso_file <- exec_func_with_error_catch(reader_fun, iso_file, ...)
       
       # cleanup any binary content depending on debug setting
@@ -106,7 +111,19 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   }
   
   # read files
-  iso_files <- with(files, mapply(read_iso_file, filepath = filepath, cachepath = cachepath, ext = ext, reader_fun = reader_fun, cacheable = cacheable))
+  iso_files <-
+    with(
+      files,
+      mapply(
+        read_iso_file,
+        filepath = filepath,
+        cachepath = cachepath,
+        ext = ext,
+        reader_fun = reader_fun,
+        cacheable = cacheable,
+        file_n = file_n
+      )
+    )
   
   # turn into iso_file list
   iso_files <- iso_as_file_list(unname(iso_files), discard_duplicates = discard_duplicates) 
