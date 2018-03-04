@@ -118,9 +118,9 @@ test_that("test that isofils objects can be combined and subset", {
   expect_equal({ iso_fileC <- iso_file %>% { .$file_info$file_id <- "C"; . }; iso_fileC$file_info$file_id }, "C")
   
   # combinining iso_files
-  expect_error(c(iso_fileA, 5), "can only combine iso_file and iso_file\\_list")
+  expect_error(c(iso_fileA, 5), "can only process iso_file and iso_file\\_list")
   expect_error(c(isoreader:::make_cf_data_structure(), isoreader:::make_di_data_structure()), 
-               "can only combine iso_file objects with the same data type")
+               "can only process iso_file objects with the same data type")
   expect_is(iso_filesAB <- c(iso_fileA, iso_fileB), "iso_file_list")
   expect_is(iso_filesABC <- c(iso_fileA, iso_fileB, iso_fileC), "iso_file_list")
   expect_equal(c(iso_filesAB, iso_fileC), c(iso_fileA, iso_fileB, iso_fileC))
