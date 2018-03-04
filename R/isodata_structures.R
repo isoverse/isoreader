@@ -15,7 +15,7 @@ make_iso_file_data_structure <- function() {
         file_id = NA_character_, # unique identifer
         file_path = NA_character_, # path to file (file extension is key for processing)
         file_subpath = NA_character_, # sub path in case file is an archieve
-        file_datetime = NA # the run date and time of the file
+        file_datetime = NA_integer_ # the run date and time of the file
       ),
       method_info = list(), # all methods information
       raw_data = data_frame(), # all mass data (Note: maybe not top-level b/c of scans?)
@@ -113,7 +113,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
   } else {
     # combine everything
     if(!all(is_iso <- sapply(iso_objs, iso_is_object))) {
-      stop("can only combine iso_file and iso_file_list objects, encountered incompatible data type(s): ",
+      stop("can only process iso_file and iso_file_list objects, encountered incompatible data type(s): ",
            unlist(lapply(iso_objs, class)[!is_iso]) %>% 
            { str_c(unique(.), collapse = ", ")}, call. = FALSE)
     }
@@ -128,7 +128,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     # check if al ellements are the same data type
     classes <- lapply(iso_list, class) 
     if (!all(sapply(classes, function(x) all(x == classes[[1]])))) {
-      str_interp("can only combine iso_file objects with the same data type (first: ${ref_dt}), encountered: ${wrong_dt}", 
+      str_interp("can only process iso_file objects with the same data type (first: ${ref_dt}), encountered: ${wrong_dt}", 
                  list(ref_dt = classes[[1]][1], 
                       wrong_dt = classes %>% sapply(`[`, 1) %>% { .[.!=classes[[1]][1]] } %>% 
                         { str_c(unique(.), collapse = ", ")})) %>% 
