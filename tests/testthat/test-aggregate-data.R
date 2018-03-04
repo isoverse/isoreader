@@ -20,7 +20,7 @@ test_that("test that file information can be recovered from iso_files", {
   
   expect_error(get_file_datetime(), "no iso_file provided")
   expect_error(get_file_datetime(42), "can only retrieve file information from an iso_file object")
-  expect_equal(get_file_datetime(iso_file), NA)
+  expect_equal(get_file_datetime(iso_file), NA_integer_)
   
   iso_file$file_info$file_id <- "id"
   iso_file$file_info$file_path <- "path"
@@ -56,6 +56,54 @@ test_that("test that aggregation functions refuse to work with non iso_files", {
   expect_error(iso_get_vendor_data_table(1), "encountered incompatible data type")
 })
 
+## check aggregation helpers ====
+
+test_that("test that unnesting of aggregated data works properly", {
+  
+  df <- data_frame(int = list(5L), dbl = list(4.2), chr = list("chr"), lgl = list(TRUE))
+  
+  # simple unnest
+  expect_equal(unnested_aggregated_data_frame(df), unnest(df))
+  # check on datetime (not quite the same due to integer --> datetime conversion and back)
+  dt <- Sys.time()
+  expect_true((unnested_aggregated_data_frame(data_frame(dt = list(dt)))$dt - dt) < 10)
+  # unnest even with NULLs present
+  expect_equal(
+    bind_rows(df, select(df, -int)) %>% unnested_aggregated_data_frame(),
+    bind_rows(unnest(df), unnest(select(df, -int)))
+  )
+  # don't unnest mixed type columns
+  expect_equal(
+    unnested_aggregated_data_frame(bind_rows(df, mutate(df, dbl=chr)))$dbl,
+    bind_rows(unnest(df, int, chr, lgl), unnest(mutate(df, dbl=chr), int, chr, lgl))$dbl
+  )
+  # don't unnest multi value columns
+  df2 <- mutate(df, chr = map(chr, ~c("ch1", "ch2")))
+  expect_equal(
+    unnested_aggregated_data_frame(bind_rows(df, df2))$chr,
+    c(df$chr, df2$chr)
+  )
+  # replace missing entries with NA instead (for string)
+  expect_equal(
+    unnested_aggregated_data_frame(bind_rows(select(df, -chr), df2))$chr,
+    c(NA_character_, df2$chr)
+  )
+  # replace missing entries with NA instead (for integer)
+  df2 <- mutate(df, int = map(int, ~c(1L,2L)))
+  expect_equal(
+    unnested_aggregated_data_frame(bind_rows(select(df, -int), df2))$int,
+    c(NA_integer_, df2$int)
+  )
+  # replace missing entries with NA instead (for double)
+  df2 <- mutate(df, dbl = map(dbl, ~c(1.0, 4.2)))
+  expect_equal(
+    unnested_aggregated_data_frame(bind_rows(select(df, -dbl), df2))$dbl,
+    c(NA_real_, df2$dbl)
+  )
+  
+  
+})
+
 ## check data summary ====
 
 test_that("test that data summary is accessible", {
@@ -69,7 +117,7 @@ test_that("test that data summary is accessible", {
   expect_equal(nrow(iso_get_data_summary(c(iso_file1, iso_file2))), 2)
 })
 
-## check aggregating file info works
+## check get file info works =====
 
 test_that("test that aggregating file info works", {
 
@@ -86,16 +134,15 @@ test_that("test that aggregating file info works", {
   expect_message(iso_get_file_info(c(iso_file1, iso_file2), quiet = FALSE), "aggregating")
   expect_silent(agg <- iso_get_file_info(c(iso_file1, iso_file2), quiet = TRUE))
   expect_equal(names(agg), unique(names(iso_file1$file_info), names(iso_file2$file_info)))
-  expect_equal(iso_get_file_info(c(iso_file1, iso_file2)), 
-               {
-                  # check for multi value collapse functionality
-                  iso_file1$file_info$multi_value <- str_c(iso_file1$file_info$multi_value, collapse = "; ")
-                  iso_file2$file_info$multi_value <- str_c(iso_file2$file_info$multi_value, collapse = "; ")
-                  bind_rows(as_data_frame(iso_file1$file_info), as_data_frame(iso_file2$file_info))
-               })
+  expect_equal(iso_get_file_info(c(iso_file1, iso_file2)) %>% unnest(multi_value) ,
+               bind_rows(as_data_frame(iso_file1$file_info), as_data_frame(iso_file2$file_info)))
   
   # check selecte functionality
   expect_equal(names(iso_get_file_info(iso_file1, select = c("file_datetime", "only_a"))), c("file_id", "file_datetime", "only_a"))
+  expect_equal(names(iso_get_file_info(iso_file1, select = c(file_datetime, only_a))), c("file_id", "file_datetime", "only_a"))
+  expect_equal(names(iso_get_file_info(iso_file1, select = c(x = file_datetime, y = only_a))), c("file_id", "x", "y"))
+  expect_equal(names(iso_get_file_info(iso_file1, select = starts_with("file"))), c("file_id", "file_path", "file_subpath", "file_datetime"))
+  expect_equal(names(iso_get_file_info(iso_file1, select = c(x = starts_with("file")))), c("x1", "x2", "x3", "x4"))
   expect_warning(agg <- iso_get_file_info(iso_file2, select = c("file_datetime", "only_a")), "refers to unknown column")
   expect_equal(names(agg), c("file_id", "file_datetime"))
 })

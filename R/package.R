@@ -6,7 +6,7 @@
 #' @importFrom tidyselect everything starts_with ends_with matches vars_select
 #' @importFrom dplyr vars n select select_ rename rename_ arrange desc mutate mutate_ mutate_at filter filter_ distinct as_data_frame left_join right_join full_join data_frame bind_rows bind_cols group_by group_by_ ungroup tally summarize do
 #' @importFrom glue glue collapse
-#' @importFrom purrr map map_lgl map_chr map_df map_int map_dbl map2 map2_chr map2_lgl safely
+#' @importFrom purrr map map_lgl map_chr map_df map_int map_dbl map2 map2_chr map2_lgl map2_dbl map2_int safely
 #' @importFrom tibble tribble deframe rownames_to_column
 #' @importFrom lubridate interval duration as_datetime
 #' @import stringr

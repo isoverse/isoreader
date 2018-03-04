@@ -99,6 +99,24 @@ get_raw_data_info <- function(x) {
   }
 }
 
+get_raw_data_infos <- function(x) {
+  stopifnot(iso_is_file(x) || iso_is_file_list(x))
+  # FIXME WORK HERE
+  if (x$read_options$raw_data) {
+    cols <- names(x$raw_data) %>% str_subset("^[iIvV](\\d+)\\.") 
+    if (length(cols) == 0) return("no ions")
+    cols <- cols %>% str_match("^[iIvV](\\d+)\\.") %>% {.[,2] } %>% sort()
+    rows <- 
+      if (iso_is_dual_inlet(x)) glue("{floor(nrow(x$raw_data)/2)} cycles")
+    else if (iso_is_continuous_flow(x)) glue("{nrow(x$raw_data)} time points")
+    else glue("{nrow(x$raw_data} rows")
+    glue("{rows}, {length(cols)} ions ({collapse(cols, ',')})") %>% 
+      as.character()
+  } else {
+    "raw data not read"
+  }
+}
+
 # summary of file info
 get_file_info_info <- function(x) {
   stopifnot(iso_is_file(x))
@@ -143,6 +161,22 @@ get_vendor_data_table_info <- function(x) {
 
 # Specific data aggregation calls =====
 
+#' Get data
+#' 
+iso_get_data <- function(iso_files, quiet = default(quiet)) {
+  iso_files <- iso_as_file_list(iso_files)
+  if (!quiet) sprintf("Info: aggregating data from %d data file(s)", length(iso_files)) %>% message()
+  check_read_options(iso_files, "file_info")
+  
+  iso_files %>% 
+    # retrieve file info
+    map(~map(.x$file_info, list)) %>% 
+    # combine in data frame
+    bind_rows() %>% 
+    # unnest aggregated data
+    unnested_aggregated_data_frame()
+}
+
 #' Aggregate file info
 #'
 #' Combine file information from multiple iso_files. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included. File information beyond \code{file_id} and \code{file_path} is only available if the iso_files were read with parameter \code{read_file_info=TRUE}.
@@ -158,25 +192,26 @@ iso_get_file_info <- function(iso_files, select = everything(), quiet = default(
   check_read_options(iso_files, "file_info")
   
   # retrieve info
-  file_info <- lapply(iso_files, function(iso_file) {
-    lapply(iso_file$file_info, function(entry) {
-      if (length(entry) > 1) str_c(entry, collapse = "; ") else entry
-    })  %>% as_data_frame()
-  }) %>% bind_rows()
+  file_info <- iso_files %>% 
+    # retrieve file info (turn into list columns)
+    map(~map(.x$file_info, list)) %>% 
+    # combine in data frame
+    bind_rows()
   
+  # nothing returned
   if (nrow(file_info) == 0) return(file_info)
   
-  # safety check (probably not necessary because of iso_file combination checks but consequences would be too problematic not to check)
-  if (any(duplicated(file_info$file_id))) {
-    stop("duplicate file ids are not permitted as they can lead to unexpected consequences in data processing", call. = FALSE)
-  }
-  
-  # get include information
+  # figure out which columns are selected
   select_cols <- get_column_names(file_info, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
   if (!"file_id" %in% select_cols) 
     select_cols <- c("file_id", select_cols) # file info always included
   
-  return(file_info[select_cols])
+  # return
+  file_info %>% 
+    # focus on selected columns only (also takes care of the rename)
+    dplyr::select(!!!select_cols) %>% 
+    # unnest aggregated data frame
+    unnested_aggregated_data_frame()
 }
 
 #' Aggregate raw data
@@ -372,7 +407,6 @@ iso_get_vendor_data_table <- function(iso_files, with_units = FALSE, select = ev
   if (nrow(vendor_data_table) == 0) return(vendor_data_table)
   
   # get select information
-  # ASDFSD=====
   
   # get include information
   select_cols <- get_column_names(vendor_data_table, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
@@ -401,3 +435,79 @@ check_read_options <- function(iso_files, option) {
             call. = FALSE, immediate. = TRUE)
   }
 }
+
+
+# Data Aggregation helpers ==========
+
+# helper function to unnest aggregated columns that have single or no values and the same data types
+unnested_aggregated_data_frame <- function(df) {
+  
+  # safety
+  stopifnot(is.data.frame(df))
+  if (nrow(df) == 0) return(df)
+  
+  # NA defaults
+  NA_defaults <- list(character = NA_character_, numeric = NA_real_, integer = NA_integer_, logical = NA)
+  
+  # get information about the data frame columns
+  cols <- 
+    data_frame(
+      column = names(df),
+      id = 1:length(column),
+      lengths = map(column, ~map_int(df[[.x]], length)),
+      min_length = map_int(lengths, ~min(.x)),
+      max_length = map_int(lengths, ~max(.x)),
+      is_missing = map(lengths, ~.x == 0),
+      has_missing = min_length == 0,
+      main_class = map2(column, is_missing, ~map_chr(df[[.x]], ~class(.x)[1])[!.y]),
+      has_identical_class = map_lgl(main_class, ~all(.x==.x[1])),
+      identical_class = ifelse(has_identical_class, map_chr(main_class, ~.x[1]), NA_character_),
+      unnest_single_value = max_length == 1 & has_identical_class,
+      renest_missing_value = min_length == 0 & max_length > 1 & has_identical_class & identical_class %in% names(NA_defaults)
+    )
+  
+  # unnest data
+  for (i in 1:nrow(cols)) {
+    
+    if (cols$unnest_single_value[i]) {
+      # unnest single values
+      if (cols$identical_class[i] == "character")
+        df <- mutate(df, !!cols$column[i] := 
+                          map2_chr(!!sym(cols$column[i]), cols$is_missing[[i]], 
+                                   ~if(.y) { NA_character_ } else {.x[1]}))
+      else if(cols$identical_class[i] == "numeric")
+        df <- mutate(df, !!cols$column[i] := 
+                          map2_dbl(!!sym(cols$column[i]), cols$is_missing[[i]], 
+                                   ~if(.y) { NA_real_ } else {.x[1]}))
+      else if (cols$identical_class[i] == "logical")
+        df <- mutate(df, !!cols$column[i] := 
+                       map2_lgl(!!sym(cols$column[i]), cols$is_missing[[i]], 
+                                ~if(.y) { NA } else {.x[1]}))
+      else if (cols$identical_class[i] == "integer")
+        df <- mutate(df, !!cols$column[i] := 
+                          map2_int(!!sym(cols$column[i]), cols$is_missing[[i]], 
+                                   ~if(.y) { NA_integer_ } else {.x[1]}))
+      else if (cols$identical_class[i] == "POSIXct") 
+        df <- mutate(df, !!cols$column[i] := 
+                          map2_int(!!sym(cols$column[i]), cols$is_missing[[i]], 
+                                   ~if (.y) { NA_integer_ } else { as.integer(.x[1])}) %>% 
+                          as_datetime(tz = Sys.timezone()))
+      else {
+        glue("cannot unnest file info column {cols$column[i]}, encountered unusual class {cols$identical_class[i]}") %>% 
+          warning(immediate. = TRUE, call. = FALSE)
+      }
+    } else if (cols$renest_missing_value[i]) {
+      # replace NA values in columns that have too many values for unnesting (so unnesting is easy for the user)
+      df <- mutate(df, !!cols$column[i] := 
+                        map2(!!sym(cols$column[i]), cols$is_missing[[i]], 
+                             ~if(.y) { NA_defaults[[cols$identical_class[i]]] } else {.x}))
+    }
+
+  }
+  
+  
+  #
+  return(df)
+}
+
+

@@ -64,7 +64,8 @@ test_that("test that export to Excel works properly", {
                  mutate(time = signif(time), m44 = signif(m44), m45 = signif(m45))) 
   expect_equal(iso_get_file_info(cf), 
                read_excel(str_c(filepath, ".cf.xlsx"), "file info",
-                          col_types = c("text", "text", "text", "logical"))) 
+                          col_types = c("text", "text", "text", "numeric")) %>% 
+                 mutate(file_datetime = as.integer(file_datetime))) 
   expect_equal(iso_get_vendor_data_table(cf), 
                read_excel(str_c(filepath, ".cf.xlsx"), "vendor data table") %>% 
                  mutate(x = as.integer(x))) 
