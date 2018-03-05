@@ -13,6 +13,7 @@ Imports:
     rlang (>= 0.1.4),
     glue,
     tidyselect (>= 0.2.3),
+    tibble,
     dplyr (>= 0.7.4),
     tidyr,
     stringr,
