@@ -105,7 +105,6 @@ test_that("test that unnesting of aggregated data works properly", {
     c(NA_real_, df2$dbl)
   )
   
-  
 })
 
 ## check data summary ====
@@ -295,12 +294,6 @@ test_that("test that aggregating of vendor data table works", {
   attr(iso_file1$vendor_data_table, "units") <- attr(iso_file2$vendor_data_table, "units") <- 
     data_frame(column = c("column1", "column2", "col_a_only"), units = c("[1]", "[2]", ""))
   
-  # selecting subsets
-  expect_warning(agg <- iso_get_vendor_data_table(c(iso_file1, iso_file2), select = "bla"), "unknown column")
-  expect_equal(names(agg), "file_id")
-  expect_equal(iso_get_vendor_data_table(c(iso_file1, iso_file2), select = c(file_id, column1), with_units = FALSE) %>% 
-                 names(), c("file_id", "column1"))
-  
   # aggregated with and without units
   expect_message(agg <- iso_get_vendor_data_table(c(iso_file1, iso_file2), with_units = TRUE, quiet = FALSE), "aggregating")
   expect_equal(agg, 
@@ -311,11 +304,22 @@ test_that("test that aggregating of vendor data table works", {
                bind_rows(mutate(iso_file1$vendor_data_table, file_id="a"),
                          mutate(iso_file2$vendor_data_table, file_id="b")))
   
+  # selecting/renaming specific columns
+  isofiles <- c(iso_file1, iso_file2)
+  expect_warning(agg <- iso_get_vendor_data_table(isofiles, select = c(bla, column1)), "unknown column")
+  expect_equal(names(agg), c("file_id", "column1"))
+  expect_equal(names(iso_get_vendor_data_table(isofiles, select = c(file_id, column1))), c("file_id", "column1"))
+  expect_equal(names(iso_get_vendor_data_table(isofiles, select = c(x = file_id, y = column1))), c("x", "y"))
+  expect_equal(names(iso_get_vendor_data_table(isofiles, select = c(z = starts_with("file")))), c("z"))
+  expect_equal(names(iso_get_vendor_data_table(isofiles, select = c())), c("file_id"))
+  
   # include file info
   iso_file1 <- modifyList(iso_file1, list(file_info = list(test_info = "x")))
   iso_file2 <- modifyList(iso_file2, list(file_info = list(test_info = "y")))
-  expect_true("test_info" %in% names(agg <- iso_get_vendor_data_table(c(iso_file1, iso_file2), include_file_info = c("test_info"))))
+  isofiles <- c(iso_file1, iso_file2)
+  expect_true("test_info" %in% names(agg <- iso_get_vendor_data_table(isofiles, include_file_info = c("test_info"))))
   expect_equal(unique(agg$test_info), c("x", "y"))
+  expect_equal(names(iso_get_vendor_data_table(isofiles, select = column1, include_file_info = c(a = test_info))), c("file_id", "a", "column1"))
   
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
