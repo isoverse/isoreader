@@ -164,7 +164,7 @@ test_that("test that aggregating file info works", {
 })
 
 
-## check raw data aggregation
+## check raw data aggregation ========
 
 test_that("test that aggregeting raw data works", {
   
@@ -342,4 +342,79 @@ test_that("test that aggregating of vendor data table works", {
     c("x", "y")
   )
   
+})
+
+## check overall get data =====
+
+test_that("test that total data aggregation works", {
+  
+  # general warning messages
+  iso_file <- isoreader:::make_cf_data_structure()
+  expect_warning(data <- iso_get_data(iso_file), "read without extracting the file info")
+  expect_warning(data <- iso_get_data(iso_file), "read without extracting the raw data")
+  expect_warning(data <- iso_get_data(iso_file), "read without extracting the vendor data table")
+  expect_warning(data <- iso_get_data(iso_file), "read without extracting the method info")
+  
+  # total get_data structure
+  expect_equal(names(data), c("file_id", "file_type", "file_info", 
+                              "raw_data", "vendor_data_table", "standards", "resistors", 
+                              "has_file_info", "has_raw_data", "has_vendor_data_table", "has_standards", "has_resistors"))
+  expect_equal(data %>% select(starts_with("has")),
+               data_frame(has_file_info = TRUE, has_raw_data = FALSE, has_vendor_data_table = FALSE, has_standards = FALSE, has_resistors = FALSE))  
+  expect_equal(data$file_type, "continuous_flow")
+  
+  # info messages
+  iso_file$read_options$file_info <- TRUE
+  iso_file$read_options$method_info <- TRUE
+  iso_file$read_options$raw_data <- TRUE
+  iso_file$read_options$vendor_data_table <- TRUE
+  iso_file1 <- modifyList(iso_file, list(file_info = list(file_id = "a")))
+  iso_file2 <- modifyList(iso_file, list(file_info = list(file_id = "b")))
+  expect_message(iso_get_data(iso_file), "aggregating all data from 1 data file")
+  expect_message(iso_get_data(c(iso_file1, iso_file2)), "aggregating all data from 2 data file")
+  
+  # vendor data table
+  iso_file1$vendor_data_table <- data_frame(column1 = "col1 a", column2 = "col2 a")
+  expect_equal(iso_get_data(c(iso_file1, iso_file2))$has_vendor_data_table, c(TRUE, FALSE))
+  iso_file2$vendor_data_table <- data_frame(column1 = "col1 b", column2 = "col2 b")
+  expect_equal(iso_get_data(c(iso_file1, iso_file2))$has_vendor_data_table, c(TRUE, TRUE))
+  expect_true(is_tibble(out <- iso_get_data(c(iso_file1, iso_file2)) %>% unnest(vendor_data_table)))
+  expect_equal(select(out,column1, column2), bind_rows(iso_file1$vendor_data_table, iso_file2$vendor_data_table) )
+  expect_true(is_tibble(out <- iso_get_data(c(iso_file1, iso_file2), include_vendor_data_table = c(x = column1)) %>% unnest(vendor_data_table)))
+  expect_equal(out$x, bind_rows(iso_file1$vendor_data_table, iso_file2$vendor_data_table)$column1)
+  
+  # file_info
+  iso_file1$file_info$test <- 42
+  expect_true(is_tibble(out <- iso_get_data(c(iso_file1, iso_file2), include_file_info = c(x = test)) %>% unnest(file_info)))
+  expect_equal(out$x, c(42, NA_real_))
+  
+  # raw data
+  iso_file1$raw_data <- data_frame(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), `r46/44` = v46.mV/v44.mV)
+  expect_equal(iso_get_data(c(iso_file1, iso_file2))$has_raw_data, c(TRUE, FALSE))
+  iso_file2$raw_data <- data_frame(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), v45.mV = runif(10))
+  expect_equal(iso_get_data(c(iso_file1, iso_file2))$has_raw_data, c(TRUE, TRUE))
+  expect_true(is_tibble(out <- iso_get_data(c(iso_file1, iso_file2), include_file_info = c(x = test)) %>% unnest(raw_data)))
+  expect_equal(select(out, -file_id, -file_type, -starts_with("has")), bind_rows(iso_file1$raw_data, iso_file2$raw_data))
+  
+  # standards
+  iso_file1 <- modifyList(iso_file, list(file_info = list(file_id = "a"), 
+                                         method_info = list(standards = data_frame(standard = "test a"))))
+  expect_equal(iso_get_data(c(iso_file1, iso_file2))$has_standards, c(TRUE, FALSE))
+  iso_file2 <- modifyList(iso_file, list(file_info = list(file_id = "b"),
+                                         method_info = list(standards = data_frame(standard = "test a"))))
+  expect_equal(iso_get_data(c(iso_file1, iso_file2))$has_standards, c(TRUE, TRUE))
+  expect_true(is_tibble(out <- iso_get_data(c(iso_file1, iso_file2)) %>% unnest(standards)))
+  expect_equal(select(out, standard), bind_rows(iso_file1$method_info$standards, iso_file2$method_info$standards))
+
+  # resistors
+  iso_file1 <- modifyList(iso_file, list(file_info = list(file_id = "a"), 
+                                         method_info = list(resistors = data_frame(cup = 1:3, R.Ohm = c(1e9, 1e10, 1e11)))))
+  expect_equal(iso_get_data(c(iso_file1, iso_file2))$has_resistors, c(TRUE, FALSE))
+  iso_file2 <- modifyList(iso_file, list(file_info = list(file_id = "b"),
+                                         method_info = list(resistors = data_frame(cup = 1:3, R.Ohm = c(3e9, 1e11, 1e12)))))
+  expect_equal(iso_get_data(c(iso_file1, iso_file2))$has_resistors, c(TRUE, TRUE))
+  expect_true(is_tibble(out <- iso_get_data(c(iso_file1, iso_file2)) %>% unnest(resistors)))
+  expect_equal(select(out, cup, R.Ohm), bind_rows(iso_file1$method_info$resistors, iso_file2$method_info$resistors))
+  
+      
 })

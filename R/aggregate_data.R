@@ -163,7 +163,7 @@ get_vendor_data_table_info <- function(x) {
 
 #' Aggregate all isofiles data
 #' 
-#' This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data \code{\link{iso_get_raw_data}}, \code{\link{iso_get_file_info}}, \code{\link{iso_get_vendor_data_table}}, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To \code{\link[tidyr]{unnest}} any of the specific data types (e.g. \code{raw_data}), make sure to filter first for the files that have this data type available (e.g. \code{filter(has_raw_data)}).
+#' This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data \code{\link{iso_get_raw_data}}, \code{\link{iso_get_file_info}}, \code{\link{iso_get_vendor_data_table}}, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To \code{\link[tidyr]{unnest}} any of the specific data types (e.g. \code{raw_data}), make sure to filter first for the files that have this data type available (e.g. \code{filter(has_raw_data)}). 
 #' 
 #' @inheritParams iso_get_raw_data
 #' @inheritParams iso_get_standards_info
@@ -176,7 +176,6 @@ iso_get_data <- function(iso_files, include_file_info = everything(), include_ve
                          gather = FALSE, with_units = FALSE, with_ratios = FALSE, quiet = default(quiet)) {
   iso_files <- iso_as_file_list(iso_files)
   if (!quiet) sprintf("Info: aggregating all data from %d data file(s)", length(iso_files)) %>% message()
-  check_read_options(iso_files, "file_info")
   
   # file class
   file_class <- 
@@ -217,7 +216,7 @@ iso_get_data <- function(iso_files, include_file_info = everything(), include_ve
   
   # methods_data - resistors
   resistors <- iso_get_resistors_info(iso_files, quiet = TRUE)
-  if (ncol(standards) > 1)
+  if (ncol(resistors) > 1)
     resistors <- nest(resistors, -file_id, .key = resistors)
   else
     resistors <- data_frame(file_id = character(0), resistors = list(NULL))
