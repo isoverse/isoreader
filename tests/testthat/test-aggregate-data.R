@@ -58,6 +58,19 @@ test_that("test that aggregation functions refuse to work with non iso_files", {
 
 ## check aggregation helpers ====
 
+test_that("test that file info list to data frame conversion works properly", {
+  
+  # test data
+  cf <- isoreader:::make_cf_data_structure()
+  cf$file_info$file_id <- "A"
+  cf$file_info$test_info <- 42
+  cf <- iso_as_file_list(cf)
+  expect_true(is_tibble(file_info <- convert_file_info_to_data_frame(cf)[[1]]$file_info))
+  expect_equal(names(file_info), c("file_id", "file_path", "file_subpath", "file_datetime", "test_info"))
+  expect_equal(map_chr(file_info, ~class(.x)[1]) %>% unname(), c("character", "character", "character", "integer", "list"))
+  expect_equal(file_info$test_info, list(42))
+})
+
 test_that("test that unnesting of aggregated data works properly", {
   
   df <- data_frame(int = list(5L), dbl = list(4.2), chr = list("chr"), lgl = list(TRUE))
