@@ -124,10 +124,14 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
         file_n = file_n
       )
     )
-  
-  # turn into iso_file list
-  iso_files <- iso_as_file_list(unname(iso_files), discard_duplicates = discard_duplicates) 
 
+  # turn into iso_file list
+  iso_files <- iso_as_file_list(iso_files, discard_duplicates = discard_duplicates) 
+
+  # convert file_info to data frame in isofiles for faster access
+  # @note: this is not quite ideal because it basically casts iso_as_file_list twice if there are any files that have non-data frame file_info
+  iso_files <- convert_file_info_to_data_frame(iso_files, discard_duplicates = discard_duplicates)
+  
   # report problems
   if (!default(quiet) && iso_has_problems(iso_files)) {
     message(sprintf("Info: encountered %.0f problems in total.", n_problems(iso_files)))
