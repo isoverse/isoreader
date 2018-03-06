@@ -124,13 +124,15 @@ test_that("test that unnesting of aggregated data works properly", {
 
 test_that("test that data summary is accessible", {
   
-  iso_file <- isoreader:::make_iso_file_data_structure()
+  iso_file <- isoreader:::make_cf_data_structure()
   expect_true(is.data.frame(iso_get_data_summary(iso_file)))
   
   # test data
   iso_file1 <- modifyList(iso_file, list(file_info = list(file_id = "a")))
   iso_file2 <- modifyList(iso_file, list(file_info = list(file_id = "b")))
   expect_equal(nrow(iso_get_data_summary(c(iso_file1, iso_file2))), 2)
+  
+  # FIXME: continue here testing the individual get...infos functions
 })
 
 ## check get file info works =====

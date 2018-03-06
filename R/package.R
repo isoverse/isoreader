@@ -4,7 +4,7 @@
 #' @importFrom rlang enquo quo quos UQ !! !!! get_expr quo_expr quo_text quo_is_null quo_is_symbol quo_is_lang is_quosure is_empty is_integerish eval_tidy sym lang_head
 #' @importFrom tidyselect everything starts_with ends_with matches vars_select
 #' @importFrom tibble is_tibble
-#' @importFrom dplyr vars n select select_ rename rename_ arrange desc mutate mutate_ mutate_at filter filter_ distinct as_data_frame left_join right_join full_join data_frame bind_rows bind_cols group_by group_by_ ungroup tally summarize do
+#' @importFrom dplyr vars n select select_ rename rename_ arrange desc mutate mutate_ mutate_at filter filter_ distinct as_data_frame left_join right_join full_join data_frame bind_rows bind_cols group_by group_by_ ungroup tally summarize do case_when
 #' @importFrom tidyr gather spread nest unnest extract
 #' @importFrom glue glue collapse
 #' @importFrom purrr map map_lgl map_chr map_df map_int map_dbl map2 map2_chr map2_lgl map2_dbl map2_int safely
