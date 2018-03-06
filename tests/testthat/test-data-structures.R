@@ -50,7 +50,11 @@ test_that("test that data structure can be printed", {
   cf <- isoreader:::make_cf_data_structure()
   expect_output(print(cf), "raw data not read")
   cf$read_options$raw_data <- TRUE
-  expect_output(print(cf), "no ions")
+  expect_output(print(cf), "0 ions")
+  di <- isoreader:::make_di_data_structure()
+  expect_output(print(di), "raw data not read")
+  di$read_options$raw_data <- TRUE
+  expect_output(print(di), "0 ions")
 })
 
 # iso_file list checks work ====

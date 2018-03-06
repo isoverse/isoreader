@@ -68,96 +68,133 @@ iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
       message()
   }
   
-  # @note speed this up by vectorizing the get info functions more efficiently
-  lapply(iso_files, function(iso_file) {
-    data_frame(file_id = iso_file$file_info$file_id,
-               raw_data = get_raw_data_info(iso_file),
-               file_info = get_file_info_info(iso_file),
-               method_info = get_method_info_info(iso_file),
-               vendor_data_table = get_vendor_data_table_info(iso_file),
-               file_path = sprintf("%s%s", iso_file$file_info$file_path, 
-                                   iso_file$file_info$file_subpath %>% { if(!is.na(.)) str_c("|", .) else "" })
-    )
-  }) %>% bind_rows()
+  if (length(iso_files) == 0) return(data_frame())
+  
+  # aggregate all the info
+  data_frame(
+    file_id = names(iso_files),
+    file_path_ = map_chr(iso_files, ~.x$file_info$file_path),
+    file_subpath = map_chr(iso_files, ~.x$file_info$file_subpath)
+  ) %>%
+    left_join(get_raw_data_info(iso_files), by = "file_id") %>%
+    left_join(get_file_info_info(iso_files), by = "file_id") %>%
+    left_join(get_method_info_info(iso_files), by = "file_id") %>%
+    left_join(get_vendor_data_table_info(iso_files), by = "file_id") %>%
+    mutate(file_path = ifelse(!is.na(file_subpath), glue("{file_path_}|{file_subpath}"), file_path_)) %>%
+    select(-file_path_, -file_subpath)
 }
 
 # summary of raw data info
-get_raw_data_info <- function(x) {
-  stopifnot(iso_is_file(x))
-  if (x$read_options$raw_data) {
-    cols <- names(x$raw_data) %>% str_subset("^[iIvV](\\d+)\\.") 
-    if (length(cols) == 0) return("no ions")
-    cols <- cols %>% str_match("^[iIvV](\\d+)\\.") %>% {.[,2] } %>% sort()
-    rows <- 
-      if (iso_is_dual_inlet(x)) glue("{floor(nrow(x$raw_data)/2)} cycles")
-      else if (iso_is_continuous_flow(x)) glue("{nrow(x$raw_data)} time points")
-      else glue("{nrow(x$raw_data} rows")
-    glue("{rows}, {length(cols)} ions ({collapse(cols, ',')})") %>% 
-      as.character()
+get_raw_data_info <- function(iso_files) {
+  
+  # make sure to convert to file list
+  iso_files <- iso_as_file_list(iso_files)
+  
+  # make sure to not process empty list
+  if (length(iso_files) == 0)
+    return(data_frame(file_id = character(), raw_data = character()))
+  raw_data_not_read <- "raw data not read"
+  
+  # retrieve the raw data info
+  raw_data_sum <- 
+    data_frame(
+      file_id = names(iso_files),
+      read_raw_data = map_lgl(iso_files, ~.x$read_options$raw_data),
+      all_ions = map(iso_files, ~names(.x$raw_data) %>% str_subset("^[iIvV](\\d+)\\.")),
+      n_ions = map_int(all_ions, length),
+      ions = map2_chr(all_ions, n_ions, ~if(.y > 0) { collapse(.x, sep = ", ") } else {""}) %>% 
+        str_replace_all("[^0-9,]", "")
+    )
+  
+  if (iso_is_continuous_flow(iso_files[[1]])) {
+    raw_data_sum <- raw_data_sum %>% 
+      mutate(
+        n_tps = map_int(iso_files, ~nrow(.x$raw_data)),
+        label = ifelse(read_raw_data, glue("{n_tps} time points, {n_ions} ions ({ions})"), "raw data not read")
+      )
+  } else if (iso_is_dual_inlet(iso_files[[1]])) {
+    raw_data_sum <- raw_data_sum %>% 
+      mutate(
+        n_cycles = map_int(iso_files, ~as.integer(floor(nrow(.x$raw_data)/2))),
+        label = ifelse(read_raw_data, glue("{n_cycles} cycles, {n_ions} ions ({ions})"), "raw data not read")
+      )
   } else {
-    "raw data not read"
+    # should not get here
+    glue("cannot process '{class(iso_files[[1]])[1]}'") %>% stop(call. = FALSE)
   }
-}
-
-get_raw_data_infos <- function(x) {
-  stopifnot(iso_is_file(x) || iso_is_file_list(x))
-  # FIXME WORK HERE
-  if (x$read_options$raw_data) {
-    cols <- names(x$raw_data) %>% str_subset("^[iIvV](\\d+)\\.") 
-    if (length(cols) == 0) return("no ions")
-    cols <- cols %>% str_match("^[iIvV](\\d+)\\.") %>% {.[,2] } %>% sort()
-    rows <- 
-      if (iso_is_dual_inlet(x)) glue("{floor(nrow(x$raw_data)/2)} cycles")
-    else if (iso_is_continuous_flow(x)) glue("{nrow(x$raw_data)} time points")
-    else glue("{nrow(x$raw_data} rows")
-    glue("{rows}, {length(cols)} ions ({collapse(cols, ',')})") %>% 
-      as.character()
-  } else {
-    "raw data not read"
-  }
+  
+  return(select(raw_data_sum, file_id, raw_data = label))
 }
 
 # summary of file info
-get_file_info_info <- function(x) {
-  stopifnot(iso_is_file(x))
-  if (x$read_options$file_info) {
-    glue("{length(x$file_info)} entries") %>% 
-      as.character()
+get_file_info_info <- function(iso_files) {
+  # make sure to convert to file list
+  iso_files <- iso_as_file_list(iso_files) %>% convert_file_info_to_data_frame()
+  
+  # make sure to not process empty list
+  if (length(iso_files) == 0) {
+    data_frame(file_id = character(), file_info = character())
   } else {
-    "file info not read"
+    # retrieve the raw data info
+    data_frame(
+      file_id = names(iso_files),
+      read_file_info = map_lgl(iso_files, ~.x$read_options$file_info),
+      file_info = ifelse(!read_file_info, "file info not read", paste(map_int(iso_files, ~ncol(.x$file_info)), "entries"))
+    ) %>% select(file_id, file_info)
   }
 }
 
 # summary of method info
-# @note: this needs manual update depending on method information (to keep things compact in summary)
-get_method_info_info <- function(x) {
-  stopifnot(iso_is_file(x))
-  if (x$read_options$method_info) {
-    method_info <- c()
-    if (!is.null(x$method_info$standards)) method_info <- c(method_info, "standards")
-    if (!is.null(x$method_info$resistors)) method_info <- c(method_info, "resistors")
-    if (!is_empty(method_info)) 
-      glue("{collapse(method_info, ', ')}") %>% as.character()
-    else
-      "no method info"
+get_method_info_info <- function(iso_files) {
+  
+  # make sure to convert to file list
+  iso_files <- iso_as_file_list(iso_files) 
+  
+  # make sure to not process empty list
+  if (length(iso_files) == 0) {
+    data_frame(file_id = character(), method_info = character())
   } else {
-    "method info not read"
+    # retrieve the raw data info
+    data_frame(
+      file_id = names(iso_files),
+      read_method_info = map_lgl(iso_files, ~.x$read_options$method_info),
+      has_standards = map_lgl(iso_files, ~!is.null(.x$method_info$standards)),
+      has_resistors = map_lgl(iso_files, ~!is.null(.x$method_info$resistors)),
+      method_info = case_when(
+        !read_method_info ~ "method info not read",
+        has_standards & has_resistors ~ "standards, resistors",
+        has_standards ~ "standards",
+        has_resistors ~ "resistors",
+        TRUE ~ "no method info"
+      ) 
+    ) %>% select(file_id, method_info)
   }
+  
 }
 
 # summary of vendor data table
-get_vendor_data_table_info <- function(x) {
-  stopifnot(iso_is_file(x))
-  if (x$read_options$vendor_data_table) {
-    if (nrow(x$vendor_data_table) > 0 || ncol(x$vendor_data_table) > 0)
-      glue("{nrow(x$vendor_data_table)} rows, {ncol(x$vendor_data_table)} columns") %>% as.character()
-    else
-      "no vendor data table"
+get_vendor_data_table_info <- function(iso_files) {
+  # make sure to convert to file list
+  iso_files <- iso_as_file_list(iso_files) %>% convert_file_info_to_data_frame()
+  
+  # make sure to not process empty list
+  if (length(iso_files) == 0) {
+    data_frame(file_id = character(), vendor_data_table = character())
   } else {
-    "vendor data table not read"
+    # retrieve the raw data info
+    data_frame(
+      file_id = names(iso_files),
+      read_vendor_data_table = map_lgl(iso_files, ~.x$read_options$vendor_data_table),
+      rows = map_int(iso_files, ~nrow(.x$vendor_data_table)),
+      cols = map_int(iso_files, ~ncol(.x$vendor_data_table)),
+      vendor_data_table = case_when(
+        !read_vendor_data_table ~ "vendor data table not read",
+        rows > 0 & cols > 0 ~ sprintf("%d rows, %d columns", rows, cols),
+        TRUE ~ "no vendor data table"
+      ) 
+    ) %>% select(file_id, vendor_data_table)
   }
 }
-
 
 # Specific data aggregation calls =====
 

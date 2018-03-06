@@ -195,17 +195,9 @@ print.iso_file_list <- function(x, ...) {
 #' @rdname iso_printing
 #' @export
 print.iso_file <- function(x, ..., show_problems = TRUE) {
-  data_type <- class(x) %>% { .[.!="iso_file"][1] } %>% 
-    str_to_title() %>% str_replace("_", " ")
+  data_type <- class(x) %>% { .[.!="iso_file"][1] } %>% str_to_title() %>% str_replace("_", " ")
   if (is.na(data_type)) data_type <- "Iso"
-  sprintf("%s iso file '%s': %s", #; file_info: %s method_info: %s; vendor_data_table: %s", 
-          data_type,
-          get_file_id(x),
-          get_raw_data_info(x)
-          #get_file_info_info(x),
-          #get_method_info_info(x),
-          #get_vendor_data_table_info(x)
-  ) %>% cat("\n")
+  glue("{data_type} iso file '{x$file_info$file_id}': {get_raw_data_info(x)$raw_data}") %>% cat("\n")
   if (show_problems && n_problems(x) > 0) {
     cat("Problems:\n")
     print(iso_get_problems(x), ...)
