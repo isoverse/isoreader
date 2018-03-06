@@ -10,12 +10,11 @@ iso_get_vendor_data_table(iso_files, with_units = FALSE,
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
-\item{with_units}{whether to include units in the column headers (if there are any) or not (default is FALSE)}
+\item{with_units}{whether to include units in the column headers (if there are any) or not (default is FALSE). Note that this can slow down the function significantely.}
 
-\item{select}{which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. Includes all columns by default. File id is always included no matter what selection parameters.}
+\item{select}{which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default. File id is always included no matter which selection parameters.}
 
-\item{include_file_info}{if provided, will include the requested file information (see \code{\link{iso_get_file_info}}) with the raw data. 
-Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax.}
+\item{include_file_info}{which file information to include (see \code{\link{iso_get_file_info}}). Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns.}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
@@ -23,7 +22,8 @@ Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax.}
 Aggregate data from the vendor-computed data table. This information is only available if the iso_files were read with parameter \code{read_vendor_data_table=TRUE}.
 }
 \seealso{
-Other data retrieval functions: \code{\link{iso_get_file_info}},
+Other data retrieval functions: \code{\link{iso_get_data}},
+  \code{\link{iso_get_file_info}},
   \code{\link{iso_get_raw_data}},
   \code{\link{iso_get_resistors_info}},
   \code{\link{iso_get_standards_info}}
