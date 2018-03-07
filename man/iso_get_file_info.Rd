@@ -9,7 +9,7 @@ iso_get_file_info(iso_files, select = everything(), quiet = default(quiet))
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
-\item{select}{which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. Includes all columns by default. File id is always included no matter what selection parameters.}
+\item{select}{which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default. File id is always included no matter which selection parameters.}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
@@ -20,7 +20,8 @@ Combine file information from multiple iso_files. By default all information is 
 File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using \code{iso_file$file_info[['INFO_NAME']]} on the iso_file object directly.
 }
 \seealso{
-Other data retrieval functions: \code{\link{iso_get_raw_data}},
+Other data retrieval functions: \code{\link{iso_get_data}},
+  \code{\link{iso_get_raw_data}},
   \code{\link{iso_get_resistors_info}},
   \code{\link{iso_get_standards_info}},
   \code{\link{iso_get_vendor_data_table}}

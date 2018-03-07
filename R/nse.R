@@ -48,7 +48,7 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   }
   
   # check on the number requirements for each column match
-  cols <- map(cols_results, ~as.character(.x$result))
+  cols <- map(cols_results, ~(.x$result))
   if (any(missing <- !names(n_reqs) %in% names(cols)))
     glue("column requirements for unknow parameter(s) provided: {collapse(names(n_reqs[missing]), ', ')}") %>%
     stop(call. = FALSE)

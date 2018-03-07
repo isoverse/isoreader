@@ -127,7 +127,7 @@ fetch_C_block <- function(bfile, C_block, min_pos = 1, occurence = NULL) {
 # @FIXME: testing
 # move_to_C_block(my_test$binary, "NO")
 # move_to_C_block(my_test$binary, "CData", occurence = 2)
-move_to_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1, reset_cap = TRUE) {
+move_to_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1, move_to_end = TRUE, reset_cap = TRUE) {
   # fetch right C block
   cblock <- fetch_C_block(bfile, C_block, min_pos = min_pos, occurence = occurence)
   if (is.null(cblock)) {
@@ -135,7 +135,8 @@ move_to_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1, reset_ca
   } 
   # reset position cap
   if (reset_cap) bfile$max_pos <- length(bfile$raw)
-  return(move_to_pos(bfile, cblock$end[1] + 1))
+  new_pos <- if(move_to_end) cblock$end[1] + 1L else cblock$start[1]
+  return(move_to_pos(bfile, new_pos))
 }
 
 # move to next C block (does not reet cap by default)

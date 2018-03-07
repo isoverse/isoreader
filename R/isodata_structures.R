@@ -15,7 +15,7 @@ make_iso_file_data_structure <- function() {
         file_id = NA_character_, # unique identifer
         file_path = NA_character_, # path to file (file extension is key for processing)
         file_subpath = NA_character_, # sub path in case file is an archieve
-        file_datetime = NA # the run date and time of the file
+        file_datetime = NA_integer_ # the run date and time of the file
       ),
       method_info = list(), # all methods information
       raw_data = data_frame(), # all mass data (Note: maybe not top-level b/c of scans?)
@@ -111,27 +111,24 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     iso_list <- list()
     all_problems <- get_problems_structure() %>% mutate(file_id = character()) %>% select(file_id, everything())
   } else {
-    # combine everything
-    if(!all(is_iso <- sapply(iso_objs, iso_is_object))) {
-      stop("can only combine iso_file and iso_file_list objects, encountered incompatible data type(s): ",
-           unlist(lapply(iso_objs, class)[!is_iso]) %>% 
-           { str_c(unique(.), collapse = ", ")}, call. = FALSE)
+    # check if everything is an iso object
+    if(!all(is_iso <- map_lgl(iso_objs, iso_is_object))) {
+      stop("can only process iso_file and iso_file_list objects, encountered incompatible data type(s): ",
+           unlist(lapply(iso_objs[!is_iso], class)) %>% unique() %>% str_c(collapse = ", "), 
+           call. = FALSE)
     }
+
+    # flatten isofiles and isofile lists to make one big isofile list
+    iso_list <- map(iso_objs, ~if(iso_is_file_list(.x)) { .x } else { list(.x) }) %>% unlist(recursive = FALSE)
     
-    # combine iso objects
-    iso_list <- lapply(iso_objs, function(obj) {
-      if (iso_is_file_list(obj)) as.list(obj) # iso lists already have named entries
-      else setNames(list(obj), obj$file_info$file_id) # use file_id to name new files
-    }) %>% 
-    { do.call(c, .) }
+    # reset file ids
+    names(iso_list) <- map_chr(iso_list, ~.x$file_info$file_id)
     
-    # check if al ellements are the same data type
-    classes <- lapply(iso_list, class) 
-    if (!all(sapply(classes, function(x) all(x == classes[[1]])))) {
-      str_interp("can only combine iso_file objects with the same data type (first: ${ref_dt}), encountered: ${wrong_dt}", 
-                 list(ref_dt = classes[[1]][1], 
-                      wrong_dt = classes %>% sapply(`[`, 1) %>% { .[.!=classes[[1]][1]] } %>% 
-                        { str_c(unique(.), collapse = ", ")})) %>% 
+    # check if al elements are the same data type
+    classes <- map_chr(iso_list, ~class(.x)[1]) 
+    if (!all(classes == classes[1])) {
+      wrong_dt <- classes[classes != classes[1]] %>% unique %>% collapse(", ")
+      glue("can only process iso_file objects with the same data type (first: {classes[1]}), encountered: {wrong_dt}") %>% 
         stop(call. = FALSE)
     }
     
@@ -149,17 +146,14 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     }
     
     # propagate problems
-    all_problems <- lapply(iso_list, function(iso_file) {
-      get_problems(iso_file) %>% 
-        mutate_(.dots = list(file_id = ~iso_file$file_info$file_id))
-    }) %>% bind_rows()
+    all_problems <- map(iso_list, ~get_problems(.x) %>% mutate(file_id = .x$file_info$file_id)) %>% bind_rows()
   }
   
   # problems
   if (nrow(all_problems)) {
     all_problems <- all_problems %>% 
       unique() %>% # remove duplicate entries
-      { select_(., .dots = c("file_id", names(.))) }
+      select(file_id, everything())
   }
   
   # generate structure
@@ -201,17 +195,9 @@ print.iso_file_list <- function(x, ...) {
 #' @rdname iso_printing
 #' @export
 print.iso_file <- function(x, ..., show_problems = TRUE) {
-  data_type <- class(x) %>% { .[.!="iso_file"][1] } %>% 
-    str_to_title() %>% str_replace("_", " ")
+  data_type <- class(x) %>% { .[.!="iso_file"][1] } %>% str_to_title() %>% str_replace("_", " ")
   if (is.na(data_type)) data_type <- "Iso"
-  sprintf("%s iso file '%s': %s", #; file_info: %s method_info: %s; vendor_data_table: %s", 
-          data_type,
-          get_file_id(x),
-          get_raw_data_info(x)
-          #get_file_info_info(x),
-          #get_method_info_info(x),
-          #get_vendor_data_table_info(x)
-  ) %>% cat("\n")
+  glue("{data_type} iso file '{x$file_info$file_id}': {get_raw_data_info(x)$raw_data}") %>% cat("\n")
   if (show_problems && n_problems(x) > 0) {
     cat("Problems:\n")
     print(iso_get_problems(x), ...)

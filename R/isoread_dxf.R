@@ -15,6 +15,7 @@ iso_read_dxf <- function(ds, ...) {
     ds <- exec_func_with_error_catch(extract_isodat_measurement_info, ds)
     ds <- exec_func_with_error_catch(extract_isodat_datetime, ds)
     ds <- exec_func_with_error_catch(extract_H3_factor_info, ds)
+    ds <- exec_func_with_error_catch(extract_MS_integration_time_info, ds)
   }
   
   # process raw data
