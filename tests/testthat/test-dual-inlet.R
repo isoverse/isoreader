@@ -25,6 +25,7 @@ test_that("test that did files can be read", {
   
   iso_turn_reader_caching_off()
   
+  # .did files
   expect_true(file.exists(file <- iso_get_reader_example("dual_inlet_example.did")))
   expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
@@ -32,6 +33,13 @@ test_that("test that did files can be read", {
   expect_true(file.exists(file <- file.path("test_data", "did_example_CO2_clumped_01.did")))
   expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
+  
+  # minimal files
+  expect_true(dir.exists(files <- file.path("test_data", "minimal_files")))
+  expect_true(iso_is_file_list(dids <- iso_read_dual_inlet(files)))
+  expect_true(dids %>% iso_get_file_info(select = c(Comment, starts_with("MS"))) %>% 
+                mutate(MSIT_correct = Comment == paste(MS_integration_time.s, "sec")) %>% 
+                { all(.$MSIT_correct) })
   
   # .caf files
   expect_true(file.exists(file <- file.path("test_data", "caf_example_CO2_01.caf")))
