@@ -14,6 +14,7 @@ test_that("test that export to rda works properly", {
   cf$method_info$resistors <- data_frame(cup = 1:3, R.Ohm = c(1e9, 1e10, 1e11))
   cf$vendor_data_table <- data_frame(x = 1:5, y = letters[1:5]) %>% { attr(., "units") <- c(x="a", y = "b"); . }
   filepath <- file.path(tempdir(), "test")
+  cf <- cf %>% iso_as_file_list %>% convert_file_info_to_data_frame() %>% {.[[1]]}
   
   # export and reimport single file
   expect_message(cf_out <- iso_export_to_rda(cf, filepath, quiet = FALSE), "exporting data .* into R Data Archive")
@@ -64,7 +65,8 @@ test_that("test that export to Excel works properly", {
                  mutate(time = signif(time), m44 = signif(m44), m45 = signif(m45))) 
   expect_equal(iso_get_file_info(cf), 
                read_excel(str_c(filepath, ".cf.xlsx"), "file info",
-                          col_types = c("text", "text", "text", "logical"))) 
+                          col_types = c("text", "text", "text", "numeric")) %>% 
+                 mutate(file_datetime = as.integer(file_datetime))) 
   expect_equal(iso_get_vendor_data_table(cf), 
                read_excel(str_c(filepath, ".cf.xlsx"), "vendor data table") %>% 
                  mutate(x = as.integer(x))) 
