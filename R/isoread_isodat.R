@@ -363,8 +363,25 @@ extract_H3_factor_info <- function(ds) {
       move_to_next_pattern(re_text("H3 Factor")) %>% 
       move_to_next_pattern(re_block("x-000")) %>% 
       capture_n_data("H3_factor", "double", 1)
+    # FIXME: is there a reason why H3 factor is character instead of number?
+    # maybe for compatibility with the elementar files?
     ds$file_info$`H3 Factor` <- as.character(ds$binary$data$H3_factor)
   }
+  return(ds)
+}
+
+# extract MS integration time
+extract_MS_integration_time_info <- function(ds) {
+  
+  ds$binary <- ds$binary %>% 
+    set_binary_file_error_prefix("cannot extract MS integration time") %>% 
+    move_to_C_block("CActionPeakCenter", move_to_end = FALSE) %>% 
+    skip_pos(-5) %>% 
+    capture_n_data("ms_integration_time", "integer", 1, sensible = c(0L, 3600000L))
+  
+  # store ms integration time
+  ds$file_info$MS_integration_time.s <- ds$binary$data$ms_integration_time/1000
+  
   return(ds)
 }
 
