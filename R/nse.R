@@ -28,15 +28,17 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   # summarize if there were any errors
   if (!all(ok)) {
     params <-
-      str_c(names(cols_quos)[!ok] %>% { ifelse(nchar(.) > 0, str_c(., " = "), .) },
-            map_chr(cols_quos[!ok], quo_text)) %>%
+      map2_chr(names(cols_quos)[!ok], cols_quos[!ok], function(var, val) {
+        if (nchar(var) > 0 && var != quo_text(val)) str_c(var, " = ", quo_text(val))
+        else quo_text(val)
+      }) %>% 
       collapse("', '", last = "' and '")
     errors <- map_chr(cols_results[!ok], ~.x$error$message) %>% collapse("\n- ")
     err_msg <- 
       if (sum(!ok) > 1) 
-        glue("parameters '{params}' refer to unknown columns in data frame '{df_name}':\n- {errors}") 
+        glue("'{params}' refer to unknown columns in data frame '{df_name}':\n- {errors}") 
       else 
-        glue("parameter '{params}' refers to unknown column(s) in data frame '{df_name}':\n- {errors}") 
+        glue("'{params}' refers to unknown column(s) in data frame '{df_name}':\n- {errors}") 
     if (cols_must_exist) { 
       # throw error
       stop(err_msg, call. = FALSE)
