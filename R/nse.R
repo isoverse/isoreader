@@ -20,10 +20,10 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   # use a safe version of vars_select to get all the column names
   safe_vars_select <- safely(vars_select)
   cols_quos <- quos(!!!list(...)) %>% 
+    # make sure to evaluate calls to default
+    resolve_defaults() %>% 
     # make sure that the expressions are locally evaluated
     map(~quo(!!get_expr(.x)))
-  # make sure to evaluate calls to default
-  cols_quos <- resolve_defaults(cols_quos)
   cols_results <- map(cols_quos, ~safe_vars_select(names(df), !!!.x))
   ok <- map_lgl(cols_results, ~is.null(.x$error))
   
