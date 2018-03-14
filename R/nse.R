@@ -98,7 +98,8 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   if (length(type_reqs) > 0) {
     
     # valid types
-    types <- c(list = "nested (<list>)", numeric = "numeric (<dbl>)", integer = "integer (<int>)", character = "text (<chr>)")
+    types <- c(list = "nested (<list>)", numeric = "numeric (<dbl>)", integer = "integer (<int>)", 
+               character = "text (<chr>)", logical = "logical (<lgl>)")
     if (!all(ok <- unlist(type_reqs) %in% names(types))) {
       type_req_unknown <- unlist(type_reqs)[!ok]
       glue("unknown type requirement specification(s): '{collapse(type_req_unknown, \"', '\")}'. Allowed are: {collapse(names(types), ', ')}") %>%
