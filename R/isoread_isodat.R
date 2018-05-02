@@ -561,9 +561,9 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
       type <- 
         if (ds$binary$data$format == "%s") { "text"
         } else if (ds$binary$data$format %in% c("%u", "%d")) { "integer"
-        } else if (str_detect(ds$binary$data$format, "\\%[0-9.]+f")) { "double"
+        } else if (str_detect(ds$binary$data$format, "\\%[0-9.]*f")) { "double"
         } else { op_error(ds$binary, 
-                          sprintf("could not data table column format '%s' for column '%s'",
+                          sprintf("could not process data table column format '%s' for column '%s'",
                                   ds$binary$data$format, col)) 
         }
       
