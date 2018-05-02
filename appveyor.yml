@@ -18,6 +18,7 @@ cache:
 build_script:
   - travis-tool.sh install_deps
   - travis-tool.sh install_bioc rhdf5
+  - travis-tool.sh install_github wesm/feather/R
 
 test_script:
   - travis-tool.sh run_tests
