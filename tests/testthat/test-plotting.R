@@ -31,26 +31,26 @@ test_that("test that plot continuous flow works properly", {
   
   # aesthetics, mapping, panelling formatting tests - defaults first
   expect_true(all(names(p$mapping) %in% c("colour", "x", "y", "group")))
-  expect_equal(as.character(p$mapping$colour), "file_id")
-  expect_equal(as.character(p$mapping$x), "time")
-  expect_equal(as.character(p$mapping$y), "value")
+  expect_true("file_id" %in% as.character(p$mapping$colour))
+  expect_true("time" %in% as.character(p$mapping$x))
+  expect_true("value" %in% as.character(p$mapping$y))
   expect_equal(class(p$facet)[1], "FacetGrid")
   expect_equal(names(p$facet$params$rows), "data")
-  expect_equal(names(p$facet$params$cols), NULL)
+  expect_equal(names(p$facet$params$cols) %>% length(), 0)
   
   # then custom specifications
   expect_true(is.ggplot(p <- iso_plot_raw_data(cf, panel_by = "none", color_by = "data", linetype_by = "file")))
   expect_true(all(p$data$data %in% c("44 [mV]", "46 [mV]", "46/44"))) # all selected by default
   expect_true(all(names(p$mapping) %in% c("colour", "x", "y", "group", "linetype")))
-  expect_equal(as.character(p$mapping$colour), "data")
-  expect_equal(as.character(p$mapping$linetype), "file_id")
+  expect_true("data" %in% as.character(p$mapping$colour))
+  expect_true("file_id" %in% as.character(p$mapping$linetype))
   expect_equal(class(p$facet)[1], "FacetNull")
   expect_true(is.ggplot(p <- iso_plot_raw_data(cf, "44", panel_by = "file", color_by = "none", linetype_by = "data")))
   expect_true(all(names(p$mapping) %in% c("x", "y", "group", "linetype")))
-  expect_equal(as.character(p$mapping$linetype), "data")
+  expect_true("data" %in% as.character(p$mapping$linetype))
   expect_equal(class(p$facet)[1], "FacetGrid")
   expect_equal(names(p$facet$params$rows), "file_id")
-  expect_equal(names(p$facet$params$cols), NULL)
+  expect_equal(names(p$facet$params$cols) %>% length(), 0)
   
 })
 
@@ -79,10 +79,10 @@ test_that("test that plot dual inlet works properly", {
   
   # aesthetics, mapping, panelling formatting tests - defaults first
   expect_true(all(names(p$mapping) %in% c("colour", "x", "y", "group", "shape")))
-  expect_equal(as.character(p$mapping$colour), "file_id")
-  expect_equal(as.character(p$mapping$x), "cycle")
-  expect_equal(as.character(p$mapping$y), "value")
-  expect_equal(as.character(p$mapping$shape), "type")
+  expect_true("file_id" %in% as.character(p$mapping$colour))
+  expect_true("cycle" %in% as.character(p$mapping$x))
+  expect_true("value" %in% as.character(p$mapping$y))
+  expect_true("type" %in% as.character(p$mapping$shape))
   expect_equal(class(p$facet)[1], "FacetWrap")
   expect_equal(names(p$facet$params$facets), "data")
   
@@ -90,14 +90,14 @@ test_that("test that plot dual inlet works properly", {
   expect_true(is.ggplot(p <- iso_plot_raw_data(di, panel_by = "none", color_by = "data", linetype_by = "file", shape_by = "none")))
   expect_true(all(p$data$data %in% c("44 [mV]", "46 [mV]", "46/44"))) # all selected by default
   expect_true(all(names(p$mapping) %in% c("colour", "x", "y", "group", "linetype")))
-  expect_equal(as.character(p$mapping$colour), "data")
-  expect_equal(as.character(p$mapping$linetype), "file_id")
+  expect_true("data" %in% as.character(p$mapping$colour))
+  expect_true("file_id" %in% as.character(p$mapping$linetype))
   expect_equal(class(p$facet)[1], "FacetNull")
   expect_true(is.ggplot(p <- iso_plot_raw_data(di, "44", panel_by = "file", color_by = "SA|STD", linetype_by = "data", shape_by = "file")))
   expect_true(all(names(p$mapping) %in% c("x", "y", "group", "colour", "linetype", "shape")))
-  expect_equal(as.character(p$mapping$colour), "type")
-  expect_equal(as.character(p$mapping$linetype), "data")
-  expect_equal(as.character(p$mapping$shape), "file_id")
+  expect_true("type" %in% as.character(p$mapping$colour))
+  expect_true("data" %in% as.character(p$mapping$linetype))
+  expect_true("file_id" %in% as.character(p$mapping$shape))
   expect_equal(class(p$facet)[1], "FacetWrap")
   expect_equal(names(p$facet$params$facets), "file_id")
 })
