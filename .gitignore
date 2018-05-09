@@ -39,6 +39,7 @@ vignettes/*.pdf
 /inst/extdata/
 /inst/other/
 /inst/doc
+/vignettes/cache
 
 # documentation
 !/docs/*
