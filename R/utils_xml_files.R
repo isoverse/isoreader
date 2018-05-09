@@ -152,11 +152,11 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
           if (nrow(task_values) > 0) {
             left_join(., 
               # wide format for task values
-              task_values %>% select_("GlobalIdentifier", "DisplayName", "Value") %>% 
-                group_by_(.dots = c("GlobalIdentifier", "DisplayName")) %>% 
+              task_values %>% select("GlobalIdentifier", "DisplayName", "Value") %>% 
+                group_by(!!sym("GlobalIdentifier"), !!sym("DisplayName")) %>% 
                 summarize(Value = str_c(Value, collapse = ", ")) %>% # make sure multiple values are collapsed properly
                 ungroup() %>% 
-                spread_("DisplayName", "Value"), 
+                spread("DisplayName", "Value"), 
               by = "GlobalIdentifier")
           } else .
         },
