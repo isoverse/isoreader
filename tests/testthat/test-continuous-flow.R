@@ -28,7 +28,7 @@ test_that("test that dxf files can be read", {
   
   iso_turn_reader_caching_off()
   
-  expect_true(file.exists(file <- iso_get_reader_example("continuous_flow_example.dxf")))
+  expect_true(file.exists(file <- iso_get_reader_example("linearity_example.dxf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
 
