@@ -103,5 +103,11 @@ test_that("test that plot dual inlet works properly", {
   expect_true("file_id" %in% as.character(p$mapping$shape))
   expect_equal(class(p$facet)[1], "FacetWrap")
   expect_equal(names(p$facet$params$facets), "file_id")
+  
+  expect_true(is.ggplot(p <- iso_plot_raw_data(di, "44", panel = file_id ~ data)))
+  expect_equal(class(p$facet)[1], "FacetGrid")
+  expect_equal(names(p$facet$params$rows), "file_id")
+  expect_equal(names(p$facet$params$cols), "data")
+  
 })
 
