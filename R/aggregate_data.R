@@ -713,4 +713,9 @@ unnest_aggregated_data_frame <- function(df) {
   return(df)
 }
 
-
+# helper function to concatenate list columns for export file formats that cannot handle the embedded data
+collapse_list_columns <- function(df, sep = ", ") {
+  collapse_function <- function(x) collapse(x, sep = sep)
+  df %>% 
+    mutate_if(.predicate = is.list, .funs = map_chr, collapse_function)
+}
