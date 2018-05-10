@@ -121,7 +121,7 @@ extract_caf_raw_voltage_data <- function(ds) {
   ) %>% 
     group_by(type) %>% 
     mutate(
-      cycle = ifelse(type[1] == "standard" & pos == max(pos), 0L, 1L:n()),
+      cycle = as.integer(ifelse(type[1] == "standard" & pos == max(pos), 0L, 1L:n())),
       # capture voltages
       voltages = map(pos, capture_voltages)
     ) %>% ungroup() %>% 
@@ -184,7 +184,7 @@ extract_caf_vendor_data_table <- function(ds) {
   # assign data table
   ds$vendor_data_table <- vendor_dt %>% 
     arrange(!!as.name("Nr.")) %>% 
-    mutate(cycle = 1:n()) %>% 
+    mutate(cycle = as.integer(1:n())) %>% 
     select(-!!as.name("Nr."), -!!as.name("Is Ref.?")) %>% 
     select(!!as.name("cycle"), everything())
   

@@ -108,7 +108,7 @@ extract_did_raw_voltage_data <- function(ds) {
     # spread out the volrages
     select(-pos, -cup) %>% spread(mass, voltage) %>% 
     # update cycle
-    mutate(cycle = as.integer(ifelse(cycle == "Pre", -1, cycle)) + 1L)
+    mutate(cycle = as.integer(ifelse(cycle == "Pre", -1L, cycle)) + 1L)
   
   # voltages data frame
   ds$raw_data <- arrange(voltages, desc(type), cycle)
@@ -167,7 +167,7 @@ extract_did_vendor_data_table <- function(ds) {
     
     table_column <- list(
       list(
-        cycle = ds$binary$data$values[c(TRUE, FALSE)] + 1L,
+        cycle = as.integer(ds$binary$data$values[c(TRUE, FALSE)] + 1L),
         value = ds$binary$data$values[c(FALSE, TRUE)]
       )) %>% setNames(str_replace(ds$binary$data$column, "\\s*$", "")) # remove trailing white spaces in column names
     vendor_dt <- c(vendor_dt, table_column)
