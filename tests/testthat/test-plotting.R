@@ -7,7 +7,8 @@ test_that("test that raw data plot throws appropriate errors", {
 test_that("test that plot continuous flow works properly", {
   
   expect_error(iso_plot_continuous_flow_data(42), "can only plot continuous flow")
-  expect_is(cf <- isoreader:::make_cf_data_structure() %>% isoreader:::update_read_options(read_raw_data = TRUE), "continuous_flow")
+  expect_is(cf <- isoreader:::make_cf_data_structure() %>% 
+              isoreader:::update_read_options(read_file_info = TRUE, read_raw_data = TRUE), "continuous_flow")
   expect_error(iso_plot_raw_data(cf), "no raw data in supplied iso_files")
   
   # make test raw data
@@ -17,9 +18,9 @@ test_that("test that plot continuous flow works properly", {
   expect_error(iso_plot_raw_data(cf, c("42")), "not available in the provided iso_files")
   expect_error(cf %>% {.$raw_data$time.min = 1:10; .} %>% iso_plot_raw_data(.), "unclear which column is the time column")
   expect_error(iso_plot_raw_data(cf, time_interval = 55), "time interval needs to be a vector with two numeric entries")
-  expect_error(iso_plot_raw_data(cf, panel_by = "42"), "unknown layout specification")
-  expect_error(iso_plot_raw_data(cf, color_by = "42"), "unknown layout specification")
-  expect_error(iso_plot_raw_data(cf, linetype_by = "42"), "unknown layout specification")
+  expect_error(iso_plot_raw_data(cf, panel = DNE), "unknown column")
+  expect_error(iso_plot_raw_data(cf, color = DNE), "unknown column")
+  expect_error(iso_plot_raw_data(cf, linetype = DNE), "unknown column")
   
   # generate plot
   cf <- iso_calculate_ratios(cf, "46/44")
@@ -39,13 +40,13 @@ test_that("test that plot continuous flow works properly", {
   expect_equal(names(p$facet$params$cols) %>% length(), 0)
   
   # then custom specifications
-  expect_true(is.ggplot(p <- iso_plot_raw_data(cf, panel_by = "none", color_by = "data", linetype_by = "file")))
+  expect_true(is.ggplot(p <- iso_plot_raw_data(cf, panel = NULL, color = data, linetype = file_id)))
   expect_true(all(p$data$data %in% c("44 [mV]", "46 [mV]", "46/44"))) # all selected by default
   expect_true(all(names(p$mapping) %in% c("colour", "x", "y", "group", "linetype")))
   expect_true("data" %in% as.character(p$mapping$colour))
   expect_true("file_id" %in% as.character(p$mapping$linetype))
   expect_equal(class(p$facet)[1], "FacetNull")
-  expect_true(is.ggplot(p <- iso_plot_raw_data(cf, "44", panel_by = "file", color_by = "none", linetype_by = "data")))
+  expect_true(is.ggplot(p <- iso_plot_raw_data(cf, "44", panel = file_id, color = NULL, linetype = data)))
   expect_true(all(names(p$mapping) %in% c("x", "y", "group", "linetype")))
   expect_true("data" %in% as.character(p$mapping$linetype))
   expect_equal(class(p$facet)[1], "FacetGrid")
@@ -57,17 +58,19 @@ test_that("test that plot continuous flow works properly", {
 test_that("test that plot dual inlet works properly", {
   
   expect_error(iso_plot_dual_inlet_data(42), "can only plot dual inlet")
-  expect_is(di <- isoreader:::make_di_data_structure() %>% isoreader:::update_read_options(read_raw_data = TRUE), "dual_inlet")
+  expect_is(di <- isoreader:::make_di_data_structure() %>% isoreader:::update_read_options(read_raw_data = TRUE, read_file_info = TRUE), "dual_inlet")
   expect_error(iso_plot_raw_data(di), "no raw data in supplied iso_files")
 
   # make test raw data
   di$raw_data <- data_frame(type = rep(c("standard", "sample"), each = 5), cycle = rep(1:5, times = 2), v44.mV = runif(10), v46.mV = runif(10))
   
   # test for errors
-  expect_error(iso_plot_raw_data(di, panel_by = "42"), "unknown layout specification")
-  expect_error(iso_plot_raw_data(di, color_by = "42"), "unknown layout specification")
-  expect_error(iso_plot_raw_data(di, linetype_by = "42"), "unknown layout specification")
-  expect_error(iso_plot_raw_data(di, shape_by = "42"), "unknown layout specification")
+  expect_error(iso_plot_raw_data(di, panel = DNE), "unknown column")
+  expect_error(iso_plot_raw_data(di, panel = DNE ~ data), "unknown column")
+  expect_error(iso_plot_raw_data(di, panel = data ~ DNE), "unknown column")
+  expect_error(iso_plot_raw_data(di, color = DNE), "unknown colum")
+  expect_error(iso_plot_raw_data(di, linetype = DNE), "unknown column")
+  expect_error(iso_plot_raw_data(di, shape = DNE), "unknown column")
   
   # generate plot
   di <- iso_calculate_ratios(di, "46/44")
@@ -87,13 +90,13 @@ test_that("test that plot dual inlet works properly", {
   expect_equal(names(p$facet$params$facets), "data")
   
   # then custom specifications
-  expect_true(is.ggplot(p <- iso_plot_raw_data(di, panel_by = "none", color_by = "data", linetype_by = "file", shape_by = "none")))
+  expect_true(is.ggplot(p <- iso_plot_raw_data(di, panel = NULL, color = data, linetype = file_id, shape = NULL)))
   expect_true(all(p$data$data %in% c("44 [mV]", "46 [mV]", "46/44"))) # all selected by default
   expect_true(all(names(p$mapping) %in% c("colour", "x", "y", "group", "linetype")))
   expect_true("data" %in% as.character(p$mapping$colour))
   expect_true("file_id" %in% as.character(p$mapping$linetype))
   expect_equal(class(p$facet)[1], "FacetNull")
-  expect_true(is.ggplot(p <- iso_plot_raw_data(di, "44", panel_by = "file", color_by = "SA|STD", linetype_by = "data", shape_by = "file")))
+  expect_true(is.ggplot(p <- iso_plot_raw_data(di, "44", panel = file_id, color = type, linetype = data, shape = file_id)))
   expect_true(all(names(p$mapping) %in% c("x", "y", "group", "colour", "linetype", "shape")))
   expect_true("type" %in% as.character(p$mapping$colour))
   expect_true("data" %in% as.character(p$mapping$linetype))
@@ -101,3 +104,4 @@ test_that("test that plot dual inlet works properly", {
   expect_equal(class(p$facet)[1], "FacetWrap")
   expect_equal(names(p$facet$params$facets), "file_id")
 })
+
