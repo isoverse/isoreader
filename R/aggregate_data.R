@@ -205,11 +205,12 @@ get_vendor_data_table_info <- function(iso_files) {
 #' @inheritParams iso_get_raw_data
 #' @inheritParams iso_get_standards_info
 #' @inheritParams iso_get_vendor_data_table
+#' @param include_raw_data which columns from the raw data to include use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default.
 #' @param include_vendor_data_table which columns from the vendor data table to include - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default.
 #' @return data_frame with file_ids, file_types and nested data frames for each data type (file_info, raw_data, vendor_data_table, etc.)
 #' @family data retrieval functions
 #' @export
-iso_get_data <- function(iso_files, include_file_info = everything(), include_vendor_data_table = everything(), 
+iso_get_data <- function(iso_files, include_file_info = everything(), include_raw_data = everything(), include_vendor_data_table = everything(), 
                          gather = FALSE, with_units = FALSE, with_ratios = FALSE, quiet = default(quiet)) {
   iso_files <- iso_as_file_list(iso_files)
   if (!quiet) sprintf("Info: aggregating all data from %d data file(s)", length(iso_files)) %>% message()
@@ -230,7 +231,8 @@ iso_get_data <- function(iso_files, include_file_info = everything(), include_ve
     file_info <- data_frame(file_id = character(0), file_info = list(NULL))
   
   # raw data
-  raw_data <- iso_get_raw_data(iso_files, gather = gather, quiet = TRUE)
+  include_raw_data_quo <- enquo(include_raw_data)
+  raw_data <- iso_get_raw_data(iso_files, select = !!include_raw_data_quo, gather = gather, quiet = TRUE)
   if (ncol(raw_data) > 1)
     raw_data <- nest(raw_data, -file_id, .key = raw_data)
   else
@@ -315,22 +317,29 @@ iso_get_file_info <- function(iso_files, select = everything(), quiet = default(
     unnest_aggregated_data_frame()
 }
 
+# note: consider providing a separate iso_gather_raw_data method that works just on the raw data table and could be used in other contexts
+
 #' Aggregate raw data
 #' 
 #' Aggregate the raw ion data from the provided iso_files. Can aggregate either in a wide table (for easy overview) or a gathered long table (for plotting and further data processing). The raw data is only available if the iso_files were read with parameter \code{read_raw_data=TRUE}.
 #' 
 #' @inheritParams iso_read_files
 #' @param iso_files collection of iso_file objects
-#' @param gather whether to gather raw data into long format (e.g. for ease of use in plotting)
+#' @param select which raw data columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. By default, all columns are selected.
+#' @family data retrieval functions
+#' @param gather whether to gather raw data into long format (e.g. for ease of use in plotting). Not that the \code{select} parameter applies to the data columns BEFORE gathering.
 #' @param include_file_info which file information to include (see \code{\link{iso_get_file_info}}). Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns.
 #' @family data retrieval functions
 #' @export
-iso_get_raw_data <- function(iso_files, gather = FALSE, include_file_info = NULL, quiet = default(quiet)) {
+iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, include_file_info = NULL, quiet = default(quiet)) {
   iso_files <- iso_as_file_list(iso_files)
+  select_quo <- enquo(select)
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
-    sprintf("Info: aggregating raw data from %d data file(s)%s", length(iso_files),
-            get_info_message_concat(include_file_info_quo, prefix = ", including file info ")) %>% message()
+    glue(
+      "Info: aggregating raw data from {length(iso_files)} data file(s)",
+      "{get_info_message_concat(select_quo, prefix = ', selecting data columns ', empty = 'everything()')}",
+      "{get_info_message_concat(include_file_info_quo, prefix = ', including file info ')}") %>% message()
   }
   check_read_options(iso_files, "raw_data")
   
@@ -352,6 +361,14 @@ iso_get_raw_data <- function(iso_files, gather = FALSE, include_file_info = NULL
   # check for rows
   if (nrow(data) == 0) return(data)
   
+  # selecting columns
+  select_cols <- get_column_names(data, select = select_quo, n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
+  if (!"file_id" %in% select_cols) 
+    select_cols <- c("file_id", select_cols) # file info always included
+  data <- data %>% 
+    # focus on selected columns only (also takes care of the rename)
+    dplyr::select(!!!select_cols) 
+  
   # if gathering
   if (gather) {
     column <- value <- extra_parens <- category <- NULL # global vars
@@ -361,7 +378,7 @@ iso_get_raw_data <- function(iso_files, gather = FALSE, include_file_info = NULL
       gather(column, value, matches(masses_ratios_re)) %>% 
       # extract unit information
       extract(column, into = c("category", "data", "extra_parens", "units"), regex = masses_ratios_re) %>% 
-      select(-extra_parens) %>% 
+      dplyr::select(-extra_parens) %>% 
       # remove unknown data
       filter(!is.na(value)) %>% 
       # assign category
@@ -551,26 +568,6 @@ iso_get_vendor_data_table <- function(iso_files, with_units = FALSE, select = ev
   
   # unnest
   vendor_data_table <- dplyr::select(vendor_data_table, file_id, dt) %>% unnest(dt)
-  
-  # vendor_data_table <- lapply(iso_files, function(iso_file) {
-  #   df <- iso_file$vendor_data_table
-  #   
-  #   # see if there is any data at all
-  #   if (nrow(df) == 0) return(df)
-  #   
-  #   # use units 
-  #   if (with_units && !is.null(attr(df, "units")) && !is.na(attr(df, "units")))  {
-  #     cols_with_units <- attr(df, "units")[c("column", "units")] %>% 
-  #       mutate(units = ifelse(!is.na(units) & nchar(units) > 0, str_c(column, " ", units), column)) %>% 
-  #       deframe()
-  #     names(df) <- cols_with_units[names(df)]
-  #   }
-  #   
-  #   # include file id
-  #   df %>% 
-  #     mutate(file_id = iso_file$file_info$file_id) %>% 
-  #     dplyr::select(file_id, everything())
-  # }) %>% bind_rows()
 
   # get include information
   select_cols <- get_column_names(vendor_data_table, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
