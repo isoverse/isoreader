@@ -4,21 +4,23 @@
 \alias{iso_plot_dual_inlet_data}
 \title{Plot mass data from dual inlet files}
 \usage{
-iso_plot_dual_inlet_data(iso_files, data = c(), panel_by = "data",
-  color_by = "file", linetype_by = "none", shape_by = "SA|STD")
+iso_plot_dual_inlet_data(iso_files, data = c(), filter = NULL,
+  panel = data, color = file_id, linetype = NULL, shape = type)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
 \item{data}{which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using \code{\link{iso_calculate_ratios}} prior to plotting.}
 
-\item{panel_by}{whether to panel data by anything, options are "none" (overlay all), "data" (by mass/ratio data), "file" (panel by files), "SA|STD" (panel by sample|standard). The default is "data"}
+\item{filter}{any filter condition to apply to the data beyond the masses/ratio selection (param \code{data}) and time interval (param \code{time_interval}). For details on the available data columns see \link{iso_get_raw_data} with parameters \code{gather = TRUE} and \code{include_file_info = everything()} (i.e. all file info is available for plotting aesthetics).}
 
-\item{color_by}{whether to color data by anything, options are the same as for \code{panel_by} but the default is "file"}
+\item{panel}{whether to panel data by anything - any data column is possible (see notes in the \code{filter} parameter) but the most commonly used options are \code{panel = NULL} (overlay all), \code{panel = data} (by mass/ratio data), \code{panel = file_id} (panel by files, alternatively use any appropriate file_info column), and \code{panel = type} (panel by sample vs standard). Additionally it is possible to panel two variables against each other (i.e. use a \link[ggplot2]{facet_grid}), e.g. by specifying the formula \code{panel = data ~ file_id} (data in the panel rows, files in the panel columns) or \code{panel = data ~ type}.The default for this parameter is simple panelling by \code{data}.}
 
-\item{linetype_by}{whether to differentiate data by linetype, options are the same as for \code{panel_by} but the default is "none". Note that a limited number of linetype_by (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}}
+\item{color}{whether to color data by anything, options are the same as for \code{panel} but the default is \code{file_id}.}
 
-\item{shape_by}{whether to shape data points by anything, options are the same as for panel_by but the default is "SA|STD" (sample|standard)}
+\item{linetype}{whether to differentiate data by linetype, options are the same as for \code{panel} but the default is \code{NULL} (i.e. no linetype aesthetic). Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}.}
+
+\item{shape}{whether to shape data points by anything, options are the same as for \code{panel} but the default is \code{type} (sample vs standard).}
 }
 \description{
 Plot mass data from dual inlet files
