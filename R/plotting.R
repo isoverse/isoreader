@@ -227,7 +227,7 @@ iso_plot_continuous_flow_data <- function(
 #' 
 #' @inheritParams iso_plot_continuous_flow_data
 #' @param filter any filter condition to apply to the data beyond the masses/ratio selection (param \code{data}) and time interval (param \code{time_interval}). For details on the available data columns see \link{iso_get_raw_data} with parameters \code{gather = TRUE} and \code{include_file_info = everything()} (i.e. all file info is available for plotting aesthetics).
-#' @param panel whether to panel data by anything - any data column is possible (see notes in the \code{filter} parameter) but the most commonly used options are \code{panel = NULL} (overlay all), \code{panel = data} (by mass/ratio data), \code{panel = file_id} (panel by files, alternatively use any appropriate file_info column), and \code{panel = type} (panel by sample vs standard). Additionally it is possible to panel two variables against each other (i.e. use a \link[ggplot2]{facet_grid}), e.g. by specifying the formula \code{panel = data ~ file_id} or \code{panel = data ~ type}.The default for this parameter is simple panelling by \code{data}. 
+#' @param panel whether to panel data by anything - any data column is possible (see notes in the \code{filter} parameter) but the most commonly used options are \code{panel = NULL} (overlay all), \code{panel = data} (by mass/ratio data), \code{panel = file_id} (panel by files, alternatively use any appropriate file_info column), and \code{panel = type} (panel by sample vs standard). Additionally it is possible to panel two variables against each other (i.e. use a \link[ggplot2]{facet_grid}), e.g. by specifying the formula \code{panel = data ~ file_id} (data in the panel rows, files in the panel columns) or \code{panel = data ~ type}.The default for this parameter is simple panelling by \code{data}. 
 #' @param shape whether to shape data points by anything, options are the same as for \code{panel} but the default is \code{type} (sample vs standard).
 #' @note normalization is not useful for dual inlet data, except potentially between standard and sample - however, for this it is more meaningful to simply plot the relevant ratios together
 #' @family plot functions
@@ -265,8 +265,8 @@ iso_plot_dual_inlet_data <- function(
     # formula --> facet_grid
     aes_cols <- c(aes_cols, get_column_names(
       raw_data, 
-      panel_lhs = aes_quos$panel %>% quo_expr() %>% f_lhs(),
-      panel_rhs = aes_quos$panel %>% quo_expr() %>% f_rhs()))
+      panel_rows = aes_quos$panel %>% quo_expr() %>% f_lhs(),
+      panel_cols = aes_quos$panel %>% quo_expr() %>% f_rhs()))
   }
   
   # only work with desired data (masses and ratios)
@@ -309,7 +309,7 @@ iso_plot_dual_inlet_data <- function(
     if (quo_is_symbol(aes_quos$panel))
       p <- p + facet_wrap(new_formula(NULL, sym(aes_cols$panel)), scales = "free_y")
     else
-      p <- p + facet_grid(new_formula(sym(aes_cols$panel_lhs), sym(aes_cols$panel_rhs)), scales = "free_y")
+      p <- p + facet_grid(new_formula(sym(aes_cols$panel_rows), sym(aes_cols$panel_cols)), scales = "free_y")
   }
   
   # color
