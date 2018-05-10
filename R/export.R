@@ -28,7 +28,7 @@ iso_export_to_rda <- function(iso_files, filepath, quiet = default(quiet)) {
 
 #' Export data to Excel
 #' 
-#' This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file but they are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters). 
+#' This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file but they are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters). Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export.
 #' 
 #' @inheritParams iso_export_to_rda
 #' @param include_raw_data whether to include the raw data in the export (if available)
@@ -66,7 +66,9 @@ iso_export_to_excel <- function(iso_files, filepath,
   }
   if (include_file_info) {
     addWorksheet(wb, "file info")
-    writeData(wb, "file info", iso_get_file_info(export_iso_files, quiet = TRUE),
+    # note: this takes care of nested vectors, they get concatenated with ', '
+    writeData(wb, "file info", 
+              iso_get_file_info(export_iso_files, quiet = TRUE) %>% collapse_list_columns(),
               headerStyle = hs)
   }
   if (include_method_info) {
@@ -93,7 +95,7 @@ iso_export_to_excel <- function(iso_files, filepath,
 
 #' Export to feather
 #' 
-#' This function exports the passed in iso_files to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided \code{filepath_prefix} as prefix. All are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters). 
+#' This function exports the passed in iso_files to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided \code{filepath_prefix} as prefix. All are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters). Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in feather output.
 #' 
 #' @inheritParams iso_export_to_excel
 #' @param filepath_prefix the path (folder and filename) prefix for the exported feather files. The correct suffix for different kinds of data and file extension is automatically added
@@ -122,7 +124,9 @@ iso_export_to_feather <- function(iso_files, filepath_prefix,
     write_feather(iso_get_raw_data(iso_files, quiet = TRUE), filepaths[['raw_data']])
   
   if (include_file_info) 
-    write_feather(iso_get_file_info(iso_files, quiet = TRUE), filepaths[['file_info']])
+    # note: this takes care of nested vectors, they get concatenated with ', '
+    write_feather(iso_get_file_info(iso_files, quiet = TRUE) %>% collapse_list_columns(), 
+                  filepaths[['file_info']])
   
   if (include_method_info) {
     write_feather(iso_get_standards_info(iso_files, quiet = TRUE), filepaths[['method_info_standards']])
