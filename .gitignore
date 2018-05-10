@@ -40,6 +40,9 @@ vignettes/*.pdf
 /inst/other/
 /inst/doc
 /vignettes/cache
+/vignettes/*.feather
+/vignettes/*.xlsx
+/vignettes/*.rda
 
 # documentation
 !/docs/*
