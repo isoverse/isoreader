@@ -1,11 +1,11 @@
 ---
 title: "Continuous Flow Examples"
-output:
-  html_document:
-    df_print: paged
-    toc: true
-    toc_float: true
-    toc_depth: 3
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Continuous Flow Examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include = FALSE}

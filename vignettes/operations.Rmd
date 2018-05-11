@@ -1,12 +1,13 @@
 ---
-title: "Operations Examples"
-output:
-  html_document:
-    df_print: paged
-    toc: true
-    toc_float: true
-    toc_depth: 3
+title: "Operations Example"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Operations Example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
