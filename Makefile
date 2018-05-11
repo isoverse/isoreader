@@ -1,6 +1,6 @@
 # tools for active package development
 
-all: docu check
+all: vignettes docu check
 
 docu:
 	rm -f -r vignettes/cache
@@ -10,6 +10,9 @@ docu:
 	rm -f vignettes/*.feather
 	rm -f vignettes/*.xlsx
 	rm -f vignettes/*.rda
+
+vignettes:
+	Rscript -e "devtools::build_vignettes()"
 
 check:
 	Rscript -e "devtools::check()"
