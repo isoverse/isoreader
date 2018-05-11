@@ -1,0 +1,78 @@
+---
+title: "Operations Example"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Operations Example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+Coming soon...
+
+Isoreader provides a number of general purpose operations that work on all supported IRMS data formats such as caching of read files and data exports. This will demonstrate some of these general operations.
+
+## Supported file types
+
+```{r}
+
+```
+
+
+## Caching
+
+```{r}
+
+```
+
+
+## Messages and default parameters
+
+```{r}
+
+```
+
+
+## Combining / subsetting isofiles
+
+All isoreader objects are lists that can be combined or subset to work with only specific files or create a larger collection. 
+
+```{r}
+
+```
+
+## Filtering isofiles by file information
+
+Additionally, the `iso_filter_files` function allows for subsetting a collection of isofiles based on any file information.
+
+```{r}
+
+```
+
+## Removing erroneous files
+
+Removing files with problems: `iso_omit_files_with_problems`
+
+```{r}
+
+```
+
+## Re-reading files
+
+```{r}
+
+```
+
+
+
+

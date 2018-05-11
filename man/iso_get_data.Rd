@@ -5,17 +5,20 @@
 \title{Aggregate all isofiles data}
 \usage{
 iso_get_data(iso_files, include_file_info = everything(),
-  include_vendor_data_table = everything(), gather = FALSE,
-  with_units = FALSE, with_ratios = FALSE, quiet = default(quiet))
+  include_raw_data = everything(), include_vendor_data_table = everything(),
+  gather = FALSE, with_units = FALSE, with_ratios = FALSE,
+  quiet = default(quiet))
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
 \item{include_file_info}{which file information to include (see \code{\link{iso_get_file_info}}). Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns.}
 
+\item{include_raw_data}{which columns from the raw data to include use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default.}
+
 \item{include_vendor_data_table}{which columns from the vendor data table to include - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default.}
 
-\item{gather}{whether to gather raw data into long format (e.g. for ease of use in plotting)}
+\item{gather}{whether to gather raw data into long format (e.g. for ease of use in plotting). Not that the \code{select} parameter applies to the data columns BEFORE gathering.}
 
 \item{with_units}{whether to include units in the column headers (if there are any) or not (default is FALSE). Note that this can slow down the function significantely.}
 

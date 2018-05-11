@@ -18,13 +18,19 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+<meta property="og:title" content="Aggregate resistors from methods info — iso_get_resistors_info" />
+
+<meta property="og:description" content="Aggregates the resistor information recovered from the provided iso_files. This information is only available if the iso_files were read with parameter read_method_info=TRUE and only linked to specific masses if the iso_files were additionally read with parametr read_raw_data=TRUE." />
+<meta name="twitter:card" content="summary" />
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -32,6 +38,8 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
 
 
   </head>
@@ -47,15 +55,25 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">isoreader</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">isoreader</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.9.17.9000</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">Home</a>
 </li>
 <li>
-  <a href="../articles/index.html">Vignettes</a>
+  <a href="../articles/dual_inlet.html">Dual Inlet</a>
+</li>
+<li>
+  <a href="../articles/continuous_flow.html">Continuous Flow</a>
+</li>
+<li>
+  <a href="../articles/operations.html">Operations</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -70,6 +88,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -77,10 +96,11 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Aggregate resistors from methods info</h1>
+    <small>Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/aggregate_data.R'><code>R/aggregate_data.R</code></a></small>
     </div>
 
     
@@ -90,7 +110,7 @@
     <pre class="usage"><span class='fu'>iso_get_resistors_info</span>(<span class='no'>iso_files</span>, <span class='kw'>include_file_info</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -99,8 +119,7 @@
     </tr>
     <tr>
       <th>include_file_info</th>
-      <td><p>if provided, will include the requested file information (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>) with the raw data. 
-Use <code>c(...)</code> to select multiple, supports all <a href='http://dplyr.tidyverse.org/reference/select.html'>select</a> syntax.</p></td>
+      <td><p>which file information to include (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>). Use <code>c(...)</code> to select multiple, supports all <a href='http://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns.</p></td>
     </tr>
     <tr>
       <th>quiet</th>
@@ -110,10 +129,11 @@ Use <code>c(...)</code> to select multiple, supports all <a href='http://dplyr.t
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p>Other data retrieval functions: <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>,
+    <div class='dont-index'><p>Other data retrieval functions: <code><a href='iso_get_data.html'>iso_get_data</a></code>,
+  <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>,
   <code><a href='iso_get_raw_data.html'>iso_get_raw_data</a></code>,
   <code><a href='iso_get_standards_info.html'>iso_get_standards_info</a></code>,
-  <code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a></code></p>
+  <code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a></code></p></div>
     
 
   </div>
@@ -134,11 +154,14 @@ Use <code>c(...)</code> to select multiple, supports all <a href='http://dplyr.t
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+
