@@ -6,7 +6,7 @@
 \usage{
 iso_plot_continuous_flow_data(iso_files, data = c(), time_interval = c(),
   time_interval_units = "seconds", filter = NULL, normalize = FALSE,
-  zoom = NULL, panel = data, color = file_id, linetype = NULL)
+  zoom = NULL, panel = data, color = file_id, linetype = NULL, ...)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -28,6 +28,8 @@ iso_plot_continuous_flow_data(iso_files, data = c(), time_interval = c(),
 \item{color}{whether to color data by anything, options are the same as for \code{panel} but the default is \code{file_id}.}
 
 \item{linetype}{whether to differentiate data by linetype, options are the same as for \code{panel} but the default is \code{NULL} (i.e. no linetype aesthetic). Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}.}
+
+\item{...}{deprecated parameters}
 }
 \description{
 Plot chromatogram from continuous flow data

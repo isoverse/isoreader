@@ -5,7 +5,7 @@
 \title{Plot mass data from dual inlet files}
 \usage{
 iso_plot_dual_inlet_data(iso_files, data = c(), filter = NULL,
-  panel = data, color = file_id, linetype = NULL, shape = type)
+  panel = data, color = file_id, linetype = NULL, shape = type, ...)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -21,6 +21,8 @@ iso_plot_dual_inlet_data(iso_files, data = c(), filter = NULL,
 \item{linetype}{whether to differentiate data by linetype, options are the same as for \code{panel} but the default is \code{NULL} (i.e. no linetype aesthetic). Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}.}
 
 \item{shape}{whether to shape data points by anything, options are the same as for \code{panel} but the default is \code{type} (sample vs standard).}
+
+\item{...}{deprecated parameters}
 }
 \description{
 Plot mass data from dual inlet files
