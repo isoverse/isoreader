@@ -4,7 +4,7 @@
 \name{isoreader-package}
 \alias{isoreader}
 \alias{isoreader-package}
-\title{isoreader: Read IRMS data from isodat files}
+\title{isoreader: Read IRMS data files}
 \description{
 R interface to IRMS (isotope ratio mass spectrometry) file formats typically used in stable isotope geochemistry.
 }
