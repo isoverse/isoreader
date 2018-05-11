@@ -4,6 +4,9 @@ language: R
 sudo: false
 dist: trusty
 cache: packages
+r_binary_packages:
+  - devtools
+  - roxygen2
 bioc_packages:
   - rhdf5
 r:
@@ -27,3 +30,4 @@ before_install: |
   
 after_success:
   - Rscript -e 'covr::codecov()'
+  - Rscript -e 'devtools::install();devtools::test()'
