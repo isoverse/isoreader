@@ -179,7 +179,7 @@ test_that("test that export to Feather works properly", {
   expect_true(file.exists(str_c(filepath, "_vendor_data_table.cf.feather")))
   # note for comparisons: rounding is NOT necessary because storage is equivalent to values in R
   expect_equal(iso_get_raw_data(cf), read_feather(str_c(filepath, "_raw_data.cf.feather")))
-  expect_equal(iso_get_file_info(cf) %>% isoreader::collapse_list_columns(), read_feather(str_c(filepath, "_file_info.cf.feather")))
+  expect_equal(iso_get_file_info(cf) %>% isoreader:::collapse_list_columns(), read_feather(str_c(filepath, "_file_info.cf.feather")))
   expect_equal(iso_get_standards_info(cf), read_feather(str_c(filepath, "_method_info-standards.cf.feather")))
   expect_equal(iso_get_resistors_info (cf), read_feather(str_c(filepath, "_method_info-resistors.cf.feather")))
   expect_equal(iso_get_vendor_data_table(cf), read_feather(str_c(filepath, "_vendor_data_table.cf.feather")))
@@ -194,7 +194,7 @@ test_that("test that export to Feather works properly", {
   expect_true(file.exists(str_c(filepath, "_vendor_data_table.di.feather")))
   # note for comparisons: rounding is NOT necessary because storage is equivalent to values in R
   expect_equal(iso_get_raw_data(di_example), read_feather(str_c(filepath, "_raw_data.di.feather")))
-  expect_equal(iso_get_file_info(di_example) %>% isoreader::collapse_list_columns(), read_feather(str_c(filepath, "_file_info.di.feather")))
+  expect_equal(iso_get_file_info(di_example) %>% isoreader:::collapse_list_columns(), read_feather(str_c(filepath, "_file_info.di.feather")))
   expect_equal(iso_get_standards_info(di_example), read_feather(str_c(filepath, "_method_info-standards.di.feather")))
   expect_equal(iso_get_resistors_info (di_example), read_feather(str_c(filepath, "_method_info-resistors.di.feather")))
   expect_equal(iso_get_vendor_data_table(di_example), read_feather(str_c(filepath, "_vendor_data_table.di.feather")))
@@ -209,7 +209,7 @@ test_that("test that export to Feather works properly", {
   expect_true(file.exists(str_c(filepath, "_vendor_data_table.cf.feather")))
   # note for comparisons: rounding is NOT necessary because storage is equivalent to values in R
   expect_equal(iso_get_raw_data(cf_example), read_feather(str_c(filepath, "_raw_data.cf.feather")))
-  expect_equal(iso_get_file_info(cf_example) %>% isoreader::collapse_list_columns(), read_feather(str_c(filepath, "_file_info.cf.feather")))
+  expect_equal(iso_get_file_info(cf_example) %>% isoreader:::collapse_list_columns(), read_feather(str_c(filepath, "_file_info.cf.feather")))
   expect_equal(iso_get_standards_info(cf_example), read_feather(str_c(filepath, "_method_info-standards.cf.feather")))
   expect_equal(iso_get_resistors_info (cf_example), read_feather(str_c(filepath, "_method_info-resistors.cf.feather")))
   expect_equal(iso_get_vendor_data_table(cf_example), read_feather(str_c(filepath, "_vendor_data_table.cf.feather")))
