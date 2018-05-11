@@ -19,24 +19,28 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   
   # use a safe version of vars_select to get all the column names
   safe_vars_select <- safely(vars_select)
-  cols_quos <- quos(!!!list(...))
-  # make sure to evaluate calls to default
-  cols_quos <- resolve_defaults(cols_quos)
+  cols_quos <- quos(!!!list(...)) %>% 
+    # make sure to evaluate calls to default
+    resolve_defaults() %>% 
+    # make sure that the expressions are locally evaluated
+    map(~quo(!!get_expr(.x)))
   cols_results <- map(cols_quos, ~safe_vars_select(names(df), !!!.x))
   ok <- map_lgl(cols_results, ~is.null(.x$error))
   
   # summarize if there were any errors
   if (!all(ok)) {
     params <-
-      str_c(names(cols_quos)[!ok] %>% { ifelse(nchar(.) > 0, str_c(., " = "), .) },
-            map_chr(cols_quos[!ok], quo_text)) %>%
+      map2_chr(names(cols_quos)[!ok], cols_quos[!ok], function(var, val) {
+        if (nchar(var) > 0 && var != quo_text(val)) str_c(var, " = ", quo_text(val))
+        else quo_text(val)
+      }) %>% 
       collapse("', '", last = "' and '")
     errors <- map_chr(cols_results[!ok], ~.x$error$message) %>% collapse("\n- ")
     err_msg <- 
       if (sum(!ok) > 1) 
-        glue("parameters '{params}' refer to unknown columns in data frame '{df_name}':\n- {errors}") 
+        glue("'{params}' refer to unknown columns in data frame '{df_name}':\n- {errors}") 
       else 
-        glue("parameter '{params}' refers to unknown column(s) in data frame '{df_name}':\n- {errors}") 
+        glue("'{params}' refers to unknown column(s) in data frame '{df_name}':\n- {errors}") 
     if (cols_must_exist) { 
       # throw error
       stop(err_msg, call. = FALSE)
@@ -94,7 +98,8 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   if (length(type_reqs) > 0) {
     
     # valid types
-    types <- c(list = "nested (<list>)", numeric = "numeric (<dbl>)", integer = "integer (<int>)", character = "text (<chr>)")
+    types <- c(list = "nested (<list>)", numeric = "numeric (<dbl>)", integer = "integer (<int>)", 
+               character = "text (<chr>)", logical = "logical (<lgl>)")
     if (!all(ok <- unlist(type_reqs) %in% names(types))) {
       type_req_unknown <- unlist(type_reqs)[!ok]
       glue("unknown type requirement specification(s): '{collapse(type_req_unknown, \"', '\")}'. Allowed are: {collapse(names(types), ', ')}") %>%

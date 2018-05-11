@@ -12,7 +12,7 @@ iso_get_vendor_data_table(iso_files, with_units = FALSE,
 
 \item{with_units}{whether to include units in the column headers (if there are any) or not (default is FALSE). Note that this can slow down the function significantely.}
 
-\item{select}{which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default. File id is always included no matter which selection parameters.}
+\item{select}{which raw data columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. By default, all columns are selected.}
 
 \item{include_file_info}{which file information to include (see \code{\link{iso_get_file_info}}). Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns.}
 

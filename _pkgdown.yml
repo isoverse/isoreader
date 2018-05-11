@@ -13,18 +13,17 @@ navbar:
   left:
   - text: Home
     href: index.html
-  - text: Vignettes
-    href: articles/index.html
+  - text: Dual Inlet
+    href: articles/dual_inlet.html
+  - text: Continuous Flow
+    href: articles/continuous_flow.html
+  - text: Operations
+    href: articles/operations.html
   - text: Reference
     href: reference/index.html
   right:
   - icon: fa-github fa-lg
     href: https://github.com/kopflab/isoreader
-
-articles:
-- title: All vignettes
-  desc: ~
-  contents: '``'
 
 reference:
 - title: Reading IRMS data files
@@ -54,6 +53,7 @@ reference:
     These functions aggregate the data collected from one or many IRMS data files.
   contents:
   - '`iso_get_data_summary`'
+  - '`iso_get_data`'
   - '`iso_get_file_info`'
   - '`iso_get_raw_data`'
   - '`iso_get_vendor_data_table`'

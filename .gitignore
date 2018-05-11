@@ -38,6 +38,11 @@ vignettes/*.pdf
 /tmp/
 /inst/extdata/
 /inst/other/
+/inst/doc
+/vignettes/cache
+/vignettes/*.feather
+/vignettes/*.xlsx
+/vignettes/*.rda
 
 # documentation
 !/docs/*

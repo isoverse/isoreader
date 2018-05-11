@@ -15,6 +15,12 @@ test_that("Getting column names (with # and type requirement checks) works", {
   expect_error(get_column_names(5), "not a data frame")
   expect_error(get_column_names(df, a = quo(x)), "unknown column")
   
+  # error messages
+  expect_error(get_column_names(df, quo(x)), "'x'.*unknown column")
+  expect_error(get_column_names(df, x = quo(x)), "'x'.*unknown column")
+  expect_error(get_column_names(df, x = quo(c(x))), "'x = c\\(x\\)'.*unknown column")
+  expect_error(get_column_names(df, a = quo(x)), "'a = x'.*unknown column")
+  
   # single column per identifier
   expect_equal(get_column_names(df, a = quo(mpg), b = quo(wt)), list(a=c(mpg = "mpg"), b = c(wt = "wt")))
   expect_equal(get_column_names(df, a = quo("mpg"), b = quo("wt")), list(a=c(mpg = "mpg"), b = c(wt = "wt")))
@@ -52,6 +58,7 @@ test_that("Getting column names (with # and type requirement checks) works", {
   expect_error(get_column_names(df, a = quo(mpg), type_reqs = list(a = "list")), "not .* the correct column types")
   expect_error(get_column_names(df, a = quo(mpg), type_reqs = list(a = "integer")), "not .* the correct column types")
   expect_error(get_column_names(df, a = quo(mpg), type_reqs = list(a = "character")), "not .* the correct column types")
+  expect_error(get_column_names(df, a = quo(mpg), type_reqs = list(a = "logical")), "not .* the correct column types")
   expect_error(get_column_names(df, a = quo(c(mpg, rowname)), n_reqs = list(a = "+"), type_reqs = list(a = "character")), "not .* the correct column types")
   expect_equal(get_column_names(df, a = quo(mpg), type_reqs = list(a = "numeric")), list(a = c(mpg = "mpg")))
   expect_equal(get_column_names(df, a = quo(c(mpg, cyl)), n_reqs = list(a = "+"), type_reqs = list(a = "numeric")), list(a = c(mpg = "mpg", cyl = "cyl")))
