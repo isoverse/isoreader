@@ -45,11 +45,28 @@ iso_plot_continuous_flow_data <- function(
   time_interval = c(), time_interval_units = "seconds", 
   filter = NULL,
   normalize = FALSE, zoom = NULL, 
-  panel = data, color = file_id, linetype = NULL) {
+  panel = data, color = file_id, linetype = NULL,
+  ...) {
   
   # safety checks
   if(!iso_is_continuous_flow(iso_files)) 
     stop("iso_plot_continuous_flow_data can only plot continuous flow iso_files", call. = FALSE)
+  
+  # check for deprecated parameters
+  dots <- list(...)
+  old <- c("panel_by", "color_by", "linetype_by", "shape_by")
+  if (any(old %in% names(dots))) {
+    glue("deprecated parameter(s): ",
+         "'{collapse(old[old %in% names(dots)], sep=\"', '\")}' ",
+         "- please check the function documentation for details on ",
+         "the updated parameters") %>% 
+      stop(call. = FALSE)
+  }
+  if (length(dots) > 0) {
+    glue("unkown parameter(s): ",
+         "'{collapse(names(dots), sep=\"', '\")}' ") %>% 
+      stop(call. = FALSE)
+  }
   
   # global vars
   time <- type <- value <- file_id <- category <- data_without_units <- NULL
@@ -234,12 +251,29 @@ iso_plot_continuous_flow_data <- function(
 #' @export
 iso_plot_dual_inlet_data <- function(
   iso_files, data = c(), filter = NULL,
-  panel = data, color = file_id, linetype = NULL, shape = type) {
+  panel = data, color = file_id, linetype = NULL, shape = type,
+  ...) {
   
   # checks
   if(!iso_is_dual_inlet(iso_files)) 
     stop("iso_plot_dual_inlet_data can only plot dual inlet iso_files", call. = FALSE)
 
+  # check for deprecated parameters
+  dots <- list(...)
+  old <- c("panel_by", "color_by", "linetype_by", "shape_by")
+  if (any(old %in% names(dots))) {
+    glue("deprecated parameter(s): ",
+         "'{collapse(old[old %in% names(dots)], sep=\"', '\")}' ",
+         "- please check the function documentation for details on ",
+         "the updated parameters") %>% 
+      stop(call. = FALSE)
+  }
+  if (length(dots) > 0) {
+    glue("unkown parameter(s): ",
+         "'{collapse(names(dots), sep=\"', '\")}' ") %>% 
+      stop(call. = FALSE)
+  }
+  
   # global vars
   cycle <- value <- type <- data_without_units <- NULL
   
