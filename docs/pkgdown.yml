@@ -5,7 +5,6 @@ articles:
   continuous_flow: continuous_flow.html
   dual_inlet: dual_inlet.html
   operations: operations.html
-  test: test.html
 urls:
   reference: http://isoreader.kopflab.com/reference
   article: http://isoreader.kopflab.com/articles
