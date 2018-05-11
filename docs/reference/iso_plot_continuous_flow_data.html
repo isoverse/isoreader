@@ -109,7 +109,7 @@
 
     <pre class="usage"><span class='fu'>iso_plot_continuous_flow_data</span>(<span class='no'>iso_files</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'>c</span>(), <span class='kw'>time_interval</span> <span class='kw'>=</span> <span class='fu'>c</span>(),
   <span class='kw'>time_interval_units</span> <span class='kw'>=</span> <span class='st'>"seconds"</span>, <span class='kw'>filter</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>zoom</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>panel</span> <span class='kw'>=</span> <span class='no'>data</span>, <span class='kw'>color</span> <span class='kw'>=</span> <span class='no'>file_id</span>, <span class='kw'>linetype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+  <span class='kw'>zoom</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>panel</span> <span class='kw'>=</span> <span class='no'>data</span>, <span class='kw'>color</span> <span class='kw'>=</span> <span class='no'>file_id</span>, <span class='kw'>linetype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -153,6 +153,10 @@
     <tr>
       <th>linetype</th>
       <td><p>whether to differentiate data by linetype, options are the same as for <code>panel</code> but the default is <code>NULL</code> (i.e. no linetype aesthetic). Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using <code><a href='http://www.rdocumentation.org/packages/ggplot2/topics/scale_linetype'>scale_linetype</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>deprecated parameters</p></td>
     </tr>
     </table>
     
