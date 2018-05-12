@@ -20,7 +20,7 @@ version <- as.character(packageVersion("isoreader"))
 [![Git_Hub_Version](https://img.shields.io/badge/GitHub-`r version`-orange.svg?style=flat-square)](/commits)
 [![Last-Update](https://img.shields.io/badge/updated-`r gsub('-', '--', Sys.Date())`-yellowgreen.svg)](/commits)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://kopflab.github.io/isoreader/)
-[![Build Status](https://travis-ci.org/KopfLab/turnoveR.svg?branch=master)](https://travis-ci.org/KopfLab/isoreader)
+[![Build Status](https://travis-ci.org/KopfLab/isoreader.svg?branch=master)](https://travis-ci.org/KopfLab/isoreader)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/KopfLab/isoreader?branch=master&svg=true)](https://ci.appveyor.com/project/KopfLab/isoreader)
 
 ## About

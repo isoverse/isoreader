@@ -1,5 +1,5 @@
 title: Isoreader
-url: http://isoreader.kopflab.com
+url: http://kopflab.github.io/isoreader/
 template:
   params:
     bootswatch: simplex
@@ -11,8 +11,6 @@ navbar:
   title: isoreader
   type: default
   left:
-  - text: Home
-    href: index.html
   - text: Dual Inlet
     href: articles/dual_inlet.html
   - text: Continuous Flow

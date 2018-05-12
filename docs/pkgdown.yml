@@ -6,6 +6,6 @@ articles:
   dual_inlet: dual_inlet.html
   operations: operations.html
 urls:
-  reference: http://isoreader.kopflab.com/reference
-  article: http://isoreader.kopflab.com/articles
+  reference: http://kopflab.github.io/isoreader//reference
+  article: http://kopflab.github.io/isoreader//articles
 
