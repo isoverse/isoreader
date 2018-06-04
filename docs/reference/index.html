@@ -21,11 +21,17 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
+
+
+
 <meta property="og:title" content="Function reference" />
+
 
 
 <!-- mathjax -->
@@ -37,7 +43,15 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106138361-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'UA-106138361-3');
+</script>
 
   </head>
 
@@ -53,8 +67,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">isoreader</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.9.17.9000</span>
+        <a class="navbar-link" href="../index.html">Isoreader</a>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.18.9000</span>
       </span>
     </div>
 
@@ -99,6 +113,7 @@
     <table class="ref-index">
 
     <colgroup>
+      
       <col class="alias" />
       <col class="title" />
     </colgroup>
@@ -111,25 +126,25 @@
         </th>
       </tr>
       <tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_read_continuous_flow.html">iso_read_continuous_flow()</a></code> </p>
         </td>
         <td><p>Load continuous flow data</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_read_dual_inlet.html">iso_read_dual_inlet()</a></code> </p>
         </td>
         <td><p>Load dual inlet data</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_read_scan.html">iso_read_scan()</a></code> </p>
         </td>
         <td><p>Load scan data</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_reread_files.html">iso_reread_files()</a></code> <code><a href="iso_reread_files.html">iso_reread_archive()</a></code> </p>
         </td>
@@ -143,43 +158,43 @@
         </th>
       </tr>
       <tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_filter_files.html">iso_filter_files()</a></code> </p>
         </td>
         <td><p>Filter iso_files</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_calculate_ratios.html">iso_calculate_ratios()</a></code> </p>
         </td>
         <td><p>Calculate ratios</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_convert_signals.html">iso_convert_signals()</a></code> </p>
         </td>
         <td><p>Convert signal units in continuous flow and dual inlet files</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_convert_time.html">iso_convert_time()</a></code> </p>
         </td>
         <td><p>Convert time units in continuous flow files</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="extract_data.html">extract_data</a></code> </p>
         </td>
         <td><p>Overview of text data extraction functions</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="extract_substring.html">extract_substring()</a></code> </p>
         </td>
         <td><p>Extract a substring from text</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="extract_word.html">extract_word()</a></code> </p>
         </td>
@@ -193,43 +208,43 @@
         </th>
       </tr>
       <tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_get_data_summary.html">iso_get_data_summary()</a></code> </p>
         </td>
         <td><p>Get data summary</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_get_data.html">iso_get_data()</a></code> </p>
         </td>
         <td><p>Aggregate all isofiles data</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_get_file_info.html">iso_get_file_info()</a></code> </p>
         </td>
         <td><p>Aggregate file info</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_get_raw_data.html">iso_get_raw_data()</a></code> </p>
         </td>
         <td><p>Aggregate raw data</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_get_vendor_data_table.html">iso_get_vendor_data_table()</a></code> </p>
         </td>
         <td><p>Aggregate vendor computed table data</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_get_resistors_info.html">iso_get_resistors_info()</a></code> </p>
         </td>
         <td><p>Aggregate resistors from methods info</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_get_standards_info.html">iso_get_standards_info()</a></code> </p>
         </td>
@@ -243,19 +258,19 @@
         </th>
       </tr>
       <tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_plot_continuous_flow_data.html">iso_plot_continuous_flow_data()</a></code> </p>
         </td>
         <td><p>Plot chromatogram from continuous flow data</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_plot_dual_inlet_data.html">iso_plot_dual_inlet_data()</a></code> </p>
         </td>
         <td><p>Plot mass data from dual inlet files</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_plot_raw_data.html">iso_plot_raw_data()</a></code> </p>
         </td>
@@ -269,19 +284,19 @@
         </th>
       </tr>
       <tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_export_to_excel.html">iso_export_to_excel()</a></code> </p>
         </td>
         <td><p>Export data to Excel</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_export_to_feather.html">iso_export_to_feather()</a></code> </p>
         </td>
         <td><p>Export to feather</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_export_to_rda.html">iso_export_to_rda()</a></code> </p>
         </td>
@@ -295,49 +310,49 @@
         </th>
       </tr>
       <tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_get_supported_file_types.html">iso_get_supported_file_types()</a></code> </p>
         </td>
         <td><p>Supported file types</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_get_reader_example.html">iso_get_reader_example()</a></code> <code><a href="iso_get_reader_example.html">iso_get_reader_examples()</a></code> </p>
         </td>
         <td><p>Example files</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_caching.html">iso_turn_reader_caching_on()</a></code> <code><a href="iso_caching.html">iso_turn_reader_caching_off()</a></code> </p>
         </td>
         <td><p>Turn caching on/off</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_cleanup_reader_cache.html">iso_cleanup_reader_cache()</a></code> </p>
         </td>
         <td><p>Cleanup old cached files</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_info_messages.html">iso_turn_info_messages_on()</a></code> <code><a href="iso_info_messages.html">iso_turn_info_messages_off()</a></code> </p>
         </td>
         <td><p>Turn information messages on/off</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_set_default_read_parameters.html">iso_set_default_read_parameters()</a></code> </p>
         </td>
         <td><p>Set default read options</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_get_default_reader_parameters.html">iso_get_default_reader_parameters()</a></code> </p>
         </td>
         <td><p>Get the current default parameters</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_show_default_reader_parameters.html">iso_show_default_reader_parameters()</a></code> </p>
         </td>
@@ -351,31 +366,31 @@
         </th>
       </tr>
       <tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_problem_functions.html">iso_problem_functions</a></code> </p>
         </td>
         <td><p>Problem Functions Overview</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_has_problems.html">iso_has_problems()</a></code> </p>
         </td>
         <td><p>Check for parsing problems</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_get_problems_summary.html">iso_get_problems_summary()</a></code> </p>
         </td>
         <td><p>Retrieve a summary of the problems</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_get_problems.html">iso_get_problems()</a></code> </p>
         </td>
         <td><p>Retrieve parsing problems</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_omit_files_with_problems.html">iso_omit_files_with_problems()</a></code> </p>
         </td>
@@ -389,31 +404,31 @@
         </th>
       </tr>
       <tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_read_files.html">iso_read_files()</a></code> </p>
         </td>
         <td><p>Core function to read isotope data files</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_data_structure.html">iso_is_file()</a></code> <code><a href="iso_data_structure.html">iso_is_file_list()</a></code> <code><a href="iso_data_structure.html">iso_is_object()</a></code> <code><a href="iso_data_structure.html">iso_is_dual_inlet()</a></code> <code><a href="iso_data_structure.html">iso_is_continuous_flow()</a></code> <code><a href="iso_data_structure.html">iso_as_file_list()</a></code> </p>
         </td>
         <td><p>Isoreader data structure functions</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_debug_mode.html">iso_turn_debug_on()</a></code> <code><a href="iso_debug_mode.html">iso_turn_debug_off()</a></code> <code><a href="iso_debug_mode.html">set_read_file_event_expr()</a></code> </p>
         </td>
         <td><p>Debugging functions</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="print.binary_structure_map.html">print(<i>&lt;binary_structure_map&gt;</i>)</a></code> </p>
         </td>
         <td><p>Print binary structure map</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="iso_printing.html">print(<i>&lt;iso_file_list&gt;</i>)</a></code> <code><a href="iso_printing.html">print(<i>&lt;iso_file&gt;</i>)</a></code> <code><a href="iso_printing.html">print(<i>&lt;dual_inlet&gt;</i>)</a></code> <code><a href="iso_printing.html">print(<i>&lt;continuous_flow&gt;</i>)</a></code> </p>
         </td>

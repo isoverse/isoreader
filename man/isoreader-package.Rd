@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Sebastian Kopf \email{sebastian.kopf@colorado.edu}
+\strong{Maintainer}: Sebastian Kopf \email{sebastian.kopf@colorado.edu} (0000-0002-2044-0201)
 
 }
 \keyword{internal}

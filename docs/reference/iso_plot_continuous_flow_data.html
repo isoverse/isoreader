@@ -21,14 +21,20 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
+
+
+
 <meta property="og:title" content="Plot chromatogram from continuous flow data — iso_plot_continuous_flow_data" />
 
 <meta property="og:description" content="Plot chromatogram from continuous flow data" />
 <meta name="twitter:card" content="summary" />
+
 
 
 <!-- mathjax -->
@@ -40,7 +46,15 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106138361-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'UA-106138361-3');
+</script>
 
   </head>
 
@@ -56,8 +70,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">isoreader</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.9.17.9000</span>
+        <a class="navbar-link" href="../index.html">Isoreader</a>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.18.9000</span>
       </span>
     </div>
 
@@ -97,16 +111,20 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot chromatogram from continuous flow data</h1>
-    <small>Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/plotting.R'><code>R/plotting.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/plotting.R'><code>R/plotting.R</code></a></small>
+    <div class="hidden name"><code>iso_plot_continuous_flow_data.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Plot chromatogram from continuous flow data</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>iso_plot_continuous_flow_data</span>(<span class='no'>iso_files</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'>c</span>(), <span class='kw'>time_interval</span> <span class='kw'>=</span> <span class='fu'>c</span>(),
   <span class='kw'>time_interval_units</span> <span class='kw'>=</span> <span class='st'>"seconds"</span>, <span class='kw'>filter</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>zoom</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>panel</span> <span class='kw'>=</span> <span class='no'>data</span>, <span class='kw'>color</span> <span class='kw'>=</span> <span class='no'>file_id</span>, <span class='kw'>linetype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>zoom</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>panel</span> <span class='kw'>=</span> <span class='no'>data</span>, <span class='kw'>color</span> <span class='kw'>=</span> <span class='no'>file_id</span>, <span class='kw'>linetype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>label</span> <span class='kw'>=</span> <span class='no'>file_id</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -150,6 +168,10 @@
     <tr>
       <th>linetype</th>
       <td><p>whether to differentiate data by linetype, options are the same as for <code>panel</code> but the default is <code>NULL</code> (i.e. no linetype aesthetic). Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using <code><a href='http://www.rdocumentation.org/packages/ggplot2/topics/scale_linetype'>scale_linetype</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>label</th>
+      <td><p>this is primarily of use for turning these into interactive plots via <a href='http://www.rdocumentation.org/packages/plotly/topics/ggplotly'>ggplotly</a> as it present as an additional mousover label. Any unique file identifier is a useful choice, the default is <code>file_id</code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
