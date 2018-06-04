@@ -21,14 +21,20 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
+
+
+
 <meta property="og:title" content="Remove problematic files — iso_omit_files_with_problems" />
 
 <meta property="og:description" content="Removes the files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the iso_problem_functions." />
 <meta name="twitter:card" content="summary" />
+
 
 
 <!-- mathjax -->
@@ -40,7 +46,15 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106138361-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'UA-106138361-3');
+</script>
 
   </head>
 
@@ -56,8 +70,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">isoreader</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.9.17.9000</span>
+        <a class="navbar-link" href="../index.html">Isoreader</a>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.18.9000</span>
       </span>
     </div>
 
@@ -97,12 +111,15 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Remove problematic files</h1>
-    <small>Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/problems.R'><code>R/problems.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/problems.R'><code>R/problems.R</code></a></small>
+    <div class="hidden name"><code>iso_omit_files_with_problems.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Removes the files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the <a href='iso_problem_functions.html'>iso_problem_functions</a>.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>iso_omit_files_with_problems</span>(<span class='no'>iso_files</span>, <span class='kw'>remove_files_with_errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>remove_files_with_warnings</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>

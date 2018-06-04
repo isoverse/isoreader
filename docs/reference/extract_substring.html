@@ -21,15 +21,21 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
+
+
+
 <meta property="og:title" content="Extract a substring from text — extract_substring" />
 
 <meta property="og:description" content="This is a convenience function to capture substrings from textual data. 
 Uses str_match_all internally but instead of returning everything, always returns only one single part of the match, depending on parameters capture_n and capture_group." />
 <meta name="twitter:card" content="summary" />
+
 
 
 <!-- mathjax -->
@@ -41,7 +47,15 @@ Uses str_match_all internally but instead of returning everything, always return
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106138361-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'UA-106138361-3');
+</script>
 
   </head>
 
@@ -57,8 +71,8 @@ Uses str_match_all internally but instead of returning everything, always return
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">isoreader</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.9.17.9000</span>
+        <a class="navbar-link" href="../index.html">Isoreader</a>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.18.9000</span>
       </span>
     </div>
 
@@ -98,13 +112,16 @@ Uses str_match_all internally but instead of returning everything, always return
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Extract a substring from text</h1>
-    <small>Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/cleanup.R'><code>R/cleanup.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/cleanup.R'><code>R/cleanup.R</code></a></small>
+    <div class="hidden name"><code>extract_substring.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>This is a convenience function to capture substrings from textual data. 
 Uses <code><a href='http://www.rdocumentation.org/packages/stringr/topics/str_match'>str_match_all</a></code> internally but instead of returning everything, always returns only one single part of the match, depending on parameters <code>capture_n</code> and <code>capture_group</code>.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>extract_substring</span>(<span class='no'>string</span>, <span class='no'>pattern</span>, <span class='kw'>capture_n</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>capture_bracket</span> <span class='kw'>=</span> <span class='fl'>0</span>,
   <span class='kw'>missing</span> <span class='kw'>=</span> <span class='fl'>NA_character_</span>)</pre>

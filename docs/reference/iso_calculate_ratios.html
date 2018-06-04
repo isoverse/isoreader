@@ -21,14 +21,20 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
+
+
+
 <meta property="og:title" content="Calculate ratios — iso_calculate_ratios" />
 
 <meta property="og:description" content="Calculate ratios from raw data. Note that these are recorded ratios and are not normalized against any standards yet. The ratios are calculated straight from the raw data without any unit conversions, i.e. if the raw data is in mV, the ratio is mV/mV, if in nA the ratio is nA/nA, etc. These raw ratios are subsequently NOT identical to absolute ratios, in fact they are usually not even close (especially if raw data recorded as voltages with different resistors). If raw data is first converted to identical current units (iso_convert_signals), the ratios may be close to their true values (+instrument fractionation), however, isotope ratios should always be calibrated against reference ratios measured in the same data file." />
 <meta name="twitter:card" content="summary" />
+
 
 
 <!-- mathjax -->
@@ -40,7 +46,15 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106138361-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'UA-106138361-3');
+</script>
 
   </head>
 
@@ -56,8 +70,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">isoreader</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.9.17.9000</span>
+        <a class="navbar-link" href="../index.html">Isoreader</a>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.18.9000</span>
       </span>
     </div>
 
@@ -97,12 +111,15 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate ratios</h1>
-    <small>Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/calculate_ratios.R'><code>R/calculate_ratios.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/calculate_ratios.R'><code>R/calculate_ratios.R</code></a></small>
+    <div class="hidden name"><code>iso_calculate_ratios.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Calculate ratios from raw data. Note that these are recorded ratios and are not normalized against any standards yet. The ratios are calculated straight from the raw data without any unit conversions, i.e. if the raw data is in mV, the ratio is mV/mV, if in nA the ratio is nA/nA, etc. These raw ratios are subsequently NOT identical to absolute ratios, in fact they are usually not even close (especially if raw data recorded as voltages with different resistors). If raw data is first converted to identical current units (<code><a href='iso_convert_signals.html'>iso_convert_signals</a></code>), the ratios may be close to their true values (+instrument fractionation), however, isotope ratios should always be calibrated against reference ratios measured in the same data file.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>iso_calculate_ratios</span>(<span class='no'>iso_files</span>, <span class='no'>ratios</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
     
