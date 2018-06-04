@@ -34,7 +34,7 @@ This package is intended as a unified one-stop command line interface to all com
 You can install isoreader from github with the devtools package (version > 1.13.2 required for bioconductor support).
 
 ```{r gh-installation, eval = FALSE}
-# install.packages("devtools") # once on CRAN
+# install.packages("devtools") # only needed once
 devtools::install_github("KopfLab/isoreader")
 ```
 

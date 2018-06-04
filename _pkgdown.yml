@@ -3,7 +3,13 @@ url: http://kopflab.github.io/isoreader/
 template:
   params:
     bootswatch: simplex
-    
+    ganalytics: UA-106138361-3
+
+development:
+  mode: unreleased
+  version_label: danger
+  version_tooltip: "release candidate"
+
 home:
   strip_header: true    
 
