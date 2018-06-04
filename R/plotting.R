@@ -38,6 +38,7 @@ iso_plot_raw_data <- function(iso_files, ..., quiet = default(quiet)) {
 #' @param panel whether to panel data by anything - any data column is possible (see notes in the \code{filter} parameter) but the most commonly used options are \code{panel = NULL} (overlay all), \code{panel = data} (by mass/ratio data), \code{panel = file_id} (panel by files, alternatively use any appropriate file_info column). The default is panelling by \code{data}.
 #' @param color whether to color data by anything, options are the same as for \code{panel} but the default is \code{file_id}.
 #' @param linetype whether to differentiate data by linetype, options are the same as for \code{panel} but the default is \code{NULL} (i.e. no linetype aesthetic). Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}.
+#' @param label this is primarily of use for turning these into interactive plots via \link[plotly]{ggplotly} as it present as an additional mousover label. Any unique file identifier is a useful choice, the default is \code{file_id}.
 #' @param ... deprecated parameters
 #' @family plot functions
 #' @export
@@ -46,7 +47,7 @@ iso_plot_continuous_flow_data <- function(
   time_interval = c(), time_interval_units = "seconds", 
   filter = NULL,
   normalize = FALSE, zoom = NULL, 
-  panel = data, color = file_id, linetype = NULL,
+  panel = data, color = file_id, linetype = NULL, label = file_id,
   ...) {
   
   # safety checks
@@ -78,7 +79,8 @@ iso_plot_continuous_flow_data <- function(
   if (nrow(raw_data) == 0) stop("no raw data in supplied iso_files", call. = FALSE)
   
   # check for column existence
-  aes_quos <- list(panel = enquo(panel), color = enquo(color), linetype = enquo(linetype))
+  aes_quos <- list(panel = enquo(panel), color = enquo(color), 
+                   linetype = enquo(linetype), label = enquo(label))
   aes_cols <- get_column_names(raw_data, panel = aes_quos$panel, color = aes_quos$color, linetype = aes_quos$linetype, 
                               n_reqs = list(panel = "?", color = "?", linetype = "?"))
 
@@ -237,6 +239,10 @@ iso_plot_continuous_flow_data <- function(
   if (!is_empty(aes_cols$linetype)) 
     p <- p %+% aes_(linetype = sym(aes_cols$linetype))
   
+  # label
+  if (!quo_is_null(aes_quos$label))
+    p <- p %+% aes_(label = aes_quos$label)
+  
   # return plot
   return(p)
 }
@@ -253,7 +259,7 @@ iso_plot_continuous_flow_data <- function(
 #' @export
 iso_plot_dual_inlet_data <- function(
   iso_files, data = c(), filter = NULL,
-  panel = data, color = file_id, linetype = NULL, shape = type,
+  panel = data, color = file_id, linetype = NULL, shape = type, label = file_id,
   ...) {
   
   # checks
@@ -284,7 +290,9 @@ iso_plot_dual_inlet_data <- function(
   if (nrow(raw_data) == 0) stop("no raw data in supplied iso_files", call. = FALSE)
 
   # check for column existence
-  aes_quos <- list(panel = enquo(panel), color = enquo(color), linetype = enquo(linetype), shape = enquo(shape))
+  aes_quos <- list(panel = enquo(panel), color = enquo(color), 
+                   linetype = enquo(linetype), shape = enquo(shape), 
+                   label = enquo(label))
   
   
   aes_cols <- get_column_names(
@@ -360,6 +368,10 @@ iso_plot_dual_inlet_data <- function(
   if (!is_empty(aes_cols$shape)) 
     p <- p %+% aes_(shape = sym(aes_cols$shape))
 
+  # label
+  if (!quo_is_null(aes_quos$label))
+    p <- p %+% aes_(label = aes_quos$label)
+  
   # return plot
   return(p)
 }
