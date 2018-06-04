@@ -3,7 +3,7 @@
 isoreader
 =========
 
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader) [![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-0.9.17.9000-orange.svg?style=flat-square)](/commits) [![Last-Update](https://img.shields.io/badge/updated-2018--05--12-yellowgreen.svg)](/commits) [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://kopflab.github.io/isoreader/) [![Build Status](https://travis-ci.org/KopfLab/isoreader.svg?branch=master)](https://travis-ci.org/KopfLab/isoreader) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/KopfLab/isoreader?branch=master&svg=true)](https://ci.appveyor.com/project/KopfLab/isoreader)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader) [![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-0.9.18.9000-orange.svg?style=flat-square)](/commits) [![Last-Update](https://img.shields.io/badge/updated-2018--06--04-yellowgreen.svg)](/commits) [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://kopflab.github.io/isoreader/) [![Build Status](https://travis-ci.org/KopfLab/isoreader.svg?branch=master)](https://travis-ci.org/KopfLab/isoreader) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/KopfLab/isoreader?branch=master&svg=true)](https://ci.appveyor.com/project/KopfLab/isoreader)
 
 About
 -----
@@ -18,7 +18,7 @@ Installation
 You can install isoreader from github with the devtools package (version &gt; 1.13.2 required for bioconductor support).
 
 ``` r
-# install.packages("devtools") # once on CRAN
+# install.packages("devtools") # only needed once
 devtools::install_github("KopfLab/isoreader")
 ```
 
