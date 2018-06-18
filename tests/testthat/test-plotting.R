@@ -19,8 +19,9 @@ test_that("test that plot continuous flow works properly", {
   expect_error(cf %>% {.$raw_data$time.min = 1:10; .} %>% iso_plot_raw_data(.), "unclear which column is the time column")
   expect_error(iso_plot_raw_data(cf, time_interval = 55), "time interval needs to be a vector with two numeric entries")
   expect_error(iso_plot_raw_data(cf, panel = DNE), "unknown column")
-  expect_error(iso_plot_raw_data(cf, color = DNE), "unknown column")
-  expect_error(iso_plot_raw_data(cf, linetype = DNE), "unknown column")
+  expect_error(iso_plot_raw_data(cf, color = DNE), "not.*valid")
+  expect_error(iso_plot_raw_data(cf, linetype = DNE), "not.*valid")
+  expect_error(iso_plot_raw_data(cf, label = DNE), "not.*valid")
   
   # generate plot
   cf <- iso_calculate_ratios(cf, "46/44")
@@ -69,9 +70,10 @@ test_that("test that plot dual inlet works properly", {
   expect_error(iso_plot_raw_data(di, panel = DNE), "unknown column")
   expect_error(iso_plot_raw_data(di, panel = DNE ~ data), "unknown column")
   expect_error(iso_plot_raw_data(di, panel = data ~ DNE), "unknown column")
-  expect_error(iso_plot_raw_data(di, color = DNE), "unknown colum")
-  expect_error(iso_plot_raw_data(di, linetype = DNE), "unknown column")
-  expect_error(iso_plot_raw_data(di, shape = DNE), "unknown column")
+  expect_error(iso_plot_raw_data(di, color = DNE), "not.*valid")
+  expect_error(iso_plot_raw_data(di, linetype = DNE), "not.*valid")
+  expect_error(iso_plot_raw_data(di, shape = DNE), "not.*valid")
+  expect_error(iso_plot_raw_data(di, label = DNE), "not.*valid")
   
   # generate plot
   di <- iso_calculate_ratios(di, "46/44")
