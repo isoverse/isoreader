@@ -26,9 +26,9 @@ iso_plot_continuous_flow_data(iso_files, data = c(), time_interval = c(),
 
 \item{panel}{whether to panel data by anything - any data column is possible (see notes in the \code{filter} parameter) but the most commonly used options are \code{panel = NULL} (overlay all), \code{panel = data} (by mass/ratio data), \code{panel = file_id} (panel by files, alternatively use any appropriate file_info column). The default is panelling by \code{data}.}
 
-\item{color}{whether to color data by anything, options are the same as for \code{panel} but the default is \code{file_id}.}
+\item{color}{whether to color data by anything, options are the same as for \code{panel} but the default is \code{file_id} and complex expressions (not just columns) are supported.}
 
-\item{linetype}{whether to differentiate data by linetype, options are the same as for \code{panel} but the default is \code{NULL} (i.e. no linetype aesthetic). Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}.}
+\item{linetype}{whether to differentiate data by linetype, options are the same as for \code{panel} but the default is \code{NULL} (i.e. no linetype aesthetic) and complex expressions (not just columns) are supported. Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}.}
 
 \item{label}{this is primarily of use for turning these into interactive plots via \link[plotly]{ggplotly} as it present as an additional mousover label. Any unique file identifier is a useful choice, the default is \code{file_id}.}
 
