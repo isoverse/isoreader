@@ -1,3 +1,49 @@
+# Test quo expressions by confirming they can create a valid column in a mutate
+# @note that global variables will be interpreted even in the context of the data frame
+# ideally this will be only within the data frame
+check_expressions <- function(df, ...) {
+  
+  # df name and data frame test
+  if (missing(df)) stop("no data frame supplied", call. = FALSE)
+  df_name <- enquo(df) %>% quo_text()
+  df <- enquo(df) %>% eval_tidy()
+  if (!is.data.frame(df))
+    glue("parameter {df_name} is not a data frame") %>% stop(call. = FALSE)
+  
+  # use a safe version of mutate to check all expresions
+  # (use mutate instead of eval_tidy to make sure it's absolutely valid)
+  safe_eval <- safely(mutate)
+  expr_quos <- quos(!!!list(...)) %>% 
+    # make sure to evaluate calls to default
+    resolve_defaults() %>% 
+    # make sure that the expressions are locally evaluated
+    map(~quo(!!get_expr(.x)))
+  expr_quos <- expr_quos[!map_lgl(expr_quos, quo_is_null)]
+  expr_errors <- map(expr_quos, ~safe_eval(df, !!.x)$error)
+
+  # check results
+  ok <- map_lgl(expr_errors, ~is.null(.x))
+
+  # summarize if there were any errors
+  if (!all(ok)) {
+    params <-
+      map2_chr(names(expr_quos)[!ok], expr_quos[!ok], function(var, val) {
+        if (nchar(var) > 0 && var != quo_text(val)) str_c(var, " = ", quo_text(val))
+        else quo_text(val)
+      }) %>%
+      collapse("', '", last = "' and '")
+    errors <- map_chr(expr_errors[!ok], ~.x$message) %>% collapse("\n- ")
+    err_msg <-
+      if (sum(!ok) > 1)
+        glue("'{params}' are invalid expressions in data frame '{df_name}':\n- {errors}")
+      else
+        glue("'{params}' is not a valid expression in data frame '{df_name}':\n- {errors}")
+    stop(err_msg, call. = FALSE)
+  }
+
+  return(invisible(df))
+}
+
 # Get the column names for a set of parameters referencing columns in a data frame. Compatible with all dplyr type column selection
 # criteria including both standard and non-standard evaluation. Throws errors if expressions cannot be evaluated or if an incorrect
 # number of columns are identified for a given parameter.

@@ -36,8 +36,8 @@ iso_plot_raw_data <- function(iso_files, ..., quiet = default(quiet)) {
 #' @param normalize whether to normalize all data (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if \code{zoom} is set) is applied after normalizing.
 #' @param zoom if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values > 1 are zoom in, values < 1 are zoom out, baseline always remains the bottom anchor point, zooming is always relative to the max in the plot (even if that is outside visible frame). Note that for overlay plots (\code{panel_bu = "none"}) zooming is relative to the max in each panel (potentially across different data traces). Also note that zooming only affects masses, ratios are not zoomed.
 #' @param panel whether to panel data by anything - any data column is possible (see notes in the \code{filter} parameter) but the most commonly used options are \code{panel = NULL} (overlay all), \code{panel = data} (by mass/ratio data), \code{panel = file_id} (panel by files, alternatively use any appropriate file_info column). The default is panelling by \code{data}.
-#' @param color whether to color data by anything, options are the same as for \code{panel} but the default is \code{file_id}.
-#' @param linetype whether to differentiate data by linetype, options are the same as for \code{panel} but the default is \code{NULL} (i.e. no linetype aesthetic). Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}.
+#' @param color whether to color data by anything, options are the same as for \code{panel} but the default is \code{file_id} and complex expressions (not just columns) are supported.
+#' @param linetype whether to differentiate data by linetype, options are the same as for \code{panel} but the default is \code{NULL} (i.e. no linetype aesthetic) and complex expressions (not just columns) are supported. Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}.
 #' @param label this is primarily of use for turning these into interactive plots via \link[plotly]{ggplotly} as it present as an additional mousover label. Any unique file identifier is a useful choice, the default is \code{file_id}.
 #' @param ... deprecated parameters
 #' @family plot functions
@@ -78,12 +78,13 @@ iso_plot_continuous_flow_data <- function(
   raw_data <- iso_get_raw_data(iso_files, gather = TRUE, quiet = TRUE, include_file_info = everything())
   if (nrow(raw_data) == 0) stop("no raw data in supplied iso_files", call. = FALSE)
   
-  # check for column existence
+  # check for column existence and expression evaluation
   aes_quos <- list(panel = enquo(panel), color = enquo(color), 
                    linetype = enquo(linetype), label = enquo(label))
-  aes_cols <- get_column_names(raw_data, panel = aes_quos$panel, color = aes_quos$color, linetype = aes_quos$linetype, 
-                              n_reqs = list(panel = "?", color = "?", linetype = "?"))
-
+  
+  aes_cols <- get_column_names(raw_data, panel = aes_quos$panel, n_reqs = list(panel = "?"))
+  check_expressions(raw_data, aes_quos$color, aes_quos$linetype, aes_quos$label)
+  
   # only work with desired data (masses and ratios)
   select_data <- if(length(data) == 0) unique(raw_data$data) else as.character(data)
   if ( length(missing <- setdiff(select_data, unique(raw_data$data))) > 0 ) 
@@ -232,13 +233,13 @@ iso_plot_continuous_flow_data <- function(
     p <- p + facet_grid(new_formula(sym(aes_cols$panel), sym(".")), scales = "free_y")
   
   # color
-  if (!is_empty(aes_cols$color))
-    p <- p %+% aes_(color = sym(aes_cols$color))
+  if (!quo_is_null(aes_quos$color))
+    p <- p %+% aes_(color = aes_quos$color)
   
   # linetype
-  if (!is_empty(aes_cols$linetype)) 
-    p <- p %+% aes_(linetype = sym(aes_cols$linetype))
-  
+  if (!quo_is_null(aes_quos$linetype))
+    p <- p %+% aes_(linetype = aes_quos$linetype)
+    
   # label
   if (!quo_is_null(aes_quos$label))
     p <- p %+% aes_(label = aes_quos$label)
@@ -293,11 +294,8 @@ iso_plot_dual_inlet_data <- function(
   aes_quos <- list(panel = enquo(panel), color = enquo(color), 
                    linetype = enquo(linetype), shape = enquo(shape), 
                    label = enquo(label))
-  
-  
-  aes_cols <- get_column_names(
-    raw_data, color = aes_quos$color, linetype = aes_quos$linetype, shape = aes_quos$shape, 
-    n_reqs = list(color = "?", linetype = "?", shape = "?"))
+  aes_cols <- list()
+  check_expressions(raw_data, aes_quos$color, aes_quos$linetype, aes_quos$shape, aes_quos$label)
   
   if (quo_is_null(aes_quos$panel)) {
     # no panel
@@ -357,16 +355,16 @@ iso_plot_dual_inlet_data <- function(
   }
   
   # color
-  if (!is_empty(aes_cols$color))
-    p <- p %+% aes_(color = sym(aes_cols$color))
+  if (!quo_is_null(aes_quos$color))
+    p <- p %+% aes_(color = aes_quos$color)
 
   # linetype
-  if (!is_empty(aes_cols$linetype)) 
-    p <- p %+% aes_(linetype = sym(aes_cols$linetype))
+  if (!quo_is_null(aes_quos$linetype)) 
+    p <- p %+% aes_(linetype = aes_quos$linetype)
   
   # shape_by
-  if (!is_empty(aes_cols$shape)) 
-    p <- p %+% aes_(shape = sym(aes_cols$shape))
+  if (!quo_is_null(aes_quos$shape)) 
+    p <- p %+% aes_(shape = aes_quos$shape)
 
   # label
   if (!quo_is_null(aes_quos$label))
