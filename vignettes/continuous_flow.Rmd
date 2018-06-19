@@ -145,7 +145,7 @@ iso_files %>%
 
 Raw data typically only includes ion signals but isotope ratios are often needed to calculate and visualize the data. For this purpose, isoreader provides a dynamic ratio calculation function (`iso_calculate_ratios()`) that accepts any combination of masses, here demonstrated for the standard CO2 ratios $\frac{46}{44}$ and $\frac{45}{44}$. Additionally, the following example demonstrates how the `filter` parameter can be used to exclude plotting artifacts (here e.g. the extreme ratio values seen right after the magnet jump). Notice how the ratios calculated from current intensities are close to 0 (as the real ratios likely are) whereas those calculated from voltages are close to 1 (due to the so chosen, different resistors in the detector circuit). See the section on **Signal conversion** further down on how to scale to uniform intensity units to address this comparison obstacle.
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # for between
 library(dplyr)
 # for expand range
