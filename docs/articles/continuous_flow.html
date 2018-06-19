@@ -258,14 +258,6 @@ iso_files <span class="op">%&gt;%</span><span class="st"> </span>
 <h3 class="hasAnchor">
 <a href="#isotope-ratios" class="anchor"></a>Isotope ratios</h3>
 <p>Raw data typically only includes ion signals but isotope ratios are often needed to calculate and visualize the data. For this purpose, isoreader provides a dynamic ratio calculation function (<code><a href="../reference/iso_calculate_ratios.html">iso_calculate_ratios()</a></code>) that accepts any combination of masses, here demonstrated for the standard CO2 ratios <span class="math inline">\(\frac{46}{44}\)</span> and <span class="math inline">\(\frac{45}{44}\)</span>. Additionally, the following example demonstrates how the <code>filter</code> parameter can be used to exclude plotting artifacts (here e.g. the extreme ratio values seen right after the magnet jump). Notice how the ratios calculated from current intensities are close to 0 (as the real ratios likely are) whereas those calculated from voltages are close to 1 (due to the so chosen, different resistors in the detector circuit). See the section on <strong>Signal conversion</strong> further down on how to scale to uniform intensity units to address this comparison obstacle.</p>
-<pre><code>#&gt; 
-#&gt; Attaching package: 'dplyr'
-#&gt; The following objects are masked from 'package:stats':
-#&gt; 
-#&gt;     filter, lag
-#&gt; The following objects are masked from 'package:base':
-#&gt; 
-#&gt;     intersect, setdiff, setequal, union</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iso_files &lt;-
 <span class="st">  </span>iso_files <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="co"># calculate 46/44 and 45/44 ratios</span>
