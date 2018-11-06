@@ -4,16 +4,15 @@ language: R
 sudo: false
 dist: trusty
 cache: packages
-r_binary_packages:
-  - devtools
-  - roxygen2
 bioc_packages:
   - rhdf5
 r:
   - oldrel
   - release
   - devel
-  
+os:
+  - linux
+  - osx
 addons:
   apt:
     sources:
