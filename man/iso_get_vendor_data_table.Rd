@@ -5,7 +5,8 @@
 \title{Aggregate vendor computed table data}
 \usage{
 iso_get_vendor_data_table(iso_files, with_units = FALSE,
-  select = everything(), include_file_info = NULL, quiet = default(quiet))
+  select = everything(), include_file_info = NULL,
+  quiet = default(quiet))
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -28,3 +29,4 @@ Other data retrieval functions: \code{\link{iso_get_data}},
   \code{\link{iso_get_resistors_info}},
   \code{\link{iso_get_standards_info}}
 }
+\concept{data retrieval functions}

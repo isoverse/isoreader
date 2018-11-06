@@ -37,3 +37,4 @@ normalization is not useful for dual inlet data, except potentially between stan
 Other plot functions: \code{\link{iso_plot_continuous_flow_data}},
   \code{\link{iso_plot_raw_data}}
 }
+\concept{plot functions}

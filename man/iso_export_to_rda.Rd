@@ -23,3 +23,4 @@ This function exports the passed in iso_files to an R Data Archive (.rda) file, 
 Other export functions: \code{\link{iso_export_to_excel}},
   \code{\link{iso_export_to_feather}}
 }
+\concept{export functions}
