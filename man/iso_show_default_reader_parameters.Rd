@@ -23,3 +23,4 @@ Other settings functions: \code{\link{iso_caching}},
   \code{\link{iso_info_messages}},
   \code{\link{iso_set_default_read_parameters}}
 }
+\concept{settings functions}

@@ -4,10 +4,10 @@
 \alias{iso_plot_continuous_flow_data}
 \title{Plot chromatogram from continuous flow data}
 \usage{
-iso_plot_continuous_flow_data(iso_files, data = c(), time_interval = c(),
-  time_interval_units = "seconds", filter = NULL, normalize = FALSE,
-  zoom = NULL, panel = data, color = file_id, linetype = NULL,
-  label = file_id, ...)
+iso_plot_continuous_flow_data(iso_files, data = c(),
+  time_interval = c(), time_interval_units = "seconds",
+  filter = NULL, normalize = FALSE, zoom = NULL, panel = data,
+  color = file_id, linetype = NULL, label = file_id, ...)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -41,3 +41,4 @@ Plot chromatogram from continuous flow data
 Other plot functions: \code{\link{iso_plot_dual_inlet_data}},
   \code{\link{iso_plot_raw_data}}
 }
+\concept{plot functions}
