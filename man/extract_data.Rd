@@ -34,3 +34,4 @@ use \code{\link[readr]{parse_number}} instead if this is not the case (re-export
 Other data extraction functions: \code{\link{extract_substring}},
   \code{\link{extract_word}}
 }
+\concept{data extraction functions}

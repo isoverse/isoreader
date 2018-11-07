@@ -4,19 +4,12 @@
 \name{reexports}
 \alias{reexports}
 \alias{parse_number}
-\alias{reexports}
 \alias{parse_logical}
-\alias{reexports}
 \alias{parse_integer}
-\alias{reexports}
 \alias{parse_double}
-\alias{reexports}
 \alias{parse_datetime}
-\alias{reexports}
 \alias{problems}
-\alias{reexports}
 \alias{stop_for_problems}
-\alias{reexports}
 \alias{\%>\%}
 \title{Objects exported from other packages}
 \keyword{internal}
