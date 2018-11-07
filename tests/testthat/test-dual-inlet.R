@@ -38,6 +38,10 @@ test_that("test that did files can be read", {
   expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
   
+  expect_true(file.exists(file <- file.path("test_data", "did_example_unicode.did")))
+  expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
+  expect_equal(nrow(problems(did)), 0)
+  
   # minimal files
   expect_true(dir.exists(files <- file.path("test_data", "minimal_files")))
   expect_true(iso_is_file_list(dids <- iso_read_dual_inlet(files)))
