@@ -30,3 +30,4 @@ Uses \code{\link[stringr]{str_match_all}} internally but instead of returning ev
 Other data extraction functions: \code{\link{extract_data}},
   \code{\link{extract_word}}
 }
+\concept{data extraction functions}

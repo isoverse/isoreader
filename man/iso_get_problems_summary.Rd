@@ -23,3 +23,4 @@ Other problem functions: \code{\link{iso_get_problems}},
   \code{\link{iso_omit_files_with_problems}},
   \code{\link{iso_problem_functions}}
 }
+\concept{problem functions}
