@@ -134,7 +134,7 @@ extract_did_vendor_data_table <- function(ds) {
                                  re_block("fef-x"), re_block("text"), # actual column name
                                  re_null(4), re_block("stx"))
   column_data_re <- re_combine(re_text("/"), re_block("fef-0"), re_block("fef-x"), re_block("text"), re_null(4), 
-                               re_block("x-000"), re_block("x-000"), re_block("x-000")) # data comes after this
+                               re_block("x-000"), re_block("x-000")) # data comes after this
   column_header_positions <- find_next_patterns(ds$binary, column_header_re)
   column_data_positions <- find_next_patterns(ds$binary, column_data_re)
   
@@ -160,10 +160,14 @@ extract_did_vendor_data_table <- function(ds) {
       # capture column data
       move_to_pos(column_data_positions[i]) %>% 
       move_to_next_pattern(column_data_re, max_gap = 0) %>% # move to start of data
+      capture_n_data("n_values", "integer", n = 1, sensible = c(1, 1000)) %>%  # NOTE: this assumes more than 1000 cycles are unrealistic in dual inlet
       capture_data("values", "double", re_block("fef-0"), re_block("stx"), sensible = c(-1e10, 1e10))
     
-    if (length(ds$binary$data$values) %% 2 != 0)
-      stop("odd number of data entries recovered", call. = FALSE)
+    # safety check
+    if (length(ds$binary$data$values) != 2 * ds$binary$data$n_values)
+      glue::glue("inconsistent number of data entries recovered ({length(ds$binary$data$values)}) - ",
+                 "expected {2 * ds$binary$data$n_values} values from {ds$binary$data$n_values} cycles") %>% 
+      stop(call. = FALSE)
     
     table_column <- list(
       list(

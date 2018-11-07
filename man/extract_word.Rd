@@ -5,8 +5,9 @@
 \title{Extract words from text}
 \usage{
 extract_word(string, capture_n = 1, include_numbers = TRUE,
-  include_underscore = FALSE, include_dash = FALSE, include_space = FALSE,
-  include_colon = FALSE, missing = NA_character_)
+  include_underscore = FALSE, include_dash = FALSE,
+  include_space = FALSE, include_colon = FALSE,
+  missing = NA_character_)
 }
 \arguments{
 \item{string}{string to extract}
@@ -40,3 +41,4 @@ x_num <- parse_number(x_text)
 Other data extraction functions: \code{\link{extract_data}},
   \code{\link{extract_substring}}
 }
+\concept{data extraction functions}

@@ -2,6 +2,14 @@
 #' @export
 magrittr::`%>%`
 
+# collapse helper to deal with naming change in the glue package
+collapse <- function(...) {
+  if (exists("glue_collapse", where=asNamespace("glue"), mode="function"))
+    glue::glue_collapse(...)
+  else
+    glue::collapse(...)
+}
+
 # helper to make sure columns exist
 # NOTE: is this used?
 col_check <- function(cols, data, fun = sys.call(-1), msg = "You may have to change the parameters in your function call") {

@@ -5,9 +5,9 @@
 \title{Aggregate all isofiles data}
 \usage{
 iso_get_data(iso_files, include_file_info = everything(),
-  include_raw_data = everything(), include_vendor_data_table = everything(),
-  gather = FALSE, with_units = FALSE, with_ratios = FALSE,
-  quiet = default(quiet))
+  include_raw_data = everything(),
+  include_vendor_data_table = everything(), gather = FALSE,
+  with_units = FALSE, with_ratios = FALSE, quiet = default(quiet))
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -39,3 +39,4 @@ Other data retrieval functions: \code{\link{iso_get_file_info}},
   \code{\link{iso_get_standards_info}},
   \code{\link{iso_get_vendor_data_table}}
 }
+\concept{data retrieval functions}

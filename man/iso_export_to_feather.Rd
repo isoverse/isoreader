@@ -4,10 +4,10 @@
 \alias{iso_export_to_feather}
 \title{Export to feather}
 \usage{
-iso_export_to_feather(iso_files, filepath_prefix, include_raw_data = TRUE,
-  include_file_info = TRUE, include_method_info = TRUE,
-  include_vendor_data_table = TRUE, include_problems = TRUE,
-  quiet = default(quiet))
+iso_export_to_feather(iso_files, filepath_prefix,
+  include_raw_data = TRUE, include_file_info = TRUE,
+  include_method_info = TRUE, include_vendor_data_table = TRUE,
+  include_problems = TRUE, quiet = default(quiet))
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -36,3 +36,4 @@ This function exports the passed in iso_files to the Python and R shared feather
 Other export functions: \code{\link{iso_export_to_excel}},
   \code{\link{iso_export_to_rda}}
 }
+\concept{export functions}

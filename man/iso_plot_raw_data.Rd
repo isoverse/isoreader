@@ -22,3 +22,4 @@ For customizing plotting calls, it is easier to use \code{\link{iso_plot_continu
 Other plot functions: \code{\link{iso_plot_continuous_flow_data}},
   \code{\link{iso_plot_dual_inlet_data}}
 }
+\concept{plot functions}
