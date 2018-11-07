@@ -34,3 +34,4 @@ Other data retrieval functions: \code{\link{iso_get_data}},
   \code{\link{iso_get_standards_info}},
   \code{\link{iso_get_vendor_data_table}}
 }
+\concept{data retrieval functions}

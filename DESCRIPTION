@@ -1,7 +1,7 @@
 Package: isoreader
 Title: Read IRMS data files
 Description: R interface to IRMS (isotope ratio mass spectrometry) file formats typically used in stable isotope geochemistry.
-Version: 0.9.19.9000
+Version: 0.9.21.9000
 Authors@R: person("Sebastian", "Kopf", email = "sebastian.kopf@colorado.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-2044-0201"))
 URL: https://github.com/kopflab/isoreader
 BugReports: https://github.com/kopflab/isoreader/issues
@@ -39,4 +39,4 @@ License: GPL (>= 2) | file LICENSE
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
