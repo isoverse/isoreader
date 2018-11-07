@@ -471,7 +471,7 @@ get_ctrl_blocks_config <- function() {
     # c block (not auto processed because Cblocks are found separately)
     `C-block`  = list(size = 20L, auto = FALSE, regexp = "\xff\xff(\\x00|[\x01-\x0f])\\x00.\\x00\x43[\x20-\x7e]+"),
     
-    # text block (not auto processed)
+    # text block (not auto processed) - note that this does not include non standard characters
     text    = list(size = 20L, auto = FALSE, regexp = "([\x20-\x7e]\\x00)+"),
     `text0` = list(size = 20L, auto = FALSE, regexp = "([\x20-\x7e]\\x00)*"), # allows no text
     permil  = list(size = 2L, auto = FALSE, regexp = "\x30\x20")
@@ -484,7 +484,7 @@ get_ctrl_blocks_config <- function() {
 get_data_blocks_config <- function() {
   list(
     raw     = list(type = "raw", auto = FALSE, size = 1L),
-    text    = list(type = "character", auto = TRUE, size = 2L, regexp = "[\x20-\x7e]\\x00"),
+    text    = list(type = "character", auto = TRUE, size = 2L, regexp = "[\x20-\xff]\\x00"), # extended unicode characters
     integer = list(type = "integer", auto = TRUE, size = 4L),
     float   = list(type = "numeric", auto = TRUE, size = 4L),
     double  = list(type = "numeric", auto = TRUE, size = 8L)
@@ -556,12 +556,13 @@ parse_raw_data <- function(raw, type, n = full_raw(), ignore_trailing_zeros = FA
                  error_prefix, n, regexp, raw_trim_text), call. = FALSE)
   }
   
-  if (nchar(regexp) > 0) {
+  if (regexp != "") {
     regexp <- sprintf("(%s){%.0f}", regexp, n)
     if (length(grepRaw(regexp, raw_trim)) == 0) {
-      if (!is.null(errors)) 
+      if (!is.null(errors)) {
         stop(sprintf("%sraw data does not match requested data pattern (%s): %s", 
                      error_prefix, regexp, raw_trim_text), call. = FALSE)
+      }
       return(NULL)
     }
   }
@@ -570,8 +571,12 @@ parse_raw_data <- function(raw, type, n = full_raw(), ignore_trailing_zeros = FA
   type_bytes <- seq_along(dbc) %>% rep(times = map_int(dbc, "size")) %>% rep(times = n)
   data <- list()
   for (i in 1:length(dbc)) {
-    parsed_data <- readBin(raw[type_bytes == i], dbc[[i]]$type, size = dbc[[i]]$size, n = n)
-    if (dbc[[i]]$type == "character") parsed_data <- str_c(parsed_data, collapse = "")
+    
+    if (dbc[[i]]$type == "character") {
+      parsed_data <- raw[type_bytes == i] %>% intToUtf8()
+    } else {
+      parsed_data <- readBin(raw[type_bytes == i], what = dbc[[i]]$type, size = dbc[[i]]$size, n = n)
+    }
     data <- c(data, list(parsed_data))
   }
   names(data) <- 1:length(dbc)

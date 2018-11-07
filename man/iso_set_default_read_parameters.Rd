@@ -4,8 +4,9 @@
 \alias{iso_set_default_read_parameters}
 \title{Set default read options}
 \usage{
-iso_set_default_read_parameters(data = NULL, read_raw_data, read_file_info,
-  read_method_info, read_vendor_data_table, quiet = default(quiet))
+iso_set_default_read_parameters(data = NULL, read_raw_data,
+  read_file_info, read_method_info, read_vendor_data_table,
+  quiet = default(quiet))
 }
 \arguments{
 \item{data}{a data frame - returned invisibly as is if provided (e.g. in the middle of a pipeline)}
@@ -29,3 +30,4 @@ Other settings functions: \code{\link{iso_caching}},
   \code{\link{iso_info_messages}},
   \code{\link{iso_show_default_reader_parameters}}
 }
+\concept{settings functions}
