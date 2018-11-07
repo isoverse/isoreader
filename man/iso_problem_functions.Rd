@@ -25,3 +25,4 @@ Other problem functions: \code{\link{iso_get_problems_summary}},
   \code{\link{iso_has_problems}},
   \code{\link{iso_omit_files_with_problems}}
 }
+\concept{problem functions}
