@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.19.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
       </span>
     </div>
 
@@ -117,14 +117,14 @@
 
     <div class="ref-description">
     
-    <p>This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data <code><a href='iso_get_raw_data.html'>iso_get_raw_data</a></code>, <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>, <code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a></code>, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To <code><a href='http://www.rdocumentation.org/packages/tidyr/topics/unnest'>unnest</a></code> any of the specific data types (e.g. <code>raw_data</code>), make sure to filter first for the files that have this data type available (e.g. <code>filter(has_raw_data)</code>).</p>
+    <p>This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data <code><a href='iso_get_raw_data.html'>iso_get_raw_data</a></code>, <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>, <code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a></code>, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To <code><a href='https://tidyr.tidyverse.org/reference/unnest.html'>unnest</a></code> any of the specific data types (e.g. <code>raw_data</code>), make sure to filter first for the files that have this data type available (e.g. <code>filter(has_raw_data)</code>).</p>
     
     </div>
 
     <pre class="usage"><span class='fu'>iso_get_data</span>(<span class='no'>iso_files</span>, <span class='kw'>include_file_info</span> <span class='kw'>=</span> <span class='fu'>everything</span>(),
-  <span class='kw'>include_raw_data</span> <span class='kw'>=</span> <span class='fu'>everything</span>(), <span class='kw'>include_vendor_data_table</span> <span class='kw'>=</span> <span class='fu'>everything</span>(),
-  <span class='kw'>gather</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>with_units</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>with_ratios</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+  <span class='kw'>include_raw_data</span> <span class='kw'>=</span> <span class='fu'>everything</span>(),
+  <span class='kw'>include_vendor_data_table</span> <span class='kw'>=</span> <span class='fu'>everything</span>(), <span class='kw'>gather</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>with_units</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>with_ratios</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

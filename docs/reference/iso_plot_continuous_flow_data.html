@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.19.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
       </span>
     </div>
 
@@ -121,10 +121,10 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_plot_continuous_flow_data</span>(<span class='no'>iso_files</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'>c</span>(), <span class='kw'>time_interval</span> <span class='kw'>=</span> <span class='fu'>c</span>(),
-  <span class='kw'>time_interval_units</span> <span class='kw'>=</span> <span class='st'>"seconds"</span>, <span class='kw'>filter</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>zoom</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>panel</span> <span class='kw'>=</span> <span class='no'>data</span>, <span class='kw'>color</span> <span class='kw'>=</span> <span class='no'>file_id</span>, <span class='kw'>linetype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>label</span> <span class='kw'>=</span> <span class='no'>file_id</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>iso_plot_continuous_flow_data</span>(<span class='no'>iso_files</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'>c</span>(),
+  <span class='kw'>time_interval</span> <span class='kw'>=</span> <span class='fu'>c</span>(), <span class='kw'>time_interval_units</span> <span class='kw'>=</span> <span class='st'>"seconds"</span>,
+  <span class='kw'>filter</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>zoom</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>panel</span> <span class='kw'>=</span> <span class='no'>data</span>,
+  <span class='kw'>color</span> <span class='kw'>=</span> <span class='no'>file_id</span>, <span class='kw'>linetype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>label</span> <span class='kw'>=</span> <span class='no'>file_id</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -167,7 +167,7 @@
     </tr>
     <tr>
       <th>linetype</th>
-      <td><p>whether to differentiate data by linetype, options are the same as for <code>panel</code> but the default is <code>NULL</code> (i.e. no linetype aesthetic) and complex expressions (not just columns) are supported. Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using <code><a href='http://www.rdocumentation.org/packages/ggplot2/topics/scale_linetype'>scale_linetype</a></code>.</p></td>
+      <td><p>whether to differentiate data by linetype, options are the same as for <code>panel</code> but the default is <code>NULL</code> (i.e. no linetype aesthetic) and complex expressions (not just columns) are supported. Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using <code><a href='ggplot2.tidyverse.org/reference/scale_linetype.html'>scale_linetype</a></code>.</p></td>
     </tr>
     <tr>
       <th>label</th>
