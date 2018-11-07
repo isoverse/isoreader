@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.19.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
       </span>
     </div>
 
@@ -142,7 +142,7 @@
     </tr>
     <tr>
       <th>panel</th>
-      <td><p>whether to panel data by anything - any data column is possible (see notes in the <code>filter</code> parameter) but the most commonly used options are <code>panel = NULL</code> (overlay all), <code>panel = data</code> (by mass/ratio data), <code>panel = file_id</code> (panel by files, alternatively use any appropriate file_info column), and <code>panel = type</code> (panel by sample vs standard). Additionally it is possible to panel two variables against each other (i.e. use a <a href='http://www.rdocumentation.org/packages/ggplot2/topics/facet_grid'>facet_grid</a>), e.g. by specifying the formula <code>panel = data ~ file_id</code> (data in the panel rows, files in the panel columns) or <code>panel = data ~ type</code>.The default for this parameter is simple panelling by <code>data</code>.</p></td>
+      <td><p>whether to panel data by anything - any data column is possible (see notes in the <code>filter</code> parameter) but the most commonly used options are <code>panel = NULL</code> (overlay all), <code>panel = data</code> (by mass/ratio data), <code>panel = file_id</code> (panel by files, alternatively use any appropriate file_info column), and <code>panel = type</code> (panel by sample vs standard). Additionally it is possible to panel two variables against each other (i.e. use a <a href='ggplot2.tidyverse.org/reference/facet_grid.html'>facet_grid</a>), e.g. by specifying the formula <code>panel = data ~ file_id</code> (data in the panel rows, files in the panel columns) or <code>panel = data ~ type</code>.The default for this parameter is simple panelling by <code>data</code>.</p></td>
     </tr>
     <tr>
       <th>color</th>
@@ -150,7 +150,7 @@
     </tr>
     <tr>
       <th>linetype</th>
-      <td><p>whether to differentiate data by linetype, options are the same as for <code>panel</code> but the default is <code>NULL</code> (i.e. no linetype aesthetic) and complex expressions (not just columns) are supported. Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using <code><a href='http://www.rdocumentation.org/packages/ggplot2/topics/scale_linetype'>scale_linetype</a></code>.</p></td>
+      <td><p>whether to differentiate data by linetype, options are the same as for <code>panel</code> but the default is <code>NULL</code> (i.e. no linetype aesthetic) and complex expressions (not just columns) are supported. Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using <code><a href='ggplot2.tidyverse.org/reference/scale_linetype.html'>scale_linetype</a></code>.</p></td>
     </tr>
     <tr>
       <th>shape</th>
