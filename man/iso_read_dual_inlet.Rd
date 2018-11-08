@@ -22,7 +22,7 @@ iso_read_dual_inlet(..., read_raw_data = default(read_raw_data),
 
 \item{read_vendor_data_table}{whether to read the vendor computed data table}
 
-\item{discard_duplicates}{whether to automatically discard duplicate file_ids (only first one is kept)}
+\item{discard_duplicates}{whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If \code{TRUE} (the default), only the first files are kept and any files with the same file ID are discarded. If \code{FALSE}, all duplicate files are kept but their file IDs are appended with suffix \code{#1}, \code{#2}, etc.}
 
 \item{cache}{whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
 

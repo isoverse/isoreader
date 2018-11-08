@@ -19,7 +19,7 @@ isoread <- function(...) {
 #' @param paths one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).
 #' @param supported_extensions data frame with supported extensions and corresponding reader functions
 #' @param data_structure the basic data structure for the type of iso_file
-#' @param discard_duplicates whether to automatically discard duplicate file_ids (only first one is kept)
+#' @inheritParams iso_as_file_list
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}
 #' @param cache whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.
 #' @param read_cache whether to reload from cache if a cached version exists. Note that it will only read from cache if the file was previously read with the exact same isoreader version and read options and has not been modified since.

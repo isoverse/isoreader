@@ -17,7 +17,7 @@ iso_read_files(paths, supported_extensions, data_structure, ...,
 
 \item{...}{additional parameters passed to the specific processing functions for the different file extensions}
 
-\item{discard_duplicates}{whether to automatically discard duplicate file_ids (only first one is kept)}
+\item{discard_duplicates}{whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If \code{TRUE} (the default), only the first files are kept and any files with the same file ID are discarded. If \code{FALSE}, all duplicate files are kept but their file IDs are appended with suffix \code{#1}, \code{#2}, etc.}
 
 \item{cache}{whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
 
