@@ -126,8 +126,8 @@ expand_file_paths <- function(paths, extensions = c()) {
   filenames <- basename(filepaths)
   if (anyDuplicated(filenames)) {
     dups <- duplicated(filenames) | duplicated(filenames, fromLast = T)
-    stop("some files from different folders have identical file names:\n\t", 
-         filepaths[dups] %>% str_c(collapse = "\n\t"), call. = FALSE)
+    warning("some files from different folders have identical file names:\n\t", 
+         filepaths[dups] %>% str_c(collapse = "\n\t"), immediate. = TRUE, call. = FALSE)
   }
    
   return(filepaths)
