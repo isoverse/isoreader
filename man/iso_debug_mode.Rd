@@ -7,7 +7,7 @@
 \alias{set_read_file_event_expr}
 \title{Debugging functions}
 \usage{
-iso_turn_debug_on(data = NULL, catch_errors = TRUE)
+iso_turn_debug_on(data = NULL, catch_errors = TRUE, cache = FALSE)
 
 iso_turn_debug_off(data = NULL)
 
@@ -17,6 +17,8 @@ set_read_file_event_expr(event_expr = NULL)
 \item{data}{a data frame - returned invisibly as is if provided (e.g. in the middle of a pipeline)}
 
 \item{catch_errors}{whether to still catch errors in debug mode or whether to throw them}
+
+\item{cache}{whether to cache or read anything from cache}
 
 \item{event_expr}{an expression to evaluate in the context of reading individual iso files (evaluated in the local environment of the read function!)}
 }

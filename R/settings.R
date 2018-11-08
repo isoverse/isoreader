@@ -156,11 +156,17 @@ update_quiet <- function(quiet) {
 NULL
 
 #' @param catch_errors whether to still catch errors in debug mode or whether to throw them
+#' @param cache whether to cache or read anything from cache
 #' @rdname iso_debug_mode
-iso_turn_debug_on <- function(data = NULL, catch_errors = TRUE) {
+iso_turn_debug_on <- function(data = NULL, catch_errors = TRUE, cache = FALSE) {
   set_default("debug", TRUE)
   set_default("catch_errors", catch_errors)
-  message("Info: debug mode turned on, error catching turned ", if(catch_errors) "on" else "off")
+  set_default("cache", cache)
+  glue(
+    "Info: debug mode turned on, ",
+    "error catching turned {if(catch_errors) 'on' else 'off'}, ",
+    "caching turned {if(cache) 'on' else 'off'}") %>% 
+    message()
   if (!missing(data)) return(data)
 }
 
@@ -168,6 +174,7 @@ iso_turn_debug_on <- function(data = NULL, catch_errors = TRUE) {
 iso_turn_debug_off <- function(data = NULL) {
   set_default("debug", FALSE)
   set_default("catch_errors", TRUE)
+  set_default("cache", TRUE)
   message("Info: debug mode turned off")
   if (!missing(data)) return(data)
 }
