@@ -11,11 +11,11 @@ iso_read_files(paths, supported_extensions, data_structure, ...,
 \arguments{
 \item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
 
-\item{supported_extensions}{data frame with supported extensions and corresponding reader functions}
+\item{supported_extensions}{data frame with supported extensions and corresponding reader functions (columns 'extension', 'func', 'cacheable')}
 
 \item{data_structure}{the basic data structure for the type of iso_file}
 
-\item{...}{additional parameters passed to the specific processing functions for the different file extensions}
+\item{...}{read options to be stored in the data structure as read options}
 
 \item{discard_duplicates}{whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If \code{TRUE} (the default), only the first files are kept and any files with the same file ID are discarded. If \code{FALSE}, all duplicate files are kept but their file IDs are appended with suffix \code{#1}, \code{#2}, etc.}
 

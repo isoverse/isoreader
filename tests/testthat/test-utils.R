@@ -9,6 +9,32 @@ test_that("retrieving example files works correctly", {
   
 })
 
+test_that("test that file extension helpers work correctly", {
+  
+  # get file extension
+  expect_equal(isoreader:::get_file_ext("test.csv"), ".csv")
+  expect_equal(isoreader:::get_file_ext("test.x.csv"), ".csv")
+  
+  # match file extension
+  expect_equal(isoreader:::match_file_ext("test.csv", c(".txt", ".csv")), ".csv")
+  expect_equal(isoreader:::match_file_ext("test.csv", c(".txt", "csv", ".csv")), ".csv")
+  expect_equal(isoreader:::match_file_ext("test.dne", c(".txt", ".csv")), NA_character_)
+  
+  # match supported filed types
+  expect_error(isoreader:::match_to_supported_file_types())
+  expect_error(isoreader:::match_to_supported_file_types(data_frame(), data_frame()))
+  expect_error(
+    isoreader:::match_to_supported_file_types(data_frame(filepath = "test.txt"), data_frame(extension = ".csv")),
+    "unexpected file extension"
+  )
+  expect_equal(
+    isoreader:::match_to_supported_file_types(
+      data_frame(filepath = c("test.csv", "test.dxf")), 
+      data_frame(extension = c(".dxf", "t.dxf", ".csv"))),
+    data_frame(filepath = c("test.csv", "test.dxf"), extension = c(".csv", "t.dxf"))
+  )
+})
+
 test_that("test that retrieving file paths works correctly", {
   
   expect_error(isoreader:::expand_file_paths())

@@ -42,52 +42,53 @@ iso_get_reader_example <- function(filename) {
 iso_get_reader_examples <- function() {
   # global vars
   extension <- filename <- format <- NULL
-  expand_file_paths(system.file(package = "isoreader", "extdata"), iso_get_supported_file_types()$extension) %>% 
-    match_to_supported_file_types() %>% 
-    arrange(extension, filename) %>% 
-    select(filename, extension, format)
+  file_types <- iso_get_supported_file_types()
+  system.file(package = "isoreader", "extdata") %>% 
+    expand_file_paths(file_types$extension) %>% 
+    { data_frame(filepath = ., filename = basename(filepath) ) } %>% 
+    match_to_supported_file_types(file_types) %>% 
+    arrange(type, extension, filename) %>% 
+    select(filename, type, description)
 }
 
-# file types and paths ====
-
-#' Supported file types
-#' 
-#' Get an overview of all the file types currently supported by the isoreader package.
-#' 
-#' @export
-iso_get_supported_file_types <- function() {
-  # global vars
-  extension <- description <- type <- call <- description <- NULL
-  bind_rows(
-    get_supported_di_files() %>% mutate(type = "Dual Inlet", call = "iso_read_dual_inlet"),
-    get_supported_cf_files() %>% mutate(type = "Continuous flow", call = "iso_read_continuous_flow")
-  ) %>% 
-    mutate(extension = str_c(".", extension)) %>% 
-    select(extension, format = description, type, call) 
-}
-
-# match files to supported file types
-match_to_supported_file_types <- function(filepaths) {
-  # global vars
-  filepath <- filename <- extension <- ext_id <- format <- NULL
-  supported_files <- iso_get_supported_file_types()
-  
-  # extensions
-  ext_regexps <- supported_files$extension %>% str_c("$")
-  find_extension <- function(filename) which(str_detect(filename, ext_regexps)) %>% { if(length(.) >0) min(.) else NA_integer_ }
-  data_frame(
-    filepath = filepaths,
-    filename = basename(filepath),
-    ext_id = sapply(filename, find_extension),
-    extension = supported_files$extension[ext_id]
-  ) %>% 
-    left_join(supported_files, by = "extension") %>% 
-    select(-ext_id)
-}
+# file paths ====
 
 # get file extension
 get_file_ext <- function(filepath) {
   basename(filepath) %>% str_extract("\\.[^.]+$")
+}
+
+# match file extension
+# returns the longest extension that matches
+match_file_ext <- function(filepath, extensions) {
+  exts_regexp <- stringr::str_replace_all(extensions, "\\.", "\\\\.") %>% str_c("$")
+  exts <- extensions[str_detect(filepath, exts_regexp)]
+  if (length(exts) == 0) return(NA_character_)
+  else return(exts[stringr::str_length(exts) == max(stringr::str_length(exts))][1])
+}
+
+# match multiple filepaths with extensions and return a data frame
+# @param pfilepaths_df data frame with, at minimum, column 'filepath'
+# @param extensions_df data frame with, at miminum, column 'extension'
+match_to_supported_file_types <- function(filepaths_df, extensions_df) {
+  stopifnot("filepath" %in% names(filepaths_df))
+  stopifnot("extension" %in% names(extensions_df))
+  files <- 
+    filepaths_df %>% 
+    mutate(extension = map_chr(filepath, match_file_ext, extensions_df$extension)) %>% 
+    left_join(mutate(extensions_df, .ext_exists = TRUE), by = "extension")
+  
+  # safety check
+  if ( nrow(missing <- dplyr::filter(files, is.na(.ext_exists))) > 0) {
+    exts <- missing$filepath %>% get_file_ext() %>% unique() %>% str_c(collapse = ", ")
+    glue::glue(
+      "unexpected file extension(s): {exts} ",
+      "(expected one of the following: ",
+      "{str_c(extensions_df$extension, collapse = ', ')})") %>% 
+    stop(call. = FALSE)
+  }
+  
+  return(dplyr::select(files, -.ext_exists))
 }
 
 # expand the file paths in supplied folders that fit the provided data types
@@ -102,7 +103,7 @@ expand_file_paths <- function(paths, extensions = c()) {
   # extensions check
   if(length(extensions) == 0) stop("no extensions provided for retrieving file paths", call. = FALSE)
   isdir <- paths %>% lapply(file.info) %>% map_lgl("isdir")
-  pattern <- extensions %>% str_replace("^(\\.)?", "\\\\.") %>% str_c(collapse = "|") %>% { str_c("(", ., ")$") }
+  pattern <- extensions %>% str_replace_all("\\.", "\\\\.") %>% str_c(collapse = "|") %>% { str_c("(", ., ")$") }
   has_ext <- paths[!isdir] %>% str_detect(pattern)
   if (!all(has_ext))
     stop("some file(s) do not have one of the supported extensions (", 

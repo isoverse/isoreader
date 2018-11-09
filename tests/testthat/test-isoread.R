@@ -1,11 +1,22 @@
 context("Test basic iso_read_files coordinator function")
 
-test_that("test that parameter checks are performed when reading binary file", {
+test_that("test that file reader registration works", {
+  
+  isoreader:::initialize_options()
+  expect_error(iso_register_continuous_flow_file_reader(".new", nrow), "please provide the function name")
+  expect_equal(iso_register_continuous_flow_file_reader(".new", "nrow") %>% dplyr::filter(extension == ".new") %>% nrow(), 1)
+  expect_equal(iso_register_continuous_flow_file_reader(".new", "nrow") %>% dplyr::filter(extension == ".new") %>% nrow(), 1)
+  expect_error(iso_register_continuous_flow_file_reader(".new", "mean"), "already exists")
+  expect_warning(new <- iso_register_continuous_flow_file_reader(".new", "mean", overwrite = TRUE), "will be overwritte")
+  expect_equal(new %>% dplyr::filter(extension == ".new") %>% nrow(), 1)
+})
+
+test_that("test that parameter checks are performed when reading file", {
   # make sure adequate parameter supplied
   expect_error(isoreader:::iso_read_files(), "missing")
-  expect_error(isoreader:::iso_read_files(supported_extensions = data_frame()), "not in data\\: \\'extension\\', \\'fun\\'")
+  expect_error(isoreader:::iso_read_files(supported_extensions = data_frame()), "not in data\\: \\'extension\\', \\'func\\'")
   expect_error(isoreader:::iso_read_files(
-    supported_extensions = data_frame(extension = "did", fun = list(isoreader:::iso_read_did)), 
+    supported_extensions = isoreader:::get_supported_di_files(), 
     data_structure = structure(list())), "data structure must include class \\'iso_file\\'")
   expect_error(isoreader:::iso_read_files(
     supported_extensions = isoreader:::get_supported_di_files(), # func tested in test-dual-inlet 
@@ -16,14 +27,14 @@ test_that("test that parameter checks are performed when reading binary file", {
     data_structure = isoreader:::make_di_data_structure()), 
     "file path\\(s\\) required")
 })
-  
+
 
 test_that("test that checks are run when re-reading iso_files", {
   
   expect_warning(iso_reread_files(make_cf_data_structure()), "no longer exist at the referenced location")
   expect_error(iso_reread_files(make_cf_data_structure(), stop_if_missing = TRUE), "no longer exist at the referenced location")
-  expect_error(iso_reread_archive("test.csv"), "unrecognized file type")
-  expect_error(iso_reread_archive("DNE.dxf"), "file\\(s\\) do not exist")
+  expect_error(iso_reread_archive("test.csv"), "unexpected file extension")
+  expect_error(iso_reread_archive("DNE.cf.rda"), "file\\(s\\) do not exist")
 })
 
 

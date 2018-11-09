@@ -1,6 +1,6 @@
 # read isodat .dxf file
 # @param ds the data structure to fill
-iso_read_dxf <- function(ds, ...) {
+iso_read_dxf <- function(ds) {
 
   # safety checks
   if(!iso_is_continuous_flow(ds)) 

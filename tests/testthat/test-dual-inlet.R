@@ -2,12 +2,9 @@ context("Dual Inlet Files")
 
 test_that("test that supported di files are correct", {
   expect_is(exts <- isoreader:::get_supported_di_files(), "data.frame")
-  expect_equal(exts$extension, c("did", "caf", "di.rda"))
-  expect_true(all(exts$fun %>% sapply(class) == "character"))
-  
-  # check for existence in names sapce
-  expect_true(all(exts$fun %>% sapply(exists, where = environment(iso_get_supported_file_types))))
-  expect_true(all(exts$fun %>% sapply(get, envir = environment(iso_get_supported_file_types)) %>% sapply(class) == "function"))
+  expect_equal(exts$extension, c(".did", ".caf", ".di.rda"))
+  expect_true(all(exts$func %>% sapply(class) == "character"))
+  expect_true(all(exts$func %>% map_lgl(exists, mode = "function", where = asNamespace("isoreader"))))
 })
 
 test_that("test that parameter checks are performed", {
@@ -21,7 +18,7 @@ test_that("test that did files can be read", {
   # test specific files
   
   # FIXME: re-enable for commits
-  #skip("Currently not testing all dual inlet data files.")
+  # skip("Currently not testing all dual inlet data files.")
   
   iso_turn_reader_caching_off()
   
