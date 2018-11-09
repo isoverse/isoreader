@@ -8,7 +8,7 @@
 #' @importFrom tidyr gather spread nest unnest extract
 #' @importFrom glue glue
 #' @importFrom purrr map map_lgl map_chr map_df map_int map_dbl map2 map2_chr map2_lgl map2_dbl map2_int safely is_empty
-#' @importFrom future plan multiprocess future availableCores resolved value
+#' @importFrom future plan multiprocess sequential future availableCores resolved value
 #' @importFrom tibble tribble deframe rownames_to_column
 #' @importFrom lubridate interval duration as_datetime
 #' @importFrom stringr str_c str_detect str_to_title str_replace str_replace_all str_replace_na str_match str_match_all str_interp str_subset str_extract fixed

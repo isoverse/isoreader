@@ -183,10 +183,11 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   if (parallel) {
     threads <- availableCores()
     oplan <- plan(multiprocess)
-    on.exit(plan(oplan), add = TRUE)
   } else {
     threads <- 1
+    oplan <- plan(sequential)
   }
+  on.exit(plan(oplan), add = TRUE)
   
   # supplied data checks
   col_check(c("extension", "func", "cacheable"), supported_extensions)
@@ -242,19 +243,24 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
     # prepare iso_file object
     iso_file <- set_ds_file_path(data_structure, filepath)
     
-    # read from cache?
+    # read/write cache?
     read_from_cache <- read_cache && cacheable && file.exists(cachepath)
-    caching <- if (cache && cacheable) " and caching" else ""
+    write_to_cache <- cache && cacheable
     
     # user info
     if (!quiet) {
-      if (read_from_cache)
+      if (read_from_cache) { 
         glue("Info: reading file {file_n}/{nrow(files)} '{filepath}' from cache") %>%
         message(appendLF = threads > 1)
-      else 
-        glue("Info: reading{caching} file {file_n}/{nrow(files)} '{filepath}' with '{ext}' reader") %>% 
+      } else {
+        glue(
+          "Info: reading{if (write_to_cache) ' and caching' else ''} ",
+          "file {file_n}/{nrow(files)} '{filepath}' with '{ext}' reader") %>% 
         message(appendLF = threads > 1)
+      }
+      if (threads == 1) message("...", appendLF = FALSE)
     }
+    
     
     # evaluate read file event quosure if it exists
     read_file_event <- getOption("isoreader.read_file_event")
@@ -264,7 +270,9 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
     
     # run as future
     future(
-      globals = list(cache = cache),
+      globals = list(
+        iso_file = iso_file, reader_fun = reader_fun, cachepath = cachepath,
+        read_from_cache = read_from_cache, write_to_cache = write_to_cache),
       expr = {
       
       if (read_from_cache) {
@@ -278,40 +286,56 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
         if (!default(debug)) iso_file$binary <- NULL
         
         # store in cached file
-        if (cache && cacheable) cache_iso_file(iso_file, cachepath)
+        if (write_to_cache) cache_iso_file(iso_file, cachepath)
       }
       
       return(iso_file)
     })
   }
 
+  # finish function
+  finish_iso_file <- function(filepath, file_n) {
+    if (!quiet) message(".", file_n, "\U2713", appendLF = FALSE)
+    # evaluate finish file event quosure if it exists
+    finish_file_event <- getOption("isoreader.finish_file_event")
+    if (!is.null(finish_file_event) && is_quosure(finish_file_event) && !quo_is_null(finish_file_event)) {
+      eval_tidy(get_expr(finish_file_event))
+    }
+  }
+  
   # generate futures
   iso_files <- list()
   for (i in unique(files$batch)) {
-    futures <-
-      filter(files, batch == i) %>% 
-      with(
-        mapply(
-          read_iso_file,
-          filepath = filepath,
-          cachepath = cachepath,
-          ext = extension,
-          reader_fun = func,
-          cacheable = cacheable,
-          file_n = file_n
-        )
+    
+    batch <- filter(files, batch == i)
+    finished <- rep(FALSE, nrow(batch))
+    futures <- 
+      with(batch,
+           mapply(
+             read_iso_file,
+             filepath = filepath,
+             cachepath = cachepath,
+             ext = extension,
+             reader_fun = func,
+             cacheable = cacheable,
+             file_n = file_n
+           )
       )
 
-    # query futures status for command line updates
-    if (!quiet) {
-      message("...", appendLF = FALSE)
-      while (!all(sapply(futures, resolved))) {
-        # progress
-        message(".", appendLF = FALSE)
-        Sys.sleep(0.1) 
+    # query futures status
+    while (TRUE) {
+      is_finished <- purrr::map_lgl(futures, resolved)
+      newly_finished <- which(finished != is_finished)
+      if (length(newly_finished) > 0) {
+        with(batch, purrr::walk2(filepath[newly_finished], file_n[newly_finished], finish_iso_file))
+        finished <- is_finished
       }
-      message()
+      if (all(finished)) break
+      # progress
+      if (!quiet) message(".", appendLF = FALSE)
+      Sys.sleep(0.1) 
     }
+    if (!quiet) message() # newline
     
     # retrieve values from futures
     iso_files <- c(iso_files, lapply(futures, value))
