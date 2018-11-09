@@ -1,6 +1,7 @@
 context("Dual Inlet Files")
 
 test_that("test that supported di files are correct", {
+  isoreader:::initialize_options()
   expect_is(exts <- isoreader:::get_supported_di_files(), "data.frame")
   expect_equal(exts$extension, c(".did", ".caf", ".di.rda"))
   expect_true(all(exts$func %>% sapply(class) == "character"))
