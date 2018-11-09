@@ -22,6 +22,7 @@ test_that("test that dxf files can be read", {
   
   # FIXME: re-enable for commits
   # skip("Currently not testing all continuous flow data files.")
+  # FIXME: run as one batch to make use of parallel processing
   
   iso_turn_reader_caching_off()
   

@@ -18,6 +18,7 @@ Imports:
     tidyr,
     stringr,
     purrr,
+    future,
     lubridate,
     tibble,
     readr,
