@@ -107,7 +107,7 @@ iso_read_dual_inlet <- function(
   ..., 
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
-  discard_duplicates = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
+  discard_duplicates = TRUE, parallel = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
   iso_read_files(
@@ -119,6 +119,7 @@ iso_read_dual_inlet <- function(
     read_method_info = read_method_info,
     read_vendor_data_table = read_vendor_data_table,
     discard_duplicates = discard_duplicates,
+    parallel = parallel,
     cache = cache,
     read_cache = read_cache,
     quiet = quiet
@@ -133,8 +134,8 @@ iso_read_dual_inlet <- function(
 iso_read_continuous_flow <- function(
   ..., 
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
-  read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
-  discard_duplicates = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
+  read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table), 
+  discard_duplicates = TRUE, parallel = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
   iso_read_files(
@@ -146,6 +147,7 @@ iso_read_continuous_flow <- function(
     read_method_info = read_method_info,
     read_vendor_data_table = read_vendor_data_table,
     discard_duplicates = discard_duplicates,
+    parallel = parallel,
     cache = cache,
     read_cache = read_cache,
     quiet = quiet
@@ -162,16 +164,26 @@ iso_read_continuous_flow <- function(
 #' @param supported_extensions data frame with supported extensions and corresponding reader functions (columns 'extension', 'func', 'cacheable')
 #' @param data_structure the basic data structure for the type of iso_file
 #' @inheritParams iso_as_file_list
+#' @param parallel whether to process in parallel based on the number of available CPU cores
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}
 #' @param cache whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.
 #' @param read_cache whether to reload from cache if a cached version exists. Note that it will only read from cache if the file was previously read with the exact same isoreader version and read options and has not been modified since.
 #' @param ... read options to be stored in the data structure as read options
 #' @return single iso_file object (if single file) or list of iso_files (iso_file_list)
-iso_read_files <- function(paths, supported_extensions, data_structure, ..., discard_duplicates = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
+iso_read_files <- function(paths, supported_extensions, data_structure, ..., discard_duplicates = TRUE, parallel = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
 
   # set quiet for the current and sub-calls and reset back to previous setting on exit
   on_exit_quiet <- update_quiet(quiet)
-  on.exit(on_exit_quiet())
+  on.exit(on_exit_quiet(), add = TRUE)
+  
+  # parallel processing
+  if (parallel) {
+    threads <- availableCores()
+    oplan <- plan(multiprocess)
+    on.exit(plan(oplan), add = TRUE)
+  } else {
+    threads <- 1
+  }
   
   # supplied data checks
   col_check(c("extension", "func", "cacheable"), supported_extensions)
@@ -188,12 +200,26 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   if (missing(paths) || is.null(paths) || is.na(paths)) stop("file path(s) required", call. = FALSE)
   filepaths <- expand_file_paths(paths, supported_extensions$extension)
   
+  # overview
+  if (!default(quiet)) {
+    glue::glue(
+      "Info: preparing to read {length(filepaths)} data file(s)",
+      if (parallel) { " in parallel using {threads} available cores..." } 
+      else {"..."}) %>% 
+      message()
+  }
+  
+  # check if there are any
+  if (length(filepaths) == 0) 
+    return(iso_as_file_list(list()))
+  
   # generate read files overview
   files <- 
     data_frame(
       filepath = filepaths,
       cachepath = generate_cache_filepaths(filepath, data_structure$read_options),
-      file_n = 1:length(filepaths)
+      file_n = 1:length(filepaths),
+      batch = file_n %/% threads
     ) %>% 
     # merge in supported extensions with reader and cacheable info
     match_to_supported_file_types(supported_extensions) 
@@ -207,16 +233,25 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
          str_c(req_readers[missing], collapse = ", "), call. = FALSE)
   }
   
-  # overview
-  if (!default(quiet)) {
-    message("Info: preparing to read ", nrow(files), " data file(s)...")
-  }
-  
   # read function
   read_iso_file <- function(filepath, cachepath, ext, reader_fun, cacheable, file_n) {
     
     # prepare iso_file object
     iso_file <- set_ds_file_path(data_structure, filepath)
+    
+    # read from cache?
+    read_from_cache <- read_cache && cacheable && file.exists(cachepath)
+    caching <- if (cache && cacheable) " and caching" else ""
+    
+    # user info
+    if (!default(quiet)) {
+      if (read_from_cache)
+        glue("Info: reading file {file_n}/{nrow(files)} '{filepath}' from cache") %>%
+        message(appendLF = threads > 1)
+      else 
+        glue("Info: reading{caching} file {file_n}/{nrow(files)} '{filepath}' with '{ext}' reader") %>% 
+        message(appendLF = threads > 1)
+    }
     
     # evaluate read file event quosure if it exists
     read_file_event <- getOption("isoreader.read_file_event")
@@ -224,46 +259,59 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
       eval_tidy(get_expr(read_file_event))
     }
     
-    # check for cache
-    if (read_cache && cacheable && file.exists(cachepath)) {
-      ## cache available  
-      if (!default(quiet)) {
-        glue("Info: reading file {file_n}/{nrow(files)} '{filepath}' from cache...") %>% message()
-      }
-      iso_file <- load_cached_iso_file(cachepath)
-    } else {
-      ## read file anew using extension-specific function to read file
-      caching <- if (cache && cacheable) " and caching" else ""
-      if (!default(quiet)) {
-        glue("Info: reading{caching} file {file_n}/{nrow(files)} '{filepath}' with '{ext}' reader...") %>% message()
-      }
-      iso_file <- exec_func_with_error_catch(reader_fun, iso_file)
+    # run as future (FIXME: only if it's not cached?)
+    future(
+      globals = list(cache = cache),
+      expr = {
       
-      # cleanup any binary content depending on debug setting
-      if (!default(debug)) iso_file$binary <- NULL
+      if (read_from_cache) {
+        # read from cache
+        iso_file <- load_cached_iso_file(cachepath)
+      } else {
+        # read from original file
+        iso_file <- exec_func_with_error_catch(reader_fun, iso_file)
+        
+        # cleanup any binary content depending on debug setting
+        if (!default(debug)) iso_file$binary <- NULL
+        
+        # store in cached file
+        if (cache && cacheable) cache_iso_file(iso_file, cachepath)
+      }
       
-      # store in cached file
-      if (cache && cacheable) cache_iso_file(iso_file, cachepath)
+      return(iso_file)
+    })
+  }
+
+  # generate futures
+  iso_files <- list()
+  for (i in unique(files$batch)) {
+    futures <-
+      filter(files, batch == i) %>% 
+      with(
+        mapply(
+          read_iso_file,
+          filepath = filepath,
+          cachepath = cachepath,
+          ext = extension,
+          reader_fun = func,
+          cacheable = cacheable,
+          file_n = file_n
+        )
+      )
+
+    # query futures status
+    message("...", appendLF = FALSE)
+    while (!all(sapply(futures, resolved))) {
+      # progress
+      message(".", appendLF = FALSE)
+      Sys.sleep(0.1) 
     }
+    message()
     
-    return(list(iso_file))
+    # retrieve values from futures
+    iso_files <- c(iso_files, lapply(futures, value))
   }
   
-  # read files
-  iso_files <-
-    with(
-      files,
-      mapply(
-        read_iso_file,
-        filepath = filepath,
-        cachepath = cachepath,
-        ext = extension,
-        reader_fun = func,
-        cacheable = cacheable,
-        file_n = file_n
-      )
-    )
-
   # turn into iso_file list
   iso_files <- iso_as_file_list(iso_files, discard_duplicates = discard_duplicates) 
 
