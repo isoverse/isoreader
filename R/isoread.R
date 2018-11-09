@@ -1,3 +1,86 @@
+# file types & reader =================
+
+#' Register file readers
+#' 
+#' Register file extensions and reader functions for different data files. Isoreader automatically registers all built-in file readers so this function is usually only needed when registering additional readers provided for testing purposes from outside of the isoreader package.
+#' 
+#' @details \code{iso_register_dual_inlet_file_reader}: use this function to register file readers for dual inlet files.
+#' 
+#' @rdname file_readers
+#' @param extension the file extension (e.g. \code{.dxf}) of the data file. Must be unique otherwise different files can not automatically be matched with the appropriate file reader based on their extension.
+#' @param func the name of the function that should be used a filter reader. All file reader functions must accept a data structure argument as the first argument and return the same data structure with added data.
+#' @param description what is this file type about?
+#' @param cacheable whether this file type is cacheable. If \code{TRUE} (the default), user requests to cache the file will be honored. If \code{FALSE}, this file type will never be cached no matter what the user requests.
+#' @param overwrite whether to overwrite an existing file reader for the same extension
+#' @family file_types
+#' @export
+iso_register_dual_inlet_file_reader <- function(extension, func, description = NA_character_, cacheable = TRUE, overwrite = FALSE) {
+  register_file_reader("dual inlet", "iso_read_dual_inlet", extension, func, description, cacheable, overwrite)
+}
+
+#' @details \code{iso_register_continuous_flow_file_reader}: use this function to register file readers for continuous flow files.
+#' @rdname file_readers
+#' @family file_types
+iso_register_continuous_flow_file_reader <- function(extension, func, description = NA_character_, cacheable = TRUE, overwrite = FALSE) {
+  register_file_reader("continuous flow", "iso_read_continuous_flow", extension, func, description, cacheable, overwrite)
+}
+
+register_file_reader <- function(type, call, extension, func, description, cacheable, overwrite) {
+
+  if (!is.character(func))
+    stop("please provide the function name rather than the function itself to register it",
+         call. = FALSE)
+  
+  frs <- default("file_readers", allow_null = TRUE)
+  new_fr <-
+    dplyr::data_frame(
+      type = type, call = call, extension = extension,
+      func = func, cacheable = cacheable, description = description
+    )
+  
+  if (!is.null(frs) && extension %in% frs$extension) {
+    if (identical(new_fr, dplyr::filter(frs, extension == !!extension))) {
+      # already exists and is identical, nothing more to do
+      return(frs)
+    }
+    
+    if (!overwrite) {
+      # already exists but don't overwrite --> error
+      glue::glue(
+        "file reader for extension '{extension}' already exists, specify overwrite = TRUE to replace the existing file reader"
+      ) %>%
+      stop(call. = FALSE)
+    } 
+    
+    # already exists and will be overwritten
+    glue::glue("file reader for extension '{extension}' already exists and will be overwritten") %>%
+      warning(immediate. = TRUE, call. = FALSE)
+    frs <- dplyr::filter(frs, extension != !!extension)
+  }
+  set_default("file_readers", dplyr::bind_rows(frs, new_fr))
+  default("file_readers")
+}
+
+#' Supported file types
+#' 
+#' Get an overview of all the file types currently supported by the isoreader package. To register additional file readers, use the \code{\link{iso_register_dual_inlet_file_reader}} and \code{\link{iso_register_continuous_flow_file_reader}} functions.
+#' 
+#' @family file_types
+#' @export
+iso_get_supported_file_types <- function() {
+  dplyr::select(default("file_readers"), extension, description, type, call)
+}
+
+get_supported_di_files <- function() {
+  dplyr::filter(default("file_readers"), type == "dual inlet")
+}
+
+get_supported_cf_files <- function() {
+  dplyr::filter(default("file_readers"), type == "continuous flow")
+}
+
+# file reading ===========
+
 #' Read isotope data file
 #' 
 #' This function from the original isoread package is deprecated, please use \link{iso_read_dual_inlet}, \link{iso_read_continuous_flow} and \link{iso_read_scan} instead.
@@ -10,6 +93,65 @@ isoread <- function(...) {
     call. = FALSE)
 }
 
+#' Load dual inlet data
+#' 
+#' @inheritParams iso_read_files
+#' @param ... one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).
+#' @param read_raw_data whether to read the raw mass/ion data from the file
+#' @param read_file_info whether to read auxiliary file information (file id, sequence information, etc.)
+#' @param read_method_info whether to read methods information (standards, processing info)
+#' @param read_vendor_data_table whether to read the vendor computed data table
+#' @family isoread functions for different types of IRMS data
+#' @export
+iso_read_dual_inlet <- function(
+  ..., 
+  read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
+  read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
+  discard_duplicates = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
+  
+  # process data
+  iso_read_files(
+    unlist(list(...), use.names = FALSE),
+    supported_extensions = get_supported_di_files(),
+    data_structure = make_di_data_structure(),
+    read_raw_data = read_raw_data,
+    read_file_info = read_file_info,
+    read_method_info = read_method_info,
+    read_vendor_data_table = read_vendor_data_table,
+    discard_duplicates = discard_duplicates,
+    cache = cache,
+    read_cache = read_cache,
+    quiet = quiet
+  )
+}
+
+#' Load continuous flow data
+#' 
+#' @inheritParams iso_read_dual_inlet
+#' @family isoread functions for different types of IRMS data
+#' @export
+iso_read_continuous_flow <- function(
+  ..., 
+  read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
+  read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
+  discard_duplicates = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
+  
+  # process data
+  iso_read_files(
+    unlist(list(...), use.names = FALSE),
+    supported_extensions = get_supported_cf_files(),
+    data_structure = make_cf_data_structure(),
+    read_raw_data = read_raw_data,
+    read_file_info = read_file_info,
+    read_method_info = read_method_info,
+    read_vendor_data_table = read_vendor_data_table,
+    discard_duplicates = discard_duplicates,
+    cache = cache,
+    read_cache = read_cache,
+    quiet = quiet
+  )
+}
+
 #' Core function to read isotope data files
 #' 
 #' This function takes care of extracting basic information about iso_files, dealing with problems and making sure only valid fire formats are processed. 
@@ -17,13 +159,13 @@ isoread <- function(...) {
 #' It is made available outside the package because it can be very useful for testing new file readers.
 #' 
 #' @param paths one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).
-#' @param supported_extensions data frame with supported extensions and corresponding reader functions
+#' @param supported_extensions data frame with supported extensions and corresponding reader functions (columns 'extension', 'func', 'cacheable')
 #' @param data_structure the basic data structure for the type of iso_file
 #' @inheritParams iso_as_file_list
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}
 #' @param cache whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.
 #' @param read_cache whether to reload from cache if a cached version exists. Note that it will only read from cache if the file was previously read with the exact same isoreader version and read options and has not been modified since.
-#' @param ... additional parameters passed to the specific processing functions for the different file extensions
+#' @param ... read options to be stored in the data structure as read options
 #' @return single iso_file object (if single file) or list of iso_files (iso_file_list)
 iso_read_files <- function(paths, supported_extensions, data_structure, ..., discard_duplicates = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
 
@@ -32,7 +174,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   on.exit(on_exit_quiet())
   
   # supplied data checks
-  col_check(c("extension", "fun"), supported_extensions)
+  col_check(c("extension", "func", "cacheable"), supported_extensions)
   if(!is(data_structure, "iso_file")) stop("data structure must include class 'iso_file'", call. = FALSE)
   col_check(c("file_info"), data_structure)
   
@@ -51,22 +193,19 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
     data_frame(
       filepath = filepaths,
       cachepath = generate_cache_filepaths(filepath, data_structure$read_options),
-      ext = get_file_ext(filepath),
       file_n = 1:length(filepaths)
-    )
-  
-  # extension to reader map & safety checks
-  ext_fun_map <- supported_extensions %>% { setNames(.$fun, str_c(".", .$id)) }
-  ext_cache_map <- supported_extensions %>% { setNames(.$cache, str_c(".", .$id)) }
-  
-  if ( length(missing_readers <- setdiff(files$ext, names(ext_fun_map))) > 0)
-    stop("unknown file id(s), cannot find reader function(s): ", str_c(missing_readers, collapse = ", "), call. = FALSE)
-  
-  files <- files %>% 
-    mutate(
-      reader_fun = ext_fun_map[ext],
-      cacheable = ext_cache_map[ext]
-    )
+    ) %>% 
+    # merge in supported extensions with reader and cacheable info
+    match_to_supported_file_types(supported_extensions) 
+    
+  # safety check on reader functions
+  req_readers <- unique(files$func)
+  in_workspace <- map_lgl(req_readers, exists, mode = "function")
+  in_isoreader_ns <- map_lgl(req_readers, exists, mode = "function", where = asNamespace("isoreader"))
+  if ( any(missing <- !in_workspace && !in_isoreader_ns) ) {
+    stop("required reader function(s) does not seem to exist: ", 
+         str_c(req_readers[missing], collapse = ", "), call. = FALSE)
+  }
   
   # overview
   if (!default(quiet)) {
@@ -98,7 +237,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
       if (!default(quiet)) {
         glue("Info: reading{caching} file {file_n}/{nrow(files)} '{filepath}' with '{ext}' reader...") %>% message()
       }
-      iso_file <- exec_func_with_error_catch(reader_fun, iso_file, ...)
+      iso_file <- exec_func_with_error_catch(reader_fun, iso_file)
       
       # cleanup any binary content depending on debug setting
       if (!default(debug)) iso_file$binary <- NULL
@@ -118,8 +257,8 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
         read_iso_file,
         filepath = filepath,
         cachepath = cachepath,
-        ext = ext,
-        reader_fun = reader_fun,
+        ext = extension,
+        reader_fun = func,
         cacheable = cacheable,
         file_n = file_n
       )
@@ -219,13 +358,8 @@ iso_reread_files <- function(iso_files, ..., stop_if_missing = FALSE, quiet = de
 #' @export
 iso_reread_archive <- function(rda_filepaths, ..., stop_if_missing = FALSE, quiet = default(quiet)) {
   
-  file_types <- match_to_supported_file_types(rda_filepaths)
-  
-  # global vars
-  extension <- NULL
-  
-  if (nrow(missing <- filter(file_types, is.na(extension))) > 0)
-    stop("unrecognized file type(s): ", str_c(missing$filename, collapse = ", "), call. = FALSE)
+  extensions <- iso_get_supported_file_types() %>% dplyr::filter(stringr::str_detect(extension, "rda"))
+  file_types <- data_frame(filepath = rda_filepaths) %>% match_to_supported_file_types(extensions)
   
   if (any(missing <- !file.exists(rda_filepaths))) 
     stop("file(s) do not exist: ", str_c(rda_filepaths[missing], collapse = ", "), call. = FALSE)

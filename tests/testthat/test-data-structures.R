@@ -131,10 +131,10 @@ test_that("test that isofils objects can be combined and subset", {
   
   ## problems combining identical files (without discarding duplicates!)
   expect_warning(iso_filesABA <- iso_as_file_list(iso_fileA, iso_fileB, iso_fileA, discard_duplicates = FALSE), 
-                 "duplicate files kept, may interfere with data processing")
+                 "duplicate files kept")
   expect_is(iso_filesABA, "iso_file_list")
-  expect_equal(problems(iso_filesABA) %>% select(file_id, type), data_frame(file_id = "A", type = "warning"))
-  expect_equal(names(iso_filesABA), c("A", "B", "A"))
+  expect_equal(names(iso_filesABA), c("A#1", "B", "A#2"))
+  expect_equal(problems(iso_filesABA) %>% select(file_id, type), data_frame(file_id = c("A#1", "A#2"), type = "warning"))
   expect_equal(problems(iso_filesABA[[1]]) %>% select(type), data_frame(type = "warning"))
   expect_equal(problems(iso_filesABA[[2]]) %>% select(type), data_frame(type = character(0)))
   expect_equal(problems(iso_filesABA[[3]]) %>% select(type), data_frame(type = "warning"))
