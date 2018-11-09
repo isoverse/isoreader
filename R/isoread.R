@@ -107,7 +107,7 @@ iso_read_dual_inlet <- function(
   ..., 
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
-  discard_duplicates = TRUE, parallel = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
+  discard_duplicates = TRUE, parallel = FALSE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
   iso_read_files(
@@ -135,7 +135,7 @@ iso_read_continuous_flow <- function(
   ..., 
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table), 
-  discard_duplicates = TRUE, parallel = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
+  discard_duplicates = TRUE, parallel = FALSE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
   iso_read_files(
@@ -164,14 +164,17 @@ iso_read_continuous_flow <- function(
 #' @param supported_extensions data frame with supported extensions and corresponding reader functions (columns 'extension', 'func', 'cacheable')
 #' @param data_structure the basic data structure for the type of iso_file
 #' @inheritParams iso_as_file_list
-#' @param parallel whether to process in parallel based on the number of available CPU cores
+#' @param parallel whether to process in parallel based on the number of available CPU cores. This may yield performance increases for files that are slow to parse such as continuous flow isodat files but usually provides little benefit for efficient data formats such as reading from R Data Archives.
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}
 #' @param cache whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.
 #' @param read_cache whether to reload from cache if a cached version exists. Note that it will only read from cache if the file was previously read with the exact same isoreader version and read options and has not been modified since.
 #' @param ... read options to be stored in the data structure as read options
 #' @return single iso_file object (if single file) or list of iso_files (iso_file_list)
-iso_read_files <- function(paths, supported_extensions, data_structure, ..., discard_duplicates = TRUE, parallel = TRUE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
+iso_read_files <- function(paths, supported_extensions, data_structure, ..., discard_duplicates = TRUE, parallel = FALSE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
 
+  # start timer
+  start_time <- Sys.time()
+  
   # set quiet for the current and sub-calls and reset back to previous setting on exit
   on_exit_quiet <- update_quiet(quiet)
   on.exit(on_exit_quiet(), add = TRUE)
@@ -201,7 +204,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   filepaths <- expand_file_paths(paths, supported_extensions$extension)
   
   # overview
-  if (!default(quiet)) {
+  if (!quiet) {
     glue::glue(
       "Info: preparing to read {length(filepaths)} data file(s)",
       if (parallel) { " in parallel using {threads} available cores..." } 
@@ -244,7 +247,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
     caching <- if (cache && cacheable) " and caching" else ""
     
     # user info
-    if (!default(quiet)) {
+    if (!quiet) {
       if (read_from_cache)
         glue("Info: reading file {file_n}/{nrow(files)} '{filepath}' from cache") %>%
         message(appendLF = threads > 1)
@@ -259,7 +262,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
       eval_tidy(get_expr(read_file_event))
     }
     
-    # run as future (FIXME: only if it's not cached?)
+    # run as future
     future(
       globals = list(cache = cache),
       expr = {
@@ -299,17 +302,29 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
         )
       )
 
-    # query futures status
-    message("...", appendLF = FALSE)
-    while (!all(sapply(futures, resolved))) {
-      # progress
-      message(".", appendLF = FALSE)
-      Sys.sleep(0.1) 
+    # query futures status for command line updates
+    if (!quiet) {
+      message("...", appendLF = FALSE)
+      while (!all(sapply(futures, resolved))) {
+        # progress
+        message(".", appendLF = FALSE)
+        Sys.sleep(0.1) 
+      }
+      message()
     }
-    message()
     
     # retrieve values from futures
     iso_files <- c(iso_files, lapply(futures, value))
+  }
+  
+  # finish time
+  end_time <- Sys.time()
+  if (!quiet) {
+    sprintf(
+      "Info: finished reading %s files in %.2f %s",
+      nrow(files), as.numeric(end_time - start_time), 
+      attr(end_time - start_time, "units")) %>% 
+    message()
   }
   
   # turn into iso_file list
@@ -321,7 +336,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   
   # report problems
   if (!default(quiet) && iso_has_problems(iso_files)) {
-    message(sprintf("Info: encountered %.0f problems in total.", n_problems(iso_files)))
+    message(sprintf("Info: encountered %.0f problems in total", n_problems(iso_files)))
     print(problems(iso_files))
     cat("\n")
   }
