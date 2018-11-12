@@ -13,6 +13,12 @@ set_default <- function(name, value, overwrite = TRUE) {
   return(invisible(value))
 }
 
+# helper function to transfer option settings between processors
+get_all_options <- function() {
+  all_opts <- options()
+  all_opts[str_detect(names(all_opts), "^isoreader\\.")]
+}
+
 #' Get the current default parameters
 #' 
 #' Retrieve a table with all default function parameters for this package. 
