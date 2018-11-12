@@ -6,10 +6,12 @@
 \title{Register file readers}
 \usage{
 iso_register_dual_inlet_file_reader(extension, func,
-  description = NA_character_, cacheable = TRUE, overwrite = FALSE)
+  description = NA_character_, cacheable = TRUE, overwrite = FALSE,
+  env = find_func(func))
 
 iso_register_continuous_flow_file_reader(extension, func,
-  description = NA_character_, cacheable = TRUE, overwrite = FALSE)
+  description = NA_character_, cacheable = TRUE, overwrite = FALSE,
+  env = find_func(func))
 }
 \arguments{
 \item{extension}{the file extension (e.g. \code{.dxf}) of the data file. Must be unique otherwise different files can not automatically be matched with the appropriate file reader based on their extension.}
@@ -21,6 +23,8 @@ iso_register_continuous_flow_file_reader(extension, func,
 \item{cacheable}{whether this file type is cacheable. If \code{TRUE} (the default), user requests to cache the file will be honored. If \code{FALSE}, this file type will never be cached no matter what the user requests.}
 
 \item{overwrite}{whether to overwrite an existing file reader for the same extension}
+
+\item{env}{the environment where to find the function, by default this will be determined automatically and will throw an error if there is any ambiguity (e.g. the same function name in multiple packages) in which case it should be set manually}
 }
 \description{
 Register file extensions and reader functions for different data files. Isoreader automatically registers all built-in file readers so this function is usually only needed when registering additional readers provided for testing purposes from outside of the isoreader package.

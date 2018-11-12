@@ -9,6 +9,11 @@ test_that("test that file reader registration works", {
   expect_error(iso_register_continuous_flow_file_reader(".new", "mean"), "already exists")
   expect_warning(new <- iso_register_continuous_flow_file_reader(".new", "mean", overwrite = TRUE), "will be overwritte")
   expect_equal(new %>% dplyr::filter(extension == ".new") %>% nrow(), 1)
+  expect_error(iso_register_continuous_flow_file_reader(".new2", "THISFUNCTIONDOESNOTEXIST"), "could not find function")
+  .GlobalEnv$iso_is_file <- function() stop("testing")
+  expect_error(iso_register_continuous_flow_file_reader(".new2", "iso_is_file"), "exists in more than one environment")
+  expect_equal(iso_register_continuous_flow_file_reader(".new2", "iso_is_file", env = "isoreader") %>% 
+                 dplyr::filter(extension == ".new") %>% nrow(), 1)
 })
 
 test_that("test that parameter checks are performed when reading file", {
