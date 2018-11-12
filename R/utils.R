@@ -239,17 +239,17 @@ iso_cleanup_reader_cache <- function(all = FALSE) {
 # @param func can be either function name or function call
 # problems are reported in obj
 # @note: maybe could use tidyverse::safely for this at some point?
-exec_func_with_error_catch <- function(func, obj, ...) {
+exec_func_with_error_catch <- function(func, obj, ..., env = asNamespace("isoreader")) {
   if (is.character(func)) func_name <- func
   else func_name <- substitute(func) %>% deparse()
   if (!default("catch_errors")) {
     # debug mode, don't catch any errors
-    obj <- do.call(func, args = c(list(obj), list(...)))
+    obj <- do.call(func, args = c(list(obj), list(...)), envir = env)
   } else {
     # regular mode, catch errors and report them as problems
     obj <- 
       tryCatch({
-        do.call(func, args = c(list(obj), list(...)))
+        do.call(func, args = c(list(obj), list(...)), envir = env)
       }, error = function(e){
         return(register_error(obj, e$message, func = func_name))
       })

@@ -12,30 +12,45 @@
 #' @param description what is this file type about?
 #' @param cacheable whether this file type is cacheable. If \code{TRUE} (the default), user requests to cache the file will be honored. If \code{FALSE}, this file type will never be cached no matter what the user requests.
 #' @param overwrite whether to overwrite an existing file reader for the same extension
+#' @param env the environment where to find the function, by default this will be determined automatically and will throw an error if there is any ambiguity (e.g. the same function name in multiple packages) in which case it should be set manually
 #' @family file_types
 #' @export
-iso_register_dual_inlet_file_reader <- function(extension, func, description = NA_character_, cacheable = TRUE, overwrite = FALSE) {
-  register_file_reader("dual inlet", "iso_read_dual_inlet", extension, func, description, cacheable, overwrite)
+iso_register_dual_inlet_file_reader <- function(
+  extension, func, description = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
+  register_file_reader("dual inlet", "iso_read_dual_inlet", extension, func, description, cacheable, overwrite, env)
 }
 
 #' @details \code{iso_register_continuous_flow_file_reader}: use this function to register file readers for continuous flow files.
 #' @rdname file_readers
 #' @family file_types
-iso_register_continuous_flow_file_reader <- function(extension, func, description = NA_character_, cacheable = TRUE, overwrite = FALSE) {
-  register_file_reader("continuous flow", "iso_read_continuous_flow", extension, func, description, cacheable, overwrite)
+iso_register_continuous_flow_file_reader <- function(
+  extension, func, description = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
+  register_file_reader("continuous flow", "iso_read_continuous_flow", extension, func, description, cacheable, overwrite, env)
 }
 
-register_file_reader <- function(type, call, extension, func, description, cacheable, overwrite) {
+register_file_reader <- function(type, call, extension, func, description, cacheable, overwrite, env) {
 
   if (!is.character(func))
     stop("please provide the function name rather than the function itself to register it",
          call. = FALSE)
   
+  if (length(env) == 0)
+    stop("could not find function '", func, "' in any environment - please make sure that it is defined", 
+         call. = FALSE)
+  
+  if (length(env) > 1)
+    glue::glue("function '{func}' exists in more than one environment ",
+               "({paste(env, collapse = ', ')})", 
+               ", please specify parameter 'env' to clarify") %>% 
+    stop(call. = FALSE)
+  
   frs <- default("file_readers", allow_null = TRUE)
+  
   new_fr <-
     dplyr::data_frame(
       type = type, call = call, extension = extension,
-      func = func, cacheable = cacheable, description = description
+      func = func, cacheable = cacheable, description = description,
+      env = env
     )
   
   if (!is.null(frs) && extension %in% frs$extension) {
@@ -59,6 +74,12 @@ register_file_reader <- function(type, call, extension, func, description, cache
   }
   set_default("file_readers", dplyr::bind_rows(frs, new_fr))
   default("file_readers")
+}
+
+# convenience function to find packages where function is located
+find_func <- function(func) {
+  if (!is.character(func)) stop("please provide the function name rather than the function itself", call. = FALSE)
+  findFunction(func) %>% map_chr(environmentName) %>% str_replace("^package:", "") %>% { .[!str_detect(., "^imports:")] } %>% unique()
 }
 
 #' Supported file types
@@ -182,7 +203,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   # parallel processing
   if (parallel) {
     cores <- future::availableCores()
-    oplan <- plan(future::multiprocess)
+    oplan <- plan(future::multisession) #plan(future::multiprocess)
     on.exit(plan(oplan), add = TRUE)
   } 
   
@@ -215,7 +236,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   if (!default(quiet)) {
     glue::glue(
       "Info: preparing to read {length(filepaths)} data file(s)",
-      if (parallel) { ", setting up {cores} parallel processes..." } 
+      if (parallel) { ", setting up {min(cores, length(filepaths))} parallel processes..." } 
       else {"..."}) %>% 
       pb$message()
   }
@@ -275,29 +296,11 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
     iso_files <- processes$result %>% unlist(recursive = FALSE)
   } else {
     # parallel
-    started <- finished <- rep(FALSE, nrow(files))
+    status <- list(started = rep(FALSE, nrow(files)), finished = rep(FALSE, nrow(files)))
     # check on processes and update progress + user info
     while (TRUE) {
-      # started files
-      newly_started <- readr::read_file(log_files$started) %>% stringr::str_split(fixed(",")) %>% { .[[1]][-1] } %>% as.numeric()
-      if (any(!started[newly_started])) {
-        new_idxs <- newly_started[!started[newly_started]]
-        started[newly_started] <- TRUE
-        files[new_idxs,] %>% 
-          with(mapply(start_iso_file, process = process, filepath = filepath, file_n = file_n, 
-                      files_n = files_n, read_from_cache = read_from_cache, 
-                      write_to_cache = write_to_cache, ext = extension, MoreArgs = list(pb = pb)))
-      }
-      
-      # finished files
-      newly_finished <- readr::read_file(log_files$finished) %>% stringr::str_split(fixed(",")) %>% { .[[1]][-1] } %>% as.numeric()
-      if (any(!finished[newly_finished])) {
-        new_idxs <- newly_finished[!finished[newly_finished]]
-        finished[newly_finished] <- TRUE
-        files[new_idxs,] %>% 
-          with(mapply(finish_iso_file, process = process, filepath = filepath, 
-                      file_n = file_n, files_n = files_n, MoreArgs = list(pb = pb))) 
-      } 
+      # update status
+      status <- process_parallel_logs(pb, status, log_files, files)
       
       # processors report
       futures_finished <- purrr::map_lgl(processes$result, resolved)
@@ -305,6 +308,9 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
       # done?
       if (all(futures_finished)) break
     }
+    
+    # finall call to wrap up logs
+    process_parallel_logs(pb, status, log_files, files)
     
     # delete log files
     file.remove(log_files$started)
@@ -347,6 +353,111 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   return(iso_files)
 }
 
+# wrapper function for creating a read procss
+create_read_process <- function(parallel, data_structure, files, progress_bar = NULL, log_files = NULL) {
+  if (parallel) {
+    # find required global functions and packages from the used readers
+    func_globals <- filter(files, env == "R_GlobalEnv")$func %>% { setNames(purrr::map(., ~rlang::eval_tidy(rlang::sym(.x))), .) }
+    packages <- c("isoreader", filter(files, env != "R_GlobalEnv")$env) %>% unique()
+    # parallel via futures 
+    result <- 
+      future::future(
+        # @NOTE: this may require a way to set globals and packages for the call backs and alternative processing functions to work!
+        # maybe just an option to turn globals = TRUE? maybe as part of iso_debug_mode?
+        globals = c(func_globals, list(data_structure = data_structure, files = files, log_files = log_files, all_opts = get_all_options())),
+        packages = packages,
+        expr = {
+          # reload same isoreader options
+          require(isoreader)
+          options(all_opts)
+          # Note: explicit namespace call required to all parallel session processing
+          isoreader:::map_read_mode(data_structure, files, isoreader:::read_parallel, log_files = log_files)
+        })
+  } else {
+    # sequential (avoid futures package completely for safety)
+    result <- map_read_mode(data_structure, files, read_sequential, progress_bar = progress_bar)
+  }
+  return(result)
+}
+
+# map sequential vs. parallel processing mode
+map_read_mode <- function(data_structure, files, read_func, progress_bar = NULL, log_files = NULL) {
+  with(
+    files,
+    mapply(
+      read_func,
+      # args from files
+      process = process,
+      filepath = filepath, 
+      file_n = file_n, 
+      files_n = files_n, 
+      read_from_cache = read_from_cache, 
+      write_to_cache = write_to_cache, 
+      cachepath = cachepath, 
+      ext = extension, 
+      reader_fun = func,
+      reader_fun_env = env,
+      # single value args
+      MoreArgs = list(
+        ds = data_structure,
+        pb = progress_bar, 
+        log_files = log_files
+      )
+    ))
+}
+
+# sequential reading
+read_sequential <- function(pb, ds, process, filepath, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext, reader_fun, reader_fun_env, ...) {
+  start_iso_file(
+    pb = pb, process = process, filepath = filepath, file_n = file_n, 
+    files_n = files_n, read_from_cache = read_from_cache, 
+    write_to_cache = write_to_cache, ext = ext)
+  isofile <- read_iso_file(
+    ds = ds, filepath = filepath, read_from_cache = read_from_cache, 
+    write_to_cache = write_to_cache, cachepath = cachepath, 
+    reader_fun = reader_fun, reader_fun_env = reader_fun_env)
+  finish_iso_file(
+    pb = pb, process = process, filepath = filepath, file_n = file_n, 
+    files_n = files_n)
+  return(list(isofile))
+}
+
+# parallel processing
+read_parallel <- function(log_files, ds, process, filepath, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext, reader_fun, reader_fun_env, ...) {
+  cat(paste0(",", file_n), file = log_files$started, append = TRUE)
+  isofile <- read_iso_file(
+    ds = ds, filepath = filepath, read_from_cache = read_from_cache, 
+    write_to_cache = write_to_cache, cachepath = cachepath, 
+    reader_fun = reader_fun, reader_fun_env = reader_fun_env)
+  cat(paste0(",", file_n), file = log_files$finished, append = TRUE)
+  return(list(isofile))
+}
+
+# process parallel logs
+process_parallel_logs <- function(progress_bar, status, log_files, files) {
+  # started files
+  newly_started <- readr::read_file(log_files$started) %>% stringr::str_split(fixed(",")) %>% { .[[1]][-1] } %>% as.numeric()
+  if (any(!status$started[newly_started])) {
+    new_idxs <- newly_started[!status$started[newly_started]]
+    status$started[newly_started] <- TRUE
+    files[new_idxs,] %>% 
+      with(mapply(start_iso_file, process = process, filepath = filepath, file_n = file_n, 
+                  files_n = files_n, read_from_cache = read_from_cache, 
+                  write_to_cache = write_to_cache, ext = extension, MoreArgs = list(pb = progress_bar)))
+  }
+  
+  # finished files
+  newly_finished <- readr::read_file(log_files$finished) %>% stringr::str_split(fixed(",")) %>% { .[[1]][-1] } %>% as.numeric()
+  if (any(!status$finished[newly_finished])) {
+    new_idxs <- newly_finished[!status$finished[newly_finished]]
+    status$finished[newly_finished] <- TRUE
+    files[new_idxs,] %>% 
+      with(mapply(finish_iso_file, process = process, filepath = filepath, 
+                  file_n = file_n, files_n = files_n, MoreArgs = list(pb = progress_bar))) 
+  } 
+  
+  return(status)
+}
 
 # progress / user info at start of file (extra parameters included in case needed by read_file_event)
 start_iso_file <- function(pb, process, filepath, file_n, files_n, read_from_cache, write_to_cache, ext) {
@@ -376,7 +487,7 @@ start_iso_file <- function(pb, process, filepath, file_n, files_n, read_from_cac
 }
 
 # read function
-read_iso_file <- function(ds, filepath, read_from_cache, write_to_cache, cachepath, reader_fun) {
+read_iso_file <- function(ds, filepath, read_from_cache, write_to_cache, cachepath, reader_fun, reader_fun_env) {
   
   # prepare iso_file object
   iso_file <- set_ds_file_path(ds, filepath)
@@ -386,7 +497,8 @@ read_iso_file <- function(ds, filepath, read_from_cache, write_to_cache, cachepa
     iso_file <- load_cached_iso_file(cachepath)
   } else {
     # read from original file
-    iso_file <- exec_func_with_error_catch(reader_fun, iso_file)
+    env <- if (reader_fun_env == "R_GlobalEnv") .GlobalEnv else asNamespace(reader_fun_env)
+    iso_file <- exec_func_with_error_catch(reader_fun, iso_file, env = env)
     
     # cleanup any binary content depending on debug setting
     if (!default(debug)) iso_file$binary <- NULL
@@ -401,90 +513,13 @@ read_iso_file <- function(ds, filepath, read_from_cache, write_to_cache, cachepa
 # progress / user info at end of file (extra parameters in case needed by finish_file_event)
 finish_iso_file <- function(pb, process, filepath, file_n, files_n) {
   # progress bar update (do this even if not quiet)
-  last <- paste0(file_n, "\U2713")
-  pb$tick()
+  if(!pb$finished) pb$tick()
   
   # evaluate finish file event quosure if it exists
   finish_file_event <- getOption("isoreader.finish_file_event")
   if (!is.null(finish_file_event) && is_quosure(finish_file_event) && !quo_is_null(finish_file_event)) {
     eval_tidy(get_expr(finish_file_event))
   }
-}
-
-# sequential reading
-read_sequential <- function(pb, ds, process, filepath, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext, reader_fun, ...) {
-  start_iso_file(
-    pb = pb, process = process, filepath = filepath, file_n = file_n, 
-    files_n = files_n, read_from_cache = read_from_cache, 
-    write_to_cache = write_to_cache, ext = ext)
-  isofile <- read_iso_file(
-    ds = ds, filepath = filepath, read_from_cache = read_from_cache, 
-    write_to_cache = write_to_cache, cachepath = cachepath, 
-    reader_fun = reader_fun)
-  finish_iso_file(
-    pb = pb, process = process, filepath = filepath, file_n = file_n, 
-    files_n = files_n)
-  return(list(isofile))
-}
-
-# parallel processing
-read_parallel <- function(log_files, ds, process, filepath, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext, reader_fun, ...) {
-  cat(paste0(",", file_n), file = log_files$started, append = TRUE)
-  isofile <- read_iso_file(
-    ds = ds, filepath = filepath, read_from_cache = read_from_cache, 
-    write_to_cache = write_to_cache, cachepath = cachepath, 
-    reader_fun = reader_fun)
-  cat(paste0(",", file_n), file = log_files$finished, append = TRUE)
-  return(list(isofile))
-}
-
-# map sequential vs. parallel processing mode
-map_read_mode <- function(data_structure, files, read_func, progress_bar = NULL, log_files = NULL) {
-  with(
-    files,
-    mapply(
-      read_func,
-      # args from files
-      process = process,
-      filepath = filepath, 
-      file_n = file_n, 
-      files_n = files_n, 
-      read_from_cache = read_from_cache, 
-      write_to_cache = write_to_cache, 
-      cachepath = cachepath, 
-      ext = extension, 
-      reader_fun = func,
-      # single value args
-      MoreArgs = list(
-        ds = data_structure,
-        pb = progress_bar, 
-        log_files = log_files
-      )
-    ))
-}
-
-# wrapper function for creating a read procss
-create_read_process <- function(parallel, data_structure, files, progress_bar = NULL, log_files = NULL) {
-  if (parallel) {
-    # parallel via futures 
-    result <- 
-      future::future(
-        # @NOTE: this may require a way to set globals and packages for the call backs and alternative processing functions to work!
-        # maybe just an option to turn globals = TRUE? maybe as part of iso_debug_mode?
-        globals = list(data_structure = data_structure, files = files, log_files = log_files, all_opts = get_all_options()),
-        packages = c("isoreader"),
-        expr = {
-          # reload same isoreader options
-          require(isoreader)
-          options(all_opts)
-          # Note: explicit namespace call required to all parallel session processing
-          isoreader:::map_read_mode(data_structure, files, isoreader:::read_parallel, log_files = log_files)
-        })
-  } else {
-    # sequential (avoid futures package completely for safety)
-    result <- map_read_mode(data_structure, files, read_sequential, progress_bar = progress_bar)
-  }
-  return(result)
 }
 
 # file re-reading =========
