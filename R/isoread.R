@@ -512,14 +512,14 @@ read_iso_file <- function(ds, filepath, read_from_cache, write_to_cache, cachepa
 
 # progress / user info at end of file (extra parameters in case needed by finish_file_event)
 finish_iso_file <- function(pb, process, filepath, file_n, files_n) {
-  # progress bar update (do this even if not quiet)
-  if(!pb$finished) pb$tick()
-  
   # evaluate finish file event quosure if it exists
   finish_file_event <- getOption("isoreader.finish_file_event")
   if (!is.null(finish_file_event) && is_quosure(finish_file_event) && !quo_is_null(finish_file_event)) {
     eval_tidy(get_expr(finish_file_event))
   }
+  
+  # progress bar update (do this even if not quiet)
+  if(!pb$finished) pb$tick()
 }
 
 # file re-reading =========
