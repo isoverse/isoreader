@@ -1,6 +1,6 @@
 # read cached isoreader files
 # @param ds the data structure to fill
-iso_read_rds <- function(ds) {
+iso_load <- function(ds) {
 
   # safety checks
   if(!iso_is_file(ds)) stop("data structure must be an iso_file", call. = FALSE)
@@ -18,7 +18,7 @@ iso_read_rds <- function(ds) {
   iso_files <- iso_as_file_list(isofiles)
 
   if (!(iso_is_object(iso_files)))
-    stop("R Data Archive did not contain iso_file data", call. = FALSE)
+    stop("R Data Structure did not contain iso_file data", call. = FALSE)
   iso_files <- iso_as_file_list(iso_files)
 
   # make sure all are the appropriate classes
@@ -37,7 +37,7 @@ iso_read_rds <- function(ds) {
   ok_version <- map_lgl(versions, same_as_isoreader_version, packageVersion("isoreader"))
   if (any(!ok_version)) {
     messages <- sprintf("file created by a different version of the isoreader package (%s)", map_chr(versions[!ok_version], as.character))
-    iso_files[!ok_version] <- map2(iso_files[!ok_version], messages, register_warning, func = "iso_read_rds", warn = FALSE)
+    iso_files[!ok_version] <- map2(iso_files[!ok_version], messages, register_warning, func = "iso_load", warn = FALSE)
   }
 
   if (any(!ok_version)) {
@@ -46,4 +46,11 @@ iso_read_rds <- function(ds) {
   }
 
   return(iso_files)
+}
+
+# read cached isoreader files
+# @param ds the data structure to fill
+iso_read_rda <- function(ds) {
+  warning("`iso_read_rda' is deprecated and will call `iso_load()'. Please call `iso_load()' directly to avoid this warning.")
+  iso_load(ds)
 }

@@ -34,6 +34,6 @@ This function exports the passed in iso_files to the Python and R shared feather
 }
 \seealso{
 Other export functions: \code{\link{iso_export_to_excel}},
-  \code{\link{iso_export_to_rds}}
+  \code{\link{iso_export_to_rds}}, \code{\link{iso_save}}
 }
 \concept{export functions}

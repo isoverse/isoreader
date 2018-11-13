@@ -34,6 +34,6 @@ This function exports the passed in iso_files to Excel. The different kinds of d
 }
 \seealso{
 Other export functions: \code{\link{iso_export_to_feather}},
-  \code{\link{iso_export_to_rds}}
+  \code{\link{iso_export_to_rds}}, \code{\link{iso_save}}
 }
 \concept{export functions}
