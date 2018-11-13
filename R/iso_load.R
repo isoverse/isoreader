@@ -29,7 +29,7 @@ iso_load <- function(ds) {
 
   # information
   if (!default(quiet)) {
-    sprintf("Info: loaded data for %d data files from R Data Archive - checking loaded files for content consistency...", length(iso_files)) %>% message()
+    sprintf("Info: loaded data for %d data files from R Data Structure - checking loaded files for content consistency...", length(iso_files)) %>% message()
   }
 
   # check for version warning
@@ -41,7 +41,7 @@ iso_load <- function(ds) {
   }
 
   if (any(!ok_version)) {
-    sprintf("%.0f of the %.0f data files stored in the R Data Archive ('%s') were created by a different version of the isoreader package. This may lead to processing problems.\nConsider re-reading the original data files using the 'iso_reread_files()' or 'iso_reread_archive()' function. ", sum(!ok_version), length(iso_files), ds$file_info$file_id) %>%
+    sprintf("%.0f of the %.0f data files stored in the R Data Structure ('%s') were created by a different version of the isoreader package. This may lead to processing problems.\nConsider re-reading the original data files using the 'iso_reread_files()' or 'iso_reread_archive()' function. ", sum(!ok_version), length(iso_files), ds$file_info$file_id) %>%
     warning(call. = FALSE, immediate. = TRUE)
   }
 
