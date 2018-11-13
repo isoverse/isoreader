@@ -27,7 +27,7 @@ iso_read_continuous_flow(..., read_raw_data = default(read_raw_data),
 
 \item{parallel}{whether to process in parallel based on the number of available CPU cores. This may yield performance increases for files that are slow to parse such as continuous flow isodat files but usually provides little benefit for efficient data formats such as reading from R Data Archives.}
 
-\item{cache}{whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
+\item{cache}{whether to cache iso_files. Note that previously exported R Data Archives (di.rds, cf.rds) are never cached since they are already essentially in cached form.}
 
 \item{read_cache}{whether to reload from cache if a cached version exists. Note that it will only read from cache if the file was previously read with the exact same isoreader version and read options and has not been modified since.}
 

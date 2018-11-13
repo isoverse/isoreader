@@ -8,7 +8,7 @@
 iso_reread_files(iso_files, ..., stop_if_missing = FALSE,
   quiet = default(quiet))
 
-iso_reread_archive(rda_filepaths, ..., stop_if_missing = FALSE,
+iso_reread_archive(rds_filepaths, ..., stop_if_missing = FALSE,
   quiet = default(quiet))
 }
 \arguments{
@@ -20,17 +20,17 @@ iso_reread_archive(rda_filepaths, ..., stop_if_missing = FALSE,
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 
-\item{rda_filepaths}{the path(s) to the iso_files R data archive(s) to re-read (can be a single file or vector of files)}
+\item{rds_filepaths}{the path(s) to the iso_files R data archive(s) to re-read (can be a single file or vector of files)}
 }
 \description{
-Sometimes it is useful to reload isotope files from their original data files (e.g. after upgrading to a newer version of the isoreader package). 
-The functions described below are intended to make this very easy. 
+Sometimes it is useful to reload isotope files from their original data files (e.g. after upgrading to a newer version of the isoreader package).
+The functions described below are intended to make this very easy.
 However, it is only possible for iso_file objects whose file paths still point to the original raw data files.
 }
 \details{
 \code{iso_reread_files} will re-read all the original data files for the passed in \code{iso_files} object. Returns the reread iso_file objects.
 
-\code{iso_reread_archive} is a convenience function for refreshing saved iso_file collections. It will load a specific iso_files R Data Archive (\code{rda_filepath}), re-read all the data from the original data files and save the collection back to the same rda file. The iso_files are returned invisibly.
+\code{iso_reread_archive} is a convenience function for refreshing saved iso_file collections. It will load a specific iso_files R Data Archive (\code{rds_filepath}), re-read all the data from the original data files and save the collection back to the same rds file. The iso_files are returned invisibly.
 }
 \note{
 re-reading files with their original read parameters is not yet supported
