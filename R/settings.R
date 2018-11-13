@@ -185,8 +185,14 @@ iso_turn_debug_off <- function(data = NULL) {
   if (!missing(data)) return(data)
 }
 
-#' @param event_expr an expression to evaluate in the context of reading individual iso files (evaluated in the local environment of the read function!)
+#' @param event_expr an expression to evaluate in the context of reading individual iso files (evaluated in the local environment at the beginning of a file read)
 #' @rdname iso_debug_mode
 set_read_file_event_expr <- function(event_expr = NULL) {
   set_default("read_file_event", enquo(event_expr))
+}
+
+#' @param event_expr an expression to evaluate in the context of reading individual iso files (evaluated in the local environment at the end of a file read)
+#' @rdname iso_debug_mode
+set_finish_file_event_expr <- function(event_expr = NULL) {
+  set_default("finish_file_event", enquo(event_expr))
 }

@@ -1,3 +1,5 @@
+# general helper functions ===========
+
 #' @importFrom magrittr %>%
 #' @export
 magrittr::`%>%`
@@ -18,6 +20,23 @@ col_check <- function(cols, data, fun = sys.call(-1), msg = "You may have to cha
          "'. ", msg, ". Function: ", fun, call. = FALSE)
 }
 
+# helper function for sending a message by progress bar (if set)
+pb_message <- function(msg) {
+  # FIXME: implement me
+  # store in options:
+  #   in_parallel = FALSE [def] / TRUE
+  #   log_file = NULL [def] / tempfile name
+  #   pb = NULL [def] / progress bar object
+  # use options to distinguish whether in a parallel process (in_parallel = TRUE)
+  # in parallel -> write to message log file (read with skip from log file, make it a csv for efficiency!)
+  # --> replace the start messages with this, just keep the finish based on index
+  # not in parallel -> see if pb is set and !finished, send to pb if set, normal message if not
+}
+
+# helper function for sending a warning by progress bar (if set)
+pb_warning <- function(msg) {
+  # FIXME: implement me
+}
 
 # example files ====
 

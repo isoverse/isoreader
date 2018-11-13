@@ -11,6 +11,7 @@ initialize_options <- function() {
     isoreader.read_method_info = TRUE,
     isoreader.read_vendor_data_table = TRUE,
     isoreader.read_file_event = quo(NULL),
+    isoreader.finish_file_event = quo(NULL),
     isoreader.file_readers = NULL
   )
   options(default_options)
@@ -23,6 +24,8 @@ initialize_options <- function() {
   iso_register_continuous_flow_file_reader(".dxf", "iso_read_dxf", "Isodat Continuous Flow file format (newer)", env = "isoreader")
   iso_register_continuous_flow_file_reader(".iarc", "iso_read_flow_iarc", "IonOS Continous Flow data archieve", env = "isoreader")
   iso_register_continuous_flow_file_reader(".cf.rda", "iso_read_rda", "Isoreader R Data Archive", cacheable = FALSE, env = "isoreader")
+  
+  invisible(options()[names(default_options)])
 }
 
 .onLoad <- function(libname, pkgname) {
