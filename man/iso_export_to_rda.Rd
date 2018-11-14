@@ -2,7 +2,7 @@
 % Please edit documentation in R/export.R
 \name{iso_export_to_rda}
 \alias{iso_export_to_rda}
-\title{Export data to R Data Archive (.rda)}
+\title{Export data to R Data Archive (.rda) (deprecated)}
 \usage{
 iso_export_to_rda(iso_files, filepath, quiet = default(quiet))
 }
@@ -21,6 +21,7 @@ This function exports the passed in iso_files to an R Data Archive (.rda) file, 
 }
 \seealso{
 Other export functions: \code{\link{iso_export_to_excel}},
-  \code{\link{iso_export_to_feather}}
+  \code{\link{iso_export_to_feather}},
+  \code{\link{iso_save}}
 }
 \concept{export functions}
