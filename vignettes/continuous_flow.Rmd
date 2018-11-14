@@ -284,10 +284,10 @@ At the moment, isoreader supports export of all data to R Data archives, Excel, 
 
 ```{r}
 # export to R data archive
-iso_files %>% iso_export_to_rda("iso_files_export")
+iso_files %>% iso_save("iso_files_export")
 
 # read back the exported R data archive
-iso_read_continuous_flow("iso_files_export.cf.rda")
+iso_read_continuous_flow("iso_files_export.cf.rds")
 ```
 
 ```{r}

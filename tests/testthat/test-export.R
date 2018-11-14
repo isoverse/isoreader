@@ -4,9 +4,9 @@ di_example <- iso_read_dual_inlet(iso_get_reader_example("dual_inlet_example.did
 cf_example <- iso_read_continuous_flow(iso_get_reader_example("continuous_flow_example.cf"))
 
 test_that("test that export to rda works properly", {
-  expect_error(iso_export_to_rda(42), "can only export iso files")
-  expect_error(iso_export_to_rda(isoreader:::make_cf_data_structure()), "no filepath provided")
-  expect_error(iso_export_to_rda(isoreader:::make_cf_data_structure(), file.path("DOESNOTEXIST", "test")), 
+  expect_error(iso_save(42), "can only export iso files")
+  expect_error(iso_save(isoreader:::make_cf_data_structure()), "no filepath provided")
+  expect_error(iso_save(isoreader:::make_cf_data_structure(), file.path("DOESNOTEXIST", "test")), 
                "folder .* does not exist")
   
   # test data
@@ -21,52 +21,52 @@ test_that("test that export to rda works properly", {
   cf <- cf %>% iso_as_file_list %>% isoreader:::convert_file_info_to_data_frame() %>% {.[[1]]}
   
   # export and reimport single file
-  expect_message(cf_out <- iso_export_to_rda(cf, filepath, quiet = FALSE), "exporting data .* into R Data Archive")
+  expect_message(cf_out <- iso_save(cf, filepath, quiet = FALSE), "exporting data .* into R Data Storage")
   expect_equal(cf$raw_data, cf_out$raw_data)
-  expect_true(file.exists(str_c(filepath, ".cf.rda")))
-  expect_message(cf_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rda"), quiet = FALSE), "reading file")
+  expect_true(file.exists(str_c(filepath, ".cf.rds")))
+  expect_message(cf_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rds"), quiet = FALSE), "reading file")
   expect_equal(cf$raw_data, cf_back$raw_data)
   expect_equal(cf$file_info %>% unnest(vector_test), cf_back$file_info %>% unnest(vector_test))
   expect_equal(cf$method_info$standards, cf_back$method_info$standards)
   expect_equal(cf$method_info$resistors, cf_back$method_info$resistors)
   expect_equal(cf$vendor_data_table, cf_back$vendor_data_table)
-  expect_true(file.remove(str_c(filepath, ".cf.rda")))
+  expect_true(file.remove(str_c(filepath, ".cf.rds")))
   
   # export and reimport multiple iso_files
   cf$file_info$vector_test <- NULL
   cf2 <- cf
   cf2$file_info$file_id <- "B"
   cfs <- c(cf, cf2)
-  expect_message(cfs_out <- iso_export_to_rda(cfs, filepath, quiet = FALSE), "exporting data .* into R Data Archive")
+  expect_message(cfs_out <- iso_save(cfs, filepath, quiet = FALSE), "exporting data .* into R Data Storage")
   expect_equal(cfs, cfs_out)
-  expect_true(file.exists(str_c(filepath, ".cf.rda")))
-  expect_message(cfs_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rda"), quiet = FALSE), "reading file")
+  expect_true(file.exists(str_c(filepath, ".cf.rds")))
+  expect_message(cfs_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rds"), quiet = FALSE), "reading file")
   expect_equal(cfs, cfs_back)  
-  expect_true(file.remove(str_c(filepath, ".cf.rda")))
+  expect_true(file.remove(str_c(filepath, ".cf.rds")))
   
   # export real data files - dual inlet
-  expect_message(iso_export_to_rda(di_example, filepath, quiet = FALSE), "exporting data .* into R Data Archive")
-  expect_true(file.exists(str_c(filepath, ".di.rda")))
-  expect_message(di_example_back <- iso_read_dual_inlet(str_c(filepath, ".di.rda"), quiet = FALSE), "reading file")
+  expect_message(iso_save(di_example, filepath, quiet = FALSE), "exporting data .* into R Data Storage")
+  expect_true(file.exists(str_c(filepath, ".di.rds")))
+  expect_message(di_example_back <- iso_read_dual_inlet(str_c(filepath, ".di.rds"), quiet = FALSE), "reading file")
   expect_equal(di_example$raw_data, di_example_back$raw_data)  
   expect_equal(di_example$file_info %>% isoreader:::unnest_aggregated_data_frame() %>% unnest(measurement_info), 
                di_example_back$file_info %>% isoreader:::unnest_aggregated_data_frame() %>% unnest(measurement_info))
   expect_equal(di_example$method_info$standards, di_example_back$method_info$standards)
   expect_equal(di_example$method_info$resistors, di_example_back$method_info$resistors)
   expect_equal(di_example$vendor_data_table, di_example_back$vendor_data_table)
-  expect_true(file.remove(str_c(filepath, ".di.rda")))
+  expect_true(file.remove(str_c(filepath, ".di.rds")))
   
   # export real data files - continuous flow
-  expect_message(iso_export_to_rda(cf_example, filepath, quiet = FALSE), "exporting data .* into R Data Archive")
-  expect_true(file.exists(str_c(filepath, ".cf.rda")))
-  expect_message(cf_example_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rda"), quiet = FALSE), "reading file")
+  expect_message(iso_save(cf_example, filepath, quiet = FALSE), "exporting data .* into R Data Storage")
+  expect_true(file.exists(str_c(filepath, ".cf.rds")))
+  expect_message(cf_example_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rds"), quiet = FALSE), "reading file")
   expect_equal(cf_example$raw_data, cf_example_back$raw_data)  
   expect_equal(cf_example$file_info %>% isoreader:::unnest_aggregated_data_frame(), 
                cf_example_back$file_info %>% isoreader:::unnest_aggregated_data_frame())
   expect_equal(cf_example$method_info$standards, cf_example_back$method_info$standards)
   expect_equal(cf_example$method_info$resistors, cf_example_back$method_info$resistors)
   expect_equal(cf_example$vendor_data_table, cf_example_back$vendor_data_table)
-  expect_true(file.remove(str_c(filepath, ".cf.rda")))
+  expect_true(file.remove(str_c(filepath, ".cf.rds")))
 })
 
 library(readxl)
