@@ -16,6 +16,15 @@ initialize_options <- function() {
   )
   options(default_options)
   
+  # set temporary options used during file processing
+  temp_options <- list(
+    isoreader_temp.parallel_process = NA_integer_,
+    isoreader_temp.parallel_log_file = NULL,
+    isoreader_temp.parallel_progress_file = NULL,
+    isoreader_temp.progress_bar = NULL
+  )
+  options(temp_options)
+  
   # register file readers
   iso_register_dual_inlet_file_reader(".did", "iso_read_did", "Isodat Dual Inlet file format (newer)", env = "isoreader")
   iso_register_dual_inlet_file_reader(".caf", "iso_read_caf", "Isodat Dual Inlet file format (older)", env = "isoreader")

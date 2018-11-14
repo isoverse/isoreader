@@ -70,13 +70,25 @@ test_that("test that get support file types are listed", {
   expect_true(is.data.frame(iso_get_supported_file_types()))
 })
 
+test_that("logging works correctly", {
+  iso_turn_info_messages_on()
+  expect_message(log_message("test"), "Info: test")
+  expect_message(log_warning("test"), "Warning: test")
+  
+  iso_turn_info_messages_off()
+  expect_silent(log_message("test"))
+  expect_message(log_warning("test"), "Warning: test")
+  
+  iso_turn_info_messages_on()
+})
+
 test_that("test that error catching works correctly", {
   expect_equal( {suppressMessages(isoreader:::iso_turn_debug_on(catch_errors = TRUE)); isoreader:::default(debug)}, TRUE)
-  expect_warning(y <- isoreader:::exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
+  expect_message(y <- isoreader:::exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
   expect_equal( {suppressMessages(isoreader:::iso_turn_debug_on(catch_errors = FALSE)); isoreader:::default(debug)}, TRUE)
   expect_error(isoreader:::exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
   expect_equal( {suppressMessages(isoreader:::iso_turn_debug_off()); isoreader:::default(debug)}, FALSE)
-  expect_warning(y <- isoreader:::exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
+  expect_message(y <- isoreader:::exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
   expect_equal(problems(y) %>% select(type, details), data_frame(type = "error", details = "problem"))
 })
 

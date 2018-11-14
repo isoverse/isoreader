@@ -128,7 +128,8 @@ iso_read_dual_inlet <- function(
   ..., 
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
-  discard_duplicates = TRUE, parallel = FALSE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
+  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multiprocess, 
+  cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
   iso_read_files(
@@ -141,6 +142,7 @@ iso_read_dual_inlet <- function(
     read_vendor_data_table = read_vendor_data_table,
     discard_duplicates = discard_duplicates,
     parallel = parallel,
+    parallel_plan = parallel_plan,
     cache = cache,
     read_cache = read_cache,
     quiet = quiet
@@ -156,7 +158,8 @@ iso_read_continuous_flow <- function(
   ..., 
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table), 
-  discard_duplicates = TRUE, parallel = FALSE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
+  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multiprocess,
+  cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
   iso_read_files(
@@ -169,6 +172,7 @@ iso_read_continuous_flow <- function(
     read_vendor_data_table = read_vendor_data_table,
     discard_duplicates = discard_duplicates,
     parallel = parallel,
+    parallel_plan = parallel_plan,
     cache = cache,
     read_cache = read_cache,
     quiet = quiet
@@ -186,12 +190,14 @@ iso_read_continuous_flow <- function(
 #' @param data_structure the basic data structure for the type of iso_file
 #' @inheritParams iso_as_file_list
 #' @param parallel whether to process in parallel based on the number of available CPU cores. This may yield performance increases for files that are slow to parse such as continuous flow isodat files but usually provides little benefit for efficient data formats such as reading from R Data Archives.
+#' @param parallel_plan which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multiprocess} (the default, uses multicore if supported by the operating system, otherwise multisession), \code{future::multisession} or \code{future::multicore}.
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}
 #' @param cache whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.
 #' @param read_cache whether to reload from cache if a cached version exists. Note that it will only read from cache if the file was previously read with the exact same isoreader version and read options and has not been modified since.
 #' @param ... read options to be stored in the data structure as read options
 #' @return single iso_file object (if single file) or list of iso_files (iso_file_list)
-iso_read_files <- function(paths, supported_extensions, data_structure, ..., discard_duplicates = TRUE, parallel = FALSE, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
+iso_read_files <- function(paths, supported_extensions, data_structure, ..., discard_duplicates = TRUE, parallel = FALSE, 
+                           parallel_plan = future::multiprocess, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
 
   # start timer
   start_time <- Sys.time()
@@ -203,7 +209,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   # parallel processing
   if (parallel) {
     cores <- future::availableCores()
-    oplan <- plan(future::multisession) #plan(future::multiprocess)
+    oplan <- plan(parallel_plan)
     on.exit(plan(oplan), add = TRUE)
   } 
   
@@ -230,6 +236,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   pb <- progress::progress_bar$new(
     format = sprintf("Progress: [:bar] :current/%d (:percent) :elapsed", length(filepaths)),
     clear = FALSE, show_after = 0, total = length(filepaths))
+  set_temp("progress_bar", pb)
   pb$tick(0)
   
   # overview
@@ -238,7 +245,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
       "Info: preparing to read {length(filepaths)} data file(s)",
       if (parallel) { ", setting up {min(cores, length(filepaths))} parallel processes..." } 
       else {"..."}) %>% 
-      pb$message()
+      log_message()
   }
   
   # generate read files overview
@@ -267,25 +274,20 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
          str_c(req_readers[missing], collapse = ", "), call. = FALSE)
   }
   
-  # set up log files (for updates while parallel processing)
-  log_files <- NULL
-  if (parallel) {
-    log_files <- tempfile() %>% { list(started = paste0(., "_started"), finished = paste0(., "_finished")) }
-    cat("0", file = log_files$started)
-    cat("0", file = log_files$finished)
-  }
+  # set up log files for parallel processing
+  if (parallel) setup_parallel_logs()
   
   # setup up processes
+  set_temp("parallel_process", NA_integer_) # mark the main process
   processes <- 
     files %>% 
-    mutate(process_nest = process) %>% 
-    nest(-process_nest) %>% 
+    nest(-process) %>% 
     mutate(
-      result = map(
+      result = purrr::map2(
+        process,
         data,
         ~ create_read_process(
-          parallel = parallel, data_structure = data_structure,
-          files = .x, progress_bar = pb, log_files = log_files
+          process = .x, data_structure = data_structure, files = .y
         )
       )
     )
@@ -296,27 +298,8 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
     iso_files <- processes$result %>% unlist(recursive = FALSE)
   } else {
     # parallel
-    status <- list(started = rep(FALSE, nrow(files)), finished = rep(FALSE, nrow(files)))
-    # check on processes and update progress + user info
-    while (TRUE) {
-      # update status
-      status <- process_parallel_logs(pb, status, log_files, files)
-      
-      # processors report
-      futures_finished <- purrr::map_lgl(processes$result, resolved)
-      
-      # done?
-      if (all(futures_finished)) break
-    }
-    
-    # finall call to wrap up logs
-    process_parallel_logs(pb, status, log_files, files)
-    
-    # delete log files
-    file.remove(log_files$started)
-    file.remove(log_files$finished)
-    
-    # fetch results 
+    monitor_parallel_logs(processes)
+    cleanup_parallel_logs()
     iso_files <- processes$result %>% lapply(future::value) %>% 
       unlist(recursive = FALSE)
   }
@@ -328,10 +311,10 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   if (!default(quiet)) {
     end_time <- Sys.time()
     sprintf(
-      "Info: finished reading %s files in %.2f %s",
+      "finished reading %s files in %.2f %s",
       nrow(files), as.numeric(end_time - start_time), 
       attr(end_time - start_time, "units")) %>% 
-    message()
+    log_message()
   }
 
   # turn into iso_file list
@@ -343,7 +326,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   
   # report problems
   if (!default(quiet) && iso_has_problems(iso_files)) {
-    message(sprintf("Info: encountered %.0f problems in total", n_problems(iso_files)))
+    sprintf("encountered %.0f problems in total", n_problems(iso_files)) %>% log_message()
     print(problems(iso_files))
     cat("\n")
   }
@@ -354,129 +337,67 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
 }
 
 # wrapper function for creating a read procss
-create_read_process <- function(parallel, data_structure, files, progress_bar = NULL, log_files = NULL) {
-  if (parallel) {
+# @param process if NA --> set up process in the current session, if integer --> set up parallel process
+create_read_process <- function(process, data_structure, files) {
+  
+  # specify relevant files columns to match read_iso_file parameters
+  files <- files %>% 
+    select(
+      filepath = filepath, file_n = file_n, files_n = files_n, 
+      read_from_cache = read_from_cache, write_to_cache = write_to_cache, cachepath = cachepath, 
+      ext = extension, reader_fun = func, reader_fun_env = env
+    )
+  
+  # parallel
+  if (!is.na(process)) {
     # find required global functions and packages from the used readers
-    func_globals <- filter(files, env == "R_GlobalEnv")$func %>% { setNames(purrr::map(., ~rlang::eval_tidy(rlang::sym(.x))), .) }
-    packages <- c("isoreader", filter(files, env != "R_GlobalEnv")$env) %>% unique()
+    func_globals <- filter(files, reader_fun_env == "R_GlobalEnv")$reader_fun %>% 
+      unique() %>% { setNames(purrr::map(., ~rlang::eval_tidy(rlang::sym(.x))), .) }
+    packages <- c("isoreader", "purrr", filter(files, reader_fun_env != "R_GlobalEnv")$reader_fun_env) %>% unique()
+    log_file <- get_temp("parallel_log_file")
+    progress_file <- get_temp("parallel_progress_file")
     # parallel via futures 
     result <- 
       future::future(
-        # @NOTE: this may require a way to set globals and packages for the call backs and alternative processing functions to work!
-        # maybe just an option to turn globals = TRUE? maybe as part of iso_debug_mode?
-        globals = c(func_globals, list(data_structure = data_structure, files = files, log_files = log_files, all_opts = get_all_options())),
+        globals = c(func_globals, list(
+          process = process, data_structure = data_structure, files = files, 
+          log_file = log_file, progress_file = progress_file, all_opts = get_all_options())),
         packages = packages,
         expr = {
-          # reload same isoreader options
+          # reload isoreader options
           require(isoreader)
+          require(purrr)
           options(all_opts)
-          # Note: explicit namespace call required to all parallel session processing
-          isoreader:::map_read_mode(data_structure, files, isoreader:::read_parallel, log_files = log_files)
+          # set isoreader temp options for parallel processing
+          isoreader:::set_temp("parallel_process", process)
+          isoreader:::set_temp("parallel_log_file", log_file)
+          isoreader:::set_temp("parallel_progress_file", progress_file)
+          # process isofiles
+          purrr::pmap(files, isoreader:::read_iso_file, ds = data_structure)
         })
   } else {
-    # sequential (avoid futures package completely for safety)
-    result <- map_read_mode(data_structure, files, read_sequential, progress_bar = progress_bar)
+    # sequential (don't use future package)
+    result <-  purrr::pmap(files, read_iso_file, ds = data_structure)
   }
   return(result)
 }
 
-# map sequential vs. parallel processing mode
-map_read_mode <- function(data_structure, files, read_func, progress_bar = NULL, log_files = NULL) {
-  with(
-    files,
-    mapply(
-      read_func,
-      # args from files
-      process = process,
-      filepath = filepath, 
-      file_n = file_n, 
-      files_n = files_n, 
-      read_from_cache = read_from_cache, 
-      write_to_cache = write_to_cache, 
-      cachepath = cachepath, 
-      ext = extension, 
-      reader_fun = func,
-      reader_fun_env = env,
-      # single value args
-      MoreArgs = list(
-        ds = data_structure,
-        pb = progress_bar, 
-        log_files = log_files
-      )
-    ))
-}
-
-# sequential reading
-read_sequential <- function(pb, ds, process, filepath, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext, reader_fun, reader_fun_env, ...) {
-  start_iso_file(
-    pb = pb, process = process, filepath = filepath, file_n = file_n, 
-    files_n = files_n, read_from_cache = read_from_cache, 
-    write_to_cache = write_to_cache, ext = ext)
-  isofile <- read_iso_file(
-    ds = ds, filepath = filepath, read_from_cache = read_from_cache, 
-    write_to_cache = write_to_cache, cachepath = cachepath, 
-    reader_fun = reader_fun, reader_fun_env = reader_fun_env)
-  finish_iso_file(
-    pb = pb, process = process, filepath = filepath, file_n = file_n, 
-    files_n = files_n)
-  return(list(isofile))
-}
-
-# parallel processing
-read_parallel <- function(log_files, ds, process, filepath, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext, reader_fun, reader_fun_env, ...) {
-  cat(paste0(",", file_n), file = log_files$started, append = TRUE)
-  isofile <- read_iso_file(
-    ds = ds, filepath = filepath, read_from_cache = read_from_cache, 
-    write_to_cache = write_to_cache, cachepath = cachepath, 
-    reader_fun = reader_fun, reader_fun_env = reader_fun_env)
-  cat(paste0(",", file_n), file = log_files$finished, append = TRUE)
-  return(list(isofile))
-}
-
-# process parallel logs
-process_parallel_logs <- function(progress_bar, status, log_files, files) {
-  # started files
-  newly_started <- readr::read_file(log_files$started) %>% stringr::str_split(fixed(",")) %>% { .[[1]][-1] } %>% as.numeric()
-  if (any(!status$started[newly_started])) {
-    new_idxs <- newly_started[!status$started[newly_started]]
-    status$started[newly_started] <- TRUE
-    files[new_idxs,] %>% 
-      with(mapply(start_iso_file, process = process, filepath = filepath, file_n = file_n, 
-                  files_n = files_n, read_from_cache = read_from_cache, 
-                  write_to_cache = write_to_cache, ext = extension, MoreArgs = list(pb = progress_bar)))
-  }
+# read function
+read_iso_file <- function(ds, filepath, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext, reader_fun, reader_fun_env) {
   
-  # finished files
-  newly_finished <- readr::read_file(log_files$finished) %>% stringr::str_split(fixed(",")) %>% { .[[1]][-1] } %>% as.numeric()
-  if (any(!status$finished[newly_finished])) {
-    new_idxs <- newly_finished[!status$finished[newly_finished]]
-    status$finished[newly_finished] <- TRUE
-    files[new_idxs,] %>% 
-      with(mapply(finish_iso_file, process = process, filepath = filepath, 
-                  file_n = file_n, files_n = files_n, MoreArgs = list(pb = progress_bar))) 
-  } 
-  
-  return(status)
-}
-
-# progress / user info at start of file (extra parameters included in case needed by read_file_event)
-start_iso_file <- function(pb, process, filepath, file_n, files_n, read_from_cache, write_to_cache, ext) {
+  # prepare iso_file object
+  iso_file <- set_ds_file_path(ds, filepath)
   
   # progress update
   if (!default(quiet)) {
     if (read_from_cache) { 
-      msg <- glue(
-        #"Info: reading file {file_n}/{files_n} '{filepath}' from cache",
-        "Info: reading file '{filepath}' from cache",
-        if(!is.na(process)) {" on process {process}..."} else {"..."})
+      msg <- glue("reading file '{filepath}' from cache...")
     } else {
       msg <- glue(
-        "Info: reading{if (write_to_cache) ' and caching' else ''} ",
-        #"file {file_n}/{files_n} '{filepath}' with '{ext}' reader",
-        "file '{filepath}' with '{ext}' reader",
-        if(!is.na(process)) {" on process {process}..."} else {"..."}) 
+        "reading{if (write_to_cache) ' and caching' else ''} ",
+        "file '{filepath}' with '{ext}' reader")
     }
-    pb$message(msg)
+    log_message(msg)
   }
   
   # evaluate read file event quosure if it exists
@@ -484,13 +405,6 @@ start_iso_file <- function(pb, process, filepath, file_n, files_n, read_from_cac
   if (!is.null(read_file_event) && is_quosure(read_file_event) && !quo_is_null(read_file_event)) {
     eval_tidy(get_expr(read_file_event))
   }
-}
-
-# read function
-read_iso_file <- function(ds, filepath, read_from_cache, write_to_cache, cachepath, reader_fun, reader_fun_env) {
-  
-  # prepare iso_file object
-  iso_file <- set_ds_file_path(ds, filepath)
   
   if (read_from_cache) {
     # read from cache
@@ -507,19 +421,16 @@ read_iso_file <- function(ds, filepath, read_from_cache, write_to_cache, cachepa
     if (write_to_cache) cache_iso_file(iso_file, cachepath)
   }
   
-  return(iso_file)
-}
-
-# progress / user info at end of file (extra parameters in case needed by finish_file_event)
-finish_iso_file <- function(pb, process, filepath, file_n, files_n) {
   # evaluate finish file event quosure if it exists
   finish_file_event <- getOption("isoreader.finish_file_event")
   if (!is.null(finish_file_event) && is_quosure(finish_file_event) && !quo_is_null(finish_file_event)) {
     eval_tidy(get_expr(finish_file_event))
   }
   
-  # progress bar update (do this even if not quiet)
-  if(!pb$finished) pb$tick()
+  # marke progress for progress bar
+  log_progress()
+  
+  return(iso_file)
 }
 
 # file re-reading =========
@@ -549,7 +460,7 @@ iso_reread_files <- function(iso_files, ..., stop_if_missing = FALSE, quiet = de
   
   # overview
   if (!default(quiet)) {
-    message("Info: re-reading ", length(filepaths), " data file(s)...")
+    log_message("re-reading ", length(filepaths), " data file(s)...")
   }
   
   # safety check for non existent data files
@@ -606,7 +517,7 @@ iso_reread_archive <- function(rda_filepaths, ..., stop_if_missing = FALSE, quie
     stop("file(s) do not exist: ", str_c(rda_filepaths[missing], collapse = ", "), call. = FALSE)
   
   reread_archive <- function(filepath, call) {
-    if(!quiet) message("Info: loading R Data Archive ", basename(filepath), "...")
+    if(!quiet) log_message("loading R Data Archive ", basename(filepath), "...")
     suppressWarnings(do.call(call, args = list(paths = filepath, quiet=TRUE))) %>% 
       iso_reread_files(..., stop_if_missing = stop_if_missing, quiet=quiet) %>% 
       iso_export_to_rda(filepath = filepath, quiet=quiet)
