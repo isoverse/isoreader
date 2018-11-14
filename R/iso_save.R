@@ -35,7 +35,7 @@ iso_save <- function(iso_files, filepath, quiet = default(quiet)) {
 #' @export
 #' @seealso iso_save
 iso_export_to_rds <- function(iso_files, filepath, quiet = default(quiet)) {
-  warning("`iso_export_to_rds' is deprecated and will call `iso_save()'. Please call `iso_save()' directly to avoid this warning.")
+  warning("`iso_export_to_rds' is deprecated and will call `iso_save()'. Please call `iso_save()' directly to avoid this warning.", call. = FALSE, immediate. = TRUE)
   iso_save(iso_files, filepath, quiet = quiet)
 }
 
