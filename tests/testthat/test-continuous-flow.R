@@ -3,7 +3,7 @@ context("Continuous flow")
 test_that("test that supported cf files are correct", {
   isoreader:::initialize_options()
   expect_is(exts <- isoreader:::get_supported_cf_files(), "data.frame")
-  expect_equal(exts$extension, c(".cf", ".dxf", ".iarc", ".cf.rda"))
+  expect_equal(exts$extension, c(".cf", ".dxf", ".iarc", ".cf.rds", ".cf.rda"))
   expect_true(all(exts$func %>% sapply(class) == "character"))
   expect_true(all(exts$func %>% map_lgl(exists, mode = "function", where = asNamespace("isoreader"))))
 })
