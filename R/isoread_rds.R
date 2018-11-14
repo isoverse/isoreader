@@ -6,7 +6,7 @@ iso_read_rds <- function(ds) {
   if(!iso_is_file(ds)) stop("data structure must be an iso_file", call. = FALSE)
   
   # load rds file
-  iso_file <- readRDS(ds$file_info$file_path) 
+  iso_files <- readRDS(ds$file_info$file_path) 
   
   # make sure object in file was loaded properly
   if (exists("isofiles", inherits = FALSE)) { 
@@ -19,7 +19,7 @@ iso_read_rds <- function(ds) {
     iso_files <- iso_as_file_list(isofiles)
   }
   if (!(iso_is_object(iso_files))) 
-    stop("R Data Archive did not contain iso_file data", call. = FALSE)
+    stop("R Data Storage did not contain iso_file data", call. = FALSE)
   iso_files <- iso_as_file_list(iso_files)
   
   # make sure all are the appropriate classes
@@ -42,7 +42,7 @@ iso_read_rds <- function(ds) {
   }
 
   if (any(!ok_version)) {
-    sprintf("%.0f of the %.0f data files stored in the R Data Archive ('%s') were created by a different version of the isoreader package. This may lead to processing problems.\nConsider re-reading the original data files using the 'iso_reread_files()' or 'iso_reread_archive()' function. ", sum(!ok_version), length(iso_files), ds$file_info$file_id) %>% 
+    sprintf("%.0f of the %.0f data files stored in the R Data Structure ('%s') were created by a different version of the isoreader package. This may lead to processing problems.\nConsider re-reading the original data files using the 'iso_reread_files()' or 'iso_reread_archive()' function. ", sum(!ok_version), length(iso_files), ds$file_info$file_id) %>% 
     warning(call. = FALSE, immediate. = TRUE)
   }
 
