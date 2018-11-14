@@ -13,11 +13,27 @@ set_default <- function(name, value, overwrite = TRUE) {
   return(invisible(value))
 }
 
-# helper function to transfer option settings between processors
-get_all_options <- function() {
-  all_opts <- options()
-  all_opts[str_detect(names(all_opts), "^isoreader\\.")]
+# retrieve temp option
+get_temp <- function(name, allow_null = TRUE) {
+  value <- getOption(str_c("isoreader_temp.", name))
+  if (!allow_null && is.null(value)) stop("isoreader temporary setting '", name, "' does not exist", call. = FALSE)
+  return(value)
 }
+
+# set temp option
+set_temp <- function(name, value) {
+  options(list(value) %>% setNames(str_c("isoreader_temp.", name)))
+  return(invisible(value))
+}
+
+# helper function to transfer option settings between processors
+get_all_options <- function(with_temp = FALSE) {
+  all_opts <- options()
+  pattern <- if(with_temp) "^isoreader(_temp)?\\." else "^isoreader\\."
+  all_opts[str_detect(names(all_opts), pattern)]
+}
+
+
 
 #' Get the current default parameters
 #' 
