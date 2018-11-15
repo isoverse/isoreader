@@ -10,6 +10,7 @@ docu:
 	rm -f vignettes/*.feather
 	rm -f vignettes/*.xlsx
 	rm -f vignettes/*.rda
+	rm -f vignettes/*.rds
 
 vignettes:
 	Rscript -e "devtools::build_vignettes()"
