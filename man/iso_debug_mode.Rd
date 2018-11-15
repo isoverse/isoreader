@@ -5,6 +5,7 @@
 \alias{iso_turn_debug_on}
 \alias{iso_turn_debug_off}
 \alias{set_read_file_event_expr}
+\alias{set_finish_file_event_expr}
 \title{Debugging functions}
 \usage{
 iso_turn_debug_on(data = NULL, catch_errors = TRUE, cache = FALSE)
@@ -12,6 +13,8 @@ iso_turn_debug_on(data = NULL, catch_errors = TRUE, cache = FALSE)
 iso_turn_debug_off(data = NULL)
 
 set_read_file_event_expr(event_expr = NULL)
+
+set_finish_file_event_expr(event_expr = NULL)
 }
 \arguments{
 \item{data}{a data frame - returned invisibly as is if provided (e.g. in the middle of a pipeline)}
@@ -20,7 +23,9 @@ set_read_file_event_expr(event_expr = NULL)
 
 \item{cache}{whether to cache or read anything from cache}
 
-\item{event_expr}{an expression to evaluate in the context of reading individual iso files (evaluated in the local environment of the read function!)}
+\item{event_expr}{an expression to evaluate in the context of reading individual iso files (evaluated in the local environment at the beginning of a file read)}
+
+\item{event_expr}{an expression to evaluate in the context of reading individual iso files (evaluated in the local environment at the end of a file read)}
 }
 \description{
 For troubleshooting. Not exported.

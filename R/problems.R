@@ -160,7 +160,7 @@ register_problem <- function(obj, type = NA_character_, details = NA_character_,
 register_warning <- function(obj, details = NA_character_, ..., 
                              func = find_parent_call("register_warning"), warn = TRUE) {
   force(func)
-  if (warn) warning(details, call. = FALSE, immediate. = TRUE)
+  if (warn) log_warning(details)
   register_problem(obj, type = "warning", details = details, func = func, ...)
 }
 
@@ -168,7 +168,7 @@ register_warning <- function(obj, details = NA_character_, ...,
 register_error <- function(obj, details = NA_character_, ..., 
                            func = find_parent_call("register_error"), warn = TRUE) {
   force(func)
-  if (warn) warning("caught error - ", details, call. = FALSE, immediate. = TRUE)
+  if (warn) log_warning(paste0("caught error - ", details))
   register_problem(obj, type = "error", details = details, func = func, ...)
 }
 
