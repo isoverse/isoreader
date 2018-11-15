@@ -27,7 +27,7 @@ iso_register_continuous_flow_file_reader(extension, func,
 \item{env}{the environment where to find the function, by default this will be determined automatically and will throw an error if there is any ambiguity (e.g. the same function name in multiple packages) in which case it should be set manually}
 }
 \description{
-Register file extensions and reader functions for different data files. Isoreader automatically registers all built-in file readers so this function is usually only needed when registering additional readers provided for testing purposes from outside of the isoreader package.
+Register file extensions and reader functions for different data files. Isoreader automatically registers all built-in file readers so this function is usually only needed when registering additional readers provided for testing purposes from outside of the isoreader package. Note that file extensions are case-insensitive, i.e. a reader for \code{.ext} will also recognize \code{.Ext} and \code{.EXT}
 }
 \details{
 \code{iso_register_dual_inlet_file_reader}: use this function to register file readers for dual inlet files.
