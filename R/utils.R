@@ -23,7 +23,7 @@ col_check <- function(cols, data, fun = sys.call(-1), msg = "You may have to cha
 # messages/warnings/progress =======
 
 # helper function for showing a message via progress bar or logging it in log file (parallel)
-log_message <- function(msg, type = "info", prefix = "Info: ", quiet = default(quiet)) {
+log_message <- function(..., type = "info", prefix = "Info: ", quiet = default(quiet)) {
   if (!quiet) {
     pb <- get_temp("progress_bar", allow_null = TRUE)
     process <- get_temp("parallel_process", allow_null = FALSE)
@@ -36,10 +36,10 @@ log_message <- function(msg, type = "info", prefix = "Info: ", quiet = default(q
       }
     } else if (!is.null(pb) && !pb$finished) {
       # progress bar
-      pb$message(paste0(prefix, msg))
+      pb$message(.makeMessage(prefix, ...))
     } else {
       # regular message
-      message(paste0(prefix, msg))
+      message(.makeMessage(prefix, ...))
     }
   }
 }
@@ -174,6 +174,14 @@ iso_get_reader_examples <- function() {
 }
 
 # file paths ====
+
+# guess root path
+# if relative --> root = "."
+# if absolute --> see if a subset of current wd and turn into a relative path
+# if absolute and not part of the working directory --> find smalles common denominator across all files as root
+guess_root <- function(filepaths) {
+  # FIXME: implement me
+}
 
 # get file extension
 get_file_ext <- function(filepath) {
