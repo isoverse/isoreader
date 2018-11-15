@@ -1,3 +1,5 @@
+# general helper functions ===========
+
 #' @importFrom magrittr %>%
 #' @export
 magrittr::`%>%`
@@ -18,6 +20,126 @@ col_check <- function(cols, data, fun = sys.call(-1), msg = "You may have to cha
          "'. ", msg, ". Function: ", fun, call. = FALSE)
 }
 
+# messages/warnings/progress =======
+
+# helper function for showing a message via progress bar or logging it in log file (parallel)
+log_message <- function(..., type = "info", prefix = "Info: ", quiet = default(quiet)) {
+  if (!quiet) {
+    pb <- get_temp("progress_bar", allow_null = TRUE)
+    process <- get_temp("parallel_process", allow_null = FALSE)
+    if (!is.na(process)) {
+      # save to log file
+      log_file <- get_temp("parallel_log_file")
+      if (!is.null(log_file)) {
+        sprintf("\"%s\",%d,\"%s\"\n", type, process, str_replace_all(msg, fixed("\""), "\\\"")) %>% 
+          cat(file = log_file, append = TRUE)
+      }
+    } else if (!is.null(pb) && !pb$finished) {
+      # progress bar
+      pb$message(.makeMessage(prefix, ...))
+    } else {
+      # regular message
+      message(.makeMessage(prefix, ...))
+    }
+  }
+}
+
+# helper function for showing a warning via progress bar or logging it in log file (parallel)
+log_warning <- function(msg, type = "warning", prefix = "Warning: ") {
+  # warnings are never quiet
+  log_message(msg, type = type, prefix = prefix, quiet = FALSE)
+}
+
+# log progress on the progress bar or log in progress file (parallel)
+log_progress <- function(n = 1L) {
+  process <- get_temp("parallel_process", allow_null = FALSE)
+  pb <- get_temp("progress_bar", allow_null = TRUE)
+  if (!is.na(process)) {
+    # save to log file
+    log_file <- get_temp("parallel_progress_file")
+    if (!is.null(log_file)) {
+      cat(rep(" ", n), file = log_file, append = TRUE)
+    }
+  } else if(!is.null(pb) && !pb$finished) {
+    # advance progress
+    pb$tick(n)
+  }
+}
+
+# paralell ========
+
+# setup log files
+setup_parallel_logs <- function() {
+  tmpfile <- tempfile()
+  
+  log <- paste0(tmpfile, ".log")
+  cat("", file = log)
+  set_temp("parallel_log_file", log)
+  
+  progress <- paste0(tmpfile, ".progress")
+  cat("", file = progress)
+  set_temp("parallel_progress_file", progress)
+}
+
+# monitor parallel log files
+monitor_parallel_logs <- function(processes) {
+  pb <- get_temp("progress_bar", allow_null = TRUE)
+  status <- list(log_n = 0L, progress = 0L)
+  # check on processes and update progress + user info
+  while (TRUE) {
+    # update status
+    status <- process_parallel_logs(status)
+    
+    # processors report
+    futures_finished <- purrr::map_lgl(processes$result, future::resolved)
+    
+    # done?
+    if (all(futures_finished)) break
+  }
+  
+  # finall call to wrap up logs
+  process_parallel_logs(status)
+}
+
+# process parallel logs
+process_parallel_logs <- function(status) {
+
+  # logs
+  log <- get_temp("parallel_log_file")
+  if (!is.null(log) && file.exists(log)) {
+    logs <- suppressMessages(read_csv(log, col_names = FALSE, skip = status$log_n))
+    if (nrow(logs) > 0) {
+      status$log_n <- status$log_n + nrow(logs)
+      logs %>% 
+        mutate(prefix = case_when(
+          X1 == "info" ~ sprintf("Info (process %d): ", X2),
+          X1 == "warning" ~ sprintf("Warning (process %d): ", X2),
+          TRUE ~ sprintf("Process %d: ", X2)
+        )) %>% 
+        with(purrr::walk2(X3, prefix, ~log_message(.x, prefix = .y)))
+    }
+  }
+  
+  # finished files
+  progress <- get_temp("parallel_progress_file")
+  if (!is.null(progress) && file.exists(progress)) {
+    progress <- file.size(progress)
+    if (progress > status$progress) {
+      log_progress(progress - status$progress)
+      status$progress <- progress
+    }
+  }
+  
+  return(status)
+}
+
+# cleanup parallel logs
+cleanup_parallel_logs <- function() {
+  log <- get_temp("parallel_log_file")
+  if (!is.null(log) && file.exists(log)) file.remove(log)
+  progress <- get_temp("parallel_progress_file")
+  if (!is.null(progress) && file.exists(progress)) file.remove(progress)
+}
 
 # example files ====
 
@@ -52,6 +174,14 @@ iso_get_reader_examples <- function() {
 }
 
 # file paths ====
+
+# guess root path
+# if relative --> root = "."
+# if absolute --> see if a subset of current wd and turn into a relative path
+# if absolute and not part of the working directory --> find smalles common denominator across all files as root
+guess_root <- function(filepaths) {
+  # FIXME: implement me
+}
 
 # get file extension
 get_file_ext <- function(filepath) {

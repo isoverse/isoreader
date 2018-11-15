@@ -61,14 +61,14 @@ test_that("Test that warning and error registration works properly", {
   x <- letters
   
   # add a warning
-  expect_warning(y <- isoreader:::register_warning(x, details = "problem", warn = TRUE), "problem")
+  expect_message(y <- isoreader:::register_warning(x, details = "problem", warn = TRUE), "problem")
   expect_silent(y <- isoreader:::register_warning(x, details = "problem", warn = FALSE))
   expect_equal(as.character(y), x)
   expect_equal(isoreader:::n_problems(y), 1)
   expect_equal(problems(y) %>% select(type, details), data_frame(type = "warning", details = "problem"))
   
   # add an error
-  expect_warning(y <- isoreader:::register_error(x, details = "problem", warn = TRUE), "problem")
+  expect_message(y <- isoreader:::register_error(x, details = "problem", warn = TRUE), "caught error - problem")
   expect_silent(y <- isoreader:::register_error(x, details = "problem", warn = FALSE))
   expect_equal(as.character(y), x)
   expect_equal(isoreader:::n_problems(y), 1)
@@ -87,8 +87,8 @@ test_that("Combing problems works properly", {
 test_that("removing files with errors works properly", {
   
   iso_file <- isoreader:::make_iso_file_data_structure()
-  expect_warning(iso_warn <- isoreader:::register_warning(iso_file, "test warning"))
-  expect_warning(iso_err <- isoreader:::register_error(iso_file, "test error"))
+  expect_message(iso_warn <- isoreader:::register_warning(iso_file, "test warning"))
+  expect_message(iso_err <- isoreader:::register_error(iso_file, "test error"))
   iso_file$file_info$file_id <- "A"
   iso_warn$file_info$file_id <- "B"
   iso_err$file_info$file_id <- "C"

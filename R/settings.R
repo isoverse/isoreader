@@ -13,11 +13,27 @@ set_default <- function(name, value, overwrite = TRUE) {
   return(invisible(value))
 }
 
-# helper function to transfer option settings between processors
-get_all_options <- function() {
-  all_opts <- options()
-  all_opts[str_detect(names(all_opts), "^isoreader\\.")]
+# retrieve temp option
+get_temp <- function(name, allow_null = TRUE) {
+  value <- getOption(str_c("isoreader_temp.", name))
+  if (!allow_null && is.null(value)) stop("isoreader temporary setting '", name, "' does not exist", call. = FALSE)
+  return(value)
 }
+
+# set temp option
+set_temp <- function(name, value) {
+  options(list(value) %>% setNames(str_c("isoreader_temp.", name)))
+  return(invisible(value))
+}
+
+# helper function to transfer option settings between processors
+get_all_options <- function(with_temp = FALSE) {
+  all_opts <- options()
+  pattern <- if(with_temp) "^isoreader(_temp)?\\." else "^isoreader\\."
+  all_opts[str_detect(names(all_opts), pattern)]
+}
+
+
 
 #' Get the current default parameters
 #' 
@@ -185,8 +201,14 @@ iso_turn_debug_off <- function(data = NULL) {
   if (!missing(data)) return(data)
 }
 
-#' @param event_expr an expression to evaluate in the context of reading individual iso files (evaluated in the local environment of the read function!)
+#' @param event_expr an expression to evaluate in the context of reading individual iso files (evaluated in the local environment at the beginning of a file read)
 #' @rdname iso_debug_mode
 set_read_file_event_expr <- function(event_expr = NULL) {
   set_default("read_file_event", enquo(event_expr))
+}
+
+#' @param event_expr an expression to evaluate in the context of reading individual iso files (evaluated in the local environment at the end of a file read)
+#' @rdname iso_debug_mode
+set_finish_file_event_expr <- function(event_expr = NULL) {
+  set_default("finish_file_event", enquo(event_expr))
 }

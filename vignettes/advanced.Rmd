@@ -1,0 +1,113 @@
+---
+title: "Advanced use of isoreader"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Advanced}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+library(isoreader)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+## Adding new file format readers
+
+Testing out new file format readers is easiest by registering a new reader function for a specific file extension using `iso_register_dual_inlet_file_reader` and `iso_register_continuous_flow_file_reader`, respectively. Both require an extension (e.g. `".ext"`), name of the new reader function (`"new_reader"`), and optionally a description. Both functions automatically return a data frame with a list of all registered reader. Overwriting of existing readers with a different function requires an explicit `overwrite = TRUE` flag. All reader functions must accept an isoreader data stucture object as the first argument and should return the same structure with data filled in for downstream isoreader operations to work smoothly. The following minimal example illustrates how to do this with the `new_reader` function simply printing out the layout of the provided data structure skeleton `ds`.
+
+```{r}
+new_reader <- function(ds) {
+  isoreader:::log_message("this is the new reader!")
+  str(ds)
+  return(ds)
+}
+
+# register new reader
+readers <- iso_register_dual_inlet_file_reader(".new.did", "new_reader")
+rmarkdown::paged_table(readers)
+
+# copy an example file from the package with the new extension
+iso_get_reader_example("dual_inlet_example.did") %>% file.copy(to = "example.new.did")
+
+# read the file
+iso_read_dual_inlet("example.new.did", read_cache = FALSE)
+file.remove("example.new.did")
+```
+
+Note that for parallel processing to work during the read process (`parallel = TRUE`), isoreader needs to know where to find the new reader function. It will figure this out automatically as long as the function name is unique but if this fails (or to be on the safe side), please specify e.g. `env = "R_GlobalEnv"` or `env = "newpackage"` during the reader registration. Also note that isoreader will not automatically know where to find all functions called from within the new reader function if they are not part of base R and it is recommended to make all outside calls explicit (e.g. `dplyr::filter(...)`) to pre-empt this potential problem. For info messages and warnings to work with the progress bar and in parallel reads, make sure to use `isoreader:::log_message(...)` and `isoreader:::log_warning(...)` instead of base R's `message(...)` and `warning(...)`.
+
+If you have designed and tested a new reader, please consider contributing it to the `isoreader` github repository via pull request.
+
+## Processing hooks
+
+Isoreader defines two processing hooks at the beginning and end of reading an individual file. This is useful for integration into pipelines that require additional output (such as GUIs) but is also sometimes useful for debuggin purposes. The expressions are evaluated in the context of the `isoreader:::read_iso_file` function and have access to all parameters passed to this function, such as e.g. `file_n` and `filepath`. Same as for new readers: for info messages and warnings to work with the progress bar and in parallel reads, make sure to use `isoreader:::log_message(...)` and `isoreader:::log_warning(...)` instead of base R's `message(...)` and `warning(...)`. The main difference between the two is that `log_message()` will honor the `quiet = TRUE` flag passed to the main `iso_read...()` call whereas `log_warning()` will always show its message no matter the `quiet` setting.
+
+```{r}
+isoreader:::set_read_file_event_expr({ 
+  isoreader:::log_message(sprintf("starting file #%.d, named '%s'", file_n, basename(filepath))) 
+})
+isoreader:::set_finish_file_event_expr({ 
+  isoreader:::log_message(sprintf("finished file #%.d", file_n)) 
+})
+
+c(
+  iso_get_reader_example("dual_inlet_example.did"),
+  iso_get_reader_example("dual_inlet_example.caf")
+) %>% iso_read_dual_inlet(read_cache = FALSE)
+  
+isoreader:::initialize_options() # reset all isoreader options
+```
+
+
+## Debugging isoreader
+
+The best way to start debugging an isoreader call is to switch the package into debug mode. This is done using the internal `iso_turn_debug_on()` function. This enables debug messags, turns caching off by default so files are always read anew, and makes the package keep more information in the isofile objects. It continues to catch errors inside file readers (keeping track of them in the [problems](operations.html#dealing-with-file-read-problems)) unless you set `iso_turn_debug_on(catch_errors = FALSE)`, in which case no errors are caught and stop the processing so you get the full traceback and debugging options of your IDE.
+
+### Debugging binary file reads (Isodat)
+
+Errors during the binary file reads usually indicate the approximate position in the file where the error was encountered. The easiest way to get started on figuring out what the file looks like at that position is to use a binary file editor and jump to the position. For a sense of the interpreted structure around that position, one can use the internal function `map_binary_structure` which tries to apply all frequently occuring binary patterns recognized by isoreader. The binary representation of the source file is only available if in debug mode but if debug mode is ON, it can be accessed as follows:
+
+```{r}
+# turn on debug mode
+isoreader:::iso_turn_debug_on() 
+# read example file
+ex <- iso_get_reader_example("dual_inlet_example.did") %>%  
+  iso_read_dual_inlet(quiet = TRUE)
+# access binary
+bin <- ex$binary
+# use structure mapping
+bin %>%
+  isoreader:::move_to_pos(1340) %>%
+  isoreader:::map_binary_structure(length = 200)
+```
+
+This structure representation shows recognized control elements in `<...>` and data elements in `{...}` which are converted to text or numeric representation if the interpretation is unambiguous, or plain hexadecimal characters if the nature of the data cannot be determined with certainty. Because this function tries all possible control elements and data interpretations, it is quite slow and may take a while if run for large stretches of binary code (i.e. if the `length` parameter is very long).
+
+For an overview of all the control elements that are currently consider, use the internal `get_ctrl_blocks_config_df()` function.
+
+```{r}
+isoreader:::get_ctrl_blocks_config_df() %>% 
+  rmarkdown::paged_table()
+```
+
+Additional information can be gleaned from the so-called control blocks, which are larger structural elements of Isodat binary files and are kept in a data frame wihin the binary object (again only available in debug mode). 
+
+```{r}
+bin$C_blocks %>% 
+  rmarkdown::paged_table()
+```
+
+Same as for specific byte positions, one can use the control blocks to navigate the file and `map_binary_structure`.
+
+```{r}
+bin %>% 
+  isoreader:::move_to_C_block("CMethod") %>% 
+  isoreader:::map_binary_structure(length = 200)
+```
+

@@ -130,7 +130,7 @@ test_that("test that isofils objects can be combined and subset", {
   expect_equal(c(iso_filesAB, iso_fileC), c(iso_fileA, iso_fileB, iso_fileC))
   
   ## problems combining identical files (without discarding duplicates!)
-  expect_warning(iso_filesABA <- iso_as_file_list(iso_fileA, iso_fileB, iso_fileA, discard_duplicates = FALSE), 
+  expect_message(iso_filesABA <- iso_as_file_list(iso_fileA, iso_fileB, iso_fileA, discard_duplicates = FALSE), 
                  "duplicate files kept")
   expect_is(iso_filesABA, "iso_file_list")
   expect_equal(names(iso_filesABA), c("A#1", "B", "A#2"))
@@ -141,7 +141,7 @@ test_that("test that isofils objects can be combined and subset", {
   expect_equal(problems(c(iso_fileA, iso_fileA)), problems(c(iso_fileA, iso_fileA, iso_fileA)))
   
   ## combining identical files (with discarding duplicates, i.e. default behavior)
-  expect_warning(iso_filesABA <- c(iso_fileA, iso_fileB, iso_fileA), 
+  expect_message(iso_filesABA <- c(iso_fileA, iso_fileB, iso_fileA), 
                  "duplicate files encountered, only first kept")
   expect_equal(problems(iso_filesABA) %>% select(file_id, type), data_frame(file_id = "A", type = "warning"))
   expect_equal(names(iso_filesABA), c("A", "B"))
@@ -155,7 +155,7 @@ test_that("test that isofils objects can be combined and subset", {
   )
   expect_equal(problems(iso_filesAB_probs) %>% select(file_id, details),
                data_frame(file_id = c("A", "B"), details = paste("warning", c("A", "B"))))
-  expect_warning(iso_files_ABB_probs <- c(iso_filesAB_probs, iso_fileB), "duplicate files encountered")
+  expect_message(iso_files_ABB_probs <- c(iso_filesAB_probs, iso_fileB), "duplicate files encountered")
   expect_equal(problems(iso_files_ABB_probs) %>% select(file_id, details),
                data_frame(file_id = c("A", "B", "B"), details = c("warning A", "warning B", 
                           "duplicate files encountered, only first kept: B")))
@@ -182,7 +182,7 @@ test_that("test that isofils objects can be combined and subset", {
   expect_equal( { iso_files <- iso_filesAB; iso_files[[1]] <- iso_filesABC[[3]]; names(iso_files) }, names(c(iso_fileC, iso_fileB)))
   
   ## warnings from assignments
-  expect_warning( { iso_files <- iso_filesAB; iso_files[1] <- iso_files[2]}, "duplicate files")
+  expect_message( { iso_files <- iso_filesAB; iso_files[1] <- iso_files[2]}, "duplicate files")
   expect_equal(names(iso_files), "B")
   
   # convertion to list
