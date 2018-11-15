@@ -470,7 +470,7 @@ iso_reread_files <- function(iso_files, ..., stop_if_missing = FALSE, quiet = de
     if (stop_if_missing) {
       stop(msg, call. = FALSE)
     } else {
-      warning(msg, call. = FALSE, immediate. = TRUE)
+      log_warning(msg)
       iso_files[!files_exist] <- map(iso_files[!files_exist], register_warning, func = "iso_reread_files", 
                                      details = "file does not exist at its original location and can not be re-read",
                                      warn = FALSE)

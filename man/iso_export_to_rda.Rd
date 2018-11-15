@@ -17,7 +17,7 @@ iso_export_to_rda(iso_files, filepath, quiet = default(quiet))
 returns the iso_files object invisibly for use in pipelines
 }
 \description{
-This function exports the passed in iso_files to an R Data Archive (.rda) file, which is a fairly efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard \code{\link{iso_read_continuous_flow}} and \code{\link{iso_read_dual_inlet}} functions or by simply double-clicking the .rda file which will open in an R console and restore the data into variable \code{iso_files}.
+This function is deprecated. Please use \code{\link{iso_save}} instead to save collections of isofiles.
 }
 \seealso{
 Other export functions: \code{\link{iso_export_to_excel}},

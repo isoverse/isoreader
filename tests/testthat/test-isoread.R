@@ -35,15 +35,15 @@ test_that("test that parameter checks are performed when reading file", {
 
 test_that("old file checks are run when reading stored collecionts", {
 
-  expect_warning(iso_read_continuous_flow(file.path("test_data", "collection_old.cf.rds"), quiet = TRUE), "created by a different version")
-  expect_warning(iso_read_dual_inlet(file.path("test_data", "collection_old.di.rda"), quiet = TRUE), "created by a different version")
-  expect_warning(iso_read_dual_inlet(file.path("test_data", "collection_old.di.rda"), quiet = TRUE), "deprecated in favor of R Data Storage")
+  expect_message(iso_read_continuous_flow(file.path("test_data", "collection_old.cf.rds"), quiet = TRUE), "version mismatch")
+  expect_message(iso_read_dual_inlet(file.path("test_data", "collection_old.di.rda"), quiet = TRUE), "version mismatch")
+  expect_message(iso_read_dual_inlet(file.path("test_data", "collection_old.di.rda"), quiet = TRUE), "deprecated")
 
 })
 
 test_that("test that checks are run when re-reading iso_files", {
   
-  expect_warning(iso_reread_files(make_cf_data_structure()), "no longer exist at the referenced location")
+  expect_message(iso_reread_files(make_cf_data_structure()), "no longer exist at the referenced location")
   expect_error(iso_reread_files(make_cf_data_structure(), stop_if_missing = TRUE), "no longer exist at the referenced location")
   expect_error(iso_reread_storage("test.csv"), "unexpected file extension")
   expect_error(iso_reread_storage("DNE.cf.rds"), "file\\(s\\) do not exist")
