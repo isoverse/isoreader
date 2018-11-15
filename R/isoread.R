@@ -504,29 +504,40 @@ iso_reread_files <- function(iso_files, ..., stop_if_missing = FALSE, quiet = de
   return(iso_files)
 }
 
-#' @details \code{iso_reread_archive} is a convenience function for refreshing saved iso_file collections. It will load a specific iso_files R Data Archive (\code{rda_filepath}), re-read all the data from the original data files and save the collection back to the same rda file. The iso_files are returned invisibly.
+#' @details \code{iso_reread_storage} is a convenience function for refreshing saved iso_file collections (see \code{\link{iso_save}}). It will load a specific iso_files R Data Storage file (\code{rds_filepath}), re-read all the data from the original data files and save the collection back to the same rds file. The filepaths are returned invisibly.
+#' 
+#' Note that this function will also reread the older .rda Archive files but store them in the newer .rds format after re-reading.
+#' 
 #' @rdname iso_reread_files
-#' @param rda_filepaths the path(s) to the iso_files R data archive(s) to re-read (can be a single file or vector of files)
+#' @param rds_filepaths the path(s) to the iso_files R data archive(s) to re-read (can be a single file or vector of files)
 #' @export
-iso_reread_archive <- function(rda_filepaths, ..., stop_if_missing = FALSE, quiet = default(quiet)) {
+iso_reread_storage <- function(rds_filepaths, ..., stop_if_missing = FALSE, quiet = default(quiet)) {
   
-  extensions <- iso_get_supported_file_types() %>% dplyr::filter(stringr::str_detect(extension, "rda"))
-  file_types <- data_frame(filepath = rda_filepaths) %>% match_to_supported_file_types(extensions)
+  extensions <- iso_get_supported_file_types() %>% dplyr::filter(stringr::str_detect(extension, "rd[sa]"))
+  file_types <- data_frame(filepath = rds_filepaths) %>% match_to_supported_file_types(extensions)
   
-  if (any(missing <- !file.exists(rda_filepaths))) 
-    stop("file(s) do not exist: ", str_c(rda_filepaths[missing], collapse = ", "), call. = FALSE)
+  if (any(missing <- !file.exists(rds_filepaths))) 
+    stop("file(s) do not exist: ", str_c(rds_filepaths[missing], collapse = ", "), call. = FALSE)
   
-  reread_archive <- function(filepath, call) {
-    if(!quiet) log_message("loading R Data Archive ", basename(filepath), "...")
-    suppressWarnings(do.call(call, args = list(paths = filepath, quiet=TRUE))) %>% 
+  reread_storage <- function(filepath, call) {
+    if(!quiet) log_message("loading R Data Storage ", basename(filepath), "...")
+    new_filepath <- str_replace(filepath, "\\.rd[sa]$", ".rds")
+    do.call(call, args = list(paths = filepath, quiet=TRUE)) %>% 
       iso_reread_files(..., stop_if_missing = stop_if_missing, quiet=quiet) %>% 
-      iso_export_to_rda(filepath = filepath, quiet=quiet)
-    return(TRUE)
+      iso_save(filepath = new_filepath, quiet=quiet)
+    return(new_filepath)
   }
   
   # note: cannot combine these in case some of them are dual inlet while others are continuous flow
-  with(file_types, mapply(reread_archive, filepath, call))
-  invisible(NULL)
+  rds_filepaths <- with(file_types, purrr::map2_chr(filepath, call, reread_storage))
+  return(invisible(rds_filepaths))
 }
 
+#' @details \code{iso_reread_archive} is deprecated in favour of \code{iso_reread_storage}
+#' @rdname iso_reread_files
+#' @export
+iso_reread_archive <- function(...) {
+  log_warning("'iso_reread_archive' is deprecated and will call 'iso_reread_storage'. Please use 'iso_reread_storage' directly to avoid this warning.")
+  invisible(iso_reread_storage(...))
+}
 
