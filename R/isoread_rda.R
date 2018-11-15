@@ -5,6 +5,10 @@ iso_read_rda <- function(ds) {
   # safety checks
   if(!iso_is_file(ds)) stop("data structure must be an iso_file", call. = FALSE)
   
+  # general deprecation warning
+  "R Data Archives (.rda) are deprecated in favor of R Data Storage (.rds) files, please re-save your isofiles using the new iso_save() function." %>% 
+    warning(call. = FALSE, immediate. = TRUE)
+  
   # load rda file
   if (exists("iso_files", inherits = FALSE)) rm("iso_files")
   if (exists("isofiles", inherits = FALSE)) rm("isofiles") # backwards compatibility
@@ -44,12 +48,9 @@ iso_read_rda <- function(ds) {
   }
 
   if (any(!ok_version)) {
-    sprintf("%.0f of the %.0f data files stored in the R Data Archive ('%s') were created by a different version of the isoreader package. This may lead to processing problems.\nConsider re-reading the original data files using the 'iso_reread_files()' or 'iso_reread_archive()' function. ", sum(!ok_version), length(iso_files), ds$file_info$file_id) %>% 
+    sprintf("%.0f of the %.0f data files stored in the R Data Archive ('%s') were created by a different version of the isoreader package. This may lead to processing problems.\nConsider re-reading the original data files using the 'iso_reread_files()' or 'iso_reread_storage()' function. ", sum(!ok_version), length(iso_files), ds$file_info$file_id) %>% 
     warning(call. = FALSE, immediate. = TRUE)
   }
-
-  # deprecation warning for each file
-  iso_files <- map(iso_files, register_warning, details = "R Data Archives (.rda) are deprecated in favor of R Data Storage (.rds) files, please re-save your isofiles using the new iso_save() function.", func = "iso_read_rda", warn = FALSE)
 
   return(iso_files)
 }

@@ -1,8 +1,8 @@
-## Export functions
+## Export functions =======
 
 #' Export data to R Data Archive (.rda) (deprecated)
 #' 
-#' This function exports the passed in iso_files to an R Data Archive (.rda) file, which is a fairly efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard \code{\link{iso_read_continuous_flow}} and \code{\link{iso_read_dual_inlet}} functions or by simply double-clicking the .rda file which will open in an R console and restore the data into variable \code{iso_files}.
+#' This function is deprecated. Please use \code{\link{iso_save}} instead to save collections of isofiles.
 #' 
 #' @inheritParams iso_get_raw_data
 #' @param filepath the path (folder and filename) to the export file. The correct file extension is automatically added if not already in the filename, i.e. filename can be provided with or without extension.
@@ -11,7 +11,7 @@
 #' @export
 iso_export_to_rda <- function(iso_files, filepath, quiet = default(quiet)) {
   # throw deprecation warning
-  warning("`iso_export_to_rda' is deprecated and will call `iso_save()'. Please call `iso_save()' directly to avoid this warning.", call. = FALSE, immediate. = TRUE)
+  warning("'iso_export_to_rda' is deprecated and will call 'iso_save()'. Please call 'iso_save()' directly to avoid this warning.", call. = FALSE, immediate. = TRUE)
 
   # call iso_save
   iso_save(iso_files, filepath, quiet)

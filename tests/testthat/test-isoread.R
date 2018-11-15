@@ -33,13 +33,44 @@ test_that("test that parameter checks are performed when reading file", {
     "file path\\(s\\) required")
 })
 
+test_that("old file checks are run when reading stored collecionts", {
+
+  expect_warning(iso_read_continuous_flow(file.path("test_data", "collection_old.cf.rds"), quiet = TRUE), "created by a different version")
+  expect_warning(iso_read_dual_inlet(file.path("test_data", "collection_old.di.rda"), quiet = TRUE), "created by a different version")
+  expect_warning(iso_read_dual_inlet(file.path("test_data", "collection_old.di.rda"), quiet = TRUE), "deprecated in favor of R Data Storage")
+
+})
 
 test_that("test that checks are run when re-reading iso_files", {
   
   expect_warning(iso_reread_files(make_cf_data_structure()), "no longer exist at the referenced location")
   expect_error(iso_reread_files(make_cf_data_structure(), stop_if_missing = TRUE), "no longer exist at the referenced location")
-  expect_error(iso_reread_archive("test.csv"), "unexpected file extension")
-  expect_error(iso_reread_archive("DNE.cf.rda"), "file\\(s\\) do not exist")
+  expect_error(iso_reread_storage("test.csv"), "unexpected file extension")
+  expect_error(iso_reread_storage("DNE.cf.rds"), "file\\(s\\) do not exist")
+ 
+})
+
+test_that("test that re-reads are working properly", {
+  
+  # re-read of files
+  files <- iso_read_continuous_flow(file.path("test_data", c("cf_example_H_01.cf", "cf_example_H_02.cf")))
+  expect_true(iso_is_file_list(files))
+  expect_true(iso_is_file(files[[1]]))
+  expect_message(re_file <- iso_reread_files(files[[1]]), "re-reading 1 data file")
+  expect_true(iso_is_file(re_file))
+  expect_message(re_files <- iso_reread_files(files), "re-reading 2 data file")
+  expect_true(iso_is_file_list(re_files))
+  
+  # re-read old collection (should save as new .rds instead)
+  collection_path <- file.path("test_data", "collection_old.di.rda")
+  expect_message(new_path <- iso_reread_storage(collection_path), "re-reading")
+  expect_equal(new_path, stringr::str_replace(collection_path, "rda$", "rds"))
+  expect_equal(iso_read_dual_inlet(new_path) %>% iso_get_problems() %>% nrow(), 0)
+  # re-read the new collection
+  expect_message(new_path2 <- iso_reread_storage(new_path), "re-reading")
+  expect_equal(new_path, new_path2)
+  expect_equal(iso_read_dual_inlet(new_path2) %>% iso_get_problems() %>% nrow(), 0)
+  if (file.exists(new_path2)) file.remove(new_path2)
 })
 
 

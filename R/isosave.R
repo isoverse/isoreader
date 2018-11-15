@@ -2,7 +2,7 @@
 
 #' Save data to R Data Storage (.rds)
 #' 
-#' This function saves the passed in iso_files to an R Data Storage (.rds) file, which is a fairly efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard \code{\link{iso_read_continuous_flow}} and \code{\link{iso_read_dual_inlet}} functions.
+#' This function saves the passed in iso_files to an R Data Storage (.rds) file, which is an efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard \code{\link{iso_read_continuous_flow}} and \code{\link{iso_read_dual_inlet}} functions.
 #' 
 #' @inheritParams iso_get_raw_data
 #' @param filepath the path (folder and filename) to the export file. The correct file extension is automatically added if not already in the filename, i.e. filename can be provided with or without extension.
@@ -35,6 +35,6 @@ get_rds_export_filepath <- function(iso_files, filepath) {
   else if (iso_is_dual_inlet(iso_files))
     ext <- ".di.rds"
   else
-    stop("R data archive export of this type of iso_files not supported", call. = FALSE)
+    stop("R data storage export of this type of iso_files not supported", call. = FALSE)
   return(get_export_filepath(filepath, ext))
 }
