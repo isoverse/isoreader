@@ -278,17 +278,23 @@ all_data <- iso_files %>% iso_get_data()
 all_data %>% rmarkdown::paged_table()
 ```
 
-## Data Export
+## Saving collections
 
-At the moment, isoreader supports export of all data to R Data archives, Excel, and the [Feather file format](https://blog.rstudio.com/2016/03/29/feather/) (a Python/R cross-over format). R Data archives can also be convientiently read back using the same `iso_read_continuous_flow` command used for raw data files. Note that the different export methods have similar syntax and append the appropriate file extension for each type of export file.
+Saving entire collections of isofiles for retrieval at a later point is easily done using the `iso_save` function which stores collections or individual isoreader file objects in the efficient R data storage format `.rds` (if not specified, the extension `.cf.rds` will be automatically appended). These saved collections can be convientiently read back using the same `iso_read_continuous_flow` command used for raw data files.
 
 ```{r}
 # export to R data archive
-iso_files %>% iso_save("iso_files_export")
+iso_files %>% iso_save("iso_files_export.cf.rds")
 
 # read back the exported R data archive
-iso_read_continuous_flow("iso_files_export.cf.rds")
+iso_files <- iso_read_continuous_flow("iso_files_export.cf.rds")
+iso_files %>% iso_get_data_summary() %>% rmarkdown::paged_table()
 ```
+
+
+## Data Export
+
+At the moment, isoreader supports export of all data to R Data archives, Excel, and the [Feather file format](https://blog.rstudio.com/2016/03/29/feather/) (a Python/R cross-over format). Note that both export methods have similar syntax and append the appropriate file extension for each type of export file (`.cf.xlsx` and `.cf.feather`, respectively).
 
 ```{r}
 # export to excel
