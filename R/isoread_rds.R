@@ -30,7 +30,7 @@ iso_read_rds <- function(ds) {
   
   # information
   if (!default(quiet)) {
-    sprintf("Info: loaded data for %d data files from R Data Archive - checking loaded files for content consistency...", length(iso_files)) %>% message()
+    sprintf("Info: loaded data for %d data files from R Data Storage - checking loaded files for content consistency...", length(iso_files)) %>% message()
   }
   
   # check for version warning
