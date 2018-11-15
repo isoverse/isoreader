@@ -17,7 +17,7 @@ iso_save(iso_files, filepath, quiet = default(quiet))
 returns the iso_files object invisibly for use in pipelines
 }
 \description{
-This function saves the passed in iso_files to an R Data Storage (.rds) file, which is a fairly efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard \code{\link{iso_read_continuous_flow}} and \code{\link{iso_read_dual_inlet}} functions.
+This function saves the passed in iso_files to an R Data Storage (.rds) file, which is an efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard \code{\link{iso_read_continuous_flow}} and \code{\link{iso_read_dual_inlet}} functions.
 }
 \seealso{
 Other export functions: \code{\link{iso_export_to_excel}},

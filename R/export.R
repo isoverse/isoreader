@@ -11,7 +11,7 @@
 #' @export
 iso_export_to_rda <- function(iso_files, filepath, quiet = default(quiet)) {
   # throw deprecation warning
-  warning("'iso_export_to_rda' is deprecated and will call 'iso_save()'. Please call 'iso_save()' directly to avoid this warning.", call. = FALSE, immediate. = TRUE)
+  log_warning("'iso_export_to_rda' is deprecated and will call 'iso_save()'. Please call 'iso_save()' directly to avoid this warning.")
 
   # call iso_save
   iso_save(iso_files, filepath, quiet)
@@ -145,17 +145,6 @@ get_export_filepath <- function(filepath, ext) {
   if (!is.null(ext))
     filename <- filename %>% str_replace(fixed(ext), "") %>% str_c(ext) # to make sure correct extension
   return(file.path(folder, filename)) 
-}
-
-# rds export filepath
-get_rds_export_filepath <- function(iso_files, filepath) {
-  if (iso_is_continuous_flow(iso_files))
-    ext <- ".cf.rds"
-  else if (iso_is_dual_inlet(iso_files))
-    ext <- ".di.rds"
-  else
-    stop("R data archive export of this type of iso_files not supported", call. = FALSE)
-  return(get_export_filepath(filepath, ext))
 }
 
 # excel export filephat
