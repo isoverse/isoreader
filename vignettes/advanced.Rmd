@@ -23,6 +23,7 @@ Testing out new file format readers is easiest by registering a new reader funct
 
 ```{r}
 new_reader <- function(ds) {
+  isoreader:::log_message("this is the new reader!")
   str(ds)
   return(ds)
 }
@@ -35,24 +36,24 @@ rmarkdown::paged_table(readers)
 iso_get_reader_example("dual_inlet_example.did") %>% file.copy(to = "example.new.did")
 
 # read the file
-iso_read_dual_inlet("example.new.did", read_cache = FALSE, parallel = TRUE)
+iso_read_dual_inlet("example.new.did", read_cache = FALSE)
 file.remove("example.new.did")
 ```
 
-Note that for parallel processing to work during the read process (`parallel = TRUE`), isoreader needs to know where to find the new reader function. It will figure this out automatically as long as the function name is unique but if this fails (or to be on the safe side), please specify e.g. `env = "R_GlobalEnv"` or `env = "newpackage"` during the reader registration. Also note that isoreader will not automatically know where to find all functions called from within the new reader function if they are not part of base R and it is recommended to make all outside calls explicit (e.g. `dplyr::filter(...)`) to pre-empt this potential problem. 
+Note that for parallel processing to work during the read process (`parallel = TRUE`), isoreader needs to know where to find the new reader function. It will figure this out automatically as long as the function name is unique but if this fails (or to be on the safe side), please specify e.g. `env = "R_GlobalEnv"` or `env = "newpackage"` during the reader registration. Also note that isoreader will not automatically know where to find all functions called from within the new reader function if they are not part of base R and it is recommended to make all outside calls explicit (e.g. `dplyr::filter(...)`) to pre-empt this potential problem. For info messages and warnings to work with the progress bar and in parallel reads, make sure to use `isoreader:::log_message(...)` and `isoreader:::log_warning(...)` instead of base R's `message(...)` and `warning(...)`.
 
 If you have designed and tested a new reader, please consider contributing it to the `isoreader` github repository via pull request.
 
 ## Processing hooks
 
-Isoreader defines two processing hooks at the beginning and end of reading an individual file. This is useful for integration into pipelines that require additional output (such as GUIs) but is also sometimes useful for debuggin purposes. The expressions are evaluated in the context of the `isoreader:::start_iso_file` and `isoreader:::finish_iso_file` functions respectively and have access to several file parameters including the file number (`file_n`), `process`, `filepath` and the progress bar object (`pb`).
+Isoreader defines two processing hooks at the beginning and end of reading an individual file. This is useful for integration into pipelines that require additional output (such as GUIs) but is also sometimes useful for debuggin purposes. The expressions are evaluated in the context of the `isoreader:::read_iso_file` function and have access to all parameters passed to this function, such as e.g. `file_n` and `filepath`. Same as for new readers: for info messages and warnings to work with the progress bar and in parallel reads, make sure to use `isoreader:::log_message(...)` and `isoreader:::log_warning(...)` instead of base R's `message(...)` and `warning(...)`. The main difference between the two is that `log_message()` will honor the `quiet = TRUE` flag passed to the main `iso_read...()` call whereas `log_warning()` will always show its message no matter the `quiet` setting.
 
 ```{r}
 isoreader:::set_read_file_event_expr({ 
-  pb$message(sprintf("starting file #%.d, named '%s'", file_n, basename(filepath))) 
+  isoreader:::log_message(sprintf("starting file #%.d, named '%s'", file_n, basename(filepath))) 
 })
 isoreader:::set_finish_file_event_expr({ 
-  pb$message(sprintf("finished file #%.d", file_n)) 
+  isoreader:::log_message(sprintf("finished file #%.d", file_n)) 
 })
 
 c(
