@@ -242,7 +242,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   # overview
   if (!default(quiet)) {
     glue::glue(
-      "Info: preparing to read {length(filepaths)} data file(s)",
+      "preparing to read {length(filepaths)} data file(s)",
       if (parallel) { ", setting up {min(cores, length(filepaths))} parallel processes..." } 
       else {"..."}) %>% 
       log_message()
