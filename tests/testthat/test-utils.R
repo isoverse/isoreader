@@ -17,6 +17,9 @@ test_that("test that file extension helpers work correctly", {
   
   # match file extension
   expect_equal(isoreader:::match_file_ext("test.csv", c(".txt", ".csv")), ".csv")
+  expect_equal(isoreader:::match_file_ext("test.CSV", c(".txt", ".csv")), ".csv")
+  expect_equal(isoreader:::match_file_ext("test.csv", c(".txt", ".CSV")), ".CSV")
+  expect_equal(isoreader:::match_file_ext("test.CSV", c(".txt", ".CSV")), ".CSV")
   expect_equal(isoreader:::match_file_ext("test.csv", c(".txt", "csv", ".csv")), ".csv")
   expect_equal(isoreader:::match_file_ext("test.dne", c(".txt", ".csv")), NA_character_)
   

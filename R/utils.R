@@ -191,8 +191,9 @@ get_file_ext <- function(filepath) {
 # match file extension
 # returns the longest extension that matches
 match_file_ext <- function(filepath, extensions) {
-  exts_regexp <- stringr::str_replace_all(extensions, "\\.", "\\\\.") %>% str_c("$")
-  exts <- extensions[str_detect(filepath, exts_regexp)]
+  exts_regexp <- extensions %>% stringr::str_to_lower() %>% 
+    stringr::str_replace_all("\\.", "\\\\.") %>% str_c("$")
+  exts <- extensions[str_detect(stringr::str_to_lower(filepath), exts_regexp)]
   if (length(exts) == 0) return(NA_character_)
   else return(exts[stringr::str_length(exts) == max(stringr::str_length(exts))][1])
 }
