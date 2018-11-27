@@ -31,7 +31,8 @@ log_message <- function(..., type = "info", prefix = "Info: ", quiet = default(q
       # save to log file
       log_file <- get_temp("parallel_log_file")
       if (!is.null(log_file)) {
-        sprintf("\"%s\",%d,\"%s\"\n", type, process, str_replace_all(msg, fixed("\""), "\\\"")) %>% 
+        sprintf("\"%s\",%d,\"%s\"\n", type, process, 
+                str_replace_all(.makeMessage(...), fixed("\""), "\\\"")) %>% 
           cat(file = log_file, append = TRUE)
       }
     } else if (!is.null(pb) && !pb$finished) {
@@ -45,9 +46,9 @@ log_message <- function(..., type = "info", prefix = "Info: ", quiet = default(q
 }
 
 # helper function for showing a warning via progress bar or logging it in log file (parallel)
-log_warning <- function(msg, type = "warning", prefix = "Warning: ") {
+log_warning <- function(..., type = "warning", prefix = "Warning: ") {
   # warnings are never quiet
-  log_message(msg, type = type, prefix = prefix, quiet = FALSE)
+  log_message(..., type = type, prefix = prefix, quiet = FALSE)
 }
 
 # log progress on the progress bar or log in progress file (parallel)
