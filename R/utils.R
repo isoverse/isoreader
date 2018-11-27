@@ -109,7 +109,7 @@ process_parallel_logs <- function(status) {
   log <- get_temp("parallel_log_file")
   if (!is.null(log) && file.exists(log)) {
     logs <- suppressMessages(read_csv(log, col_names = FALSE, skip = status$log_n))
-    if (nrow(logs) > 0) {
+    if (nrow(logs) > 0 && ncol(logs) >= 3) {
       status$log_n <- status$log_n + nrow(logs)
       logs %>% 
         mutate(prefix = case_when(
