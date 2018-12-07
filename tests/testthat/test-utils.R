@@ -93,8 +93,28 @@ test_that("test that root folder finding works correctly", {
       different = c(".", "extdata", file.path("extdata", "dual_inlet_example.did"))
     )
   )
+  expect_equal(
+    guess_file_root(
+      c(system.file("extdata", package = "isoreader"),
+        system.file("extdata", "dual_inlet_example.did", package = "isoreader"))
+    ),
+    list(
+      common = system.file("extdata", package = "isoreader"),
+      different = c(".", "dual_inlet_example.did")
+    )
+  )
+  # check that file isn't included in common path
+  expect_equal(
+    guess_file_root(
+      c(system.file("extdata", "dual_inlet_example.did", package = "isoreader"),
+        system.file("extdata", "dual_inlet_example.did", package = "isoreader"))
+    ),
+    list(
+      common = system.file("extdata", package = "isoreader"),
+      different = c("dual_inlet_example.did", "dual_inlet_example.did")
+    )
+  )
   
-  # FIXME: how to best test other guess_file_root behaviour without being in a working directory?
 })
 
 test_that("test that retrieving file paths works correctly", {
