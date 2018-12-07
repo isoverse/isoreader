@@ -21,6 +21,7 @@ vignettes/cache
 vignettes/*.feather
 vignettes/*.xlsx
 vignettes/*.rda
+vignettes/*.rds
 vignettes/*timestamp
 vignettes/*.R
 vignettes/*/*/*.png
