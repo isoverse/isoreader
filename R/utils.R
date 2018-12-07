@@ -108,7 +108,7 @@ process_parallel_logs <- function(status) {
   # logs
   log <- get_temp("parallel_log_file")
   if (!is.null(log) && file.exists(log)) {
-    logs <- suppressMessages(read_csv(log, col_names = FALSE, skip = status$log_n))
+    logs <- suppressMessages(readr::read_csv(log, col_names = FALSE, skip = status$log_n))
     if (nrow(logs) > 0 && ncol(logs) >= 3) {
       status$log_n <- status$log_n + nrow(logs)
       logs %>% 
@@ -179,9 +179,71 @@ iso_get_reader_examples <- function() {
 # guess root path
 # if relative --> root = "."
 # if absolute --> see if a subset of current wd and turn into a relative path
-# if absolute and not part of the working directory --> find smalles common denominator across all files as root
-guess_root <- function(filepaths) {
-  # FIXME: implement me
+# if absolute and not part of the working directory --> find small common denominator across all files as root
+guess_file_root <- function(filepaths) {
+  
+  # safety checks
+  if(length(filepaths) == 0) return("")
+  
+  # check absolute vs. relative
+  relative <- !R.utils::isAbsolutePath(filepaths)
+  is_relative <- all(relative)
+  is_absolute <- all(!relative)
+  if (!is_relative && !is_absolute) {
+    # mixed paths -> expand relative paths
+    filepaths[relative] <- file.path(getwd(), filepaths[relative])
+  }
+  
+  # find common path
+  common <- filepaths %>% map(get_path_folders) %>% get_common_from_start()
+  wd <- get_path_folders(getwd())
+  wd_common <- get_common_from_start(list(common, wd))
+  if (length(wd) == length(wd_common) && all(wd_common == wd)) {
+    # all of the folders have the working directory
+    common <- common[-(1:length(wd))]
+    is_relative <- TRUE
+  }
+  
+  if (length(common) == 0 && is_relative) {
+    return(".")
+  } else if (length(common) == 0 && all(!relative)) {
+    return ("")
+  } else {
+    return(common)
+  }
+}
+
+# find out which elements are identical from the start of the vectors
+# @param vectors list of vectors
+get_common_from_start <- function(vectors) {
+  min_length <- min(map_int(vectors, length))
+  if(min_length == 0) return(character(0))
+  
+  # find common segments
+  common <- map(vectors, ~data_frame(i = 1:min_length, entry = .x[1:min_length])) %>% 
+    bind_rows() %>% 
+    group_by(i) %>% 
+    summarize(same = all(entry == entry[1])) %>% 
+    arrange(i) %>% 
+    mutate(diff = cumsum(abs(c(same[1] == FALSE,diff(!same))))) %>%
+    filter(diff == 0)
+
+  return(vectors[[1]][common$i])
+}
+
+# helperfunction to get vector of folders
+# only returns folders in the resulting vector unless include_files = TRUE
+get_path_folders <- function(filepath, include_files = FALSE) {
+  if (!file.exists(filepath)) stop("path does not exist: ", basename(filepath), call. = FALSE)
+  if (!include_files && !dir.exists(filepath)) filepath <- dirname(filepath)
+  folders <- c()
+  while(TRUE) {
+    folders <- c(basename(filepath), folders)
+    parent <- dirname(filepath)
+    if (parent == filepath) break;
+    filepath <- parent
+  }
+  return(folders)
 }
 
 # get file extension
