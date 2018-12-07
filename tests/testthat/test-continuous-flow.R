@@ -22,7 +22,7 @@ test_that("test that dxf files can be read", {
   # test specific files
   
   # FIXME: re-enable for commits
-  skip("Currently not testing all continuous flow data files.")
+  #skip("Currently not testing all continuous flow data files.")
   # FIXME: run as one batch to make use of parallel processing
   
   iso_turn_reader_caching_off()
@@ -38,6 +38,10 @@ test_that("test that dxf files can be read", {
   expect_true(file.exists(file <- iso_get_reader_example("continuous_flow_example.dxf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
+  
+  expect_true(file.exists(file <- iso_get_reader_example("continuous_flow_example.iarc")))
+  expect_is(iarc <- iso_read_continuous_flow(file), "iso_file_list")
+  expect_equal(nrow(problems(iarc)), 0)
   
   expect_true(file.exists(file <- file.path("test_data", "dxf_example_H_01.dxf")))
   expect_is(dxf1 <- iso_read_continuous_flow(file), "continuous_flow")
