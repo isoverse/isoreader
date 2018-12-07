@@ -108,8 +108,25 @@ process_parallel_logs <- function(status) {
   # logs
   log <- get_temp("parallel_log_file")
   if (!is.null(log) && file.exists(log)) {
-    logs <- suppressMessages(readr::read_csv(log, col_names = FALSE, skip = status$log_n))
-    if (nrow(logs) > 0 && ncol(logs) >= 3) {
+    
+    # try to read logs
+    reset <- 
+      tryCatch(
+        {
+          logs <- suppressMessages(readr::read_csv(log, col_names = FALSE, skip = status$log_n))
+          if (nrow(logs) > 0 && ncol(logs) != 3) stop("incorrect log file format", call. = FALSE)
+          NULL # set reset to NULL if it gets to here
+        },
+        error = function(e) e$message # csv read error
+      )
+    
+    if (!is.null(reset)) {
+      # safety precaution in case log file gets corrupted
+      log_message("resetting log file (some progress updates may not display) because of error - ", reset, prefix = "Warning: ")
+      cat("", file = log)
+      status$log_n <- 0L
+    } else if (nrow(logs) > 0) {
+      # display logs
       status$log_n <- status$log_n + nrow(logs)
       logs %>% 
         mutate(prefix = case_when(
