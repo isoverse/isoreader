@@ -36,6 +36,11 @@ Isoreader provides a number of general purpose operations that work on all suppo
 ```
 
 
+## Parallel processing
+
+Whether parallel processing yields signifcant improvemens in read speeds depends on the number of available processors, file types and operating system. In theory, parallel processing always reduces computation time but in practice this is offset by various factors including the size of the data that needs to be sent back and forth between the processors, file system read/write speed, and the spin-up time for new processes. Generally speaking, parallel processing can provide significant improvements in speed with larger number of files (~10+) and more complex read operations (e.g. continuous flow vs. dual inlet). Reading from cache is so efficient that there are rarely gains from parallel processing and it is usually faster NOT to read in parallel.
+
+
 ## Messages and default parameters
 
 ```{r}
@@ -58,6 +63,10 @@ Additionally, the `iso_filter_files` function allows for subsetting a collection
 ```{r}
 
 ```
+
+## Dealing with file read problems
+
+
 
 ## Removing erroneous files
 
