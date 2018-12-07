@@ -1,8 +1,8 @@
 context("Dual Inlet Files")
 
 test_that("test that supported di files are correct", {
-  isoreader:::initialize_options()
-  expect_is(exts <- isoreader:::get_supported_di_files(), "data.frame")
+  initialize_options()
+  expect_is(exts <- get_supported_di_files(), "data.frame")
   expect_equal(exts$extension, c(".did", ".caf", ".di.rda", ".di.rds"))
   expect_true(all(exts$func %>% sapply(class) == "character"))
   expect_true(all(exts$func %>% map_lgl(exists, mode = "function", where = asNamespace("isoreader"))))
@@ -10,7 +10,7 @@ test_that("test that supported di files are correct", {
 
 test_that("test that parameter checks are performed", {
 
-  expect_error(isoreader:::iso_read_did(isoreader:::make_cf_data_structure()), 
+  expect_error(iso_read_did(make_cf_data_structure()), 
                "data structure must be a \\'dual_inlet\\' iso_file")
   
 })
@@ -19,12 +19,13 @@ test_that("test that did files can be read", {
   # test specific files
   
   # FIXME: re-enable for commits
-  # skip("Currently not testing all dual inlet data files.")
+  skip("Currently not testing all dual inlet data files.")
   # FIXME: run as one batch to make use of parallel processing
   
   iso_turn_reader_caching_off()
   
   # .did files
+  
   expect_true(file.exists(file <- iso_get_reader_example("dual_inlet_example.did")))
   expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
