@@ -3,35 +3,35 @@ context("Problems")
 test_that("Test that problem registration and reporting works properly", {
   
   x <- letters
-  expect_equal(isoreader:::n_problems(x), 0L)
+  expect_equal(n_problems(x), 0L)
   
   # initialize problems attribute
   expect_equal({
-    y <- isoreader:::initialize_problems_attribute(x)
+    y <- initialize_problems_attribute(x)
     as.character(y)
   }, x)
-  expect_equal(isoreader:::n_problems(y), 0L)
+  expect_equal(n_problems(y), 0L)
   expect_equal(problems(y) %>% names(), c("type", "func", "details"))
   
   # test auto initialize of get_problems
-  expect_equal(isoreader:::get_problems(x), isoreader:::get_problems(y))
-  expect_equal(problems(y), isoreader:::get_problems(y))
+  expect_equal(get_problems(x), get_problems(y))
+  expect_equal(problems(y), get_problems(y))
   
   # add a problem
   expect_equal({
-    y <- isoreader:::register_problem(x, func = "testing", details = "problem")
+    y <- register_problem(x, func = "testing", details = "problem")
     as.character(y)
   }, x)
   
-  expect_equal(isoreader:::n_problems(y), 1)
+  expect_equal(n_problems(y), 1)
   expect_equal(problems(y) %>% select(func, details), data_frame(func = "testing", details = "problem"))
   
   # add another problem
   expect_equal({
-    z <- isoreader:::register_problem(y, details = "problem2", code = 5)
+    z <- register_problem(y, details = "problem2", code = 5)
     as.character(z)
   }, x)
-  expect_equal(isoreader:::n_problems(z), 2)
+  expect_equal(n_problems(z), 2)
   expect_equal(problems(z) %>% select(details, code), data_frame(details = c("problem", "problem2"), code = c(NA, 5)))
   
   # stop for problems
@@ -41,7 +41,7 @@ test_that("Test that problem registration and reporting works properly", {
 
 test_that("Test that problems set for iso_file lists get propagated to all files", {
   # propagate problems for iso_files
-  expect_is(iso_file <- isoreader:::make_iso_file_data_structure(), "iso_file")
+  expect_is(iso_file <- make_iso_file_data_structure(), "iso_file")
   iso_file1 <- iso_file %>% { .$file_info$file_id <- "A"; . }
   iso_file2 <- iso_file %>% { .$file_info$file_id <- "B"; . }
   expect_is(iso_files <- c(iso_file1, iso_file2), "iso_file_list")
@@ -61,34 +61,34 @@ test_that("Test that warning and error registration works properly", {
   x <- letters
   
   # add a warning
-  expect_message(y <- isoreader:::register_warning(x, details = "problem", warn = TRUE), "problem")
-  expect_silent(y <- isoreader:::register_warning(x, details = "problem", warn = FALSE))
+  expect_message(y <- register_warning(x, details = "problem", warn = TRUE), "problem")
+  expect_silent(y <- register_warning(x, details = "problem", warn = FALSE))
   expect_equal(as.character(y), x)
-  expect_equal(isoreader:::n_problems(y), 1)
+  expect_equal(n_problems(y), 1)
   expect_equal(problems(y) %>% select(type, details), data_frame(type = "warning", details = "problem"))
   
   # add an error
-  expect_message(y <- isoreader:::register_error(x, details = "problem", warn = TRUE), "caught error - problem")
-  expect_silent(y <- isoreader:::register_error(x, details = "problem", warn = FALSE))
+  expect_message(y <- register_error(x, details = "problem", warn = TRUE), "caught error - problem")
+  expect_silent(y <- register_error(x, details = "problem", warn = FALSE))
   expect_equal(as.character(y), x)
-  expect_equal(isoreader:::n_problems(y), 1)
+  expect_equal(n_problems(y), 1)
   expect_equal(problems(y) %>% select(type, details), data_frame(type = "error", details = "problem"))
 })
   
 test_that("Combing problems works properly", {
-  x <- isoreader:::register_problem(letters, type = "problem_x")
-  y <- isoreader:::register_problem(letters, type = "problem_y")
+  x <- register_problem(letters, type = "problem_x")
+  y <- register_problem(letters, type = "problem_y")
   z <- letters
   
-  expect_equal(isoreader:::combined_problems(x, y), bind_rows(problems(x), problems(y)))
-  expect_equal(isoreader:::combined_problems(x, y, z), isoreader:::combined_problems(x, y))  
+  expect_equal(combined_problems(x, y), bind_rows(problems(x), problems(y)))
+  expect_equal(combined_problems(x, y, z), combined_problems(x, y))  
 })
 
 test_that("removing files with errors works properly", {
   
-  iso_file <- isoreader:::make_iso_file_data_structure()
-  expect_message(iso_warn <- isoreader:::register_warning(iso_file, "test warning"))
-  expect_message(iso_err <- isoreader:::register_error(iso_file, "test error"))
+  iso_file <- make_iso_file_data_structure()
+  expect_message(iso_warn <- register_warning(iso_file, "test warning"))
+  expect_message(iso_err <- register_error(iso_file, "test error"))
   iso_file$file_info$file_id <- "A"
   iso_warn$file_info$file_id <- "B"
   iso_err$file_info$file_id <- "C"

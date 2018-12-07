@@ -1,8 +1,8 @@
 context("Continuous flow")
 
 test_that("test that supported cf files are correct", {
-  isoreader:::initialize_options()
-  expect_is(exts <- isoreader:::get_supported_cf_files(), "data.frame")
+  initialize_options()
+  expect_is(exts <- get_supported_cf_files(), "data.frame")
   expect_equal(exts$extension, c(".cf", ".dxf", ".iarc", ".cf.rda", ".cf.rds"))
   expect_true(all(exts$func %>% sapply(class) == "character"))
   expect_true(all(exts$func %>% map_lgl(exists, mode = "function", where = asNamespace("isoreader"))))
@@ -11,7 +11,7 @@ test_that("test that supported cf files are correct", {
 test_that("test that parameter checks are performed", {
   
   # flow iarc
-  expect_error(isoreader:::iso_read_flow_iarc (isoreader:::make_di_data_structure()), 
+  expect_error(iso_read_flow_iarc (make_di_data_structure()), 
                "data structure must be a \\'continuous_flow\\' iso_file")
   
   
@@ -22,7 +22,7 @@ test_that("test that dxf files can be read", {
   # test specific files
   
   # FIXME: re-enable for commits
-  # skip("Currently not testing all continuous flow data files.")
+  skip("Currently not testing all continuous flow data files.")
   # FIXME: run as one batch to make use of parallel processing
   
   iso_turn_reader_caching_off()

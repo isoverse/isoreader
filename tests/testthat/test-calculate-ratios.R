@@ -4,7 +4,7 @@ test_that("test that ratios can be calculated", {
   
   # parameter tests
   expect_error(iso_calculate_ratios(42), "can only calculate ratios for iso files")
-  iso_file <- isoreader:::make_iso_file_data_structure()
+  iso_file <- make_iso_file_data_structure()
   expect_error(iso_calculate_ratios(iso_file), "no ratios provided for ratio calculations")
   expect_error(iso_calculate_ratios(iso_file, ratios = c("42")), "invalid ratio")
   expect_warning(iso_calculate_ratios(iso_file, ratios = c("44/42")), "read without extracting the raw data")
