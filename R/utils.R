@@ -224,7 +224,7 @@ guess_file_root <- function(filepaths) {
   different <- common_different$different
   different[is_file] <- map2(
     different[is_file], basename(filepaths)[is_file],
-    ~c(.x, .y))
+    ~if(identical(.x, empty)) { .y } else { c(.x, .y) })
   
   # return
   return(
