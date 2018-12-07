@@ -58,20 +58,40 @@ test_that("test that root folder finding works correctly", {
   )
   
   # get common from start
-  expect_equal(get_common_from_start(list(1:5, 1:3)), 1:3)
-  expect_equal(get_common_from_start(list(1:5, 1:4, 1:3)), 1:3)
-  expect_equal(get_common_from_start(list(1:3, 1:4, 1:5)), 1:3)
-  expect_equal(get_common_from_start(list(1:5, c(1:3, 5:4))), 1:3)
-  expect_equal(get_common_from_start(list(1:5, 0:5)), integer(0))
-  expect_equal(get_common_from_start(list(1:5, 2)), integer(0))
-  expect_equal(get_common_from_start(list(1:5, 0)), integer(0))
+  expect_equal(get_common_different_from_start(list(1:5, 1:3)), 
+               list(common = 1:3, different = list(4:5, character(0))))
+  expect_equal(get_common_different_from_start(list(1:5, 1:4, 1:3)), 
+               list(common = 1:3, different = list(4:5, 4, character(0))))
+  expect_equal(get_common_different_from_start(list(1:3, 1:4, 1:5)),
+               list(common = 1:3, different = list(character(0), 4, 4:5)))
+  expect_equal(get_common_different_from_start(list(1:5, c(1:3, 5:4))), 
+               list(common = 1:3, different = list(4:5, 5:4)))
+  expect_equal(get_common_different_from_start(list(1:5, 0:5)), 
+               list(common = character(0), different = list(1:5, 0:5)))
+  expect_equal(get_common_different_from_start(list(1:5, 2)), 
+               list(common = character(0), different = list(1:5, 2)))
+  expect_equal(get_common_different_from_start(list(1:5, 0), empty = "test"), 
+               list(common = "test", different = list(1:5, 0)))
+  expect_equal(get_common_different_from_start(list(1:5, integer(0))), 
+               list(common = character(0), different = list(1:5, integer(0))))
   
   # guess file root
+  expect_error(guess_file_root("DNE"), "does not exist")
+  expect_error(guess_file_root(c(system.file(package = "isoreader"), "DNE")), "does not exist")
   expect_equal(
-    guess_file_root(list(system.file("extdata", package = "isoreader"), 
-                         system.file("extdata", package = "isoreader"))) %>% 
-      tail(1),
-    "extdata"
+    isoreader:::guess_file_root(c(getwd(), getwd())),
+    list(common = ".", different = c(".", "."))
+  )
+  expect_equal(
+    guess_file_root(
+      c(system.file(package = "isoreader"),
+        system.file("extdata", package = "isoreader"),
+        system.file("extdata", "dual_inlet_example.did", package = "isoreader"))
+    ),
+    list(
+      common = system.file(package = "isoreader"),
+      different = c(".", "extdata", file.path("extdata", "dual_inlet_example.did"))
+    )
   )
   
   # FIXME: how to best test other guess_file_root behaviour without being in a working directory?

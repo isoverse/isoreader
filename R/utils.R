@@ -184,51 +184,110 @@ guess_file_root <- function(filepaths) {
   
   # safety checks
   if(length(filepaths) == 0) return("")
+  if (!all(ok <- file.exists(filepaths))) {
+    stop("path does not exist: ", 
+         paste(basename(filepaths)[!ok], collapse = ", "), 
+         call. = FALSE)
+  }
+  
+  # empty path
+  empty <- "."
   
   # check absolute vs. relative
   relative <- !R.utils::isAbsolutePath(filepaths)
   is_relative <- all(relative)
-  is_absolute <- all(!relative)
-  if (!is_relative && !is_absolute) {
-    # mixed paths -> expand relative paths
-    filepaths[relative] <- file.path(getwd(), filepaths[relative])
-  }
+  is_file <- !dir.exists(filepaths)
   
-  # find common path
-  common <- filepaths %>% map(get_path_folders) %>% get_common_from_start()
+  # expand relative paths
+  filepaths[relative] <- file.path(getwd(), filepaths[relative])
+  
+  # find common and different path
+  common_different <- 
+    filepaths %>% map(get_path_folders) %>% 
+    get_common_different_from_start(empty = empty)
+  common <- common_different$common
+  
+  # check whether common is part of the working directory
   wd <- get_path_folders(getwd())
-  wd_common <- get_common_from_start(list(common, wd))
-  if (length(wd) == length(wd_common) && all(wd_common == wd)) {
+  wd_common <- get_common_different_from_start(list(common, wd))$common
+  if (identical(wd, wd_common)) {
     # all of the folders have the working directory
     common <- common[-(1:length(wd))]
+    if (length(common) == 0) common <- empty
     is_relative <- TRUE
   }
   
-  if (length(common) == 0 && is_relative) {
-    return(".")
-  } else if (length(common) == 0 && all(!relative)) {
-    return ("")
-  } else {
-    return(common)
-  }
+  # absolute path
+  if (!is_relative && identical(common, ".")) common <- ""
+  
+  # add files back to the paths
+  different <- common_different$different
+  different[is_file] <- map2(
+    different[is_file], basename(filepaths)[is_file],
+    ~c(.x, .y))
+  
+  # return
+  return(
+    list(
+      common = do.call(file.path, args = as.list(common)),
+      different = map_chr(different, ~do.call(file.path, args = as.list(.x)))
+    )
+  )
 }
 
 # find out which elements are identical from the start of the vectors
 # @param vectors list of vectors
-get_common_from_start <- function(vectors) {
+get_common_different_from_start <- function(vectors, empty = character(0)) {
   min_length <- min(map_int(vectors, length))
-  if(min_length == 0) return(character(0))
+  if(min_length == 0) {
+    return(list(common = empty, different = vectors))
+  }
   
-  # find common segments
-  common <- map(vectors, ~data_frame(i = 1:min_length, entry = .x[1:min_length])) %>% 
-    bind_rows() %>% 
+  # all path vectors
+  vectors <- 
+    map2(
+      1:length(vectors), vectors, 
+      ~data_frame(v = .x, i = 1:length(.y), entry = .y)
+    ) %>% 
+    bind_rows() 
+  
+  # common segments
+  commons <- vectors %>% 
+    filter(i <= min_length) %>% 
     group_by(i) %>% 
     summarize(same = all(entry == entry[1])) %>% 
     arrange(i) %>% 
     mutate(diff = cumsum(abs(c(same[1] == FALSE,diff(!same))))) %>%
     filter(diff == 0)
-
-  return(vectors[[1]][common$i])
+  
+  # common vector
+  common <- filter(vectors, v==1)$entry[commons$i]
+  if (length(common) == 0) common <- empty
+  
+  # differences vector
+  different <- 
+    filter(vectors, !i %in% commons$i) %>% 
+    select(v, entry) %>% 
+    nest(-v) %>% 
+    full_join(data_frame(
+      v = unique(vectors$v), 
+      empty = list(entry = empty)), by = "v") %>% 
+    mutate(
+      missing = map_lgl(data, is.null),
+      data = map2(missing, data, ~if(.x) { NULL } else { .y$entry }),
+      result = ifelse(missing, empty, data)
+    ) %>% 
+    select(v, result) %>% 
+    arrange(v) %>% 
+    tibble::deframe() %>% 
+    unname()
+  
+  return(
+    list(
+      common = common,
+      different = different
+    )
+  )
 }
 
 # helperfunction to get vector of folders
