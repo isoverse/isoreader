@@ -176,10 +176,14 @@ iso_get_reader_examples <- function() {
 
 # file paths ====
 
-# guess root path
-# if relative --> root = "."
-# if absolute --> see if a subset of current wd and turn into a relative path
-# if absolute and not part of the working directory --> find small common denominator across all files as root
+# guess root path based on common aspects of the filepaths
+# prefixes all relative paths with the working directory
+# BUT removes the working directory again if it is part of the common filepath of ALL files
+# returns a list with two keys:
+#   - common: the common path
+#   - different: the differences for each filepath
+# never includes final filenames in common path
+# uses "." if common or different are empty
 guess_file_root <- function(filepaths) {
   
   # safety checks
