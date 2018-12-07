@@ -193,72 +193,133 @@ iso_get_reader_examples <- function() {
 
 # file paths ====
 
-# guess root path based on common aspects of the filepaths
-# prefixes all relative paths with the working directory
-# BUT removes the working directory again if it is part of the common filepath of ALL files
-# returns a list with two keys:
-#   - common: the common path
-#   - different: the differences for each filepath
-# never includes final filenames in common path
-# uses "." if common or different are empty
-guess_file_root <- function(filepaths) {
+#' Identify path roots
+#' 
+#' Helper function to identify the roots of absolute paths. Tries to put absolute paths into the context of the relative root. For those that this is not possible (because they are not in fact a sub-path of the relative root), identifies the greatest common denominator for absolute paths as their root. Does not change relative paths but does check wheter they do exist.
+#' @param relative_root root path for relative files. Can be a relative path itself (relative to the current working directory) or an absolute path on the file system.
+#' @return a data frame with the root direcrtors and paths relative to the root
+#' @export
+identify_path_roots <- function(paths, relative_root = ".") {
+  
+  # root safety
+  if (!dir.exists(relative_root)) {
+    stop("root is not an existing directory: ", relative_root, call. = FALSE)
+  }
+  
+  # anything to work with?
+  if(length(paths) == 0) return(data_frame(root = character(0), path = character(0)))
+  
+  # paths
+  paths <- 
+    data_frame(
+      i = 1:length(paths),
+      path = paths,
+      absolute = R.utils::isAbsolutePath(path),
+      full_path = ifelse(absolute, path, file.path(relative_root, path)),
+      exists = file.exists(full_path),
+      is_dir = dir.exists(full_path)
+    )
   
   # safety checks
-  if(length(filepaths) == 0) return("")
-  if (!all(ok <- file.exists(filepaths))) {
-    stop("path does not exist: ", 
-         paste(basename(filepaths)[!ok], collapse = ", "), 
+  if (!all(paths$exists)) {
+    stop("path does not exist: \n\t", 
+         paste(filter(paths, !exists)$path, collapse = "\n\t"), 
          call. = FALSE)
   }
   
-  # empty path
-  empty <- "."
+  # get root folders
+  rel_root_folders <- get_path_folders(relative_root)
+  abs_root_folders <- 
+    if(R.utils::isAbsolutePath(relative_root)) relative_root_folders 
+    else get_path_folders(file.path(getwd(), relative_root))
   
-  # check absolute vs. relative
-  relative <- !R.utils::isAbsolutePath(filepaths)
-  is_relative <- all(relative)
-  is_file <- !dir.exists(filepaths)
+  # get path folders
+  paths <- paths %>% mutate(path_folders = map(full_path, get_path_folders))
   
-  # expand relative paths
-  filepaths[relative] <- file.path(getwd(), filepaths[relative])
+  # relative paths
+  rel_paths <- paths %>% 
+    filter(!absolute) %>% 
+    mutate(
+      new_path = find_common_different_from_start(c(list(rel_root_folders), path_folders))$different[-1], 
+      root = relative_root
+    )
   
-  # find common and different path
-  common_different <- 
-    filepaths %>% map(get_path_folders) %>% 
-    get_common_different_from_start(empty = empty)
-  common <- common_different$common
-  
-  # check whether common is part of the working directory
-  wd <- get_path_folders(getwd())
-  wd_common <- get_common_different_from_start(list(common, wd))$common
-  if (identical(wd, wd_common)) {
-    # all of the folders have the working directory
-    common <- common[-(1:length(wd))]
-    if (length(common) == 0) common <- empty
-    is_relative <- TRUE
+  # check which absolute paths are common with the root
+  abs_paths <- 
+    paths %>% 
+    filter(absolute) %>% 
+    mutate(has_rel_root = has_common_start(path_folders, abs_root_folders))
+ 
+  # absolute paths that share relative root
+  abs_rel_paths <- abs_paths %>% 
+    filter(has_rel_root) %>% 
+    mutate(
+      new_path = find_common_different_from_start(c(list(abs_root_folders), path_folders))$different[-1],
+      root = relative_root
+    )
+
+  # absolute paths that don't have a relative root
+  abs_paths <- filter(abs_paths, !has_rel_root)
+  if (nrow(abs_paths) > 0) {
+    common_diff <- find_common_different_from_start(abs_paths$path_folders)
+    abs_paths <- abs_paths %>% 
+      mutate(
+        new_path = common_diff$different,
+        root = do.call(file.path, args = as.list(common_diff$common))
+      )
   }
   
-  # absolute path
-  if (!is_relative && identical(common, ".")) common <- ""
+  # combine all
+  paths <-
+    bind_rows(abs_paths, rel_paths, abs_rel_paths) %>% 
+    # expand the paths
+    mutate(
+      full_new_path = 
+        # process folder and file paths properly
+        purrr::pmap(list(path = new_path, is_dir = is_dir, file = basename(path)),
+        function(path, is_dir, file) {
+          if (!is_dir && identical(path, "."))
+            return(file) # file only (empty path)
+          else if (!is_dir)
+            return(c(path, file)) # path + file
+          else if (length(path) == 0)
+            return(".") # empty path
+          else 
+            return(path)
+        }) %>%
+        # combine into file path
+        map_chr(~do.call(file.path, args = as.list(.x)))
+    ) %>% 
+    arrange(i) 
   
-  # add files back to the paths
-  different <- common_different$different
-  different[is_file] <- map2(
-    different[is_file], basename(filepaths)[is_file],
-    ~if(identical(.x, empty)) { .y } else { c(.x, .y) })
-  
-  # return
-  return(
-    list(
-      common = do.call(file.path, args = as.list(common)),
-      different = map_chr(different, ~do.call(file.path, args = as.list(.x)))
-    )
-  )
+  #return(paths)
+  return(select(paths, root, path = full_new_path))
 }
 
-# find out which elements are identical from the start of the vectors
+# find out which vectors have the common start
 # @param vectors list of vectors
-get_common_different_from_start <- function(vectors, empty = character(0)) {
+# @param common single vector to check for
+has_common_start <- function(vectors, common) {
+  common_length <- length(common)
+  vector_lengths <- map_int(vectors, length)
+  is_common <- rep(TRUE, length(vectors))
+  
+  # rule out those that are too short
+  is_common [vector_lengths < common_length] <- FALSE
+  
+  # check for others whether they are identical
+  is_common[is_common] <- map_lgl(
+    vectors[is_common], 
+    ~identical(.x[1:common_length], common)
+  )
+  
+  # return
+  return(is_common)
+}
+
+# find the common elements from the start of the vectors
+# @param vectors list of vectors
+find_common_different_from_start <- function(vectors, empty = character(0)) {
   min_length <- min(map_int(vectors, length))
   if(min_length == 0) {
     return(list(common = empty, different = vectors))
@@ -311,10 +372,11 @@ get_common_different_from_start <- function(vectors, empty = character(0)) {
   )
 }
 
-# helperfunction to get vector of folders
+# helper function to get vector of folders
 # only returns folders in the resulting vector unless include_files = TRUE
+# omits all . since it does not change path
 get_path_folders <- function(filepath, include_files = FALSE) {
-  if (!file.exists(filepath)) stop("path does not exist: ", basename(filepath), call. = FALSE)
+  if (!file.exists(filepath)) stop("path does not exist: ", filepath, call. = FALSE)
   if (!include_files && !dir.exists(filepath)) filepath <- dirname(filepath)
   folders <- c()
   while(TRUE) {
@@ -323,7 +385,8 @@ get_path_folders <- function(filepath, include_files = FALSE) {
     if (parent == filepath) break;
     filepath <- parent
   }
-  return(folders)
+  # ignore without . since it does not change path
+  return(folders[folders != "."])
 }
 
 # get file extension

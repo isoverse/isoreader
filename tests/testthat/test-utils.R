@@ -40,6 +40,32 @@ test_that("test that file extension helpers work correctly", {
 
 test_that("test that root folder finding works correctly", {
   
+  # has common start
+  expect_equal(has_common_start(list(1:5, 1:3), 1:2), c(TRUE, TRUE))
+  expect_equal(has_common_start(list(1:5, 1:3), 1:3), c(TRUE, TRUE))
+  expect_equal(has_common_start(list(1:5, 1:3), 1:4), c(TRUE, FALSE))
+  expect_equal(has_common_start(list(1:5, 1:3), 1:6), c(FALSE, FALSE))
+  expect_equal(has_common_start(list(1:5, 1:3), 2L), c(FALSE, FALSE))
+  expect_equal(has_common_start(list(1:5, 2:3), 2L), c(FALSE, TRUE))
+  
+  # get common/different from start
+  expect_equal(find_common_different_from_start(list(1:5, 1:3)), 
+               list(common = 1:3, different = list(4:5, character(0))))
+  expect_equal(find_common_different_from_start(list(1:5, 1:4, 1:3)), 
+               list(common = 1:3, different = list(4:5, 4, character(0))))
+  expect_equal(find_common_different_from_start(list(1:3, 1:4, 1:5)),
+               list(common = 1:3, different = list(character(0), 4, 4:5)))
+  expect_equal(find_common_different_from_start(list(1:5, c(1:3, 5:4))), 
+               list(common = 1:3, different = list(4:5, 5:4)))
+  expect_equal(find_common_different_from_start(list(1:5, 0:5)), 
+               list(common = character(0), different = list(1:5, 0:5)))
+  expect_equal(find_common_different_from_start(list(1:5, 2)), 
+               list(common = character(0), different = list(1:5, 2)))
+  expect_equal(find_common_different_from_start(list(1:5, 0), empty = "test"), 
+               list(common = "test", different = list(1:5, 0)))
+  expect_equal(find_common_different_from_start(list(1:5, integer(0))), 
+               list(common = character(0), different = list(1:5, integer(0))))
+  
   # get path folders
   expect_equal(
     setdiff(get_path_folders(system.file("extdata", package = "isoreader")), 
@@ -56,62 +82,72 @@ test_that("test that root folder finding works correctly", {
             get_path_folders(system.file(package = "isoreader"))),
     c("extdata", "dual_inlet_example.did")
   )
+  expect_equal(get_path_folders(file.path("test_data")), "test_data")
+  expect_equal(get_path_folders(file.path(".", "test_data", ".", ".")), "test_data")
+  expect_equal(get_path_folders(file.path(".")), character(0))
   
-  # get common from start
-  expect_equal(get_common_different_from_start(list(1:5, 1:3)), 
-               list(common = 1:3, different = list(4:5, character(0))))
-  expect_equal(get_common_different_from_start(list(1:5, 1:4, 1:3)), 
-               list(common = 1:3, different = list(4:5, 4, character(0))))
-  expect_equal(get_common_different_from_start(list(1:3, 1:4, 1:5)),
-               list(common = 1:3, different = list(character(0), 4, 4:5)))
-  expect_equal(get_common_different_from_start(list(1:5, c(1:3, 5:4))), 
-               list(common = 1:3, different = list(4:5, 5:4)))
-  expect_equal(get_common_different_from_start(list(1:5, 0:5)), 
-               list(common = character(0), different = list(1:5, 0:5)))
-  expect_equal(get_common_different_from_start(list(1:5, 2)), 
-               list(common = character(0), different = list(1:5, 2)))
-  expect_equal(get_common_different_from_start(list(1:5, 0), empty = "test"), 
-               list(common = "test", different = list(1:5, 0)))
-  expect_equal(get_common_different_from_start(list(1:5, integer(0))), 
-               list(common = character(0), different = list(1:5, integer(0))))
+  # identifty path roots
+  expect_error(identify_path_roots(relative_root = "DNE"), "root .* not an exist")
+  expect_error(identify_path_roots("DNE"), "does not exist")
+  expect_error(identify_path_roots(c(system.file(package = "isoreader"), "DNE")), "does not exist")
+  expect_equal(identify_path_roots(c()), data_frame(root = character(0), path = character(0)))
   
-  # guess file root
-  expect_error(guess_file_root("DNE"), "does not exist")
-  expect_error(guess_file_root(c(system.file(package = "isoreader"), "DNE")), "does not exist")
+  # general checks on relative paths
+  expect_equal(identify_path_roots("test_data"), data_frame(root = ".", path = "test_data"))
+  expect_equal(identify_path_roots(file.path(".", ".", "test_data", ".")), data_frame(root = ".", path = "test_data"))
+  expect_equal(identify_path_roots(".", relative_root = "test_data"), data_frame(root = "test_data", path = "."))
+  expect_equal(identify_path_roots(c("test_data", ".")), data_frame(root = ".", path = c("test_data", ".")))
+  expect_equal(identify_path_roots(c(".", "test_data")), data_frame(root = ".", path = c(".", "test_data")))
   expect_equal(
-    isoreader:::guess_file_root(c(getwd(), getwd())),
-    list(common = ".", different = c(".", "."))
+    identify_path_roots(c("test-utils.R", "test_data", file.path("test_data", "cf_example_H_01.cf"))), 
+    data_frame(root = ".", path = c("test-utils.R", "test_data", file.path("test_data", "cf_example_H_01.cf"))))
+  
+  # absolute paths that fit the relative path
+  expect_equal(identify_path_roots(getwd()), data_frame(root = ".", path = "."))
+  expect_equal(identify_path_roots(file.path(getwd(), "test_data")), data_frame(root = ".", path = "test_data"))
+  expect_equal(identify_path_roots(c(file.path(getwd(), "test_data"), "test_data")), data_frame(root = ".", path = c("test_data", "test_data")))
+  expect_equal(
+    identify_path_roots(c(file.path(getwd(), "test-utils.R"), file.path(getwd(), "test_data"), file.path(getwd(), "test_data", "cf_example_H_01.cf"))), 
+    data_frame(root = ".", path = c("test-utils.R", "test_data", file.path("test_data", "cf_example_H_01.cf"))))
+  
+  # add absolute paths that don't fit the relative path
+  td <- system.file(package = "isoreader")
+  expect_equal(
+    identify_path_roots(c(td, file.path(getwd(), "test_data"), "test-utils.R")), 
+    data_frame(root = c(td, ".", "."), path = c(".", "test_data", "test-utils.R"))
   )
   expect_equal(
-    guess_file_root(
+    identify_path_roots(
       c(system.file(package = "isoreader"),
         system.file("extdata", package = "isoreader"),
         system.file("extdata", "dual_inlet_example.did", package = "isoreader"))
     ),
-    list(
-      common = system.file(package = "isoreader"),
-      different = c(".", "extdata", file.path("extdata", "dual_inlet_example.did"))
+    data_frame(
+      root = system.file(package = "isoreader"),
+      path = c(".", "extdata", file.path("extdata", "dual_inlet_example.did"))
     )
   )
+  
   expect_equal(
-    guess_file_root(
+    identify_path_roots(
       c(system.file("extdata", package = "isoreader"),
-        system.file("extdata", "dual_inlet_example.did", package = "isoreader"))
+        system.file("extdata", "dual_inlet_example.did", package = "isoreader")),
     ),
-    list(
-      common = system.file("extdata", package = "isoreader"),
-      different = c(".", "dual_inlet_example.did")
+    data_frame(
+      root = system.file("extdata", package = "isoreader"),
+      path = c(".", "dual_inlet_example.did")
     )
   )
+  
   # check that file isn't included in common path
   expect_equal(
-    guess_file_root(
+    identify_path_roots(
       c(system.file("extdata", "dual_inlet_example.did", package = "isoreader"),
         system.file("extdata", "dual_inlet_example.did", package = "isoreader"))
     ),
-    list(
-      common = system.file("extdata", package = "isoreader"),
-      different = c("dual_inlet_example.did", "dual_inlet_example.did")
+    data_frame(
+      root = system.file("extdata", package = "isoreader"),
+      path = c("dual_inlet_example.did", "dual_inlet_example.did")
     )
   )
   
