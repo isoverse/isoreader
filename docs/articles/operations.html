@@ -35,7 +35,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.29.9000</span>
       </span>
     </div>
 
@@ -49,6 +49,9 @@
 </li>
 <li>
   <a href="../articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="../articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -75,7 +78,7 @@
     <div class="page-header toc-ignore">
       <h1>Operations Example</h1>
             
-            <h4 class="date">2018-11-07</h4>
+            <h4 class="date">2018-12-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kopflab/isoreader/blob/master/vignettes/operations.Rmd"><code>vignettes/operations.Rmd</code></a></small>
       <div class="hidden name"><code>operations.Rmd</code></div>
@@ -98,6 +101,11 @@
 <h2 class="hasAnchor">
 <a href="#caching" class="anchor"></a>Caching</h2>
 </div>
+<div id="parallel-processing" class="section level2">
+<h2 class="hasAnchor">
+<a href="#parallel-processing" class="anchor"></a>Parallel processing</h2>
+<p>Whether parallel processing yields signifcant improvemens in read speeds depends on the number of available processors, file types and operating system. In theory, parallel processing always reduces computation time but in practice this is offset by various factors including the size of the data that needs to be sent back and forth between the processors, file system read/write speed, and the spin-up time for new processes. Generally speaking, parallel processing can provide significant improvements in speed with larger number of files (~10+) and more complex read operations (e.g. continuous flow vs. dual inlet). Reading from cache is so efficient that there are rarely gains from parallel processing and it is usually faster NOT to read in parallel.</p>
+</div>
 <div id="messages-and-default-parameters" class="section level2">
 <h2 class="hasAnchor">
 <a href="#messages-and-default-parameters" class="anchor"></a>Messages and default parameters</h2>
@@ -111,6 +119,10 @@
 <h2 class="hasAnchor">
 <a href="#filtering-isofiles-by-file-information" class="anchor"></a>Filtering isofiles by file information</h2>
 <p>Additionally, the <code>iso_filter_files</code> function allows for subsetting a collection of isofiles based on any file information.</p>
+</div>
+<div id="dealing-with-file-read-problems" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dealing-with-file-read-problems" class="anchor"></a>Dealing with file read problems</h2>
 </div>
 <div id="removing-erroneous-files" class="section level2">
 <h2 class="hasAnchor">
@@ -131,9 +143,11 @@
 <li><a href="#introduction">Introduction</a></li>
       <li><a href="#supported-file-types">Supported file types</a></li>
       <li><a href="#caching">Caching</a></li>
+      <li><a href="#parallel-processing">Parallel processing</a></li>
       <li><a href="#messages-and-default-parameters">Messages and default parameters</a></li>
       <li><a href="#combining-subsetting-isofiles">Combining / subsetting isofiles</a></li>
       <li><a href="#filtering-isofiles-by-file-information">Filtering isofiles by file information</a></li>
+      <li><a href="#dealing-with-file-read-problems">Dealing with file read problems</a></li>
       <li><a href="#removing-erroneous-files">Removing erroneous files</a></li>
       <li><a href="#re-reading-files">Re-reading files</a></li>
       </ul>

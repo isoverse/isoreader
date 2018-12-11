@@ -35,7 +35,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.29.9000</span>
       </span>
     </div>
 
@@ -49,6 +49,9 @@
 </li>
 <li>
   <a href="../articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="../articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -76,7 +79,7 @@
     <div class="page-header toc-ignore">
       <h1>Continuous Flow Examples</h1>
             
-            <h4 class="date">2018-11-07</h4>
+            <h4 class="date">2018-12-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kopflab/isoreader/blob/master/vignettes/continuous_flow.Rmd"><code>vignettes/continuous_flow.Rmd</code></a></small>
       <div class="hidden name"><code>continuous_flow.Rmd</code></div>
@@ -101,7 +104,7 @@
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rmarkdown/topics/paged_table">paged_table</a></span>()</a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["filename"],"name":[1],"type":["chr"],"align":["left"]},{"label":["extension"],"name":[2],"type":["chr"],"align":["left"]},{"label":["format"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.caf","2":".caf","3":"Isodat Dual Inlet file format (older)"},{"1":"continuous_flow_example.cf","2":".cf","3":"Isodat Continuous Flow file format (older)"},{"1":"dual_inlet_example.did","2":".did","3":"Isodat Dual Inlet file format (newer)"},{"1":"dual_inlet_example2.did","2":".did","3":"Isodat Dual Inlet file format (newer)"},{"1":"continuous_flow_example.dxf","2":".dxf","3":"Isodat Continuous Flow file format (newer)"},{"1":"linearity_example.dxf","2":".dxf","3":"Isodat Continuous Flow file format (newer)"},{"1":"continuous_flow_example.iarc","2":".iarc","3":"IonOS Continous Flow data archieve"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["filename"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["description"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"continuous flow","3":"Isodat Continuous Flow file format (older)"},{"1":"continuous_flow_example.dxf","2":"continuous flow","3":"Isodat Continuous Flow file format (newer)"},{"1":"linearity_example.dxf","2":"continuous flow","3":"Isodat Continuous Flow file format (newer)"},{"1":"continuous_flow_example.iarc","2":"continuous flow","3":"IonOS Continous Flow data archieve"},{"1":"dual_inlet_example.caf","2":"dual inlet","3":"Isodat Dual Inlet file format (older)"},{"1":"dual_inlet_example.did","2":"dual inlet","3":"Isodat Dual Inlet file format (newer)"},{"1":"dual_inlet_example2.did","2":"dual inlet","3":"Isodat Dual Inlet file format (newer)"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># read a few of the continuous flow examples</span></a>
@@ -113,8 +116,8 @@
 <a class="sourceLine" id="cb3-7" data-line-number="7">    <span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"linearity_example.dxf"</span>)</a>
 <a class="sourceLine" id="cb3-8" data-line-number="8">  )</a>
 <a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; Info: preparing to read 4 data file(s)...</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; Info: reading and caching file 1/4 '/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.cf' with '.cf' reader...</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; Info: reading and caching file 2/4 '/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.iarc' with '.iarc' reader...</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; Info: reading and caching file '/Users/sk/Library/R/3.5/library/isorea...</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; Info: reading and caching file '/Users/sk/Library/R/3.5/library/isorea...</span></a>
 <a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt;       unpacking isoprime archieve file...</span></a>
 <a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt;       found 1 processing list(s) in .iarc: 'ProcessingList_1'</span></a>
 <a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt;       found 2 method(s) in .iarc: 'Method_320', 'Method_77'</span></a>
@@ -122,44 +125,22 @@
 <a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt;       searching processing list 'ProcessingList_1' for gas configurations...</span></a>
 <a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt;       found configurations for 'CO', 'SO2', 'CO2', 'H2', 'N2'</span></a>
 <a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt;       processing sample '6632_WSL-2 wood' (IRMS data '133.hdf5', '135.hdf5')</span></a>
-<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt; Warning: caught error - C stack usage 7970880 is too close to the limit</span></a>
-<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt;       processing sample '6605_USGS41' (IRMS data '40.hdf5', '43.hdf5')</span></a>
-<a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co">#&gt; Warning: caught error - C stack usage 7970880 is too close to the limit</span></a>
-<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">#&gt;       processing sample '6617_IAEA600' (IRMS data '80.hdf5', '82.hdf5')</span></a>
-<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="co">#&gt; Warning: caught error - C stack usage 7970880 is too close to the limit</span></a>
-<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co">#&gt;       processing sample '6630_GlutamicAcid04' (IRMS data '124.hdf5', '126.hdf5')</span></a>
-<a class="sourceLine" id="cb3-25" data-line-number="25"><span class="co">#&gt; Warning: caught error - C stack usage 7970880 is too close to the limit</span></a>
-<a class="sourceLine" id="cb3-26" data-line-number="26"><span class="co">#&gt; Info: reading and caching file 3/4 '/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.dxf' with '.dxf' reader...</span></a>
-<a class="sourceLine" id="cb3-27" data-line-number="27"><span class="co">#&gt; Info: reading and caching file 4/4 '/Users/sk/Library/R/3.5/library/isoreader/extdata/linearity_example.dxf' with '.dxf' reader...</span></a>
-<a class="sourceLine" id="cb3-28" data-line-number="28"><span class="co">#&gt; Info: encountered 4 problems in total.</span></a>
-<a class="sourceLine" id="cb3-29" data-line-number="29"><span class="co">#&gt; # A tibble: 4 x 4</span></a>
-<a class="sourceLine" id="cb3-30" data-line-number="30"><span class="co">#&gt;   file_id         type  func              details                         </span></a>
-<a class="sourceLine" id="cb3-31" data-line-number="31"><span class="co">#&gt;   &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt;             &lt;chr&gt;                           </span></a>
-<a class="sourceLine" id="cb3-32" data-line-number="32"><span class="co">#&gt; 1 6632_WSL-2 wood error process_iarc_sam… C stack usage  7970880 is too c…</span></a>
-<a class="sourceLine" id="cb3-33" data-line-number="33"><span class="co">#&gt; 2 6605_USGS41     error process_iarc_sam… C stack usage  7970880 is too c…</span></a>
-<a class="sourceLine" id="cb3-34" data-line-number="34"><span class="co">#&gt; 3 6617_IAEA600    error process_iarc_sam… C stack usage  7970880 is too c…</span></a>
-<a class="sourceLine" id="cb3-35" data-line-number="35"><span class="co">#&gt; 4 6630_GlutamicA… error process_iarc_sam… C stack usage  7970880 is too c…</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt;       processing sample '6605_USGS41' (IRMS data '40.hdf5', '43.hdf5')</span></a>
+<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt;       processing sample '6617_IAEA600' (IRMS data '80.hdf5', '82.hdf5')</span></a>
+<a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co">#&gt;       processing sample '6630_GlutamicAcid04' (IRMS data '124.hdf5', '126.hdf5')</span></a>
+<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">#&gt; Info: reading and caching file '/Users/sk/Library/R/3.5/library/isorea...</span></a>
+<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="co">#&gt; Info: reading and caching file '/Users/sk/Library/R/3.5/library/isorea...</span></a>
+<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co">#&gt; Info: finished reading 4 files in 8.21 secs</span></a></code></pre></div>
 </div>
 <div id="file-summary" class="section level2">
 <h2 class="hasAnchor">
 <a href="#file-summary" class="anchor"></a>File summary</h2>
 <p>The <code>iso_files</code> variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the <code><a href="../reference/iso_get_data_summary.html">iso_get_data_summary()</a></code> function.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rmarkdown/topics/paged_table">paged_table</a></span>() </a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; Info: aggregating data summary from 7 data file(s)</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb4-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; Info: aggregating data summary from 7 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_data"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_info"],"name":[3],"type":["chr"],"align":["left"]},{"label":["method_info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["vendor_data_table"],"name":[5],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"8605 time points, 2 ions (2,3)","3":"19 entries","4":"standards, resistors","5":"19 rows, 25 columns","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.cf"},{"1":"6632_WSL-2 wood","2":"0 time points, 0 ions ()","3":"15 entries","4":"no method info","5":"no vendor data table","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.iarc|Task_0b7e6b49-7756-4cca-b387-4d6617cb28e6"},{"1":"6605_USGS41","2":"0 time points, 0 ions ()","3":"15 entries","4":"no method info","5":"no vendor data table","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.iarc|Task_0e08e8b4-c625-4fd7-bf5b-9f4823f660cd"},{"1":"6617_IAEA600","2":"0 time points, 0 ions ()","3":"15 entries","4":"no method info","5":"no vendor data table","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.iarc|Task_1de1fdc3-0797-4e44-8357-52acbd0d4a6d"},{"1":"6630_GlutamicAcid04","2":"0 time points, 0 ions ()","3":"15 entries","4":"no method info","5":"no vendor data table","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.iarc|Task_261a3286-0bc6-4aca-bba2-183c02597d8b"},{"1":"continuous_flow_example.dxf","2":"2435 time points, 6 ions (28,29,30,44,45,46)","3":"19 entries","4":"standards, resistors","5":"6 rows, 60 columns","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.dxf"},{"1":"linearity_example.dxf","2":"2307 time points, 3 ions (44,45,46)","3":"14 entries","4":"standards, resistors","5":"8 rows, 40 columns","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/linearity_example.dxf"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_data"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_info"],"name":[3],"type":["chr"],"align":["left"]},{"label":["method_info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["vendor_data_table"],"name":[5],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"8605 time points, 2 ions (2,3)","3":"19 entries","4":"standards, resistors","5":"19 rows, 25 columns","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.cf"},{"1":"6632_WSL-2 wood","2":"1952 time points, 3 ions (45,46,44)","3":"15 entries","4":"no method info","5":"no vendor data table","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.iarc|Task_0b7e6b49-7756-4cca-b387-4d6617cb28e6"},{"1":"6605_USGS41","2":"2387 time points, 2 ions (29,28)","3":"15 entries","4":"no method info","5":"no vendor data table","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.iarc|Task_0e08e8b4-c625-4fd7-bf5b-9f4823f660cd"},{"1":"6617_IAEA600","2":"1796 time points, 3 ions (45,46,44)","3":"15 entries","4":"no method info","5":"no vendor data table","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.iarc|Task_1de1fdc3-0797-4e44-8357-52acbd0d4a6d"},{"1":"6630_GlutamicAcid04","2":"2386 time points, 2 ions (29,28)","3":"15 entries","4":"no method info","5":"no vendor data table","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.iarc|Task_261a3286-0bc6-4aca-bba2-183c02597d8b"},{"1":"continuous_flow_example.dxf","2":"2435 time points, 6 ions (28,29,30,44,45,46)","3":"19 entries","4":"standards, resistors","5":"6 rows, 60 columns","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.dxf"},{"1":"linearity_example.dxf","2":"2307 time points, 3 ions (44,45,46)","3":"14 entries","4":"standards, resistors","5":"8 rows, 40 columns","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/linearity_example.dxf"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <div id="problems" class="section level3">
@@ -169,13 +150,13 @@
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rmarkdown/topics/paged_table">paged_table</a></span>()</a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["error"],"name":[2],"type":["int"],"align":["right"]},{"label":["warning"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"6605_USGS41","2":"1","3":"0"},{"1":"6617_IAEA600","2":"1","3":"0"},{"1":"6630_GlutamicAcid04","2":"1","3":"0"},{"1":"6632_WSL-2 wood","2":"1","3":"0"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["error"],"name":[2],"type":["lgl"],"align":["right"]},{"label":["warning"],"name":[3],"type":["lgl"],"align":["right"]}],"data":[],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_problems.html">iso_get_problems</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rmarkdown/topics/paged_table">paged_table</a></span>()</a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["func"],"name":[3],"type":["chr"],"align":["left"]},{"label":["details"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"6632_WSL-2 wood","2":"error","3":"process_iarc_sample_data","4":"C stack usage  7970880 is too close to the limit"},{"1":"6605_USGS41","2":"error","3":"process_iarc_sample_data","4":"C stack usage  7970880 is too close to the limit"},{"1":"6617_IAEA600","2":"error","3":"process_iarc_sample_data","4":"C stack usage  7970880 is too close to the limit"},{"1":"6630_GlutamicAcid04","2":"error","3":"process_iarc_sample_data","4":"C stack usage  7970880 is too close to the limit"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["type"],"name":[1],"type":["chr"],"align":["left"]},{"label":["func"],"name":[2],"type":["chr"],"align":["left"]},{"label":["details"],"name":[3],"type":["chr"],"align":["left"]},{"label":["file_id"],"name":[4],"type":["chr"],"align":["left"]}],"data":[],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -254,7 +235,7 @@
 <a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co">#&gt; Info: aggregating raw data from 7 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["tp"],"name":[2],"type":["int"],"align":["right"]},{"label":["time.s"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["v2.mV"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["v3.mV"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["v28.mV"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["v29.mV"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["v30.mV"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["v44.mV"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["v45.mV"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["v46.mV"],"name":[11],"type":["dbl"],"align":["right"]}],"data":[{"1":"continuous_flow_example.cf","2":"1","3":"0.209","4":"194.5682","5":"60.01971","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA"},{"1":"continuous_flow_example.cf","2":"2","3":"0.418","4":"194.5418","5":"60.04760","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA"},{"1":"continuous_flow_example.cf","2":"3","3":"0.627","4":"194.5365","5":"60.21315","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA"},{"1":"continuous_flow_example.cf","2":"4","3":"0.836","4":"194.5630","5":"59.91891","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA"},{"1":"continuous_flow_example.cf","2":"5","3":"1.045","4":"194.5735","5":"59.71668","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA"},{"1":"continuous_flow_example.cf","2":"6","3":"1.254","4":"194.5444","5":"59.69523","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA"},{"1":"continuous_flow_example.cf","2":"7","3":"1.463","4":"194.5153","5":"59.58589","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA"},{"1":"continuous_flow_example.cf","2":"8","3":"1.672","4":"194.5233","5":"59.72385","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA"},{"1":"continuous_flow_example.cf","2":"9","3":"1.881","4":"194.5096","5":"59.73885","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA"},{"1":"continuous_flow_example.cf","2":"10","3":"2.090","4":"194.5206","5":"59.73885","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["tp"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["time.s"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["v2.mV"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["v3.mV"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["i45.nA"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["i46.nA"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["i44.nA"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["i29.nA"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["i28.nA"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["v28.mV"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["v29.mV"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["v30.mV"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["v44.mV"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["v45.mV"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["v46.mV"],"name":[16],"type":["dbl"],"align":["right"]}],"data":[{"1":"continuous_flow_example.cf","2":"1","3":"0.209","4":"194.5682","5":"60.01971","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"continuous_flow_example.cf","2":"2","3":"0.418","4":"194.5418","5":"60.04760","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"continuous_flow_example.cf","2":"3","3":"0.627","4":"194.5365","5":"60.21315","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"continuous_flow_example.cf","2":"4","3":"0.836","4":"194.5630","5":"59.91891","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"continuous_flow_example.cf","2":"5","3":"1.045","4":"194.5735","5":"59.71668","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"continuous_flow_example.cf","2":"6","3":"1.254","4":"194.5444","5":"59.69523","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"continuous_flow_example.cf","2":"7","3":"1.463","4":"194.5153","5":"59.58589","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"continuous_flow_example.cf","2":"8","3":"1.672","4":"194.5233","5":"59.72385","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"continuous_flow_example.cf","2":"9","3":"1.881","4":"194.5096","5":"59.73885","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"continuous_flow_example.cf","2":"10","3":"2.090","4":"194.5206","5":"59.73885","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co"># get specific raw data and add some file information</span></a>
@@ -355,15 +336,7 @@
 <a class="sourceLine" id="cb19-12" data-line-number="12"><span class="st">      </span>(data <span class="op">==</span><span class="st"> "46/44"</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">between</span>(value, <span class="dv">0</span>, <span class="fl">0.012</span>))</a>
 <a class="sourceLine" id="cb19-13" data-line-number="13">  )</a>
 <a class="sourceLine" id="cb19-14" data-line-number="14"><span class="co">#&gt; Info: converting signals to 'nA' for 7 continuous flow data file(s) with automatic resistor values from individual iso_files</span></a>
-<a class="sourceLine" id="cb19-15" data-line-number="15"><span class="co">#&gt; Warning: encountered 4 problem(s) during signal conversion (4 total problems):</span></a>
-<a class="sourceLine" id="cb19-16" data-line-number="16"><span class="co">#&gt; # A tibble: 4 x 4</span></a>
-<a class="sourceLine" id="cb19-17" data-line-number="17"><span class="co">#&gt;   file_id         type  func              details                         </span></a>
-<a class="sourceLine" id="cb19-18" data-line-number="18"><span class="co">#&gt;   &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt;             &lt;chr&gt;                           </span></a>
-<a class="sourceLine" id="cb19-19" data-line-number="19"><span class="co">#&gt; 1 6632_WSL-2 wood error process_iarc_sam… C stack usage  7970880 is too c…</span></a>
-<a class="sourceLine" id="cb19-20" data-line-number="20"><span class="co">#&gt; 2 6605_USGS41     error process_iarc_sam… C stack usage  7970880 is too c…</span></a>
-<a class="sourceLine" id="cb19-21" data-line-number="21"><span class="co">#&gt; 3 6617_IAEA600    error process_iarc_sam… C stack usage  7970880 is too c…</span></a>
-<a class="sourceLine" id="cb19-22" data-line-number="22"><span class="co">#&gt; 4 6630_GlutamicA… error process_iarc_sam… C stack usage  7970880 is too c…</span></a>
-<a class="sourceLine" id="cb19-23" data-line-number="23"><span class="co">#&gt; Info: calculating ratio(s) in 7 data file(s): 46/44, 45/44</span></a></code></pre></div>
+<a class="sourceLine" id="cb19-15" data-line-number="15"><span class="co">#&gt; Info: calculating ratio(s) in 7 data file(s): 46/44, 45/44</span></a></code></pre></div>
 <p><img src="continuous_flow_files/figure-html/signal%20conversion-1.png" width="960"></p>
 </div>
 <div id="plot-styling" class="section level3">
@@ -375,9 +348,9 @@
 <a class="sourceLine" id="cb20-3" data-line-number="3"><span class="st">  </span><span class="co"># replot</span></a>
 <a class="sourceLine" id="cb20-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../reference/iso_plot_continuous_flow_data.html">iso_plot_continuous_flow_data</a></span>(<span class="dt">data =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">3</span>)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb20-5" data-line-number="5"><span class="st">  </span><span class="co"># add vertical dashed line (ggplot functionality)</span></a>
-<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>(<span class="dt">xintercept =</span> <span class="dv">15</span>, <span class="dt">linetype =</span> <span class="dv">2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>(<span class="dt">xintercept =</span> <span class="dv">15</span>, <span class="dt">linetype =</span> <span class="dv">2</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb20-7" data-line-number="7"><span class="st">  </span><span class="co"># modify plot styling (ggplot functionality)</span></a>
-<a class="sourceLine" id="cb20-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">text =</span> <span class="kw"><a href="ggplot2.tidyverse.org/reference/element.html">element_text</a></span>(<span class="dt">size =</span> <span class="dv">20</span>),</a>
+<a class="sourceLine" id="cb20-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">text =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span>(<span class="dt">size =</span> <span class="dv">20</span>),</a>
 <a class="sourceLine" id="cb20-9" data-line-number="9">        <span class="dt">legend.position =</span> <span class="st">"none"</span>)</a></code></pre></div>
 <p><img src="continuous_flow_files/figure-html/styling-1.png" width="960"></p>
 </div>
@@ -439,137 +412,57 @@
 <a class="sourceLine" id="cb24-3" data-line-number="3">all_data <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rmarkdown/topics/paged_table">paged_table</a></span>()</a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_info"],"name":[3],"type":["list"],"align":["right"]},{"label":["raw_data"],"name":[4],"type":["list"],"align":["right"]},{"label":["vendor_data_table"],"name":[5],"type":["list"],"align":["right"]},{"label":["standards"],"name":[6],"type":["list"],"align":["right"]},{"label":["resistors"],"name":[7],"type":["list"],"align":["right"]},{"label":["has_file_info"],"name":[8],"type":["lgl"],"align":["right"]},{"label":["has_raw_data"],"name":[9],"type":["lgl"],"align":["right"]},{"label":["has_vendor_data_table"],"name":[10],"type":["lgl"],"align":["right"]},{"label":["has_standards"],"name":[11],"type":["lgl"],"align":["right"]},{"label":["has_resistors"],"name":[12],"type":["lgl"],"align":["right"]}],"data":[{"1":"continuous_flow_example.cf","2":"continuous_flow","3":"<tibble>","4":"<tibble>","5":"<tibble>","6":"<tibble>","7":"<tibble>","8":"TRUE","9":"TRUE","10":"TRUE","11":"TRUE","12":"TRUE"},{"1":"6632_WSL-2 wood","2":"continuous_flow","3":"<tibble>","4":"<NULL>","5":"<NULL>","6":"<NULL>","7":"<NULL>","8":"TRUE","9":"FALSE","10":"FALSE","11":"FALSE","12":"FALSE"},{"1":"6605_USGS41","2":"continuous_flow","3":"<tibble>","4":"<NULL>","5":"<NULL>","6":"<NULL>","7":"<NULL>","8":"TRUE","9":"FALSE","10":"FALSE","11":"FALSE","12":"FALSE"},{"1":"6617_IAEA600","2":"continuous_flow","3":"<tibble>","4":"<NULL>","5":"<NULL>","6":"<NULL>","7":"<NULL>","8":"TRUE","9":"FALSE","10":"FALSE","11":"FALSE","12":"FALSE"},{"1":"6630_GlutamicAcid04","2":"continuous_flow","3":"<tibble>","4":"<NULL>","5":"<NULL>","6":"<NULL>","7":"<NULL>","8":"TRUE","9":"FALSE","10":"FALSE","11":"FALSE","12":"FALSE"},{"1":"continuous_flow_example.dxf","2":"continuous_flow","3":"<tibble>","4":"<tibble>","5":"<tibble>","6":"<tibble>","7":"<tibble>","8":"TRUE","9":"TRUE","10":"TRUE","11":"TRUE","12":"TRUE"},{"1":"linearity_example.dxf","2":"continuous_flow","3":"<tibble>","4":"<tibble>","5":"<tibble>","6":"<tibble>","7":"<tibble>","8":"TRUE","9":"TRUE","10":"TRUE","11":"TRUE","12":"TRUE"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_info"],"name":[3],"type":["list"],"align":["right"]},{"label":["raw_data"],"name":[4],"type":["list"],"align":["right"]},{"label":["vendor_data_table"],"name":[5],"type":["list"],"align":["right"]},{"label":["standards"],"name":[6],"type":["list"],"align":["right"]},{"label":["resistors"],"name":[7],"type":["list"],"align":["right"]},{"label":["has_file_info"],"name":[8],"type":["lgl"],"align":["right"]},{"label":["has_raw_data"],"name":[9],"type":["lgl"],"align":["right"]},{"label":["has_vendor_data_table"],"name":[10],"type":["lgl"],"align":["right"]},{"label":["has_standards"],"name":[11],"type":["lgl"],"align":["right"]},{"label":["has_resistors"],"name":[12],"type":["lgl"],"align":["right"]}],"data":[{"1":"continuous_flow_example.cf","2":"continuous_flow","3":"<tibble>","4":"<tibble>","5":"<tibble>","6":"<tibble>","7":"<tibble>","8":"TRUE","9":"TRUE","10":"TRUE","11":"TRUE","12":"TRUE"},{"1":"6632_WSL-2 wood","2":"continuous_flow","3":"<tibble>","4":"<tibble>","5":"<NULL>","6":"<NULL>","7":"<NULL>","8":"TRUE","9":"TRUE","10":"FALSE","11":"FALSE","12":"FALSE"},{"1":"6605_USGS41","2":"continuous_flow","3":"<tibble>","4":"<tibble>","5":"<NULL>","6":"<NULL>","7":"<NULL>","8":"TRUE","9":"TRUE","10":"FALSE","11":"FALSE","12":"FALSE"},{"1":"6617_IAEA600","2":"continuous_flow","3":"<tibble>","4":"<tibble>","5":"<NULL>","6":"<NULL>","7":"<NULL>","8":"TRUE","9":"TRUE","10":"FALSE","11":"FALSE","12":"FALSE"},{"1":"6630_GlutamicAcid04","2":"continuous_flow","3":"<tibble>","4":"<tibble>","5":"<NULL>","6":"<NULL>","7":"<NULL>","8":"TRUE","9":"TRUE","10":"FALSE","11":"FALSE","12":"FALSE"},{"1":"continuous_flow_example.dxf","2":"continuous_flow","3":"<tibble>","4":"<tibble>","5":"<tibble>","6":"<tibble>","7":"<tibble>","8":"TRUE","9":"TRUE","10":"TRUE","11":"TRUE","12":"TRUE"},{"1":"linearity_example.dxf","2":"continuous_flow","3":"<tibble>","4":"<tibble>","5":"<tibble>","6":"<tibble>","7":"<tibble>","8":"TRUE","9":"TRUE","10":"TRUE","11":"TRUE","12":"TRUE"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
+</div>
+</div>
+<div id="saving-collections" class="section level2">
+<h2 class="hasAnchor">
+<a href="#saving-collections" class="anchor"></a>Saving collections</h2>
+<p>Saving entire collections of isofiles for retrieval at a later point is easily done using the <code>iso_save</code> function which stores collections or individual isoreader file objects in the efficient R data storage format <code>.rds</code> (if not specified, the extension <code>.cf.rds</code> will be automatically appended). These saved collections can be convientiently read back using the same <code>iso_read_continuous_flow</code> command used for raw data files.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co"># export to R data archive</span></a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_save.html">iso_save</a></span>(<span class="st">"iso_files_export.cf.rds"</span>)</a>
+<a class="sourceLine" id="cb25-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 7 iso_files into R Data Storage 'iso_files_export.cf.rds'</span></a>
+<a class="sourceLine" id="cb25-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb25-5" data-line-number="5"><span class="co"># read back the exported R data archive</span></a>
+<a class="sourceLine" id="cb25-6" data-line-number="6">iso_files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span>(<span class="st">"iso_files_export.cf.rds"</span>)</a>
+<a class="sourceLine" id="cb25-7" data-line-number="7"><span class="co">#&gt; Info: preparing to read 1 data file(s)...</span></a>
+<a class="sourceLine" id="cb25-8" data-line-number="8"><span class="co">#&gt; Info: reading file 'iso_files_export.cf.rds' with '.cf.rds' reader</span></a>
+<a class="sourceLine" id="cb25-9" data-line-number="9"><span class="co">#&gt; Info: loaded data for 7 data files from R Data Storage - checking load...</span></a>
+<a class="sourceLine" id="cb25-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.05 secs</span></a>
+<a class="sourceLine" id="cb25-11" data-line-number="11">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rmarkdown/topics/paged_table">paged_table</a></span>()</a>
+<a class="sourceLine" id="cb25-12" data-line-number="12"><span class="co">#&gt; Info: aggregating data summary from 7 data file(s)</span></a></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_data"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_info"],"name":[3],"type":["chr"],"align":["left"]},{"label":["method_info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["vendor_data_table"],"name":[5],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"8605 time points, 2 ions (2,3)","3":"19 entries","4":"standards, resistors","5":"19 rows, 25 columns","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.cf"},{"1":"6632_WSL-2 wood","2":"1952 time points, 3 ions (45,46,44)","3":"15 entries","4":"no method info","5":"no vendor data table","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.iarc|Task_0b7e6b49-7756-4cca-b387-4d6617cb28e6"},{"1":"6605_USGS41","2":"2387 time points, 2 ions (29,28)","3":"15 entries","4":"no method info","5":"no vendor data table","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.iarc|Task_0e08e8b4-c625-4fd7-bf5b-9f4823f660cd"},{"1":"6617_IAEA600","2":"1796 time points, 3 ions (45,46,44)","3":"15 entries","4":"no method info","5":"no vendor data table","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.iarc|Task_1de1fdc3-0797-4e44-8357-52acbd0d4a6d"},{"1":"6630_GlutamicAcid04","2":"2386 time points, 2 ions (29,28)","3":"15 entries","4":"no method info","5":"no vendor data table","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.iarc|Task_261a3286-0bc6-4aca-bba2-183c02597d8b"},{"1":"continuous_flow_example.dxf","2":"2435 time points, 6 ions (28,29,30,44,45,46)","3":"19 entries","4":"standards, resistors","5":"6 rows, 60 columns","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/continuous_flow_example.dxf"},{"1":"linearity_example.dxf","2":"2307 time points, 3 ions (44,45,46)","3":"14 entries","4":"standards, resistors","5":"8 rows, 40 columns","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/linearity_example.dxf"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
 </div>
 </div>
 <div id="data-export" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data-export" class="anchor"></a>Data Export</h2>
-<p>At the moment, isoreader supports export of all data to R Data archives, Excel, and the <a href="https://blog.rstudio.com/2016/03/29/feather/">Feather file format</a> (a Python/R cross-over format). R Data archives can also be convientiently read back using the same <code>iso_read_continuous_flow</code> command used for raw data files. Note that the different export methods have similar syntax and append the appropriate file extension for each type of export file.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co"># export to R data archive</span></a>
-<a class="sourceLine" id="cb25-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_export_to_rda.html">iso_export_to_rda</a></span>(<span class="st">"iso_files_export"</span>)</a>
-<a class="sourceLine" id="cb25-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 7 iso_files into R Data Archive 'iso_files_export.cf.rda'</span></a>
-<a class="sourceLine" id="cb25-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb25-5" data-line-number="5"><span class="co"># read back the exported R data archive</span></a>
-<a class="sourceLine" id="cb25-6" data-line-number="6"><span class="kw"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span>(<span class="st">"iso_files_export.cf.rda"</span>)</a>
-<a class="sourceLine" id="cb25-7" data-line-number="7"><span class="co">#&gt; Info: preparing to read 1 data file(s)...</span></a>
-<a class="sourceLine" id="cb25-8" data-line-number="8"><span class="co">#&gt; Info: reading file 1/1 'iso_files_export.cf.rda' with '.rda' reader...</span></a>
-<a class="sourceLine" id="cb25-9" data-line-number="9"><span class="co">#&gt; Info: loaded data for 7 data files from R Data Archive - checking loaded files for content consistency...</span></a>
-<a class="sourceLine" id="cb25-10" data-line-number="10"><span class="co">#&gt; Info: encountered 4 problems in total.</span></a>
-<a class="sourceLine" id="cb25-11" data-line-number="11"><span class="co">#&gt; # A tibble: 4 x 4</span></a>
-<a class="sourceLine" id="cb25-12" data-line-number="12"><span class="co">#&gt;   file_id         type  func              details                         </span></a>
-<a class="sourceLine" id="cb25-13" data-line-number="13"><span class="co">#&gt;   &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt;             &lt;chr&gt;                           </span></a>
-<a class="sourceLine" id="cb25-14" data-line-number="14"><span class="co">#&gt; 1 6632_WSL-2 wood error process_iarc_sam… C stack usage  7970880 is too c…</span></a>
-<a class="sourceLine" id="cb25-15" data-line-number="15"><span class="co">#&gt; 2 6605_USGS41     error process_iarc_sam… C stack usage  7970880 is too c…</span></a>
-<a class="sourceLine" id="cb25-16" data-line-number="16"><span class="co">#&gt; 3 6617_IAEA600    error process_iarc_sam… C stack usage  7970880 is too c…</span></a>
-<a class="sourceLine" id="cb25-17" data-line-number="17"><span class="co">#&gt; 4 6630_GlutamicA… error process_iarc_sam… C stack usage  7970880 is too c…</span></a>
-<a class="sourceLine" id="cb25-18" data-line-number="18"><span class="co">#&gt; Data from 7 continuous flow iso files:</span></a>
-<a class="sourceLine" id="cb25-19" data-line-number="19"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb25-20" data-line-number="20"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb25-21" data-line-number="21"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb25-22" data-line-number="22"></a>
-<a class="sourceLine" id="cb25-23" data-line-number="23"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb25-24" data-line-number="24"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb25-25" data-line-number="25"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb25-26" data-line-number="26"></a>
-<a class="sourceLine" id="cb25-27" data-line-number="27"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb25-28" data-line-number="28"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb25-29" data-line-number="29"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb25-30" data-line-number="30"><span class="co">#&gt; # A tibble: 7 x 6</span></a>
-<a class="sourceLine" id="cb25-31" data-line-number="31"><span class="co">#&gt;   file_id   raw_data   file_info method_info vendor_data_tab… file_path   </span></a>
-<a class="sourceLine" id="cb25-32" data-line-number="32"><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;            &lt;chr&gt;       </span></a>
-<a class="sourceLine" id="cb25-33" data-line-number="33"><span class="co">#&gt; 1 continuo… 8605 time… 19 entri… standards,… 19 rows, 25 col… /Users/sk/L…</span></a>
-<a class="sourceLine" id="cb25-34" data-line-number="34"><span class="co">#&gt; 2 6632_WSL… 0 time po… 15 entri… no method … no vendor data … /Users/sk/L…</span></a>
-<a class="sourceLine" id="cb25-35" data-line-number="35"><span class="co">#&gt; 3 6605_USG… 0 time po… 15 entri… no method … no vendor data … /Users/sk/L…</span></a>
-<a class="sourceLine" id="cb25-36" data-line-number="36"><span class="co">#&gt; 4 6617_IAE… 0 time po… 15 entri… no method … no vendor data … /Users/sk/L…</span></a>
-<a class="sourceLine" id="cb25-37" data-line-number="37"><span class="co">#&gt; 5 6630_Glu… 0 time po… 15 entri… no method … no vendor data … /Users/sk/L…</span></a>
-<a class="sourceLine" id="cb25-38" data-line-number="38"><span class="co">#&gt; 6 continuo… 2435 time… 19 entri… standards,… 6 rows, 60 colu… /Users/sk/L…</span></a>
-<a class="sourceLine" id="cb25-39" data-line-number="39"><span class="co">#&gt; 7 linearit… 2307 time… 14 entri… standards,… 8 rows, 40 colu… /Users/sk/L…</span></a>
-<a class="sourceLine" id="cb25-40" data-line-number="40"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb25-41" data-line-number="41"><span class="co">#&gt; Problem summary:</span></a>
-<a class="sourceLine" id="cb25-42" data-line-number="42"><span class="co">#&gt; # A tibble: 4 x 3</span></a>
-<a class="sourceLine" id="cb25-43" data-line-number="43"><span class="co">#&gt;   file_id             error warning</span></a>
-<a class="sourceLine" id="cb25-44" data-line-number="44"><span class="co">#&gt;   &lt;chr&gt;               &lt;int&gt;   &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb25-45" data-line-number="45"><span class="co">#&gt; 1 6605_USGS41             1       0</span></a>
-<a class="sourceLine" id="cb25-46" data-line-number="46"><span class="co">#&gt; 2 6617_IAEA600            1       0</span></a>
-<a class="sourceLine" id="cb25-47" data-line-number="47"><span class="co">#&gt; 3 6630_GlutamicAcid04     1       0</span></a>
-<a class="sourceLine" id="cb25-48" data-line-number="48"><span class="co">#&gt; 4 6632_WSL-2 wood         1       0</span></a></code></pre></div>
+<p>At the moment, isoreader supports export of all data to R Data archives, Excel, and the <a href="https://blog.rstudio.com/2016/03/29/feather/">Feather file format</a> (a Python/R cross-over format). Note that both export methods have similar syntax and append the appropriate file extension for each type of export file (<code>.cf.xlsx</code> and <code>.cf.feather</code>, respectively).</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="co"># export to excel</span></a>
 <a class="sourceLine" id="cb26-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(<span class="st">"iso_files_export"</span>)</a>
 <a class="sourceLine" id="cb26-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 7 iso_files into Excel 'iso_files_export.cf.xlsx'</span></a>
-<a class="sourceLine" id="cb26-4" data-line-number="4"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb26-5" data-line-number="5"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb26-6" data-line-number="6"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb26-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb26-8" data-line-number="8"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb26-9" data-line-number="9"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb26-10" data-line-number="10"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb26-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb26-12" data-line-number="12"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb26-13" data-line-number="13"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb26-14" data-line-number="14"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb26-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb26-16" data-line-number="16"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb26-17" data-line-number="17"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb26-18" data-line-number="18"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb26-19" data-line-number="19"></a>
-<a class="sourceLine" id="cb26-20" data-line-number="20"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb26-21" data-line-number="21"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb26-22" data-line-number="22"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb26-23" data-line-number="23"></a>
-<a class="sourceLine" id="cb26-24" data-line-number="24"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb26-25" data-line-number="25"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb26-26" data-line-number="26"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb26-27" data-line-number="27"></a>
-<a class="sourceLine" id="cb26-28" data-line-number="28"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb26-29" data-line-number="29"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb26-30" data-line-number="30"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb26-31" data-line-number="31"></a>
-<a class="sourceLine" id="cb26-32" data-line-number="32"><span class="co"># data sheets available in the exported data file:</span></a>
-<a class="sourceLine" id="cb26-33" data-line-number="33">readxl<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/readxl/topics/excel_sheets">excel_sheets</a></span>(<span class="st">"iso_files_export.cf.xlsx"</span>)</a>
-<a class="sourceLine" id="cb26-34" data-line-number="34"><span class="co">#&gt; [1] "raw data"          "file info"         "method info"      </span></a>
-<a class="sourceLine" id="cb26-35" data-line-number="35"><span class="co">#&gt; [4] "vendor data table" "problems"</span></a></code></pre></div>
+<a class="sourceLine" id="cb26-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb26-5" data-line-number="5"><span class="co"># data sheets available in the exported data file:</span></a>
+<a class="sourceLine" id="cb26-6" data-line-number="6">readxl<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/readxl/topics/excel_sheets">excel_sheets</a></span>(<span class="st">"iso_files_export.cf.xlsx"</span>)</a>
+<a class="sourceLine" id="cb26-7" data-line-number="7"><span class="co">#&gt; [1] "raw data"          "file info"         "method info"      </span></a>
+<a class="sourceLine" id="cb26-8" data-line-number="8"><span class="co">#&gt; [4] "vendor data table" "problems"</span></a></code></pre></div>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="co"># export to feather</span></a>
 <a class="sourceLine" id="cb27-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_export_to_feather.html">iso_export_to_feather</a></span>(<span class="st">"iso_files_export"</span>)</a>
 <a class="sourceLine" id="cb27-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 7 iso_files into .cf.feather files at 'iso_files_export'</span></a>
-<a class="sourceLine" id="cb27-4" data-line-number="4"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb27-5" data-line-number="5"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb27-6" data-line-number="6"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb27-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb27-8" data-line-number="8"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb27-9" data-line-number="9"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb27-10" data-line-number="10"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb27-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb27-12" data-line-number="12"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb27-13" data-line-number="13"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb27-14" data-line-number="14"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb27-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb27-16" data-line-number="16"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb27-17" data-line-number="17"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb27-18" data-line-number="18"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb27-19" data-line-number="19"></a>
-<a class="sourceLine" id="cb27-20" data-line-number="20"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb27-21" data-line-number="21"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb27-22" data-line-number="22"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb27-23" data-line-number="23"></a>
-<a class="sourceLine" id="cb27-24" data-line-number="24"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb27-25" data-line-number="25"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb27-26" data-line-number="26"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb27-27" data-line-number="27"></a>
-<a class="sourceLine" id="cb27-28" data-line-number="28"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb27-29" data-line-number="29"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb27-30" data-line-number="30"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb27-31" data-line-number="31"></a>
-<a class="sourceLine" id="cb27-32" data-line-number="32"><span class="co"># exported feather files</span></a>
-<a class="sourceLine" id="cb27-33" data-line-number="33"><span class="kw">list.files</span>(<span class="dt">pattern =</span> <span class="st">".cf.feather"</span>)</a>
-<a class="sourceLine" id="cb27-34" data-line-number="34"><span class="co">#&gt; [1] "iso_files_export_file_info.cf.feather"            </span></a>
-<a class="sourceLine" id="cb27-35" data-line-number="35"><span class="co">#&gt; [2] "iso_files_export_method_info-resistors.cf.feather"</span></a>
-<a class="sourceLine" id="cb27-36" data-line-number="36"><span class="co">#&gt; [3] "iso_files_export_method_info-standards.cf.feather"</span></a>
-<a class="sourceLine" id="cb27-37" data-line-number="37"><span class="co">#&gt; [4] "iso_files_export_problems.cf.feather"             </span></a>
-<a class="sourceLine" id="cb27-38" data-line-number="38"><span class="co">#&gt; [5] "iso_files_export_raw_data.cf.feather"             </span></a>
-<a class="sourceLine" id="cb27-39" data-line-number="39"><span class="co">#&gt; [6] "iso_files_export_vendor_data_table.cf.feather"</span></a></code></pre></div>
+<a class="sourceLine" id="cb27-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb27-5" data-line-number="5"><span class="co"># exported feather files</span></a>
+<a class="sourceLine" id="cb27-6" data-line-number="6"><span class="kw">list.files</span>(<span class="dt">pattern =</span> <span class="st">".cf.feather"</span>)</a>
+<a class="sourceLine" id="cb27-7" data-line-number="7"><span class="co">#&gt; [1] "iso_files_export_file_info.cf.feather"            </span></a>
+<a class="sourceLine" id="cb27-8" data-line-number="8"><span class="co">#&gt; [2] "iso_files_export_method_info-resistors.cf.feather"</span></a>
+<a class="sourceLine" id="cb27-9" data-line-number="9"><span class="co">#&gt; [3] "iso_files_export_method_info-standards.cf.feather"</span></a>
+<a class="sourceLine" id="cb27-10" data-line-number="10"><span class="co">#&gt; [4] "iso_files_export_problems.cf.feather"             </span></a>
+<a class="sourceLine" id="cb27-11" data-line-number="11"><span class="co">#&gt; [5] "iso_files_export_raw_data.cf.feather"             </span></a>
+<a class="sourceLine" id="cb27-12" data-line-number="12"><span class="co">#&gt; [6] "iso_files_export_vendor_data_table.cf.feather"</span></a></code></pre></div>
 </div>
   </div>
 
@@ -584,6 +477,7 @@
       <li><a href="#file-information">File Information</a></li>
       <li><a href="#data-plots">Data &amp; Plots</a></li>
       <li><a href="#data-processing">Data Processing</a></li>
+      <li><a href="#saving-collections">Saving collections</a></li>
       <li><a href="#data-export">Data Export</a></li>
       </ul>
 </div>

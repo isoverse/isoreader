@@ -35,7 +35,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.29.9000</span>
       </span>
     </div>
 
@@ -49,6 +49,9 @@
 </li>
 <li>
   <a href="../articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="../articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -76,7 +79,7 @@
     <div class="page-header toc-ignore">
       <h1>Dual Inlet Examples</h1>
             
-            <h4 class="date">2018-11-07</h4>
+            <h4 class="date">2018-12-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kopflab/isoreader/blob/master/vignettes/dual_inlet.Rmd"><code>vignettes/dual_inlet.Rmd</code></a></small>
       <div class="hidden name"><code>dual_inlet.Rmd</code></div>
@@ -101,7 +104,7 @@
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rmarkdown/topics/paged_table">paged_table</a></span>()</a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["filename"],"name":[1],"type":["chr"],"align":["left"]},{"label":["extension"],"name":[2],"type":["chr"],"align":["left"]},{"label":["format"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.caf","2":".caf","3":"Isodat Dual Inlet file format (older)"},{"1":"continuous_flow_example.cf","2":".cf","3":"Isodat Continuous Flow file format (older)"},{"1":"dual_inlet_example.did","2":".did","3":"Isodat Dual Inlet file format (newer)"},{"1":"dual_inlet_example2.did","2":".did","3":"Isodat Dual Inlet file format (newer)"},{"1":"continuous_flow_example.dxf","2":".dxf","3":"Isodat Continuous Flow file format (newer)"},{"1":"linearity_example.dxf","2":".dxf","3":"Isodat Continuous Flow file format (newer)"},{"1":"continuous_flow_example.iarc","2":".iarc","3":"IonOS Continous Flow data archieve"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["filename"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["description"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"continuous flow","3":"Isodat Continuous Flow file format (older)"},{"1":"continuous_flow_example.dxf","2":"continuous flow","3":"Isodat Continuous Flow file format (newer)"},{"1":"linearity_example.dxf","2":"continuous flow","3":"Isodat Continuous Flow file format (newer)"},{"1":"continuous_flow_example.iarc","2":"continuous flow","3":"IonOS Continous Flow data archieve"},{"1":"dual_inlet_example.caf","2":"dual inlet","3":"Isodat Dual Inlet file format (older)"},{"1":"dual_inlet_example.did","2":"dual inlet","3":"Isodat Dual Inlet file format (newer)"},{"1":"dual_inlet_example2.did","2":"dual inlet","3":"Isodat Dual Inlet file format (newer)"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># read dual inlet examples</span></a>
@@ -112,27 +115,17 @@
 <a class="sourceLine" id="cb3-6" data-line-number="6">    <span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"dual_inlet_example.caf"</span>)</a>
 <a class="sourceLine" id="cb3-7" data-line-number="7">  )</a>
 <a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; Info: preparing to read 3 data file(s)...</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; Info: reading and caching file 1/3 '/Users/sk/Library/R/3.5/library/isoreader/extdata/dual_inlet_example.did' with '.did' reader...</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; Info: reading and caching file 2/3 '/Users/sk/Library/R/3.5/library/isoreader/extdata/dual_inlet_example2.did' with '.did' reader...</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; Info: reading and caching file 3/3 '/Users/sk/Library/R/3.5/library/isoreader/extdata/dual_inlet_example.caf' with '.caf' reader...</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; Info: reading file '/Users/sk/Library/R/3.5/library/isoreader/extdata/...</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; Info: reading and caching file '/Users/sk/Library/R/3.5/library/isorea...</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; Info: reading file '/Users/sk/Library/R/3.5/library/isoreader/extdata/...</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; Info: finished reading 3 files in 0.68 secs</span></a></code></pre></div>
 </div>
 <div id="file-summary" class="section level2">
 <h2 class="hasAnchor">
 <a href="#file-summary" class="anchor"></a>File summary</h2>
 <p>The <code>iso_files</code> variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the <code><a href="../reference/iso_get_data_summary.html">iso_get_data_summary()</a></code> function.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rmarkdown/topics/paged_table">paged_table</a></span>()</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; Info: aggregating data summary from 3 data file(s)</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb4-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; Info: aggregating data summary from 3 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_data"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_info"],"name":[3],"type":["chr"],"align":["left"]},{"label":["method_info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["vendor_data_table"],"name":[5],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.did","2":"15 cycles, 8 ions (28,29,32,33,34,38,40,44)","3":"15 entries","4":"standards, resistors","5":"15 rows, 7 columns","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/dual_inlet_example.did"},{"1":"dual_inlet_example2.did","2":"7 cycles, 6 ions (44,45,46,47,48,49)","3":"14 entries","4":"standards, resistors","5":"7 rows, 8 columns","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/dual_inlet_example2.did"},{"1":"dual_inlet_example.caf","2":"8 cycles, 6 ions (44,45,46,47,48,49)","3":"20 entries","4":"standards, resistors","5":"8 rows, 9 columns","6":"/Users/sk/Library/R/3.5/library/isoreader/extdata/dual_inlet_example.caf"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -243,15 +236,8 @@
 <a class="sourceLine" id="cb13-9" data-line-number="9"><span class="st">  </span><span class="co"># look at first few records only</span></a>
 <a class="sourceLine" id="cb13-10" data-line-number="10"><span class="st">  </span><span class="kw">head</span>(<span class="dt">n=</span><span class="dv">10</span>) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rmarkdown/topics/paged_table">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">#&gt; Info: aggregating raw data from 3 data file(s), selecting data columns 'c(type, cycle, v28.mV, v30.mV)', including file info 'c(run = Analysis)'</span></a>
-<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb13-13" data-line-number="13"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb13-14" data-line-number="14"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb13-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb13-16" data-line-number="16"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb13-17" data-line-number="17"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb13-18" data-line-number="18"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb13-19" data-line-number="19"><span class="co">#&gt; Warning: 'select = c(type, cycle, v28.mV, v30.mV)' refers to unknown column(s) in data frame 'data':</span></a>
-<a class="sourceLine" id="cb13-20" data-line-number="20"><span class="co">#&gt; - object 'v30.mV' not found</span></a></code></pre></div>
+<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#&gt; Warning: 'select = c(type, cycle, v28.mV, v30.mV)' refers to unknown column(s) in data frame 'data':</span></a>
+<a class="sourceLine" id="cb13-13" data-line-number="13"><span class="co">#&gt; - object 'v30.mV' not found</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["run"],"name":[2],"type":["chr"],"align":["left"]},{"label":["type"],"name":[3],"type":["chr"],"align":["left"]},{"label":["cycle"],"name":[4],"type":["int"],"align":["right"]},{"label":["v28.mV"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"0","5":"2319.591"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"1","5":"2314.045"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"2","5":"2314.073"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"3","5":"2308.652"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"4","5":"2306.104"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"5","5":"2302.021"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"6","5":"2308.069"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"7","5":"2308.090"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"8","5":"2308.144"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"9","5":"2305.838"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -321,15 +307,15 @@
 <a class="sourceLine" id="cb18-8" data-line-number="8">    <span class="dt">color =</span> <span class="st">`</span><span class="dt">Identifier 1</span><span class="st">`</span></a>
 <a class="sourceLine" id="cb18-9" data-line-number="9">  ) <span class="op">+</span></a>
 <a class="sourceLine" id="cb18-10" data-line-number="10"><span class="st">  </span><span class="co"># add horizontal line indicating the averages (using a ggplot geom)</span></a>
-<a class="sourceLine" id="cb18-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/geom_abline.html">geom_hline</a></span>(</a>
+<a class="sourceLine" id="cb18-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_hline</a></span>(</a>
 <a class="sourceLine" id="cb18-12" data-line-number="12">    <span class="dt">data =</span> <span class="cf">function</span>(df) {</a>
 <a class="sourceLine" id="cb18-13" data-line-number="13">      df <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb18-14" data-line-number="14"><span class="st">        </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="st">`</span><span class="dt">Identifier 1</span><span class="st">`</span>, type, data) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb18-15" data-line-number="15"><span class="st">        </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="dt">value =</span> <span class="kw">mean</span>(value))</a>
 <a class="sourceLine" id="cb18-16" data-line-number="16">      }, </a>
-<a class="sourceLine" id="cb18-17" data-line-number="17">    <span class="dt">mapping =</span> <span class="kw"><a href="ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">yintercept =</span> value)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb18-17" data-line-number="17">    <span class="dt">mapping =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">yintercept =</span> value)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb18-18" data-line-number="18"><span class="st">  </span><span class="co"># modify plot styling (ggplot functionality)</span></a>
-<a class="sourceLine" id="cb18-19" data-line-number="19"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">text =</span> <span class="kw"><a href="ggplot2.tidyverse.org/reference/element.html">element_text</a></span>(<span class="dt">size =</span> <span class="dv">20</span>))</a></code></pre></div>
+<a class="sourceLine" id="cb18-19" data-line-number="19"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">text =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span>(<span class="dt">size =</span> <span class="dv">20</span>))</a></code></pre></div>
 <p><img src="dual_inlet_files/figure-html/plot%20styling-1.png" width="768"></p>
 </div>
 </div>
@@ -379,79 +365,52 @@
 </div>
 </div>
 </div>
+<div id="saving-collections" class="section level2">
+<h2 class="hasAnchor">
+<a href="#saving-collections" class="anchor"></a>Saving collections</h2>
+<p>Saving entire collections of isofiles for retrieval at a later point is easily done using the <code>iso_save</code> function which stores collections or individual isoreader file objects in the efficient R data storage format <code>.rds</code> (if not specified, the extension <code>.di.rds</code> will be automatically appended). These saved collections can be convientiently read back using the same <code>iso_read_dual_inlet</code> command used for raw data files.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="co"># export to R data archive</span></a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_save.html">iso_save</a></span>(<span class="st">"iso_files_export.di.rds"</span>)</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 3 iso_files into R Data Storage 'iso_files_export.di.rds'</span></a>
+<a class="sourceLine" id="cb22-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="co"># read back the exported R data storage</span></a>
+<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="kw"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span>(<span class="st">"iso_files_export.di.rds"</span>)</a>
+<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="co">#&gt; Info: preparing to read 1 data file(s)...</span></a>
+<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="co">#&gt; Info: reading file 'iso_files_export.di.rds' with '.di.rds' reader</span></a>
+<a class="sourceLine" id="cb22-9" data-line-number="9"><span class="co">#&gt; Info: loaded data for 3 data files from R Data Storage - checking load...</span></a>
+<a class="sourceLine" id="cb22-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.08 secs</span></a>
+<a class="sourceLine" id="cb22-11" data-line-number="11"><span class="co">#&gt; Data from 3 dual inlet iso files: </span></a>
+<a class="sourceLine" id="cb22-12" data-line-number="12"><span class="co">#&gt; # A tibble: 3 x 6</span></a>
+<a class="sourceLine" id="cb22-13" data-line-number="13"><span class="co">#&gt;   file_id  raw_data   file_info  method_info vendor_data_tab… file_path   </span></a>
+<a class="sourceLine" id="cb22-14" data-line-number="14"><span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;            &lt;chr&gt;       </span></a>
+<a class="sourceLine" id="cb22-15" data-line-number="15"><span class="co">#&gt; 1 dual_in… 15 cycles… 15 entries standards,… 15 rows, 7 colu… /Users/sk/L…</span></a>
+<a class="sourceLine" id="cb22-16" data-line-number="16"><span class="co">#&gt; 2 dual_in… 7 cycles,… 14 entries standards,… 7 rows, 8 colum… /Users/sk/L…</span></a>
+<a class="sourceLine" id="cb22-17" data-line-number="17"><span class="co">#&gt; 3 dual_in… 8 cycles,… 20 entries standards,… 8 rows, 9 colum… /Users/sk/L…</span></a></code></pre></div>
+</div>
 <div id="data-export" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data-export" class="anchor"></a>Data Export</h2>
-<p>At the moment, isoreader supports export of all data to R Data archives, Excel, and the <a href="https://blog.rstudio.com/2016/03/29/feather/">Feather file format</a> (a Python/R cross-over format). R Data archives can also be convientiently read back using the same <code>iso_read_dual_inlet</code> command used for raw data files. Note that the different export methods have similar syntax and append the appropriate file extension for each type of export file.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="co"># export to R data archive</span></a>
-<a class="sourceLine" id="cb22-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_export_to_rda.html">iso_export_to_rda</a></span>(<span class="st">"iso_files_export"</span>)</a>
-<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 3 iso_files into R Data Archive 'iso_files_export.di.rda'</span></a>
-<a class="sourceLine" id="cb22-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="co"># read back the exported R data archive</span></a>
-<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="kw"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span>(<span class="st">"iso_files_export.di.rda"</span>)</a>
-<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="co">#&gt; Info: preparing to read 1 data file(s)...</span></a>
-<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="co">#&gt; Info: reading file 1/1 'iso_files_export.di.rda' with '.rda' reader...</span></a>
-<a class="sourceLine" id="cb22-9" data-line-number="9"><span class="co">#&gt; Info: loaded data for 3 data files from R Data Archive - checking loaded files for content consistency...</span></a>
-<a class="sourceLine" id="cb22-10" data-line-number="10"><span class="co">#&gt; Data from 3 dual inlet iso files:</span></a>
-<a class="sourceLine" id="cb22-11" data-line-number="11"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb22-12" data-line-number="12"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb22-13" data-line-number="13"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb22-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb22-15" data-line-number="15"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb22-16" data-line-number="16"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb22-17" data-line-number="17"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb22-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb22-19" data-line-number="19"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb22-20" data-line-number="20"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb22-21" data-line-number="21"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb22-22" data-line-number="22"><span class="co">#&gt; # A tibble: 3 x 6</span></a>
-<a class="sourceLine" id="cb22-23" data-line-number="23"><span class="co">#&gt;   file_id  raw_data   file_info  method_info vendor_data_tab… file_path   </span></a>
-<a class="sourceLine" id="cb22-24" data-line-number="24"><span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;            &lt;chr&gt;       </span></a>
-<a class="sourceLine" id="cb22-25" data-line-number="25"><span class="co">#&gt; 1 dual_in… 15 cycles… 15 entries standards,… 15 rows, 7 colu… /Users/sk/L…</span></a>
-<a class="sourceLine" id="cb22-26" data-line-number="26"><span class="co">#&gt; 2 dual_in… 7 cycles,… 14 entries standards,… 7 rows, 8 colum… /Users/sk/L…</span></a>
-<a class="sourceLine" id="cb22-27" data-line-number="27"><span class="co">#&gt; 3 dual_in… 8 cycles,… 20 entries standards,… 8 rows, 9 colum… /Users/sk/L…</span></a></code></pre></div>
+<p>At the moment, isoreader supports export of all data to Excel and the <a href="https://blog.rstudio.com/2016/03/29/feather/">Feather file format</a> (a Python/R cross-over format). Note that both export methods have similar syntax and append the appropriate file extension for each type of export file (<code>.di.xlsx</code> and <code>.di.feather</code>, respectively).</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="co"># export to excel</span></a>
 <a class="sourceLine" id="cb23-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(<span class="st">"iso_files_export"</span>)</a>
 <a class="sourceLine" id="cb23-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 3 iso_files into Excel 'iso_files_export.di.xlsx'</span></a>
-<a class="sourceLine" id="cb23-4" data-line-number="4"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb23-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb23-10" data-line-number="10"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb23-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb23-12" data-line-number="12"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb23-13" data-line-number="13"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb23-14" data-line-number="14"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb23-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb23-16" data-line-number="16"><span class="co"># data sheets available in the exported data file:</span></a>
-<a class="sourceLine" id="cb23-17" data-line-number="17">readxl<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/readxl/topics/excel_sheets">excel_sheets</a></span>(<span class="st">"iso_files_export.di.xlsx"</span>)</a>
-<a class="sourceLine" id="cb23-18" data-line-number="18"><span class="co">#&gt; [1] "raw data"          "file info"         "method info"      </span></a>
-<a class="sourceLine" id="cb23-19" data-line-number="19"><span class="co">#&gt; [4] "vendor data table" "problems"</span></a></code></pre></div>
+<a class="sourceLine" id="cb23-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co"># data sheets available in the exported data file:</span></a>
+<a class="sourceLine" id="cb23-6" data-line-number="6">readxl<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/readxl/topics/excel_sheets">excel_sheets</a></span>(<span class="st">"iso_files_export.di.xlsx"</span>)</a>
+<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt; [1] "raw data"          "file info"         "method info"      </span></a>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; [4] "vendor data table" "problems"</span></a></code></pre></div>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="co"># export to feather</span></a>
 <a class="sourceLine" id="cb24-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_export_to_feather.html">iso_export_to_feather</a></span>(<span class="st">"iso_files_export"</span>)</a>
 <a class="sourceLine" id="cb24-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 3 iso_files into .di.feather files at 'iso_files_export'</span></a>
-<a class="sourceLine" id="cb24-4" data-line-number="4"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb24-6" data-line-number="6"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb24-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb24-8" data-line-number="8"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb24-9" data-line-number="9"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb24-10" data-line-number="10"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb24-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb24-12" data-line-number="12"><span class="co">#&gt; Warning: 'collapse' is deprecated.</span></a>
-<a class="sourceLine" id="cb24-13" data-line-number="13"><span class="co">#&gt; Use 'glue_collapse' instead.</span></a>
-<a class="sourceLine" id="cb24-14" data-line-number="14"><span class="co">#&gt; See help("Deprecated") and help("glue-deprecated").</span></a>
-<a class="sourceLine" id="cb24-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb24-16" data-line-number="16"><span class="co"># exported feather files</span></a>
-<a class="sourceLine" id="cb24-17" data-line-number="17"><span class="kw">list.files</span>(<span class="dt">pattern =</span> <span class="st">".di.feather"</span>)</a>
-<a class="sourceLine" id="cb24-18" data-line-number="18"><span class="co">#&gt; [1] "iso_files_export_file_info.di.feather"            </span></a>
-<a class="sourceLine" id="cb24-19" data-line-number="19"><span class="co">#&gt; [2] "iso_files_export_method_info-resistors.di.feather"</span></a>
-<a class="sourceLine" id="cb24-20" data-line-number="20"><span class="co">#&gt; [3] "iso_files_export_method_info-standards.di.feather"</span></a>
-<a class="sourceLine" id="cb24-21" data-line-number="21"><span class="co">#&gt; [4] "iso_files_export_problems.di.feather"             </span></a>
-<a class="sourceLine" id="cb24-22" data-line-number="22"><span class="co">#&gt; [5] "iso_files_export_raw_data.di.feather"             </span></a>
-<a class="sourceLine" id="cb24-23" data-line-number="23"><span class="co">#&gt; [6] "iso_files_export_vendor_data_table.di.feather"</span></a></code></pre></div>
+<a class="sourceLine" id="cb24-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="co"># exported feather files</span></a>
+<a class="sourceLine" id="cb24-6" data-line-number="6"><span class="kw">list.files</span>(<span class="dt">pattern =</span> <span class="st">".di.feather"</span>)</a>
+<a class="sourceLine" id="cb24-7" data-line-number="7"><span class="co">#&gt; [1] "iso_files_export_file_info.di.feather"            </span></a>
+<a class="sourceLine" id="cb24-8" data-line-number="8"><span class="co">#&gt; [2] "iso_files_export_method_info-resistors.di.feather"</span></a>
+<a class="sourceLine" id="cb24-9" data-line-number="9"><span class="co">#&gt; [3] "iso_files_export_method_info-standards.di.feather"</span></a>
+<a class="sourceLine" id="cb24-10" data-line-number="10"><span class="co">#&gt; [4] "iso_files_export_problems.di.feather"             </span></a>
+<a class="sourceLine" id="cb24-11" data-line-number="11"><span class="co">#&gt; [5] "iso_files_export_raw_data.di.feather"             </span></a>
+<a class="sourceLine" id="cb24-12" data-line-number="12"><span class="co">#&gt; [6] "iso_files_export_vendor_data_table.di.feather"</span></a></code></pre></div>
 </div>
   </div>
 
@@ -466,6 +425,7 @@
       <li><a href="#file-information">File Information</a></li>
       <li><a href="#data-plots">Data &amp; Plots</a></li>
       <li><a href="#data-processing">Data Processing</a></li>
+      <li><a href="#saving-collections">Saving collections</a></li>
       <li><a href="#data-export">Data Export</a></li>
       </ul>
 </div>
