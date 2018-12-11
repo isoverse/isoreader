@@ -471,11 +471,26 @@ get_ctrl_blocks_config <- function() {
     # c block (not auto processed because Cblocks are found separately)
     `C-block`  = list(size = 20L, auto = FALSE, regexp = "\xff\xff(\\x00|[\x01-\x0f])\\x00.\\x00\x43[\x20-\x7e]+"),
     
-    # text block (not auto processed) - note that this does not include non standard characters
+    # text block (not auto processed) - note that this does NOT include non standard characters
     text    = list(size = 20L, auto = FALSE, regexp = "([\x20-\x7e]\\x00)+"),
     `text0` = list(size = 20L, auto = FALSE, regexp = "([\x20-\x7e]\\x00)*"), # allows no text
     permil  = list(size = 2L, auto = FALSE, regexp = "\x30\x20")
   )
+}
+
+# helper function to get the control blokcs as a data frame
+get_ctrl_blocks_config_df <- function() {
+  get_ctrl_blocks_config() %>%
+    {
+      data_frame(
+        block = names(.),
+        regexp = map_chr(., "regexp"),
+        hexadecimal = map_chr(
+          .,
+          ~.x$regexp %>% charToRaw() %>% as.character() %>% paste(collapse = " ")
+        )
+      )
+    }
 }
 
 # get configuration information for the data blocks

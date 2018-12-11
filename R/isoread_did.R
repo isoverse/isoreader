@@ -1,6 +1,6 @@
 # read isodat .did file
 # @param ds the data structure to fill
-iso_read_did <- function(ds, ...) {
+iso_read_did <- function(ds) {
   
   # safety checks
   if(!iso_is_dual_inlet(ds)) 

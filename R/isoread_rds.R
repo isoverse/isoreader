@@ -1,17 +1,12 @@
 # read cached isoreader files
 # @param ds the data structure to fill
-iso_read_rda <- function(ds) {
+iso_read_rds <- function(ds) {
   
   # safety checks
   if(!iso_is_file(ds)) stop("data structure must be an iso_file", call. = FALSE)
   
-  # general deprecation warning
-  log_warning("R Data Archives (.rda) are deprecated in favor of R Data Storage (.rds) files, please re-save your isofiles using the new iso_save() function.")
-  
-  # load rda file
-  if (exists("iso_files", inherits = FALSE)) rm("iso_files")
-  if (exists("isofiles", inherits = FALSE)) rm("isofiles") # backwards compatibility
-  load(ds$file_info$file_path) 
+  # load rds file
+  iso_files <- readRDS(ds$file_info$file_path) 
   
   # make sure object in file was loaded properly
   if (exists("isofiles", inherits = FALSE)) { 
@@ -23,8 +18,8 @@ iso_read_rda <- function(ds) {
     })
     iso_files <- iso_as_file_list(isofiles)
   }
-  if (!exists("iso_files", inherits = FALSE) || !(iso_is_object(iso_files))) 
-    stop("R Data Archive did not contain iso_file data", call. = FALSE)
+  if (!(iso_is_object(iso_files))) 
+    stop("R Data Storage did not contain iso_file data", call. = FALSE)
   iso_files <- iso_as_file_list(iso_files)
   
   # make sure all are the appropriate classes
@@ -35,7 +30,7 @@ iso_read_rda <- function(ds) {
   
   # information
   if (!default(quiet)) {
-    sprintf("loaded data for %d data files from R Data Archive - checking loaded files for content consistency...", length(iso_files)) %>% 
+    sprintf("loaded data for %d data files from R Data Storage - checking loaded files for content consistency...", length(iso_files)) %>% 
       log_message()
   }
   
@@ -44,11 +39,12 @@ iso_read_rda <- function(ds) {
   ok_version <- map_lgl(versions, same_as_isoreader_version, packageVersion("isoreader"))
   if (any(!ok_version)) {
     messages <- sprintf("file created by a different version of the isoreader package (%s)", map_chr(versions[!ok_version], as.character))
-    iso_files[!ok_version] <- map2(iso_files[!ok_version], messages, register_warning, func = "iso_read_rda", warn = FALSE)
+    iso_files[!ok_version] <- map2(iso_files[!ok_version], messages, register_warning, func = "iso_read_rds", warn = FALSE)
   }
 
   if (any(!ok_version)) {
-    sprintf("version mismatch - %.0f of the %.0f data files stored in the R Data Archive ('%s') were created by a different version of the isoreader package. This may lead to processing problems.", sum(!ok_version), length(iso_files), ds$file_info$file_id) %>% 
+    sprintf("version mismatch - %.0f of the %.0f data files stored in the R Data Structure ('%s') were created by a different version of the isoreader package. This may lead to processing problems.", 
+            sum(!ok_version), length(iso_files), ds$file_info$file_id) %>% 
     log_warning()
     log_warning("Consider re-reading the original data files using the 'iso_reread_files()' or 'iso_reread_archive()' function.")
   }

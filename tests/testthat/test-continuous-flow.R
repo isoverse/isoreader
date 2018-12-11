@@ -1,19 +1,17 @@
 context("Continuous flow")
 
 test_that("test that supported cf files are correct", {
-  expect_is(exts <- isoreader:::get_supported_cf_files(), "data.frame")
-  expect_equal(exts$extension, c("cf", "dxf", "iarc", "cf.rda"))
-  expect_true(all(exts$fun %>% sapply(class) == "character"))
-  
-  # check for existence in namespace
-  expect_true(all(exts$fun %>% sapply(exists, where = environment(iso_get_supported_file_types))))
-  expect_true(all(exts$fun %>% sapply(get, envir = environment(iso_get_supported_file_types)) %>% sapply(class) == "function"))
+  initialize_options()
+  expect_is(exts <- get_supported_cf_files(), "data.frame")
+  expect_equal(exts$extension, c(".cf", ".dxf", ".iarc", ".cf.rda", ".cf.rds"))
+  expect_true(all(exts$func %>% sapply(class) == "character"))
+  expect_true(all(exts$func %>% map_lgl(exists, mode = "function", where = asNamespace("isoreader"))))
 })
 
 test_that("test that parameter checks are performed", {
   
   # flow iarc
-  expect_error(isoreader:::iso_read_flow_iarc (isoreader:::make_di_data_structure()), 
+  expect_error(iso_read_flow_iarc (make_di_data_structure()), 
                "data structure must be a \\'continuous_flow\\' iso_file")
   
   
@@ -25,6 +23,7 @@ test_that("test that dxf files can be read", {
   
   # FIXME: re-enable for commits
   #skip("Currently not testing all continuous flow data files.")
+  # FIXME: run as one batch to make use of parallel processing
   
   iso_turn_reader_caching_off()
   
@@ -39,6 +38,10 @@ test_that("test that dxf files can be read", {
   expect_true(file.exists(file <- iso_get_reader_example("continuous_flow_example.dxf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
+  
+  expect_true(file.exists(file <- iso_get_reader_example("continuous_flow_example.iarc")))
+  expect_is(iarc <- iso_read_continuous_flow(file), "iso_file_list")
+  expect_equal(nrow(problems(iarc)), 0)
   
   expect_true(file.exists(file <- file.path("test_data", "dxf_example_H_01.dxf")))
   expect_is(dxf1 <- iso_read_continuous_flow(file), "continuous_flow")

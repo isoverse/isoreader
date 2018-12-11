@@ -4,13 +4,13 @@ di_example <- iso_read_dual_inlet(iso_get_reader_example("dual_inlet_example.did
 cf_example <- iso_read_continuous_flow(iso_get_reader_example("continuous_flow_example.cf"))
 
 test_that("test that export to rda works properly", {
-  expect_error(iso_export_to_rda(42), "can only export iso files")
-  expect_error(iso_export_to_rda(isoreader:::make_cf_data_structure()), "no filepath provided")
-  expect_error(iso_export_to_rda(isoreader:::make_cf_data_structure(), file.path("DOESNOTEXIST", "test")), 
+  expect_error(iso_save(42), "can only export iso files")
+  expect_error(iso_save(make_cf_data_structure()), "no filepath provided")
+  expect_error(iso_save(make_cf_data_structure(), file.path("DOESNOTEXIST", "test")), 
                "folder .* does not exist")
   
   # test data
-  cf <- isoreader:::make_cf_data_structure()
+  cf <- make_cf_data_structure()
   cf$file_info$file_id <- "A"
   cf$file_info$vector_test <- 1:3
   cf$raw_data <- data_frame(time = 1:10, m44 = runif(10), m45 = runif(10))
@@ -18,66 +18,66 @@ test_that("test that export to rda works properly", {
   cf$method_info$resistors <- data_frame(cup = 1:3, R.Ohm = c(1e9, 1e10, 1e11))
   cf$vendor_data_table <- data_frame(x = 1:5, y = letters[1:5]) %>% { attr(., "units") <- c(x="a", y = "b"); . }
   filepath <- file.path(tempdir(), "test")
-  cf <- cf %>% iso_as_file_list %>% isoreader:::convert_file_info_to_data_frame() %>% {.[[1]]}
+  cf <- cf %>% iso_as_file_list %>% convert_file_info_to_data_frame() %>% {.[[1]]}
   
   # export and reimport single file
-  expect_message(cf_out <- iso_export_to_rda(cf, filepath, quiet = FALSE), "exporting data .* into R Data Archive")
+  expect_message(cf_out <- iso_save(cf, filepath, quiet = FALSE), "exporting data .* into R Data Storage")
   expect_equal(cf$raw_data, cf_out$raw_data)
-  expect_true(file.exists(str_c(filepath, ".cf.rda")))
-  expect_message(cf_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rda"), quiet = FALSE), "reading file")
+  expect_true(file.exists(str_c(filepath, ".cf.rds")))
+  expect_message(cf_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rds"), quiet = FALSE), "reading file")
   expect_equal(cf$raw_data, cf_back$raw_data)
   expect_equal(cf$file_info %>% unnest(vector_test), cf_back$file_info %>% unnest(vector_test))
   expect_equal(cf$method_info$standards, cf_back$method_info$standards)
   expect_equal(cf$method_info$resistors, cf_back$method_info$resistors)
   expect_equal(cf$vendor_data_table, cf_back$vendor_data_table)
-  expect_true(file.remove(str_c(filepath, ".cf.rda")))
+  expect_true(file.remove(str_c(filepath, ".cf.rds")))
   
   # export and reimport multiple iso_files
   cf$file_info$vector_test <- NULL
   cf2 <- cf
   cf2$file_info$file_id <- "B"
   cfs <- c(cf, cf2)
-  expect_message(cfs_out <- iso_export_to_rda(cfs, filepath, quiet = FALSE), "exporting data .* into R Data Archive")
+  expect_message(cfs_out <- iso_save(cfs, filepath, quiet = FALSE), "exporting data .* into R Data Storage")
   expect_equal(cfs, cfs_out)
-  expect_true(file.exists(str_c(filepath, ".cf.rda")))
-  expect_message(cfs_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rda"), quiet = FALSE), "reading file")
+  expect_true(file.exists(str_c(filepath, ".cf.rds")))
+  expect_message(cfs_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rds"), quiet = FALSE), "reading file")
   expect_equal(cfs, cfs_back)  
-  expect_true(file.remove(str_c(filepath, ".cf.rda")))
+  expect_true(file.remove(str_c(filepath, ".cf.rds")))
   
   # export real data files - dual inlet
-  expect_message(iso_export_to_rda(di_example, filepath, quiet = FALSE), "exporting data .* into R Data Archive")
-  expect_true(file.exists(str_c(filepath, ".di.rda")))
-  expect_message(di_example_back <- iso_read_dual_inlet(str_c(filepath, ".di.rda"), quiet = FALSE), "reading file")
+  expect_message(iso_save(di_example, filepath, quiet = FALSE), "exporting data .* into R Data Storage")
+  expect_true(file.exists(str_c(filepath, ".di.rds")))
+  expect_message(di_example_back <- iso_read_dual_inlet(str_c(filepath, ".di.rds"), quiet = FALSE), "reading file")
   expect_equal(di_example$raw_data, di_example_back$raw_data)  
-  expect_equal(di_example$file_info %>% isoreader:::unnest_aggregated_data_frame() %>% unnest(measurement_info), 
-               di_example_back$file_info %>% isoreader:::unnest_aggregated_data_frame() %>% unnest(measurement_info))
+  expect_equal(di_example$file_info %>% unnest_aggregated_data_frame() %>% unnest(measurement_info), 
+               di_example_back$file_info %>% unnest_aggregated_data_frame() %>% unnest(measurement_info))
   expect_equal(di_example$method_info$standards, di_example_back$method_info$standards)
   expect_equal(di_example$method_info$resistors, di_example_back$method_info$resistors)
   expect_equal(di_example$vendor_data_table, di_example_back$vendor_data_table)
-  expect_true(file.remove(str_c(filepath, ".di.rda")))
+  expect_true(file.remove(str_c(filepath, ".di.rds")))
   
   # export real data files - continuous flow
-  expect_message(iso_export_to_rda(cf_example, filepath, quiet = FALSE), "exporting data .* into R Data Archive")
-  expect_true(file.exists(str_c(filepath, ".cf.rda")))
-  expect_message(cf_example_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rda"), quiet = FALSE), "reading file")
+  expect_message(iso_save(cf_example, filepath, quiet = FALSE), "exporting data .* into R Data Storage")
+  expect_true(file.exists(str_c(filepath, ".cf.rds")))
+  expect_message(cf_example_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rds"), quiet = FALSE), "reading file")
   expect_equal(cf_example$raw_data, cf_example_back$raw_data)  
-  expect_equal(cf_example$file_info %>% isoreader:::unnest_aggregated_data_frame(), 
-               cf_example_back$file_info %>% isoreader:::unnest_aggregated_data_frame())
+  expect_equal(cf_example$file_info %>% unnest_aggregated_data_frame(), 
+               cf_example_back$file_info %>% unnest_aggregated_data_frame())
   expect_equal(cf_example$method_info$standards, cf_example_back$method_info$standards)
   expect_equal(cf_example$method_info$resistors, cf_example_back$method_info$resistors)
   expect_equal(cf_example$vendor_data_table, cf_example_back$vendor_data_table)
-  expect_true(file.remove(str_c(filepath, ".cf.rda")))
+  expect_true(file.remove(str_c(filepath, ".cf.rds")))
 })
 
 library(readxl)
 test_that("test that export to Excel works properly", {
   expect_error(iso_export_to_excel(42), "can only export iso files")
-  expect_error(iso_export_to_excel(isoreader:::make_cf_data_structure()), "no filepath provided")
-  expect_error(iso_export_to_excel(isoreader:::make_cf_data_structure(), file.path("DOESNOTEXIST", "test")), 
+  expect_error(iso_export_to_excel(make_cf_data_structure()), "no filepath provided")
+  expect_error(iso_export_to_excel(make_cf_data_structure(), file.path("DOESNOTEXIST", "test")), 
                "folder .* does not exist")
   
   # test data
-  cf <- isoreader:::make_cf_data_structure()
+  cf <- make_cf_data_structure()
   cf$file_info$file_id <- "A"
   cf$file_info$vector_test <- 1:3
   cf$read_options <- list(file_info = TRUE, method_info = TRUE, raw_data = TRUE, vendor_data_table = TRUE)
@@ -96,7 +96,7 @@ test_that("test that export to Excel works properly", {
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
                read_excel(str_c(filepath, ".cf.xlsx"), "raw data") %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif)) 
-  expect_equal(iso_get_file_info(cf) %>% isoreader:::collapse_list_columns(), 
+  expect_equal(iso_get_file_info(cf) %>% collapse_list_columns(), 
                read_excel(str_c(filepath, ".cf.xlsx"), "file info",
                           col_types = c("text", "text", "text", "numeric", "text")) %>% 
                  mutate(file_datetime = as.integer(file_datetime))) 
@@ -113,7 +113,7 @@ test_that("test that export to Excel works properly", {
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
                read_excel(str_c(filepath, ".di.xlsx"), "raw data") %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif)) 
-  expect_equal(iso_get_file_info(di_example) %>% isoreader:::collapse_list_columns() %>% 
+  expect_equal(iso_get_file_info(di_example) %>% collapse_list_columns() %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif) %>% 
                  dplyr::select_if(function(x) !is.na(x)) %>% 
                  select(-file_datetime), # never exactly identical, 
@@ -134,7 +134,7 @@ test_that("test that export to Excel works properly", {
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
                read_excel(str_c(filepath, ".cf.xlsx"), "raw data") %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif)) 
-  expect_equal(iso_get_file_info(cf_example) %>% isoreader:::collapse_list_columns() %>% 
+  expect_equal(iso_get_file_info(cf_example) %>% collapse_list_columns() %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif) %>% 
                  dplyr::select_if(function(x) !is.na(x)) %>% 
                  select(-file_datetime), # never exactly identical, 
@@ -154,12 +154,12 @@ test_that("test that export to Excel works properly", {
 library(feather)
 test_that("test that export to Feather works properly", {
   expect_error(iso_export_to_feather(42), "can only export iso files")
-  expect_error(iso_export_to_feather(isoreader:::make_cf_data_structure()), "no filepath provided")
-  expect_error(iso_export_to_feather(isoreader:::make_cf_data_structure(), file.path("DOESNOTEXIST", "test")), 
+  expect_error(iso_export_to_feather(make_cf_data_structure()), "no filepath provided")
+  expect_error(iso_export_to_feather(make_cf_data_structure(), file.path("DOESNOTEXIST", "test")), 
                "folder .* does not exist")
   
   # test data
-  cf <- isoreader:::make_cf_data_structure()
+  cf <- make_cf_data_structure()
   cf$file_info$file_id <- "A"
   cf$file_info$vector_test <- 1:3
   cf$read_options <- list(file_info = TRUE, method_info = TRUE, raw_data = TRUE, vendor_data_table = TRUE)
@@ -179,7 +179,7 @@ test_that("test that export to Feather works properly", {
   expect_true(file.exists(str_c(filepath, "_vendor_data_table.cf.feather")))
   # note for comparisons: rounding is NOT necessary because storage is equivalent to values in R
   expect_equal(iso_get_raw_data(cf), read_feather(str_c(filepath, "_raw_data.cf.feather")))
-  expect_equal(iso_get_file_info(cf) %>% isoreader:::collapse_list_columns(), read_feather(str_c(filepath, "_file_info.cf.feather")))
+  expect_equal(iso_get_file_info(cf) %>% collapse_list_columns(), read_feather(str_c(filepath, "_file_info.cf.feather")))
   expect_equal(iso_get_standards_info(cf), read_feather(str_c(filepath, "_method_info-standards.cf.feather")))
   expect_equal(iso_get_resistors_info (cf), read_feather(str_c(filepath, "_method_info-resistors.cf.feather")))
   expect_equal(iso_get_vendor_data_table(cf), read_feather(str_c(filepath, "_vendor_data_table.cf.feather")))
@@ -194,7 +194,7 @@ test_that("test that export to Feather works properly", {
   expect_true(file.exists(str_c(filepath, "_vendor_data_table.di.feather")))
   # note for comparisons: rounding is NOT necessary because storage is equivalent to values in R
   expect_equal(iso_get_raw_data(di_example), read_feather(str_c(filepath, "_raw_data.di.feather")))
-  expect_equal(iso_get_file_info(di_example) %>% isoreader:::collapse_list_columns(), read_feather(str_c(filepath, "_file_info.di.feather")))
+  expect_equal(iso_get_file_info(di_example) %>% collapse_list_columns(), read_feather(str_c(filepath, "_file_info.di.feather")))
   expect_equal(iso_get_standards_info(di_example), read_feather(str_c(filepath, "_method_info-standards.di.feather")))
   expect_equal(iso_get_resistors_info (di_example), read_feather(str_c(filepath, "_method_info-resistors.di.feather")))
   expect_equal(iso_get_vendor_data_table(di_example), read_feather(str_c(filepath, "_vendor_data_table.di.feather")))
@@ -209,7 +209,7 @@ test_that("test that export to Feather works properly", {
   expect_true(file.exists(str_c(filepath, "_vendor_data_table.cf.feather")))
   # note for comparisons: rounding is NOT necessary because storage is equivalent to values in R
   expect_equal(iso_get_raw_data(cf_example), read_feather(str_c(filepath, "_raw_data.cf.feather")))
-  expect_equal(iso_get_file_info(cf_example) %>% isoreader:::collapse_list_columns(), read_feather(str_c(filepath, "_file_info.cf.feather")))
+  expect_equal(iso_get_file_info(cf_example) %>% collapse_list_columns(), read_feather(str_c(filepath, "_file_info.cf.feather")))
   expect_equal(iso_get_standards_info(cf_example), read_feather(str_c(filepath, "_method_info-standards.cf.feather")))
   expect_equal(iso_get_resistors_info (cf_example), read_feather(str_c(filepath, "_method_info-resistors.cf.feather")))
   expect_equal(iso_get_vendor_data_table(cf_example), read_feather(str_c(filepath, "_vendor_data_table.cf.feather")))
