@@ -4,7 +4,7 @@ context("File info")
 
 test_that("test that file information can be recovered from iso_files", {
   
-  expect_true(iso_is_file(iso_file <- isoreader:::make_iso_file_data_structure()))
+  expect_true(iso_is_file(iso_file <- make_iso_file_data_structure()))
   
   expect_error(get_file_id(), "no iso_file provided")
   expect_error(get_file_id(42), "can only retrieve file information from an iso_file object")
@@ -39,11 +39,11 @@ context("Data aggregation")
 ## check read options ====
 
 test_that("test that read option checks work properly", {
-  iso_file <- isoreader:::make_iso_file_data_structure()
-  expect_warning(isoreader:::check_read_options(iso_file, "raw_data"), "read without extracting the raw data")
+  iso_file <- make_iso_file_data_structure()
+  expect_warning(check_read_options(iso_file, "raw_data"), "read without extracting the raw data")
   iso_file <- modifyList(iso_file, list(read_options = list(raw_data = TRUE)))
-  expect_silent(isoreader:::check_read_options(iso_file, "raw_data"))
-  expect_warning(isoreader:::check_read_options(iso_file, "file_info"), "read without extracting the file info")
+  expect_silent(check_read_options(iso_file, "raw_data"))
+  expect_warning(check_read_options(iso_file, "file_info"), "read without extracting the file info")
 })
 
 ## check aggregate functions' errors ====
@@ -61,7 +61,7 @@ test_that("test that aggregation functions refuse to work with non iso_files", {
 test_that("test that file info list to data frame conversion works properly", {
   
   # test data
-  cf <- isoreader:::make_cf_data_structure()
+  cf <- make_cf_data_structure()
   cf$file_info$file_id <- "A"
   cf$file_info$test_info <- 42
   cf <- iso_as_file_list(cf)
@@ -124,7 +124,7 @@ test_that("test that unnesting of aggregated data works properly", {
 
 test_that("test that data summary is accessible", {
   
-  iso_file <- isoreader:::make_cf_data_structure()
+  iso_file <- make_cf_data_structure()
   expect_true(is.data.frame(iso_get_data_summary(iso_file)))
   
   # test data
@@ -139,7 +139,7 @@ test_that("test that data summary is accessible", {
 
 test_that("test that aggregating file info works", {
 
-  iso_file <- isoreader:::make_iso_file_data_structure()
+  iso_file <- make_iso_file_data_structure()
   expect_warning(iso_get_file_info(iso_file), "read without extracting the file info")
   
   # test data
@@ -170,7 +170,7 @@ test_that("test that aggregating file info works", {
 
 test_that("test that aggregeting raw data works", {
   
-  iso_file <- isoreader:::make_iso_file_data_structure()
+  iso_file <- make_iso_file_data_structure()
   expect_warning(iso_get_raw_data(iso_file), "read without extracting the raw data")
   
   # test data
@@ -205,7 +205,7 @@ test_that("test that aggregeting raw data works", {
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
     suppressWarnings(iso_get_raw_data(
-      c(isoreader:::make_iso_file_data_structure(), iso_file1, iso_file2), 
+      c(make_iso_file_data_structure(), iso_file1, iso_file2), 
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
   )
@@ -216,7 +216,7 @@ test_that("test that aggregeting raw data works", {
 
 test_that("test that aggregating of methods standards works", {
   
-  iso_file <- isoreader:::make_iso_file_data_structure()
+  iso_file <- make_iso_file_data_structure()
   expect_warning(iso_get_standards_info(iso_file), "read without extracting the method info")
   
   # test data
@@ -241,7 +241,7 @@ test_that("test that aggregating of methods standards works", {
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
     suppressWarnings(iso_get_standards_info(
-      c(isoreader:::make_iso_file_data_structure(), iso_file1, iso_file2), 
+      c(make_iso_file_data_structure(), iso_file1, iso_file2), 
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
   )
@@ -253,7 +253,7 @@ test_that("test that aggregating of methods standards works", {
 
 test_that("test that aggregating of resistors works", {
   
-  iso_file <- isoreader:::make_iso_file_data_structure()
+  iso_file <- make_iso_file_data_structure()
   expect_warning(iso_get_resistors_info (iso_file), "read without extracting the method info")
   
   # test data
@@ -278,7 +278,7 @@ test_that("test that aggregating of resistors works", {
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
     suppressWarnings(iso_get_resistors_info (
-      c(isoreader:::make_iso_file_data_structure(), iso_file1, iso_file2), 
+      c(make_iso_file_data_structure(), iso_file1, iso_file2), 
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
   )
@@ -290,7 +290,7 @@ test_that("test that aggregating of resistors works", {
 
 test_that("test that aggregating of vendor data table works", {
   
-  iso_file <- isoreader:::make_iso_file_data_structure()
+  iso_file <- make_iso_file_data_structure()
   expect_warning(iso_get_vendor_data_table(iso_file), "read without extracting the vendor data table")
   
   # test data
@@ -339,7 +339,7 @@ test_that("test that aggregating of vendor data table works", {
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
     suppressWarnings(iso_get_vendor_data_table(
-      c(isoreader:::make_iso_file_data_structure(), iso_file1, iso_file2),
+      c(make_iso_file_data_structure(), iso_file1, iso_file2),
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
   )
@@ -351,7 +351,7 @@ test_that("test that aggregating of vendor data table works", {
 test_that("test that total data aggregation works", {
   
   # general warning messages
-  iso_file <- isoreader:::make_cf_data_structure()
+  iso_file <- make_cf_data_structure()
   expect_warning(data <- iso_get_data(iso_file), "read without extracting the file info")
   expect_warning(data <- iso_get_data(iso_file), "read without extracting the raw data")
   expect_warning(data <- iso_get_data(iso_file), "read without extracting the vendor data table")

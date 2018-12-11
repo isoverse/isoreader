@@ -90,9 +90,9 @@ iso_is_continuous_flow <- function(x) {
 
 # Iso file list ----
 
-#' @description \code{iso_as_file_list} concatenates iso_file and iso_file list object(s) into one combined iso_file list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within iso_file lists have to be the same type of iso_file, issues warnings if there are duplicate file ids and summarizes all problems in the iso_file list
+#' @description \code{iso_as_file_list} concatenates iso_file and iso_file list object(s) into one combined iso_file list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within iso_file lists have to be the same type of iso_file, issues warnings if there are duplicate file ids and summarizes all problems in the iso_file list. If duplicates are allowed (\code{discard_duplicates = FALSE}), their file IDs will append a #1, #2, #3, etc. to preserve unique file IDs (important for many data aggregation operations). 
 #' @param ... iso_file and iso_file_list objects to concatenate
-#' @param discard_duplicates whether to discard encountered file id duplicates
+#' @param discard_duplicates whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If \code{TRUE} (the default), only the first files are kept and any files with the same file ID are discarded. If \code{FALSE}, all duplicate files are kept but their file IDs are appended with suffix \code{#1}, \code{#2}, etc. 
 #' @rdname iso_data_structure
 #' @export
 iso_as_file_list <- function(..., discard_duplicates = TRUE) {
@@ -132,17 +132,41 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
         stop(call. = FALSE)
     }
     
-    # check for name duplicates and register a warning if there are any
-    if (any(dups <- duplicated(names(iso_list)) | duplicated(names(iso_list), fromLast = TRUE))) {
-      msg <- if(discard_duplicates) "duplicate files encountered, only first kept" else "duplicate files kept, may interfere with data processing"
-      for (idx in which(dups)) {
+    # check for file_id duplicates
+    dups <- 
+      data_frame(
+        idx = 1:length(iso_list),
+        file_id = names(iso_list)
+      ) %>% 
+      group_by(file_id) %>% 
+      mutate(n = 1:n(), has_duplicates = any(n > 1)) %>% 
+      ungroup() %>% 
+      filter(has_duplicates)
+    
+    # process duplicates
+    if (nrow(dups) > 0) {
+      msg <- if(discard_duplicates) "duplicate files encountered, only first kept" else "duplicate files kept but with recoded file IDs"
+      
+      # work on duplicates
+      for (i in 1:nrow(dups)) {
+        # register warnings
+        idx <- dups$idx[i]
+        warn <- dups$n[i] == 1 # only show immediate warning for the first duplicate
         iso_list[[idx]] <- register_warning(
-          iso_list[[idx]], str_c(str_replace_na(c(msg, ": ", names(iso_list)[idx])), collapse = ""))
+          iso_list[[idx]], sprintf("%s: %s", msg, dups$file_id[i]), warn = warn)
+        # recode ID if keeping duplicates
+        if (!discard_duplicates) {
+          recode_id <- sprintf("%s#%d", iso_list[[idx]]$file_info$file_id, dups$n[i])
+          iso_list[[idx]]$file_info$file_id <- recode_id
+          names(iso_list)[idx] <- recode_id
+        }
       }
       
+      # finalize duplicates 
       if (discard_duplicates) {
-        iso_list[duplicated(names(iso_list))] <- NULL
-      }
+        # discard all but first duplicate
+        iso_list[filter(dups, n > 1)$idx] <- NULL
+      } 
     }
     
     # propagate problems
