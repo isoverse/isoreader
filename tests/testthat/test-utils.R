@@ -38,6 +38,8 @@ test_that("test that file extension helpers work correctly", {
   )
 })
 
+# root finding ======= 
+
 test_that("test that root folder finding works correctly", {
   
   # has common start
@@ -87,37 +89,50 @@ test_that("test that root folder finding works correctly", {
   expect_equal(get_path_folders(file.path(".")), character(0))
   
   # identifty path roots
-  expect_error(iso_identify_path_roots(relative_root = "DNE"), "root .* not an exist")
-  expect_error(iso_identify_path_roots("DNE"), "does not exist")
-  expect_error(iso_identify_path_roots(c(system.file(package = "isoreader"), "DNE")), "does not exist")
-  expect_equal(iso_identify_path_roots(c()), data_frame(root = character(0), path = character(0)))
+  expect_error(iso_find_absolute_path_roots("DNE"), "does not exist")
+  expect_error(iso_find_absolute_path_roots(file.path(getwd(), "DNE")), "does not exist")
+  expect_error(iso_find_absolute_path_roots(".", "DNE"), "does not exist")
+  expect_error(iso_find_absolute_path_roots(c(".", ".", "."), c(".", ".")), "one entry or be of the same length")
+  expect_error(iso_find_absolute_path_roots(""), "empty paths .* are not valid")
+  expect_equal(iso_find_absolute_path_roots(c()), data_frame(root = character(0), path = character(0)))
   
-  # general checks on relative paths
-  expect_equal(iso_identify_path_roots("test_data"), data_frame(root = ".", path = "test_data"))
-  expect_equal(iso_identify_path_roots(file.path(".", ".", "test_data", ".")), data_frame(root = ".", path = "test_data"))
-  expect_equal(iso_identify_path_roots(".", relative_root = "test_data"), data_frame(root = "test_data", path = "."))
-  expect_equal(iso_identify_path_roots(c("test_data", ".")), data_frame(root = ".", path = c("test_data", ".")))
-  expect_equal(iso_identify_path_roots(c(".", "test_data")), data_frame(root = ".", path = c(".", "test_data")))
+  # general checks on relative paths (should remain unchanged)
+  test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
+  expect_equal(iso_find_absolute_path_roots(test_folder), data_frame(root = ".", path = test_folder))
+  expect_equal(iso_find_absolute_path_roots(file.path(".", ".", test_folder, ".")), data_frame(root = ".", path = test_folder))
+  expect_equal(iso_find_absolute_path_roots(".", root = test_folder), data_frame(root = test_folder, path = "."))
+  expect_equal(iso_find_absolute_path_roots(c(test_folder, ".")), data_frame(root = ".", path = c(test_folder, ".")))
+  expect_equal(iso_find_absolute_path_roots(c(test_folder, "."), "."), data_frame(root = ".", path = c(test_folder, ".")))
+  expect_equal(iso_find_absolute_path_roots(c(test_folder, "."), c(".", ".")), data_frame(root = ".", path = c(test_folder, ".")))
+  expect_equal(iso_find_absolute_path_roots(c(test_folder, "."), c(".", getwd())), data_frame(root = c(".", getwd()), path = c(test_folder, ".")))
+  expect_equal(iso_find_absolute_path_roots(c(".", test_folder)), data_frame(root = ".", path = c(".", test_folder)))
+  expect_equal(iso_find_absolute_path_roots("cf_example_H_01.cf", test_folder), data_frame(root = test_folder, path = "cf_example_H_01.cf"))
   expect_equal(
-    iso_identify_path_roots(c("test-utils.R", "test_data", file.path("test_data", "cf_example_H_01.cf"))), 
-    data_frame(root = ".", path = c("test-utils.R", "test_data", file.path("test_data", "cf_example_H_01.cf"))))
+    iso_find_absolute_path_roots(c(test_folder, file.path(test_folder, "cf_example_H_01.cf"))), 
+    data_frame(root = ".", path = c(test_folder, file.path(test_folder, "cf_example_H_01.cf"))))
   
   # absolute paths that fit the relative path
-  expect_equal(iso_identify_path_roots(getwd()), data_frame(root = ".", path = "."))
-  expect_equal(iso_identify_path_roots(file.path(getwd(), "test_data")), data_frame(root = ".", path = "test_data"))
-  expect_equal(iso_identify_path_roots(c(file.path(getwd(), "test_data"), "test_data")), data_frame(root = ".", path = c("test_data", "test_data")))
+  expect_equal(iso_find_absolute_path_roots(getwd()), data_frame(root = ".", path = "."))
+  expect_equal(iso_find_absolute_path_roots(file.path(getwd(), test_folder)), data_frame(root = ".", path = test_folder))
+  expect_equal(iso_find_absolute_path_roots(c(file.path(getwd(), test_folder), test_folder)), data_frame(root = ".", path = c(test_folder, test_folder)))
   expect_equal(
-    iso_identify_path_roots(c(file.path(getwd(), "test-utils.R"), file.path(getwd(), "test_data"), file.path(getwd(), "test_data", "cf_example_H_01.cf"))), 
-    data_frame(root = ".", path = c("test-utils.R", "test_data", file.path("test_data", "cf_example_H_01.cf"))))
+    iso_find_absolute_path_roots(c(file.path(getwd(), test_folder), test_folder), c(test_folder, ".")), 
+    data_frame(root = c(test_folder, "."), path = c(".", test_folder)))
+  expect_equal(
+    iso_find_absolute_path_roots(c(file.path(getwd(), test_folder), file.path(getwd(), test_folder, "cf_example_H_01.cf")), test_folder),
+    data_frame(root = test_folder, path = c(".", "cf_example_H_01.cf")))
+  expect_equal(
+    iso_find_absolute_path_roots(c(file.path(getwd(), test_folder), file.path(getwd(), test_folder, "cf_example_H_01.cf")), c(".", test_folder)),
+    data_frame(root = c(".", test_folder), path = c(test_folder, "cf_example_H_01.cf")))
   
-  # add absolute paths that don't fit the relative path
+  # add absolute paths that don't fit the relative path (this don't work interactively if package installed in current path with devtools)
   td <- system.file(package = "isoreader")
   expect_equal(
-    iso_identify_path_roots(c(td, file.path(getwd(), "test_data"), "test-utils.R")), 
-    data_frame(root = c(td, ".", "."), path = c(".", "test_data", "test-utils.R"))
+    iso_find_absolute_path_roots(c(td, file.path(getwd(), test_folder), file.path(test_folder, "cf_example_H_01.cf"))), 
+    data_frame(root = c(td, ".", "."), path = c(".", test_folder, file.path(test_folder, "cf_example_H_01.cf")))
   )
   expect_equal(
-    iso_identify_path_roots(
+    iso_find_absolute_path_roots(
       c(system.file(package = "isoreader"),
         system.file("extdata", package = "isoreader"),
         system.file("extdata", "dual_inlet_example.did", package = "isoreader"))
@@ -129,7 +144,7 @@ test_that("test that root folder finding works correctly", {
   )
   
   expect_equal(
-    iso_identify_path_roots(
+    iso_find_absolute_path_roots(
       c(system.file("extdata", package = "isoreader"),
         system.file("extdata", "dual_inlet_example.did", package = "isoreader")),
     ),
@@ -141,7 +156,7 @@ test_that("test that root folder finding works correctly", {
   
   # check that file isn't included in common path
   expect_equal(
-    iso_identify_path_roots(
+    iso_find_absolute_path_roots(
       c(system.file("extdata", "dual_inlet_example.did", package = "isoreader"),
         system.file("extdata", "dual_inlet_example.did", package = "isoreader"))
     ),
@@ -153,27 +168,36 @@ test_that("test that root folder finding works correctly", {
   
 })
 
+# expanding file paths ======
+
 test_that("test that retrieving file paths works correctly", {
   
-  expect_error(expand_file_paths())
-  expect_error(expand_file_paths("DOESNOTEXIST"), "not exist")
-  expect_error(expand_file_paths(c("DOESNOTEXIST", "NOTEITHER")), "not exist")
-  expect_error(expand_file_paths(system.file("extdata", package = "isoreader")), "no extensions")
-  expect_error(expand_file_paths(system.file("extdata", package = "isoreader") %>% list.files(full.names = TRUE), "did"), 
+  expect_error(iso_expand_paths())
+  expect_error(iso_expand_paths("DNE"), "does not exist")
+  expect_error(iso_expand_paths(file.path(getwd(), "DNE")), "does not exist")
+  expect_error(iso_expand_paths(".", root = "DNE"), "does not exist")
+  expect_error(iso_expand_paths(c(".", ".", "."), root = c(".", ".")), "one entry or be of the same length")
+  expect_error(iso_expand_paths(""), "empty paths .* are not valid")
+  expect_error(iso_expand_paths(system.file("extdata", package = "isoreader")), "no extensions")
+  expect_error(iso_expand_paths(system.file("extdata", package = "isoreader") %>% list.files(full.names = TRUE), "did"), 
                "do not have one of the supported extensions")
   
   # check expected result
+  direct_list <-  system.file("extdata", package = "isoreader") %>% list.files(full.names = T, pattern = "\\.(dxf|did|cf)$")
   expect_identical(
-    direct_list <- system.file("extdata", package = "isoreader") %>% list.files(full.names = T, pattern = "\\.(dxf|did|cf)$"),
-    system.file("extdata", package = "isoreader") %>% expand_file_paths(c("did", "dxf", "cf"))
+    data_frame(root = ".", path = direct_list),
+    system.file("extdata", package = "isoreader") %>% iso_expand_paths(c("did", "dxf", "cf"))
   )
   expect_identical(
-    system.file("extdata", package = "isoreader") %>% list.files(full.names = T, pattern = "\\.(dxf|did|cf)$") %>% {.[c(2,1,3:length(.))]},
-    c(direct_list[2], system.file("extdata", package = "isoreader")) %>% expand_file_paths(c("did", "dxf", "cf"))
+    data_frame(root = ".", path = direct_list %>% {.[c(2,1,3:length(.))]}),
+    c(direct_list[2], system.file("extdata", package = "isoreader")) %>% iso_expand_paths(c("did", "dxf", "cf"))
   )
   
-  # test duplicated file names error
-  # @FIXME: not sure how to test this without actually artifically duplicating an included data file
+  expect_warning(
+    iso_expand_paths(c("."), "did", c(".", getwd())),
+   "some files from different folders have identical file names" 
+  )
+  
 })
 
 test_that("test that column name checks work correctly", {
