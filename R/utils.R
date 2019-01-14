@@ -185,13 +185,28 @@ iso_get_reader_examples <- function() {
   file_types <- iso_get_supported_file_types()
   iso_expand_paths(
       ".", extensions = file_types$extension, root = system.file(package = "isoreader", "extdata")) %>% 
-    mutate(filepath = path, filename = basename(filepath)) %>% 
+    mutate(filename = basename(path)) %>% 
     match_to_supported_file_types(file_types) %>% 
     arrange(type, extension, filename) %>% 
     select(filename, type, description)
 }
 
 # file paths ====
+
+# convenience function to check if something is a folder (even if it doesn't exist)
+# @param path(s) 
+is_folder <- function(path, check_existence = TRUE) {
+  # safety check
+  if(check_existence && !(exists <- file.exists(path))) 
+    stop("paths do not exist:\n - ", str_c(path[!exists], collapse = "\n - "), call. = FALSE)
+  
+  # it's a folder if it exists
+  check <- dir.exists(path) | 
+    # or if we're not checking existence and it does not exist but it has a . in the name
+    ( !check_existence & !file.exists(path) & !str_detect(basename(path), fixed(".")) )
+  
+  return(check)
+}
 
 # convenience function to generate a paths data frame
 # @param path path(s) (relative or absolute)
@@ -217,7 +232,7 @@ get_paths_data_frame <- function(path, root, check_existence = TRUE) {
       absolute = R.utils::isAbsolutePath(path),
       full_path = ifelse(absolute, path, file.path(root, path)),
       exists = file.exists(full_path),
-      is_dir = dir.exists(full_path)
+      is_dir = is_folder(full_path, check_existence = !!check_existence)
     )
   
   # safety check
@@ -228,104 +243,6 @@ get_paths_data_frame <- function(path, root, check_existence = TRUE) {
   }
   
   return(paths)
-}
-
-#' Find roots for absolute paths
-#' 
-#' Helper function to find the roots of absolute paths. Tries to put absolute paths into the context of the relative root. For those that this is not possible (because they are not in fact a sub-path of the relative roots), identifies the greatest common denominator for absolute paths as their root. Does not change relative paths but does check wheter they do exist.
-#' @param path vector of file/folder paths, mixed relative and absolute paths are allowed.
-#' @param root root path(s) for relative files - single root or vector of same length as \code{path}. Can be relative to the current working directory or absolute path(s) on the file system.
-#' @return a data frame with the root directories and paths relative to the root - order of input paths is preserved
-#' @familiy file system functions
-#' @export
-iso_find_absolute_path_roots <- function(path, root = ".") {
-  
-  # anything to work with?
-  if(length(path) == 0) return(data_frame(root = character(0), path = character(0)))
-  
-  # generate data frame and check existence
-  paths <- get_paths_data_frame(path, root, check_existence = TRUE)
-  
-  # get root folders
-  paths <- paths %>% 
-    group_by(root) %>% 
-    mutate(
-      rel_root_folders = map(root, get_path_folders),
-      abs_root_folders = map2(
-        root, rel_root_folders, 
-        ~if(R.utils::isAbsolutePath(.x)) { .y } else { get_path_folders(file.path(getwd(), .x)) }
-      )
-    ) %>% ungroup()
-  
-  # get path folders
-  paths <- paths %>% mutate(path_folders = map(full_path, get_path_folders))
-
-  # relative paths
-  rel_paths <- paths %>% 
-    filter(!absolute) %>%
-    group_by(root) %>% 
-    # this is not necessary since the path won't change, but it's a good check and makes combined processing easier
-    mutate(new_path = find_common_different_from_start(c(rel_root_folders[1], path_folders))$different[-1]) %>% 
-    ungroup()
-  
-  # check which absolute paths are common with the root
-  abs_paths <- paths %>% filter(absolute)
-  if (nrow(abs_paths) > 0) {
-    abs_paths <- abs_paths %>% 
-      group_by(root) %>% 
-      mutate(has_rel_root = has_common_start(path_folders, abs_root_folders[[1]])) %>% 
-      ungroup()
-    
-    # absolute paths that share relative root
-    abs_rel_paths <- abs_paths %>% filter(has_rel_root)
-    if (nrow(abs_rel_paths) > 0) {
-      abs_rel_paths <- abs_rel_paths %>% 
-        group_by(root) %>% 
-        mutate(new_path = find_common_different_from_start(c(abs_root_folders[1], path_folders))$different[-1]) %>% 
-        ungroup()
-    }
-    
-    # absolute paths that don't have a relative root
-    abs_paths <- filter(abs_paths, !has_rel_root)
-    if (nrow(abs_paths) > 0) {
-      common_diff <- find_common_different_from_start(abs_paths$path_folders)
-      abs_paths <- abs_paths %>% 
-        mutate(
-          new_path = common_diff$different,
-          root = do.call(file.path, args = as.list(common_diff$common))
-        )
-    }
-  } else {
-    # no absolute paths
-    abs_paths <- data_frame()
-    abs_rel_paths <- data_frame()
-  }
-  
-  # combine all
-  paths <-
-    bind_rows(abs_paths, rel_paths, abs_rel_paths) %>% 
-    # expand the paths
-    mutate(
-      full_new_path = 
-        # process folder and file paths properly
-        purrr::pmap(list(path = new_path, is_dir = is_dir, file = basename(path)),
-        function(path, is_dir, file) {
-          if (!is_dir && identical(path, "."))
-            return(file) # file only
-          else if (!is_dir)
-            return(c(path, file)) # path + file
-          else if (length(path) == 0)
-            return(".") # current directory
-          else 
-            return(path)
-        }) %>%
-        # combine into file path
-        map_chr(~do.call(file.path, args = as.list(.x)))
-    ) %>% 
-    arrange(i) 
-  
-  #return(paths)
-  return(select(paths, root, path = full_new_path))
 }
 
 # find out which vectors have the common start
@@ -404,70 +321,29 @@ find_common_different_from_start <- function(vectors, empty = character(0)) {
   )
 }
 
-# helper function to get vector of folders
-# only returns folders in the resulting vector unless include_files = TRUE
-# omits all . since it does not change path
-get_path_folders <- function(filepath, include_files = FALSE) {
-  if (!file.exists(filepath)) stop("path does not exist: ", filepath, call. = FALSE)
-  if (!include_files && !dir.exists(filepath)) filepath <- dirname(filepath)
-  folders <- c()
+# helper function to get vector of path segments
+# omits segments that are just the current folder (.)
+get_path_segments <- function(path) {
+  segments <- c()
   while(TRUE) {
-    folders <- c(basename(filepath), folders)
-    parent <- dirname(filepath)
-    if (parent == filepath) break;
-    filepath <- parent
+    segments <- c(basename(path), segments)
+    parent <- dirname(path)
+    if (parent == path) break;
+    path <- parent
   }
   # ignore without . since it does not change path
-  return(folders[folders != "."])
-}
-
-# get file extension
-get_file_ext <- function(filepath) {
-  basename(filepath) %>% str_extract("\\.[^.]+$")
-}
-
-# match file extension
-# returns the longest extension that matches
-match_file_ext <- function(filepath, extensions) {
-  exts_regexp <- extensions %>% stringr::str_to_lower() %>% 
-    stringr::str_replace_all("\\.", "\\\\.") %>% str_c("$")
-  exts <- extensions[str_detect(stringr::str_to_lower(filepath), exts_regexp)]
-  if (length(exts) == 0) return(NA_character_)
-  else return(exts[stringr::str_length(exts) == max(stringr::str_length(exts))][1])
-}
-
-# match multiple filepaths with extensions and return a data frame
-# @param pfilepaths_df data frame with, at minimum, column 'filepath'
-# @param extensions_df data frame with, at miminum, column 'extension'
-match_to_supported_file_types <- function(filepaths_df, extensions_df) {
-  stopifnot("filepath" %in% names(filepaths_df))
-  stopifnot("extension" %in% names(extensions_df))
-  files <- 
-    filepaths_df %>% 
-    mutate(extension = map_chr(filepath, match_file_ext, extensions_df$extension)) %>% 
-    left_join(mutate(extensions_df, .ext_exists = TRUE), by = "extension")
-  
-  # safety check
-  if ( nrow(missing <- dplyr::filter(files, is.na(.ext_exists))) > 0) {
-    exts <- missing$filepath %>% get_file_ext() %>% unique() %>% str_c(collapse = ", ")
-    glue::glue(
-      "unexpected file extension(s): {exts} ",
-      "(expected one of the following: ",
-      "{str_c(extensions_df$extension, collapse = ', ')})") %>% 
-    stop(call. = FALSE)
-  }
-  
-  return(dplyr::select(files, -.ext_exists))
+  return(segments[segments != "."])
 }
 
 #' Expand file paths
 #' 
 #' Helper function to expand the provided paths to find data files in folders and subfolders that match any of the specified extensions. Filepaths will be kept as is, only folders will be expanded. Note that this function is rarely called directly. It is used automatically by \code{\link{iso_read_dual_inlet}} and \code{\link{iso_read_continuous_flow}} to identify fiels of interest based on the file paths provided.
 #' 
-#' @inheritParams iso_find_absolute_path_roots
+#' @param path vector of file/folder paths, mixed relative and absolute paths are allowed.
 #' @param extensions which extensions to look for? (with or without leading .) - this is typically one or more of the extensions listed by \code{\link{iso_get_supported_file_types()}}
+#' @param root root for relative paths. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). The default is the current working directory (\code{"."}). Can be supplied as a vector of same length as the provided paths if the paths have different roots.
 #' @return data frame with columns \code{root} (\code{root} as provided) and \code{path} of all the found files.
-#' @familiy file system functions
+#' @family file system functions
 #' @export
 iso_expand_paths <- function(path, extensions = c(), root = ".") {
   
@@ -487,7 +363,7 @@ iso_expand_paths <- function(path, extensions = c(), root = ".") {
          str_c(extensions, collapse = ", "), 
          "):\n\t", with(paths, path[!has_ext]) %>% str_c(collapse = "\n\t"), call. = FALSE)
   }
-    
+  
   # retrieve all the files
   filepaths <- 
     paths %>% 
@@ -519,6 +395,147 @@ iso_expand_paths <- function(path, extensions = c(), root = ".") {
   return(paths)
 }
 
+
+#' Shorten relative paths
+#'
+#' Convenience function to shorten relative paths based on overlap with the provided root(s). Also simplifies current directory repeats (e.g. "././." becomes ".") for better legiblity. Does not check whether the original or resulting paths point to valid files or folders. Absolute paths are allowed but are returned as is without attempts at shortening. See \code{iso_find_absolute_path_roots} for rooting absolute paths.
+#'
+#' @param path file path(s) to check for shortening 
+#' @param path root root(s) to check the paths for
+#' @family file system functions
+#' @export 
+#' @examples 
+#' iso_shorten_relative_paths(file.path("A", "B", "C"), "A") # shortens to B/C
+#' iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "B")) # shortens to C
+#' iso_shorten_relative_paths(file.path("A", "B", "C"), "B") # no shortening, stays A/B/C
+iso_shorten_relative_paths <- function(path, root = ".") {
+  
+  # error with dimensions
+  if (length(path) != 1 && length(root) != 1 && length(path) != length(root)) {
+    stop("paths and roots need to have one entry or be of the same length, not ",
+         length(path), " and ", length(root), call. = FALSE)
+  }
+  
+  # generate paths dataframe (WITHOUT concatenating path and root ulnike get_paths_data_frame)
+  paths <- 
+    data_frame(
+      i = 1:max(length(root), length(path)),
+      path = path,
+      root = root,
+      absolute = R.utils::isAbsolutePath(path),
+      path_folders = map(path, get_path_segments),
+      root_folders = map(root, get_path_segments)
+    ) %>% 
+    group_by(root) %>% 
+    mutate(has_root = has_common_start(path_folders, root_folders[[1]])) %>% 
+    ungroup()
+  
+  # shorten relative paths
+  shortened_paths <-
+    paths %>% 
+    filter(!absolute & has_root) %>%
+    # find shortened relative paths
+    group_by(root, path) %>% 
+    mutate(path_folders = find_common_different_from_start(c(root_folders[1], path_folders[1]))$different[-1]) %>% 
+    ungroup() 
+  
+  # reassmble relative paths
+  rel_paths <- 
+    bind_rows(shortened_paths, filter(paths, !absolute & !has_root)) %>% 
+    mutate(path = path_folders %>% map_chr(
+      ~if(length(.x) == 0) { "." } else { do.call(file.path, args = as.list(.x))})
+    )
+  
+  # return all
+  paths <- bind_rows(rel_paths, filter(paths, absolute)) %>% arrange(i) 
+  return(paths$path)
+}
+
+#' Find roots for absolute paths
+#' 
+#' Helper function to find the roots of absolute paths. Tries to put absolute paths into the context of the relative root. For those that this is not possible (because they are not in fact a sub-path of the relative roots), identifies the greatest common denominator for absolute paths as their root. Does not change relative paths but does check wheter they do exist if \code{check_existence = TRUE} (the default). To modify relative paths, use \link{iso_shorten_relative_paths} prior to calling this function.
+#' @inheritParams iso_expand_paths
+#' @param check_existence whether to check for the existence of the paths
+#' @return a data frame with the root directories and paths relative to the root - order of input paths is preserved
+#' @family file system functions
+#' @export
+iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRUE) {
+  
+  # anything to work with?
+  if(length(path) == 0) return(data_frame(root = character(0), path = character(0)))
+  
+  # generate data frame and check existence
+  paths <- get_paths_data_frame(path, root, check_existence = check_existence)
+  
+  # process absolute paths
+  abs_paths <- paths %>% filter(absolute)
+  if (nrow(abs_paths) > 0) {
+    
+    # determine root folders
+    abs_paths <- abs_paths %>% 
+      # get path folders
+      mutate(path_folders = ifelse(is_dir, full_path, dirname(full_path)) %>% map(get_path_segments)) %>% 
+      # get root folders
+      group_by(root) %>% 
+      mutate(
+        rel_root_folders = map(root, get_path_segments),
+        abs_root_folders = map2(
+          root, rel_root_folders, 
+          ~if(R.utils::isAbsolutePath(.x)) { .y } else { get_path_segments(file.path(getwd(), .x)) }
+        ),
+        has_rel_root = has_common_start(path_folders, abs_root_folders[[1]])
+      ) %>% 
+      ungroup()
+    
+    # absolute paths that share relative root
+    abs_rel_paths <- abs_paths %>% filter(has_rel_root)
+    if (nrow(abs_rel_paths) > 0) {
+      abs_rel_paths <- abs_rel_paths %>% 
+        group_by(root) %>% 
+        mutate(new_path = find_common_different_from_start(c(abs_root_folders[1], path_folders))$different[-1]) %>% 
+        ungroup()
+    }
+    
+    # absolute paths that don't have a relative root
+    abs_paths <- filter(abs_paths, !has_rel_root)
+    if (nrow(abs_paths) > 0) {
+      common_diff <- find_common_different_from_start(abs_paths$path_folders)
+      abs_paths <- abs_paths %>% 
+        mutate(
+          new_path = common_diff$different,
+          root = do.call(file.path, args = as.list(common_diff$common))
+        )
+    }
+    
+    # reassemble absolute paths
+    abs_paths <-
+      bind_rows(abs_paths, abs_rel_paths) %>% 
+      # expand the paths
+      mutate(
+        path = 
+          # process folder and file paths properly
+          purrr::pmap(list(path = new_path, is_dir = is_dir, file = basename(path)),
+                      function(path, is_dir, file) {
+                        if (!is_dir && identical(path, "."))
+                          return(file) # file only
+                        else if (!is_dir)
+                          return(c(path, file)) # path + file
+                        else if (length(path) == 0)
+                          return(".") # current directory
+                        else 
+                          return(path)
+                      }) %>%
+          # combine into file path
+          map_chr(~do.call(file.path, args = as.list(.x)))
+      )
+  } 
+  
+  # combine all
+  paths <- bind_rows(abs_paths, filter(paths, !absolute)) %>%  arrange(i) 
+  
+  return(select(paths, root, path))
+}
+
 # get re-read filepaths
 get_reread_filepaths <- function(iso_files) {
   if(!iso_is_object(iso_files)) stop("can only re-read iso_files", call. = FALSE)
@@ -526,6 +543,48 @@ get_reread_filepaths <- function(iso_files) {
   info <- lapply(iso_files, function(i) i$file_info[c("file_id", "file_path", "file_subpath")])
   return(info %>% map_chr("file_path") %>% unique())
 }
+
+# file extensions ======
+
+# get file extension
+get_file_ext <- function(filepath) {
+  basename(filepath) %>% str_extract("\\.[^.]+$")
+}
+
+# match file extension
+# returns the longest extension that matches
+match_file_ext <- function(filepath, extensions) {
+  exts_regexp <- extensions %>% stringr::str_to_lower() %>% 
+    stringr::str_replace_all("\\.", "\\\\.") %>% str_c("$")
+  exts <- extensions[str_detect(stringr::str_to_lower(filepath), exts_regexp)]
+  if (length(exts) == 0) return(NA_character_)
+  else return(exts[stringr::str_length(exts) == max(stringr::str_length(exts))][1])
+}
+
+# match multiple filepaths with extensions and return a data frame
+# @param filepaths_df data frame with, at minimum, column 'path'
+# @param extensions_df data frame with, at miminum, column 'extension'
+match_to_supported_file_types <- function(filepaths_df, extensions_df) {
+  stopifnot("path" %in% names(filepaths_df))
+  stopifnot("extension" %in% names(extensions_df))
+  files <- 
+    filepaths_df %>% 
+    mutate(extension = map_chr(path, match_file_ext, extensions_df$extension)) %>% 
+    left_join(mutate(extensions_df, .ext_exists = TRUE), by = "extension")
+  
+  # safety check
+  if ( nrow(missing <- dplyr::filter(files, is.na(.ext_exists))) > 0) {
+    exts <- missing$path %>% get_file_ext() %>% unique() %>% str_c(collapse = ", ")
+    glue::glue(
+      "unexpected file extension(s): {exts} ",
+      "(expected one of the following: ",
+      "{str_c(extensions_df$extension, collapse = ', ')})") %>% 
+    stop(call. = FALSE)
+  }
+  
+  return(dplyr::select(files, -.ext_exists))
+}
+
 
 # caching ====
 
