@@ -324,6 +324,7 @@ find_common_different_from_start <- function(vectors, empty = character(0)) {
 # helper function to get vector of path segments
 # omits segments that are just the current folder (.)
 get_path_segments <- function(path) {
+  if (is.na(path)) return(path)
   segments <- c()
   while(TRUE) {
     segments <- c(basename(path), segments)
@@ -568,11 +569,12 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
 get_reread_filepaths <- function(iso_files) {
   if(!iso_is_object(iso_files)) stop("can only re-read iso_files", call. = FALSE)
   iso_files <- iso_as_file_list(iso_files)
-  info <- lapply(iso_files, function(i) i$file_info[c("file_id", "file_path", "file_subpath")])
-  return(info %>% map_chr("file_path") %>% unique())
+  info <- map_chr(iso_files, get_ds_file_path) %>% unique()
+  return(info)
 }
 
 # file extensions ======
+
 
 # get file extension
 get_file_ext <- function(filepath) {

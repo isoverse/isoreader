@@ -11,7 +11,7 @@ iso_read_rda <- function(ds) {
   # load rda file
   if (exists("iso_files", inherits = FALSE)) rm("iso_files")
   if (exists("isofiles", inherits = FALSE)) rm("isofiles") # backwards compatibility
-  load(ds$file_info$file_path) 
+  load(get_ds_file_path(ds)) 
   
   # make sure object in file was loaded properly
   if (exists("isofiles", inherits = FALSE)) { 

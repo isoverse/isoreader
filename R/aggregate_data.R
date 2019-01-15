@@ -602,6 +602,34 @@ check_read_options <- function(iso_files, option) {
 
 # Data Aggregation helpers ==========
 
+# helper function to convert file_path into rooted path for unrooted legacy files
+convert_file_path_to_rooted <- function(iso_files, root = ".", ...) {
+  
+  stopifnot(iso_is_file_list(iso_files))
+  
+  # the ones needing updating
+  needs_conversion <- map_lgl(iso_files, ~is.null(.x$file_info[["file_root"]]) || is.na(.x$file_info$file_root))
+  
+  if (any(needs_conversion)) {
+    
+    # get paths
+    paths <- 
+      map_chr(iso_files[needs_conversion], ~.x$file_info$file_path) %>% 
+      iso_root_paths(root = root, check_existence = FALSE)
+    
+    # prepare file info updates
+    file_info_update <- with(paths, map2(root, path, ~list(file_info = list(file_root = .x, file_path = .y))))
+    names(file_info_update) <- names(iso_files[needs_conversion])
+    
+    # make sure to keep format
+    iso_files <- as.list(iso_files) %>% 
+      modifyList(file_info_update) %>% 
+      iso_as_file_list(...)
+  }
+  
+  return(iso_files)
+}
+
 # helper function to turn file info from list to data frame for easier/faster aggregation
 convert_file_info_to_data_frame <- function(iso_files, ...) {
   

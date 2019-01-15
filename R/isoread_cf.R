@@ -7,7 +7,7 @@ iso_read_cf <- function(ds) {
     stop("data structure must be a 'continuous_flow' iso_file", call. = FALSE)
   
   # read binary file
-  ds$binary <- read_binary_file(ds$file_info$file_path)
+  ds$binary <- get_ds_file_path(ds) %>% read_binary_file()
   
   # process file info
   if(ds$read_options$file_info) {

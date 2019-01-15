@@ -13,6 +13,7 @@ make_iso_file_data_structure <- function() {
       ), 
       file_info = list(
         file_id = NA_character_, # unique identifer
+        file_root = NA_character_, # root directory for file path
         file_path = NA_character_, # path to file (file extension is key for processing)
         file_subpath = NA_character_, # sub path in case file is an archieve
         file_datetime = NA_integer_ # the run date and time of the file
@@ -246,13 +247,20 @@ print.continuous_flow <- function(x, ..., show_problems = TRUE) {
 # Update structures =====
 
 # set data structure file path
-set_ds_file_path <- function(ds, file_path, file_id = basename(file_path), file_subpath = NA_character_) {
+set_ds_file_path <- function(ds, file_root, file_path, file_id = basename(file_path), file_subpath = NA_character_) {
   if (!iso_is_file(ds)) stop("can only set path for iso_file data structures", call. = FALSE)
-  if (!file.exists(file_path)) stop("file/folder does not exist: ", file_path, call. = FALSE)
+  ds$file_info$file_root <- file_root
   ds$file_info$file_path <- file_path
   ds$file_info$file_id <- file_id
   ds$file_info$file_subpath <- file_subpath
+  if (!file.exists(get_ds_file_path(ds))) 
+    stop("file/folder does not exist: ", file_path, call. = FALSE)
   return(ds)
+}
+
+get_ds_file_path <- function(ds) {
+  if (is.na(ds$file_info$file_root)) return(ds$file_info$file_path)
+  else return(file.path(ds$file_info$file_root, ds$file_info$file_path))
 }
 
 # update read options in structure
