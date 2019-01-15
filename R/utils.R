@@ -396,18 +396,35 @@ iso_expand_paths <- function(path, extensions = c(), root = ".") {
 }
 
 
+#' Root paths
+#' 
+#' Function to root both relative and absolute paths to a root directory (or directories) commonly relative to current working directory. Determines the best way to shorten relative paths and put absolute paths in a relative context (if possible) using \link{iso_shorten_relative_paths} and \link{iso_find_absolute_path_roots}, respectively. 
+#' 
+#' @inheritParams iso_find_absolute_path_roots
+#' @return a data frame with the root directories and paths relative to the root - order of input paths is preserved
+#' @family file system functions
+#' @export
+iso_root_paths <- function(path, root = ".", check_existence = TRUE) {
+  
+  paths <- iso_shorten_relative_paths(path, root)
+  paths <- iso_find_absolute_path_roots(paths$path, paths$root, check_existence = check_existence)
+  
+  return(paths)
+}
+
 #' Shorten relative paths
 #'
-#' Convenience function to shorten relative paths based on overlap with the provided root(s). Also simplifies current directory repeats (e.g. "././." becomes ".") for better legiblity. Does not check whether the original or resulting paths point to valid files or folders. Absolute paths are allowed but are returned as is without attempts at shortening. See \code{iso_find_absolute_path_roots} for rooting absolute paths.
+#' Convenience function to shorten relative paths based on overlap with the provided root(s). Also simplifies current directory repeats (e.g. "././." becomes ".") for better legiblity. Does not check whether the original or resulting paths point to valid files or folders. Relative paths that do not start with the supplied \code{root} default back to the current working directory (\code{.}). Absolute paths are allowed but are returned as is without attempts at shortening. See \code{iso_find_absolute_path_roots} for rooting absolute paths.
 #'
-#' @param path file path(s) to check for shortening 
-#' @param path root root(s) to check the paths for
+#' @inheritParams iso_expand_paths
+#' @return a data frame with the root directories and paths relative to the root - order of input paths is preserved
 #' @family file system functions
 #' @export 
 #' @examples 
-#' iso_shorten_relative_paths(file.path("A", "B", "C"), "A") # shortens to B/C
-#' iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "B")) # shortens to C
-#' iso_shorten_relative_paths(file.path("A", "B", "C"), "B") # no shortening, stays A/B/C
+#' iso_shorten_relative_paths(file.path("A", "B", "C"), "A") # root = "A", path = B/C
+#' iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "B")) # root = "A/B", path = "C"
+#' iso_shorten_relative_paths(file.path("A", "C", "D"), file.path("A", "B")) # root = "A", path = "C/D"
+#' iso_shorten_relative_paths(file.path("A", "B", "C"), "B") # root = ".", path stays "A/B/C"
 iso_shorten_relative_paths <- function(path, root = ".") {
   
   # error with dimensions
@@ -416,6 +433,9 @@ iso_shorten_relative_paths <- function(path, root = ".") {
          length(path), " and ", length(root), call. = FALSE)
   }
   
+  # relative base reference
+  wd_folders <- get_path_segments(getwd())
+  
   # generate paths dataframe (WITHOUT concatenating path and root ulnike get_paths_data_frame)
   paths <- 
     data_frame(
@@ -423,32 +443,40 @@ iso_shorten_relative_paths <- function(path, root = ".") {
       path = path,
       root = root,
       absolute = R.utils::isAbsolutePath(path),
-      path_folders = map(path, get_path_segments),
-      root_folders = map(root, get_path_segments)
+      path_folders = map(path, get_path_segments)
     ) %>% 
+    # put roots into working directory context if possible
     group_by(root) %>% 
-    mutate(has_root = has_common_start(path_folders, root_folders[[1]])) %>% 
+    mutate(
+      root_folders_all = map(root[1], get_path_segments),
+      root_folders_rel = find_common_different_from_start(c(list(wd_folders), root_folders_all[1]))$different[-1],
+      root_folders = if (has_common_start(root_folders_all[1], wd_folders)) root_folders_rel else root_folders_all
+    ) %>% 
     ungroup()
   
   # shorten relative paths
-  shortened_paths <-
-    paths %>% 
-    filter(!absolute & has_root) %>%
-    # find shortened relative paths
-    group_by(root, path) %>% 
-    mutate(path_folders = find_common_different_from_start(c(root_folders[1], path_folders[1]))$different[-1]) %>% 
-    ungroup() 
-  
-  # reassmble relative paths
-  rel_paths <- 
-    bind_rows(shortened_paths, filter(paths, !absolute & !has_root)) %>% 
-    mutate(path = path_folders %>% map_chr(
-      ~if(length(.x) == 0) { "." } else { do.call(file.path, args = as.list(.x))})
-    )
+  rel_paths <- paths %>% filter(!absolute)
+  if (nrow(rel_paths) > 0) {
+    rel_paths <- rel_paths %>% 
+      # shorten with most possible overlap
+      group_by(root, path) %>% 
+      mutate(
+        root_folders = list(find_common_different_from_start(c(root_folders[1], path_folders[1]))$common),
+        path_folders = find_common_different_from_start(c(root_folders[1], path_folders[1]))$different[-1]
+      ) %>% 
+      ungroup() %>% 
+      # assmple paths
+      mutate(
+        path = path_folders %>% map_chr(
+          ~if(length(.x) == 0) { "." } else { do.call(file.path, args = as.list(.x))})
+      )
+  }
   
   # return all
-  paths <- bind_rows(rel_paths, filter(paths, absolute)) %>% arrange(i) 
-  return(paths$path)
+  paths <- bind_rows(rel_paths, filter(paths, absolute)) %>% arrange(i) %>% 
+    # simplify root path
+    mutate(root = root_folders %>% map_chr(~if(length(.x) == 0) { "." } else { do.call(file.path, args = as.list(.x))}))
+  return(select(paths, root, path))
 }
 
 #' Find roots for absolute paths

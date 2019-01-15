@@ -93,31 +93,62 @@ test_that("test that path segmentation works correctly", {
 
 # relative path shifting =======
 
-test_that("relative path shifting works correctly", {
+test_that("relative path shortening works correctly", {
   
   # errors
   expect_error(iso_find_absolute_path_roots(c(".", ".", "."), c(".", ".")), "one entry or be of the same length")
   
   # shoretning of sequential ././.
-  expect_equal(iso_shorten_relative_paths(file.path(".", ".", "A", "B", ".", "C")), file.path("A", "B", "C"))
+  expect_equal(iso_shorten_relative_paths(file.path(".", ".", "A", "B", ".", "C")), 
+               data_frame(root = ".", path = file.path("A", "B", "C")))
   
   # shortening of relative paths
-  expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), "A"), file.path("B", "C"))
-  expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "B")), "C")
-  expect_equal(iso_shorten_relative_paths(file.path("A", ".", ".", "B", "C"), file.path(".", "A", "B")), "C")
-  expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), "B"), file.path("A", "B", "C"))
-  expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "B", "C", "D")), file.path("A", "B", "C"))
-  expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "D")), file.path("A", "B", "C"))
-  expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "B", "C")), ".")
+  expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), "A"), 
+               data_frame(root = "A", path = file.path("B", "C")))
+  expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "B")), 
+               data_frame(root = file.path("A", "B"), path = "C"))
+  expect_equal(iso_shorten_relative_paths(file.path("A", "C", "D"), file.path("A", "B")), 
+               data_frame(root = "A", path = file.path("C", "D")))
+  expect_equal(iso_shorten_relative_paths(file.path("A", ".", ".", "B", "C"), file.path(".", "A", "B")), 
+               data_frame(root = file.path("A", "B"), path = "C"))
+  expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), "B"), 
+               data_frame(root = ".", path = file.path("A", "B", "C")))
+  expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "B", "C")), 
+               data_frame(root = file.path("A", "B", "C"), path = "."))
+  expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "B", "C", "D")), 
+               data_frame(root = file.path("A", "B", "C"), path = "."))
   
-  # no shortening for absolute paths
-  expect_equal(iso_shorten_relative_paths(getwd(), getwd()), getwd())
+  # path and root absolute - stay the same
+  expect_equal(iso_shorten_relative_paths(getwd(), system.file(package = "base")),
+               data_frame(root = system.file(package = "base"), path = getwd()))
+  
+  # root gets shortened to wd if a subpath
+  expect_equal(iso_shorten_relative_paths(file.path("A", "B"), getwd()),
+               data_frame(root = ".", path = file.path("A", "B")))
+  
+  expect_equal(iso_shorten_relative_paths(file.path("A", "B"), file.path(getwd(), "A")),
+               data_frame(root = "A", path = "B"))
+  
+  # no shortening for absolute paths (only roots)
+  expect_equal(iso_shorten_relative_paths(getwd(), getwd()), 
+               data_frame(root = ".", path = getwd()))
   
   # mixed test
   expect_equal(
     iso_shorten_relative_paths(
-      c(file.path("A", "B", "C"), file.path("B", "C"), getwd()), "A"),
-    c(file.path("B", "C"), file.path("B", "C"), getwd()))
+      c(file.path("A", "B", "C"), file.path("A", "C"), file.path("B", "C"), getwd()), file.path("A", "B")),
+    data_frame(root = c(file.path("A", "B"), "A", ".", file.path("A", "B")),
+               path = c("C", "C", c(file.path("B", "C"), getwd())))
+  )
+  
+  # combined rel and abs
+  expect_equal(
+    iso_root_paths(
+      c(file.path("A", "B", "C"), file.path("A", "C"), file.path("B", "C"), getwd()), file.path("A", "B"), check_existence = FALSE),
+    data_frame(root = c(file.path("A", "B"), "A", ".", getwd()),
+               path = c("C", "C", c(file.path("B", "C"), ".")))
+  )
+  
 })
 
 # absolute path roots =======
