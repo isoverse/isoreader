@@ -14,6 +14,10 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+knitr::opts_chunk$set(
+  dev = c("png", "pdf"), 
+  dev.args = list(pdf = list(encoding = "WinAnsi", useDingbats = FALSE)),
+  fig.keep = "all", fig.path = file.path("fig_output", "dual_inlet_"))
 ```
 
 ## Introduction
@@ -68,7 +72,7 @@ Detailed file information can be aggregated for all isofiles using the `iso_get_
 
 ```{r}
 # all file information
-iso_files %>% iso_get_file_info() %>% rmarkdown::paged_table()
+iso_files %>% iso_get_file_info(select = c(-file_root)) %>% rmarkdown::paged_table()
 # select file information
 iso_files %>% 
   iso_get_file_info(

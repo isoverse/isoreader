@@ -22,7 +22,7 @@ test_that("test that dxf files can be read", {
   # test specific files
   
   # FIXME: re-enable for commits
-  skip("Currently not testing all continuous flow data files.")
+  #skip("Currently not testing all continuous flow data files.")
   # FIXME: run as one batch to make use of parallel processing
   
   iso_turn_reader_caching_off()
@@ -43,39 +43,41 @@ test_that("test that dxf files can be read", {
   expect_is(iarc <- iso_read_continuous_flow(file), "iso_file_list")
   expect_equal(nrow(problems(iarc)), 0)
   
-  expect_true(file.exists(file <- file.path("test_data", "dxf_example_H_01.dxf")))
+  test_folder <- file.path("test_data") # test_folder <- file.path("tests", "testthat", "test_data") # direct
+  
+  expect_true(file.exists(file <- file.path(test_folder, "dxf_example_H_01.dxf")))
   expect_is(dxf1 <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf1)), 0)
   
-  expect_true(file.exists(file <- file.path("test_data", "dxf_example_HO_01.dxf")))
+  expect_true(file.exists(file <- file.path(test_folder, "dxf_example_HO_01.dxf")))
   expect_is(dxf2 <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf2)), 0)
   
-  expect_true(file.exists(file <- file.path("test_data", "cf_example_H_01.cf")))
+  expect_true(file.exists(file <- file.path(test_folder, "cf_example_H_01.cf")))
   expect_is(dxf3 <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf3)), 0)
   
-  expect_true(file.exists(file <- file.path("test_data", "cf_example_H_02.cf")))
+  expect_true(file.exists(file <- file.path(test_folder, "cf_example_H_02.cf")))
   expect_is(dxf4 <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf4)), 0)
   
-  expect_true(file.exists(file <- file.path("test_data", "cf_example_H_03.cf")))
+  expect_true(file.exists(file <- file.path(test_folder, "cf_example_H_03.cf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
-  expect_true(file.exists(file <- file.path("test_data", "cf_example_H_04.cf")))
+  expect_true(file.exists(file <- file.path(test_folder, "cf_example_H_04.cf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
-  expect_true(file.exists(file <- file.path("test_data", "cf_example_H_05.cf")))
+  expect_true(file.exists(file <- file.path(test_folder, "cf_example_H_05.cf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
-  expect_true(file.exists(file <- file.path("test_data", "cf_example_H_06.cf")))
+  expect_true(file.exists(file <- file.path(test_folder, "cf_example_H_06.cf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
-  expect_true(file.exists(file <- file.path("test_data", "cf_example_H_07.cf")))
+  expect_true(file.exists(file <- file.path(test_folder, "cf_example_H_07.cf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   
@@ -84,7 +86,7 @@ test_that("test that dxf files can be read", {
   iso_files <- c(dxf1, dxf2, dxf3)
   expect_equal(
     iso_files %>% get_reread_filepaths(),
-    iso_files %>% sapply(function(i) i$file_info$file_path) %>% as.character()
+    iso_files %>% map_chr(get_ds_file_path) %>% as.character()
   )
   expect_true(iso_is_continuous_flow(reread_dxf <- iso_reread_files(iso_files)))
   expect_equal(nrow(problems(reread_dxf)), 0)

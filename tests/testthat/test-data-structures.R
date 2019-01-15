@@ -85,18 +85,20 @@ test_that("test that iso_file list checks work", {
 test_that("can set file path for data structures", {
   expect_error(set_ds_file_path(data_frame()), "can only set path for iso_file data structures")
   expect_silent(ds <- make_iso_file_data_structure())
-  expect_error(set_ds_file_path(ds, "DOESNOTEXIST"), "does not exist")
+  expect_error(set_ds_file_path(ds, "DNE", "DNE"), "does not exist")
   
   # default
-  expect_is(ds <- set_ds_file_path(ds, system.file("extdata", package = "isoreader")), "iso_file")
-  expect_equal(ds$file_info$file_path, system.file("extdata", package = "isoreader"))
-  expect_equal(ds$file_info$file_id, basename(system.file("extdata", package = "isoreader")))
+  expect_is(ds <- set_ds_file_path(ds, system.file(package = "isoreader"), "extdata"), "iso_file")
+  expect_equal(ds$file_info$file_root, system.file(package = "isoreader"))
+  expect_equal(ds$file_info$file_path, "extdata")
+  expect_equal(ds$file_info$file_id, "extdata")
   expect_equal(ds$file_info$file_subpath, NA_character_)
   
   # custom id and subpath
-  expect_is(ds <- set_ds_file_path(ds, system.file("extdata", package = "isoreader"),
+  expect_is(ds <- set_ds_file_path(ds, system.file(package = "isoreader"), "extdata",
                                                "my_id", "subpath"), "iso_file")
-  expect_equal(ds$file_info$file_path, system.file("extdata", package = "isoreader"))
+  expect_equal(ds$file_info$file_root, system.file(package = "isoreader"))
+  expect_equal(ds$file_info$file_path, "extdata")
   expect_equal(ds$file_info$file_id, "my_id")
   expect_equal(ds$file_info$file_subpath, "subpath")
 })
@@ -111,7 +113,6 @@ test_that("test that can update read options", {
   expect_equal(update_read_options(iso_file, read_file_info = TRUE, raw_data = TRUE)$read_options,
                list(file_info = TRUE, method_info = FALSE, raw_data = TRUE, vendor_data_table = FALSE))
 })
-
 
 # isofils objects can be combined and subset ====
 test_that("test that isofils objects can be combined and subset", {

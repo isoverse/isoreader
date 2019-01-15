@@ -6,7 +6,7 @@ iso_read_rds <- function(ds) {
   if(!iso_is_file(ds)) stop("data structure must be an iso_file", call. = FALSE)
   
   # load rds file
-  iso_files <- readRDS(ds$file_info$file_path) 
+  iso_files <- readRDS(get_ds_file_path(ds)) 
   
   # make sure object in file was loaded properly
   if (exists("isofiles", inherits = FALSE)) { 

@@ -7,7 +7,7 @@ iso_read_dxf <- function(ds) {
     stop("data structure must be a 'continuous_flow' iso_file", call. = FALSE)
   
   # read binary file
-  ds$binary <- read_binary_file(ds$file_info$file_path)
+  ds$binary <- get_ds_file_path(ds) %>% read_binary_file()
   
   # process file info
   if(ds$read_options$file_info) {
@@ -81,7 +81,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
   # find all masses
   for (config in names(configs)) {
     if (default(debug)) 
-      message("processing ", config, " (", configs[[config]]$pos, "-", configs[[config]]$cap, ")")
+      log_message("processing ", config, " (", configs[[config]]$pos, "-", configs[[config]]$cap, ")")
     ds$binary <- ds$binary %>% 
       move_to_pos(configs[[config]]$pos) %>% 
       cap_at_pos(configs[[config]]$cap)

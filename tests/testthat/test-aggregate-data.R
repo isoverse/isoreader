@@ -66,8 +66,8 @@ test_that("test that file info list to data frame conversion works properly", {
   cf$file_info$test_info <- 42
   cf <- iso_as_file_list(cf)
   expect_true(is_tibble(file_info <- convert_file_info_to_data_frame(cf)[[1]]$file_info))
-  expect_equal(names(file_info), c("file_id", "file_path", "file_subpath", "file_datetime", "test_info"))
-  expect_equal(map_chr(file_info, ~class(.x)[1]) %>% unname(), c("character", "character", "character", "integer", "list"))
+  expect_equal(names(file_info), c("file_id", "file_root", "file_path", "file_subpath", "file_datetime", "test_info"))
+  expect_equal(map_chr(file_info, ~class(.x)[1]) %>% unname(), c("character", "character", "character", "character", "integer", "list"))
   expect_equal(file_info$test_info, list(42))
 })
 
@@ -159,8 +159,8 @@ test_that("test that aggregating file info works", {
   expect_equal(names(iso_get_file_info(iso_file1, select = c("file_datetime", "only_a"))), c("file_id", "file_datetime", "only_a"))
   expect_equal(names(iso_get_file_info(iso_file1, select = c(file_datetime, only_a))), c("file_id", "file_datetime", "only_a"))
   expect_equal(names(iso_get_file_info(iso_file1, select = c(x = file_datetime, y = only_a))), c("file_id", "x", "y"))
-  expect_equal(names(iso_get_file_info(iso_file1, select = starts_with("file"))), c("file_id", "file_path", "file_subpath", "file_datetime"))
-  expect_equal(names(iso_get_file_info(iso_file1, select = c(x = starts_with("file")))), c("x1", "x2", "x3", "x4"))
+  expect_equal(names(iso_get_file_info(iso_file1, select = starts_with("file"))), c("file_id", "file_root", "file_path", "file_subpath", "file_datetime"))
+  expect_equal(names(iso_get_file_info(iso_file1, select = c(x = starts_with("file")))), c("x1", "x2", "x3", "x4", "x5"))
   expect_warning(agg <- iso_get_file_info(iso_file2, select = c("file_datetime", "only_a")), "refers to unknown column")
   expect_equal(names(agg), c("file_id", "file_datetime"))
 })

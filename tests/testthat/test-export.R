@@ -12,6 +12,8 @@ test_that("test that export to rda works properly", {
   # test data
   cf <- make_cf_data_structure()
   cf$file_info$file_id <- "A"
+  cf$file_info$file_root <- "."
+  cf$file_info$file_path <- "test"
   cf$file_info$vector_test <- 1:3
   cf$raw_data <- data_frame(time = 1:10, m44 = runif(10), m45 = runif(10))
   cf$method_info$standards <- data_frame(standard = "test a")
@@ -94,14 +96,14 @@ test_that("test that export to Excel works properly", {
   # note for comparisons: rounding is necessary because storage is not perfect numerically
   expect_equal(iso_get_raw_data(cf) %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
-               read_excel(str_c(filepath, ".cf.xlsx"), "raw data") %>% 
+               readxl::read_excel(str_c(filepath, ".cf.xlsx"), "raw data") %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif)) 
   expect_equal(iso_get_file_info(cf) %>% collapse_list_columns(), 
-               read_excel(str_c(filepath, ".cf.xlsx"), "file info",
-                          col_types = c("text", "text", "text", "numeric", "text")) %>% 
+               readxl::read_excel(str_c(filepath, ".cf.xlsx"), "file info",
+                          col_types = c("text", "text", "text", "text", "numeric", "text")) %>% 
                  mutate(file_datetime = as.integer(file_datetime))) 
   expect_equal(iso_get_vendor_data_table(cf), 
-               read_excel(str_c(filepath, ".cf.xlsx"), "vendor data table") %>% 
+               readxl::read_excel(str_c(filepath, ".cf.xlsx"), "vendor data table") %>% 
                  mutate(x = as.integer(x))) 
   # TODO: also test the standards and resistor values (from the same tab)
   expect_true(file.remove(str_c(filepath, ".cf.xlsx")))
