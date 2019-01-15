@@ -4,7 +4,8 @@
 \alias{iso_read_continuous_flow}
 \title{Load continuous flow data}
 \usage{
-iso_read_continuous_flow(..., read_raw_data = default(read_raw_data),
+iso_read_continuous_flow(..., root = ".",
+  read_raw_data = default(read_raw_data),
   read_file_info = default(read_file_info),
   read_method_info = default(read_method_info),
   read_vendor_data_table = default(read_vendor_data_table),
@@ -14,6 +15,8 @@ iso_read_continuous_flow(..., read_raw_data = default(read_raw_data),
 }
 \arguments{
 \item{...}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
+
+\item{root}{root for relative paths. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). The default is the current working directory (\code{"."}). Can be supplied as a vector of same length as the provided paths if the paths have different roots.}
 
 \item{read_raw_data}{whether to read the raw mass/ion data from the file}
 

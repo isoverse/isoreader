@@ -4,13 +4,15 @@
 \alias{iso_read_files}
 \title{Core function to read isotope data files}
 \usage{
-iso_read_files(paths, supported_extensions, data_structure, ...,
+iso_read_files(paths, root, supported_extensions, data_structure, ...,
   discard_duplicates = TRUE, parallel = FALSE,
   parallel_plan = future::multiprocess, cache = default(cache),
   read_cache = default(cache), quiet = default(quiet))
 }
 \arguments{
-\item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
+\item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read). Paths can be absolute paths or relative to the provided file \code{root} (which is the current working directory by default). For absolute paths, a common root directory will be guessed using \link{iso_find_absolute_path_roots}. The root portion of paths will never be displayed in info messages.}
+
+\item{root}{root for relative paths. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). The default is the current working directory (\code{"."}). Can be supplied as a vector of same length as the provided paths if the paths have different roots.}
 
 \item{supported_extensions}{data frame with supported extensions and corresponding reader functions (columns 'extension', 'func', 'cacheable')}
 
