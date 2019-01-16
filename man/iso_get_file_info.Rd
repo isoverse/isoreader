@@ -21,7 +21,8 @@ Combine file information from multiple iso_files. By default all information is 
 File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using \code{iso_file$file_info[['INFO_NAME']]} on the iso_file object directly.
 }
 \seealso{
-Other data retrieval functions: \code{\link{iso_get_data}},
+Other data retrieval functions: \code{\link{iso_get_bgrd_data}},
+  \code{\link{iso_get_data}},
   \code{\link{iso_get_raw_data}},
   \code{\link{iso_get_resistors_info}},
   \code{\link{iso_get_standards_info}},
