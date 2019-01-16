@@ -32,6 +32,7 @@ make_iso_file_data_structure <- function() {
 # basic dual inlet data structure
 make_di_data_structure <- function() {
   struct <- make_iso_file_data_structure()
+  struct$bgrd_data <- data_frame() # store background data
   class(struct) <- c("dual_inlet", class(struct))
   return(struct)
 }
