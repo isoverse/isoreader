@@ -23,7 +23,8 @@ iso_get_vendor_data_table(iso_files, with_units = FALSE,
 Aggregate data from the vendor-computed data table. This information is only available if the iso_files were read with parameter \code{read_vendor_data_table=TRUE}.
 }
 \seealso{
-Other data retrieval functions: \code{\link{iso_get_data}},
+Other data retrieval functions: \code{\link{iso_get_bgrd_data}},
+  \code{\link{iso_get_data}},
   \code{\link{iso_get_file_info}},
   \code{\link{iso_get_raw_data}},
   \code{\link{iso_get_resistors_info}},
