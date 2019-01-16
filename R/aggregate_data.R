@@ -394,6 +394,77 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
 }
 
 
+#' Aggregate background data
+#' 
+#' Aggregate the background data from the provided iso_files. Can aggregate either in a wide table (for easy overview) or a gathered long table (for plotting and further data processing). The background data is only available if the iso_files were read with parameter \code{read_raw_data=TRUE}.
+#' 
+#' @inheritParams iso_get_raw_data
+#' @family data retrieval functions
+#' @export
+iso_get_bgrd_data <- function(iso_files, select = everything(), gather = FALSE, include_file_info = NULL, quiet = default(quiet)) {
+  iso_files <- iso_as_file_list(iso_files)
+  if (!all(map_lgl(iso_files, iso_is_dual_inlet))) stop("background data is only available in dual inlet data files", call. = FALSE)
+  select_quo <- enquo(select)
+  include_file_info_quo <- enquo(include_file_info)
+  if (!quiet) { 
+    glue(
+      "Info: aggregating background data from {length(iso_files)} data file(s)",
+      "{get_info_message_concat(select_quo, prefix = ', selecting data columns ', empty = 'everything()')}",
+      "{get_info_message_concat(include_file_info_quo, prefix = ', including file info ')}") %>% message()
+  }
+  check_read_options(iso_files, "raw_data")
+  
+  # check whether there are any
+  if (length(iso_files) == 0) return(data_frame())
+  
+  # fetch data
+  data <-
+    # fetch data
+    data_frame(
+      file_id = names(iso_files),
+      bgrd_data = map(iso_files, ~.x$bgrd_data)
+    ) %>% 
+    # make sure to include only existing raw data
+    filter(!map_lgl(bgrd_data, is.null)) %>% 
+    # unnest
+    unnest(bgrd_data)
+  
+  # check for rows
+  if (nrow(data) == 0) return(data)
+  
+  # selecting columns
+  select_cols <- get_column_names(data, select = select_quo, n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
+  if (!"file_id" %in% select_cols) 
+    select_cols <- c("file_id", select_cols) # file info always included
+  data <- data %>% 
+    # focus on selected columns only (also takes care of the rename)
+    dplyr::select(!!!select_cols) 
+  
+  # if gathering
+  if (gather) {
+    column <- value <- extra_parens <- category <- NULL # global vars
+    masses_ratios_re <- "^([vir])(\\d+/?\\d*)(\\.(.+))?$"
+    data <- data %>% 
+      # gather all masses and ratios
+      gather(column, value, matches(masses_ratios_re)) %>% 
+      # extract unit information
+      extract(column, into = c("category", "data", "extra_parens", "units"), regex = masses_ratios_re) %>% 
+      dplyr::select(-extra_parens) %>% 
+      # remove unknown data
+      filter(!is.na(value)) %>% 
+      # assign category
+      mutate(category = ifelse(category == "r", "ratio", "mass"))
+  } 
+  
+  # if file info
+  if (!quo_is_null(include_file_info_quo)) {
+    info <- iso_get_file_info(iso_files, select = !!include_file_info_quo, quiet = TRUE)
+    data <- right_join(info, data, by = "file_id")
+  }
+  return(data)
+}
+
+
 #' Aggregate standards from methods info
 #'
 #' Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios. This information is only available if the iso_files were read with parameter \code{read_method_info=TRUE}.

@@ -80,7 +80,7 @@ iso_convert_signals <- function(iso_files, to, R, R_units = NA, quiet = default(
   if (!quiet) {
     sprintf("Info: converting signals to '%s' for %d continuous flow data file(s) with %s", 
             to, length(iso_files), 
-            if (auto_R) "automatic resistor values from individual iso_files"
+            if (auto_R) "automatic resistor values from individual iso_files (if needed for conversion)"
             else str_c("specific resistor value(s): ", str_c(str_c(names(R),"=",R, R_units), collapse = ", "))
             ) %>% message()
   }

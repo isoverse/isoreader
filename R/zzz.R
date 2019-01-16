@@ -28,6 +28,7 @@ initialize_options <- function() {
   # register file readers
   iso_register_dual_inlet_file_reader(".did", "iso_read_did", "Isodat Dual Inlet file format (newer)", env = "isoreader")
   iso_register_dual_inlet_file_reader(".caf", "iso_read_caf", "Isodat Dual Inlet file format (older)", env = "isoreader")
+  iso_register_dual_inlet_file_reader(".txt", "iso_read_nu", "Nu Dual Inlet file format", env = "isoreader")
   iso_register_dual_inlet_file_reader(".di.rda", "iso_read_rda", "Isoreader R Data Archive (deprecated)", cacheable = FALSE, env = "isoreader")
   iso_register_dual_inlet_file_reader(".di.rds", "iso_read_rds", "Isoreader R Data Storage", cacheable = FALSE, env = "isoreader")
   iso_register_continuous_flow_file_reader(".cf", "iso_read_cf", "Isodat Continuous Flow file format (older)", env = "isoreader")
