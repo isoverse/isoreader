@@ -50,7 +50,7 @@ iso_read_rda <- function(ds) {
   if (any(!ok_version)) {
     sprintf("version mismatch - %.0f of the %.0f data files stored in the R Data Archive ('%s') were created by a different version of the isoreader package. This may lead to processing problems.", sum(!ok_version), length(iso_files), ds$file_info$file_id) %>% 
     log_warning()
-    log_warning("Consider re-reading the original data files using the 'iso_reread_files()' or 'iso_reread_archive()' function.")
+    log_warning("Consider re-reading the original data files using the 'iso_reread_files()' or 'iso_reread_storage()' function.")
   }
 
   return(iso_files)

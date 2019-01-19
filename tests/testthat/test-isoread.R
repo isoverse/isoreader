@@ -64,14 +64,16 @@ test_that("test that re-reads are working properly", {
   expect_true(iso_is_file_list(re_files))
 
   # re-read old collection (should save as new .rds instead)
-  collection_path <- file.path("test_data", "collection_old.di.rda")
+  test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data")
+  collection_path <- file.path(test_folder, "collection_old.di.rda")
   expect_message(new_path <- iso_reread_storage(collection_path), "R Data Archives .* deprecated")
   expect_equal(new_path, stringr::str_replace(collection_path, "rda$", "rds"))
-  expect_equal(iso_read_dual_inlet(new_path) %>% iso_get_problems() %>% nrow(), 0)
+  expect_message(iso_reread_storage(collection_path), "version mismatch")
+  expect_message(iso_reread_storage(collection_path), "Consider re-reading")
+  expect_message(iso_reread_storage(collection_path), "no longer exist")
   # re-read the new collection
   expect_message(new_path2 <- iso_reread_storage(new_path), "re-reading")
   expect_equal(new_path, new_path2)
-  expect_equal(iso_read_dual_inlet(new_path2) %>% iso_get_problems() %>% nrow(), 0)
   if (file.exists(new_path2)) file.remove(new_path2)
   
 })
