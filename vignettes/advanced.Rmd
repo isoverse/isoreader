@@ -46,11 +46,11 @@ If you have designed and tested a new reader, please consider contributing it to
 
 ## Processing hooks
 
-Isoreader defines two processing hooks at the beginning and end of reading an individual file. This is useful for integration into pipelines that require additional output (such as GUIs) but is also sometimes useful for debuggin purposes. The expressions are evaluated in the context of the `isoreader:::read_iso_file` function and have access to all parameters passed to this function, such as e.g. `file_n` and `filepath`. Same as for new readers: for info messages and warnings to work with the progress bar and in parallel reads, make sure to use `isoreader:::log_message(...)` and `isoreader:::log_warning(...)` instead of base R's `message(...)` and `warning(...)`. The main difference between the two is that `log_message()` will honor the `quiet = TRUE` flag passed to the main `iso_read...()` call whereas `log_warning()` will always show its message no matter the `quiet` setting.
+Isoreader defines two processing hooks at the beginning and end of reading an individual file. This is useful for integration into pipelines that require additional output (such as GUIs) but is also sometimes useful for debuggin purposes. The expressions are evaluated in the context of the `isoreader:::read_iso_file` function and have access to all parameters passed to this function, such as e.g. `file_n` and `path`. Same as for new readers: for info messages and warnings to work with the progress bar and in parallel reads, make sure to use `isoreader:::log_message(...)` and `isoreader:::log_warning(...)` instead of base R's `message(...)` and `warning(...)`. The main difference between the two is that `log_message()` will honor the `quiet = TRUE` flag passed to the main `iso_read...()` call whereas `log_warning()` will always show its message no matter the `quiet` setting.
 
 ```{r}
 isoreader:::set_read_file_event_expr({ 
-  isoreader:::log_message(sprintf("starting file #%.d, named '%s'", file_n, basename(filepath))) 
+  isoreader:::log_message(sprintf("starting file #%.d, named '%s'", file_n, basename(path))) 
 })
 isoreader:::set_finish_file_event_expr({ 
   isoreader:::log_message(sprintf("finished file #%.d", file_n)) 
