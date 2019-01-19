@@ -1,9 +1,11 @@
 context("Dual Inlet Files")
 
+# data structures =========
+
 test_that("test that supported di files are correct", {
   initialize_options()
   expect_is(exts <- get_supported_di_files(), "data.frame")
-  expect_equal(exts$extension, c(".did", ".caf", ".di.rda", ".di.rds"))
+  expect_equal(exts$extension, c(".did", ".caf", ".txt", ".di.rda", ".di.rds"))
   expect_true(all(exts$func %>% sapply(class) == "character"))
   expect_true(all(exts$func %>% map_lgl(exists, mode = "function", where = asNamespace("isoreader"))))
 })
@@ -14,6 +16,17 @@ test_that("test that parameter checks are performed", {
                "data structure must be a \\'dual_inlet\\' iso_file")
   
 })
+
+# nu files ======
+
+test_that("test that nu file processor works properly", {
+  
+  expect_error(group_lines(list()))
+  expect_error(group_lines(""))
+  
+})
+
+# actual files ========
 
 test_that("test that did files can be read", {
   # test specific files
