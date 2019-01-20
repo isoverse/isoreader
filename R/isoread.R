@@ -79,7 +79,7 @@ register_file_reader <- function(type, call, extension, func, description, cache
 # convenience function to find packages where function is located
 find_func <- function(func) {
   if (!is.character(func)) stop("please provide the function name rather than the function itself", call. = FALSE)
-  findFunction(func) %>% map_chr(environmentName) %>% str_replace("^package:", "") %>% { .[!str_detect(., "^imports:")] } %>% unique()
+  methods::findFunction(func) %>% map_chr(environmentName) %>% str_replace("^package:", "") %>% { .[!str_detect(., "^imports:")] } %>% unique()
 }
 
 #' Supported file types
@@ -372,8 +372,6 @@ create_read_process <- function(process, data_structure, files) {
         packages = packages,
         expr = {
           # reload isoreader options
-          require(isoreader)
-          require(purrr)
           options(all_opts)
           # set isoreader temp options for parallel processing
           isoreader:::set_temp("parallel_process", process)

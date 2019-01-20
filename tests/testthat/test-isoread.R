@@ -92,3 +92,11 @@ test_that("test that file event expressions work", {
   expect_output(iso_read_dual_inlet(minimal_files[1:3], quiet = TRUE), "1.*4.*9")
   set_finish_file_event_expr({})
 })
+
+# implement: parallel processing test
+
+test_that("test that parallel reading works", {
+  
+  # try both multiprocess and multisession
+  
+})
