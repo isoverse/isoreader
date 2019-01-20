@@ -94,7 +94,7 @@ iso_read_nu <- function(ds) {
   # run parsers ======
 
   for (parser in parsers) {
-    ds <- isoreader:::exec_func_with_error_catch(
+    ds <- exec_func_with_error_catch(
       process_nu_parser, ds, parser,
       msg_prefix = str_c(str_c(parser$id, collapse = ", "), ": "))
   }

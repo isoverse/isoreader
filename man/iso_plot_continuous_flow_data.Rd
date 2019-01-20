@@ -30,7 +30,7 @@ iso_plot_continuous_flow_data(iso_files, data = c(),
 
 \item{linetype}{whether to differentiate data by linetype, options are the same as for \code{panel} but the default is \code{NULL} (i.e. no linetype aesthetic) and complex expressions (not just columns) are supported. Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}.}
 
-\item{label}{this is primarily of use for turning these into interactive plots via \link[plotly]{ggplotly} as it present as an additional mousover label. Any unique file identifier is a useful choice, the default is \code{file_id}.}
+\item{label}{this is primarily of use for turning these into interactive plots via ggplotly as it present as an additional mousover label. Any unique file identifier is a useful choice, the default is \code{file_id}.}
 
 \item{...}{deprecated parameters}
 }
