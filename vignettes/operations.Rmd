@@ -16,39 +16,39 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Introduction
+# Introduction
 
 Coming soon...
 
 Isoreader provides a number of general purpose operations that work on all supported IRMS data formats such as caching of read files and data exports. This will demonstrate some of these general operations.
 
-## Supported file types
+# Supported file types
 
 ```{r}
 
 ```
 
 
-## Caching
+# Caching
 
 ```{r}
 
 ```
 
 
-## Parallel processing
+# Parallel processing
 
 Whether parallel processing yields signifcant improvemens in read speeds depends on the number of available processors, file types and operating system. In theory, parallel processing always reduces computation time but in practice this is offset by various factors including the size of the data that needs to be sent back and forth between the processors, file system read/write speed, and the spin-up time for new processes. Generally speaking, parallel processing can provide significant improvements in speed with larger number of files (~10+) and more complex read operations (e.g. continuous flow vs. dual inlet). Reading from cache is so efficient that there are rarely gains from parallel processing and it is usually faster NOT to read in parallel.
 
 
-## Messages and default parameters
+# Messages and default parameters
 
 ```{r}
 
 ```
 
 
-## Combining / subsetting isofiles
+# Combining / subsetting isofiles
 
 All isoreader objects are lists that can be combined or subset to work with only specific files or create a larger collection. 
 
@@ -56,7 +56,7 @@ All isoreader objects are lists that can be combined or subset to work with only
 
 ```
 
-## Filtering isofiles by file information
+# Filtering isofiles by file information
 
 Additionally, the `iso_filter_files` function allows for subsetting a collection of isofiles based on any file information.
 
@@ -64,11 +64,11 @@ Additionally, the `iso_filter_files` function allows for subsetting a collection
 
 ```
 
-## Dealing with file read problems
+# Dealing with file read problems
 
 
 
-## Removing erroneous files
+# Removing erroneous files
 
 Removing files with problems: `iso_omit_files_with_problems`
 
@@ -76,7 +76,7 @@ Removing files with problems: `iso_omit_files_with_problems`
 
 ```
 
-## Re-reading files
+# Re-reading files
 
 ```{r}
 
