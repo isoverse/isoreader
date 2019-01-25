@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 version <- as.character(packageVersion("isoreader"))
 ```
 
-# isoreader
+# isoreader <a href='https://isoreader.kopflab.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
 [![Git_Hub_Version](https://img.shields.io/badge/GitHub-`r version`-orange.svg?style=flat-square)](/commits)
@@ -45,7 +45,7 @@ Currently supported file types:
 ```{r, echo=FALSE}
 library(isoreader)
 iso_get_supported_file_types() %>% 
-  dplyr::select(extension, format, type) %>% 
+  dplyr::select(extension, format = description, type) %>% 
   knitr::kable()
 ```
 
