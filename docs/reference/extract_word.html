@@ -72,7 +72,7 @@ Can adjust whether characters such as &quot;_&quot;, &quot;-&quot;, &quot; &quot
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.1</span>
       </span>
     </div>
 
@@ -86,6 +86,9 @@ Can adjust whether characters such as &quot;_&quot;, &quot;-&quot;, &quot; &quot
 </li>
 <li>
   <a href="../articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="../articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -175,7 +178,7 @@ Can adjust whether characters such as "_", "-", " ", and "." should be counted a
     <pre class="examples"><div class='input'><span class='no'>x_text</span> <span class='kw'>&lt;-</span> <span class='fu'>extract_word</span>(<span class='fu'>c</span>(<span class='st'>"sample number16.2"</span>, <span class='st'>"sample number7b"</span>),
                        <span class='kw'>capture_n</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>include_colon</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 <span class='co'># "number16.2" "number7b"</span>
-<span class='no'>x_num</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/readr/topics/parse_number'>parse_number</a></span>(<span class='no'>x_text</span>)
+<span class='no'>x_num</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/parse_number.html'>parse_number</a></span>(<span class='no'>x_text</span>)
 <span class='co'># 16.2 7.0</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

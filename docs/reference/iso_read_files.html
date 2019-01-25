@@ -73,7 +73,7 @@ It is made available outside the package because it can be very useful for testi
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.1</span>
       </span>
     </div>
 
@@ -87,6 +87,9 @@ It is made available outside the package because it can be very useful for testi
 </li>
 <li>
   <a href="../articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="../articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -125,8 +128,9 @@ It is made available outside the package because it can be very useful for testi
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_read_files</span>(<span class='no'>paths</span>, <span class='no'>supported_extensions</span>, <span class='no'>data_structure</span>, <span class='no'>...</span>,
-  <span class='kw'>discard_duplicates</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cache</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>cache</span>),
+    <pre class="usage"><span class='fu'>iso_read_files</span>(<span class='no'>paths</span>, <span class='no'>root</span>, <span class='no'>supported_extensions</span>, <span class='no'>data_structure</span>, <span class='no'>...</span>,
+  <span class='kw'>discard_duplicates</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>parallel_plan</span> <span class='kw'>=</span> <span class='kw pkg'>future</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/future/topics/multiprocess'>multiprocess</a></span>, <span class='kw'>cache</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>cache</span>),
   <span class='kw'>read_cache</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>cache</span>), <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -134,11 +138,15 @@ It is made available outside the package because it can be very useful for testi
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>paths</th>
-      <td><p>one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).</p></td>
+      <td><p>one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read). Paths can be absolute paths or relative to the provided file <code>root</code> (which is the current working directory by default). For absolute paths, a common root directory will be guessed using <a href='iso_find_absolute_path_roots.html'>iso_find_absolute_path_roots</a>. The root portion of paths will never be displayed in info messages.</p></td>
+    </tr>
+    <tr>
+      <th>root</th>
+      <td><p>root for relative paths. Can be relative to the current working directory (e.g. <code>"data"</code>) or an absolute path on the file system (e.g. <code>"/Users/..."</code> or <code>"C:/Data/.."</code>). The default is the current working directory (<code>"."</code>). Can be supplied as a vector of same length as the provided paths if the paths have different roots.</p></td>
     </tr>
     <tr>
       <th>supported_extensions</th>
-      <td><p>data frame with supported extensions and corresponding reader functions</p></td>
+      <td><p>data frame with supported extensions and corresponding reader functions (columns 'extension', 'func', 'cacheable')</p></td>
     </tr>
     <tr>
       <th>data_structure</th>
@@ -146,11 +154,19 @@ It is made available outside the package because it can be very useful for testi
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional parameters passed to the specific processing functions for the different file extensions</p></td>
+      <td><p>read options to be stored in the data structure as read options</p></td>
     </tr>
     <tr>
       <th>discard_duplicates</th>
-      <td><p>whether to automatically discard duplicate file_ids (only first one is kept)</p></td>
+      <td><p>whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If <code>TRUE</code> (the default), only the first files are kept and any files with the same file ID are discarded. If <code>FALSE</code>, all duplicate files are kept but their file IDs are appended with suffix <code>#1</code>, <code>#2</code>, etc.</p></td>
+    </tr>
+    <tr>
+      <th>parallel</th>
+      <td><p>whether to process in parallel based on the number of available CPU cores. This may yield performance increases for files that are slow to parse such as continuous flow isodat files but usually provides little benefit for efficient data formats such as reading from R Data Archives.</p></td>
+    </tr>
+    <tr>
+      <th>parallel_plan</th>
+      <td><p>which parallel processing strategy to use, see <a href='http://www.rdocumentation.org/packages/future/topics/plan'>plan</a>, typically <code><a href='http://www.rdocumentation.org/packages/future/topics/multiprocess'>future::multiprocess</a></code> (the default, uses multicore if supported by the operating system, otherwise multisession), <code><a href='http://www.rdocumentation.org/packages/future/topics/multisession'>future::multisession</a></code> or <code><a href='http://www.rdocumentation.org/packages/future/topics/multicore'>future::multicore</a></code>.</p></td>
     </tr>
     <tr>
       <th>cache</th>

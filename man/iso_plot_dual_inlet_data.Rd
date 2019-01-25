@@ -2,39 +2,13 @@
 % Please edit documentation in R/plotting.R
 \name{iso_plot_dual_inlet_data}
 \alias{iso_plot_dual_inlet_data}
-\title{Plot mass data from dual inlet files}
+\title{moved to isoprocessor}
 \usage{
-iso_plot_dual_inlet_data(iso_files, data = c(), filter = NULL,
-  panel = data, color = file_id, linetype = NULL, shape = type,
-  label = file_id, ...)
+iso_plot_dual_inlet_data(...)
 }
 \arguments{
-\item{iso_files}{collection of iso_file objects}
-
-\item{data}{which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using \code{\link{iso_calculate_ratios}} prior to plotting.}
-
-\item{filter}{any filter condition to apply to the data beyond the masses/ratio selection (param \code{data}) and time interval (param \code{time_interval}). For details on the available data columns see \link{iso_get_raw_data} with parameters \code{gather = TRUE} and \code{include_file_info = everything()} (i.e. all file info is available for plotting aesthetics).}
-
-\item{panel}{whether to panel data by anything - any data column is possible (see notes in the \code{filter} parameter) but the most commonly used options are \code{panel = NULL} (overlay all), \code{panel = data} (by mass/ratio data), \code{panel = file_id} (panel by files, alternatively use any appropriate file_info column), and \code{panel = type} (panel by sample vs standard). Additionally it is possible to panel two variables against each other (i.e. use a \link[ggplot2]{facet_grid}), e.g. by specifying the formula \code{panel = data ~ file_id} (data in the panel rows, files in the panel columns) or \code{panel = data ~ type}.The default for this parameter is simple panelling by \code{data}.}
-
-\item{color}{whether to color data by anything, options are the same as for \code{panel} but the default is \code{file_id} and complex expressions (not just columns) are supported.}
-
-\item{linetype}{whether to differentiate data by linetype, options are the same as for \code{panel} but the default is \code{NULL} (i.e. no linetype aesthetic) and complex expressions (not just columns) are supported. Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}.}
-
-\item{shape}{whether to shape data points by anything, options are the same as for \code{panel} but the default is \code{type} (sample vs standard).}
-
-\item{label}{this is primarily of use for turning these into interactive plots via ggplotly as it present as an additional mousover label. Any unique file identifier is a useful choice, the default is \code{file_id}.}
-
-\item{...}{deprecated parameters}
+\item{...}{deprecated}
 }
 \description{
-Plot mass data from dual inlet files
+moved to isoprocessor
 }
-\note{
-normalization is not useful for dual inlet data, except potentially between standard and sample - however, for this it is more meaningful to simply plot the relevant ratios together
-}
-\seealso{
-Other plot functions: \code{\link{iso_plot_continuous_flow_data}},
-  \code{\link{iso_plot_raw_data}}
-}
-\concept{plot functions}

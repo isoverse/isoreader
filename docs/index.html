@@ -35,7 +35,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.1</span>
       </span>
     </div>
 
@@ -49,6 +49,9 @@
 </li>
 <li>
   <a href="articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
@@ -83,8 +86,8 @@
 <div id="about" class="section level2">
 <h2 class="hasAnchor">
 <a href="#about" class="anchor"></a>About</h2>
-<p>This package is intended as a unified one-stop command line interface to all common IRMS (isotope ratio mass spectrometry) file formats used in stable isotope geochemistry. It is an extension and highly stream-lined re-implemention of the proof-of-concept <a href="https://github.com/sebkopf/isoread">isoread</a> package and is designed to fit into a larger framework of IRMS data tools that includes the web-based graphical user interface package <a href="https://github.com/KopfLab/isoviewer">isoviewer</a> and the data processing pipeline <a href="https://github.com/KopfLab/isoprocessor">isoprocessor</a> (in development).</p>
-<p><a href="https://kopflab.github.io/isoreader/">isoreader</a> enables the reading and processing of stable isotope data directly from the data files and thus provides a tool for platform-independent (Windows, Mac, Linux), efficient and reproducible data reduction. Although implemented in R, it can be used in both RMarkdown as well as Jupyter data processing notebooks and also provides functionality for easy export to Python using the shared R/Python feather file format. At present, it can read most Thermo dual inlet (.did, .caf) and continuous flow (.dxf, .cf) data files as well as Elementar continuous flow data archives (.iarc) with additional extensions for other file formats in the works. Due to the dynamic implementation and design based on the popular <a href="https://www.tidyverse.org/">tidyverse</a> style of R programming, isoreader is easily extendable, takes care of error catching to avoid pipeline breaks due to problems encountered in source data files (modeled after <a href="https://readr.tidyverse.org/">readr</a>) and works great with <a href="https://www.tidyverse.org/">tidyverse</a> packages such as <a href="https://tidyr.tidyverse.org/">tidyr</a>, <a href="https://dplyr.tidyverse.org/">dplyr</a> and <a href="https://ggplot2.tidyverse.org/">ggplot</a>. The release candidate for <a href="http://www.github.com/KopfLab/isoreader">isoreader</a> version 1.0 is currently going through beta testing and will be submitted to the Comprehensive R Archive Network (CRAN) later this year. No major functionality changes are expected for version 1 and you can install and use the beta version using the <code>devtools</code> package.</p>
+<p>This package is intended as a unified one-stop command line interface to all common IRMS (isotope ratio mass spectrometry) file formats used in stable isotope geochemistry. It is an extension and highly stream-lined re-implemention of the proof-of-concept <a href="https://github.com/sebkopf/isoread">isoread</a> package and is designed to fit into a larger framework of IRMS data tools that includes the web-based graphical user interface package <a href="https://github.com/KopfLab/isoviewer">isoviewer</a> and the data processing and visualization pipeline <a href="https://github.com/KopfLab/isoprocessor">isoprocessor</a>.</p>
+<p><a href="https://kopflab.github.io/isoreader/">isoreader</a> enables the reading and processing of stable isotope data directly from the data files and thus provides a tool for platform-independent (Windows, Mac, Linux), efficient and reproducible data reduction. Although implemented in R, it can be used in both RMarkdown as well as Jupyter data processing notebooks and also provides functionality for easy export to Python using the shared R/Python feather file format. At present, it can read most Thermo dual inlet (.did, .caf) and continuous flow (.dxf, .cf) data files as well as Elementar continuous flow data archives (.iarc) with additional extensions for other file formats in the works. Due to the dynamic implementation and design based on the popular <a href="https://www.tidyverse.org/">tidyverse</a> style of R programming, isoreader is easily extendable, takes care of error catching to avoid pipeline breaks due to problems encountered in source data files (modeled after <a href="https://readr.tidyverse.org/">readr</a>) and works great with <a href="https://www.tidyverse.org/">tidyverse</a> packages such as <a href="https://tidyr.tidyverse.org/">tidyr</a>, <a href="https://dplyr.tidyverse.org/">dplyr</a> and <a href="https://ggplot2.tidyverse.org/">ggplot</a>.</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -107,37 +110,52 @@
 <tr class="odd">
 <td align="left">.did</td>
 <td align="left">Isodat Dual Inlet file format (newer)</td>
-<td align="left">Dual Inlet</td>
+<td align="left">dual inlet</td>
 </tr>
 <tr class="even">
 <td align="left">.caf</td>
 <td align="left">Isodat Dual Inlet file format (older)</td>
-<td align="left">Dual Inlet</td>
+<td align="left">dual inlet</td>
 </tr>
 <tr class="odd">
+<td align="left">.txt</td>
+<td align="left">Nu Dual Inlet file format</td>
+<td align="left">dual inlet</td>
+</tr>
+<tr class="even">
 <td align="left">.di.rda</td>
-<td align="left">Isoreader R Data Archive</td>
-<td align="left">Dual Inlet</td>
+<td align="left">Isoreader R Data Archive (deprecated)</td>
+<td align="left">dual inlet</td>
+</tr>
+<tr class="odd">
+<td align="left">.di.rds</td>
+<td align="left">Isoreader R Data Storage</td>
+<td align="left">dual inlet</td>
 </tr>
 <tr class="even">
 <td align="left">.cf</td>
 <td align="left">Isodat Continuous Flow file format (older)</td>
-<td align="left">Continuous flow</td>
+<td align="left">continuous flow</td>
 </tr>
 <tr class="odd">
 <td align="left">.dxf</td>
 <td align="left">Isodat Continuous Flow file format (newer)</td>
-<td align="left">Continuous flow</td>
+<td align="left">continuous flow</td>
 </tr>
 <tr class="even">
 <td align="left">.iarc</td>
 <td align="left">IonOS Continous Flow data archieve</td>
-<td align="left">Continuous flow</td>
+<td align="left">continuous flow</td>
 </tr>
 <tr class="odd">
 <td align="left">.cf.rda</td>
-<td align="left">Isoreader R Data Archive</td>
-<td align="left">Continuous flow</td>
+<td align="left">Isoreader R Data Archive (deprecated)</td>
+<td align="left">continuous flow</td>
+</tr>
+<tr class="even">
+<td align="left">.cf.rds</td>
+<td align="left">Isoreader R Data Storage</td>
+<td align="left">continuous flow</td>
 </tr>
 </tbody>
 </table>
@@ -164,6 +182,12 @@
 <h2 class="hasAnchor">
 <a href="#open-source" class="anchor"></a>Open Source</h2>
 <p><a href="https://kopflab.github.io/isoreader/">isoreader</a> is and will always be fully open-source (i.e. free as in ‘freedom’ and free as in ‘free beer’) and is provided as is. The source code is released under GPL-2.</p>
+</div>
+<div id="isoverse" class="section level2">
+<h2 class="hasAnchor">
+<a href="#isoverse" class="anchor"></a>isoverse <a href="http://www.isoverse.org"><img src="reference/figures/isoverse_logo_thumb.png" align="right" height="138.5"></a>
+</h2>
+<p>This package is part of the isoverse suite of data tools for stable isotopes.</p>
 </div>
 </div>
   </div>
@@ -196,11 +220,12 @@
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://cran.r-project.org/package=isoreader"><img src="http://www.r-pkg.org/badges/version/isoreader" alt="CRAN_Status_Badge"></a></li>
-<li><a href="/commits"><img src="https://img.shields.io/badge/GitHub-0.9.21.9000-orange.svg?style=flat-square" alt="Git_Hub_Version"></a></li>
-<li><a href="/commits"><img src="https://img.shields.io/badge/updated-2018--11--07-yellowgreen.svg" alt="Last-Update"></a></li>
+<li><a href="/commits"><img src="https://img.shields.io/badge/GitHub-1.0.1-orange.svg?style=flat-square" alt="Git_Hub_Version"></a></li>
 <li><a href="https://kopflab.github.io/isoreader/"><img src="https://img.shields.io/badge/docs-online-green.svg" alt="Documentation"></a></li>
 <li><a href="https://travis-ci.org/KopfLab/isoreader"><img src="https://travis-ci.org/KopfLab/isoreader.svg?branch=master" alt="Build Status"></a></li>
 <li><a href="https://ci.appveyor.com/project/KopfLab/isoreader"><img src="https://ci.appveyor.com/api/projects/status/github/KopfLab/isoreader?branch=master&amp;svg=true" alt="AppVeyor Build Status"></a></li>
+<li><a href="https://mybinder.org/v2/gh/KopfLab/isoreader/binder?urlpath=rstudio"><img src="https://img.shields.io/badge/launch-RStudio-blue.svg" alt="Binder"></a></li>
+<li><a href="https://mybinder.org/v2/gh/KopfLab/isoreader/binder?urlpath=lab"><img src="https://img.shields.io/badge/launch-Jupyter-orange.svg" alt="Binder"></a></li>
 </ul>
 </div>
 </div>

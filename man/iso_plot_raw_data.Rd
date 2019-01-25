@@ -2,24 +2,13 @@
 % Please edit documentation in R/plotting.R
 \name{iso_plot_raw_data}
 \alias{iso_plot_raw_data}
-\title{Plot raw data from isoreader files}
+\title{moved to isoprocessor}
 \usage{
-iso_plot_raw_data(iso_files, ..., quiet = default(quiet))
+iso_plot_raw_data(...)
 }
 \arguments{
-\item{iso_files}{collection of iso_file objects}
-
-\item{...}{parameters for the data specific plotting functions}
-
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
+\item{...}{deprecated}
 }
 \description{
-Convenience function for making quick standard plots for raw isoreader data. 
-Calls \code{\link{iso_plot_continuous_flow_data}} and \code{\link{iso_plot_dual_inlet_data}} for data specific plotting (see those functions for parameter details). 
-For customizing plotting calls, it is easier to use \code{\link{iso_plot_continuous_flow_data}} and \code{\link{iso_plot_dual_inlet_data}} directly.
+moved to isoprocessor
 }
-\seealso{
-Other plot functions: \code{\link{iso_plot_continuous_flow_data}},
-  \code{\link{iso_plot_dual_inlet_data}}
-}
-\concept{plot functions}

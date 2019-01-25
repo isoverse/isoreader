@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Convert signal units in continuous flow and dual inlet files — iso_convert_signals • Isoreader</title>
+<title>moved to isoprocessor — iso_convert_signals • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,13 +30,9 @@
 
 
 
-<meta property="og:title" content="Convert signal units in continuous flow and dual inlet files — iso_convert_signals" />
+<meta property="og:title" content="moved to isoprocessor — iso_convert_signals" />
 
-<meta property="og:description" content="This function can be used to convert the intensity units of a collection of iso_files to a scaled unit (e.g. from mV to V, or nA to mA) or different unit (e.g. from mV to nA or vice-versa). 
-The original signal intensity units are inferred from the naming of the intensity columns. 
-The new units must be a voltage (V) or current (A) but can have any valid SI prefix. 
-Conversion from voltage to current and vice versa requires information about the resistors used in the op amp. 
-This information is automatically retrieved during file read for file formats that contain resistors values (e.g. dxf and did) and are read with the read_method_info=TRUE parameter (see iso_get_resistors_info for details on how to access resistor values in read files). If resistor values are not set in a file, it will not allow automatic conversion between voltage and current. Instead, the R and R_units parameters can be used to provide specific resistor values. However, if R is set, these values will be used for all passed in iso_files." />
+<meta property="og:description" content="moved to isoprocessor" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -75,7 +71,7 @@ This information is automatically retrieved during file read for file formats th
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.1</span>
       </span>
     </div>
 
@@ -89,6 +85,9 @@ This information is automatically retrieved during file read for file formats th
 </li>
 <li>
   <a href="../articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="../articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -114,52 +113,27 @@ This information is automatically retrieved during file read for file formats th
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Convert signal units in continuous flow and dual inlet files</h1>
+    <h1>moved to isoprocessor</h1>
     <small class="dont-index">Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/unit_conversion.R'><code>R/unit_conversion.R</code></a></small>
     <div class="hidden name"><code>iso_convert_signals.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This function can be used to convert the intensity units of a collection of iso_files to a scaled unit (e.g. from mV to V, or nA to mA) or different unit (e.g. from mV to nA or vice-versa). 
-The original signal intensity units are inferred from the naming of the intensity columns. 
-The new units must be a voltage (V) or current (A) but can have any valid SI prefix. 
-Conversion from voltage to current and vice versa requires information about the resistors used in the op amp. 
-This information is automatically retrieved during file read for file formats that contain resistors values (e.g. dxf and did) and are read with the <code>read_method_info=TRUE</code> parameter (see <code><a href='iso_get_resistors_info.html'>iso_get_resistors_info</a></code> for details on how to access resistor values in read files). If resistor values are not set in a file, it will not allow automatic conversion between voltage and current. Instead, the <code>R</code> and <code>R_units</code> parameters can be used to provide specific resistor values. However, if <code>R</code> is set, these values will be used for all passed in <code>iso_files</code>.</p>
+    <p>moved to isoprocessor</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_convert_signals</span>(<span class='no'>iso_files</span>, <span class='no'>to</span>, <span class='no'>R</span>, <span class='kw'>R_units</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+    <pre class="usage"><span class='fu'>iso_convert_signals</span>(<span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>iso_files</th>
-      <td><p>collection of iso_file objects</p></td>
-    </tr>
-    <tr>
-      <th>to</th>
-      <td><p>what signal unit to convert to</p></td>
-    </tr>
-    <tr>
-      <th>R</th>
-      <td><p>resistor value(s). If not specified, will use resitor values from individual iso_files. If specified, must be a named vector with Rm (m=mass) as names (e.g. <code>c(R45=0.3, R46=3)</code>), in units of <code>R_units</code>. If specified, will be used for ALL provided iso_files.</p></td>
-    </tr>
-    <tr>
-      <th>R_units</th>
-      <td><p>determined what units resistor values (<code>R</code>) are in, if they are specified. Example <code>R_units = "GOhm"</code> designates that the resistor values provided in <code>R</code> parameter are in Giga-Ohm, i.e. 10^9 Ohm.</p></td>
-    </tr>
-    <tr>
-      <th>quiet</th>
-      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
+      <th>...</th>
+      <td><p>deprecated</p></td>
     </tr>
     </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>the passed in iso_file(s) with changed signal units</p>
     
 
   </div>
@@ -167,9 +141,7 @@ This information is automatically retrieved during file read for file formats th
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-          </ul>
+                </ul>
 
   </div>
 </div>

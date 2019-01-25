@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.1</span>
       </span>
     </div>
 
@@ -85,6 +85,9 @@
 </li>
 <li>
   <a href="../articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="../articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -111,7 +114,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Load dual inlet data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/dual_inlet.R'><code>R/dual_inlet.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/isoread.R'><code>R/isoread.R</code></a></small>
     <div class="hidden name"><code>iso_read_dual_inlet.Rd</code></div>
     </div>
 
@@ -121,11 +124,13 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_read_dual_inlet</span>(<span class='no'>...</span>, <span class='kw'>read_raw_data</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>read_raw_data</span>),
+    <pre class="usage"><span class='fu'>iso_read_dual_inlet</span>(<span class='no'>...</span>, <span class='kw'>root</span> <span class='kw'>=</span> <span class='st'>"."</span>,
+  <span class='kw'>read_raw_data</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>read_raw_data</span>),
   <span class='kw'>read_file_info</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>read_file_info</span>),
   <span class='kw'>read_method_info</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>read_method_info</span>),
   <span class='kw'>read_vendor_data_table</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>read_vendor_data_table</span>),
-  <span class='kw'>discard_duplicates</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cache</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>cache</span>),
+  <span class='kw'>discard_duplicates</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>parallel_plan</span> <span class='kw'>=</span> <span class='kw pkg'>future</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/future/topics/multiprocess'>multiprocess</a></span>, <span class='kw'>cache</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>cache</span>),
   <span class='kw'>read_cache</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>cache</span>), <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -134,6 +139,10 @@
     <tr>
       <th>...</th>
       <td><p>one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).</p></td>
+    </tr>
+    <tr>
+      <th>root</th>
+      <td><p>root for relative paths. Can be relative to the current working directory (e.g. <code>"data"</code>) or an absolute path on the file system (e.g. <code>"/Users/..."</code> or <code>"C:/Data/.."</code>). The default is the current working directory (<code>"."</code>). Can be supplied as a vector of same length as the provided paths if the paths have different roots.</p></td>
     </tr>
     <tr>
       <th>read_raw_data</th>
@@ -153,7 +162,15 @@
     </tr>
     <tr>
       <th>discard_duplicates</th>
-      <td><p>whether to automatically discard duplicate file_ids (only first one is kept)</p></td>
+      <td><p>whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If <code>TRUE</code> (the default), only the first files are kept and any files with the same file ID are discarded. If <code>FALSE</code>, all duplicate files are kept but their file IDs are appended with suffix <code>#1</code>, <code>#2</code>, etc.</p></td>
+    </tr>
+    <tr>
+      <th>parallel</th>
+      <td><p>whether to process in parallel based on the number of available CPU cores. This may yield performance increases for files that are slow to parse such as continuous flow isodat files but usually provides little benefit for efficient data formats such as reading from R Data Archives.</p></td>
+    </tr>
+    <tr>
+      <th>parallel_plan</th>
+      <td><p>which parallel processing strategy to use, see <a href='http://www.rdocumentation.org/packages/future/topics/plan'>plan</a>, typically <code><a href='http://www.rdocumentation.org/packages/future/topics/multiprocess'>future::multiprocess</a></code> (the default, uses multicore if supported by the operating system, otherwise multisession), <code><a href='http://www.rdocumentation.org/packages/future/topics/multisession'>future::multisession</a></code> or <code><a href='http://www.rdocumentation.org/packages/future/topics/multicore'>future::multicore</a></code>.</p></td>
     </tr>
     <tr>
       <th>cache</th>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot chromatogram from continuous flow data — iso_plot_continuous_flow_data • Isoreader</title>
+<title>moved to isoprocessor — iso_plot_continuous_flow_data • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Plot chromatogram from continuous flow data — iso_plot_continuous_flow_data" />
+<meta property="og:title" content="moved to isoprocessor — iso_plot_continuous_flow_data" />
 
-<meta property="og:description" content="Plot chromatogram from continuous flow data" />
+<meta property="og:description" content="moved to isoprocessor" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.1</span>
       </span>
     </div>
 
@@ -85,6 +85,9 @@
 </li>
 <li>
   <a href="../articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="../articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -110,79 +113,27 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot chromatogram from continuous flow data</h1>
+    <h1>moved to isoprocessor</h1>
     <small class="dont-index">Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/plotting.R'><code>R/plotting.R</code></a></small>
     <div class="hidden name"><code>iso_plot_continuous_flow_data.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Plot chromatogram from continuous flow data</p>
+    <p>moved to isoprocessor</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_plot_continuous_flow_data</span>(<span class='no'>iso_files</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'>c</span>(),
-  <span class='kw'>time_interval</span> <span class='kw'>=</span> <span class='fu'>c</span>(), <span class='kw'>time_interval_units</span> <span class='kw'>=</span> <span class='st'>"seconds"</span>,
-  <span class='kw'>filter</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>zoom</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>panel</span> <span class='kw'>=</span> <span class='no'>data</span>,
-  <span class='kw'>color</span> <span class='kw'>=</span> <span class='no'>file_id</span>, <span class='kw'>linetype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>label</span> <span class='kw'>=</span> <span class='no'>file_id</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>iso_plot_continuous_flow_data</span>(<span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>iso_files</th>
-      <td><p>collection of iso_file objects</p></td>
-    </tr>
-    <tr>
-      <th>data</th>
-      <td><p>which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using <code><a href='iso_calculate_ratios.html'>iso_calculate_ratios</a></code> prior to plotting.</p></td>
-    </tr>
-    <tr>
-      <th>time_interval</th>
-      <td><p>which time interval to plot</p></td>
-    </tr>
-    <tr>
-      <th>time_interval_units</th>
-      <td><p>which units the time interval is in, default is "seconds"</p></td>
-    </tr>
-    <tr>
-      <th>filter</th>
-      <td><p>any filter condition to apply to the data beyond the masses/ratio selection (param <code>data</code>) and time interval (param <code>time_interval</code>). For details on the available data columns see <a href='iso_get_raw_data.html'>iso_get_raw_data</a> with parameters <code>gather = TRUE</code> and <code>include_file_info = everything()</code> (i.e. all file info is available for plotting aesthetics).</p></td>
-    </tr>
-    <tr>
-      <th>normalize</th>
-      <td><p>whether to normalize all data (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if <code>zoom</code> is set) is applied after normalizing.</p></td>
-    </tr>
-    <tr>
-      <th>zoom</th>
-      <td><p>if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values &gt; 1 are zoom in, values &lt; 1 are zoom out, baseline always remains the bottom anchor point, zooming is always relative to the max in the plot (even if that is outside visible frame). Note that for overlay plots (<code>panel_bu = "none"</code>) zooming is relative to the max in each panel (potentially across different data traces). Also note that zooming only affects masses, ratios are not zoomed.</p></td>
-    </tr>
-    <tr>
-      <th>panel</th>
-      <td><p>whether to panel data by anything - any data column is possible (see notes in the <code>filter</code> parameter) but the most commonly used options are <code>panel = NULL</code> (overlay all), <code>panel = data</code> (by mass/ratio data), <code>panel = file_id</code> (panel by files, alternatively use any appropriate file_info column). The default is panelling by <code>data</code>.</p></td>
-    </tr>
-    <tr>
-      <th>color</th>
-      <td><p>whether to color data by anything, options are the same as for <code>panel</code> but the default is <code>file_id</code> and complex expressions (not just columns) are supported.</p></td>
-    </tr>
-    <tr>
-      <th>linetype</th>
-      <td><p>whether to differentiate data by linetype, options are the same as for <code>panel</code> but the default is <code>NULL</code> (i.e. no linetype aesthetic) and complex expressions (not just columns) are supported. Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using <code><a href='ggplot2.tidyverse.org/reference/scale_linetype.html'>scale_linetype</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>label</th>
-      <td><p>this is primarily of use for turning these into interactive plots via <a href='http://www.rdocumentation.org/packages/plotly/topics/ggplotly'>ggplotly</a> as it present as an additional mousover label. Any unique file identifier is a useful choice, the default is <code>file_id</code>.</p></td>
-    </tr>
-    <tr>
       <th>...</th>
-      <td><p>deprecated parameters</p></td>
+      <td><p>deprecated</p></td>
     </tr>
     </table>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other plot functions: <code><a href='iso_plot_dual_inlet_data.html'>iso_plot_dual_inlet_data</a></code>,
-  <code><a href='iso_plot_raw_data.html'>iso_plot_raw_data</a></code></p></div>
     
 
   </div>
@@ -190,9 +141,7 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#see-also">See also</a></li>
-          </ul>
+                </ul>
 
   </div>
 </div>
