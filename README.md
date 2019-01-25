@@ -124,4 +124,10 @@ session).
 
 [isoreader](https://kopflab.github.io/isoreader/) is and will always be
 fully open-source (i.e. free as in ‘freedom’ and free as in ‘free beer’)
-and is provided as is. The source code is released under GPL-2.
+and is provided as is. The source code is released under
+GPL-2.
+
+## isoverse <a href='http://www.isoverse.org'><img src='man/figures/isoverse_logo_thumb.png' align="right" height="138.5"/></a>
+
+This package is part of the isoverse suite of data tools for stable
+isotopes.
