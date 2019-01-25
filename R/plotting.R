@@ -1,4 +1,4 @@
-# plotting functions ==== 
+# plotting functions (deprecated) ===== 
 
 #' moved to isoprocessor
 #' 
