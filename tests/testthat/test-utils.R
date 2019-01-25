@@ -276,6 +276,10 @@ test_that("test that column name checks work correctly", {
 
 test_that("test that get support file types are listed", {
   expect_true(is.data.frame(iso_get_supported_file_types()))
+  expect_equal(
+    iso_get_supported_file_types() %>% names(),
+    c("extension", "description", "type", "call")
+  )
 })
 
 test_that("logging works correctly", {
