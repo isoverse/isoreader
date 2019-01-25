@@ -19,8 +19,6 @@ knitr::opts_chunk$set(
 
 Isoreader supports several continuous flow IRMS data formats. This vignette shows some of the functionality for continuous flow files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the [operations vignette](https://kopflab.github.io/isoreader/articles/operations.html). For details on downstream data processing and visualization, see the [isoprocessor package](https://isoprocessor.kopflab.org).
 
-Note: this vignette is still a work in progress.
-
 ```{r}
 # load isoreader package
 library(isoreader)
