@@ -16,9 +16,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Introduction
+# Introduction
 
-Isoreader supports several dual inlet IRMS data formats as well as plotting functions specifically for dual inlet data. This vignette shows some of the functionality for dual inlet data files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the [operations vignette](https://kopflab.github.io/isoreader/articles/operations.html).
+Isoreader supports several dual inlet IRMS data formats. This vignette shows some of the functionality for dual inlet data files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the [operations vignette](https://kopflab.github.io/isoreader/articles/operations.html). For details on downstream data processing and visualization, see the [isoprocessor package](https://isoprocessor.kopflab.org).
 
 Note: this vignette is still a work in progress.
 
@@ -29,7 +29,7 @@ library(isoreader)
 ```
 
 
-## Reading files
+# Reading files
 
 Reading dual inlet files is as simple as passing one or multiple file or folder paths to the `iso_read_dual_inlet()` function. If folders are provided, any files that have a recognized continuous flow file extensions within those folders will be processed (e.g. all `.did` and `.caf`). Here we read several files that are bundled with the package as examples (and whose paths can be retrieved using the `iso_get_reader_example()` function).
 
@@ -41,11 +41,13 @@ iso_files <-
   iso_read_dual_inlet(
     iso_get_reader_example("dual_inlet_example.did"),
     iso_get_reader_example("dual_inlet_example2.did"),
-    iso_get_reader_example("dual_inlet_example.caf")
+    iso_get_reader_example("dual_inlet_example.caf"),
+    iso_get_reader_example("dual_inlet_nu_example.txt"),
+    nu_masses = 49:44
   )
 ```
 
-## File summary
+# File summary
 
 The `iso_files` variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the `iso_get_data_summary()` function.
 
@@ -53,7 +55,7 @@ The `iso_files` variable now contains a set of isoreader objects, one for each f
 iso_files %>% iso_get_data_summary() %>% rmarkdown::paged_table()
 ```
 
-### Problems
+## Problems
 
 In case there was any trouble with reading any of the files, the following functions provide an overview summary as well as details of all errors and warnings, respectively. The examples here contain no errors but if you run into any unexpected file read problems, please file a bug report in the [isoreader issue tracker](https://github.com/kopflab/isoreader/issues).
 
@@ -62,13 +64,13 @@ iso_files %>% iso_get_problems_summary() %>% rmarkdown::paged_table()
 iso_files %>% iso_get_problems() %>% rmarkdown::paged_table()
 ```
 
-## File Information
+# File Information
 
 Detailed file information can be aggregated for all isofiles using the `iso_get_file_info()` function which supports the full [select syntax](https://dplyr.tidyverse.org/reference/select.html) of the [dplyr](https://dplyr.tidyverse.org/) package to specify which fields are of interest (by default, all file information is retrieved). The following provides a few examples for how this can be used (the names of the interesting info columns may vary between different file formats):
 
 ```{r}
 # all file information
-iso_files %>% iso_get_file_info() %>% rmarkdown::paged_table()
+iso_files %>% iso_get_file_info(select = c(-file_root)) %>% rmarkdown::paged_table()
 # select file information
 iso_files %>% 
   iso_get_file_info(
@@ -83,7 +85,7 @@ iso_files %>%
   ) %>% rmarkdown::paged_table()
 ```
 
-### Resistors
+## Resistors
 
 Additionally, some IRMS data files contain resistor information that are useful for downstream calculations (see e.g. section on signal conversion later in this vignette):
 
@@ -91,7 +93,7 @@ Additionally, some IRMS data files contain resistor information that are useful 
 iso_files %>% iso_get_resistors_info() %>% rmarkdown::paged_table()
 ```
 
-### Reference values
+## Reference values
 
 As well as isotopic reference values for the different gases:
 
@@ -102,7 +104,7 @@ iso_files %>% iso_get_standards_info() %>% rmarkdown::paged_table()
 iso_files %>% iso_get_standards_info(with_ratios = TRUE) %>% rmarkdown::paged_table()
 ```
 
-## Data & Plots
+# Raw Data
 
 The raw data read from the IRMS files can be retrieved similarly using the `iso_get_raw_data()` function. Most data aggregation functions also allow for inclusion of file information using the `include_file_info` parameter, which functions identically to the `select` parameter of the `iso_get_file_info` function discussed earlier.
 
@@ -112,8 +114,8 @@ iso_files %>% iso_get_raw_data() %>% head(n=10) %>% rmarkdown::paged_table()
 # get specific raw data and add some file information
 iso_files %>% 
   iso_get_raw_data(
-    # select just time and the m/z 2 and 3 ions
-    select = c(type, cycle, v28.mV, v30.mV),
+    # select just time and the two ions
+    select = c(type, cycle, v28.mV, v29.mV),
     # include the Analysis number fron the file info and rename it to 'run'
     include_file_info = c(run = Analysis)
   ) %>% 
@@ -121,93 +123,14 @@ iso_files %>%
   head(n=10) %>% rmarkdown::paged_table()
 ```
 
-### Plots
 
-Plotting the raw data can be done either with the generic `iso_plot_raw_data()` function for a simple plot with default parameters, or directly using the dual inlet specific `iso_plot_dual_inlet_data()`:
+# Data Processing
 
-```{r "all data", fig.width = 12, fig.asp = 0.8}
-iso_files %>% iso_plot_dual_inlet_data()
-```
-
-All customization options are described in the function help (`?iso_plot_dual_inlet_data`) and include, for example, plotting only a specific subset of masses:
-
-```{r "select masses", fig.width = 10, fig.asp = 0.3}
-iso_files %>% 
-  # plot just masses 2, 44 and 45
-  iso_plot_dual_inlet_data(
-    data = c("28", "44", "45")
-  )
-```
-
-### Isotope ratios
-
-For dual inlet applications isotope ratios calculated using the recorded ion intensities are typically of primary interest. For this purpose, isoreader provides a dynamic ratio calculation function (`iso_calculate_ratios()`) that accepts any combination of masses, here demonstrated for several different ratios. In this context, another useful customization option of the plotting function is the option to adjust plot aesthetics such as color, shape, and paneling:
-
-```{r "ratios", fig.width = 8, fig.asp = 1}
-iso_files <-
-  iso_files %>% 
-  # calculate 46/44, 45/44 and 32/28 (O2/N2) ratios
-  iso_calculate_ratios(ratios = c("46/44", "45/44", "32/28"))
-
-iso_files %>% 
-  iso_plot_dual_inlet_data(
-    # visualize ratios
-    data = c("45/44", "46/44", "32/28"),
-    # panel the ratios vs. type (standard/sample)
-    panel = data ~ type,
-    # color by the file info stored in Identifier 1
-    color = `Identifier 1`
-  )
-```
-
-### Signal conversion
-
-Isoreader can convert between different signal units. This is particularly useful for comparing data files from different mass specs that record primary signals differentally. In dual inlet applications, this is typically less important than in continuous flow because data is usually visualized as ratios right away. However, occassionally it can be of interest to examine the primary ion currents. 
-
-```{r "signal conversion", fig.width = 10, fig.asp = 0.3}
-iso_files$dual_inlet_example.caf %>% 
-  # convert all signals to nano ampere
-  iso_convert_signals(to = "pA") %>% 
-  # plot primary ion currents
-  iso_plot_dual_inlet_data(
-    data = c("45", "47", "48"),
-    color = type
-  )
-```
-
-### Plot styling
-
-Since all isoreader plots are standard [ggplot](http://ggplot2.tidyverse.org/) objects, they can be modified with any ggplot commands. For example to add a horizontal line (using [dplyr](http://dplyr.tidyverse.org/) for the calculations) and modify the themes:
-
-```{r "plot styling", message=FALSE, fig.width = 8, fig.asp = 0.7}
-library(ggplot2)
-library(dplyr)
-iso_files %>% 
-  # replot
-  iso_plot_dual_inlet_data(
-    data = "45/44",
-    panel = type ~ `Identifier 1`,
-    color = `Identifier 1`
-  ) +
-  # add horizontal line indicating the averages (using a ggplot geom)
-  geom_hline(
-    data = function(df) {
-      df %>% 
-        group_by(`Identifier 1`, type, data) %>% 
-        summarize(value = mean(value))
-      }, 
-    mapping = aes(yintercept = value)) +
-  # modify plot styling (ggplot functionality)
-  theme(text = element_text(size = 20))
-```
-
-## Data Processing
-
-The isoreader package is intended to make raw stable isotope data easily accessible. However, as with most analytical data, there is significant downstream processing required to turn these raw signal intensities into properly referenced isotopic measurement. This and similar functionality will be part of the [isoprocessor package](https://github.com/KopfLab/isoprocessor) which takes isotopic data through the various corrections in a transparent, efficient and reproducible manner. 
+The isoreader package is intended to make raw stable isotope data easily accessible. However, as with most analytical data, there is significant downstream processing required to turn these raw signal intensities into properly referenced isotopic measurement. This and similar functionality as well as data visualization is part of the [isoprocessor package](https://isoprocessor.kopflab.org) which takes isotopic data through the various corrections in a transparent, efficient and reproducible manner. 
 
 That said, most vendor software also performs some of these calculations and it can be useful to be able to compare new data reduction procecures against those implemented in the vendor software. For this purpose, isoreader retrieves vendor computed data tables whenver possible, as illustrated below.
 
-### Vendor Data Table
+## Vendor Data Table
 
 As with most data retrieval funtions, the `iso_get_vendor_data_table()` function also allows specific column selection (by default, all columns are selected) and easy addition of file information via the `include_file_info` parameter (by default, none is included).
 
@@ -224,7 +147,7 @@ iso_files %>%
   ) %>% rmarkdown::paged_table()
 ```
 
-### For expert users: retrieving all data 
+## For expert users: retrieving all data 
 
 For users familiar with the nested data frames from the [tidyverse](https://www.tidyverse.org/) (particularly [tidyr](https://tidyr.tidyverse.org/)'s `nest` and `unnest`), there is an easy way to retrieve all data from the iso file objects in a single nested data frame. Use the `include_file_info`, `include_raw_data`, and `include_vendor_data_table` parameters to specify which columns to include. By default, everything is included:
 
@@ -233,7 +156,7 @@ all_data <- iso_files %>% iso_get_data()
 all_data %>% rmarkdown::paged_table()
 ```
 
-## Saving collections
+# Saving collections
 
 Saving entire collections of isofiles for retrieval at a later point is easily done using the `iso_save` function which stores collections or individual isoreader file objects in the efficient R data storage format `.rds` (if not specified, the extension `.di.rds` will be automatically appended). These saved collections can be convientiently read back using the same `iso_read_dual_inlet` command used for raw data files.
 
@@ -246,7 +169,7 @@ iso_read_dual_inlet("iso_files_export.di.rds")
 ```
 
 
-## Data Export
+# Data Export
 
 At the moment, isoreader supports export of all data to Excel and the [Feather file format](https://blog.rstudio.com/2016/03/29/feather/) (a Python/R cross-over format). Note that both export methods have similar syntax and append the appropriate file extension for each type of export file (`.di.xlsx` and `.di.feather`, respectively).
 

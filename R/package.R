@@ -3,7 +3,7 @@
 
 #' @importFrom rlang enquo quo quos UQ !! !!! get_expr quo_expr quo_text quo_is_null quo_is_symbol quo_is_lang is_quosure is_empty is_integerish eval_tidy sym lang_head new_formula f_lhs f_rhs
 #' @importFrom tidyselect everything starts_with ends_with matches vars_select
-#' @importFrom tibble is_tibble
+#' @importFrom tibble tibble is_tibble
 #' @importFrom dplyr vars n select select_ rename rename_ arrange desc mutate mutate_ mutate_at mutate_if filter filter_ distinct as_data_frame left_join right_join full_join data_frame bind_rows bind_cols group_by group_by_ ungroup tally summarize do case_when
 #' @importFrom tidyr gather spread nest unnest extract
 #' @importFrom glue glue
@@ -12,7 +12,6 @@
 #' @importFrom tibble tribble deframe rownames_to_column
 #' @importFrom lubridate interval duration as_datetime
 #' @importFrom stringr str_c str_detect str_to_title str_replace str_replace_all str_replace_na str_match str_match_all str_interp str_subset str_extract fixed
-#' @importFrom ggplot2 ggplot aes geom_line geom_point scale_x_continuous scale_y_continuous expand_limits facet_grid facet_wrap labs theme_bw theme %+% is.ggplot aes_
 #' @importFrom stats setNames embed
 #' @importFrom methods is
 #' @importFrom utils unzip head tail modifyList packageVersion

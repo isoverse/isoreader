@@ -79,7 +79,7 @@ register_file_reader <- function(type, call, extension, func, description, cache
 # convenience function to find packages where function is located
 find_func <- function(func) {
   if (!is.character(func)) stop("please provide the function name rather than the function itself", call. = FALSE)
-  findFunction(func) %>% map_chr(environmentName) %>% str_replace("^package:", "") %>% { .[!str_detect(., "^imports:")] } %>% unique()
+  methods::findFunction(func) %>% map_chr(environmentName) %>% str_replace("^package:", "") %>% { .[!str_detect(., "^imports:")] } %>% unique()
 }
 
 #' Supported file types
@@ -122,24 +122,31 @@ isoread <- function(...) {
 #' @param read_file_info whether to read auxiliary file information (file id, sequence information, etc.)
 #' @param read_method_info whether to read methods information (standards, processing info)
 #' @param read_vendor_data_table whether to read the vendor computed data table
+#' @param nu_masses list of masses (e.g. \code{c("46","45","44")}) to map the collector channels (interpreted in order, i.e. the first channel will be linked to the first mass, the second channel to the second mass, etc.). This parameter is only used for reading Nu data files.
 #' @family isoread functions for different types of IRMS data
 #' @export
 iso_read_dual_inlet <- function(
   ..., 
+  root = ".",
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
+  nu_masses = c(),
   discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multiprocess, 
   cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
   iso_read_files(
     unlist(list(...), use.names = FALSE),
+    root = root,
     supported_extensions = get_supported_di_files(),
     data_structure = make_di_data_structure(),
-    read_raw_data = read_raw_data,
-    read_file_info = read_file_info,
-    read_method_info = read_method_info,
-    read_vendor_data_table = read_vendor_data_table,
+    read_options = c(
+      read_raw_data = read_raw_data,
+      read_file_info = read_file_info,
+      read_method_info = read_method_info,
+      read_vendor_data_table = read_vendor_data_table
+    ),
+    reader_options = list(nu_masses = nu_masses),
     discard_duplicates = discard_duplicates,
     parallel = parallel,
     parallel_plan = parallel_plan,
@@ -156,6 +163,7 @@ iso_read_dual_inlet <- function(
 #' @export
 iso_read_continuous_flow <- function(
   ..., 
+  root = ".",
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table), 
   discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multiprocess,
@@ -164,12 +172,16 @@ iso_read_continuous_flow <- function(
   # process data
   iso_read_files(
     unlist(list(...), use.names = FALSE),
+    root = root,
     supported_extensions = get_supported_cf_files(),
     data_structure = make_cf_data_structure(),
-    read_raw_data = read_raw_data,
-    read_file_info = read_file_info,
-    read_method_info = read_method_info,
-    read_vendor_data_table = read_vendor_data_table,
+    read_options = c(
+      read_raw_data = read_raw_data,
+      read_file_info = read_file_info,
+      read_method_info = read_method_info,
+      read_vendor_data_table = read_vendor_data_table
+    ),
+    reader_options = list(),
     discard_duplicates = discard_duplicates,
     parallel = parallel,
     parallel_plan = parallel_plan,
@@ -185,7 +197,8 @@ iso_read_continuous_flow <- function(
 #' This function is not typicaly called directly but indirectly by calling \link{iso_read_dual_inlet}, \link{iso_read_continuous_flow} and \link{iso_read_scan}. 
 #' It is made available outside the package because it can be very useful for testing new file readers.
 #' 
-#' @param paths one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).
+#' @param paths one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read). Paths can be absolute paths or relative to the provided file \code{root} (which is the current working directory by default). For absolute paths, a common root directory will be guessed using \link{iso_find_absolute_path_roots}. The root portion of paths will never be displayed in info messages.
+#' @inheritParams iso_expand_paths
 #' @param supported_extensions data frame with supported extensions and corresponding reader functions (columns 'extension', 'func', 'cacheable')
 #' @param data_structure the basic data structure for the type of iso_file
 #' @inheritParams iso_as_file_list
@@ -194,9 +207,10 @@ iso_read_continuous_flow <- function(
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}
 #' @param cache whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.
 #' @param read_cache whether to reload from cache if a cached version exists. Note that it will only read from cache if the file was previously read with the exact same isoreader version and read options and has not been modified since.
-#' @param ... read options to be stored in the data structure as read options
+#' @param read_options vector of read options to be stored in the data structure (e.g. \code{c(read_vendor_data_table = FALSE)}). The \code{read_} prefix is optional.
+#' @param reader_options list of paramters to be passed on to the reader
 #' @return single iso_file object (if single file) or list of iso_files (iso_file_list)
-iso_read_files <- function(paths, supported_extensions, data_structure, ..., discard_duplicates = TRUE, parallel = FALSE, 
+iso_read_files <- function(paths, root, supported_extensions, data_structure, read_options = c(), reader_options = list(), discard_duplicates = TRUE, parallel = FALSE, 
                            parallel_plan = future::multiprocess, cache = default(cache), read_cache = default(cache), quiet = default(quiet)) {
 
   # start timer
@@ -218,44 +232,45 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
   if(!is(data_structure, "iso_file")) stop("data structure must include class 'iso_file'", call. = FALSE)
   col_check(c("file_info"), data_structure)
   
-  # global vars
-  filepath <- ext <- NULL
-  
   # read options update in data structure
-  data_structure <- update_read_options(data_structure, ...)
+  data_structure <- update_read_options(data_structure, read_options)
   
   # expand & safety check paths (will warn if non-supported file types are included or same filename occurs multiple times)
-  if (missing(paths) || is.null(paths) || is.na(paths)) stop("file path(s) required", call. = FALSE)
-  filepaths <- expand_file_paths(paths, supported_extensions$extension)
+  if (missing(paths) || is.null(paths) || is.na(paths)) stop("file path(s) required, none provided", call. = FALSE)
+  filepaths <- iso_expand_paths(paths, extensions = supported_extensions$extension, root = root)
   
   # check if there are any
-  if (length(filepaths) == 0) 
+  if (nrow(filepaths) == 0) 
     return(iso_as_file_list(list()))
+  
+  # find roots for absolute paths
+  filepaths <- iso_find_absolute_path_roots(filepaths$path, filepaths$root)
   
   # initialize progress bar
   pb <- progress::progress_bar$new(
-    format = sprintf("Progress: [:bar] :current/%d (:percent) :elapsed", length(filepaths)),
-    clear = FALSE, show_after = 0, total = length(filepaths))
+    format = sprintf("Progress: [:bar] :current/%d (:percent) :elapsed", nrow(filepaths)),
+    clear = FALSE, show_after = 0, total = nrow(filepaths))
   set_temp("progress_bar", pb)
   pb$tick(0)
   
   # overview
   if (!default(quiet)) {
     glue::glue(
-      "preparing to read {length(filepaths)} data file(s)",
-      if (parallel) { ", setting up {min(cores, length(filepaths))} parallel processes..." } 
+      "preparing to read {nrow(filepaths)} data file(s)",
+      if (parallel) { ", setting up {min(cores, nrow(filepaths))} parallel processes..." } 
       else {"..."}) %>% 
       log_message()
   }
-  
+
   # generate read files overview
   files <- 
-    data_frame(
-      filepath = filepaths,
-      file_n = 1:length(filepaths),
-      files_n = length(filepaths),
-      cachepath = generate_cache_filepaths(filepath, data_structure$read_options),
-      process = if(!parallel) NA_integer_ else ((file_n - 1) %% cores) + 1L
+    filepaths %>% 
+    mutate(
+      file_n = 1:n(),
+      files_n = n(),
+      cachepath = generate_cache_filepaths(file.path(root, path), data_structure$read_options),
+      process = if(!parallel) NA_integer_ else ((file_n - 1) %% cores) + 1L,
+      reader_options = list(!!reader_options)
     ) %>% 
     # merge in supported extensions with reader and cacheable info
     match_to_supported_file_types(supported_extensions) %>% 
@@ -264,7 +279,7 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
       read_from_cache = read_cache & cacheable & file.exists(cachepath),
       write_to_cache = cache & cacheable
     )
-    
+  
   # safety check on reader functions
   req_readers <- unique(files$func)
   in_workspace <- map_lgl(req_readers, exists, mode = "function")
@@ -322,7 +337,10 @@ iso_read_files <- function(paths, supported_extensions, data_structure, ..., dis
 
   # convert file_info to data frame in isofiles for faster access
   # @note: this is not quite ideal because it basically casts iso_as_file_list twice if there are any files that have non-data frame file_info
+  # but should happen less and less as older file objects get upgraded
   iso_files <- convert_file_info_to_data_frame(iso_files, discard_duplicates = discard_duplicates)
+  if (length(root) != 1) root <- "." # if there are multiple, default back to working directory in case of ambiguity
+  iso_files <- convert_file_path_to_rooted(iso_files, root = root)
   
   # report problems
   if (!default(quiet) && iso_has_problems(iso_files)) {
@@ -343,9 +361,8 @@ create_read_process <- function(process, data_structure, files) {
   # specify relevant files columns to match read_iso_file parameters
   files <- files %>% 
     select(
-      filepath = filepath, file_n = file_n, files_n = files_n, 
-      read_from_cache = read_from_cache, write_to_cache = write_to_cache, cachepath = cachepath, 
-      ext = extension, reader_fun = func, reader_fun_env = env
+      root, path, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext = extension, 
+      reader_fun = func, reader_options = reader_options, reader_fun_env = env
     )
   
   # parallel
@@ -365,8 +382,6 @@ create_read_process <- function(process, data_structure, files) {
         packages = packages,
         expr = {
           # reload isoreader options
-          require(isoreader)
-          require(purrr)
           options(all_opts)
           # set isoreader temp options for parallel processing
           isoreader:::set_temp("parallel_process", process)
@@ -383,19 +398,19 @@ create_read_process <- function(process, data_structure, files) {
 }
 
 # read function
-read_iso_file <- function(ds, filepath, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext, reader_fun, reader_fun_env) {
+read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext, reader_fun, reader_options, reader_fun_env) {
   
   # prepare iso_file object
-  iso_file <- set_ds_file_path(ds, filepath)
+  iso_file <- set_ds_file_path(ds, root, path)
   
   # progress update
   if (!default(quiet)) {
     if (read_from_cache) { 
-      msg <- glue("reading file '{filepath}' from cache...")
+      msg <- glue("reading file '{path}' from cache...")
     } else {
       msg <- glue(
         "reading{if (write_to_cache) ' and caching' else ''} ",
-        "file '{filepath}' with '{ext}' reader")
+        "file '{path}' with '{ext}' reader")
     }
     log_message(msg)
   }
@@ -412,10 +427,14 @@ read_iso_file <- function(ds, filepath, file_n, files_n, read_from_cache, write_
   } else {
     # read from original file
     env <- if (reader_fun_env == "R_GlobalEnv") .GlobalEnv else asNamespace(reader_fun_env)
-    iso_file <- exec_func_with_error_catch(reader_fun, iso_file, env = env)
+    iso_file <- exec_func_with_error_catch(reader_fun, iso_file, options = reader_options, env = env)
     
-    # cleanup any binary content depending on debug setting
-    if (!default(debug)) iso_file$binary <- NULL
+    # cleanup any binary and source content depending on debug setting
+    if (!default(debug)) {
+      iso_file$binary <- NULL # @FIXME: binary should be renamed to source throughout
+      iso_file$source <- NULL
+      iso_file$temp <- NULL
+    }
     
     # store in cached file
     if (write_to_cache) cache_iso_file(iso_file, cachepath)
@@ -514,7 +533,7 @@ iso_reread_files <- function(iso_files, ..., stop_if_missing = FALSE, quiet = de
 iso_reread_storage <- function(rds_filepaths, ..., stop_if_missing = FALSE, quiet = default(quiet)) {
   
   extensions <- iso_get_supported_file_types() %>% dplyr::filter(stringr::str_detect(extension, "rd[sa]"))
-  file_types <- data_frame(filepath = rds_filepaths) %>% match_to_supported_file_types(extensions)
+  file_types <- data_frame(path = rds_filepaths) %>% match_to_supported_file_types(extensions)
   
   if (any(missing <- !file.exists(rds_filepaths))) 
     stop("file(s) do not exist: ", str_c(rds_filepaths[missing], collapse = ", "), call. = FALSE)
@@ -529,7 +548,7 @@ iso_reread_storage <- function(rds_filepaths, ..., stop_if_missing = FALSE, quie
   }
   
   # note: cannot combine these in case some of them are dual inlet while others are continuous flow
-  rds_filepaths <- with(file_types, purrr::map2_chr(filepath, call, reread_storage))
+  rds_filepaths <- with(file_types, purrr::map2_chr(path, call, reread_storage))
   return(invisible(rds_filepaths))
 }
 

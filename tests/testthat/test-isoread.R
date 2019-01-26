@@ -53,24 +53,29 @@ test_that("test that checks are run when re-reading iso_files", {
 test_that("test that re-reads are working properly", {
   
   # re-read of files
-  files <- iso_read_continuous_flow(file.path("test_data", c("cf_example_H_01.cf", "cf_example_H_02.cf")))
+  test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
+  files <- iso_read_continuous_flow("cf_example_H_01.cf", "cf_example_H_02.cf", root = test_folder)
   expect_true(iso_is_file_list(files))
   expect_true(iso_is_file(files[[1]]))
+  expect_equal(get_reread_filepaths(files), file.path(test_folder, c("cf_example_H_01.cf", "cf_example_H_02.cf")))
   expect_message(re_file <- iso_reread_files(files[[1]]), "re-reading 1 data file")
   expect_true(iso_is_file(re_file))
   expect_message(re_files <- iso_reread_files(files), "re-reading 2 data file")
   expect_true(iso_is_file_list(re_files))
-  
+
   # re-read old collection (should save as new .rds instead)
-  collection_path <- file.path("test_data", "collection_old.di.rda")
+  test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data")
+  collection_path <- file.path(test_folder, "collection_old.di.rda")
   expect_message(new_path <- iso_reread_storage(collection_path), "R Data Archives .* deprecated")
   expect_equal(new_path, stringr::str_replace(collection_path, "rda$", "rds"))
-  expect_equal(iso_read_dual_inlet(new_path) %>% iso_get_problems() %>% nrow(), 0)
+  expect_message(iso_reread_storage(collection_path), "version mismatch")
+  expect_message(iso_reread_storage(collection_path), "Consider re-reading")
+  expect_message(iso_reread_storage(collection_path), "no longer exist")
   # re-read the new collection
   expect_message(new_path2 <- iso_reread_storage(new_path), "re-reading")
   expect_equal(new_path, new_path2)
-  expect_equal(iso_read_dual_inlet(new_path2) %>% iso_get_problems() %>% nrow(), 0)
   if (file.exists(new_path2)) file.remove(new_path2)
+  
 })
 
 
@@ -86,4 +91,12 @@ test_that("test that file event expressions work", {
   set_finish_file_event_expr({ print(file_n^2) })
   expect_output(iso_read_dual_inlet(minimal_files[1:3], quiet = TRUE), "1.*4.*9")
   set_finish_file_event_expr({})
+})
+
+# implement: parallel processing test
+
+test_that("test that parallel reading works", {
+  
+  # try both multiprocess and multisession
+  
 })

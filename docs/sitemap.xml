@@ -37,6 +37,9 @@
     <loc>http://kopflab.github.io/isoreader//reference/iso_debug_mode.html</loc>
   </url>
   <url>
+    <loc>http://kopflab.github.io/isoreader//reference/iso_expand_paths.html</loc>
+  </url>
+  <url>
     <loc>http://kopflab.github.io/isoreader//reference/iso_export_to_excel.html</loc>
   </url>
   <url>
@@ -47,6 +50,12 @@
   </url>
   <url>
     <loc>http://kopflab.github.io/isoreader//reference/iso_filter_files.html</loc>
+  </url>
+  <url>
+    <loc>http://kopflab.github.io/isoreader//reference/iso_find_absolute_path_roots.html</loc>
+  </url>
+  <url>
+    <loc>http://kopflab.github.io/isoreader//reference/iso_get_bgrd_data.html</loc>
   </url>
   <url>
     <loc>http://kopflab.github.io/isoreader//reference/iso_get_data.html</loc>
@@ -124,10 +133,16 @@
     <loc>http://kopflab.github.io/isoreader//reference/iso_reread_files.html</loc>
   </url>
   <url>
+    <loc>http://kopflab.github.io/isoreader//reference/iso_root_paths.html</loc>
+  </url>
+  <url>
     <loc>http://kopflab.github.io/isoreader//reference/iso_save.html</loc>
   </url>
   <url>
     <loc>http://kopflab.github.io/isoreader//reference/iso_set_default_read_parameters.html</loc>
+  </url>
+  <url>
+    <loc>http://kopflab.github.io/isoreader//reference/iso_shorten_relative_paths.html</loc>
   </url>
   <url>
     <loc>http://kopflab.github.io/isoreader//reference/iso_show_default_reader_parameters.html</loc>
@@ -143,6 +158,9 @@
   </url>
   <url>
     <loc>http://kopflab.github.io/isoreader//reference/reexports.html</loc>
+  </url>
+  <url>
+    <loc>http://kopflab.github.io/isoreader//articles/advanced.html</loc>
   </url>
   <url>
     <loc>http://kopflab.github.io/isoreader//articles/continuous_flow.html</loc>

@@ -4,16 +4,19 @@
 \alias{iso_read_dual_inlet}
 \title{Load dual inlet data}
 \usage{
-iso_read_dual_inlet(..., read_raw_data = default(read_raw_data),
+iso_read_dual_inlet(..., root = ".",
+  read_raw_data = default(read_raw_data),
   read_file_info = default(read_file_info),
   read_method_info = default(read_method_info),
   read_vendor_data_table = default(read_vendor_data_table),
-  discard_duplicates = TRUE, parallel = FALSE,
+  nu_masses = c(), discard_duplicates = TRUE, parallel = FALSE,
   parallel_plan = future::multiprocess, cache = default(cache),
   read_cache = default(cache), quiet = default(quiet))
 }
 \arguments{
 \item{...}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
+
+\item{root}{root for relative paths. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). The default is the current working directory (\code{"."}). Can be supplied as a vector of same length as the provided paths if the paths have different roots.}
 
 \item{read_raw_data}{whether to read the raw mass/ion data from the file}
 
@@ -22,6 +25,8 @@ iso_read_dual_inlet(..., read_raw_data = default(read_raw_data),
 \item{read_method_info}{whether to read methods information (standards, processing info)}
 
 \item{read_vendor_data_table}{whether to read the vendor computed data table}
+
+\item{nu_masses}{list of masses (e.g. \code{c("46","45","44")}) to map the collector channels (interpreted in order, i.e. the first channel will be linked to the first mass, the second channel to the second mass, etc.). This parameter is only used for reading Nu data files.}
 
 \item{discard_duplicates}{whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If \code{TRUE} (the default), only the first files are kept and any files with the same file ID are discarded. If \code{FALSE}, all duplicate files are kept but their file IDs are appended with suffix \code{#1}, \code{#2}, etc.}
 

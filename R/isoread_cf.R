@@ -1,13 +1,14 @@
 # read isodat .cf file
 # @param ds the data structure to fill
-iso_read_cf <- function(ds) {
+# @param custom reader options - none needed
+iso_read_cf <- function(ds, options = list()) {
   
   # safety checks
   if(!iso_is_continuous_flow(ds)) 
     stop("data structure must be a 'continuous_flow' iso_file", call. = FALSE)
   
   # read binary file
-  ds$binary <- read_binary_file(ds$file_info$file_path)
+  ds$binary <- get_ds_file_path(ds) %>% read_binary_file()
   
   # process file info
   if(ds$read_options$file_info) {

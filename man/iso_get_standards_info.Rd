@@ -20,7 +20,8 @@ iso_get_standards_info(iso_files, with_ratios = FALSE,
 Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios. This information is only available if the iso_files were read with parameter \code{read_method_info=TRUE}.
 }
 \seealso{
-Other data retrieval functions: \code{\link{iso_get_data}},
+Other data retrieval functions: \code{\link{iso_get_bgrd_data}},
+  \code{\link{iso_get_data}},
   \code{\link{iso_get_file_info}},
   \code{\link{iso_get_raw_data}},
   \code{\link{iso_get_resistors_info}},

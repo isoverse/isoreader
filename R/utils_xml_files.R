@@ -52,10 +52,10 @@ process_iarc_info_xml <- function(filepath) {
   
   # information
   if (!default(quiet)) {
-    sprintf("      found %d processing list(s) in .iarc: '%s'", 
+    sprintf("found %d processing list(s) in .iarc: '%s'", 
             nrow(processing_lists), 
             str_c("ProcessingList_", processing_lists$ProcessingListId, collapse = "', '")) %>% 
-      message()
+      log_message(prefix = "      ")
   }
   
   return(processing_lists)
@@ -84,10 +84,10 @@ process_iarc_methods_xml <- function(filepaths) {
   # info
   if (!default(quiet)) {
     method_files <- method_params$MethodFile %>% unique()
-    sprintf("      found %d method(s) in .iarc: '%s'", 
+    sprintf("found %d method(s) in .iarc: '%s'", 
             method_files %>% length(), 
             str_c(method_files, collapse = "', '")) %>% 
-      message()
+      log_message(prefix = "      ")
   }
   
   return(method_params)
@@ -169,8 +169,8 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
   tasks <- filepaths %>% lapply(process_iarc_task_xml)
   
   if (!default(quiet)) {
-    sprintf("      found %d sample(s) in .iarc", length(tasks)) %>% 
-      message()
+    sprintf("found %d sample(s) in .iarc", length(tasks)) %>% 
+      log_message(prefix = "      ")
   }
   
   # combine info and data_files across tasks
@@ -181,8 +181,8 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
 process_iarc_processing_xml <- function(processing_list_id, filepath) {
   if (!file.exists(filepath)) stop("invalid processing list file path: ", filepath, call. = FALSE)
   if (!default(quiet)) {
-    sprintf("      searching processing list '%s' for gas configurations...", basename(filepath)) %>% 
-      message()
+    sprintf("searching processing list '%s' for gas configurations...", basename(filepath)) %>% 
+      log_message(prefix = "      ")
   }
   
   # global variables for NSE
@@ -195,7 +195,7 @@ process_iarc_processing_xml <- function(processing_list_id, filepath) {
   # safety check
   if (global_id != processing_list_id) {
     sprintf("mismatch between Info processing list ID ('%s') and processing list file id ('%s')",
-            processing_list_id, global_id, call. = FALSE)
+            processing_list_id, global_id) %>% stop(call. = FALSE)
   }
   
   ## helper functions ##
@@ -261,14 +261,14 @@ process_iarc_processing_xml <- function(processing_list_id, filepath) {
   
   # info
   if (!default(quiet)) {
-    sprintf("      found configurations for '%s'", 
+    sprintf("found configurations for '%s'", 
             species_config %>% names() %>% str_c(collapse = "', '")) %>% 
-      message()
+      log_message(prefix = "      ")
   }
   
   # debug
   if (default(debug)) {
-    message("DEBUG: species configurations: ")
+    log_message("species configurations: ", prefix = "DEBUG: ")
     print(species_config)
   }
   

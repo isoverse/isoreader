@@ -41,15 +41,12 @@ reference:
   - '`iso_read_scan`'
   - '`iso_reread_files`'
 
-- title: "Processing the data: file selection, calculations, unit conversion and scaling"
+- title: Data wrangeling
   desc: >
-    These functions provide tools to easily filter read files, calculate ratios, scale time and convert signal units. 
+    These functions provide tools to easily filter read files and update file information (in the works).
     The package also provides a few functions that expand on useful text processing provided by the readr package (summarized in `extract_data`).
   contents:
   - '`iso_filter_files`'
-  - '`iso_calculate_ratios`'
-  - '`iso_convert_signals`'
-  - '`iso_convert_time`'
   - '`extract_data`'
   - '`extract_substring`'
   - '`extract_word`'
@@ -62,25 +59,18 @@ reference:
   - '`iso_get_data`'
   - '`iso_get_file_info`'
   - '`iso_get_raw_data`'
+  - iso_get_bgrd_data
   - '`iso_get_vendor_data_table`'
   - '`iso_get_resistors_info`'
   - '`iso_get_standards_info`'
-  
-- title: Plotting the data
-  desc: >
-    These functions provide basic plots for visualizing the raw data stored in one or many IRMS data files.
-  contents:
-  - '`iso_plot_continuous_flow_data`'
-  - '`iso_plot_dual_inlet_data`'
-  - '`iso_plot_raw_data`'
 
-- title: "Exporting the data: Feather, Excel, and R Data Archives"
+- title: "Exporting/saving data: Feather, Excel, and R Data Archives"
   desc: >
-    These functions provide tools to export the data to specific file formats.
+    These functions provide tools to save the data to specific file formats.
   contents:
-  - '`iso_export_to_excel`'
-  - '`iso_export_to_feather`'
-  - '`iso_export_to_rda`'
+  - iso_save
+  - iso_export_to_excel
+  - iso_export_to_feather
 
 - title: Package information and default parameters
   desc: >
@@ -105,16 +95,42 @@ reference:
   - '`iso_get_problems`'
   - '`iso_omit_files_with_problems`'
 
-- title: Low-level IO and debugging tools
+- title: File system functions
   desc: >
-    These functions can be develop readers for new file formats.
+    Functions to find IRMS data files and root file paths.
   contents:
-  - '`iso_read_files`'
-  - '`iso_is_file`'
-  - '`iso_debug_mode`'
-  - '`print.binary_structure_map`'
-  - '`print.iso_file_list`'
-  - '`print.iso_file`'
+  - iso_expand_paths
+  - iso_root_paths
+  - iso_find_absolute_path_roots
+  - iso_shorten_relative_paths
+
+- title: Low-level IO, debugging, and development tools
+  desc: >
+    See the advanced vignette for details.
+  contents:
+  - iso_read_files
+  - iso_register_dual_inlet_file_reader
+  - iso_is_file
+  - iso_is_file_list
+  - iso_is_continuous_flow
+  - iso_is_dual_inlet
+  - iso_debug_mode
+  - print.binary_structure_map
+  - print.iso_file_list
+  - print.iso_file
+
+- title: Moved to isoprocessor or deprecated
+  contents:
+  - iso_calculate_ratios
+  - iso_convert_signals
+  - iso_convert_time
+  - iso_plot_continuous_flow_data
+  - iso_plot_dual_inlet_data
+  - iso_plot_raw_data
+  - iso_export_to_rda
+  - isoread
+  
+
 
 # additional modification notes on 
 # https://www.r-bloggers.com/building-a-website-with-pkgdown-a-short-guide/
