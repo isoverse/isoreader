@@ -1,6 +1,7 @@
 # read cached isoreader files
 # @param ds the data structure to fill
-iso_read_rda <- function(ds) {
+# @param custom reader options - none needed
+iso_read_rda <- function(ds, options = list()) {
   
   # safety checks
   if(!iso_is_file(ds)) stop("data structure must be an iso_file", call. = FALSE)

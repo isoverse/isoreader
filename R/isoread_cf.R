@@ -1,6 +1,7 @@
 # read isodat .cf file
 # @param ds the data structure to fill
-iso_read_cf <- function(ds) {
+# @param custom reader options - none needed
+iso_read_cf <- function(ds, options = list()) {
   
   # safety checks
   if(!iso_is_continuous_flow(ds)) 

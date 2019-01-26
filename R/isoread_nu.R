@@ -1,7 +1,8 @@
 
 # read nu .txt file
 # @param ds the data structure to fill
-iso_read_nu <- function(ds) {
+# @param custom reader options - specify list(nu_masses = c()) to provide masses for the channels
+iso_read_nu <- function(ds, options = list()) {
   
   # safety checks
   if(!iso_is_dual_inlet(ds)) 
@@ -41,6 +42,7 @@ iso_read_nu <- function(ds) {
       file_time = # try to get datetime from the UTC FileTime first
         create_nu_parser(
           type = "file_info", id = "file_datetime", n_req = 1, #n_req = "?",
+          check_quo = quo(is.null(ds$file_info$`Sample Failed`)),
           pattern = "\"UTC FileTimeLow\",(-?\\d+),\" UTC FileTimeHigh\",(-?\\d+)",
           parse_quo = quo({
             brackets <- stringr::str_match(header, parser$pattern)
@@ -86,7 +88,7 @@ iso_read_nu <- function(ds) {
           pattern = make_capture_pattern("Sample Name is ", "chr"),
           check_quo = quo(is.null(ds$file_info$`Sample Failed`)),
           parse_quo = quo(
-            exec_func_with_error_catch(parse_nu_data, data[[1]], ds$temp$n_blocks, ds$temp$n_channels)
+            exec_func_with_error_catch(parse_nu_data, data[[1]], ds$temp$n_blocks, ds$temp$n_channels, options$nu_masses)
           )
         )
     ))
@@ -96,7 +98,7 @@ iso_read_nu <- function(ds) {
 
   for (parser in parsers) {
     ds <- exec_func_with_error_catch(
-      process_nu_parser, ds, parser,
+      process_nu_parser, ds, parser, options,
       msg_prefix = str_c(str_c(parser$id, collapse = ", "), ": "))
   }
   
@@ -166,7 +168,7 @@ extract_substring_bracket_quo <- function(capture_bracket) {
 }
 
 # process a nu parser
-process_nu_parser <- function(ds, parser) {
+process_nu_parser <- function(ds, parser, options = list()) {
   
   # checkpoint vs parser
   is_parser <- !is.null(parser$parse_quo)
@@ -215,7 +217,8 @@ process_nu_parser <- function(ds, parser) {
 }
 
 # parse nu data
-parse_nu_data <- function(data, n_blocks, n_channels) {
+parse_nu_data <- function(data, n_blocks, n_channels, masses = c()) {
+
   if (is.null(n_blocks)) stop("number of blocks not known", call. = FALSE)
   if (is.null(n_channels)) stop("number of channels not known", call. = FALSE)
   zeros <- group_lines(data, fixed("Zero Data"))
@@ -250,10 +253,10 @@ parse_nu_data <- function(data, n_blocks, n_channels) {
     ) 
   
   # process zero/background data
-  zero_data <- exec_func_with_error_catch(parse_nu_zero_data, filter(raw_data, is_zero))
+  zero_data <- exec_func_with_error_catch(parse_nu_zero_data, filter(raw_data, is_zero), masses)
   
   # process raw sample/standard data
-  raw_data <- exec_func_with_error_catch(parse_nu_raw_data, filter(raw_data, is_ref | is_sample))
+  raw_data <- exec_func_with_error_catch(parse_nu_raw_data, filter(raw_data, is_ref | is_sample), masses)
   
   # check for problems (log & return empty dta frames)
   if (n_problems(zero_data) > 0 || n_problems(raw_data) > 0) {
@@ -291,7 +294,7 @@ parse_nu_data <- function(data, n_blocks, n_channels) {
 }
 
 # parse background data
-parse_nu_zero_data <- function(raw_data) {
+parse_nu_zero_data <- function(raw_data, masses = c()) {
   
   # process raw data for zeros
   df <- 
@@ -308,13 +311,13 @@ parse_nu_zero_data <- function(raw_data) {
   check_cycle_length(df_channels, "zero_length")
   
   # calculate intensities
-  df_intensities <- calculate_intensities(df_channels, c("block", "channel"))
+  df_intensities <- calculate_intensities(df_channels, c("block", "channel"), masses)
   
   return(df_intensities)
 }
 
 # parse raw data
-parse_nu_raw_data <- function(raw_data) {
+parse_nu_raw_data <- function(raw_data, masses = c()) {
   
   # process raw data
   df <- 
@@ -350,7 +353,7 @@ parse_nu_raw_data <- function(raw_data) {
   check_cycle_length(df_channels, "cycle_length")
   
   # calculate intensities
-  df_intensities <- calculate_intensities(df_channels, c("block", "cycle", "type", "channel"))
+  df_intensities <- calculate_intensities(df_channels, c("block", "cycle", "type", "channel"), masses)
   
   return(df_intensities)
 }
@@ -394,16 +397,37 @@ check_cycle_length <- function(df_channels, length_column) {
 }
 
 # calculate intensities
-calculate_intensities <- function(df_channels, grouping) {
+calculate_intensities <- function(df_channels, grouping, masses = c()) {
+
   # calculate raw data intensities
-  df_channels %>% 
+  df_intensities <- df_channels %>% 
     unnest(intensities) %>% 
     mutate(intensities = as.numeric(intensities)) %>% 
     group_by(!!!map(grouping, sym)) %>% 
     summarize(intensity = mean(intensities[-1])) %>% 
-    ungroup() %>% 
-    # FIXME: Q what are the channel masses?
-    mutate(channel = paste0("i", channel, ".A")) 
+    ungroup() 
+  
+  # convert channels to masses
+  n_channels <- length(unique(df_intensities$channel))
+  if (length(masses) == n_channels) {
+    masses <- 
+      tibble(
+        channel = 1L:n_channels,
+        mass = paste0("i", unname(!!masses), ".A")
+      )
+    df_intensities <- df_intensities %>% 
+      left_join(masses, by = "channel") %>% 
+      select(-channel) %>% rename(channel = mass)
+    
+  } else {
+    # don't allow this scenario
+    glue::glue("found {n_channels} channels but ",
+               "{length(masses)} masses were specified for these channels, make sure ",
+               "to specify the nu_masses parameter with the correct channel masses") %>% 
+      stop(call. = FALSE)
+  }
+  
+  return(df_intensities)
 }
 
 # utility functions ======

@@ -9,7 +9,7 @@ iso_read_dual_inlet(..., root = ".",
   read_file_info = default(read_file_info),
   read_method_info = default(read_method_info),
   read_vendor_data_table = default(read_vendor_data_table),
-  discard_duplicates = TRUE, parallel = FALSE,
+  nu_masses = c(), discard_duplicates = TRUE, parallel = FALSE,
   parallel_plan = future::multiprocess, cache = default(cache),
   read_cache = default(cache), quiet = default(quiet))
 }
@@ -25,6 +25,8 @@ iso_read_dual_inlet(..., root = ".",
 \item{read_method_info}{whether to read methods information (standards, processing info)}
 
 \item{read_vendor_data_table}{whether to read the vendor computed data table}
+
+\item{nu_masses}{list of masses (e.g. \code{c("46","45","44")}) to map the collector channels (interpreted in order, i.e. the first channel will be linked to the first mass, the second channel to the second mass, etc.). This parameter is only used for reading Nu data files.}
 
 \item{discard_duplicates}{whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If \code{TRUE} (the default), only the first files are kept and any files with the same file ID are discarded. If \code{FALSE}, all duplicate files are kept but their file IDs are appended with suffix \code{#1}, \code{#2}, etc.}
 

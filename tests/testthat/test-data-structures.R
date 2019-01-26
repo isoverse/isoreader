@@ -108,9 +108,9 @@ test_that("can set file path for data structures", {
 test_that("test that can update read options", {
   expect_is(iso_file <- make_iso_file_data_structure(), "iso_file")
   expect_equal(iso_file$read_options, list(file_info = FALSE, method_info = FALSE, raw_data = FALSE, vendor_data_table = FALSE))
-  expect_equal(update_read_options(iso_file, not_an_option = FALSE)$read_options,
+  expect_equal(update_read_options(iso_file, c(not_an_option = FALSE))$read_options,
                list(file_info = FALSE, method_info = FALSE, raw_data = FALSE, vendor_data_table = FALSE))
-  expect_equal(update_read_options(iso_file, read_file_info = TRUE, raw_data = TRUE)$read_options,
+  expect_equal(update_read_options(iso_file, c(read_file_info = TRUE, raw_data = TRUE))$read_options,
                list(file_info = TRUE, method_info = FALSE, raw_data = TRUE, vendor_data_table = FALSE))
 })
 

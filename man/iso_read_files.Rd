@@ -4,7 +4,8 @@
 \alias{iso_read_files}
 \title{Core function to read isotope data files}
 \usage{
-iso_read_files(paths, root, supported_extensions, data_structure, ...,
+iso_read_files(paths, root, supported_extensions, data_structure,
+  read_options = c(), reader_options = list(),
   discard_duplicates = TRUE, parallel = FALSE,
   parallel_plan = future::multiprocess, cache = default(cache),
   read_cache = default(cache), quiet = default(quiet))
@@ -18,7 +19,9 @@ iso_read_files(paths, root, supported_extensions, data_structure, ...,
 
 \item{data_structure}{the basic data structure for the type of iso_file}
 
-\item{...}{read options to be stored in the data structure as read options}
+\item{read_options}{vector of read options to be stored in the data structure (e.g. \code{c(read_vendor_data_table = FALSE)}). The \code{read_} prefix is optional.}
+
+\item{reader_options}{list of paramters to be passed on to the reader}
 
 \item{discard_duplicates}{whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If \code{TRUE} (the default), only the first files are kept and any files with the same file ID are discarded. If \code{FALSE}, all duplicate files are kept but their file IDs are appended with suffix \code{#1}, \code{#2}, etc.}
 

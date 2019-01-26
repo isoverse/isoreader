@@ -63,8 +63,17 @@ test_that("test that did files can be read", {
                 { all(.$MSIT_correct) })
   
   # .caf files
+  expect_true(file.exists(file <- iso_get_reader_example("dual_inlet_example.caf")))
+  expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
+  expect_equal(nrow(problems(did)), 0)
+  
   expect_true(file.exists(file <- file.path("test_data", "caf_example_CO2_01.caf")))
   expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
+  expect_equal(nrow(problems(did)), 0)
+  
+  # nu files
+  expect_true(file.exists(file <- iso_get_reader_example("dual_inlet_nu_example.txt")))
+  expect_is(did <- iso_read_dual_inlet(file, nu_masses = 49:44), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
   
 })
