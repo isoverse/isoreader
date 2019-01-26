@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.1</span>
       </span>
     </div>
 
@@ -85,6 +85,9 @@
 </li>
 <li>
   <a href="../articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="../articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -121,11 +124,13 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_turn_debug_on</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>catch_errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+    <pre class="usage"><span class='fu'>iso_turn_debug_on</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>catch_errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cache</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='fu'>iso_turn_debug_off</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
-<span class='fu'>set_read_file_event_expr</span>(<span class='kw'>event_expr</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'>set_read_file_event_expr</span>(<span class='kw'>event_expr</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>set_finish_file_event_expr</span>(<span class='kw'>event_expr</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,8 +144,12 @@
       <td><p>whether to still catch errors in debug mode or whether to throw them</p></td>
     </tr>
     <tr>
+      <th>cache</th>
+      <td><p>whether to cache or read anything from cache</p></td>
+    </tr>
+    <tr>
       <th>event_expr</th>
-      <td><p>an expression to evaluate in the context of reading individual iso files (evaluated in the local environment of the read function!)</p></td>
+      <td><p>an expression to evaluate in the context of reading individual iso files (evaluated in the local environment at the beginning of a file read)</p></td>
     </tr>
     </table>
     

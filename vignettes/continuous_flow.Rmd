@@ -17,9 +17,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-Isoreader supports several continuous flow IRMS data formats as well as plotting and data conversion functions specifically for continuous flow data. This vignette shows some of the functionality for continuous flow files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the [operations vignette](https://kopflab.github.io/isoreader/articles/operations.html).
-
-Note: this vignette is still a work in progress.
+Isoreader supports several continuous flow IRMS data formats. This vignette shows some of the functionality for continuous flow files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the [operations vignette](https://kopflab.github.io/isoreader/articles/operations.html). For details on downstream data processing and visualization, see the [isoprocessor package](https://isoprocessor.kopflab.org).
 
 ```{r}
 # load isoreader package
@@ -103,7 +101,7 @@ iso_files %>% iso_get_standards_info(with_ratios = TRUE) %>% rmarkdown::paged_ta
 ```
 
 
-# Data & Plots
+# RAw Data
 
 The raw data read from the IRMS files can be retrieved similarly using the `iso_get_raw_data()` function. Most data aggregation functions also allow for inclusion of file information using the `include_file_info` parameter, which functions identically to the `select` parameter of the `iso_get_file_info` function discussed earlier.
 
@@ -122,123 +120,9 @@ iso_files %>%
   head(n=10) %>% rmarkdown::paged_table()
 ```
 
-
-## Chromatograms
-
-Plotting the raw data (i.e. the mass chromatograms) can be done either with the generic `iso_plot_raw_data()` function for a simple plot with default parameters, or directly using the continuous flow specific `iso_plot_continuous_flow()` which can be highly customized. Note that the following plot shows the data from all files in their originally recorded signal intensity units. For examples of how to convert to a common unit, see the section on **Signal conversion** further down.
-
-```{r "all data", fig.width = 10, fig.asp = 2}
-iso_files %>% iso_plot_continuous_flow_data()
-```
-
-All customization options are described in the function help (`?iso_plot_continuous_flow_data`) and include, for example, plotting only a specific subset of masses (which will omit data from files that don't include this mass):
-
-```{r "select masses", fig.width = 10, fig.asp = 1}
-iso_files %>% 
-  # plot just masses 2, 44 and 45
-  iso_plot_continuous_flow_data(
-    data = c("2", "44", "45")
-  )
-```
-
-## Isotope ratios
-
-Raw data typically only includes ion signals but isotope ratios are often needed to calculate and visualize the data. For this purpose, isoreader provides a dynamic ratio calculation function (`iso_calculate_ratios()`) that accepts any combination of masses, here demonstrated for the standard CO2 ratios $\frac{46}{44}$ and $\frac{45}{44}$. Additionally, the following example demonstrates how the `filter` parameter can be used to exclude plotting artifacts (here e.g. the extreme ratio values seen right after the magnet jump). Notice how the ratios calculated from current intensities are close to 0 (as the real ratios likely are) whereas those calculated from voltages are close to 1 (due to the so chosen, different resistors in the detector circuit). See the section on **Signal conversion** further down on how to scale to uniform intensity units to address this comparison obstacle.
-
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-# for between
-library(dplyr)
-# for expand range
-library(ggplot2)
-```
-
-```{r "ratios", fig.width = 10, fig.asp = 0.8}
-iso_files <-
-  iso_files %>% 
-  # calculate 46/44 and 45/44 ratios
-  iso_calculate_ratios(ratios = c("46/44", "45/44"))
-
-iso_files %>% 
-  iso_plot_continuous_flow_data(
-    # visualize ratios along with main ion
-    data = c("44", "45/44", "46/44"),
-    # plot all masses but ratios only 0 to 2 to omit peak jump artifacts
-    filter = category == "mass" | between(value, 0, 2)
-  ) + 
-  expand_limits(y = -0.3)
-```
-
-## Time conversion
-
-Most continuous flow data is reported in time units of seconds but this is not always the most useful unit. Isoreader provides easy time scaling functionality that will work for all standard time units (minutes, hours, days, etc.) regardless of which time units individual isofiles were initially recorded in. 
-
-```{r "time conversion", fig.width = 10, fig.asp = 0.5}
-iso_files <- 
-  iso_files %>% 
-  # convert to minutes
-  iso_convert_time(to = "minutes") 
-
-iso_files %>% 
-  # plot masses 2 and 3
-  iso_plot_continuous_flow_data(data = c(2, 3))
-```
-
-In this context, another useful customization option of the plotting function is the option to select a specific time window (in any time units, regardless of what is plotted), and the possibility to adjust plot aesthetics such as color, linetype, and paneling:
-
-```{r "time window", fig.width = 10, fig.asp = 0.5}
-iso_files %>% 
-  # calculate 3/2 ratio on the file
-  iso_calculate_ratios("3/2") %>% 
-  iso_plot_continuous_flow_data(
-    # replot masses 2 and 3 together with the ratio for a specific time window
-    data = c("2", "3", "3/2"),
-    time_interval = c(10, 13),
-    time_interval_units = "minutes",
-    # adjust plot aesthetics to panel by masses vs. ratios and color by traces
-    panel = category,
-    color = data
-  )
-```
-
-## Signal conversion
-
-Likewise, isoreader can convert between different signal units. This is particularly useful for comparing data files from different mass specs that record signals differentally. The earlier plot of mass 44 illustrated this scenario where some data was recorded in mV and some in nA. Voltages and currents can be scaled within each unit without restriction and with any valid SI prefix  (e.g. from mV to V or nA to pA), however, for conversion from voltage to current or vice-versa, the appropriate resistor values need to be provided or be available from the data files themselves. The following is an example of scaling from voltage to current with the resistor values automatically read from the original data files (see file information section for details). Notice how the mass 44 signal is now in the same units for all files and the ratios are on comparable scales because they are calculated from the same unit intensities:
-
-```{r "signal conversion", fig.width = 10, fig.asp = 0.7}
-iso_files %>% 
-  # convert all signals to nano ampere
-  iso_convert_signals(to = "nA") %>% 
-  # re-calculate ratios with the new unuts
-  iso_calculate_ratios(ratios = c("46/44", "45/44")) %>% 
-  # re-plot same plot as earlier
-  iso_plot_continuous_flow_data(
-    data = c("44", "45/44", "46/44"),
-    filter = 
-      category == "mass" |
-      (data == "45/44" & between(value, 0.005, 0.03)) | 
-      (data == "46/44" & between(value, 0, 0.012))
-  )
-```
-
-## Plot styling
-
-Since all isoreader plots are standard [ggplot](http://ggplot2.tidyverse.org/) objects, they can be modified with any ggplot commands. For example to modify the themes:
-
-```{r "styling", fig.width = 10, fig.asp = 0.5}
-library(ggplot2)
-iso_files %>% 
-  # replot
-  iso_plot_continuous_flow_data(data = c(2,3)) +
-  # add vertical dashed line (ggplot functionality)
-  geom_vline(xintercept = 15, linetype = 2) +
-  # modify plot styling (ggplot functionality)
-  theme(text = element_text(size = 20),
-        legend.position = "none")
-```
-
 # Data Processing
 
-The isoreader package is intended to make raw stable isotope data easily accessible. However, as with most analytical data, there is significant downstream processing required to turn these raw intensity chromatograms into peak-specific, properly referenced isotopic measurements. This and similar functionality will be part of the [isoprocessor package](https://github.com/KopfLab/isoprocessor) which takes isotopic data through the various corrections in a transparent, efficient and reproducible manner. 
+The isoreader package is intended to make raw stable isotope data easily accessible. However, as with most analytical data, there is significant downstream processing required to turn these raw intensity chromatograms into peak-specific, properly referenced isotopic measurements. This and similar functionality as well as data visualization is part of the [isoprocessor package](https://isoprocessor.kopflab.org) which takes isotopic data through the various corrections in a transparent, efficient and reproducible manner. 
 
 That said, most vendor software also performs some of these calculations and it can be useful to be able to compare new data reduction procecures against those implemented in the vendor software. For this purpose, isoreader retrieves vendor computed data tables whenver possible, as illustrated below.
 

@@ -158,7 +158,7 @@ process_iarc_sample_data <- function(iso_file, task, gas_configs, folder_path) {
     iso_file <- with(irms_data[i,], {
       filepath <- file.path(folder_path, DataFile)
       run_time.s <- difftime(parse_datetime(AcquireEndDate, format = dt_format), parse_datetime(AcquireStartDate, format = dt_format), units = "s") %>% as.numeric()
-      read_irms_data_file(iso_file, filepath, gas_config, run_time.s, data_units = "nA")
+      read_irms_data_file(iso_file, filepath, gas_config, run_time.s, data_units = "nA", data_scaling = 1e-9)
     })
   }
   
@@ -168,7 +168,7 @@ process_iarc_sample_data <- function(iso_file, task, gas_configs, folder_path) {
 # read irms data file and convert the scan to column format tp, time.s, iXX.[data_units] based on gas configuration
 # will also add H3 factor if part of the gas configuration
 # @param iso_file
-read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data_units = "nA") {
+read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data_units = "nA", data_scaling = 1e-9) {
   if (!"DataSet" %in% h5ls(filepath)$name)
     stop("expected DataSet attribute not present in HDF5 data file", call. = FALSE)
   
@@ -214,8 +214,7 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
   irms_data <- irms_data %>% rename_(.dots = rename_dots)
   
   # scale currents
-  data_scaling <- 1/get_si_prefix_scaling(data_units, "A")
-  scale_data <- function(x) x*data_scaling
+  scale_data <- function(x) x / data_scaling
   irms_data <- irms_data %>% mutate_at(vars(starts_with("i")), scale_data)
   
   # scale time

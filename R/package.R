@@ -12,7 +12,6 @@
 #' @importFrom tibble tribble deframe rownames_to_column
 #' @importFrom lubridate interval duration as_datetime
 #' @importFrom stringr str_c str_detect str_to_title str_replace str_replace_all str_replace_na str_match str_match_all str_interp str_subset str_extract fixed
-#' @importFrom ggplot2 ggplot aes geom_line geom_point scale_x_continuous scale_y_continuous expand_limits facet_grid facet_wrap labs theme_bw theme %+% is.ggplot aes_
 #' @importFrom stats setNames embed
 #' @importFrom methods is
 #' @importFrom utils unzip head tail modifyList packageVersion

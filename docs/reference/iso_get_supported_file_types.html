@@ -32,7 +32,7 @@
 
 <meta property="og:title" content="Supported file types — iso_get_supported_file_types" />
 
-<meta property="og:description" content="Get an overview of all the file types currently supported by the isoreader package." />
+<meta property="og:description" content="Get an overview of all the file types currently supported by the isoreader package. To register additional file readers, use the iso_register_dual_inlet_file_reader and iso_register_continuous_flow_file_reader functions." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.1</span>
       </span>
     </div>
 
@@ -85,6 +85,9 @@
 </li>
 <li>
   <a href="../articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="../articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -111,24 +114,30 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Supported file types</h1>
-    <small class="dont-index">Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/isoread.R'><code>R/isoread.R</code></a></small>
     <div class="hidden name"><code>iso_get_supported_file_types.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Get an overview of all the file types currently supported by the isoreader package.</p>
+    <p>Get an overview of all the file types currently supported by the isoreader package. To register additional file readers, use the <code><a href='file_readers.html'>iso_register_dual_inlet_file_reader</a></code> and <code><a href='file_readers.html'>iso_register_continuous_flow_file_reader</a></code> functions.</p>
     
     </div>
 
     <pre class="usage"><span class='fu'>iso_get_supported_file_types</span>()</pre>
         
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other file_types: <code><a href='file_readers.html'>iso_register_dual_inlet_file_reader</a></code></p></div>
+    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-                </ul>
+      
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>

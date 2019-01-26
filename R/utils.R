@@ -760,3 +760,16 @@ get_info_message_concat <- function(variable, prefix = "", suffix = "", empty = 
     return("")
 }
 
+
+# migration to isoprocessor ====
+
+# migration message for function moved to isoprocessor
+show_isoprocessor_migration_message <- function(func) {
+  glue::glue("as of isoreader version 1.0, '{func}' has moved to ",
+             "the isoprocessor package (isoprocessor.isoverse.org) to re-focus ",
+             "isoreader on its core functionality. Please install and load ",
+             "isoprocessor to access this function:\n",
+             "-->  devtools::install_github(\"KopfLab/isoprocessor\") # install\n",
+             "-->  library(isoprocessor) # load") %>% 
+    stop(call. = FALSE)
+}

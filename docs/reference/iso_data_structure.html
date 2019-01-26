@@ -37,7 +37,7 @@ iso_is_file_list tests if the object is an iso_file list (collection of iso_file
 iso_is_object test if the object is an iso-object (iso_file or iso_file list)
 iso_is_dual_inlet tests if an iso_file or iso_file list consists exclusively of dual inlet file objects
 iso_is_continuous_flow tests if an iso_file or iso_file list consists exclusively of continuous flow file objects
-iso_as_file_list concatenates iso_file and iso_file list object(s) into one combined iso_file list (equivalent to calling c(...)), flattens all passed lists into one list structure, all individual objects and objects within iso_file lists have to be the same type of iso_file, issues warnings if there are duplicate file ids and summarizes all problems in the iso_file list" />
+iso_as_file_list concatenates iso_file and iso_file list object(s) into one combined iso_file list (equivalent to calling c(...)), flattens all passed lists into one list structure, all individual objects and objects within iso_file lists have to be the same type of iso_file, issues warnings if there are duplicate file ids and summarizes all problems in the iso_file list. If duplicates are allowed (discard_duplicates = FALSE), their file IDs will append a #1, #2, #3, etc. to preserve unique file IDs (important for many data aggregation operations)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -76,7 +76,7 @@ iso_as_file_list concatenates iso_file and iso_file list object(s) into one comb
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.1</span>
       </span>
     </div>
 
@@ -90,6 +90,9 @@ iso_as_file_list concatenates iso_file and iso_file list object(s) into one comb
 </li>
 <li>
   <a href="../articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="../articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -127,7 +130,7 @@ iso_as_file_list concatenates iso_file and iso_file list object(s) into one comb
 <p><code>iso_is_object</code> test if the object is an iso-object (iso_file or iso_file list)</p>
 <p><code>iso_is_dual_inlet</code> tests if an iso_file or iso_file list consists exclusively of dual inlet file objects</p>
 <p><code>iso_is_continuous_flow</code> tests if an iso_file or iso_file list consists exclusively of continuous flow file objects</p>
-<p><code>iso_as_file_list</code> concatenates iso_file and iso_file list object(s) into one combined iso_file list (equivalent to calling <code>c(...)</code>), flattens all passed lists into one list structure, all individual objects and objects within iso_file lists have to be the same type of iso_file, issues warnings if there are duplicate file ids and summarizes all problems in the iso_file list</p>
+<p><code>iso_as_file_list</code> concatenates iso_file and iso_file list object(s) into one combined iso_file list (equivalent to calling <code>c(...)</code>), flattens all passed lists into one list structure, all individual objects and objects within iso_file lists have to be the same type of iso_file, issues warnings if there are duplicate file ids and summarizes all problems in the iso_file list. If duplicates are allowed (<code>discard_duplicates = FALSE</code>), their file IDs will append a #1, #2, #3, etc. to preserve unique file IDs (important for many data aggregation operations).</p>
     
     </div>
 
@@ -156,7 +159,7 @@ iso_as_file_list concatenates iso_file and iso_file list object(s) into one comb
     </tr>
     <tr>
       <th>discard_duplicates</th>
-      <td><p>whether to discard encountered file id duplicates</p></td>
+      <td><p>whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If <code>TRUE</code> (the default), only the first files are kept and any files with the same file ID are discarded. If <code>FALSE</code>, all duplicate files are kept but their file IDs are appended with suffix <code>#1</code>, <code>#2</code>, etc.</p></td>
     </tr>
     </table>
     

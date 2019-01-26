@@ -4,13 +4,14 @@
 # isoreader <a href='https://isoreader.kopflab.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
-[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-0.9.33.9000-orange.svg?style=flat-square)](/commits)
-[![Last-Update](https://img.shields.io/badge/updated-2019--01--24-yellowgreen.svg)](/commits)
+[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-0.9.35.9000-orange.svg?style=flat-square)](/commits)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://kopflab.github.io/isoreader/)
 [![Build
 Status](https://travis-ci.org/KopfLab/isoreader.svg?branch=master)](https://travis-ci.org/KopfLab/isoreader)
 [![AppVeyor Build
 Status](https://ci.appveyor.com/api/projects/status/github/KopfLab/isoreader?branch=master&svg=true)](https://ci.appveyor.com/project/KopfLab/isoreader)
+[![Binder](https://img.shields.io/badge/launch-RStudio-blue.svg)](https://mybinder.org/v2/gh/KopfLab/isoreader/binder?urlpath=rstudio)
+[![Binder](https://img.shields.io/badge/launch-Jupyter-orange.svg)](https://mybinder.org/v2/gh/KopfLab/isoreader/binder?urlpath=lab)
 
 ## About
 
@@ -22,9 +23,8 @@ re-implemention of the proof-of-concept
 fit into a larger framework of IRMS data tools that includes the
 web-based graphical user interface package
 [isoviewer](https://github.com/KopfLab/isoviewer) and the data
-processing pipeline
-[isoprocessor](https://github.com/KopfLab/isoprocessor) (in
-development).
+processing and visualization pipeline
+[isoprocessor](https://github.com/KopfLab/isoprocessor).
 
 [isoreader](https://kopflab.github.io/isoreader/) enables the reading
 and processing of stable isotope data directly from the data files and
@@ -44,12 +44,7 @@ pipeline breaks due to problems encountered in source data files
 with [tidyverse](https://www.tidyverse.org/) packages such as
 [tidyr](https://tidyr.tidyverse.org/),
 [dplyr](https://dplyr.tidyverse.org/) and
-[ggplot](https://ggplot2.tidyverse.org/). The release candidate for
-[isoreader](http://www.github.com/KopfLab/isoreader) version 1.0 is
-currently going through beta testing and will be submitted to the
-Comprehensive R Archive Network (CRAN) later this year. No major
-functionality changes are expected for version 1 and you can install and
-use the beta version using the `devtools` package.
+[ggplot](https://ggplot2.tidyverse.org/).
 
 ## Installation
 

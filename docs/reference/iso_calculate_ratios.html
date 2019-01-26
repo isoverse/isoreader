@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate ratios — iso_calculate_ratios • Isoreader</title>
+<title>moved to isoprocessor — iso_calculate_ratios • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Calculate ratios — iso_calculate_ratios" />
+<meta property="og:title" content="moved to isoprocessor — iso_calculate_ratios" />
 
-<meta property="og:description" content="Calculate ratios from raw data. Note that these are recorded ratios and are not normalized against any standards yet. The ratios are calculated straight from the raw data without any unit conversions, i.e. if the raw data is in mV, the ratio is mV/mV, if in nA the ratio is nA/nA, etc. These raw ratios are subsequently NOT identical to absolute ratios, in fact they are usually not even close (especially if raw data recorded as voltages with different resistors). If raw data is first converted to identical current units (iso_convert_signals), the ratios may be close to their true values (+instrument fractionation), however, isotope ratios should always be calibrated against reference ratios measured in the same data file." />
+<meta property="og:description" content="moved to isoprocessor" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.1</span>
       </span>
     </div>
 
@@ -85,6 +85,9 @@
 </li>
 <li>
   <a href="../articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="../articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -110,39 +113,27 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate ratios</h1>
+    <h1>moved to isoprocessor</h1>
     <small class="dont-index">Source: <a href='https://github.com/kopflab/isoreader/blob/master/R/calculate_ratios.R'><code>R/calculate_ratios.R</code></a></small>
     <div class="hidden name"><code>iso_calculate_ratios.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Calculate ratios from raw data. Note that these are recorded ratios and are not normalized against any standards yet. The ratios are calculated straight from the raw data without any unit conversions, i.e. if the raw data is in mV, the ratio is mV/mV, if in nA the ratio is nA/nA, etc. These raw ratios are subsequently NOT identical to absolute ratios, in fact they are usually not even close (especially if raw data recorded as voltages with different resistors). If raw data is first converted to identical current units (<code><a href='iso_convert_signals.html'>iso_convert_signals</a></code>), the ratios may be close to their true values (+instrument fractionation), however, isotope ratios should always be calibrated against reference ratios measured in the same data file.</p>
+    <p>moved to isoprocessor</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_calculate_ratios</span>(<span class='no'>iso_files</span>, <span class='no'>ratios</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+    <pre class="usage"><span class='fu'>iso_calculate_ratios</span>(<span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>iso_files</th>
-      <td><p>collection of iso_file objects</p></td>
-    </tr>
-    <tr>
-      <th>ratios</th>
-      <td><p>which ratios to calculate (e.g. c("45/44", "46/44")), will only be calculated in files that have the necessary mass column</p></td>
-    </tr>
-    <tr>
-      <th>quiet</th>
-      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
+      <th>...</th>
+      <td><p>deprecated</p></td>
     </tr>
     </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>ithe passed in iso_file(s) with ratios added</p>
     
 
   </div>
@@ -150,9 +141,7 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-          </ul>
+                </ul>
 
   </div>
 </div>

@@ -73,7 +73,7 @@ However, it is only possible for iso_file objects whose file paths still point t
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">0.9.21.9000</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.1</span>
       </span>
     </div>
 
@@ -87,6 +87,9 @@ However, it is only possible for iso_file objects whose file paths still point t
 </li>
 <li>
   <a href="../articles/operations.html">Operations</a>
+</li>
+<li>
+  <a href="../articles/advanced.html">Advanced</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -128,8 +131,10 @@ However, it is only possible for iso_file objects whose file paths still point t
     <pre class="usage"><span class='fu'>iso_reread_files</span>(<span class='no'>iso_files</span>, <span class='no'>...</span>, <span class='kw'>stop_if_missing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))
 
-<span class='fu'>iso_reread_archive</span>(<span class='no'>rda_filepaths</span>, <span class='no'>...</span>, <span class='kw'>stop_if_missing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+<span class='fu'>iso_reread_storage</span>(<span class='no'>rds_filepaths</span>, <span class='no'>...</span>, <span class='kw'>stop_if_missing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))
+
+<span class='fu'>iso_reread_archive</span>(<span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -151,7 +156,7 @@ However, it is only possible for iso_file objects whose file paths still point t
       <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
     </tr>
     <tr>
-      <th>rda_filepaths</th>
+      <th>rds_filepaths</th>
       <td><p>the path(s) to the iso_files R data archive(s) to re-read (can be a single file or vector of files)</p></td>
     </tr>
     </table>
@@ -159,7 +164,9 @@ However, it is only possible for iso_file objects whose file paths still point t
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p><code>iso_reread_files</code> will re-read all the original data files for the passed in <code>iso_files</code> object. Returns the reread iso_file objects.</p>
-<p><code>iso_reread_archive</code> is a convenience function for refreshing saved iso_file collections. It will load a specific iso_files R Data Archive (<code>rda_filepath</code>), re-read all the data from the original data files and save the collection back to the same rda file. The iso_files are returned invisibly.</p>
+<p><code>iso_reread_storage</code> is a convenience function for refreshing saved iso_file collections (see <code><a href='iso_save.html'>iso_save</a></code>). It will load a specific iso_files R Data Storage file (<code>rds_filepath</code>), re-read all the data from the original data files and save the collection back to the same rds file. The filepaths are returned invisibly.</p>
+<p>Note that this function will also reread the older .rda Archive files but store them in the newer .rds format after re-reading.</p>
+<p><code>iso_reread_archive</code> is deprecated in favour of <code>iso_reread_storage</code></p>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
