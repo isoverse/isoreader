@@ -37,6 +37,7 @@
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
         <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.2</span>
+
       </span>
     </div>
 
@@ -81,6 +82,7 @@
       <h1>Continuous Flow Examples</h1>
             
             <h4 class="date">2019-01-26</h4>
+
       
       <small class="dont-index">Source: <a href="https://github.com/kopflab/isoreader/blob/master/vignettes/continuous_flow.Rmd"><code>vignettes/continuous_flow.Rmd</code></a></small>
       <div class="hidden name"><code>continuous_flow.Rmd</code></div>
@@ -105,6 +107,7 @@
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["filename"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["description"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"continuous flow","3":"Isodat Continuous Flow file format (older)"},{"1":"continuous_flow_example.dxf","2":"continuous flow","3":"Isodat Continuous Flow file format (newer)"},{"1":"linearity_example.dxf","2":"continuous flow","3":"Isodat Continuous Flow file format (newer)"},{"1":"continuous_flow_example.iarc","2":"continuous flow","3":"IonOS Continous Flow data archieve"},{"1":"dual_inlet_example.caf","2":"dual inlet","3":"Isodat Dual Inlet file format (older)"},{"1":"dual_inlet_example.did","2":"dual inlet","3":"Isodat Dual Inlet file format (newer)"},{"1":"dual_inlet_example2.did","2":"dual inlet","3":"Isodat Dual Inlet file format (newer)"},{"1":"dual_inlet_nu_example.txt","2":"dual inlet","3":"Nu Dual Inlet file format"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+
   </script>
 </div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># read a few of the continuous flow examples</span></a>
@@ -118,12 +121,14 @@
 <a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; Info: preparing to read 4 data file(s)...</span></a>
 <a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; Info: reading and caching file 'continuous_flow_example.cf' with '.cf'...</span></a>
 <a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; Info: reading and caching file 'continuous_flow_example.iarc' with '.i...</span></a>
+
 <a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt;       unpacking isoprime archieve file...</span></a>
 <a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt;       found 1 processing list(s) in .iarc: 'ProcessingList_1'</span></a>
 <a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt;       found 2 method(s) in .iarc: 'Method_320', 'Method_77'</span></a>
 <a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt;       found 4 sample(s) in .iarc</span></a>
 <a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt;       searching processing list 'ProcessingList_1' for gas configurati...</span></a>
 <a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt;       found configurations for 'CO', 'SO2', 'CO2', 'H2', 'N2'</span></a>
+
 <a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt;       processing sample '6632_WSL-2 wood' (IRMS data '133.hdf5', '135....</span></a>
 <a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt;       processing sample '6605_USGS41' (IRMS data '40.hdf5', '43.hdf5')</span></a>
 <a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt;       processing sample '6617_IAEA600' (IRMS data '80.hdf5', '82.hdf5')</span></a>
@@ -141,6 +146,7 @@
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_data"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_info"],"name":[3],"type":["chr"],"align":["left"]},{"label":["method_info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["vendor_data_table"],"name":[5],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"8605 time points, 2 ions (2,3)","3":"20 entries","4":"standards, resistors","5":"19 rows, 25 columns","6":"continuous_flow_example.cf"},{"1":"6632_WSL-2 wood","2":"1952 time points, 3 ions (45,46,44)","3":"16 entries","4":"no method info","5":"no vendor data table","6":"continuous_flow_example.iarc|Task_0b7e6b49-7756-4cca-b387-4d6617cb28e6"},{"1":"6605_USGS41","2":"2387 time points, 2 ions (29,28)","3":"16 entries","4":"no method info","5":"no vendor data table","6":"continuous_flow_example.iarc|Task_0e08e8b4-c625-4fd7-bf5b-9f4823f660cd"},{"1":"6617_IAEA600","2":"1796 time points, 3 ions (45,46,44)","3":"16 entries","4":"no method info","5":"no vendor data table","6":"continuous_flow_example.iarc|Task_1de1fdc3-0797-4e44-8357-52acbd0d4a6d"},{"1":"6630_GlutamicAcid04","2":"2386 time points, 2 ions (29,28)","3":"16 entries","4":"no method info","5":"no vendor data table","6":"continuous_flow_example.iarc|Task_261a3286-0bc6-4aca-bba2-183c02597d8b"},{"1":"continuous_flow_example.dxf","2":"2435 time points, 6 ions (28,29,30,44,45,46)","3":"20 entries","4":"standards, resistors","5":"6 rows, 60 columns","6":"continuous_flow_example.dxf"},{"1":"linearity_example.dxf","2":"2307 time points, 3 ions (44,45,46)","3":"15 entries","4":"standards, resistors","5":"8 rows, 40 columns","6":"linearity_example.dxf"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+
   </script>
 </div>
 <div id="problems" class="section level2">
@@ -254,11 +260,13 @@
 {"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["run"],"name":[2],"type":["chr"],"align":["left"]},{"label":["time.s"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["v2.mV"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["v3.mV"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"continuous_flow_example.cf","2":"6520","3":"0.209","4":"194.5682","5":"60.01971"},{"1":"continuous_flow_example.cf","2":"6520","3":"0.418","4":"194.5418","5":"60.04760"},{"1":"continuous_flow_example.cf","2":"6520","3":"0.627","4":"194.5365","5":"60.21315"},{"1":"continuous_flow_example.cf","2":"6520","3":"0.836","4":"194.5630","5":"59.91891"},{"1":"continuous_flow_example.cf","2":"6520","3":"1.045","4":"194.5735","5":"59.71668"},{"1":"continuous_flow_example.cf","2":"6520","3":"1.254","4":"194.5444","5":"59.69523"},{"1":"continuous_flow_example.cf","2":"6520","3":"1.463","4":"194.5153","5":"59.58589"},{"1":"continuous_flow_example.cf","2":"6520","3":"1.672","4":"194.5233","5":"59.72385"},{"1":"continuous_flow_example.cf","2":"6520","3":"1.881","4":"194.5096","5":"59.73885"},{"1":"continuous_flow_example.cf","2":"6520","3":"2.090","4":"194.5206","5":"59.73885"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
+
 </div>
 <div id="data-processing" class="section level1">
 <h1 class="hasAnchor">
 <a href="#data-processing" class="anchor"></a>Data Processing</h1>
 <p>The isoreader package is intended to make raw stable isotope data easily accessible. However, as with most analytical data, there is significant downstream processing required to turn these raw intensity chromatograms into peak-specific, properly referenced isotopic measurements. This and similar functionality as well as data visualization is part of the <a href="https://isoprocessor.kopflab.org">isoprocessor package</a> which takes isotopic data through the various corrections in a transparent, efficient and reproducible manner.</p>
+
 <p>That said, most vendor software also performs some of these calculations and it can be useful to be able to compare new data reduction procecures against those implemented in the vendor software. For this purpose, isoreader retrieves vendor computed data tables whenver possible, as illustrated below.</p>
 <div id="vendor-data-table" class="section level2">
 <h2 class="hasAnchor">
@@ -317,6 +325,7 @@
 </div>
 </div>
 </div>
+
 <div id="saving-collections" class="section level1">
 <h1 class="hasAnchor">
 <a href="#saving-collections" class="anchor"></a>Saving collections</h1>
@@ -363,6 +372,7 @@
 <a class="sourceLine" id="cb20-10" data-line-number="10"><span class="co">#&gt; [4] "iso_files_export_problems.cf.feather"             </span></a>
 <a class="sourceLine" id="cb20-11" data-line-number="11"><span class="co">#&gt; [5] "iso_files_export_raw_data.cf.feather"             </span></a>
 <a class="sourceLine" id="cb20-12" data-line-number="12"><span class="co">#&gt; [6] "iso_files_export_vendor_data_table.cf.feather"</span></a></code></pre></div>
+
 </div>
   </div>
 
@@ -373,6 +383,7 @@
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#introduction">Introduction</a></li>
       <li><a href="#reading-files">Reading files</a></li>
+
       <li>
 <a href="#file-summary">File summary</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#problems">Problems</a></li>
@@ -391,6 +402,7 @@
       <li><a href="#for-expert-users-retrieving-all-data">For expert users: retrieving all data</a></li>
       </ul>
 </li>
+
       <li><a href="#saving-collections">Saving collections</a></li>
       <li><a href="#data-export">Data Export</a></li>
       </ul>

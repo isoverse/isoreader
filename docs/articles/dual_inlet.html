@@ -36,7 +36,9 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
+
         <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.2</span>
+
       </span>
     </div>
 
@@ -81,6 +83,7 @@
       <h1>Dual Inlet Examples</h1>
             
             <h4 class="date">2019-01-26</h4>
+
       
       <small class="dont-index">Source: <a href="https://github.com/kopflab/isoreader/blob/master/vignettes/dual_inlet.Rmd"><code>vignettes/dual_inlet.Rmd</code></a></small>
       <div class="hidden name"><code>dual_inlet.Rmd</code></div>
@@ -105,7 +108,9 @@
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/rmarkdown/topics/paged_table">paged_table</a></span>()</a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
+
 {"columns":[{"label":["filename"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["description"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"continuous flow","3":"Isodat Continuous Flow file format (older)"},{"1":"continuous_flow_example.dxf","2":"continuous flow","3":"Isodat Continuous Flow file format (newer)"},{"1":"linearity_example.dxf","2":"continuous flow","3":"Isodat Continuous Flow file format (newer)"},{"1":"continuous_flow_example.iarc","2":"continuous flow","3":"IonOS Continous Flow data archieve"},{"1":"dual_inlet_example.caf","2":"dual inlet","3":"Isodat Dual Inlet file format (older)"},{"1":"dual_inlet_example.did","2":"dual inlet","3":"Isodat Dual Inlet file format (newer)"},{"1":"dual_inlet_example2.did","2":"dual inlet","3":"Isodat Dual Inlet file format (newer)"},{"1":"dual_inlet_nu_example.txt","2":"dual inlet","3":"Nu Dual Inlet file format"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+
   </script>
 </div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># read dual inlet examples</span></a>
@@ -113,6 +118,7 @@
 <a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span>(</a>
 <a class="sourceLine" id="cb3-4" data-line-number="4">    <span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"dual_inlet_example.did"</span>),</a>
 <a class="sourceLine" id="cb3-5" data-line-number="5">    <span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"dual_inlet_example2.did"</span>),</a>
+
 <a class="sourceLine" id="cb3-6" data-line-number="6">    <span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"dual_inlet_example.caf"</span>),</a>
 <a class="sourceLine" id="cb3-7" data-line-number="7">    <span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"dual_inlet_nu_example.txt"</span>),</a>
 <a class="sourceLine" id="cb3-8" data-line-number="8">    <span class="dt">nu_masses =</span> <span class="dv">49</span><span class="op">:</span><span class="dv">44</span></a>
@@ -130,6 +136,7 @@
 <p>The <code>iso_files</code> variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the <code><a href="../reference/iso_get_data_summary.html">iso_get_data_summary()</a></code> function.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/rmarkdown/topics/paged_table">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; Info: aggregating data summary from 4 data file(s)</span></a></code></pre></div>
+
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_data"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_info"],"name":[3],"type":["chr"],"align":["left"]},{"label":["method_info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["vendor_data_table"],"name":[5],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.did","2":"15 cycles, 8 ions (28,29,32,33,34,38,40,44)","3":"16 entries","4":"standards, resistors","5":"15 rows, 7 columns","6":"dual_inlet_example.did"},{"1":"dual_inlet_example2.did","2":"7 cycles, 6 ions (44,45,46,47,48,49)","3":"15 entries","4":"standards, resistors","5":"7 rows, 8 columns","6":"dual_inlet_example2.did"},{"1":"dual_inlet_example.caf","2":"8 cycles, 6 ions (44,45,46,47,48,49)","3":"21 entries","4":"standards, resistors","5":"8 rows, 9 columns","6":"dual_inlet_example.caf"},{"1":"dual_inlet_nu_example.txt","2":"82 cycles, 6 ions (44,45,46,47,48,49)","3":"8 entries","4":"no method info","5":"no vendor data table","6":"dual_inlet_nu_example.txt"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -238,18 +245,22 @@
 <a class="sourceLine" id="cb13-7" data-line-number="7">    <span class="dt">include_file_info =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">run =</span> Analysis)</a>
 <a class="sourceLine" id="cb13-8" data-line-number="8">  ) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb13-9" data-line-number="9"><span class="st">  </span><span class="co"># look at first few records only</span></a>
+
 <a class="sourceLine" id="cb13-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(<span class="dt">n=</span><span class="dv">10</span>) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/rmarkdown/topics/paged_table">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">#&gt; Info: aggregating raw data from 4 data file(s), selecting data columns 'c(type, cycle, v28.mV, v29.mV)', including file info 'c(run = Analysis)'</span></a></code></pre></div>
+
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["run"],"name":[2],"type":["chr"],"align":["left"]},{"label":["type"],"name":[3],"type":["chr"],"align":["left"]},{"label":["cycle"],"name":[4],"type":["int"],"align":["right"]},{"label":["v28.mV"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["v29.mV"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"0","5":"2319.591","6":"5768.939"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"1","5":"2314.045","6":"5754.992"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"2","5":"2314.073","6":"5752.840"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"3","5":"2308.652","6":"5740.336"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"4","5":"2306.104","6":"5735.285"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"5","5":"2302.021","6":"5724.794"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"6","5":"2308.069","6":"5739.984"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"7","5":"2308.090","6":"5739.708"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"8","5":"2308.144","6":"5739.896"},{"1":"dual_inlet_example.did","2":"1481","3":"standard","4":"9","5":"2305.838","6":"5734.350"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
+
 </div>
 <div id="data-processing" class="section level1">
 <h1 class="hasAnchor">
 <a href="#data-processing" class="anchor"></a>Data Processing</h1>
 <p>The isoreader package is intended to make raw stable isotope data easily accessible. However, as with most analytical data, there is significant downstream processing required to turn these raw signal intensities into properly referenced isotopic measurement. This and similar functionality as well as data visualization is part of the <a href="https://isoprocessor.kopflab.org">isoprocessor package</a> which takes isotopic data through the various corrections in a transparent, efficient and reproducible manner.</p>
+
 <p>That said, most vendor software also performs some of these calculations and it can be useful to be able to compare new data reduction procecures against those implemented in the vendor software. For this purpose, isoreader retrieves vendor computed data tables whenver possible, as illustrated below.</p>
 <div id="vendor-data-table" class="section level2">
 <h2 class="hasAnchor">
@@ -292,6 +303,7 @@
 </div>
 </div>
 </div>
+
 <div id="saving-collections" class="section level1">
 <h1 class="hasAnchor">
 <a href="#saving-collections" class="anchor"></a>Saving collections</h1>
@@ -339,6 +351,7 @@
 <a class="sourceLine" id="cb19-10" data-line-number="10"><span class="co">#&gt; [4] "iso_files_export_problems.di.feather"             </span></a>
 <a class="sourceLine" id="cb19-11" data-line-number="11"><span class="co">#&gt; [5] "iso_files_export_raw_data.di.feather"             </span></a>
 <a class="sourceLine" id="cb19-12" data-line-number="12"><span class="co">#&gt; [6] "iso_files_export_vendor_data_table.di.feather"</span></a></code></pre></div>
+
 </div>
   </div>
 
@@ -349,6 +362,7 @@
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#introduction">Introduction</a></li>
       <li><a href="#reading-files">Reading files</a></li>
+
       <li>
 <a href="#file-summary">File summary</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#problems">Problems</a></li>
@@ -367,6 +381,7 @@
       <li><a href="#for-expert-users-retrieving-all-data">For expert users: retrieving all data</a></li>
       </ul>
 </li>
+
       <li><a href="#saving-collections">Saving collections</a></li>
       <li><a href="#data-export">Data Export</a></li>
       </ul>

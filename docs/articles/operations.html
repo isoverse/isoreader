@@ -36,7 +36,9 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
+
         <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.2</span>
+
       </span>
     </div>
 
@@ -79,7 +81,9 @@
     <div class="page-header toc-ignore">
       <h1>Operations Example</h1>
             
+
             <h4 class="date">2019-01-26</h4>
+
       
       <small class="dont-index">Source: <a href="https://github.com/kopflab/isoreader/blob/master/vignettes/operations.Rmd"><code>vignettes/operations.Rmd</code></a></small>
       <div class="hidden name"><code>operations.Rmd</code></div>
@@ -107,9 +111,11 @@
 <a href="#parallel-processing" class="anchor"></a>Parallel processing</h1>
 <p>Whether parallel processing yields signifcant improvemens in read speeds depends on the number of available processors, file types and operating system. In theory, parallel processing always reduces computation time but in practice this is offset by various factors including the size of the data that needs to be sent back and forth between the processors, file system read/write speed, and the spin-up time for new processes. Generally speaking, parallel processing can provide significant improvements in speed with larger number of files (~10+) and more complex read operations (e.g. continuous flow vs. dual inlet). Reading from cache is so efficient that there are rarely gains from parallel processing and it is usually faster NOT to read in parallel.</p>
 </div>
+
 <div id="messages-and-default-parameters" class="section level1">
 <h1 class="hasAnchor">
 <a href="#messages-and-default-parameters" class="anchor"></a>Messages and default parameters</h1>
+
 </div>
 <div id="combining-subsetting-isofiles" class="section level1">
 <h1 class="hasAnchor">
@@ -121,6 +127,7 @@
 <a href="#filtering-isofiles-by-file-information" class="anchor"></a>Filtering isofiles by file information</h1>
 <p>Additionally, the <code>iso_filter_files</code> function allows for subsetting a collection of isofiles based on any file information.</p>
 </div>
+
 <div id="dealing-with-file-read-problems" class="section level1">
 <h1 class="hasAnchor">
 <a href="#dealing-with-file-read-problems" class="anchor"></a>Dealing with file read problems</h1>
@@ -128,6 +135,7 @@
 <div id="removing-erroneous-files" class="section level1">
 <h1 class="hasAnchor">
 <a href="#removing-erroneous-files" class="anchor"></a>Removing erroneous files</h1>
+
 <p>Removing files with problems: <code>iso_omit_files_with_problems</code></p>
 </div>
 <div id="re-reading-files" class="section level1">
