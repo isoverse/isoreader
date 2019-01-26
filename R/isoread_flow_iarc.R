@@ -1,6 +1,7 @@
 # read ionos .iarc archieves for their continuous flow data
 # @param ds the iso_file data structure to fill
-iso_read_flow_iarc <- function(ds) {
+# @param custom reader options - none needed
+iso_read_flow_iarc <- function(ds, options = list()) {
   
   # safety checks
   if(!iso_is_file(ds) || !is(ds, "continuous_flow")) 
@@ -13,8 +14,8 @@ iso_read_flow_iarc <- function(ds) {
   folder_name <- ds$file_info$file_path %>% basename() %>% { str_replace(., fixed(get_file_ext(.)), "") }
   folder_path <- file.path(tempdir(), folder_name)
   if (!file.exists(folder_path)) {
-    if (!default(quiet)) message("      unpacking isoprime archieve file...")
-    unzip(ds$file_info$file_path, exdir = folder_path)
+    if (!default(quiet)) log_message("unpacking isoprime archieve file...", prefix = "      ")
+    unzip(get_ds_file_path(ds), exdir = folder_path)
   }
   
   # info file ====
@@ -22,23 +23,23 @@ iso_read_flow_iarc <- function(ds) {
   if (length(info_file) != 1) {
     stop("no Info xml file found in iarc", call. = FALSE)
   }
-  processing_lists <- process_iarc_info_xml(info_file) 
+  processing_lists <- exec_func_with_error_catch(process_iarc_info_xml, info_file)
   col_check(c("DefinitionUniqueIdentifier"), processing_lists, 
             msg = "iarc Info processing list information insufficient")
   
   # methods files ====
   method_files <- list.files(folder_path, pattern = "^Method", full.names = T)
   if (length(method_files) == 0) {
-    warning("found no Method xml file(s) in iarc, proceeding without method information", call. = FALSE, immediate. = TRUE)
+    log_warning("found no Method xml file(s) in iarc, proceeding without method information")
   }
-  method_params <- process_iarc_methods_xml(method_files) 
+  method_params <- exec_func_with_error_catch(process_iarc_methods_xml, method_files) 
   
   # tasks files ====
   task_files <- list.files(folder_path, pattern = "^Task", full.names = T)
   if (length(task_files) == 0) {
     stop("no Task xml file(s) found in iarc", call. = FALSE)
   }
-  tasks <- process_iarc_tasks_xml(task_files, method_params) 
+  tasks <- exec_func_with_error_catch(process_iarc_tasks_xml, task_files, method_params) 
   col_check(c("GlobalIdentifier", "Name", "Id", "ProcessingListTypeIdentifier"), 
             map(tasks, "info") %>% bind_rows(), msg = "iarc tasks' information insufficient")
   
@@ -65,7 +66,7 @@ iso_read_flow_iarc <- function(ds) {
     file.path(folder_path, str_c("ProcessingList_", used_processing_lists$ProcessingListId)))
   
   # read sample/task data ====
-  iso_files <- process_iarc_samples(ds, tasks, gas_configs, folder_path)
+  iso_files <- exec_func_with_error_catch(process_iarc_samples, ds, tasks, gas_configs, folder_path)
   
   # propagate problems =====
   iarc_problems <- combined_problems(processing_lists, method_params, tasks, gas_configs)
@@ -97,20 +98,21 @@ process_iarc_samples <- function(iso_file_template, tasks, gas_configs, folder_p
     iso_file <- iso_file_template %>% 
       # set file path parameters
       set_ds_file_path(
+        file_root = iso_file_template$file_info$file_root,
         file_path = iso_file_template$file_info$file_path, 
         file_id = generate_task_sample_id(task), 
         file_subpath = task$filename)
     
     # processing info
     if (!default(quiet)) {
-      sprintf("      processing sample '%s' (IRMS data '%s')",
+      sprintf("processing sample '%s' (IRMS data '%s')",
               generate_task_sample_id(task), 
               task$data_files %>% 
                 filter_(.dots = list(~TypeIdentifier == "Acquire")) %>% 
                 {.$DataFile} %>% { if(length(.) > 0) str_c(., collapse = "', '") else "" }
               #task$info$GlobalIdentifier
               ) %>% 
-        message()
+        log_message(prefix = "      ")
     }
     
     # process task info
@@ -157,7 +159,7 @@ process_iarc_sample_data <- function(iso_file, task, gas_configs, folder_path) {
     iso_file <- with(irms_data[i,], {
       filepath <- file.path(folder_path, DataFile)
       run_time.s <- difftime(parse_datetime(AcquireEndDate, format = dt_format), parse_datetime(AcquireStartDate, format = dt_format), units = "s") %>% as.numeric()
-      read_irms_data_file(iso_file, filepath, gas_config, run_time.s, data_units = "nA")
+      read_irms_data_file(iso_file, filepath, gas_config, run_time.s, data_units = "nA", data_scaling = 1e-9)
     })
   }
   
@@ -167,7 +169,7 @@ process_iarc_sample_data <- function(iso_file, task, gas_configs, folder_path) {
 # read irms data file and convert the scan to column format tp, time.s, iXX.[data_units] based on gas configuration
 # will also add H3 factor if part of the gas configuration
 # @param iso_file
-read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data_units = "nA") {
+read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data_units = "nA", data_scaling = 1e-9) {
   if (!"DataSet" %in% h5ls(filepath)$name)
     stop("expected DataSet attribute not present in HDF5 data file", call. = FALSE)
   
@@ -213,8 +215,7 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
   irms_data <- irms_data %>% rename_(.dots = rename_dots)
   
   # scale currents
-  data_scaling <- 1/get_si_prefix_scaling(data_units, "A")
-  scale_data <- function(x) x*data_scaling
+  scale_data <- function(x) x / data_scaling
   irms_data <- irms_data %>% mutate_at(vars(starts_with("i")), scale_data)
   
   # scale time

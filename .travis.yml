@@ -3,6 +3,7 @@
 language: R
 sudo: false
 dist: trusty
+warnings_are_errors: false
 cache: packages
 bioc_packages:
   - rhdf5
@@ -12,7 +13,6 @@ r:
   - devel
 os:
   - linux
-  - osx
 addons:
   apt:
     sources:

@@ -13,6 +13,7 @@ make_iso_file_data_structure <- function() {
       ), 
       file_info = list(
         file_id = NA_character_, # unique identifer
+        file_root = NA_character_, # root directory for file path
         file_path = NA_character_, # path to file (file extension is key for processing)
         file_subpath = NA_character_, # sub path in case file is an archieve
         file_datetime = NA_integer_ # the run date and time of the file
@@ -31,6 +32,7 @@ make_iso_file_data_structure <- function() {
 # basic dual inlet data structure
 make_di_data_structure <- function() {
   struct <- make_iso_file_data_structure()
+  struct$bgrd_data <- data_frame() # store background data
   class(struct) <- c("dual_inlet", class(struct))
   return(struct)
 }
@@ -246,21 +248,28 @@ print.continuous_flow <- function(x, ..., show_problems = TRUE) {
 # Update structures =====
 
 # set data structure file path
-set_ds_file_path <- function(ds, file_path, file_id = basename(file_path), file_subpath = NA_character_) {
+set_ds_file_path <- function(ds, file_root, file_path, file_id = basename(file_path), file_subpath = NA_character_) {
   if (!iso_is_file(ds)) stop("can only set path for iso_file data structures", call. = FALSE)
-  if (!file.exists(file_path)) stop("file/folder does not exist: ", file_path, call. = FALSE)
+  ds$file_info$file_root <- file_root
   ds$file_info$file_path <- file_path
   ds$file_info$file_id <- file_id
   ds$file_info$file_subpath <- file_subpath
+  if (!file.exists(get_ds_file_path(ds))) 
+    stop("file/folder does not exist: ", file_path, call. = FALSE)
   return(ds)
 }
 
+get_ds_file_path <- function(ds) {
+  if (is.na(ds$file_info$file_root)) return(ds$file_info$file_path)
+  else return(file.path(ds$file_info$file_root, ds$file_info$file_path))
+}
+
 # update read options in structure
-update_read_options <- function(ds, ...) {
-  dots <- list(...)
+update_read_options <- function(ds, read_options) {
   # remove read_ prefix in function parameters
-  names(dots) <- names(dots) %>% str_replace("^read_", "") 
-  update <- dots[names(dots) %in% names(ds$read_options)]
+  if(!is.list(read_options)) read_options <- as.list(read_options)
+  names(read_options) <- names(read_options) %>% str_replace("^read_", "") 
+  update <- read_options[names(read_options) %in% names(ds$read_options)]
   # update all that exist in the read options
   ds$read_options <- modifyList(ds$read_options, update)
   return(ds)

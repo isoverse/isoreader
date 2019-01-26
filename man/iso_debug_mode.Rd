@@ -24,8 +24,6 @@ set_finish_file_event_expr(event_expr = NULL)
 \item{cache}{whether to cache or read anything from cache}
 
 \item{event_expr}{an expression to evaluate in the context of reading individual iso files (evaluated in the local environment at the beginning of a file read)}
-
-\item{event_expr}{an expression to evaluate in the context of reading individual iso files (evaluated in the local environment at the end of a file read)}
 }
 \description{
 For troubleshooting. Not exported.

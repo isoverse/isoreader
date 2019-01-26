@@ -1,13 +1,14 @@
 # read isodat .did file
 # @param ds the data structure to fill
-iso_read_did <- function(ds) {
+# @param custom reader options - none needed
+iso_read_did <- function(ds, options = list()) {
   
   # safety checks
   if(!iso_is_dual_inlet(ds)) 
     stop("data structure must be a 'dual_inlet' iso_file", call. = FALSE)
   
   # read binary file
-  ds$binary <- read_binary_file(ds$file_info$file_path)
+  ds$binary <- get_ds_file_path(ds) %>% read_binary_file()
   
   # process file info
   if(ds$read_options$file_info) {

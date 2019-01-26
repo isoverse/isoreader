@@ -1,12 +1,13 @@
 # read cached isoreader files
 # @param ds the data structure to fill
-iso_read_rds <- function(ds) {
+# @param custom reader options - none needed
+iso_read_rds <- function(ds, options = list()) {
   
   # safety checks
   if(!iso_is_file(ds)) stop("data structure must be an iso_file", call. = FALSE)
   
   # load rds file
-  iso_files <- readRDS(ds$file_info$file_path) 
+  iso_files <- readRDS(get_ds_file_path(ds)) 
   
   # make sure object in file was loaded properly
   if (exists("isofiles", inherits = FALSE)) { 
@@ -46,7 +47,7 @@ iso_read_rds <- function(ds) {
     sprintf("version mismatch - %.0f of the %.0f data files stored in the R Data Structure ('%s') were created by a different version of the isoreader package. This may lead to processing problems.", 
             sum(!ok_version), length(iso_files), ds$file_info$file_id) %>% 
     log_warning()
-    log_warning("Consider re-reading the original data files using the 'iso_reread_files()' or 'iso_reread_archive()' function.")
+    log_warning("Consider re-reading the original data files using the 'iso_reread_files()' or 'iso_reread_storage()' function.")
   }
 
   return(iso_files)
