@@ -2,43 +2,13 @@
 % Please edit documentation in R/plotting.R
 \name{iso_plot_continuous_flow_data}
 \alias{iso_plot_continuous_flow_data}
-\title{Plot chromatogram from continuous flow data}
+\title{moved to isoprocessor}
 \usage{
-iso_plot_continuous_flow_data(iso_files, data = c(),
-  time_interval = c(), time_interval_units = "seconds",
-  filter = NULL, normalize = FALSE, zoom = NULL, panel = data,
-  color = file_id, linetype = NULL, label = file_id, ...)
+iso_plot_continuous_flow_data(...)
 }
 \arguments{
-\item{iso_files}{collection of iso_file objects}
-
-\item{data}{which masses and ratios to plot (e.g. c("44", "45", "45/44")), if omitted, all available masses and ratios are plotted. Note that ratios should be calculated using \code{\link{iso_calculate_ratios}} prior to plotting.}
-
-\item{time_interval}{which time interval to plot}
-
-\item{time_interval_units}{which units the time interval is in, default is "seconds"}
-
-\item{filter}{any filter condition to apply to the data beyond the masses/ratio selection (param \code{data}) and time interval (param \code{time_interval}). For details on the available data columns see \link{iso_get_raw_data} with parameters \code{gather = TRUE} and \code{include_file_info = everything()} (i.e. all file info is available for plotting aesthetics).}
-
-\item{normalize}{whether to normalize all data (default is FALSE, i.e. no normalization). If TRUE, normalizes each trace across all files. Normalizing always scales such that each trace fills the entire height of the plot area. Note that zooming (if \code{zoom} is set) is applied after normalizing.}
-
-\item{zoom}{if not set, automatically scales to the maximum range in the selected time_interval in each panel. If set, scales by the indicated factor, i.e. values > 1 are zoom in, values < 1 are zoom out, baseline always remains the bottom anchor point, zooming is always relative to the max in the plot (even if that is outside visible frame). Note that for overlay plots (\code{panel_bu = "none"}) zooming is relative to the max in each panel (potentially across different data traces). Also note that zooming only affects masses, ratios are not zoomed.}
-
-\item{panel}{whether to panel data by anything - any data column is possible (see notes in the \code{filter} parameter) but the most commonly used options are \code{panel = NULL} (overlay all), \code{panel = data} (by mass/ratio data), \code{panel = file_id} (panel by files, alternatively use any appropriate file_info column). The default is panelling by \code{data}.}
-
-\item{color}{whether to color data by anything, options are the same as for \code{panel} but the default is \code{file_id} and complex expressions (not just columns) are supported.}
-
-\item{linetype}{whether to differentiate data by linetype, options are the same as for \code{panel} but the default is \code{NULL} (i.e. no linetype aesthetic) and complex expressions (not just columns) are supported. Note that a limited number of linetypes (6) is defined by default and the plot will fail if a higher number is required unless specified using \code{\link[ggplot2]{scale_linetype}}.}
-
-\item{label}{this is primarily of use for turning these into interactive plots via ggplotly as it present as an additional mousover label. Any unique file identifier is a useful choice, the default is \code{file_id}.}
-
-\item{...}{deprecated parameters}
+\item{...}{deprecated}
 }
 \description{
-Plot chromatogram from continuous flow data
+moved to isoprocessor
 }
-\seealso{
-Other plot functions: \code{\link{iso_plot_dual_inlet_data}},
-  \code{\link{iso_plot_raw_data}}
-}
-\concept{plot functions}
