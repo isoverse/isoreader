@@ -265,11 +265,11 @@ get_ds_file_path <- function(ds) {
 }
 
 # update read options in structure
-update_read_options <- function(ds, ...) {
-  dots <- list(...)
+update_read_options <- function(ds, read_options) {
   # remove read_ prefix in function parameters
-  names(dots) <- names(dots) %>% str_replace("^read_", "") 
-  update <- dots[names(dots) %in% names(ds$read_options)]
+  if(!is.list(read_options)) read_options <- as.list(read_options)
+  names(read_options) <- names(read_options) %>% str_replace("^read_", "") 
+  update <- read_options[names(read_options) %in% names(ds$read_options)]
   # update all that exist in the read options
   ds$read_options <- modifyList(ds$read_options, update)
   return(ds)

@@ -41,7 +41,9 @@ iso_files <-
   iso_read_dual_inlet(
     iso_get_reader_example("dual_inlet_example.did"),
     iso_get_reader_example("dual_inlet_example2.did"),
-    iso_get_reader_example("dual_inlet_example.caf")
+    iso_get_reader_example("dual_inlet_example.caf"),
+    iso_get_reader_example("dual_inlet_nu_example.txt"),
+    nu_masses = 49:44
   )
 ```
 

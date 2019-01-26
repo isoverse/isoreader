@@ -1,6 +1,7 @@
 # read isodat .caf files
 # @param ds the data structure to fill
-iso_read_caf <- function(ds) {
+# @param custom reader options - none needed
+iso_read_caf <- function(ds, options = list()) {
   
   # safety checks
   if(!iso_is_dual_inlet(ds)) 

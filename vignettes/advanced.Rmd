@@ -17,12 +17,12 @@ knitr::opts_chunk$set(
 ```
 
 
- Adding new file format readers
+# Adding new file format readers
 
-Testing out new file format readers is easiest by registering a new reader function for a specific file extension using `iso_register_dual_inlet_file_reader` and `iso_register_continuous_flow_file_reader`, respectively. Both require an extension (e.g. `".ext"`), name of the new reader function (`"new_reader"`), and optionally a description. Both functions automatically return a data frame with a list of all registered reader. Overwriting of existing readers with a different function requires an explicit `overwrite = TRUE` flag. All reader functions must accept an isoreader data stucture object as the first argument and should return the same structure with data filled in for downstream isoreader operations to work smoothly. The following minimal example illustrates how to do this with the `new_reader` function simply printing out the layout of the provided data structure skeleton `ds`.
+Testing out new file format readers is easiest by registering a new reader function for a specific file extension using `iso_register_dual_inlet_file_reader` and `iso_register_continuous_flow_file_reader`, respectively. Both require an extension (e.g. `".ext"`), name of the new reader function (`"new_reader"`), and optionally a description. Both functions automatically return a data frame with a list of all registered reader. Overwriting of existing readers with a different function requires an explicit `overwrite = TRUE` flag. All reader functions must accept an isoreader data stucture object (`ds`) as the first argument, a list of reader specific options as the second argument (`options`), and should return the structure with data filled in for downstream isoreader operations to work smoothly. The following minimal example illustrates how to do this with the `new_reader` function simply printing out the layout of the provided data structure skeleton `ds`.
 
 ```{r}
-new_reader <- function(ds) {
+new_reader <- function(ds, options = list()) {
   isoreader:::log_message("this is the new reader!")
   str(ds)
   return(ds)

@@ -1,6 +1,7 @@
 # read isodat .dxf file
 # @param ds the data structure to fill
-iso_read_dxf <- function(ds) {
+# @param custom reader options - none needed
+iso_read_dxf <- function(ds, options = list()) {
 
   # safety checks
   if(!iso_is_continuous_flow(ds)) 

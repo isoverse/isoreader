@@ -15,18 +15,18 @@ test_that("test that export to rda works properly", {
   cf$file_info$file_root <- "."
   cf$file_info$file_path <- "test"
   cf$file_info$vector_test <- 1:3
-  cf$raw_data <- data_frame(time = 1:10, m44 = runif(10), m45 = runif(10))
-  cf$method_info$standards <- data_frame(standard = "test a")
-  cf$method_info$resistors <- data_frame(cup = 1:3, R.Ohm = c(1e9, 1e10, 1e11))
-  cf$vendor_data_table <- data_frame(x = 1:5, y = letters[1:5]) %>% { attr(., "units") <- c(x="a", y = "b"); . }
+  cf$raw_data <- tibble(time = 1:10, m44 = runif(10), m45 = runif(10))
+  cf$method_info$standards <- tibble(standard = "test a")
+  cf$method_info$resistors <- tibble(cup = 1:3, R.Ohm = c(1e9, 1e10, 1e11))
+  cf$vendor_data_table <- tibble(x = 1:5, y = letters[1:5]) %>% { attr(., "units") <- c(x="a", y = "b"); . }
   filepath <- file.path(tempdir(), "test")
   cf <- cf %>% iso_as_file_list %>% convert_file_info_to_data_frame() %>% {.[[1]]}
   
   # export and reimport single file
   expect_message(cf_out <- iso_save(cf, filepath, quiet = FALSE), "exporting data .* into R Data Storage")
   expect_equal(cf$raw_data, cf_out$raw_data)
-  expect_true(file.exists(str_c(filepath, ".cf.rds")))
-  expect_message(cf_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rds"), quiet = FALSE), "reading file")
+  expect_true(file.exists(paste0(filepath, ".cf.rds")))
+  expect_message(cf_back <- iso_read_continuous_flow(paste0(filepath, ".cf.rds"), quiet = FALSE), "reading file")
   expect_equal(cf$raw_data, cf_back$raw_data)
   expect_equal(cf$file_info %>% unnest(vector_test), cf_back$file_info %>% unnest(vector_test))
   expect_equal(cf$method_info$standards, cf_back$method_info$standards)
