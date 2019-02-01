@@ -60,7 +60,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/kopflab/isoreader">
+  <a href="https://github.com/isoverse/isoreader">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -82,7 +82,7 @@
             
             <h4 class="date">2019-01-26</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/kopflab/isoreader/blob/master/vignettes/continuous_flow.Rmd"><code>vignettes/continuous_flow.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/continuous_flow.Rmd"><code>vignettes/continuous_flow.Rmd</code></a></small>
       <div class="hidden name"><code>continuous_flow.Rmd</code></div>
 
     </div>
@@ -92,7 +92,7 @@
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>Isoreader supports several continuous flow IRMS data formats. This vignette shows some of the functionality for continuous flow files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the <a href="https://kopflab.github.io/isoreader/articles/operations.html">operations vignette</a>. For details on downstream data processing and visualization, see the <a href="https://isoprocessor.kopflab.org">isoprocessor package</a>.</p>
+<p>Isoreader supports several continuous flow IRMS data formats. This vignette shows some of the functionality for continuous flow files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the <a href="http://isoreader.isoverse.org/articles/operations.html">operations vignette</a>. For details on downstream data processing and visualization, see the <a href="https://isoprocessor.isoverse.org">isoprocessor package</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># load isoreader package</span></a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(isoreader)</a></code></pre></div>
 </div>
@@ -136,7 +136,7 @@
 <div id="problems" class="section level2">
 <h2 class="hasAnchor">
 <a href="#problems" class="anchor"></a>Problems</h2>
-<p>In case there was any trouble with reading any of the files, the following functions provide an overview summary as well as details of all errors and warnings, respectively. The examples here contain no errors but if you run into any unexpected file read problems, please file a bug report in the <a href="https://github.com/kopflab/isoreader/issues">isoreader issue tracker</a>.</p>
+<p>In case there was any trouble with reading any of the files, the following functions provide an overview summary as well as details of all errors and warnings, respectively. The examples here contain no errors but if you run into any unexpected file read problems, please file a bug report in the <a href="https://github.com/isoverse/isoreader/issues">isoreader issue tracker</a>.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/rmarkdown/topics/paged_table">paged_table</a></span>()</a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -248,7 +248,7 @@
 <div id="data-processing" class="section level1">
 <h1 class="hasAnchor">
 <a href="#data-processing" class="anchor"></a>Data Processing</h1>
-<p>The isoreader package is intended to make raw stable isotope data easily accessible. However, as with most analytical data, there is significant downstream processing required to turn these raw intensity chromatograms into peak-specific, properly referenced isotopic measurements. This and similar functionality as well as data visualization is part of the <a href="https://isoprocessor.kopflab.org">isoprocessor package</a> which takes isotopic data through the various corrections in a transparent, efficient and reproducible manner.</p>
+<p>The isoreader package is intended to make raw stable isotope data easily accessible. However, as with most analytical data, there is significant downstream processing required to turn these raw intensity chromatograms into peak-specific, properly referenced isotopic measurements. This and similar functionality as well as data visualization is part of the <a href="https://isoprocessor.isoverse.org">isoprocessor package</a> which takes isotopic data through the various corrections in a transparent, efficient and reproducible manner.</p>
 <p>That said, most vendor software also performs some of these calculations and it can be useful to be able to compare new data reduction procecures against those implemented in the vendor software. For this purpose, isoreader retrieves vendor computed data tables whenver possible, as illustrated below.</p>
 <div id="vendor-data-table" class="section level2">
 <h2 class="hasAnchor">

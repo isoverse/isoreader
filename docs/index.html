@@ -60,9 +60,9 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/kopflab/isoreader">
+  <a href="https://github.com/isoverse/isoreader">
     <span class="fa fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -73,13 +73,13 @@
 </div>
 <!--/.navbar -->
 
-      
+
       </header><div class="row">
   <div class="col-md-9 contents">
-    
 
-    
-    
+
+
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <div id="isoreader" class="section level1">
 
@@ -87,15 +87,15 @@
 <div id="about" class="section level2">
 <h2 class="hasAnchor">
 <a href="#about" class="anchor"></a>About</h2>
-<p>This package is intended as a unified one-stop command line interface to all common IRMS (isotope ratio mass spectrometry) file formats used in stable isotope geochemistry. It is an extension and highly stream-lined re-implemention of the proof-of-concept <a href="https://github.com/sebkopf/isoread">isoread</a> package and is designed to fit into a larger framework of IRMS data tools that includes the web-based graphical user interface package <a href="https://github.com/KopfLab/isoviewer">isoviewer</a> and the data processing and visualization pipeline <a href="https://github.com/KopfLab/isoprocessor">isoprocessor</a>.</p>
-<p><a href="https://kopflab.github.io/isoreader/">isoreader</a> enables the reading and processing of stable isotope data directly from the data files and thus provides a tool for platform-independent (Windows, Mac, Linux), efficient and reproducible data reduction. Although implemented in R, it can be used in both RMarkdown as well as Jupyter data processing notebooks and also provides functionality for easy export to Python using the shared R/Python feather file format. At present, it can read most Thermo dual inlet (.did, .caf) and continuous flow (.dxf, .cf) data files as well as Elementar continuous flow data archives (.iarc) with additional extensions for other file formats in the works. Due to the dynamic implementation and design based on the popular <a href="https://www.tidyverse.org/">tidyverse</a> style of R programming, isoreader is easily extendable, takes care of error catching to avoid pipeline breaks due to problems encountered in source data files (modeled after <a href="https://readr.tidyverse.org/">readr</a>) and works great with <a href="https://www.tidyverse.org/">tidyverse</a> packages such as <a href="https://tidyr.tidyverse.org/">tidyr</a>, <a href="https://dplyr.tidyverse.org/">dplyr</a> and <a href="https://ggplot2.tidyverse.org/">ggplot</a>.</p>
+<p>This package is intended as a unified one-stop command line interface to all common IRMS (isotope ratio mass spectrometry) file formats used in stable isotope geochemistry. It is an extension and highly stream-lined re-implemention of the proof-of-concept <a href="https://github.com/sebkopf/isoread">isoread</a> package and is designed to fit into a larger framework of IRMS data tools that includes the web-based graphical user interface package <a href="https://github.com/isoverse/isoviewer">isoviewer</a> and the data processing and visualization pipeline <a href="https://github.com/isoverse/isoprocessor">isoprocessor</a>.</p>
+<p><a href="http://isoreader.isoverse.org/">isoreader</a> enables the reading and processing of stable isotope data directly from the data files and thus provides a tool for platform-independent (Windows, Mac, Linux), efficient and reproducible data reduction. Although implemented in R, it can be used in both RMarkdown as well as Jupyter data processing notebooks and also provides functionality for easy export to Python using the shared R/Python feather file format. At present, it can read most Thermo dual inlet (.did, .caf) and continuous flow (.dxf, .cf) data files as well as Elementar continuous flow data archives (.iarc) with additional extensions for other file formats in the works. Due to the dynamic implementation and design based on the popular <a href="https://www.tidyverse.org/">tidyverse</a> style of R programming, isoreader is easily extendable, takes care of error catching to avoid pipeline breaks due to problems encountered in source data files (modeled after <a href="https://readr.tidyverse.org/">readr</a>) and works great with <a href="https://www.tidyverse.org/">tidyverse</a> packages such as <a href="https://tidyr.tidyverse.org/">tidyr</a>, <a href="https://dplyr.tidyverse.org/">dplyr</a> and <a href="https://ggplot2.tidyverse.org/">ggplot</a>.</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>You can install isoreader from github with the devtools package (version &gt; 1.13.2 required for bioconductor support).</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages("devtools") # only needed once</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"KopfLab/isoreader"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"isoverse/isoreader"</span>)</a></code></pre></div>
 </div>
 <div id="functionality" class="section level2">
 <h2 class="hasAnchor">
@@ -161,28 +161,28 @@
 </tbody>
 </table>
 <ul>
-<li>for a full reference of all available functions, see the <strong><a href="https://kopflab.github.io/isoreader/reference/">Function Reference</a></strong>
+<li>for a full reference of all available functions, see the <strong><a href="http://isoreader.isoverse.org/reference/">Function Reference</a></strong>
 </li>
-<li>for an example of how to work with continuos flow data files, see the vignette on <strong><a href="https://kopflab.github.io/isoreader/articles/continuous_flow.html">Continuous Flow</a></strong>
+<li>for an example of how to work with continuos flow data files, see the vignette on <strong><a href="http://isoreader.isoverse.org/articles/continuous_flow.html">Continuous Flow</a></strong>
 </li>
-<li>for an example of how to work with dual inlet data files, see the vignette on <strong><a href="https://kopflab.github.io/isoreader/articles/dual_inlet.html">Dual Inlet</a></strong>
+<li>for an example of how to work with dual inlet data files, see the vignette on <strong><a href="http://isoreader.isoverse.org/articles/dual_inlet.html">Dual Inlet</a></strong>
 </li>
 </ul>
 </div>
 <div id="troubleshooting" class="section level2">
 <h2 class="hasAnchor">
 <a href="#troubleshooting" class="anchor"></a>Troubleshooting</h2>
-<p>If you run into a file format that is not currently supported or any issues with supported formats, please file a request/bug report in the <a href="https://github.com/kopflab/isoreader/issues">issue tracker</a>. Likewise if you run into any unexpected behaviour or uncaught errors. Most isoreader functionality is continuously tested on Unix and Windows systems using <a href="https://travis-ci.org/">Travis</a> and <a href="https://ci.appveyor.com/">AppVeyor</a>, respectively. This makes it possible to ensure proper functionality and catch issues quickly, however, sometimes something slips through or is not yet automatically tested. We try to make sure to fix such errors as soon as possible but ask for patience due to the small develoment team. If you have the skills and are willing to fix problems yourself, that’s great, please take a look at the development section below.</p>
+<p>If you run into a file format that is not currently supported or any issues with supported formats, please file a request/bug report in the <a href="https://github.com/isoverse/isoreader/issues">issue tracker</a>. Likewise if you run into any unexpected behaviour or uncaught errors. Most isoreader functionality is continuously tested on Unix and Windows systems using <a href="https://travis-ci.org/">Travis</a> and <a href="https://ci.appveyor.com/">AppVeyor</a>, respectively. This makes it possible to ensure proper functionality and catch issues quickly, however, sometimes something slips through or is not yet automatically tested. We try to make sure to fix such errors as soon as possible but ask for patience due to the small develoment team. If you have the skills and are willing to fix problems yourself, that’s great, please take a look at the development section below.</p>
 </div>
 <div id="development" class="section level2">
 <h2 class="hasAnchor">
 <a href="#development" class="anchor"></a>Development</h2>
-<p>If you are interested in helping with development, that’s fantastic! Please fork the repository and branch off from the <a href="https://github.com/KopfLab/isoreader/tree/dev">dev branch</a> since it contains the most up-to-date development version of <a href="https://kopflab.github.io/isoreader/">isoreader</a>. Make sure to write <a href="http://r-pkgs.had.co.nz/tests.html"><code>testthat</code> tests</a> for your work (stored in the tests/testthat directory). All tests can be run automatically and continuously during development to make it easier to spot any code problems on the go. The easiest way to run them is by running <code>make auto_test</code> in the <a href="https://kopflab.github.io/isoreader/">isoreader</a> directory from command line (it will test everything automatically in a completely separate R session).</p>
+<p>If you are interested in helping with development, that’s fantastic! Please fork the repository and branch off from the <a href="https://github.com/isoverse/isoreader/tree/dev">dev branch</a> since it contains the most up-to-date development version of <a href="http://isoreader.isoverse.org/">isoreader</a>. Make sure to write <a href="http://r-pkgs.had.co.nz/tests.html"><code>testthat</code> tests</a> for your work (stored in the tests/testthat directory). All tests can be run automatically and continuously during development to make it easier to spot any code problems on the go. The easiest way to run them is by running <code>make auto_test</code> in the <a href="http://isoreader.isoverse.org/">isoreader</a> directory from command line (it will test everything automatically in a completely separate R session).</p>
 </div>
 <div id="open-source" class="section level2">
 <h2 class="hasAnchor">
 <a href="#open-source" class="anchor"></a>Open Source</h2>
-<p><a href="https://kopflab.github.io/isoreader/">isoreader</a> is and will always be fully open-source (i.e. free as in ‘freedom’ and free as in ‘free beer’) and is provided as is. The source code is released under GPL-2.</p>
+<p><a href="http://isoreader.isoverse.org/">isoreader</a> is and will always be fully open-source (i.e. free as in ‘freedom’ and free as in ‘free beer’) and is provided as is. The source code is released under GPL-2.</p>
 </div>
 <div id="isoverse" class="section level2">
 <h2 class="hasAnchor">
@@ -197,9 +197,9 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/kopflab/isoreader">https://​github.com/​kopflab/​isoreader</a>
+<li>Browse source code at <br><a href="https://github.com/isoverse/isoreader">https://​github.com/​isoverse/​isoreader</a>
 </li>
-<li>Report a bug at <br><a href="https://github.com/kopflab/isoreader/issues">https://​github.com/​kopflab/​isoreader/​issues</a>
+<li>Report a bug at <br><a href="https://github.com/isoverse/isoreader/issues">https://​github.com/​isoverse/​isoreader/​issues</a>
 </li>
 </ul>
 </div>
@@ -222,11 +222,11 @@
 <ul class="list-unstyled">
 <li><a href="https://cran.r-project.org/package=isoreader"><img src="http://www.r-pkg.org/badges/version/isoreader" alt="CRAN_Status_Badge"></a></li>
 <li><a href="/commits"><img src="https://img.shields.io/badge/GitHub-1.0.2-orange.svg?style=flat-square" alt="Git_Hub_Version"></a></li>
-<li><a href="https://kopflab.github.io/isoreader/"><img src="https://img.shields.io/badge/docs-online-green.svg" alt="Documentation"></a></li>
-<li><a href="https://travis-ci.org/KopfLab/isoreader"><img src="https://travis-ci.org/KopfLab/isoreader.svg?branch=master" alt="Build Status"></a></li>
-<li><a href="https://ci.appveyor.com/project/KopfLab/isoreader"><img src="https://ci.appveyor.com/api/projects/status/github/KopfLab/isoreader?branch=master&amp;svg=true" alt="AppVeyor Build Status"></a></li>
-<li><a href="https://mybinder.org/v2/gh/KopfLab/isoreader/binder?urlpath=rstudio"><img src="https://img.shields.io/badge/launch-RStudio-blue.svg" alt="Binder"></a></li>
-<li><a href="https://mybinder.org/v2/gh/KopfLab/isoreader/binder?urlpath=lab"><img src="https://img.shields.io/badge/launch-Jupyter-orange.svg" alt="Binder"></a></li>
+<li><a href="http://isoreader.isoverse.org/"><img src="https://img.shields.io/badge/docs-online-green.svg" alt="Documentation"></a></li>
+<li><a href="https://travis-ci.org/isoverse/isoreader"><img src="https://travis-ci.org/isoverse/isoreader.svg?branch=master" alt="Build Status"></a></li>
+<li><a href="https://ci.appveyor.com/project/isoverse/isoreader"><img src="https://ci.appveyor.com/api/projects/status/github/isoverse/isoreader?branch=master&amp;svg=true" alt="AppVeyor Build Status"></a></li>
+<li><a href="https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=rstudio"><img src="https://img.shields.io/badge/launch-RStudio-blue.svg" alt="Binder"></a></li>
+<li><a href="https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=lab"><img src="https://img.shields.io/badge/launch-Jupyter-orange.svg" alt="Binder"></a></li>
 </ul>
 </div>
 </div>
@@ -244,7 +244,7 @@
       </footer>
 </div>
 
-  
+
 
   </body>
 </html>

@@ -15,8 +15,8 @@ collapse <- function(...) {
 # helper to make sure columns exist
 # NOTE: is this used?
 col_check <- function(cols, data, fun = sys.call(-1), msg = "You may have to change the parameters in your function call") {
-  if (!is.null(cols) && length(missing <- setdiff(cols, names(data))) > 0) 
-    stop("column(s) not in data: '", str_c(missing, collapse = "', '"), 
+  if (!is.null(cols) && length(missing <- setdiff(cols, names(data))) > 0)
+    stop("column(s) not in data: '", str_c(missing, collapse = "', '"),
          "'. ", msg, ". Function: ", fun, call. = FALSE)
 }
 
@@ -31,8 +31,8 @@ log_message <- function(..., type = "info", prefix = "Info: ", quiet = default(q
       # save to log file
       log_file <- get_temp("parallel_log_file")
       if (!is.null(log_file)) {
-        sprintf("\"%s\",%d,\"%s\"\n", type, process, 
-                str_replace_all(.makeMessage(...), fixed("\""), "\\\"")) %>% 
+        sprintf("\"%s\",%d,\"%s\"\n", type, process,
+                str_replace_all(.makeMessage(...), fixed("\""), "\\\"")) %>%
           cat(file = log_file, append = TRUE)
       }
     } else if (!is.null(pb) && !pb$finished) {
@@ -72,11 +72,11 @@ log_progress <- function(n = 1L) {
 # setup log files
 setup_parallel_logs <- function() {
   tmpfile <- tempfile()
-  
+
   log <- paste0(tmpfile, ".log")
   cat("", file = log)
   set_temp("parallel_log_file", log)
-  
+
   progress <- paste0(tmpfile, ".progress")
   cat("", file = progress)
   set_temp("parallel_progress_file", progress)
@@ -90,14 +90,14 @@ monitor_parallel_logs <- function(processes) {
   while (TRUE) {
     # update status
     status <- process_parallel_logs(status)
-    
+
     # processors report
     futures_finished <- purrr::map_lgl(processes$result, future::resolved)
-    
+
     # done?
     if (all(futures_finished)) break
   }
-  
+
   # finall call to wrap up logs
   process_parallel_logs(status)
 }
@@ -108,9 +108,9 @@ process_parallel_logs <- function(status) {
   # logs
   log <- get_temp("parallel_log_file")
   if (!is.null(log) && file.exists(log)) {
-    
+
     # try to read logs
-    reset <- 
+    reset <-
       tryCatch(
         {
           logs <- suppressMessages(readr::read_csv(log, col_names = FALSE, skip = status$log_n))
@@ -119,7 +119,7 @@ process_parallel_logs <- function(status) {
         },
         error = function(e) e$message # csv read error
       )
-    
+
     if (!is.null(reset)) {
       # safety precaution in case log file gets corrupted
       log_message("resetting log file (some progress updates may not display) because of error - ", reset, prefix = "Warning: ")
@@ -128,16 +128,16 @@ process_parallel_logs <- function(status) {
     } else if (nrow(logs) > 0) {
       # display logs
       status$log_n <- status$log_n + nrow(logs)
-      logs %>% 
+      logs %>%
         mutate(prefix = case_when(
           X1 == "info" ~ sprintf("Info (process %d): ", X2),
           X1 == "warning" ~ sprintf("Warning (process %d): ", X2),
           TRUE ~ sprintf("Process %d: ", X2)
-        )) %>% 
+        )) %>%
         with(purrr::walk2(X3, prefix, ~log_message(.x, prefix = .y)))
     }
   }
-  
+
   # finished files
   progress <- get_temp("parallel_progress_file")
   if (!is.null(progress) && file.exists(progress)) {
@@ -147,7 +147,7 @@ process_parallel_logs <- function(status) {
       status$progress <- progress
     }
   }
-  
+
   return(status)
 }
 
@@ -162,16 +162,16 @@ cleanup_parallel_logs <- function() {
 # example files ====
 
 #' Example files
-#' 
+#'
 #' @description The isoreader package comes with a few example files to make it easy to illustrate the functionality.
-#' 
+#'
 #' @details \code{iso_get_reader_example}: retrieve the path to an isoreader example file
 #' @param filename the name of the example file for which to retrieve the system path
 #' @export
 iso_get_reader_example <- function(filename) {
   filepath <- system.file(package = "isoreader", "extdata", filename)
-  if(!file.exists(filepath)) 
-    sprintf("The example file '%s' does not exist. Please use iso_get_reader_examples() to see a list of all available example files.", filename) %>% 
+  if(!file.exists(filepath))
+    sprintf("The example file '%s' does not exist. Please use iso_get_reader_examples() to see a list of all available example files.", filename) %>%
     stop(call. = FALSE)
   return(filepath)
 }
@@ -184,27 +184,27 @@ iso_get_reader_examples <- function() {
   extension <- filename <- format <- NULL
   file_types <- iso_get_supported_file_types()
   iso_expand_paths(
-      ".", extensions = file_types$extension, root = system.file(package = "isoreader", "extdata")) %>% 
-    mutate(filename = basename(path)) %>% 
-    match_to_supported_file_types(file_types) %>% 
-    arrange(type, extension, filename) %>% 
+      ".", extensions = file_types$extension, root = system.file(package = "isoreader", "extdata")) %>%
+    mutate(filename = basename(path)) %>%
+    match_to_supported_file_types(file_types) %>%
+    arrange(type, extension, filename) %>%
     select(filename, type, description)
 }
 
 # file paths ====
 
 # convenience function to check if something is a folder (even if it doesn't exist)
-# @param path(s) 
+# @param path(s)
 is_folder <- function(path, check_existence = TRUE) {
   # safety check
-  if(check_existence && !(exists <- file.exists(path))) 
+  if(check_existence && !(exists <- file.exists(path)))
     stop("paths do not exist:\n - ", str_c(path[!exists], collapse = "\n - "), call. = FALSE)
-  
+
   # it's a folder if it exists
-  check <- dir.exists(path) | 
+  check <- dir.exists(path) |
     # or if we're not checking existence and it does not exist but it has a . in the name
     ( !check_existence & !file.exists(path) & !str_detect(basename(path), fixed(".")) )
-  
+
   return(check)
 }
 
@@ -217,31 +217,31 @@ get_paths_data_frame <- function(path, root, check_existence = TRUE) {
     stop("paths and roots need to have one entry or be of the same length, not ",
          length(path), " and ", length(root), call. = FALSE)
   }
-  
+
   # path safety check
   if (any(path == "")) {
     stop("empty paths (\"\") are not valid, please use \".\" to refer to the current directory", call. = FALSE)
   }
-  
+
   # paths data frame
-  paths <- 
+  paths <-
     data_frame(
       i = 1:max(length(root), length(path)),
-      root = root, 
+      root = root,
       path = path,
       absolute = R.utils::isAbsolutePath(path),
       full_path = ifelse(absolute, path, file.path(root, path)),
       exists = file.exists(full_path),
       is_dir = is_folder(full_path, check_existence = !!check_existence)
     )
-  
+
   # safety check
   if (check_existence && !all(paths$exists)) {
-    stop("path does not exist: \n\t", 
-         paste(filter(paths, !exists)$path, collapse = "\n\t"), 
+    stop("path does not exist: \n\t",
+         paste(filter(paths, !exists)$path, collapse = "\n\t"),
          call. = FALSE)
   }
-  
+
   return(paths)
 }
 
@@ -252,16 +252,16 @@ has_common_start <- function(vectors, common) {
   common_length <- length(common)
   vector_lengths <- map_int(vectors, length)
   is_common <- rep(TRUE, length(vectors))
-  
+
   # rule out those that are too short
   is_common [vector_lengths < common_length] <- FALSE
-  
+
   # check for others whether they are identical
   is_common[is_common] <- map_lgl(
-    vectors[is_common], 
+    vectors[is_common],
     ~identical(.x[1:common_length], common)
   )
-  
+
   # return
   return(is_common)
 }
@@ -273,46 +273,46 @@ find_common_different_from_start <- function(vectors, empty = character(0)) {
   if(min_length == 0) {
     return(list(common = empty, different = vectors))
   }
-  
+
   # all path vectors
-  vectors <- 
+  vectors <-
     map2(
-      1:length(vectors), vectors, 
+      1:length(vectors), vectors,
       ~data_frame(v = .x, i = 1:length(.y), entry = .y)
-    ) %>% 
-    bind_rows() 
-  
+    ) %>%
+    bind_rows()
+
   # common segments
-  commons <- vectors %>% 
-    filter(i <= min_length) %>% 
-    group_by(i) %>% 
-    summarize(same = all(entry == entry[1])) %>% 
-    arrange(i) %>% 
+  commons <- vectors %>%
+    filter(i <= min_length) %>%
+    group_by(i) %>%
+    summarize(same = all(entry == entry[1])) %>%
+    arrange(i) %>%
     mutate(diff = cumsum(abs(c(same[1] == FALSE,diff(!same))))) %>%
     filter(diff == 0)
-  
+
   # common vector
   common <- filter(vectors, v==1)$entry[commons$i]
   if (length(common) == 0) common <- empty
-  
+
   # differences vector
-  different <- 
-    filter(vectors, !i %in% commons$i) %>% 
-    select(v, entry) %>% 
-    nest(-v) %>% 
+  different <-
+    filter(vectors, !i %in% commons$i) %>%
+    select(v, entry) %>%
+    nest(-v) %>%
     full_join(data_frame(
-      v = unique(vectors$v), 
-      empty = list(entry = empty)), by = "v") %>% 
+      v = unique(vectors$v),
+      empty = list(entry = empty)), by = "v") %>%
     mutate(
       missing = map_lgl(data, is.null),
       data = map2(missing, data, ~if(.x) { NULL } else { .y$entry }),
       result = ifelse(missing, empty, data)
-    ) %>% 
-    select(v, result) %>% 
-    arrange(v) %>% 
-    tibble::deframe() %>% 
+    ) %>%
+    select(v, result) %>%
+    arrange(v) %>%
+    tibble::deframe() %>%
     unname()
-  
+
   return(
     list(
       common = common,
@@ -337,9 +337,9 @@ get_path_segments <- function(path) {
 }
 
 #' Expand file paths
-#' 
+#'
 #' Helper function to expand the provided paths to find data files in folders and subfolders that match any of the specified extensions. Filepaths will be kept as is, only folders will be expanded. Note that this function is rarely called directly. It is used automatically by \code{\link{iso_read_dual_inlet}} and \code{\link{iso_read_continuous_flow}} to identify fiels of interest based on the file paths provided.
-#' 
+#'
 #' @param path vector of file/folder paths, mixed relative and absolute paths are allowed.
 #' @param extensions which extensions to look for? (with or without leading .) - this is typically one or more of the extensions listed by \code{\link{iso_get_supported_file_types}}
 #' @param root root for relative paths. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). The default is the current working directory (\code{"."}). Can be supplied as a vector of same length as the provided paths if the paths have different roots.
@@ -347,69 +347,69 @@ get_path_segments <- function(path) {
 #' @family file system functions
 #' @export
 iso_expand_paths <- function(path, extensions = c(), root = ".") {
-  
+
   # file paths
   paths <- get_paths_data_frame(path, root, check_existence = TRUE)
-  
+
   # extensions check
   if(length(extensions) == 0) stop("no extensions provided for retrieving file paths", call. = FALSE)
   pattern <- extensions %>% str_replace_all("\\.", "\\\\.") %>% str_c(collapse = "|") %>% { str_c("(", ., ")$") }
-  paths <- paths %>% 
+  paths <- paths %>%
     mutate(
       is_dir = dir.exists(full_path),
       has_ext = ifelse(is_dir, TRUE, str_detect(basename(full_path), pattern))
     )
   if (!all(paths$has_ext)) {
-    stop("some file(s) do not have one of the supported extensions (", 
-         str_c(extensions, collapse = ", "), 
+    stop("some file(s) do not have one of the supported extensions (",
+         str_c(extensions, collapse = ", "),
          "):\n\t", with(paths, path[!has_ext]) %>% str_c(collapse = "\n\t"), call. = FALSE)
   }
-  
+
   # retrieve all the files
-  filepaths <- 
-    paths %>% 
-    filter(is_dir) %>% 
-    mutate(file = map(full_path, ~list.files(.x, pattern = pattern, recursive = TRUE, include.dirs = FALSE))) %>% 
+  filepaths <-
+    paths %>%
+    filter(is_dir) %>%
+    mutate(file = map(full_path, ~list.files(.x, pattern = pattern, recursive = TRUE, include.dirs = FALSE))) %>%
     unnest(file)
-  
-  if (nrow(filepaths) > 0) 
+
+  if (nrow(filepaths) > 0)
     filepaths <- mutate(filepaths, path = file.path(path, file))
-  
+
   # simplify
-  paths <- 
+  paths <-
     bind_rows(
       filter(paths, !is_dir),
-      select(filepaths, i, root, path) 
-    ) %>% 
-    arrange(i) %>% 
-    select(root, path) %>% 
+      select(filepaths, i, root, path)
+    ) %>%
+    arrange(i) %>%
+    select(root, path) %>%
     unique() # make sure all unique files
-  
+
   # double check that filenames are unique
   filenames <- basename(paths$path)
   if (anyDuplicated(filenames)) {
     dups <- duplicated(filenames) | duplicated(filenames, fromLast = T)
-    warning("some files from different folders have identical file names:\n\t", 
+    warning("some files from different folders have identical file names:\n\t",
             paths$path[dups] %>% str_c(collapse = "\n\t"), immediate. = TRUE, call. = FALSE)
   }
-  
+
   return(paths)
 }
 
 
 #' Root paths
-#' 
-#' Function to root both relative and absolute paths to a root directory (or directories) commonly relative to current working directory. Determines the best way to shorten relative paths and put absolute paths in a relative context (if possible) using \link{iso_shorten_relative_paths} and \link{iso_find_absolute_path_roots}, respectively. 
-#' 
+#'
+#' Function to root both relative and absolute paths to a root directory (or directories) commonly relative to current working directory. Determines the best way to shorten relative paths and put absolute paths in a relative context (if possible) using \link{iso_shorten_relative_paths} and \link{iso_find_absolute_path_roots}, respectively.
+#'
 #' @inheritParams iso_find_absolute_path_roots
 #' @return a data frame with the root directories and paths relative to the root - order of input paths is preserved
 #' @family file system functions
 #' @export
 iso_root_paths <- function(path, root = ".", check_existence = TRUE) {
-  
+
   paths <- iso_shorten_relative_paths(path, root)
   paths <- iso_find_absolute_path_roots(paths$path, paths$root, check_existence = check_existence)
-  
+
   return(paths)
 }
 
@@ -420,68 +420,68 @@ iso_root_paths <- function(path, root = ".", check_existence = TRUE) {
 #' @inheritParams iso_expand_paths
 #' @return a data frame with the root directories and paths relative to the root - order of input paths is preserved
 #' @family file system functions
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' iso_shorten_relative_paths(file.path("A", "B", "C"), "A") # root = "A", path = B/C
 #' iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "B")) # root = "A/B", path = "C"
 #' iso_shorten_relative_paths(file.path("A", "C", "D"), file.path("A", "B")) # root = "A", path = "C/D"
 #' iso_shorten_relative_paths(file.path("A", "B", "C"), "B") # root = ".", path stays "A/B/C"
 iso_shorten_relative_paths <- function(path, root = ".") {
-  
+
   # error with dimensions
   if (length(path) != 1 && length(root) != 1 && length(path) != length(root)) {
     stop("paths and roots need to have one entry or be of the same length, not ",
          length(path), " and ", length(root), call. = FALSE)
   }
-  
+
   # relative base reference
   wd_folders <- get_path_segments(getwd())
-  
+
   # generate paths dataframe (WITHOUT concatenating path and root ulnike get_paths_data_frame)
-  paths <- 
+  paths <-
     data_frame(
       i = 1:max(length(root), length(path)),
       path = path,
       root = root,
       absolute = R.utils::isAbsolutePath(path),
       path_folders = map(path, get_path_segments)
-    ) %>% 
+    ) %>%
     # put roots into working directory context if possible
-    group_by(root) %>% 
+    group_by(root) %>%
     mutate(
       root_folders_all = map(root[1], get_path_segments),
       root_folders_rel = find_common_different_from_start(c(list(wd_folders), root_folders_all[1]))$different[-1],
       root_folders = if (has_common_start(root_folders_all[1], wd_folders)) root_folders_rel else root_folders_all
-    ) %>% 
+    ) %>%
     ungroup()
-  
+
   # shorten relative paths
   rel_paths <- paths %>% filter(!absolute)
   if (nrow(rel_paths) > 0) {
-    rel_paths <- rel_paths %>% 
+    rel_paths <- rel_paths %>%
       # shorten with most possible overlap
-      group_by(root, path) %>% 
+      group_by(root, path) %>%
       mutate(
         root_folders = list(find_common_different_from_start(c(root_folders[1], path_folders[1]))$common),
         path_folders = find_common_different_from_start(c(root_folders[1], path_folders[1]))$different[-1]
-      ) %>% 
-      ungroup() %>% 
+      ) %>%
+      ungroup() %>%
       # assmple paths
       mutate(
         path = path_folders %>% map_chr(
           ~if(length(.x) == 0) { "." } else { do.call(file.path, args = as.list(.x))})
       )
   }
-  
+
   # return all
-  paths <- bind_rows(rel_paths, filter(paths, absolute)) %>% arrange(i) %>% 
+  paths <- bind_rows(rel_paths, filter(paths, absolute)) %>% arrange(i) %>%
     # simplify root path
     mutate(root = root_folders %>% map_chr(~if(length(.x) == 0) { "." } else { do.call(file.path, args = as.list(.x))}))
   return(select(paths, root, path))
 }
 
 #' Find roots for absolute paths
-#' 
+#'
 #' Helper function to find the roots of absolute paths. Tries to put absolute paths into the context of the relative root. For those that this is not possible (because they are not in fact a sub-path of the relative roots), identifies the greatest common denominator for absolute paths as their root. Does not change relative paths but does check wheter they do exist if \code{check_existence = TRUE} (the default). To modify relative paths, use \link{iso_shorten_relative_paths} prior to calling this function.
 #' @inheritParams iso_expand_paths
 #' @param check_existence whether to check for the existence of the paths
@@ -489,59 +489,59 @@ iso_shorten_relative_paths <- function(path, root = ".") {
 #' @family file system functions
 #' @export
 iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRUE) {
-  
+
   # anything to work with?
   if(length(path) == 0) return(data_frame(root = character(0), path = character(0)))
-  
+
   # generate data frame and check existence
   paths <- get_paths_data_frame(path, root, check_existence = check_existence)
-  
+
   # process absolute paths
   abs_paths <- paths %>% filter(absolute)
   if (nrow(abs_paths) > 0) {
-    
+
     # determine root folders
-    abs_paths <- abs_paths %>% 
+    abs_paths <- abs_paths %>%
       # get path folders
-      mutate(path_folders = ifelse(is_dir, full_path, dirname(full_path)) %>% map(get_path_segments)) %>% 
+      mutate(path_folders = ifelse(is_dir, full_path, dirname(full_path)) %>% map(get_path_segments)) %>%
       # get root folders
-      group_by(root) %>% 
+      group_by(root) %>%
       mutate(
         rel_root_folders = map(root, get_path_segments),
         abs_root_folders = map2(
-          root, rel_root_folders, 
+          root, rel_root_folders,
           ~if(R.utils::isAbsolutePath(.x)) { .y } else { get_path_segments(file.path(getwd(), .x)) }
         ),
         has_rel_root = has_common_start(path_folders, abs_root_folders[[1]])
-      ) %>% 
+      ) %>%
       ungroup()
-    
+
     # absolute paths that share relative root
     abs_rel_paths <- abs_paths %>% filter(has_rel_root)
     if (nrow(abs_rel_paths) > 0) {
-      abs_rel_paths <- abs_rel_paths %>% 
-        group_by(root) %>% 
-        mutate(new_path = find_common_different_from_start(c(abs_root_folders[1], path_folders))$different[-1]) %>% 
+      abs_rel_paths <- abs_rel_paths %>%
+        group_by(root) %>%
+        mutate(new_path = find_common_different_from_start(c(abs_root_folders[1], path_folders))$different[-1]) %>%
         ungroup()
     }
-    
+
     # absolute paths that don't have a relative root
     abs_paths <- filter(abs_paths, !has_rel_root)
     if (nrow(abs_paths) > 0) {
       common_diff <- find_common_different_from_start(abs_paths$path_folders)
-      abs_paths <- abs_paths %>% 
+      abs_paths <- abs_paths %>%
         mutate(
           new_path = common_diff$different,
           root = do.call(file.path, args = as.list(common_diff$common))
         )
     }
-    
+
     # reassemble absolute paths
     abs_paths <-
-      bind_rows(abs_paths, abs_rel_paths) %>% 
+      bind_rows(abs_paths, abs_rel_paths) %>%
       # expand the paths
       mutate(
-        path = 
+        path =
           # process folder and file paths properly
           purrr::pmap(list(path = new_path, is_dir = is_dir, file = basename(path)),
                       function(path, is_dir, file) {
@@ -551,17 +551,17 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
                           return(c(path, file)) # path + file
                         else if (length(path) == 0)
                           return(".") # current directory
-                        else 
+                        else
                           return(path)
                       }) %>%
           # combine into file path
           map_chr(~do.call(file.path, args = as.list(.x)))
       )
-  } 
-  
+  }
+
   # combine all
-  paths <- bind_rows(abs_paths, filter(paths, !absolute)) %>%  arrange(i) 
-  
+  paths <- bind_rows(abs_paths, filter(paths, !absolute)) %>%  arrange(i)
+
   return(select(paths, root, path))
 }
 
@@ -584,7 +584,7 @@ get_file_ext <- function(filepath) {
 # match file extension
 # returns the longest extension that matches
 match_file_ext <- function(filepath, extensions) {
-  exts_regexp <- extensions %>% stringr::str_to_lower() %>% 
+  exts_regexp <- extensions %>% stringr::str_to_lower() %>%
     stringr::str_replace_all("\\.", "\\\\.") %>% str_c("$")
   exts <- extensions[str_detect(stringr::str_to_lower(filepath), exts_regexp)]
   if (length(exts) == 0) return(NA_character_)
@@ -597,21 +597,21 @@ match_file_ext <- function(filepath, extensions) {
 match_to_supported_file_types <- function(filepaths_df, extensions_df) {
   stopifnot("path" %in% names(filepaths_df))
   stopifnot("extension" %in% names(extensions_df))
-  files <- 
-    filepaths_df %>% 
-    mutate(extension = map_chr(path, match_file_ext, extensions_df$extension)) %>% 
+  files <-
+    filepaths_df %>%
+    mutate(extension = map_chr(path, match_file_ext, extensions_df$extension)) %>%
     left_join(mutate(extensions_df, .ext_exists = TRUE), by = "extension")
-  
+
   # safety check
   if ( nrow(missing <- dplyr::filter(files, is.na(.ext_exists))) > 0) {
     exts <- missing$path %>% get_file_ext() %>% unique() %>% str_c(collapse = ", ")
     glue::glue(
       "unexpected file extension(s): {exts} ",
       "(expected one of the following: ",
-      "{str_c(extensions_df$extension, collapse = ', ')})") %>% 
+      "{str_c(extensions_df$extension, collapse = ', ')})") %>%
     stop(call. = FALSE)
   }
-  
+
   return(dplyr::select(files, -.ext_exists))
 }
 
@@ -620,26 +620,26 @@ match_to_supported_file_types <- function(filepaths_df, extensions_df) {
 
 # generates the cash file paths for iso_files
 generate_cache_filepaths <- function(filepaths, read_options = list()) {
-  
+
   # global vars
   rowname <- size <- mtime <- filepath <- iso_v <- modified <- hash <- cache_file <- NULL
-  
+
   calculate_unf_hash <- function(filepath, size, modified) {
     obj <- c(list(filepath, size, modified), read_options)
     unf(obj)$hash %>% str_c(collapse = "")
   }
-  
-  file_info <- file.info(filepaths) %>% 
-    as_data_frame() %>% 
-    rownames_to_column() %>% 
-    select(filepath = rowname, size = size, modified = mtime) %>% 
+
+  file_info <- file.info(filepaths) %>%
+    as_data_frame() %>%
+    rownames_to_column() %>%
+    select(filepath = rowname, size = size, modified = mtime) %>%
     mutate(
       iso_v = packageVersion("isoreader"),
       hash = mapply(calculate_unf_hash, filepath, size, modified),
       cache_file = sprintf("iso_file_v%d.%d_%s_%s.rds", iso_v$major, iso_v$minor, basename(filepath), hash),
       cache_filepath = file.path(default("cache_dir"), cache_file)
     )
-  
+
   return(file_info$cache_filepath)
 }
 
@@ -652,23 +652,23 @@ cache_iso_file <- function(iso_file, cachepath) {
 # Load cached iso_file
 load_cached_iso_file <- function(filepath, check_version = TRUE) {
   # safety check (should never be a problem)
-  if (!file.exists(filepath)) stop("cached file does not exist: ", filepath, call. = FALSE) 
-  
+  if (!file.exists(filepath)) stop("cached file does not exist: ", filepath, call. = FALSE)
+
   # load
   iso_file <- readRDS(filepath)
-  
+
   # make sure object in file was loaded properly
   if (!(iso_is_object(iso_file))) stop("cached file did not contain iso_file(s)", call. = FALSE)
-  
+
   # check version
   # NOTE: this should technially no be possible because the filename of a cached file contains the version
   # however, it is a good safety precaution
   cached_version <- if(iso_is_file_list(iso_file)) iso_file[[1]]$version else iso_file$version
   if (!same_as_isoreader_version(cached_version)) {
-    iso_file <- register_warning(iso_file, details = 
+    iso_file <- register_warning(iso_file, details =
       sprintf("file created by a different version of the isoreader package (%s)", as.character(cached_version)))
   }
-  
+
   # return
   return(iso_file)
 }
@@ -696,7 +696,7 @@ iso_cleanup_reader_cache <- function(all = FALSE) {
     remove <- sapply(files, function(file){
       iso_file <- readRDS(file)
       if (!(iso_is_object(iso_file))) return(TRUE) # always remove non-iso object files
-      cached_version <- if(iso_is_file_list(iso_file)) iso_file[[1]]$version else iso_file$version  
+      cached_version <- if(iso_is_file_list(iso_file)) iso_file[[1]]$version else iso_file$version
       return(!same_as_isoreader_version(cached_version))
     })
     # remove files
@@ -721,7 +721,7 @@ exec_func_with_error_catch <- function(func, obj, ..., env = asNamespace("isorea
     obj <- do.call(func, args = c(list(obj), list(...)), envir = env)
   } else {
     # regular mode, catch errors and report them as problems
-    obj <- 
+    obj <-
       tryCatch({
         do.call(func, args = c(list(obj), list(...)), envir = env)
       }, error = function(e){
@@ -769,7 +769,7 @@ show_isoprocessor_migration_message <- function(func) {
              "the isoprocessor package (isoprocessor.isoverse.org) to re-focus ",
              "isoreader on its core functionality. Please install and load ",
              "isoprocessor to access this function:\n",
-             "-->  devtools::install_github(\"KopfLab/isoprocessor\") # install\n",
-             "-->  library(isoprocessor) # load") %>% 
+             "-->  devtools::install_github(\"isoverse/isoprocessor\") # install\n",
+             "-->  library(isoprocessor) # load") %>%
     stop(call. = FALSE)
 }
