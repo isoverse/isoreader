@@ -1,17 +1,17 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# isoreader <a href='https://isoreader.kopflab.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
+# isoreader <a href='https://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
 [![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-0.9.35.9000-orange.svg?style=flat-square)](/commits)
-[![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://kopflab.github.io/isoreader/)
+[![Documentation](https://img.shields.io/badge/docs-online-green.svg)](http://isoreader.isoverse.org/)
 [![Build
-Status](https://travis-ci.org/KopfLab/isoreader.svg?branch=master)](https://travis-ci.org/KopfLab/isoreader)
+Status](https://travis-ci.org/isoverse/isoreader.svg?branch=master)](https://travis-ci.org/isoverse/isoreader)
 [![AppVeyor Build
-Status](https://ci.appveyor.com/api/projects/status/github/KopfLab/isoreader?branch=master&svg=true)](https://ci.appveyor.com/project/KopfLab/isoreader)
-[![Binder](https://img.shields.io/badge/launch-RStudio-blue.svg)](https://mybinder.org/v2/gh/KopfLab/isoreader/binder?urlpath=rstudio)
-[![Binder](https://img.shields.io/badge/launch-Jupyter-orange.svg)](https://mybinder.org/v2/gh/KopfLab/isoreader/binder?urlpath=lab)
+Status](https://ci.appveyor.com/api/projects/status/github/isoverse/isoreader?branch=master&svg=true)](https://ci.appveyor.com/project/isoverse/isoreader)
+[![Binder](https://img.shields.io/badge/launch-RStudio-blue.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=rstudio)
+[![Binder](https://img.shields.io/badge/launch-Jupyter-orange.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=lab)
 
 ## About
 
@@ -22,11 +22,11 @@ re-implemention of the proof-of-concept
 [isoread](https://github.com/sebkopf/isoread) package and is designed to
 fit into a larger framework of IRMS data tools that includes the
 web-based graphical user interface package
-[isoviewer](https://github.com/KopfLab/isoviewer) and the data
+[isoviewer](https://github.com/isoverse/isoviewer) and the data
 processing and visualization pipeline
-[isoprocessor](https://github.com/KopfLab/isoprocessor).
+[isoprocessor](https://github.com/isoverse/isoprocessor).
 
-[isoreader](https://kopflab.github.io/isoreader/) enables the reading
+[isoreader](http://isoreader.isoverse.org/) enables the reading
 and processing of stable isotope data directly from the data files and
 thus provides a tool for platform-independent (Windows, Mac, Linux),
 efficient and reproducible data reduction. Although implemented in R, it
@@ -53,7 +53,7 @@ You can install isoreader from github with the devtools package (version
 
 ``` r
 # install.packages("devtools") # only needed once
-devtools::install_github("KopfLab/isoreader")
+devtools::install_github("isoverse/isoreader")
 ```
 
 ## Functionality
@@ -75,19 +75,19 @@ types:
 | .cf.rds   | Isoreader R Data Storage                   | continuous flow |
 
   - for a full reference of all available functions, see the **[Function
-    Reference](https://kopflab.github.io/isoreader/reference/)**
+    Reference](http://isoreader.isoverse.org/reference/)**
   - for an example of how to work with continuos flow data files, see
     the vignette on **[Continuous
-    Flow](https://kopflab.github.io/isoreader/articles/continuous_flow.html)**
+    Flow](http://isoreader.isoverse.org/articles/continuous_flow.html)**
   - for an example of how to work with dual inlet data files, see the
     vignette on **[Dual
-    Inlet](https://kopflab.github.io/isoreader/articles/dual_inlet.html)**
+    Inlet](http://isoreader.isoverse.org/articles/dual_inlet.html)**
 
 ## Troubleshooting
 
 If you run into a file format that is not currently supported or any
 issues with supported formats, please file a request/bug report in the
-[issue tracker](https://github.com/kopflab/isoreader/issues). Likewise
+[issue tracker](https://github.com/isoverse/isoreader/issues). Likewise
 if you run into any unexpected behaviour or uncaught errors. Most
 isoreader functionality is continuously tested on Unix and Windows
 systems using [Travis](https://travis-ci.org/) and
@@ -103,21 +103,21 @@ take a look at the development section below.
 
 If you are interested in helping with development, that’s fantastic\!
 Please fork the repository and branch off from the [dev
-branch](https://github.com/KopfLab/isoreader/tree/dev) since it contains
+branch](https://github.com/isoverse/isoreader/tree/dev) since it contains
 the most up-to-date development version of
-[isoreader](https://kopflab.github.io/isoreader/). Make sure to write
+[isoreader](http://isoreader.isoverse.org/). Make sure to write
 [`testthat` tests](http://r-pkgs.had.co.nz/tests.html) for your work
 (stored in the tests/testthat directory). All tests can be run
 automatically and continuously during development to make it easier to
 spot any code problems on the go. The easiest way to run them is by
 running `make auto_test` in the
-[isoreader](https://kopflab.github.io/isoreader/) directory from command
+[isoreader](http://isoreader.isoverse.org/) directory from command
 line (it will test everything automatically in a completely separate R
 session).
 
 ## Open Source
 
-[isoreader](https://kopflab.github.io/isoreader/) is and will always be
+[isoreader](http://isoreader.isoverse.org/) is and will always be
 fully open-source (i.e. free as in ‘freedom’ and free as in ‘free beer’)
 and is provided as is. The source code is released under
 GPL-2.

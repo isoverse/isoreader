@@ -1,5 +1,5 @@
 title: Isoreader
-url: http://kopflab.github.io/isoreader/
+url: http://isoreader.isoverse.org/
 template:
   params:
     bootswatch: simplex
@@ -29,7 +29,7 @@ navbar:
     href: reference/index.html
   right:
   - icon: fa-github fa-lg
-    href: https://github.com/kopflab/isoreader
+    href: https://github.com/isoverse/isoreader
 
 reference:
 - title: Reading IRMS data files

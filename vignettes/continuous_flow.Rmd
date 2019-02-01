@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-Isoreader supports several continuous flow IRMS data formats. This vignette shows some of the functionality for continuous flow files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the [operations vignette](https://kopflab.github.io/isoreader/articles/operations.html). For details on downstream data processing and visualization, see the [isoprocessor package](https://isoprocessor.kopflab.org).
+Isoreader supports several continuous flow IRMS data formats. This vignette shows some of the functionality for continuous flow files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the [operations vignette](http://isoreader.isoverse.org/articles/operations.html). For details on downstream data processing and visualization, see the [isoprocessor package](https://isoprocessor.isoverse.org).
 
 ```{r}
 # load isoreader package
@@ -52,7 +52,7 @@ iso_files %>% iso_get_data_summary() %>% rmarkdown::paged_table()
 
 ## Problems
 
-In case there was any trouble with reading any of the files, the following functions provide an overview summary as well as details of all errors and warnings, respectively. The examples here contain no errors but if you run into any unexpected file read problems, please file a bug report in the [isoreader issue tracker](https://github.com/kopflab/isoreader/issues).
+In case there was any trouble with reading any of the files, the following functions provide an overview summary as well as details of all errors and warnings, respectively. The examples here contain no errors but if you run into any unexpected file read problems, please file a bug report in the [isoreader issue tracker](https://github.com/isoverse/isoreader/issues).
 
 ```{r}
 iso_files %>% iso_get_problems_summary() %>% rmarkdown::paged_table()
@@ -122,7 +122,7 @@ iso_files %>%
 
 # Data Processing
 
-The isoreader package is intended to make raw stable isotope data easily accessible. However, as with most analytical data, there is significant downstream processing required to turn these raw intensity chromatograms into peak-specific, properly referenced isotopic measurements. This and similar functionality as well as data visualization is part of the [isoprocessor package](https://isoprocessor.kopflab.org) which takes isotopic data through the various corrections in a transparent, efficient and reproducible manner. 
+The isoreader package is intended to make raw stable isotope data easily accessible. However, as with most analytical data, there is significant downstream processing required to turn these raw intensity chromatograms into peak-specific, properly referenced isotopic measurements. This and similar functionality as well as data visualization is part of the [isoprocessor package](https://isoprocessor.isoverse.org) which takes isotopic data through the various corrections in a transparent, efficient and reproducible manner. 
 
 That said, most vendor software also performs some of these calculations and it can be useful to be able to compare new data reduction procecures against those implemented in the vendor software. For this purpose, isoreader retrieves vendor computed data tables whenver possible, as illustrated below.
 
