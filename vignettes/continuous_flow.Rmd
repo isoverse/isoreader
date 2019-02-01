@@ -101,7 +101,7 @@ iso_files %>% iso_get_standards_info(with_ratios = TRUE) %>% rmarkdown::paged_ta
 ```
 
 
-# RAw Data
+# Raw Data
 
 The raw data read from the IRMS files can be retrieved similarly using the `iso_get_raw_data()` function. Most data aggregation functions also allow for inclusion of file information using the `include_file_info` parameter, which functions identically to the `select` parameter of the `iso_get_file_info` function discussed earlier.
 
