@@ -13,14 +13,9 @@ install:
 cache:
   - C:\RLibrary
 
-# Note: the github installs are necessary to make R 3.5.0 work on appveyor
-# might no longer be needed once 3.5.0 is a little more mature
-# problem at the moment is that scales cannot compile (even if included manually)
-
 build_script:
   - travis-tool.sh install_deps
   - travis-tool.sh install_bioc rhdf5
-  - travis-tool.sh install_github wesm/feather/R
 
 test_script:
   - travis-tool.sh run_tests
