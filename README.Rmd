@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 version <- as.character(packageVersion("isoreader"))
 ```
 
-# isoreader <a href='https://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
+# isoreader <a href='http://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
 [![Git_Hub_Version](https://img.shields.io/badge/GitHub-`r version`-orange.svg?style=flat-square)](/commits)
@@ -68,4 +68,4 @@ If you are interested in helping with development, that's fantastic! Please fork
 
 ## isoverse <a href='http://www.isoverse.org'><img src='man/figures/isoverse_logo_thumb.png' align="right" height="138.5"/></a>
 
-This package is part of the isoverse suite of data tools for stable isotopes.
+This package is part of the isoverse suite of data tools for stable isotopes. If you like the functionality that isoverse packages provide to the geochemical community, please help us spread the word and include an isoverse or individual package logo on one of your posters or slides. All logos are posted in high resolution in the main [isoverse repository](https://github.com/isoverse/isoverse/tree/master/man/figures).
