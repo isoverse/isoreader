@@ -1,10 +1,10 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# isoreader <a href='https://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
+# isoreader <a href='http://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
-[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-0.9.35.9000-orange.svg?style=flat-square)](/commits)
+[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.0.2-orange.svg?style=flat-square)](/commits)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](http://isoreader.isoverse.org/)
 [![Build
 Status](https://travis-ci.org/isoverse/isoreader.svg?branch=master)](https://travis-ci.org/isoverse/isoreader)
@@ -26,9 +26,9 @@ web-based graphical user interface package
 processing and visualization pipeline
 [isoprocessor](https://github.com/isoverse/isoprocessor).
 
-[isoreader](http://isoreader.isoverse.org/) enables the reading
-and processing of stable isotope data directly from the data files and
-thus provides a tool for platform-independent (Windows, Mac, Linux),
+[isoreader](http://isoreader.isoverse.org/) enables the reading and
+processing of stable isotope data directly from the data files and thus
+provides a tool for platform-independent (Windows, Mac, Linux),
 efficient and reproducible data reduction. Although implemented in R, it
 can be used in both RMarkdown as well as Jupyter data processing
 notebooks and also provides functionality for easy export to Python
@@ -103,26 +103,30 @@ take a look at the development section below.
 
 If you are interested in helping with development, that’s fantastic\!
 Please fork the repository and branch off from the [dev
-branch](https://github.com/isoverse/isoreader/tree/dev) since it contains
-the most up-to-date development version of
+branch](https://github.com/isoverse/isoreader/tree/dev) since it
+contains the most up-to-date development version of
 [isoreader](http://isoreader.isoverse.org/). Make sure to write
 [`testthat` tests](http://r-pkgs.had.co.nz/tests.html) for your work
 (stored in the tests/testthat directory). All tests can be run
 automatically and continuously during development to make it easier to
 spot any code problems on the go. The easiest way to run them is by
 running `make auto_test` in the
-[isoreader](http://isoreader.isoverse.org/) directory from command
-line (it will test everything automatically in a completely separate R
+[isoreader](http://isoreader.isoverse.org/) directory from command line
+(it will test everything automatically in a completely separate R
 session).
 
 ## Open Source
 
-[isoreader](http://isoreader.isoverse.org/) is and will always be
-fully open-source (i.e. free as in ‘freedom’ and free as in ‘free beer’)
-and is provided as is. The source code is released under
+[isoreader](http://isoreader.isoverse.org/) is and will always be fully
+open-source (i.e. free as in ‘freedom’ and free as in ‘free beer’) and
+is provided as is. The source code is released under
 GPL-2.
 
 ## isoverse <a href='http://www.isoverse.org'><img src='man/figures/isoverse_logo_thumb.png' align="right" height="138.5"/></a>
 
 This package is part of the isoverse suite of data tools for stable
-isotopes.
+isotopes. If you like the functionality that isoverse packages provide
+to the geochemical community, please help us spread the word and include
+an isoverse or individual package logo on one of your posters or slides.
+All logos are posted in high resolution in the main [isoverse
+repository](https://github.com/isoverse/isoverse/tree/master/man/figures).
