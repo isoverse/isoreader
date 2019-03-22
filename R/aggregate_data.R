@@ -1,56 +1,10 @@
-# File info and data retrieval functions 
-# @note: should make the aggregation functions type safe?
-# @note: need an "iso_get_nested_data()" funtion that nests everything together for people who would like to use that
-# @note: --> maybe provide the nest and unnest data functions from isoprocessor?
-# @note: --> maybe allow plotting and exporting functions to also work with nested data sets? 
-#            that would allow people to manipulate them easily to change certain naming fields and then go plotting?
-# @note: consider supporting the nested data sets in the plot functions
-# @note: simplify the get_file_id/path/subpath/datetime function or cut them entirely? it's all possible with the select functions anyways...
-
-# Specific file info calls ======
-
-# Get file information
-# 
-# Retrieve basic file information form an individual isotope file (iso_file) object. All of these can also be recoverd for an entire set of files using \code{\link{iso_get_file_info}} and specifiying which info to recover, for example, \code{include = c("file_id", "file_path", "file_datetime")}
-# 
-# @details \code{get_file_id()}: retrieve the file ID (this is typially the file name)
-# @param iso_file an iso_file to retrieve basic file information from
-# @rdname file_info
-# @aliases get_file_info
-# @family data retrieval functions
-# @export
-get_file_id <- function(iso_file) {
-  check_iso_file_param(iso_file)
-  return(iso_file$file_info$file_id)
-}
-
-# @details \code{get_file_path()}: retrieve the file path (this is the path to the file in case of single file formats such as .dxf or .did and the path to the archieve file in case of collective file formats such as .iarc)
-# @rdname file_info
-get_file_path <- function(iso_file) {
-  check_iso_file_param(iso_file)
-  return(iso_file$file_info$file_path)
-}
-
-# @details \code{get_file_subpath()}: retrieve the file subpath (this only exists for collective file formats such as .iarc and is the name of the metadata file inside the .iarc archive). Returns NA for iso_file without subpath.
-# @rdname file_info
-get_file_subpath <- function(iso_file) {
-  check_iso_file_param(iso_file)
-  return(iso_file$file_info$file_subpath)
-}
-
-# @details \code{get_file_datetime()}: retrieve the run date and time in \code{\link[base]{POSIXct}} format
-# @rdname file_info
-get_file_datetime <- function(iso_file) {
-  check_iso_file_param(iso_file)
-  return(iso_file$file_info$file_datetime)
-}
+# General helper functions ======
 
 # internal convenience function
 check_iso_file_param <- function(iso_file) {
   if(missing(iso_file)) stop("no iso_file provided to retrieve file information from", call. = FALSE)
   if(!iso_is_file(iso_file)) stop("can only retrieve file information from an iso_file object, not from '", class(iso_file)[1], "'", call. = FALSE)
 }
-
 
 # Data summary information =====
 

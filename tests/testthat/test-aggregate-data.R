@@ -2,35 +2,31 @@
 
 context("File info")
 
-test_that("test that file information can be recovered from iso_files", {
+test_that("test that standard file information can be recovered from iso_files", {
   
   expect_true(iso_is_file(iso_file <- make_iso_file_data_structure()))
+  iso_file$read_options$file_info <- TRUE
   
-  expect_error(get_file_id(), "no iso_file provided")
-  expect_error(get_file_id(42), "can only retrieve file information from an iso_file object")
-  expect_equal(get_file_id(iso_file), NA_character_)
-  
-  expect_error(get_file_path(), "no iso_file provided")
-  expect_error(get_file_path(42), "can only retrieve file information from an iso_file object")
-  expect_equal(get_file_path(iso_file), NA_character_)
-  
-  expect_error(get_file_subpath(), "no iso_file provided")
-  expect_error(get_file_subpath(42), "can only retrieve file information from an iso_file object")
-  expect_equal(get_file_subpath(iso_file), NA_character_)
-  
-  expect_error(get_file_datetime(), "no iso_file provided")
-  expect_error(get_file_datetime(42), "can only retrieve file information from an iso_file object")
-  expect_equal(get_file_datetime(iso_file), NA_integer_)
+  expect_equal(iso_get_file_info(iso_file)$file_id, NA_character_)
+  expect_equal(iso_get_file_info(iso_file)$file_root, NA_character_)
+  expect_equal(iso_get_file_info(iso_file)$file_path, NA_character_)
+  expect_equal(iso_get_file_info(iso_file)$file_subpath, NA_character_)
+  expect_equal(iso_get_file_info(iso_file)$file_datetime, NA_integer_)
   
   iso_file$file_info$file_id <- "id"
+  iso_file$file_info$file_root <- "root"
   iso_file$file_info$file_path <- "path"
   iso_file$file_info$file_subpath <- "subpath"
   iso_file$file_info$file_datetime <- parse_datetime("2010-11-12 13:14:15")
   
-  expect_equal(get_file_id(iso_file), iso_file$file_info$file_id)
-  expect_equal(get_file_path(iso_file), iso_file$file_info$file_path)
-  expect_equal(get_file_subpath(iso_file), iso_file$file_info$file_subpath)
-  expect_equal(get_file_datetime(iso_file), iso_file$file_info$file_datetime)
+  expect_equal(iso_get_file_info(iso_file)$file_id, iso_file$file_info$file_id)
+  expect_equal(iso_get_file_info(iso_file)$file_root, iso_file$file_info$file_root)
+  expect_equal(iso_get_file_info(iso_file)$file_path, iso_file$file_info$file_path)
+  expect_equal(iso_get_file_info(iso_file)$file_subpath, iso_file$file_info$file_subpath)
+  
+  # Note: this also tests the timezone switch to local timezone that happens in aggregation
+  expect_equal(iso_get_file_info(iso_file)$file_datetime, 
+               lubridate::with_tz(iso_file$file_info$file_datetime, tz = Sys.timezone()))
   
 })
 
