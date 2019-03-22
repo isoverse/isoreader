@@ -85,6 +85,24 @@ iso_files %>%
   ) %>% rmarkdown::paged_table()
 ```
 
+## Filtering
+
+Any collection of isofiles can also be filtered based on the available file information using the function `iso_filter_files`. This function can operate on any column available in the file information and supports full [dplyr](https://dplyr.tidyverse.org/reference/filter.html) syntax. Note: dplyr's `filter` itself can be used directly but does not provide the user with information on how many files have been filtered out.
+
+```{r}
+# find files that have 'CIT' in their Identifier 1 field
+iso_files %>% iso_filter_files(grepl("CIT", `Identifier 1`)) %>% 
+  iso_get_file_info(select = `Identifier 1`) %>% 
+  rmarkdown::paged_table()
+
+# find files that were run in 2017
+iso_files %>% 
+  iso_filter_files(file_datetime > "2017-01-01" & file_datetime < "2018-01-01") %>% 
+  iso_get_file_info(select = file_datetime) %>% 
+  rmarkdown::paged_table()
+```
+
+
 ## Resistors
 
 Additionally, some IRMS data files contain resistor information that are useful for downstream calculations (see e.g. section on signal conversion later in this vignette):
