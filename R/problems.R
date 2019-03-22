@@ -11,7 +11,7 @@
 #' 
 #' \item \code{\link[readr]{stop_for_problems}}
 #' 
-#' \item \code{\link{iso_omit_files_with_problems}}
+#' \item \code{\link{iso_filter_files_with_problems}}
 #' }
 #' @name iso_problem_functions
 #' @family problem functions
@@ -97,38 +97,6 @@ iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE) {
     ) 
 }
  
-#' Remove problematic files
-#' 
-#' Removes the files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the \link{iso_problem_functions}.
-#' @inheritParams iso_get_raw_data
-#' @param remove_files_with_errors whether to remove files with errors (default is TRUE)
-#' @param remove_files_with_warnings whether to remove files with warnings (default is FALSE)
-#' @family problem functions
-#' @export
-iso_omit_files_with_problems <- function(iso_files, remove_files_with_errors = TRUE, remove_files_with_warnings = FALSE, quiet = default(quiet)) {
-  if (missing(iso_files) || !iso_is_object(iso_files)) stop("please provide a list of iso_files", call. = FALSE)
-  types <- c()
-  if (remove_files_with_errors) types <- c(types, "error")
-  if (remove_files_with_warnings) types <- c(types, "warning")
-  if (length(types) == 0) return(iso_files)
-  iso_files <- iso_as_file_list(iso_files)
-  
-  # find trouble file ids
-  trouble_files <- problems(iso_files) %>% 
-    filter(type %in% types) %>% 
-    { unique(.$file_id) }
-
-  # exclude
-  exclude <- names(iso_files) %in% trouble_files
-  if (!quiet) {
-    sprintf("Info: removing %d/%d files that have any %s (keeping %d)", 
-            sum(exclude), length(iso_files), 
-            collapse(types, ", ", last = " or "),
-            length(iso_files) - sum(exclude)) %>% message()
-  }
-  return(iso_files[!exclude])
-}
-
 # register a problem during isoreader operations
 # helper function to standardize problems for file reads
 # with a filename, type and details

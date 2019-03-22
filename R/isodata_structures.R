@@ -322,7 +322,7 @@ c.iso_file <- function(...) {
   iso_as_file_list(...)
 }
 
-# combine iso_file other things
+# combine iso_file with other things
 #' @export
 c.iso_file_list <- function(...) {
   iso_as_file_list(...)

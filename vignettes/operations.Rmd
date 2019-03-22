@@ -70,7 +70,7 @@ Additionally, the `iso_filter_files` function allows for subsetting a collection
 
 # Removing erroneous files
 
-Removing files with problems: `iso_omit_files_with_problems`
+Removing files with problems: `iso_filter_files_with_problems`
 
 ```{r}
 
