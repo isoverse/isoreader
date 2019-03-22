@@ -242,7 +242,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
   data_structure <- update_read_options(data_structure, read_options)
   
   # expand & safety check paths (will warn if non-supported file types are included or same filename occurs multiple times)
-  if (missing(paths) || is.null(paths) || is.na(paths)) stop("file path(s) required, none provided", call. = FALSE)
+  if (missing(paths) || is.null(paths) || all(is.na(paths))) stop("file path(s) required, none provided", call. = FALSE)
   filepaths <- iso_expand_paths(paths, extensions = supported_extensions$extension, root = root)
   
   # check if there are any
