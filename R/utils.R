@@ -197,7 +197,7 @@ iso_get_reader_examples <- function() {
 # @param path(s)
 is_folder <- function(path, check_existence = TRUE) {
   # safety check
-  if(check_existence && !(exists <- file.exists(path)))
+  if(check_existence && !all(exists <- file.exists(path)))
     stop("paths do not exist:\n - ", str_c(path[!exists], collapse = "\n - "), call. = FALSE)
 
   # it's a folder if it exists
