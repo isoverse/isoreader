@@ -14,13 +14,13 @@ test_that("test that export to rda works properly", {
   cf$file_info$file_id <- "A"
   cf$file_info$file_root <- "."
   cf$file_info$file_path <- "test"
-  cf$file_info$vector_test <- 1:3
+  cf$file_info$vector_test <- list(1:3)
   cf$raw_data <- tibble(time = 1:10, m44 = runif(10), m45 = runif(10))
   cf$method_info$standards <- tibble(standard = "test a")
   cf$method_info$resistors <- tibble(cup = 1:3, R.Ohm = c(1e9, 1e10, 1e11))
   cf$vendor_data_table <- tibble(x = 1:5, y = letters[1:5]) %>% { attr(., "units") <- c(x="a", y = "b"); . }
   filepath <- file.path(tempdir(), "test")
-  cf <- cf %>% iso_as_file_list %>% convert_file_info_to_data_frame() %>% {.[[1]]}
+  cf <- cf %>% iso_as_file_list %>% convert_isofiles_file_info_to_data_frame() %>% {.[[1]]}
   
   # export and reimport single file
   expect_message(cf_out <- iso_save(cf, filepath, quiet = FALSE), "exporting data .* into R Data Storage")
@@ -81,7 +81,7 @@ test_that("test that export to Excel works properly", {
   # test data
   cf <- make_cf_data_structure()
   cf$file_info$file_id <- "A"
-  cf$file_info$vector_test <- 1:3
+  cf$file_info$vector_test <- list(1:3)
   cf$read_options <- list(file_info = TRUE, method_info = TRUE, raw_data = TRUE, vendor_data_table = TRUE)
   cf$raw_data <- data_frame(time = (1:10)*0.1, m44 = (1:10)*0.2, m45 = (1:10)*0.3)
   cf$method_info$standards <- data_frame(standard = "test a")
@@ -91,7 +91,13 @@ test_that("test that export to Excel works properly", {
   
   # export and check
   expect_message(cf_out <- iso_export_to_excel(cf, filepath, quiet = FALSE), "exporting data .* into Excel")
-  expect_equal(cf, cf_out)
+  expect_equal(names(cf), names(cf_out))
+  expect_true(is_tibble(cf$file_info))
+  expect_true(is_tibble(cf_out$file_info))
+  expect_equal(as.list(cf$file_info), as.list(cf_out$file_info))
+  expect_equal(cf$raw_data, cf_out$raw_data)
+  expect_equal(cf$resistors, cf_out$resistors)
+  expect_equal(cf$vendor_data_table, cf_out$vendor_data_table)
   expect_true(file.exists(str_c(filepath, ".cf.xlsx")))
   # note for comparisons: rounding is necessary because storage is not perfect numerically
   expect_equal(iso_get_raw_data(cf) %>% 
@@ -163,7 +169,7 @@ test_that("test that export to Feather works properly", {
   # test data
   cf <- make_cf_data_structure()
   cf$file_info$file_id <- "A"
-  cf$file_info$vector_test <- 1:3
+  cf$file_info$vector_test <- list(1:3)
   cf$read_options <- list(file_info = TRUE, method_info = TRUE, raw_data = TRUE, vendor_data_table = TRUE)
   cf$raw_data <- data_frame(time = (1:10)*0.1, m44 = (1:10)*0.2, m45 = (1:10)*0.3)
   cf$method_info$standards <- data_frame(standard = "test a")
@@ -173,7 +179,13 @@ test_that("test that export to Feather works properly", {
   
   # export and check
   expect_message(cf_out <- iso_export_to_feather(cf, filepath, quiet = FALSE), "exporting data .* into .cf.feather")
-  expect_equal(cf, cf_out)
+  expect_equal(names(cf), names(cf_out))
+  expect_true(is_tibble(cf$file_info))
+  expect_true(is_tibble(cf_out$file_info))
+  expect_equal(as.list(cf$file_info), as.list(cf_out$file_info))
+  expect_equal(cf$raw_data, cf_out$raw_data)
+  expect_equal(cf$resistors, cf_out$resistors)
+  expect_equal(cf$vendor_data_table, cf_out$vendor_data_table)
   expect_true(file.exists(str_c(filepath, "_raw_data.cf.feather")))
   expect_true(file.exists(str_c(filepath, "_file_info.cf.feather")))
   expect_true(file.exists(str_c(filepath, "_method_info-standards.cf.feather")))

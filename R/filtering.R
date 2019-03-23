@@ -41,10 +41,10 @@ iso_filter_files_with_problems <- function(iso_files, remove_files_with_errors =
 
 #' Filter iso_files
 #' 
-#' Filter for specific iso_files using file info parameters (\code{\link{iso_get_file_info}}). Works just like dplyr's \link[dplyr]{filter} except that it provides the user with some information on what has been filtered. You can also use \link[dplyr]{filter} directly to filter collections of \code{iso_file} objects.
+#' Filter for specific iso_files using file info columns (\code{\link{iso_get_file_info}}). Works just like dplyr's \link[dplyr]{filter} except that it provides the user with some information on what has been filtered. You can also use \link[dplyr]{filter} directly to filter collections of \code{iso_file} objects.
 #' 
 #' @inheritParams iso_get_raw_data
-#' @param ... filter conditions applied based on each file's file_info (see \code{\link{iso_get_file_info}})
+#' @param ... dplyr-style \link[dplyr]{filter} conditions applied based on each file's file_info (see \code{\link{iso_get_file_info}})
 #' @export 
 iso_filter_files <- function(iso_files, ..., quiet = default(quiet)) {
   # safety checks

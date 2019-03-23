@@ -59,9 +59,9 @@ test_that("test that file info list to data frame conversion works properly", {
   # test data
   cf <- make_cf_data_structure()
   cf$file_info$file_id <- "A"
-  cf$file_info$test_info <- 42
+  cf$file_info$test_info <- list(42)
   cf <- iso_as_file_list(cf)
-  expect_true(is_tibble(file_info <- convert_file_info_to_data_frame(cf)[[1]]$file_info))
+  expect_true(is_tibble(file_info <- convert_isofiles_file_info_to_data_frame(cf)[[1]]$file_info))
   expect_equal(names(file_info), c("file_id", "file_root", "file_path", "file_subpath", "file_datetime", "test_info"))
   expect_equal(map_chr(file_info, ~class(.x)[1]) %>% unname(), c("character", "character", "character", "character", "integer", "list"))
   expect_equal(file_info$test_info, list(42))
@@ -140,16 +140,16 @@ test_that("test that aggregating file info works", {
   
   # test data
   iso_file$read_options$file_info <- TRUE
-  iso_file1 <- modifyList(iso_file, list(
-    file_info = list(file_id = "a", test_info = "x", multi_value = 1:2, only_a = TRUE)))
-  iso_file2 <- modifyList(iso_file, list(
-    file_info = list(file_id = "b", test_info = "y", multi_value = 1:3)))
+  iso_file1 <- iso_file2 <- iso_file
+  iso_file1$file_info <- mutate(iso_file1$file_info, file_id = "a", test_info = "x", multi_value = list(1:2), only_a = TRUE)
+  iso_file2$file_info <- mutate(iso_file2$file_info, file_id = "b", test_info = "y", multi_value = list(1:3))
   
   expect_message(iso_get_file_info(c(iso_file1, iso_file2), quiet = FALSE), "aggregating")
   expect_silent(agg <- iso_get_file_info(c(iso_file1, iso_file2), quiet = TRUE))
   expect_equal(names(agg), unique(names(iso_file1$file_info), names(iso_file2$file_info)))
   expect_equal(iso_get_file_info(c(iso_file1, iso_file2)) %>% unnest(multi_value) ,
-               bind_rows(as_data_frame(iso_file1$file_info), as_data_frame(iso_file2$file_info)))
+               bind_rows(unnest(iso_file1$file_info, multi_value), 
+                         unnest(iso_file2$file_info, multi_value)))
   
   # check select functionality
   expect_equal(names(iso_get_file_info(iso_file1, select = c("file_datetime", "only_a"))), c("file_id", "file_datetime", "only_a"))

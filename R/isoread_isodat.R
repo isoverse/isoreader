@@ -321,10 +321,8 @@ extract_isodat_old_sequence_line_info <- function(ds) {
   )
   
   # in file object
-  ds$file_info <- modifyList(
-    ds$file_info, 
-    file_info %>% select(label, value) %>% tibble::deframe() %>% as.list()
-  )
+  if (nrow(file_info) > 0)
+    ds$file_info[file_info$label] <- file_info$value
   
   return(ds)
 }
@@ -347,7 +345,7 @@ extract_isodat_measurement_info <- function(ds) {
   }
   
   # store all in one information set
-  ds$file_info$measurement_info <- isl_info_msgs
+  ds$file_info$measurement_info <- list(isl_info_msgs)
   
   return(ds)
 }
@@ -363,8 +361,7 @@ extract_H3_factor_info <- function(ds) {
       move_to_next_pattern(re_text("H3 Factor")) %>% 
       move_to_next_pattern(re_block("x-000")) %>% 
       capture_n_data("H3_factor", "double", 1)
-    # FIXME: is there a reason why H3 factor is character instead of number?
-    # maybe for compatibility with the elementar files?
+    # this is a text field for compatibility with other file formats
     ds$file_info$`H3 Factor` <- as.character(ds$binary$data$H3_factor)
   }
   return(ds)
@@ -379,7 +376,7 @@ extract_MS_integration_time_info <- function(ds) {
     skip_pos(-5) %>% 
     capture_n_data("ms_integration_time", "integer", 1, sensible = c(0L, 3600000L))
   
-  # store ms integration time
+  # store ms integration time (should this be text for compatibility with other formats?)
   ds$file_info$MS_integration_time.s <- ds$binary$data$ms_integration_time/1000
   
   return(ds)
@@ -453,7 +450,7 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   # store vendor data table
   .check. <- NULL # global var
   data_table <- full_join(peaks, mutate(extracted_dt$cell_values, .check. = TRUE), by = "Nr.")
-  if (any(is.na(data_table$Start) || any(is.na(data_table$.check.)))) {
+  if (any(is.na(data_table$Start) | any(is.na(data_table$.check.)))) {
     ds <- register_warning(ds, details = "vendor data table has unexpected empty cells, process vendor table with care")
   }
   ds$vendor_data_table <- select(data_table, -.check.)
