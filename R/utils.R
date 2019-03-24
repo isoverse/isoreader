@@ -752,7 +752,9 @@ get_info_message_concat <- function(variable, prefix = "", suffix = "", empty = 
     if (quo_is_null(variable)) return("")
     variable <- quo_text(variable)
   }
-  if (!is_empty(variable) && !all(nchar(variable) == 0) && !variable %in% empty) {
+  if (is_empty(variable)) return("")
+  variable <- setdiff(variable, empty)
+  if (length(variable) > 0 && !all(nchar(variable) == 0)) {
     quotes <- if(quotes) "'" else ""
     vars <- str_c(variable, collapse = str_c(quotes, ", ", quotes, collapse = ""))
     return(str_c(prefix, quotes, vars, quotes, suffix))
