@@ -1,3 +1,9 @@
+# dplyr style functions that operate on file info
+
+# select ==================
+
+# rename ==================
+
 #' Rename file info columns
 #' 
 #' Rename individual file info columns (\code{\link{iso_get_file_info}}). Works just like dplyr's \link[dplyr]{rename} except that it can rename different columns into the same name in different iso_files depending on what exists in each file. This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns. You can also use \link[dplyr]{rename} directly but it will not provide summary information on the operation.
@@ -78,3 +84,9 @@ rename.iso_file_list <- function(.data, ..., quiet = TRUE) {
 rename.iso_file <- function(.data, ...) {
   rename(iso_as_file_list(.data), ...)[[1]]
 }
+
+# mutate ==================
+
+
+# filter ==================
+
