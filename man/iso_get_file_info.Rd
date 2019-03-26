@@ -15,7 +15,7 @@ iso_get_file_info(iso_files, select = everything(),
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
 \description{
-Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the \code{select} parameter, which uses the \link{\code{iso_select_file_info}} function to select and/or rename columns. File information beyond \code{file_id}, \code{file_root}, \code{file_path} and \code{file_datetime} is only available if the \code{iso_files} were read with parameter \code{read_file_info=TRUE}.
+Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the \code{select} parameter, which uses the \code{\link{iso_select_file_info}} function to select and/or rename columns. File information beyond \code{file_id}, \code{file_root}, \code{file_path} and \code{file_datetime} is only available if the \code{iso_files} were read with parameter \code{read_file_info=TRUE}.
 }
 \note{
 File info entries with multiple values remain nested multi-value (=list) columns and can be unnested using \link[tidyr]{unnest}.
