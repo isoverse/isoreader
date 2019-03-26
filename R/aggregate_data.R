@@ -27,8 +27,12 @@ iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
   # aggregate all the info
   data_frame(
     file_id = names(iso_files),
-    file_path_ = map_chr(iso_files, ~.x$file_info$file_path),
-    file_subpath = map_chr(iso_files, ~.x$file_info$file_subpath)
+    file_path_ = map_chr(
+      iso_files, 
+      ~if (col_in_df(.x$file_info, "file_path")) { .x$file_info$file_path } else { NA_character_ }),
+    file_subpath = map_chr(
+      iso_files, 
+      ~if (col_in_df(.x$file_info, "file_path")) { .x$file_info$file_subpath } else { NA_character_ })
   ) %>%
     left_join(get_raw_data_info(iso_files), by = "file_id") %>%
     left_join(get_file_info_info(iso_files), by = "file_id") %>%
@@ -233,41 +237,41 @@ iso_get_data <- function(iso_files, include_file_info = everything(), include_ra
 
 #' Aggregate file info
 #'
-#' Combine file information from multiple iso_files. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included. File information beyond \code{file_id} and \code{file_path} is only available if the iso_files were read with parameter \code{read_file_info=TRUE}.
+#' Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the \code{select} parameter, which uses the \link{\code{iso_select_file_info}} function to select and/or rename columns. File information beyond \code{file_id}, \code{file_root}, \code{file_path} and \code{file_datetime} is only available if the \code{iso_files} were read with parameter \code{read_file_info=TRUE}.
 #'
 #' @inheritParams iso_get_raw_data
-#' @param select which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default. File id is always included no matter which selection parameters. 
+#' @param select which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. File id is always included and cannot be renamed. 
 #' @family data retrieval functions
-#' @note File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using \code{iso_file$file_info[['INFO_NAME']]} on the iso_file object directly.
+#' @note File info entries with multiple values remain nested multi-value (=list) columns and can be unnested using \link[tidyr]{unnest}.
 #' @export
 iso_get_file_info <- function(iso_files, select = everything(), quiet = default(quiet)) {
   iso_files <- iso_as_file_list(iso_files)
-  if (!quiet) sprintf("Info: aggregating file info from %d data file(s)", length(iso_files)) %>% message()
+  select_quo <- enquo(select)
+  
+  if (!quiet) { 
+    glue::glue(
+      "Info: aggregating file info from {length(iso_files)} data file(s)",
+      "{get_info_message_concat(select_quo, prefix = ', selecting info columns ', empty = 'everything()')}") %>% message()
+  }
   check_read_options(iso_files, "file_info")
   
   # @note: for safety, could be deprecated in later version because it is also done at the end of every isoread
   iso_files <- convert_isofiles_file_info_to_data_frame(iso_files) 
   
+  # select columns
+  if (quo_text(select_quo) != "everything()") {
+    # run selection unless everything is selected 
+    # (in which case it is a waste of time to run)
+    iso_files <- iso_select_file_info(iso_files, !!select_quo, quiet = TRUE)
+  }
+  
   # retrieve info
-  file_info <- iso_files %>% 
+  iso_files %>% 
     # retrieve file info
     map(~.x$file_info) %>% 
     # combine in data frame (use safe bind to make sure different data column 
     # types of the same name don't trip up the combination)
-    safe_bind_rows()
-  
-  # nothing returned
-  if (nrow(file_info) == 0) return(file_info)
-  
-  # figure out which columns are selected
-  select_cols <- get_column_names(file_info, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
-  if (!"file_id" %in% select_cols) 
-    select_cols <- c("file_id", select_cols) # file info always included
-  
-  # return
-  file_info %>% 
-    # focus on selected columns only (also takes care of the rename)
-    dplyr::select(!!!select_cols) %>% 
+    safe_bind_rows() %>% 
     # unnest aggregated data frame
     unnest_aggregated_data_frame()
 }
@@ -291,7 +295,7 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
   select_quo <- enquo(select)
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
-    glue(
+    glue::glue(
       "Info: aggregating raw data from {length(iso_files)} data file(s)",
       "{get_info_message_concat(select_quo, prefix = ', selecting data columns ', empty = 'everything()')}",
       "{get_info_message_concat(include_file_info_quo, prefix = ', including file info ')}") %>% message()
@@ -319,7 +323,7 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
   # selecting columns
   select_cols <- get_column_names(data, select = select_quo, n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
   if (!"file_id" %in% select_cols) 
-    select_cols <- c("file_id", select_cols) # file info always included
+    select_cols <- c("file_id", select_cols) # file id always included
   data <- data %>% 
     # focus on selected columns only (also takes care of the rename)
     dplyr::select(!!!select_cols) 

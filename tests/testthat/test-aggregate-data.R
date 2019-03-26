@@ -156,9 +156,10 @@ test_that("test that aggregating file info works", {
   expect_equal(names(iso_get_file_info(iso_file1, select = c(file_datetime, only_a))), c("file_id", "file_datetime", "only_a"))
   expect_equal(names(iso_get_file_info(iso_file1, select = c(x = file_datetime, y = only_a))), c("file_id", "x", "y"))
   expect_equal(names(iso_get_file_info(iso_file1, select = starts_with("file"))), c("file_id", "file_root", "file_path", "file_subpath", "file_datetime"))
-  expect_equal(names(iso_get_file_info(iso_file1, select = c(x = starts_with("file")))), c("x1", "x2", "x3", "x4", "x5"))
-  expect_warning(agg <- iso_get_file_info(iso_file2, select = c("file_datetime", "only_a")), "refers to unknown column")
-  expect_equal(names(agg), c("file_id", "file_datetime"))
+  expect_error(iso_get_file_info(iso_file1, select = c(x = file_id)), "renaming.*file_id.*may lead to unpredictable")
+  expect_equal(names(iso_get_file_info(iso_file1, select = c(x = starts_with("file"), file_id))), c("file_id", "x2", "x3", "x4", "x5"))
+  # note: not sure how to implement but this should probably throw a warning
+  expect_equal(names(iso_get_file_info(iso_file2, select = c("file_datetime", "only_a"))), c("file_id", "file_datetime"))
 })
 
 
