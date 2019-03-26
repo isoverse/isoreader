@@ -66,7 +66,7 @@ iso_files %>% iso_get_problems() %>% rmarkdown::paged_table()
 
 # File Information
 
-Detailed file information can be aggregated for all isofiles using the `iso_get_file_info()` function which supports the full [select syntax](https://dplyr.tidyverse.org/reference/select.html) of the [dplyr](https://dplyr.tidyverse.org/) package to specify which fields are of interest (by default, all file information is retrieved). The following provides a few examples for how this can be used (the names of the interesting info columns may vary between different file formats):
+Detailed file information can be aggregated for all isofiles using the `iso_get_file_info()` function which supports the full [select syntax](https://dplyr.tidyverse.org/reference/select.html) of the [dplyr](https://dplyr.tidyverse.org/) package to specify which columns are of interest (by default, all file information is retrieved). Additionally, file information from different file formats can be renamed to the same column name for easy of downstream processing. The following provides a few examples for how this can be used (the names of the interesting info columns may vary between different file formats):
 
 ```{r}
 # all file information
@@ -75,35 +75,67 @@ iso_files %>% iso_get_file_info(select = c(-file_root)) %>% rmarkdown::paged_tab
 iso_files %>% 
   iso_get_file_info(
     select = c(
-      # select the Analysis column (keep the name)
+      # rename sample id columns from the different file types to a new ID column
+      ID = `Identifier 1`, ID = `Sample Name`, 
+      # select the Analysis column (not changing the name)
       Analysis,
       # select the time stamp and rename it to `Date & Time`
-      `Date & Time` = file_datetime, 
-      # select all columns that start with "Id" and rename them id1, id2, etc.
-      id = starts_with("Id")
+      `Date & Time` = file_datetime
     )
   ) %>% rmarkdown::paged_table()
 ```
 
-## Filtering
+## Select/Rename
 
-Any collection of isofiles can also be filtered based on the available file information using the function `iso_filter_files`. This function can operate on any column available in the file information and supports full [dplyr](https://dplyr.tidyverse.org/reference/filter.html) syntax. Note: dplyr's `filter` itself can be used directly but does not provide the user with information on how many files have been filtered out.
+Rather than retrieving specific file info columns using the above example of `iso_get_file_info(select = ...)`, these information can also be modified across an entire collection of isofiles using the `iso_select_file_info()` and `iso_rename_file_info()` functions. For example, the above example could be similarly achieved with the following use of `iso_select_file_info()`:
 
 ```{r}
-# find files that have 'CIT' in their Identifier 1 field
-iso_files %>% iso_filter_files(grepl("CIT", `Identifier 1`)) %>% 
-  iso_get_file_info(select = `Identifier 1`) %>% 
+# select + rename specific file info columns
+iso_files2 <- iso_files %>% 
+  iso_select_file_info(
+    ID = `Identifier 1`, ID = `Sample Name`, Analysis, `Date & Time` = file_datetime
+  )
+
+# fetch all file info
+iso_files2 %>% iso_get_file_info() %>% rmarkdown::paged_table()
+```
+
+## Filter
+
+Any collection of isofiles can also be filtered based on the available file information using the function `iso_filter_files`. This function can operate on any column available in the file information and supports full [dplyr](https://dplyr.tidyverse.org/reference/filter.html) syntax. 
+
+```{r}
+# find files that have 'CIT' in the new ID field
+iso_files2 %>% iso_filter_files(grepl("CIT", ID)) %>% 
+  iso_get_file_info() %>% 
   rmarkdown::paged_table()
 
 # find files that were run in 2017
-iso_files %>% 
-  iso_filter_files(file_datetime > "2017-01-01" & file_datetime < "2018-01-01") %>% 
-  iso_get_file_info(select = file_datetime) %>% 
+iso_files2 %>% 
+  iso_filter_files( `Date & Time` > "2017-01-01" & `Date & Time` < "2018-01-01") %>% 
+  iso_get_file_info() %>% 
   rmarkdown::paged_table()
 ```
 
+## Mutate
 
-## Resistors
+The file information in any collection of isofiles can also be mutated using the function `iso_mutate_file_info`. This function can introduce new columns and operate on any existing columns available in the file information (even if it does not exist in all files) and supports full [dplyr](https://dplyr.tidyverse.org/reference/mutate.html) syntax. 
+
+```{r}
+iso_files2 %>% 
+  iso_mutate_file_info(
+    # update existing column
+    ID = paste("ID:", ID),
+    # change type of Analysis column to number
+    Analysis = parse_number(Analysis),
+    # introduce new column
+    `Run in 2017?` = `Date & Time` > "2017-01-01" & `Date & Time` < "2018-01-01"
+  ) %>% 
+  iso_get_file_info() %>% 
+  rmarkdown::paged_table()
+```
+
+# Resistors
 
 Additionally, some IRMS data files contain resistor information that are useful for downstream calculations (see e.g. section on signal conversion later in this vignette):
 
@@ -111,7 +143,7 @@ Additionally, some IRMS data files contain resistor information that are useful 
 iso_files %>% iso_get_resistors_info() %>% rmarkdown::paged_table()
 ```
 
-## Reference values
+# Reference values
 
 As well as isotopic reference values for the different gases:
 
