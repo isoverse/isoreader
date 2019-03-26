@@ -3,7 +3,7 @@
 # rename & select utils ========
 
 # internal function for rename and select
-select_rename_isofile <- function(isofile, func, quos, std_vars) {
+select_rename_isofile <- function(isofile, func, quos) {
   old_vars <- names(isofile$file_info)
   new_vars <- func(old_vars, !!!quos, .strict = FALSE)
   # make sure file_id is always included
@@ -25,7 +25,6 @@ select_rename_isofile <- function(isofile, func, quos, std_vars) {
                "may lead to unpredictable behaviour and is therefore not allowed, sorry") %>% 
       stop(call. = FALSE)
   }
-  
   isofile$file_info <- dplyr:::select_impl(isofile$file_info, new_vars)
   return(list(isofile = isofile, vars = vars))
 }
@@ -57,20 +56,27 @@ check_names_changes <- function(vars) {
 #' @family file_info operations
 #' @export 
 iso_select_file_info <- function(iso_files, ..., quiet = default(quiet)) {
-  # safety checks
-  if(!iso_is_object(iso_files)) stop("can only select file info in iso files", call. = FALSE)
-  # rename
-  select(iso_files, ..., quiet = quiet)
+  UseMethod("iso_select_file_info")
 }
 
 #' @export
-select.iso_file_list <- function(.data, ..., quiet = TRUE) {
-  
+iso_select_file_info.default <- function(iso_files, ..., quiet = default(quiet)) {
+  stop("this function is not defined for objects of type '", 
+       class(iso_files)[1], "'", call. = FALSE)
+}
+
+#' @export
+iso_select_file_info.iso_file <- function(iso_files, ..., quiet = default(quiet)) {
+  iso_select_file_info(iso_as_file_list(iso_files), ..., quiet = quiet)[[1]]
+}
+
+#' @export
+iso_select_file_info.iso_file_list <- function(iso_files, ..., quiet = default(quiet)) {
   # variables for all files
   select_quos <- quos(...)
   
   # select
-  isofiles_select <- map(.data, select_rename_isofile, tidyselect::vars_select, select_quos)
+  isofiles_select <- map(iso_files, select_rename_isofile, tidyselect::vars_select, select_quos)
   
   # info summary
   all_vars <- map(isofiles_select, "vars") %>% bind_rows()
@@ -90,7 +96,7 @@ select.iso_file_list <- function(.data, ..., quiet = TRUE) {
             sprintf(" - '%s' in %d files", from[1], n)
           ))
     glue::glue("Info: keeping {length(unique(all_vars$from))} file info column(s) ",
-               "wherever they exist across {length(.data)} isofile(s):\n",
+               "wherever they exist across {length(iso_files)} isofile(s):\n",
                "{paste(info$label, collapse = '\n')}") %>% 
       message()
   }
@@ -100,8 +106,15 @@ select.iso_file_list <- function(.data, ..., quiet = TRUE) {
 
 #' @export
 select.iso_file <- function(.data, ...) {
-  select(iso_as_file_list(.data), ...)[[1]]
+  iso_select_file_info(.data, ..., quiet = TRUE)
 }
+
+#' @export
+select.iso_file_list <- function(.data, ...) {
+  iso_select_file_info(.data, ..., quiet = TRUE)
+}
+
+
 
 # rename ==================
 
@@ -114,20 +127,27 @@ select.iso_file <- function(.data, ...) {
 #' @family file_info operations
 #' @export 
 iso_rename_file_info <- function(iso_files, ..., quiet = default(quiet)) {
-  # safety checks
-  if(!iso_is_object(iso_files)) stop("can only rename file info in iso files", call. = FALSE)
-  # rename
-  rename(iso_files, ..., quiet = quiet)
+  UseMethod("iso_rename_file_info")
 }
 
 #' @export
-rename.iso_file_list <- function(.data, ..., quiet = TRUE) {
-  
+iso_rename_file_info.default <- function(iso_files, ..., quiet = default(quiet)) {
+  stop("this function is not defined for objects of type '", 
+       class(iso_files)[1], "'", call. = FALSE)
+}
+
+#' @export
+iso_rename_file_info.iso_file <- function(iso_files, ..., quiet = default(quiet)) {
+  iso_rename_file_info(iso_as_file_list(iso_files), ..., quiet = quiet)[[1]]
+}
+
+#' @export
+iso_rename_file_info.iso_file_list <- function(iso_files, ..., quiet = default(quiet)) {
   # variables for all files
   rename_quos <- quos(...)
   
   # rename
-  isofiles_rename <- map(.data, select_rename_isofile, tidyselect::vars_rename, rename_quos)
+  isofiles_rename <- map(iso_files, select_rename_isofile, tidyselect::vars_rename, rename_quos)
   
   # info summary
   all_vars <- map(isofiles_rename, "vars") %>% bind_rows()
@@ -141,7 +161,7 @@ rename.iso_file_list <- function(.data, ..., quiet = TRUE) {
       mutate(label = sprintf(" - '%s' to '%s' in %d files", from, to, n))
     total_n <- all_vars %>% filter(changed) %>% select(from) %>% unique()
     glue::glue("Info: renaming {nrow(total_n)} file info column(s) ",
-               "wherever they exist across {length(.data)} isofile(s):\n",
+               "wherever they exist across {length(iso_files)} isofile(s):\n",
                "{paste(info$label, collapse = '\n')}") %>% 
       message()
   }
@@ -151,27 +171,47 @@ rename.iso_file_list <- function(.data, ..., quiet = TRUE) {
 
 #' @export
 rename.iso_file <- function(.data, ...) {
-  rename(iso_as_file_list(.data), ...)[[1]]
+  iso_rename_file_info(.data, ..., quiet = TRUE)
 }
 
-# mutate ==================
-
+#' @export
+rename.iso_file_list <- function(.data, ...) {
+  iso_rename_file_info(.data, ..., quiet = TRUE)
+}
 
 # filter ==================
 
 
 #' Filter iso_files
 #' 
-#' Filter for specific iso_files using file info columns (\code{\link{iso_get_file_info}}). Works just like dplyr's \link[dplyr]{filter} except that it provides the user with some information on what has been filtered. You can also use \link[dplyr]{filter} directly to filter collections of \code{iso_file} objects.
+#' Filter for specific isofiles using file info columns (\code{\link{iso_get_file_info}}). Works just like dplyr's \link[dplyr]{filter} except that it provides the user with some information on what has been filtered. Returns \code{NULL} if none of the isofiles' file info matches the filter criteria. You can also use \link[dplyr]{filter} directly to filter collections of \code{iso_file} objects.
 #' 
 #' @inheritParams iso_get_raw_data
 #' @param ... dplyr-style \link[dplyr]{filter} conditions applied based on each file's file_info (see \code{\link{iso_get_file_info}})
 #' @family file_info operations
 #' @export 
 iso_filter_files <- function(iso_files, ..., quiet = default(quiet)) {
-  # safety checks
-  if(!iso_is_file_list(iso_files)) stop("can only filter collections of iso files", call. = FALSE)
-  filtered_iso_files <- filter(iso_files, ...)
+  UseMethod("iso_filter_files")
+} 
+ 
+#' @export
+iso_filter_files.default <- function(iso_files, ..., quiet = default(quiet)) {
+  stop("this function is not defined for objects of type '", 
+       class(iso_files)[1], "'", call. = FALSE)
+}
+
+#' @export
+iso_filter_files.iso_file <- function(iso_files, ..., quiet = default(quiet)) {
+  iso_filter_files(iso_as_file_list(iso_files), ..., quiet = quiet)[[1]]
+}
+
+#' @export
+iso_filter_files.iso_file_list <- function(iso_files, ..., quiet = default(quiet)) {
+  # filter iso_files by file info
+  file_info <- iso_get_file_info(iso_files, quiet = TRUE) %>% dplyr::filter(...)
+  filtered_iso_files <-
+    if (nrow(file_info) == 0) NULL
+    else iso_files[names(iso_files) %in% file_info$file_id]
   
   # information
   if (!quiet) {
@@ -183,10 +223,75 @@ iso_filter_files <- function(iso_files, ..., quiet = default(quiet)) {
 }
 
 #' @export
+filter.iso_file <- function(.data, ...) {
+  iso_filter_files(.data, ..., quiet = TRUE)
+}
+
+#' @export
 filter.iso_file_list <- function(.data, ..., .preserve = FALSE) {
-  # filter iso_files by file info
-  file_info <- iso_get_file_info(.data, quiet = TRUE) %>% dplyr::filter(...)
-  # return filtered iso_files
-  if (nrow(file_info) == 0) return(NULL)
-  else .data[names(.data) %in% file_info$file_id]
+  iso_filter_files(.data, ..., quiet = TRUE)
+}
+
+# mutate ==================
+
+#' Mutate file info
+#' 
+#' Mutate the file info (\code{\link{iso_get_file_info}}) within isofile objects by changing existing columns or introducing new ones. Works just like dplyr's \link[dplyr]{mutate}. You can also use \link[dplyr]{mutate} directly but it will not provide summary information on the operation. Note that this will create missing columns that exist in some but not all of the passed in isofile objects in all isofile objects (filling them with NAs) the same way that \code{\link{iso_get_file_info}} does.
+#' 
+#' @inheritParams iso_get_raw_data
+#' @param ... dplyr-style \link[dplyr]{mutate} conditions applied to the combined file info (see \code{\link{iso_get_file_info}})
+#' @family file_info operations
+#' @export 
+iso_mutate_file_info <- function(iso_files, ..., quiet = default(quiet)) {
+  UseMethod("iso_mutate_file_info")
+} 
+
+#' @export
+iso_mutate_file_info.default <- function(iso_files, ..., quiet = default(quiet)) {
+  stop("this function is not defined for objects of type '", 
+       class(iso_files)[1], "'", call. = FALSE)
+}
+
+#' @export
+iso_mutate_file_info.iso_file <- function(iso_files, ..., quiet = default(quiet)) {
+  iso_mutate_file_info(iso_as_file_list(iso_files), ..., quiet = quiet)[[1]]
+}
+
+#' @export
+iso_mutate_file_info.iso_file_list <- function(iso_files, ..., quiet = default(quiet)) {
+  
+  # mutate iso_files' file info
+  file_info <- 
+    iso_get_file_info(iso_files, quiet = TRUE) %>% 
+    dplyr::mutate(...) 
+  
+  # convert back to list format
+  file_info <-
+    file_info %>% 
+    ensure_data_frame_list_columns() %>% 
+    split(seq(nrow(file_info))) 
+  
+  # information
+  if (!quiet) {
+    glue::glue("Info: mutating file info for {length(iso_files)} data file(s)") %>% 
+      message()
+  }
+  
+  # mutate
+  mutated_iso_files <-
+    map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) %>% 
+    iso_as_file_list()
+  
+  # return
+  return(mutated_iso_files)
+}
+
+#' @export
+mutate.iso_file <- function(.data, ...) {
+  iso_mutate_file_info(.data, ..., quiet = TRUE)
+}
+
+#' @export
+mutate.iso_file_list <- function(.data, ...) {
+  iso_mutate_file_info(.data, ..., quiet = TRUE)
 }
