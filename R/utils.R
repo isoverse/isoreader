@@ -4,6 +4,12 @@
 #' @export
 magrittr::`%>%`
 
+# check if a column is in a data frame
+col_in_df <- function(df, col) {
+  stopifnot(is.data.frame(df))
+  col %in% names(df)
+}
+
 # collapse helper to deal with naming change in the glue package
 collapse <- function(...) {
   if (exists("glue_collapse", where=asNamespace("glue"), mode="function"))
@@ -595,8 +601,8 @@ match_file_ext <- function(filepath, extensions) {
 # @param filepaths_df data frame with, at minimum, column 'path'
 # @param extensions_df data frame with, at miminum, column 'extension'
 match_to_supported_file_types <- function(filepaths_df, extensions_df) {
-  stopifnot("path" %in% names(filepaths_df))
-  stopifnot("extension" %in% names(extensions_df))
+  stopifnot(col_in_df(filepaths_df, "path"))
+  stopifnot(col_in_df(extensions_df, "extension"))
   files <-
     filepaths_df %>%
     mutate(extension = map_chr(path, match_file_ext, extensions_df$extension)) %>%

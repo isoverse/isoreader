@@ -260,6 +260,10 @@ set_ds_file_path <- function(ds, file_root, file_path, file_id = basename(file_p
 }
 
 get_ds_file_path <- function(ds) {
+  if (!col_in_df(ds$file_info, "file_path"))
+    stop("file_path column does not exist in file info (lost during rename?), cannot proceed", call. = FALSE)
+  if (!col_in_df(ds$file_info, "file_root"))
+    stop("file_root column does not exist in file info (lost during rename?), cannot proceed", call. = FALSE)
   if (is.na(ds$file_info$file_root)) return(ds$file_info$file_path)
   else return(file.path(ds$file_info$file_root, ds$file_info$file_path))
 }
