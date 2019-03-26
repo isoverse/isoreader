@@ -78,7 +78,7 @@ get_raw_data_info <- function(iso_files) {
       )
   } else {
     # should not get here
-    glue("cannot process '{class(iso_files[[1]])[1]}'") %>% stop(call. = FALSE)
+    glue("cannot process '{class(iso_files[[1]])[1]}' in get_raw_data_info") %>% stop(call. = FALSE)
   }
   
   return(select(raw_data_sum, file_id, raw_data = label))
@@ -699,7 +699,7 @@ convert_isofiles_file_info_to_data_frame <- function(iso_files, ...) {
 # safely bind rows by converting all columns to list columns if they aren't already
 # works both with lists and data frames (or mixed)
 # this is typically followed by unnest_aggreated_data_frame
-safe_bind_rows <- function(df_list, exclude = c()) {
+safe_bind_rows <- function(df_list, exclude = names(make_iso_file_data_structure()$file_info)) {
   map(df_list, ensure_data_frame_list_columns, exclude = exclude) %>% 
     bind_rows()
 }
@@ -708,15 +708,15 @@ safe_bind_rows <- function(df_list, exclude = c()) {
 # this is to allow for safely binding rows of data frames with unpredictable data types in the same columns
 # @param x data frame or list
 # @param exclude names of columns to leave the way they are
-ensure_data_frame_list_columns <- function(x, exclude = c()) {
+ensure_data_frame_list_columns <- function(x, exclude = names(make_iso_file_data_structure()$file_info)) {
   # make sure all columns are ready
   cols_to_list <- names(x)[!map_lgl(x, is.list)] %>% setdiff(exclude)
   if(length(cols_to_list) > 0) {
-    func <- if (is.list(x)) list else as.list
+    func <- if (is.data.frame(x)) as.list else list
     x[cols_to_list] <- map(x[cols_to_list], func)
   }
   # convert list to tibble
-  if (is.list(x)) x <- dplyr::as_tibble(x)
+  if (!is.data.frame(x)) x <- dplyr::as_tibble(x)
   return(x)
 }
 

@@ -16,7 +16,7 @@ test_that("Test that selecting/renaming file info works", {
   iso_files <- c(iso_file1, iso_file2, iso_file3)
   
   # select error checks
-  expect_error(iso_select_file_info(42), "only select.*iso files")
+  expect_error(iso_select_file_info(42), "not defined")
   expect_error(iso_select_file_info(iso_file1, new = file_id), "renaming.*not allowed")
   expect_error(iso_select_file_info(iso_files, new = file_id), "renaming.*not allowed")
   expect_error(iso_select_file_info(iso_files, y = new_info, y = new_info2), "unresolvable naming conflict")
@@ -52,7 +52,7 @@ test_that("Test that selecting/renaming file info works", {
   )
   
   # rename error checks
-  expect_error(iso_rename_file_info(42), "only rename.*iso files")
+  expect_error(iso_rename_file_info(42), "not defined")
   expect_error(iso_rename_file_info(iso_file1, new = file_id), "renaming.*not allowed")
   expect_error(iso_rename_file_info(iso_files, new = file_id), "renaming.*not allowed")
   expect_error(iso_rename_file_info(iso_files, new_info = new_info2), "unresolvable naming conflict")
@@ -99,18 +99,20 @@ test_that("Test that filtering by file info works", {
   iso_file3$file_info$file_id <- "C"
   
   # errors
-  expect_error(filter(iso_file1), "no applicable method")
-  expect_error(iso_filter_files(iso_file1), "can only filter collections")
+  expect_error(iso_filter_files(42), "not defined")
   
   # messaging
   iso_files <- c(iso_file1, iso_file2, iso_file3)
-  expect_equal(filter(iso_files), iso_files)
   expect_silent(filter(iso_files))
   expect_message(iso_filter_files(iso_files), "applying.*filter")
   expect_silent(iso_filter_files(iso_files, quiet = TRUE))
   
   # filtering
+  expect_equal(filter(iso_files), iso_files)
   expect_equal(filter(iso_files, new_info == 42), iso_files)
+  expect_equal(filter(iso_file1, new_info == 42), iso_file1)
+  expect_null(filter(iso_files, new_info != 42))
+  expect_null(filter(iso_file1, new_info != 42))
   expect_equal(filter(iso_files, file_id == "A"), c(iso_file1))
   expect_null(filter(iso_files, file_id == "DNE"))
   expect_error(filter(iso_files, dne == 5), "not.*found")
@@ -119,4 +121,56 @@ test_that("Test that filtering by file info works", {
   expect_equal(filter(iso_files, file_id != "A"), iso_filter_files(iso_files, file_id != "A"))
 })
 
+# mutating ====
+
+test_that("Test that mutating file info works", {
+  
+  iso_file1 <- make_di_data_structure()
+  iso_file1$read_options$file_info <- TRUE
+  iso_file1$file_info$new_info <- 42
+  iso_file2 <- iso_file3 <- iso_file1
+  iso_file1$file_info$file_id <- "A"
+  iso_file2$file_info$file_id <- "B"
+  iso_file2$file_info$new_info2 <- 2
+  iso_file3$file_info$file_id <- "C"
+  iso_file3$file_info$new_info3 <- 3
+  
+  # errors
+  expect_error(iso_mutate_file_info(42), "not defined")
+  
+  # messaging
+  iso_files <- c(iso_file1, iso_file2, iso_file3)
+  expect_silent(mutate(iso_files))
+  expect_message(iso_mutate_file_info(iso_files), "mutating")
+  expect_silent(iso_mutate_file_info(iso_files, quiet = TRUE))
+  
+  # mutating
+  expect_equal(
+    mutate(iso_files) %>% iso_get_file_info(), 
+    iso_files %>% iso_get_file_info())
+  expect_equal(
+    mutate(iso_files, new_info = as.character(new_info)) %>% iso_get_file_info(), 
+    iso_files %>% iso_get_file_info() %>% mutate(new_info = as.character(new_info)))
+  expect_true(
+    iso_is_file_list(
+      mutated_iso_files <- 
+        mutate(iso_files, newest_info = case_when(new_info2 == 2 ~ 20, new_info3 == 3 ~ 30, TRUE ~ 00)))
+  )
+  expect_equal(
+    mutated_iso_files %>% iso_get_file_info(),
+    iso_files %>% iso_get_file_info() %>% 
+      mutate(newest_info = case_when(new_info2 == 2 ~ 20, new_info3 == 3 ~ 30, TRUE ~ 00))
+  )
+  
+  # check on data types
+  expect_true(is.character(mutated_iso_files[[1]]$file_info$file_id))
+  expect_true(is.na(mutated_iso_files[[1]]$file_info$file_root))
+  expect_true(is.list(mutated_iso_files[[1]]$file_info$new_info))
+  expect_true(is.list(mutated_iso_files[[1]]$file_info$newest_info))
+  
+  # mutate and iso_mutate_file_info equivalence
+  expect_equal(
+    mutate(iso_files, newest_info = "A") %>% iso_get_file_info(), 
+    iso_mutate_file_info(iso_files, newest_info = "A") %>% iso_get_file_info())
+})
 

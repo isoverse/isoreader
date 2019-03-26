@@ -345,9 +345,11 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
   iso_files <- iso_as_file_list(iso_files, discard_duplicates = discard_duplicates) 
 
   # convert file_info to data frame in isofiles for faster access
-  # @note: this is not quite ideal because it basically casts iso_as_file_list twice if there are any files that have non-data frame file_info
-  # but should happen less and less as older file objects get upgraded
+  # @note: this is not quite ideal because it basically casts iso_as_file_list twice if there are any files that have non-data frame file_info but should happen less and less as older file objects get upgraded - should be possible to deprecate in a future version
   iso_files <- convert_isofiles_file_info_to_data_frame(iso_files, discard_duplicates = discard_duplicates)
+
+  # convert file_path_to_rooted for old files
+  # @note: should be possible to deprecate in a future version since all paths will be rooted
   if (length(root) != 1) root <- "." # if there are multiple, default back to working directory in case of ambiguity
   iso_files <- convert_file_path_to_rooted(iso_files, root = root)
   
@@ -437,7 +439,14 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, writ
     iso_file <- exec_func_with_error_catch(reader_fun, iso_file, options = reader_options, env = env)
     
     # convert file info columns to list columns (and ensure it's data frame format)
-    iso_file$file_info <- ensure_data_frame_list_columns(iso_file$file_info, exclude = names(ds$file_info))
+    if (iso_is_file_list(iso_file)) {
+      iso_file <- map(iso_file, ~{
+        .x$file_info <- ensure_data_frame_list_columns(.x$file_info, exclude = names(ds$file_info));
+        .x
+      }) %>% iso_as_file_list()
+    } else {
+      iso_file$file_info <- ensure_data_frame_list_columns(iso_file$file_info, exclude = names(ds$file_info))
+    }
     
     # cleanup any binary and source content depending on debug setting
     if (!default(debug)) {
