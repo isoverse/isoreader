@@ -18,9 +18,9 @@ data frame with file_id and number of encountered errors and warnings
 Returns a data frame listing how many errors and warnings were encountered for each file. For details on each error/warning, see \link[readr]{problems} and the \link{iso_problem_functions}.
 }
 \seealso{
-Other problem functions: \code{\link{iso_get_problems}},
+Other problem functions: \code{\link{iso_filter_files_with_problems}},
+  \code{\link{iso_get_problems}},
   \code{\link{iso_has_problems}},
-  \code{\link{iso_omit_files_with_problems}},
   \code{\link{iso_problem_functions}}
 }
 \concept{problem functions}

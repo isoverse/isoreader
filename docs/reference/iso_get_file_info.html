@@ -32,7 +32,7 @@
 
 <meta property="og:title" content="Aggregate file info — iso_get_file_info" />
 
-<meta property="og:description" content="Combine file information from multiple iso_files. By default all information is included but specific items can be specified using the include parameter. The file id is always included. File information beyond file_id and file_path is only available if the iso_files were read with parameter read_file_info=TRUE." />
+<meta property="og:description" content="Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the select parameter, which uses the iso_select_file_info function to select and/or rename columns. File information beyond file_id, file_root, file_path and file_datetime is only available if the iso_files were read with parameter read_file_info=TRUE." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -73,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.6</span>
       </span>
     </div>
 
@@ -122,7 +122,7 @@
 
     <div class="ref-description">
     
-    <p>Combine file information from multiple iso_files. By default all information is included but specific items can be specified using the <code>include</code> parameter. The file id is always included. File information beyond <code>file_id</code> and <code>file_path</code> is only available if the iso_files were read with parameter <code>read_file_info=TRUE</code>.</p>
+    <p>Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the <code>select</code> parameter, which uses the <code>iso_select_file_info</code> function to select and/or rename columns. File information beyond <code>file_id</code>, <code>file_root</code>, <code>file_path</code> and <code>file_datetime</code> is only available if the <code>iso_files</code> were read with parameter <code>read_file_info=TRUE</code>.</p>
     
     </div>
 
@@ -138,7 +138,7 @@
     </tr>
     <tr>
       <th>select</th>
-      <td><p>which columns to select - use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. File id is always included no matter which selection parameters.</p></td>
+      <td><p>which columns to select - use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. File id is always included and cannot be renamed.</p></td>
     </tr>
     <tr>
       <th>quiet</th>
@@ -148,7 +148,7 @@
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using <code>iso_file$file_info[['INFO_NAME']]</code> on the iso_file object directly.</p>
+    <p>File info entries with multiple values remain nested multi-value (=list) columns and can be unnested using <a href='https://tidyr.tidyverse.org/reference/unnest.html'>unnest</a>.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 

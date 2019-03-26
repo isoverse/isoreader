@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Save data to R Data Storage (.rds) — iso_save • Isoreader</title>
+<title>Mutate file info — iso_mutate_file_info • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Save data to R Data Storage (.rds) — iso_save" />
+<meta property="og:title" content="Mutate file info — iso_mutate_file_info" />
 
-<meta property="og:description" content="This function saves the passed in iso_files to an R Data Storage (.rds) file, which is an efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard iso_read_continuous_flow and iso_read_dual_inlet functions." />
+<meta property="og:description" content="Mutate the file info (iso_get_file_info) within isofile objects by changing existing columns or introducing new ones. Works just like dplyr's mutate. You can also use mutate directly but it will not provide summary information on the operation. Note that this will create missing columns that exist in some but not all of the passed in isofile objects in all isofile objects (filling them with NAs) the same way that iso_get_file_info does." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -115,18 +115,18 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Save data to R Data Storage (.rds)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/isosave.R'><code>R/isosave.R</code></a></small>
-    <div class="hidden name"><code>iso_save.Rd</code></div>
+    <h1>Mutate file info</h1>
+    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/file_info_operations.R'><code>R/file_info_operations.R</code></a></small>
+    <div class="hidden name"><code>iso_mutate_file_info.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This function saves the passed in iso_files to an R Data Storage (.rds) file, which is an efficient compressed data storage format. Data exported this way can be easily read back into isoreader using the standard <code><a href='iso_read_continuous_flow.html'>iso_read_continuous_flow</a></code> and <code><a href='iso_read_dual_inlet.html'>iso_read_dual_inlet</a></code> functions.</p>
+    <p>Mutate the file info (<code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>) within isofile objects by changing existing columns or introducing new ones. Works just like dplyr's <a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a>. You can also use <a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a> directly but it will not provide summary information on the operation. Note that this will create missing columns that exist in some but not all of the passed in isofile objects in all isofile objects (filling them with NAs) the same way that <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code> does.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_save</span>(<span class='no'>iso_files</span>, <span class='no'>filepath</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+    <pre class="usage"><span class='fu'>iso_mutate_file_info</span>(<span class='no'>iso_files</span>, <span class='no'>...</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -136,8 +136,8 @@
       <td><p>collection of iso_file objects</p></td>
     </tr>
     <tr>
-      <th>filepath</th>
-      <td><p>the path (folder and filename) to the export file. The correct file extension is automatically added if not already in the filename, i.e. filename can be provided with or without extension.</p></td>
+      <th>...</th>
+      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a> conditions applied to the combined file info (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>)</p></td>
     </tr>
     <tr>
       <th>quiet</th>
@@ -145,15 +145,11 @@
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>returns the iso_files object invisibly for use in pipelines</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other export functions: <code><a href='iso_export_to_excel.html'>iso_export_to_excel</a></code>,
-  <code><a href='iso_export_to_feather.html'>iso_export_to_feather</a></code>,
-  <code><a href='iso_export_to_rda.html'>iso_export_to_rda</a></code></p></div>
+    <div class='dont-index'><p>Other file_info operations: <code><a href='iso_filter_files.html'>iso_filter_files</a></code>,
+  <code><a href='iso_rename_file_info.html'>iso_rename_file_info</a></code>,
+  <code><a href='iso_select_file_info.html'>iso_select_file_info</a></code></p></div>
     
 
   </div>
@@ -162,8 +158,6 @@
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
-
       <li><a href="#see-also">See also</a></li>
           </ul>
 

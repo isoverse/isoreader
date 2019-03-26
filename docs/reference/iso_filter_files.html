@@ -32,7 +32,7 @@
 
 <meta property="og:title" content="Filter iso_files — iso_filter_files" />
 
-<meta property="og:description" content="Filter for specific iso_files using file info parameters, most commonlty file_id and file_datetime but others can be used as well if they exist." />
+<meta property="og:description" content="Filter for specific isofiles using file info columns (iso_get_file_info). Works just like dplyr's filter except that it provides the user with some information on what has been filtered. Returns NULL if none of the isofiles' file info matches the filter criteria. You can also use filter directly to filter collections of iso_file objects." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -73,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.6</span>
       </span>
     </div>
 
@@ -116,13 +116,13 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Filter iso_files</h1>
-    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/filtering.R'><code>R/filtering.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/file_info_operations.R'><code>R/file_info_operations.R</code></a></small>
     <div class="hidden name"><code>iso_filter_files.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Filter for specific iso_files using file info parameters, most commonlty file_id and file_datetime but others can be used as well if they exist.</p>
+    <p>Filter for specific isofiles using file info columns (<code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>). Works just like dplyr's <a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a> except that it provides the user with some information on what has been filtered. Returns <code>NULL</code> if none of the isofiles' file info matches the filter criteria. You can also use <a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a> directly to filter collections of <code>iso_file</code> objects.</p>
     
     </div>
 
@@ -137,7 +137,7 @@
     </tr>
     <tr>
       <th>...</th>
-      <td><p>filter conditions applied based on each file's file_info (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>)</p></td>
+      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a> conditions applied based on each file's file_info (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>)</p></td>
     </tr>
     <tr>
       <th>quiet</th>
@@ -145,13 +145,21 @@
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other file_info operations: <code><a href='iso_mutate_file_info.html'>iso_mutate_file_info</a></code>,
+  <code><a href='iso_rename_file_info.html'>iso_rename_file_info</a></code>,
+  <code><a href='iso_select_file_info.html'>iso_select_file_info</a></code></p></div>
+    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>

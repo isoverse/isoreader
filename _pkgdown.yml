@@ -93,7 +93,7 @@ reference:
   - '`iso_has_problems`'
   - '`iso_get_problems_summary`'
   - '`iso_get_problems`'
-  - '`iso_omit_files_with_problems`'
+  - '`iso_filter_files_with_problems`'
 
 - title: File system functions
   desc: >
