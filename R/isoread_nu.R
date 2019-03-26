@@ -22,7 +22,7 @@ iso_read_nu <- function(ds, options = list()) {
         create_nu_checkpoint(
           id = "Sample Failed", 
           check_quo = quo(
-            if ("Sample Failed" %in% names(ds$file_info))
+            if (col_in_df(ds$file_info, "Sample Failed"))
               stop(ds$file_info$`Sample Failed`, call. = FALSE)
           ))
       
@@ -42,7 +42,7 @@ iso_read_nu <- function(ds, options = list()) {
       file_time = # try to get datetime from the UTC FileTime first
         create_nu_parser(
           type = "file_info", id = "file_datetime", n_req = 1, #n_req = "?",
-          check_quo = quo(!"Sample Failed" %in% names(ds$file_info)),
+          check_quo = quo(!col_in_df(ds$file_info, "Sample Failed")),
           pattern = "\"UTC FileTimeLow\",(-?\\d+),\" UTC FileTimeHigh\",(-?\\d+)",
           parse_quo = quo({
             brackets <- stringr::str_match(header, parser$pattern)
@@ -72,7 +72,7 @@ iso_read_nu <- function(ds, options = list()) {
         create_nu_parser(
           type = "temp", id = c("n_blocks", "n_channels"), 
           pattern = make_capture_pattern("Num Blocks", "int"),
-          check_quo = quo(!"Sample Failed" %in% names(ds$file_info)),
+          check_quo = quo(!col_in_df(ds$file_info, "Sample Failed")),
           parse_quo = quo(
             list(
               as.integer(extract_substring(header, parser$pattern, capture_bracket = 1)),
@@ -86,7 +86,7 @@ iso_read_nu <- function(ds, options = list()) {
         create_nu_parser(
           type = "data", id = c("bgrd_data", "raw_data"),
           pattern = make_capture_pattern("Sample Name is ", "chr"),
-          check_quo = quo(!"Sample Failed" %in% names(ds$file_info)),
+          check_quo = quo(!col_in_df(ds$file_info, "Sample Failed")),
           parse_quo = quo(
             exec_func_with_error_catch(parse_nu_data, data[[1]], ds$temp$n_blocks, ds$temp$n_channels, options$nu_masses)
           )
