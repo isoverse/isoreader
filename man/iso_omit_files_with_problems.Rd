@@ -6,6 +6,9 @@
 \usage{
 iso_omit_files_with_problems(...)
 }
+\arguments{
+\item{...}{deprecated}
+}
 \description{
 This function has been renamed to \link{iso_filter_files_with_problems} for naming consistency.
 }
