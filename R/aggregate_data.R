@@ -237,7 +237,7 @@ iso_get_data <- function(iso_files, include_file_info = everything(), include_ra
 
 #' Aggregate file info
 #'
-#' Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the \code{select} parameter, which uses the \link{\code{iso_select_file_info}} function to select and/or rename columns. File information beyond \code{file_id}, \code{file_root}, \code{file_path} and \code{file_datetime} is only available if the \code{iso_files} were read with parameter \code{read_file_info=TRUE}.
+#' Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the \code{select} parameter, which uses the \code{\link{iso_select_file_info}} function to select and/or rename columns. File information beyond \code{file_id}, \code{file_root}, \code{file_path} and \code{file_datetime} is only available if the \code{iso_files} were read with parameter \code{read_file_info=TRUE}.
 #'
 #' @inheritParams iso_get_raw_data
 #' @param select which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. File id is always included and cannot be renamed. 

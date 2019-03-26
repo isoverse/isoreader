@@ -100,6 +100,7 @@ iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE) {
 #' Renamed to iso_filter_files_with_problems
 #' 
 #' This function has been renamed to \link{iso_filter_files_with_problems} for naming consistency.
+#' @param ... deprecated
 #' @export
 iso_omit_files_with_problems <- function(...) {
   warning("iso_filter_files_with_problems() was renamed and will be removed in a future version of the isoreader package. Please use iso_filter_files_with_problems() directly instead to make your code future-proof.", immediate. = TRUE, call. = FALSE)

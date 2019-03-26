@@ -117,11 +117,10 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
         xml_find_all(".//SerialisableTaskValue") %>% 
         map_xml_children() %>% 
         # link with parameters defined in methods
-        mutate_(
-          .dots = list(
-            MethodId = ~task_info[["MethodId"]],
-            GlobalIdentifier = ~task_info[["GlobalIdentifier"]]
-          )) %>% 
+        mutate(
+          MethodId = task_info[["MethodId"]],
+          GlobalIdentifier = task_info[["GlobalIdentifier"]]
+        ) %>% 
         left_join(method_parameters, by = c("MethodId" = "MethodId", "ParameterIdentifier" = "Id"))
     } else {
       task_values <- data_frame()
@@ -133,16 +132,16 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
     task_data <- 
       task_xml %>% 
       xml_find_all(".//SerialisableDataSet") %>% 
-      map_xml_children(select = c("Id", "AcquireDataStatus", "AcquireStartDate", "AcquireEndDate", "TypeIdentifier")) %>% 
-      mutate_(
-        .dots = list(
-          GlobalIdentifier = ~task_info[["GlobalIdentifier"]],
-          DataFile = ~str_c(Id, ".hdf5")
-        )) %>% 
-      { .[names(.) != "Id"] }
+      map_xml_children(
+        select = c("Id", "AcquireDataStatus", "AcquireStartDate", "AcquireEndDate", "TypeIdentifier")) %>% 
+      mutate(
+        GlobalIdentifier = task_info[["GlobalIdentifier"]],
+        DataFile = str_c(Id, ".hdf5")
+      ) %>% 
+      select(-Id)
     
     # prepare return
-    Value <- NULL # global variabls
+    Value <- NULL # global variables
     list(
       filename = basename(task_file),
       # combine task info with task values 

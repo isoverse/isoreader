@@ -458,9 +458,9 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   # safe information on the column units
   attr(ds$vendor_data_table, "units") <- 
     bind_rows(
-      select_(extracted_dt$columns, .dots = c("column", "units")),
-      data_frame(column = c("Start", "Rt", "End"), units = "[s]"),
-      data_frame(column = peaks %>% select(starts_with("Ampl"), starts_with("BGD")) %>% names(), units = "[mV]")
+      dplyr::select(extracted_dt$columns, column, units),
+      tibble::tibble(column = c("Start", "Rt", "End"), units = "[s]"),
+      tibble::tibble(column = peaks %>% select(starts_with("Ampl"), starts_with("BGD")) %>% names(), units = "[mV]")
     ) %>% 
     mutate(units = ifelse(units == " ", "", units))
   
