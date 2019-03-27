@@ -174,3 +174,69 @@ test_that("Test that mutating file info works", {
     iso_mutate_file_info(iso_files, newest_info = "A") %>% iso_get_file_info())
 })
 
+
+# parse info =======
+
+test_that("Test that file info parsing works", {
+  
+  iso_file1 <- make_di_data_structure()
+  iso_file1$read_options$file_info <- TRUE
+  iso_file1$file_info$new_info <- 42.0
+  iso_file2 <- iso_file3 <- iso_file1
+  iso_file1$file_info$file_id <- "A"
+  iso_file2$file_info$file_id <- "B"
+  iso_file2$file_info$new_info2 <- "2"
+  iso_file3$file_info$file_id <- "C"
+  iso_file3$file_info$new_info3 <- "2019-01-01 01:01"
+  iso_files <- c(iso_file1, iso_file2, iso_file3)
+  
+  # errors
+  expect_error(iso_parse_file_info(42), "not defined")
+  expect_error(iso_parse_file_info(iso_files, number = new_info, integer = new_info),
+               "cannot convert.*to multiple formats")  
+  
+  # warnings
+  expect_warning(iso_parse_file_info(iso_files, integer = new_info),
+                 "missing automatic parsers")
+  expect_warning(iso_parse_file_info(iso_files, datetime = new_info),
+                 "missing automatic parsers")
+  expect_warning(iso_parse_file_info(iso_files, integer = new_info3),
+                 "parsing failure")
+  expect_warning(iso_parse_file_info(iso_files, double = new_info3),
+                 "parsing failure")
+  expect_warning(iso_parse_file_info(iso_files, datetime = new_info2),
+                 "parsing failure")
+    
+  # messages
+  expect_message(no_effect_isos <- iso_parse_file_info(iso_files), "parsing 0.*for 3 data file")
+  expect_silent(iso_parse_file_info(iso_files, quiet = TRUE))
+  expect_message(text_isos <- iso_parse_file_info(iso_files, text = starts_with("new")), 
+                 "parsing 1.*for 3 data file")
+  expect_message(iso_parse_file_info(iso_files, text = starts_with("new")), 
+                 "to text.*new_info")
+  expect_message(iso_parse_file_info(iso_files, text = starts_with("new")), 
+                 "already the target data type.*new_info2.*new_info3")
+  expect_message(number_isos <- iso_parse_file_info(iso_files, number = c(new_info2, new_info3)),
+                 "to number.*new_info2.*new_info3")
+  expect_message(integer_isos <- iso_parse_file_info(iso_files, integer = new_info2),
+                 "to integer.*new_info2")
+  expect_message(double_isos <- iso_parse_file_info(iso_files, double = new_info2),
+                 "to double.*new_info2")
+  expect_message(datetime_isos <- iso_parse_file_info(iso_files, datetime = new_info3),
+                 "to datetime.*new_info3")
+  
+  # outcome
+  expect_equal(iso_get_file_info(no_effect_isos), iso_get_file_info(iso_files))
+  expect_equal(iso_get_file_info(text_isos), iso_get_file_info(iso_files) %>% 
+                 mutate(new_info = as.character(new_info)))
+  expect_equal(iso_get_file_info(number_isos), iso_get_file_info(iso_files) %>% 
+                 mutate(new_info2 = parse_number(new_info2),
+                        new_info3 = parse_number(new_info3)))
+  expect_equal(iso_get_file_info(integer_isos), iso_get_file_info(iso_files) %>% 
+                 mutate(new_info2 = parse_integer(new_info2)))
+  expect_equal(iso_get_file_info(double_isos), iso_get_file_info(iso_files) %>% 
+                 mutate(new_info2 = parse_double(new_info2)))
+  expect_equal(iso_get_file_info(datetime_isos)$new_info3, (iso_get_file_info(iso_files) %>% 
+                 mutate(new_info3 = parse_datetime(new_info3) %>% lubridate::with_tz(Sys.timezone())))$new_info3)
+  
+})
