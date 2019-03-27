@@ -422,6 +422,7 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   # chromatographic shifts (as is alwayst he case for H2), these will in fact NOT quite be
   # identical. Isodat seems to report only the major ion (first ion here) so we are doing the same
   rts_df <- bind_rows(rts) 
+  if (nrow(rts_df) == 0) return(ds) # no vendor data table entries found
   
   # retention times
   peak <- start <- rt <- end <- amp <- Ampl <- bg <- BGD <- NULL
