@@ -23,8 +23,8 @@ navbar:
     href: articles/continuous_flow.html
   - text: Operations
     href: articles/operations.html
-  - text: Advanced
-    href: articles/advanced.html
+  - text: Development
+    href: articles/development.html
   - text: Reference
     href: reference/index.html
   right:
