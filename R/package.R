@@ -23,6 +23,19 @@
 #' @importFrom feather write_feather
 NULL
 
+# re-export select/rename functions
+#' @export
+tidyselect::everything
+
+#' @export
+tidyselect::starts_with
+
+#' @export
+tidyselect::ends_with
+
+#' @export
+tidyselect::matches
+
 # quiets concerns of R CMD check about . that appears in pipelines 
 # and some very commonly used variable names used in NSE commands
 utils::globalVariables(c(".", "file_id", "mass", "quiet"))
