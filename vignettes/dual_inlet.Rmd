@@ -77,10 +77,12 @@ iso_files %>%
     select = c(
       # rename sample id columns from the different file types to a new ID column
       ID = `Identifier 1`, ID = `Sample Name`, 
-      # select the Analysis column (not changing the name)
-      Analysis,
+      # select columns without renaming
+      Analysis, Method, `Peak Center`,
       # select the time stamp and rename it to `Date & Time`
-      `Date & Time` = file_datetime
+      `Date & Time` = file_datetime,
+      # rename weight columns from the different file types
+      `Sample Weight`, `Sample Weight` = `Weight [mg]`
     )
   ) %>% rmarkdown::paged_table()
 ```
@@ -93,7 +95,9 @@ Rather than retrieving specific file info columns using the above example of `is
 # select + rename specific file info columns
 iso_files2 <- iso_files %>% 
   iso_select_file_info(
-    ID = `Identifier 1`, ID = `Sample Name`, Analysis, `Date & Time` = file_datetime
+    ID = `Identifier 1`, ID = `Sample Name`, Analysis, Method, 
+    `Peak Center`, `Date & Time` = file_datetime,
+    `Sample Weight`, `Sample Weight` = `Weight [mg]`
   )
 
 # fetch all file info
@@ -112,7 +116,7 @@ iso_files2 %>% iso_filter_files(grepl("CIT", ID)) %>%
 
 # find files that were run in 2017
 iso_files2 %>% 
-  iso_filter_files( `Date & Time` > "2017-01-01" & `Date & Time` < "2018-01-01") %>% 
+  iso_filter_files(`Date & Time` > "2017-01-01" & `Date & Time` < "2018-01-01") %>% 
   iso_get_file_info() %>% 
   rmarkdown::paged_table()
 ```
@@ -126,10 +130,45 @@ iso_files2 %>%
   iso_mutate_file_info(
     # update existing column
     ID = paste("ID:", ID),
-    # change type of Analysis column to number
-    Analysis = parse_number(Analysis),
     # introduce new column
     `Run in 2017?` = `Date & Time` > "2017-01-01" & `Date & Time` < "2018-01-01"
+  ) %>% 
+  iso_get_file_info() %>% 
+  rmarkdown::paged_table()
+```
+
+## Parse
+
+Most file information is initially read as text to avoid cumbersome specifications during the read process and compatibility issues between different IRMS file formats. However, many file info columns are not easily processed as text. The isoreader package therefore provides several parsing and data extraction functions to facilitate processing the text-based data (some via functionality implemented by the [readr](http://readr.tidyverse.org) package). See code block below for examples. For a complete overview, see the `?extract_data` and `?iso_parse_file_info` documentation.
+
+```{r}
+# use parsing and extraction in iso_mutate_file_info
+iso_files2 %>% 
+  iso_mutate_file_info(
+    # change type of Peak Center to logical
+    `Peak Center` = parse_logical(`Peak Center`),
+    # retrieve first word of Method column
+    Method_1st = extract_word(Method),
+    # retrieve second word of Method column
+    Method_2nd = extract_word(Method, 2),
+    # retrieve file extension from the file_id using regular expression
+    extension = extract_substring(file_id, "\\.(\\w+)$", capture_bracket = 1)
+  ) %>% 
+  iso_get_file_info(select = c(extension, `Peak Center`, matches("Method"))) %>% 
+  rmarkdown::paged_table()
+
+# use parsing in iso_filter_file_info
+iso_files2 %>% 
+  iso_filter_files(parse_integer(Analysis) > 1500) %>% 
+  iso_get_file_info() %>% 
+  rmarkdown::paged_table()
+
+# use iso_parse_file_info for simplified parsing of column data types
+iso_files2 %>% 
+  iso_parse_file_info(
+    integer = Analysis, 
+    number = `Sample Weight`,
+    logical = `Peak Center`
   ) %>% 
   iso_get_file_info() %>% 
   rmarkdown::paged_table()
