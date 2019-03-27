@@ -260,6 +260,12 @@ iso_mutate_file_info.iso_file <- function(iso_files, ..., quiet = default(quiet)
 #' @export
 iso_mutate_file_info.iso_file_list <- function(iso_files, ..., quiet = default(quiet)) {
   
+  # information
+  if (!quiet) {
+    glue::glue("Info: mutating file info for {length(iso_files)} data file(s)") %>% 
+      message()
+  }
+  
   # mutate iso_files' file info
   file_info <- 
     iso_get_file_info(iso_files, quiet = TRUE) %>% 
@@ -270,12 +276,6 @@ iso_mutate_file_info.iso_file_list <- function(iso_files, ..., quiet = default(q
     file_info %>% 
     ensure_data_frame_list_columns() %>% 
     split(seq(nrow(file_info))) 
-  
-  # information
-  if (!quiet) {
-    glue::glue("Info: mutating file info for {length(iso_files)} data file(s)") %>% 
-      message()
-  }
   
   # mutate
   mutated_iso_files <-
@@ -294,4 +294,139 @@ mutate.iso_file <- function(.data, ...) {
 #' @export
 mutate.iso_file_list <- function(.data, ...) {
   iso_mutate_file_info(.data, ..., quiet = TRUE)
+}
+
+# parse ======
+
+#' Parse file info
+#' 
+#' Convenience function to efficiently parse file info (\code{\link{iso_get_file_info}}) columns in isofile objects. Uses the \code{parse_} functions exported from \link{readr} and described in \link{extract_data}. Note that non-default behaviour of these functions is best accessed by parsing columns one-by-one using \code{\link{iso_mutate_file_info}}.
+#' 
+#' @inheritParams iso_get_raw_data
+#' @param number dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a number using \link[readr]{parse_number}. Use \code{c(...)} to select multiple columns.
+#' @param double dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a double using \link[readr]{parse_double}. Use \code{c(...)} to select multiple columns.
+#' @param integer dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to an integer using \link[readr]{parse_integer}. Use \code{c(...)} to select multiple columns.
+#' @param logical dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a boolean (TRUE/FALSE) using \link[readr]{parse_logical}. Use \code{c(...)} to select multiple columns.
+#' @param datetime dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a date-time using \link[readr]{parse_datetime}. Use \code{c(...)} to select multiple columns.
+#' @param text dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to text using \link[readr]{as.character}. Use \code{c(...)} to select multiple columns.
+#' @family file_info operations
+#' @export 
+iso_parse_file_info <- function(iso_files, number = c(), double = c(), integer = c(), logical = c(), datetime = c(), text = c(), quiet = default(quiet)) {
+  UseMethod("iso_parse_file_info")
+} 
+
+#' @export
+iso_parse_file_info.default <- function(iso_files, ...) {
+  stop("this function is not defined for objects of type '", 
+       class(iso_files)[1], "'", call. = FALSE)
+}
+
+#' @export
+iso_parse_file_info.iso_file <- function(iso_files, ...) {
+  iso_parse_file_info(iso_as_file_list(iso_files), ...)[[1]]
+}
+
+#' @export
+iso_parse_file_info.iso_file_list <- function(iso_files, number = c(), double = c(), integer = c(), logical = c(), datetime = c(), text = c(), quiet = default(quiet)) {
+  
+  # get file info
+  file_info <- iso_get_file_info(iso_files, quiet = TRUE) 
+  
+  # conversion classes
+  classes <- 
+    tribble(
+      ~parse,     ~new_class,  ~func,
+      "number",   "numeric",   "parse_number",
+      "double",   "numeric",   "parse_double",
+      "integer",  "integer",   "parse_integer",
+      "logical",  "logical",   "parse_logical",
+      "datetime", "POSIXct",   "parse_datetime",
+      "text",     "character", "as.character"
+    )
+  
+  # determine variables
+  vars <-
+    list(
+      number = tidyselect::vars_select(names(file_info), !!enquo(number)),
+      double = tidyselect::vars_select(names(file_info), !!enquo(double)),
+      integer = tidyselect::vars_select(names(file_info), !!enquo(integer)),
+      logical = tidyselect::vars_select(names(file_info), !!enquo(logical)),
+      datetime = tidyselect::vars_select(names(file_info), !!enquo(datetime)),
+      text = tidyselect::vars_select(names(file_info), !!enquo(text))
+    ) %>% 
+    tibble::enframe(name = "parse", value = "column") %>% 
+    tidyr::unnest(column) %>% 
+    # find out number of casts per column
+    group_by(column) %>% mutate(n = n()) %>% ungroup() %>% 
+    # get column info
+    left_join(classes, by = "parse") %>% 
+    mutate(
+      old_class = map_chr(column, ~class(file_info[[.x]])[1]),
+      already_cast = new_class == old_class,
+      problem = !already_cast & new_class != "character" & old_class != "character"
+    )
+  
+  # check on multi-casts
+  if (any(vars$n > 1)) {
+    probs <- 
+      vars %>% filter(n > 1) %>% group_by(column) %>% 
+      summarize(convert_to = paste(unique(parse), collapse = ", ")) %>% 
+      mutate(label = sprintf(" - '%s' to %s", column, convert_to))
+    glue::glue("cannot convert the same column(s) to multiple formats:\n",
+               "{paste(probs$label, collapse = '\n')}") %>% 
+      stop(call. = FALSE)
+  }
+  
+  # information
+  if (!quiet) {
+    info <- 
+      vars %>% filter(!problem, !already_cast) %>% group_by(parse) %>% 
+      summarize(convert = paste(unique(column), collapse = "', '")) %>% 
+      mutate(label = sprintf(" - to %s: '%s'", parse, convert))
+    already <- filter(vars, already_cast)$column %>% 
+      { if(length(.) > 0) 
+          sprintf("\n - already the target data type (and thus ignored): '%s'", 
+               paste(., collapse = "', '"))
+        else ""
+      }
+    glue::glue(
+      "Info: parsing {nrow(filter(vars, !problem, !already_cast))} ",
+      "file info columns for {length(iso_files)} data file(s)",
+      if (nrow(info) > 0) ":\n{paste(info$label, collapse = '\n')}" else "",
+      "{already}") %>% 
+      message()
+  }
+  
+  # check on conversion problems
+  if (any(vars$problem)) {
+    probs <- 
+      vars %>% filter(problem) %>% 
+      mutate(label = 
+               sprintf(" - cannot convert '%s' from %s to %s", 
+                       column, old_class, parse))
+    glue::glue(
+      "missing automatic parsers for the following type conversions ",
+      "(columns are ignored):\n{paste(probs$label, collapse = '\n')}") %>% 
+      warning(immediate. = TRUE, call. = FALSE)
+  }
+  
+  # cast
+  mutate_quos <- 
+    vars %>% filter(!problem, !already_cast) %>% 
+    with(purrr::map2(column, func, ~quo((!!.y)(!!sym(.x)))) %>% setNames(column))
+  
+  # mutate file info
+  file_info <- 
+    file_info %>% 
+    mutate(!!!mutate_quos) %>% 
+    ensure_data_frame_list_columns() %>% 
+    split(seq(nrow(file_info))) 
+  
+  # mutate
+  mutated_iso_files <-
+    map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) %>% 
+    iso_as_file_list()
+  
+  # return
+  return(mutated_iso_files)
 }
