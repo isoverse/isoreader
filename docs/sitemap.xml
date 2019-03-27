@@ -109,6 +109,9 @@
     <loc>http://isoreader.isoverse.org//reference/iso_omit_files_with_problems.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_parse_file_info.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org//reference/iso_plot_continuous_flow_data.html</loc>
   </url>
   <url>
@@ -172,10 +175,10 @@
     <loc>http://isoreader.isoverse.org//reference/reexports.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//articles/advanced.html</loc>
+    <loc>http://isoreader.isoverse.org//articles/continuous_flow.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//articles/continuous_flow.html</loc>
+    <loc>http://isoreader.isoverse.org//articles/development.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//articles/dual_inlet.html</loc>

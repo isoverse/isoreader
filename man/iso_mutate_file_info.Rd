@@ -18,6 +18,7 @@ Mutate the file info (\code{\link{iso_get_file_info}}) within isofile objects by
 }
 \seealso{
 Other file_info operations: \code{\link{iso_filter_files}},
+  \code{\link{iso_parse_file_info}},
   \code{\link{iso_rename_file_info}},
   \code{\link{iso_select_file_info}}
 }

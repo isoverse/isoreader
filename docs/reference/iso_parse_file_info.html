@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Select file info columns — iso_select_file_info • Isoreader</title>
+<title>Parse file info — iso_parse_file_info • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Select file info columns — iso_select_file_info" />
+<meta property="og:title" content="Parse file info — iso_parse_file_info" />
 
-<meta property="og:description" content="Select which file info columns (iso_get_file_info) to keep within isofile objects. Works just like dplyr's select except that it can select different columns in different iso_files depending on what exists in each file (also works for on-the-fly renaming of columns). This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns. You can also use select directly but it will not provide summary information on the operation. To rename columns without removing all other information, use iso_rename_file_info instead." />
+<meta property="og:description" content="Convenience function to efficiently parse file info (iso_get_file_info) columns in isofile objects. Uses the parse_ functions exported from readr and described in extract_data. Note that non-default behaviour of these functions is best accessed by parsing columns one-by-one using iso_mutate_file_info." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -115,18 +115,20 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Select file info columns</h1>
+    <h1>Parse file info</h1>
     <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/file_info_operations.R'><code>R/file_info_operations.R</code></a></small>
-    <div class="hidden name"><code>iso_select_file_info.Rd</code></div>
+    <div class="hidden name"><code>iso_parse_file_info.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Select which file info columns (<code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>) to keep within isofile objects. Works just like dplyr's <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> except that it can select different columns in different iso_files depending on what exists in each file (also works for on-the-fly renaming of columns). This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns. You can also use <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> directly but it will not provide summary information on the operation. To rename columns without removing all other information, use <a href='iso_rename_file_info.html'>iso_rename_file_info</a> instead.</p>
+    <p>Convenience function to efficiently parse file info (<code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>) columns in isofile objects. Uses the <code>parse_</code> functions exported from readr and described in <a href='extract_data.html'>extract_data</a>. Note that non-default behaviour of these functions is best accessed by parsing columns one-by-one using <code><a href='iso_mutate_file_info.html'>iso_mutate_file_info</a></code>.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_select_file_info</span>(<span class='no'>iso_files</span>, <span class='no'>...</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+    <pre class="usage"><span class='fu'>iso_parse_file_info</span>(<span class='no'>iso_files</span>, <span class='kw'>number</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(), <span class='kw'>double</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(),
+  <span class='kw'>integer</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(), <span class='kw'>logical</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(), <span class='kw'>datetime</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(), <span class='kw'>text</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(),
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -136,8 +138,28 @@
       <td><p>collection of iso_file objects</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> conditions applied based on each file's file_info (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>). Note that the <code>file_id</code> column will always be kept, no matter the selection criteria, and cannot be renamed to protect from unexpected behaviour.</p></td>
+      <th>number</th>
+      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> condition to choose columns that should be converted to a number using <a href='https://readr.tidyverse.org/reference/parse_number.html'>parse_number</a>. Use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple columns.</p></td>
+    </tr>
+    <tr>
+      <th>double</th>
+      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> condition to choose columns that should be converted to a double using <a href='https://readr.tidyverse.org/reference/parse_atomic.html'>parse_double</a>. Use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple columns.</p></td>
+    </tr>
+    <tr>
+      <th>integer</th>
+      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> condition to choose columns that should be converted to an integer using <a href='https://readr.tidyverse.org/reference/parse_atomic.html'>parse_integer</a>. Use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple columns.</p></td>
+    </tr>
+    <tr>
+      <th>logical</th>
+      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> condition to choose columns that should be converted to a boolean (TRUE/FALSE) using <a href='https://readr.tidyverse.org/reference/parse_atomic.html'>parse_logical</a>. Use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple columns.</p></td>
+    </tr>
+    <tr>
+      <th>datetime</th>
+      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> condition to choose columns that should be converted to a date-time using <a href='https://readr.tidyverse.org/reference/parse_datetime.html'>parse_datetime</a>. Use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple columns.</p></td>
+    </tr>
+    <tr>
+      <th>text</th>
+      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> condition to choose columns that should be converted to text using as.character. Use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple columns.</p></td>
     </tr>
     <tr>
       <th>quiet</th>
@@ -149,8 +171,8 @@
 
     <div class='dont-index'><p>Other file_info operations: <code><a href='iso_filter_files.html'>iso_filter_files</a></code>,
   <code><a href='iso_mutate_file_info.html'>iso_mutate_file_info</a></code>,
-  <code><a href='iso_parse_file_info.html'>iso_parse_file_info</a></code>,
-  <code><a href='iso_rename_file_info.html'>iso_rename_file_info</a></code></p></div>
+  <code><a href='iso_rename_file_info.html'>iso_rename_file_info</a></code>,
+  <code><a href='iso_select_file_info.html'>iso_select_file_info</a></code></p></div>
     
 
   </div>

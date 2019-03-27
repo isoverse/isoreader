@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Advanced use of isoreader • Isoreader</title>
+<title>Development features of isoreader • Isoreader</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Advanced use of isoreader">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Development features of isoreader">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -52,7 +52,7 @@
   <a href="../articles/operations.html">Operations</a>
 </li>
 <li>
-  <a href="../articles/advanced.html">Advanced</a>
+  <a href="../articles/development.html">Development</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -74,21 +74,22 @@
 <!--/.navbar -->
 
       
-      </header><link href="advanced_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
-<script src="advanced_files/pagedtable-1.1/js/pagedtable.js"></script><div class="row">
+      </header><link href="development_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="development_files/pagedtable-1.1/js/pagedtable.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Advanced use of isoreader</h1>
+      <h1>Development features of isoreader</h1>
             
             <h4 class="date">2019-03-26</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/advanced.Rmd"><code>vignettes/advanced.Rmd</code></a></small>
-      <div class="hidden name"><code>advanced.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/development.Rmd"><code>vignettes/development.Rmd</code></a></small>
+      <div class="hidden name"><code>development.Rmd</code></div>
 
     </div>
 
     
     
+<p>This vignette introduces some of the development features of the isoreader package and is aimed primarily at code contributors interested in expanding its functionality or helping with bug fixes.</p>
 <div id="adding-new-file-format-readers" class="section level1">
 <h1 class="hasAnchor">
 <a href="#adding-new-file-format-readers" class="anchor"></a>Adding new file format readers</h1>
@@ -141,7 +142,7 @@
 <a class="sourceLine" id="cb2-32" data-line-number="32"><span class="co">#&gt;   ..$ type   : chr(0) </span></a>
 <a class="sourceLine" id="cb2-33" data-line-number="33"><span class="co">#&gt;   ..$ func   : chr(0) </span></a>
 <a class="sourceLine" id="cb2-34" data-line-number="34"><span class="co">#&gt;   ..$ details: chr(0)</span></a>
-<a class="sourceLine" id="cb2-35" data-line-number="35"><span class="co">#&gt; Info: finished reading 1 files in 0.56 secs</span></a>
+<a class="sourceLine" id="cb2-35" data-line-number="35"><span class="co">#&gt; Info: finished reading 1 files in 0.46 secs</span></a>
 <a class="sourceLine" id="cb2-36" data-line-number="36"><span class="co">#&gt; Dual inlet iso file 'example.new.did': 0 cycles, 0 ions ()</span></a>
 <a class="sourceLine" id="cb2-37" data-line-number="37"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/files">file.remove</a></span>(<span class="st">"example.new.did"</span>)</a>
 <a class="sourceLine" id="cb2-38" data-line-number="38"><span class="co">#&gt; [1] TRUE</span></a></code></pre></div>
@@ -170,7 +171,7 @@
 <a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader</span></a>
 <a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; Info: starting file #2, named 'dual_inlet_example.caf'</span></a>
 <a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; Info: finished file #2</span></a>
-<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt; Info: finished reading 2 files in 6.88 secs</span></a>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt; Info: finished reading 2 files in 7.22 secs</span></a>
 <a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt; Data from 2 dual inlet iso files: </span></a>
 <a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co">#&gt; # A tibble: 2 x 6</span></a>
 <a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">#&gt;   file_id   raw_data     file_info  method_info vendor_data_tab… file_path </span></a>
