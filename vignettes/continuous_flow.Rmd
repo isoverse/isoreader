@@ -72,8 +72,8 @@ iso_files %>%
     select = c(
        # rename sample id columns from the different file types to a new ID column
       ID = `Identifier 1`, ID = `Name`, 
-      # select the Analysis column (not changing the name)
-      Analysis,
+      # select columns without renaming
+      Analysis, `Peak Center`, `H3 Factor`,
       # select the time stamp and rename it to `Date & Time`
       `Date & Time` = file_datetime
     )
@@ -88,7 +88,8 @@ Rather than retrieving specific file info columns using the above example of `is
 # select + rename specific file info columns
 iso_files2 <- iso_files %>% 
   iso_select_file_info(
-    ID = `Identifier 1`, ID = `Name`, Analysis, `Date & Time` = file_datetime
+    ID = `Identifier 1`, ID = `Name`, Analysis, `Peak Center`, `H3 Factor`, 
+    `Date & Time` = file_datetime
   )
 
 # fetch all file info
@@ -121,10 +122,45 @@ iso_files2 %>%
   iso_mutate_file_info(
     # update existing column
     ID = paste("ID:", ID),
-    # change type of Analysis column to a number
-    Analysis = parse_number(Analysis),
     # introduce new column
     `Run since 2015?` = `Date & Time` > "2015-01-01"
+  ) %>% 
+  iso_get_file_info() %>% 
+  rmarkdown::paged_table()
+```
+
+## Parse
+
+Most file information is initially read as text to avoid cumbersome specifications during the read process and compatibility issues between different IRMS file formats. However, many file info columns are not easily processed as text. The isoreader package therefore provides several parsing and data extraction functions to facilitate processing the text-based data (some via functionality implemented by the [readr](http://readr.tidyverse.org) package). See code block below for examples. For a complete overview, see the `?extract_data` and `?iso_parse_file_info` documentation.
+
+```{r}
+# use parsing and extraction in iso_mutate_file_info
+iso_files2 %>% 
+  iso_mutate_file_info(
+    # change type of Peak Center to logical
+    `Peak Center` = parse_logical(`Peak Center`),
+    # retrieve first word of file_id
+    file_id_1st = extract_word(file_id),
+    # retrieve second word of ID column
+    file_id_2nd = extract_word(file_id, 2),
+    # retrieve file extension from the file_id using regular expression
+    name = extract_substring(ID, "(\\w+)-?(.*)?", capture_bracket = 1)
+  ) %>% 
+  iso_get_file_info(select = c(matches("file_id"), ID, name, `Peak Center`)) %>% 
+  rmarkdown::paged_table()
+
+# use parsing in iso_filter_file_info
+iso_files2 %>% 
+  iso_filter_files(parse_number(`H3 Factor`) > 2) %>% 
+  iso_get_file_info() %>% 
+  rmarkdown::paged_table()
+
+# use iso_parse_file_info for simplified parsing of column data types
+iso_files2 %>% 
+  iso_parse_file_info(
+    integer = Analysis, 
+    number = `H3 Factor`,
+    logical = `Peak Center`
   ) %>% 
   iso_get_file_info() %>% 
   rmarkdown::paged_table()
