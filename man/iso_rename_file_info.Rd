@@ -19,6 +19,7 @@ Rename individual file info columns (\code{\link{iso_get_file_info}}) within iso
 \seealso{
 Other file_info operations: \code{\link{iso_filter_files}},
   \code{\link{iso_mutate_file_info}},
+  \code{\link{iso_parse_file_info}},
   \code{\link{iso_select_file_info}}
 }
 \concept{file_info operations}

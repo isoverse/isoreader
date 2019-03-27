@@ -19,8 +19,8 @@ readr::parse_datetime
 #' Overview of text data extraction functions
 #' 
 #' The following functions are intened to make it easy to extract relevant information from textual data. 
-#' These functions can be used inside the filtering conditions passed to \code{\link{iso_filter_files}} or can be used to extract data from columns 
-#' in the data frames returned by the data retrievel functions (\code{\link{iso_get_raw_data}}, \code{\link{iso_get_file_info}}, \code{\link{iso_get_vendor_data_table}}, etc.).
+#' These functions are primarily intended for use in \code{\link{iso_mutate_file_info}} and inside the filtering conditions passed to \code{\link{iso_filter_files}}. However, they can of course also be used stand-alone and in regular \code{\link[dplyr]{mutate}} or \code{\link[dplyr]{filter}} calls on the data frames returned by the data retrievel functions (\code{\link{iso_get_raw_data}}, \code{\link{iso_get_file_info}}, \code{\link{iso_get_vendor_data_table}}, etc.). Not that all the \code{parse_} functions are used in \code{\link{iso_parse_file_info}} for easy type conversions.
+#' 
 #' For simultaneous extraction of pure text data into multiple columns, please see the \code{\link[tidyr]{extract}} function from the \link{tidyr} package.
 #' 
 #' \itemize{
@@ -29,13 +29,13 @@ readr::parse_datetime
 #'
 #' \item \code{\link{extract_word}} is a more specific convenience function to extract the 1st/2nd/3rd word from textual data. 
 #' 
-#' \item \code{\link[readr]{parse_number}} is a convenience function to extract a number even if it is surrouded by text (re-exported from the \link{readr} package)
+#' \item \code{\link[readr]{parse_number}} is a convenience function to extract a number even if it is surrouded by text (re-exported from the \link{readr} package).
 #' 
 #' \item \code{\link[readr]{parse_double}} parses text that holds double (decimal) numerical values without any extraneous text around - 
 #' use \code{\link[readr]{parse_number}} instead if this is not the case (re-exported from the \link{readr} package)
 #' 
 #' \item \code{\link[readr]{parse_integer}} parses text that holds integer (whole number) numerical values without any extraneous text around - 
-#' use \code{\link[readr]{parse_number}} instead if this is not the case (re-exported from the \link{readr} packag)
+#' use \code{\link[readr]{parse_number}} instead if this is not the case (re-exported from the \link{readr} package)
 #' 
 #' \item \code{\link[readr]{parse_logical}} parses text that holds logical (boolean, i.e. TRUE/FALSE) values (re-exported from the \link{readr} package)
 #' 
