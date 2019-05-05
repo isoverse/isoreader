@@ -488,10 +488,11 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
   new_cols <- setdiff(names(new_file_info), names(df))
   
   # information
+  n_data_files <- length(unique(df$file_id))
   if (!quiet) {
     glue::glue(
       "Info: adding new file information ('{paste(new_cols, collapse = \"', '\")}') ",
-      "to {length(unique(df$file_id))} data file(s), ",
+      "to {n_data_files} data file(s), ",
       "joining by '{purrr::map_chr(join_bys, paste, collapse = \"'+'\") %>% paste(collapse = \"' then '\")}'...") %>%
       message()
   }
@@ -596,11 +597,12 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
       group_by(..priority) %>% 
       summarize(
         label = sprintf(
-          "'%s' join: %d/%d new info rows match %d data files but would lead to the duplication of %d data files.", 
+          "'%s' join: %d/%d new info rows match %d/%d data files but would lead to the duplication of %d data files.", 
           paste(join_by_col[[1]], collapse = "'+'"),
           n_ni_matches[1],
           n_ni_considered[1],
           n_df_matches[1],
+          n_data_files,
           length(unique(..df_id))
         )
       )
@@ -628,7 +630,7 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
         n_ni_matches,
         n_ni_considered,
         n_df_matches,
-        nrow(df),
+        n_data_files,
         ifelse(n_ni_actual != n_ni_matches | n_df_actual != n_df_matches, 
                sprintf(" - %d of these was/were also matched by subsequent joins which took precedence", n_df_matches - n_df_actual),
                ""

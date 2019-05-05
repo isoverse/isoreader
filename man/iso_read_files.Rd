@@ -8,7 +8,7 @@ iso_read_files(paths, root, supported_extensions, data_structure,
   read_options = c(), reader_options = list(),
   discard_duplicates = TRUE, parallel = FALSE,
   parallel_plan = future::multiprocess, cache = default(cache),
-  cache_files_with_errors = FALSE, read_cache = default(cache),
+  cache_files_with_errors = TRUE, read_cache = default(cache),
   quiet = default(quiet))
 }
 \arguments{

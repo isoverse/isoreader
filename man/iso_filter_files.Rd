@@ -17,7 +17,8 @@ iso_filter_files(iso_files, ..., quiet = default(quiet))
 Filter for specific isofiles using file info columns (\code{\link{iso_get_file_info}}). Works just like dplyr's \link[dplyr]{filter} except that it provides the user with some information on what has been filtered. Returns \code{NULL} if none of the isofiles' file info matches the filter criteria. You can also use \link[dplyr]{filter} directly to filter collections of \code{iso_file} objects.
 }
 \seealso{
-Other file_info operations: \code{\link{iso_mutate_file_info}},
+Other file_info operations: \code{\link{iso_add_file_info.iso_file_list}},
+  \code{\link{iso_mutate_file_info}},
   \code{\link{iso_parse_file_info}},
   \code{\link{iso_rename_file_info}},
   \code{\link{iso_select_file_info}}

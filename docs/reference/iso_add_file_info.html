@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Parse file info — iso_parse_file_info • Isoreader</title>
+<title>Add additional file information — iso_add_file_info.iso_file_list • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Parse file info — iso_parse_file_info" />
+<meta property="og:title" content="Add additional file information — iso_add_file_info.iso_file_list" />
 
-<meta property="og:description" content="Convenience function to batch parse file info (iso_get_file_info) columns in isofile objects for the most common parsing calls. Uses the parse_ functions exported from readr and described in extract_data. Note that for less common parsing calls or calls that require additional parameters to the parsing function, it is better to parse columns one-by-one using iso_mutate_file_info instead." />
+<meta property="og:description" content="This function makes it easy to add additional file info (iso_get_file_info) to isofile objects and data frames by a single left_join or multiple sequential left_join operations. The function provides a detailed summary of the information that was added unless quiet = TRUE. Note that one-to-many joins are not permitted (and will fail with an informative error) since this would lead to likely unintended data duplication in the isofiles. However, one-to-one and many-to-one joins are fully supported and should cover all needed use cases for this function. Also note that for each join, only the new_file_info rows that have defined non-NA, non-empty (&quot;&quot;) values in all join_by columns will be considered for the join and that only new_file_info columns that do NOT already exist in ANY file information will be added. For changing the values of existing file information, please use iso_mutate_file_info instead." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -115,19 +115,23 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Parse file info</h1>
+    <h1>Add additional file information</h1>
     <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/file_info_operations.R'><code>R/file_info_operations.R</code></a></small>
-    <div class="hidden name"><code>iso_parse_file_info.Rd</code></div>
+    <div class="hidden name"><code>iso_add_file_info.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Convenience function to batch parse file info (<code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>) columns in isofile objects for the most common parsing calls. Uses the <code>parse_</code> functions exported from readr and described in <a href='extract_data.html'>extract_data</a>. Note that for less common parsing calls or calls that require additional parameters to the parsing function, it is better to parse columns one-by-one using <code><a href='iso_mutate_file_info.html'>iso_mutate_file_info</a></code> instead.</p>
+    <p>This function makes it easy to add additional file info (<code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>) to isofile objects and data frames by a single <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code> or multiple sequential <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code> operations. The function provides a detailed summary of the information that was added unless <code>quiet = TRUE</code>. Note that one-to-many joins are not permitted (and will fail with an informative error) since this would lead to likely unintended data duplication in the isofiles. However, one-to-one and many-to-one joins are fully supported and should cover all needed use cases for this function. Also note that for each join, only the <code>new_file_info</code> rows that have defined non-NA, non-empty ("") values in all <code>join_by</code> columns will be considered for the join and that only <code>new_file_info</code> columns that do NOT already exist in ANY file information will be added. For changing the values of existing file information, please use <code><a href='iso_mutate_file_info.html'>iso_mutate_file_info</a></code> instead.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_parse_file_info</span>(<span class='no'>iso_files</span>, <span class='kw'>number</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(), <span class='kw'>double</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(),
-  <span class='kw'>integer</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(), <span class='kw'>logical</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(), <span class='kw'>datetime</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(), <span class='kw'>text</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(),
+    <pre class="usage"><span class='co'># S3 method for iso_file_list</span>
+<span class='fu'>iso_add_file_info</span>(<span class='no'>iso_files</span>, <span class='no'>new_file_info</span>, <span class='no'>...</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))
+
+<span class='co'># S3 method for data.frame</span>
+<span class='fu'>iso_add_file_info</span>(<span class='no'>df</span>, <span class='no'>new_file_info</span>, <span class='no'>...</span>,
   <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -138,40 +142,37 @@
       <td><p>collection of iso_file objects</p></td>
     </tr>
     <tr>
-      <th>number</th>
-      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> condition to choose columns that should be converted to a number using <a href='https://readr.tidyverse.org/reference/parse_number.html'>parse_number</a>. Use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple columns.</p></td>
+      <th>new_file_info</th>
+      <td><p>data frame with new file information to add to the isofiles</p></td>
     </tr>
     <tr>
-      <th>double</th>
-      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> condition to choose columns that should be converted to a double using <a href='https://readr.tidyverse.org/reference/parse_atomic.html'>parse_double</a>. Use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple columns.</p></td>
-    </tr>
-    <tr>
-      <th>integer</th>
-      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> condition to choose columns that should be converted to an integer using <a href='https://readr.tidyverse.org/reference/parse_atomic.html'>parse_integer</a>. Use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple columns.</p></td>
-    </tr>
-    <tr>
-      <th>logical</th>
-      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> condition to choose columns that should be converted to a boolean (TRUE/FALSE) using <a href='https://readr.tidyverse.org/reference/parse_atomic.html'>parse_logical</a>. Use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple columns.</p></td>
-    </tr>
-    <tr>
-      <th>datetime</th>
-      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> condition to choose columns that should be converted to a date-time using <a href='https://readr.tidyverse.org/reference/parse_datetime.html'>parse_datetime</a>. Use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple columns.</p></td>
-    </tr>
-    <tr>
-      <th>text</th>
-      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> condition to choose columns that should be converted to text using as.character. Use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(...)</a></code> to select multiple columns.</p></td>
+      <th>...</th>
+      <td><p>each parameter specifies a set of <code>join_by</code> column(s) to add the <code>new_file_info</code> to the existing file information. The provided paramters are applied sequentially. At least one must be specified.</p></td>
     </tr>
     <tr>
       <th>quiet</th>
       <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
     </tr>
+    <tr>
+      <th>df</th>
+      <td><p>a data frame of iso files data retrieved by any of the data retrieval functions (e.g. <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>, <code><a href='iso_get_raw_data.html'>iso_get_raw_data</a>, etc.</code></p></td>
+    </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>the original iso files or data frame with the new file info added in.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Single <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code>: this is the most common use of this function and basically a simple left join operation (with some additional safety checks). Specify a single <code>join_by</code> in the <code>...</code>, such as e.g. <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c("file_id")</a></code> to add additional file information joining by the <code>file_id</code> column.</p>
+<p>Multiple sequential <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code>: this use case is for applying a set of increasingly more specific <code>join_by</code> rules. For example, <code>... = c("Identifier 1", "Identifier 2"), c("file_id")</code> would serve to first add one set of new file information for all isofiles based on their <code>Identifier 1</code> and <code>Identifier 2</code> columns and then overwrite the new information with more specific details for a subset of isofiles based on their <code>file_id</code> column, all based on a single overview <code>new_file_info</code> data frame. Basically, each set of <code>join_by</code> conditions specified in <code>...</code> must describe a valid <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code> <code>join_by</code> parameter to merge the <code>new_file_info</code> with the existing file info. Each set of <code>new_file_info</code> data can overwrite the previous <code>join_by</code> matches such that the last set of <code>join_by</code> column(s) provided in <code>...</code> will overwrite all previous matches for which it applies, even if they have already been a match for a previous column.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other file_info operations: <code><a href='iso_add_file_info.html'>iso_add_file_info.iso_file_list</a></code>,
-  <code><a href='iso_filter_files.html'>iso_filter_files</a></code>,
+    <div class='dont-index'><p>Other file_info operations: <code><a href='iso_filter_files.html'>iso_filter_files</a></code>,
   <code><a href='iso_mutate_file_info.html'>iso_mutate_file_info</a></code>,
+  <code><a href='iso_parse_file_info.html'>iso_parse_file_info</a></code>,
   <code><a href='iso_rename_file_info.html'>iso_rename_file_info</a></code>,
   <code><a href='iso_select_file_info.html'>iso_select_file_info</a></code></p></div>
     
@@ -182,6 +183,10 @@
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
+
       <li><a href="#see-also">See also</a></li>
           </ul>
 

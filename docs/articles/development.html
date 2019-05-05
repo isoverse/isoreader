@@ -36,7 +36,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.6</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.7</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
     <div class="page-header toc-ignore">
       <h1>Development features of isoreader</h1>
             
-            <h4 class="date">2019-03-26</h4>
+            <h4 class="date">2019-05-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/development.Rmd"><code>vignettes/development.Rmd</code></a></small>
       <div class="hidden name"><code>development.Rmd</code></div>
@@ -115,12 +115,12 @@
 <a class="sourceLine" id="cb2-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co"># read the file</span></a>
 <a class="sourceLine" id="cb2-7" data-line-number="7"><span class="kw"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span>(<span class="st">"example.new.did"</span>, <span class="dt">read_cache =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached unless they h...</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></a>
 <a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; Info: reading file 'example.new.did' with '.new.did' reader</span></a>
 <a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; Info: this is the new reader!</span></a>
 <a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; List of 7</span></a>
 <a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt;  $ version          :Classes 'package_version', 'numeric_version'  hidden list of 1</span></a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;   ..$ : int [1:3] 1 0 6</span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;   ..$ : int [1:3] 1 0 7</span></a>
 <a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt;  $ read_options     :List of 4</span></a>
 <a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt;   ..$ file_info        : logi TRUE</span></a>
 <a class="sourceLine" id="cb2-16" data-line-number="16"><span class="co">#&gt;   ..$ method_info      : logi TRUE</span></a>
@@ -142,7 +142,7 @@
 <a class="sourceLine" id="cb2-32" data-line-number="32"><span class="co">#&gt;   ..$ type   : chr(0) </span></a>
 <a class="sourceLine" id="cb2-33" data-line-number="33"><span class="co">#&gt;   ..$ func   : chr(0) </span></a>
 <a class="sourceLine" id="cb2-34" data-line-number="34"><span class="co">#&gt;   ..$ details: chr(0)</span></a>
-<a class="sourceLine" id="cb2-35" data-line-number="35"><span class="co">#&gt; Info: finished reading 1 files in 0.46 secs</span></a>
+<a class="sourceLine" id="cb2-35" data-line-number="35"><span class="co">#&gt; Info: finished reading 1 files in 0.23 secs</span></a>
 <a class="sourceLine" id="cb2-36" data-line-number="36"><span class="co">#&gt; Dual inlet iso file 'example.new.did': 0 cycles, 0 ions ()</span></a>
 <a class="sourceLine" id="cb2-37" data-line-number="37"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/files">file.remove</a></span>(<span class="st">"example.new.did"</span>)</a>
 <a class="sourceLine" id="cb2-38" data-line-number="38"><span class="co">#&gt; [1] TRUE</span></a></code></pre></div>
@@ -164,14 +164,14 @@
 <a class="sourceLine" id="cb3-9" data-line-number="9">  <span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"dual_inlet_example.did"</span>),</a>
 <a class="sourceLine" id="cb3-10" data-line-number="10">  <span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"dual_inlet_example.caf"</span>)</a>
 <a class="sourceLine" id="cb3-11" data-line-number="11">) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span>(<span class="dt">read_cache =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; Info: preparing to read 2 data files (all will be cached unless they h...</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; Info: preparing to read 2 data files (all will be cached)...</span></a>
 <a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; Info: reading file 'dual_inlet_example.did' with '.did' reader</span></a>
 <a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; Info: starting file #1, named 'dual_inlet_example.did'</span></a>
 <a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; Info: finished file #1</span></a>
 <a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader</span></a>
 <a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; Info: starting file #2, named 'dual_inlet_example.caf'</span></a>
 <a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; Info: finished file #2</span></a>
-<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt; Info: finished reading 2 files in 7.22 secs</span></a>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt; Info: finished reading 2 files in 8.02 secs</span></a>
 <a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt; Data from 2 dual inlet iso files: </span></a>
 <a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co">#&gt; # A tibble: 2 x 6</span></a>
 <a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">#&gt;   file_id   raw_data     file_info  method_info vendor_data_tab… file_path </span></a>
