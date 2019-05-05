@@ -282,7 +282,7 @@ test_that("Test that file info addition works", {
   )
   expect_message(
     iso_add_file_info(file_info, new_info, by1 = "y", by2 = "file_id"),
-    "'y' join.*2/3 new info.*matched 6.*but only 2.*matching 3.*kept" 
+    "'y' join.*2/3 new info.*matched 6.*3.*also matched.*subsequent joins" 
   )
   expect_message(
     iso_add_file_info(file_info, new_info, by1 = "y", by2 = "file_id"),
@@ -315,7 +315,7 @@ test_that("Test that file info addition works", {
   )
   expect_message(
     iso_add_file_info(iso_files, new_info, by1 = "y", by2 = "file_id"),
-    "'y' join.*2/3 new info.*matched 6.*but only 2.*matching 3.*kept" 
+    "'y' join.*2/3 new info.*matched 6.*3.*also matched.*subsequent joins" 
   )
   expect_message(
     iso_add_file_info(iso_files, new_info, by1 = "y", by2 = "file_id"),
