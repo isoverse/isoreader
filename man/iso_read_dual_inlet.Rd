@@ -11,7 +11,7 @@ iso_read_dual_inlet(..., root = ".",
   read_vendor_data_table = default(read_vendor_data_table),
   nu_masses = c(), discard_duplicates = TRUE, parallel = FALSE,
   parallel_plan = future::multiprocess, cache = default(cache),
-  cache_files_with_errors = FALSE, read_cache = default(cache),
+  cache_files_with_errors = TRUE, read_cache = default(cache),
   quiet = default(quiet))
 }
 \arguments{
