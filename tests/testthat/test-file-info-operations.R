@@ -240,3 +240,90 @@ test_that("Test that file info parsing works", {
                  mutate(new_info3 = parse_datetime(new_info3) %>% lubridate::with_tz(Sys.timezone())))$new_info3)
   
 })
+
+# add info ========
+
+
+test_that("Test that file info addition works", {
+  
+  # test drive data set
+  file_info <- tibble(
+    file_id = letters[1:6],
+    y = rep(LETTERS[1:2], each = 3),
+  )
+  new_info <- tibble(
+    file_id = c(NA, NA, letters[2:4]),
+    y = c(LETTERS[1:2], NA, "", "X"),
+    info = paste("new", 1:length(y))
+  )
+  
+  # errors
+  expect_error(iso_add_file_info(), "without parameters")
+  expect_error(iso_add_file_info(42), "not defined")
+  expect_error(iso_add_file_info(tibble()), "no new_file_info supplied")
+  expect_error(iso_add_file_info(tibble(), tibble()), "specify at least one set of join_by")
+  expect_error(iso_add_file_info(tibble(), tibble(), "x"), "file_id column")
+  expect_error(iso_add_file_info(file_info, new_info, "NA"), "join_by.*must exist.*missing.*NA")
+  expect_error(iso_add_file_info(file_info, select(new_info, -y), "y"), "join_by.*must exist.*missing in new file info.*y")
+  expect_error(iso_add_file_info(select(file_info, -y), new_info, "y"), "join_by.*must exist.*missing in existing file info.*y")
+  expect_error(
+    iso_add_file_info(file_info, new_info[c(1,1,2), ], by1 = "y"),
+    "would create duplicate entries")
+  expect_warning(
+    out <- iso_add_file_info(file_info, select(new_info, -info), "y"),
+    "no new information.*returning data unchanged"
+  )
+  expect_equal(out, file_info)
+  
+  # actual join (sequential join)
+  expect_message(
+    df_out <- iso_add_file_info(file_info, new_info, by1 = "y", by2 = "file_id"),
+    "adding.*'info'.*to 6 data file.*joining by 'y' then 'file_id'"
+  )
+  expect_message(
+    iso_add_file_info(file_info, new_info, by1 = "y", by2 = "file_id"),
+    "'y' join.*2/3 new info.*matched 6.*but only 2.*matching 3.*kept" 
+  )
+  expect_message(
+    iso_add_file_info(file_info, new_info, by1 = "y", by2 = "file_id"),
+    "'file_id' join.*3/3 new info.*matched 3" 
+  )
+  
+  # actual join (including double column join)
+  expect_message(
+    iso_add_file_info(file_info, new_info, by1 = "y", by2 = c("file_id", "y")),
+    "adding.*to 6 data file.*joining by 'y' then 'file_id'\\+'y'" 
+  )
+  expect_message(
+    iso_add_file_info(file_info, new_info, by1 = "y", by2 = c("file_id", "y")),
+    "'y' join.*2/3 new info.*matched 6" 
+  )
+  expect_message(
+    iso_add_file_info(file_info, new_info, by1 = "y", by2 = c("file_id", "y")),
+    "'file_id'\\+'y' join.*0/1 new info.*matched 0" 
+  )
+  
+  # test with isofiles (not just in data frame)
+  template <- make_cf_data_structure()
+  template$read_options$file_info <- TRUE
+  iso_files <- map(split(file_info, seq(nrow(file_info))), ~{ x <- template; x$file_info <- .x; x }) %>% 
+    iso_as_file_list()
+  
+  expect_message(
+    iso_files_out <- iso_add_file_info(iso_files, new_info, by1 = "y", by2 = "file_id"),
+    "adding.*'info'.*to 6 data file.*joining by 'y' then 'file_id'"
+  )
+  expect_message(
+    iso_add_file_info(iso_files, new_info, by1 = "y", by2 = "file_id"),
+    "'y' join.*2/3 new info.*matched 6.*but only 2.*matching 3.*kept" 
+  )
+  expect_message(
+    iso_add_file_info(iso_files, new_info, by1 = "y", by2 = "file_id"),
+    "'file_id' join.*3/3 new info.*matched 3" 
+  )
+  # check that iso files and df derived are the same
+  expect_equal(iso_files_out %>% iso_get_file_info(), df_out)
+  
+  
+})
+

@@ -300,7 +300,7 @@ mutate.iso_file_list <- function(.data, ...) {
 
 #' Parse file info
 #' 
-#' Convenience function to efficiently parse file info (\code{\link{iso_get_file_info}}) columns in isofile objects. Uses the \code{parse_} functions exported from \link{readr} and described in \link{extract_data}. Note that non-default behaviour of these functions is best accessed by parsing columns one-by-one using \code{\link{iso_mutate_file_info}}.
+#' Convenience function to batch parse file info (\code{\link{iso_get_file_info}}) columns in isofile objects for the most common parsing calls. Uses the \code{parse_} functions exported from \link{readr} and described in \link{extract_data}. Note that for less common parsing calls or calls that require additional parameters to the parsing function, it is better to parse columns one-by-one using \code{\link{iso_mutate_file_info}} instead.
 #' 
 #' @inheritParams iso_get_raw_data
 #' @param number dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a number using \link[readr]{parse_number}. Use \code{c(...)} to select multiple columns.
@@ -429,4 +429,239 @@ iso_parse_file_info.iso_file_list <- function(iso_files, number = c(), double = 
   
   # return
   return(mutated_iso_files)
+}
+
+# add info =======
+
+#' Add additional file information
+#'
+#' This function makes it easy to add additional file info (\code{\link{iso_get_file_info}}) to isofile objects and data frames by a single \code{\link[dplyr]{left_join}} or multiple sequential \code{\link[dplyr]{left_join}} operations. The function provides a detailed summary of the information that was added unless \code{quiet = TRUE}. Note that one-to-many joins are not permitted (and will fail with an informative error) since this would lead to likely unintended data duplication in the isofiles. However, one-to-one and many-to-one joins are fully supported and should cover all needed use cases for this function. Also note that for each join, only the \code{new_file_info} rows that have defined non-NA, non-empty ("") values in all \code{join_by} columns will be considered for the join and that only \code{new_file_info} columns that do NOT already exist in ANY file information will be added. For changing the values of existing file information, please use \code{\link{iso_mutate_file_info}} instead.
+#' 
+#' Single \code{\link[dplyr]{left_join}}: this is the most common use of this function and basically a simple left join operation (with some additional safety checks). Specify a single \code{join_by} in the \code{...}, such as e.g. \code{c("file_id")} to add additional file information joining by the \code{file_id} column. 
+#' 
+#' Multiple sequential \code{\link[dplyr]{left_join}}: this use case is for applying a set of increasingly more specific \code{join_by} rules. For example, \code{... = c("Identifier 1", "Identifier 2"), c("file_id")} would serve to first add one set of new file information for all isofiles based on their \code{Identifier 1} and \code{Identifier 2} columns and then overwrite the new information with more specific details for a subset of isofiles based on their \code{file_id} column, all based on a single overview \code{new_file_info} data frame. Basically, each set of \code{join_by} conditions specified in \code{...} must describe a valid \code{\link[dplyr]{left_join}} \code{join_by} parameter to merge the \code{new_file_info} with the existing file info. Each set of \code{new_file_info} data can overwrite the previous \code{join_by} matches such that the last set of \code{join_by} column(s) provided in \code{...} will overwrite all previous matches for which it applies, even if they have already been a match for a previous column.
+#' @rdname iso_add_file_info
+#' @inheritParams iso_get_raw_data
+#' @param new_file_info data frame with new file information to add to the isofiles
+#' @param ... each parameter specifies a set of \code{join_by} column(s) to add the \code{new_file_info} to the existing file information. The provided paramters are applied sequentially. At least one must be specified.
+#' @return the original iso files or data frame with the new file info added in.
+#' @family file_info operations
+#' @export
+iso_add_file_info.iso_file_list <- function(iso_files, new_file_info, ..., quiet = default(quiet)) {
+
+  # mutate iso_files' file info
+  file_info <- 
+    iso_get_file_info(iso_files, quiet = TRUE) %>% 
+    iso_add_file_info(new_file_info = new_file_info, ..., quiet = quiet)
+  
+  # safety check
+  if (!identical(names(iso_files), file_info$file_id)) {
+    stop("file IDs of added file information does not match original file IDs, this should not be possible to happen and suggests there is a bug in the iso_add_file_info function, please report how this happened at https://github.com/isoverse/isoreader/issues", call. = FALSE)
+  }
+  
+  # convert back to list format
+  file_info <-
+    file_info %>% 
+    ensure_data_frame_list_columns() %>% 
+    split(seq(nrow(file_info))) 
+  
+  # mutate
+  updated_iso_files <-
+    map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) %>% 
+    iso_as_file_list()
+
+  return(updated_iso_files)
+}
+
+#' @export
+#' @rdname iso_add_file_info
+#' @param df a data frame of iso files data retrieved by any of the data retrieval functions (e.g. \code{\link{iso_get_file_info}}, \code{\link{iso_get_raw_data}, etc.}
+iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default(quiet)) {
+  
+  # safety checks
+  join_bys <- list(...)
+  if (missing(new_file_info)) stop("no new_file_info supplied", call. = FALSE)
+  if (length(join_bys) == 0) stop("must specify at least one set of join_by column(s) in ...", call. = FALSE)
+  if (!"file_id" %in% names(df)) stop("file_id column must be part of the data frame", call. = FALSE)
+  
+  # new columns
+  new_cols <- setdiff(names(new_file_info), names(df))
+  
+  # information
+  if (!quiet) {
+    glue::glue(
+      "Info: adding new file information ('{paste(new_cols, sep = \"', '\")}') ",
+      "to {length(unique(df$file_id))} data file(s), ",
+      "joining by '{purrr::map_chr(join_bys, paste, collapse = \"'+'\") %>% paste(collapse = \"' then '\")}'...") %>%
+      message()
+  }
+  
+  # additional safety checks
+  if (length(new_cols) == 0) {
+    glue::glue("no new information columns that don't already exist, returning data unchanged") %>% 
+      warning(immediate. = TRUE, call. = FALSE)
+    return(df)
+  }
+  missing_df <- setdiff(unique(unlist(join_bys)), names(df))
+  missing_new_fi <- setdiff(unique(unlist(join_bys)), names(new_file_info))
+  if (length(missing_df) > 0 || length(missing_new_fi) > 0) {
+    glue::glue(
+      "all join_by (...) columns must exist in both the existing file ",
+      "information and the new_file_info",
+      if(length(missing_df) > 0) "\n - missing in existing file info: '{paste(missing_df, collapse = \"', '\")}'" else "",
+      if (length(missing_new_fi) > 0) "\n - missing in new file info: '{paste(missing_new_fi, collapse = \"', '\")}'" else "") %>% 
+      stop(call. = FALSE)
+  }
+  
+  # figure out which new file info columns that are in the join_bys have data in which rows
+  join_by_cols <- 
+    tibble(
+      join_by_col = join_bys,
+      ..priority = 1:length(join_by_col)
+    )
+  
+  new_data_rows <-
+    join_by_cols %>% 
+    unnest(join_by_col) %>% 
+    mutate(
+      new_data_idx = map(join_by_col, ~which(!is.na(new_file_info[[.x]]) & nchar(as.character(new_file_info[[.x]])) > 0))
+    ) %>% 
+    group_by(..priority) %>% 
+    summarize(new_data_idx = list(Reduce(intersect, new_data_idx))) %>% 
+    right_join(join_by_cols, by = "..priority")
+  
+  # prep for joins
+  shared_cols <- intersect(names(new_file_info), names(df)) %>% { setNames(., paste0("..ni_temp_", .)) }
+  df <- mutate(df, ..df_id = row_number())
+  new_file_info <- mutate(new_file_info, ..ni_id = row_number())
+  
+  # join new file info based on the join by and new row indices
+  join_new_file_info <- function(join_by, new_rows, shared_cols) {
+    if (length(join_by) > 0 && length(new_rows) > 0) {
+      dplyr::inner_join(df, rename(new_file_info[new_rows, ], !!!shared_cols), by = join_by)
+    } else { 
+      tibble()
+    }
+  }
+  
+  # NOTE: the column overwrite leads to more confusing behaviour than probably worth it 
+  # --> people should use iso_mutate_file_info instead for adding information to columns that already exist
+  
+  # # find new file info that can overwrite existing columns (because they are empty)
+  # find_overwrite_cols <- function(data, shared_cols) {
+  #   shared_cols[map_lgl(as.character(shared_cols), ~all(is.na(data[[.x]])))]
+  # }
+  # # cleanup new file info based on overwrite columns
+  # cleanup_new_file_info <- function(data, overwrite_cols) {
+  #   if (length(overwrite_cols) > 0) {
+  #     data <- data %>%
+  #       # FIXME: do this with a mutate to preserve column order
+  #       select(!!!map(as.character(overwrite_cols), ~quo(-!!.x))) %>%
+  #       rename(!!!setNames(names(overwrite_cols), as.character(overwrite_cols)))
+  #   }
+  #   return(select(data, -starts_with("..ni_temp_")))
+  # }
+  
+  # generate joined data
+  joined_data <- 
+    new_data_rows %>% 
+    mutate(
+      n_ni_considered = map_int(new_data_idx, length),
+      shared_cols = map(join_by_col, ~shared_cols[!shared_cols %in% .x]),
+      data = purrr::pmap(list(join_by_col, new_data_idx, shared_cols), join_new_file_info),
+      n_ni_matches = map_int(data, ~length(unique(.x$..ni_id))),
+      n_df_matches = map_int(data, ~length(unique(.x$..df_id)))
+      #new_cols = purrr::map(overwrite_cols, ~names(new_file_info) %>% { .[. %in% c(new_cols, .x)] }),
+      #overwrite_cols = purrr::map2(data, shared_cols, find_overwrite_cols),
+      #data = purrr::map2(data, overwrite_cols, cleanup_new_file_info)
+    )
+  
+  # select data based on priority
+  final_data <- joined_data %>% select(..priority, data) %>% unnest(data) %>% 
+    select(-starts_with("..ni_temp_")) %>% 
+    group_by(..df_id) %>% 
+    filter(..priority == max(..priority)) %>% 
+    ungroup()
+  
+  # make sure all data is present (even those not matched by any join)
+  final_data <- final_data %>% 
+    bind_rows(filter(df, !..df_id %in% final_data$..df_id)) %>% 
+    arrange(..df_id)
+  
+  # safety checks
+  dup_data <- final_data %>% group_by(..df_id) %>% mutate(n = n()) %>% filter(n > 1L)
+  if (nrow(dup_data) > 0) {
+    error_data <- dup_data %>% 
+      left_join(joined_data, by = "..priority") %>% 
+      group_by(..priority) %>% 
+      summarize(
+        label = sprintf(
+          "'%s' join: %d/%d new info rows match %d data files but would lead to the duplication of %d data files.", 
+          paste(join_by_col[[1]], collapse = "'+'"),
+          n_ni_matches[1],
+          n_ni_considered[1],
+          n_df_matches[1],
+          length(unique(..df_id))
+        )
+      )
+
+    glue::glue(
+      "join operation(s) would create duplicate entries:\n - ",
+      "{paste(error_data$label, collapse = '\n - ')}") %>% 
+    stop(call. = FALSE)
+  }
+  
+  # info summary
+  info_sum <- 
+    final_data %>% group_by(..priority) %>% 
+    summarize(
+      n_ni_actual = length(unique(..ni_id)),
+      n_df_actual = length(unique(..df_id))
+    ) %>%
+    right_join(joined_data, by = "..priority") %>% 
+    mutate(
+      n_ni_actual = ifelse(is.na(n_ni_actual), 0L, n_ni_actual),
+      n_df_actual = ifelse(is.na(n_df_actual), 0L, n_df_actual),
+      label = sprintf(
+        "'%s' join: %d/%d new info rows matched %d data files%s", 
+        purrr::map_chr(join_by_col, paste, collapse = "'+'"),
+        n_ni_matches,
+        n_ni_considered,
+        n_df_matches,
+        ifelse(n_ni_actual != n_ni_matches | n_df_actual != n_df_matches, 
+               sprintf(", but only %d new info matching %d data files were kept after all joins", n_ni_actual, n_df_actual),
+               ""
+        )
+        # NOTE: the column overwrite leads to more confusing behaviour than probably worth it 
+        # --> new columns should be universal and will be part of overall message
+        # ifelse(n_df_actual > 0,
+        #        sprintf(", columns added: '%s'", purrr::map_chr(new_cols, paste, collapse = "', '")),
+        #        ""
+        # )
+      )
+    )
+  if (!quiet && nrow(info_sum) > 0) {
+    message(" - ", paste(info_sum$label, collapse = "\n - "))
+  }
+  
+  return(select(final_data, -..df_id, -..ni_id, -..priority))
+}
+
+# here for sequence of paramters
+#' @export
+iso_add_file_info <- function(...) {
+  UseMethod("iso_add_file_info")
+}
+
+#' @export
+iso_add_file_info.default <- function(x, ...) {
+  if (missing(x))
+    stop("this function cannot be called without parameters", call. = FALSE)  
+  stop("this function is not defined for objects of type '",
+       class(x)[1], "'", call. = FALSE)
+}
+
+#' @export
+iso_add_file_info.iso_file <- function(iso_files, ...) {
+  iso_add_file_info(iso_as_file_list(iso_files), ...)[[1]]
 }
