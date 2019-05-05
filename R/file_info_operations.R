@@ -571,7 +571,7 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
       shared_cols = map(join_by_col, ~shared_cols[!shared_cols %in% .x]),
       data = purrr::pmap(list(join_by_col, new_data_idx, shared_cols), join_new_file_info),
       n_ni_matches = map_int(data, ~length(unique(.x$..ni_id))),
-      n_df_matches = map_int(data, ~length(unique(.x$..df_id)))
+      n_df_matches = map_int(data, ~length(unique(.x$file_id)))
       #new_cols = purrr::map(overwrite_cols, ~names(new_file_info) %>% { .[. %in% c(new_cols, .x)] }),
       #overwrite_cols = purrr::map2(data, shared_cols, find_overwrite_cols),
       #data = purrr::map2(data, overwrite_cols, cleanup_new_file_info)
@@ -618,7 +618,7 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
     final_data %>% group_by(..priority) %>% 
     summarize(
       n_ni_actual = length(unique(..ni_id)),
-      n_df_actual = length(unique(..df_id))
+      n_df_actual = length(unique(file_id))
     ) %>%
     right_join(joined_data, by = "..priority") %>% 
     mutate(
