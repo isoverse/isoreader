@@ -490,7 +490,7 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
   # information
   if (!quiet) {
     glue::glue(
-      "Info: adding new file information ('{paste(new_cols, sep = \"', '\")}') ",
+      "Info: adding new file information ('{paste(new_cols, collapse = \"', '\")}') ",
       "to {length(unique(df$file_id))} data file(s), ",
       "joining by '{purrr::map_chr(join_bys, paste, collapse = \"'+'\") %>% paste(collapse = \"' then '\")}'...") %>%
       message()
@@ -623,13 +623,14 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
       n_ni_actual = ifelse(is.na(n_ni_actual), 0L, n_ni_actual),
       n_df_actual = ifelse(is.na(n_df_actual), 0L, n_df_actual),
       label = sprintf(
-        "'%s' join: %d/%d new info rows matched %d data files%s", 
+        "'%s' join: %d/%d new info rows matched %d/%d data files%s", 
         purrr::map_chr(join_by_col, paste, collapse = "'+'"),
         n_ni_matches,
         n_ni_considered,
         n_df_matches,
+        nrow(df),
         ifelse(n_ni_actual != n_ni_matches | n_df_actual != n_df_matches, 
-               sprintf(", but only %d new info matching %d data files were kept after all joins", n_ni_actual, n_df_actual),
+               sprintf(" - %d of these was/were also matched by subsequent joins which took precedence", n_df_matches - n_df_actual),
                ""
         )
         # NOTE: the column overwrite leads to more confusing behaviour than probably worth it 
