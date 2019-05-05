@@ -126,16 +126,48 @@ iso_files2 %>%
 The file information in any collection of isofiles can also be mutated using the function `iso_mutate_file_info`. This function can introduce new columns and operate on any existing columns available in the file information (even if it does not exist in all files) and supports full [dplyr](https://dplyr.tidyverse.org/reference/mutate.html) syntax. 
 
 ```{r}
-iso_files2 %>% 
+iso_files3 <- iso_files2 %>% 
   iso_mutate_file_info(
     # update existing column
     ID = paste("ID:", ID),
     # introduce new column
     `Run in 2017?` = `Date & Time` > "2017-01-01" & `Date & Time` < "2018-01-01"
-  ) %>% 
+  ) 
+
+iso_files3 %>% 
   iso_get_file_info() %>% 
   rmarkdown::paged_table()
 ```
+
+## Add
+
+Additionally, a wide range of new file information can be added in the form of a data frame with any number of columns (usually read from a comma-separated-value/csv file or an Excel/xlsx file) using the function `iso_add_file_info` and specifying which existing file information should be used to merge in the new information. It is similar to [dplyr's left_join](https://dplyr.tidyverse.org/reference/join.html) but with additional safety checks and the possibility to join the new information sequentially as illustrated below.
+
+```{r}
+# this kind of information data frame is frequently read in from a csv or xlsx file
+new_info <- 
+  dplyr::bind_rows(
+    # new information based on new vs. old samples
+    dplyr::tribble(
+      ~Analysis, ~`Run in 2017?`,  ~process,  ~info,
+       NA,       TRUE,              "yes",     "2017 runs",
+       NA,       FALSE,             "yes",     "other runs"
+    ),
+    # new information for a single specific file
+    dplyr::tribble(
+      ~Analysis, ~process,  ~note,
+       "16068",   "no",      "did not inject properly"
+    )
+  )
+new_info %>% rmarkdown::paged_table()
+
+# adding it to the isofiles
+iso_files3 %>% 
+  iso_add_file_info(new_info, by1 = "Run in 2017?", by2 = "Analysis") %>% 
+  iso_get_file_info(select = names(new_info)) %>% 
+  rmarkdown::paged_table()
+```
+
 
 ## Parse
 
