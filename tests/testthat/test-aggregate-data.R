@@ -2,35 +2,31 @@
 
 context("File info")
 
-test_that("test that file information can be recovered from iso_files", {
+test_that("test that standard file information can be recovered from iso_files", {
   
   expect_true(iso_is_file(iso_file <- make_iso_file_data_structure()))
+  iso_file$read_options$file_info <- TRUE
   
-  expect_error(get_file_id(), "no iso_file provided")
-  expect_error(get_file_id(42), "can only retrieve file information from an iso_file object")
-  expect_equal(get_file_id(iso_file), NA_character_)
-  
-  expect_error(get_file_path(), "no iso_file provided")
-  expect_error(get_file_path(42), "can only retrieve file information from an iso_file object")
-  expect_equal(get_file_path(iso_file), NA_character_)
-  
-  expect_error(get_file_subpath(), "no iso_file provided")
-  expect_error(get_file_subpath(42), "can only retrieve file information from an iso_file object")
-  expect_equal(get_file_subpath(iso_file), NA_character_)
-  
-  expect_error(get_file_datetime(), "no iso_file provided")
-  expect_error(get_file_datetime(42), "can only retrieve file information from an iso_file object")
-  expect_equal(get_file_datetime(iso_file), NA_integer_)
+  expect_equal(iso_get_file_info(iso_file)$file_id, NA_character_)
+  expect_equal(iso_get_file_info(iso_file)$file_root, NA_character_)
+  expect_equal(iso_get_file_info(iso_file)$file_path, NA_character_)
+  expect_equal(iso_get_file_info(iso_file)$file_subpath, NA_character_)
+  expect_equal(iso_get_file_info(iso_file)$file_datetime, NA_integer_)
   
   iso_file$file_info$file_id <- "id"
+  iso_file$file_info$file_root <- "root"
   iso_file$file_info$file_path <- "path"
   iso_file$file_info$file_subpath <- "subpath"
   iso_file$file_info$file_datetime <- parse_datetime("2010-11-12 13:14:15")
   
-  expect_equal(get_file_id(iso_file), iso_file$file_info$file_id)
-  expect_equal(get_file_path(iso_file), iso_file$file_info$file_path)
-  expect_equal(get_file_subpath(iso_file), iso_file$file_info$file_subpath)
-  expect_equal(get_file_datetime(iso_file), iso_file$file_info$file_datetime)
+  expect_equal(iso_get_file_info(iso_file)$file_id, iso_file$file_info$file_id)
+  expect_equal(iso_get_file_info(iso_file)$file_root, iso_file$file_info$file_root)
+  expect_equal(iso_get_file_info(iso_file)$file_path, iso_file$file_info$file_path)
+  expect_equal(iso_get_file_info(iso_file)$file_subpath, iso_file$file_info$file_subpath)
+  
+  # Note: this also tests the timezone switch to local timezone that happens in aggregation
+  expect_equal(iso_get_file_info(iso_file)$file_datetime, 
+               lubridate::with_tz(iso_file$file_info$file_datetime, tz = Sys.timezone()))
   
 })
 
@@ -63,9 +59,9 @@ test_that("test that file info list to data frame conversion works properly", {
   # test data
   cf <- make_cf_data_structure()
   cf$file_info$file_id <- "A"
-  cf$file_info$test_info <- 42
+  cf$file_info$test_info <- list(42)
   cf <- iso_as_file_list(cf)
-  expect_true(is_tibble(file_info <- convert_file_info_to_data_frame(cf)[[1]]$file_info))
+  expect_true(is_tibble(file_info <- convert_isofiles_file_info_to_data_frame(cf)[[1]]$file_info))
   expect_equal(names(file_info), c("file_id", "file_root", "file_path", "file_subpath", "file_datetime", "test_info"))
   expect_equal(map_chr(file_info, ~class(.x)[1]) %>% unname(), c("character", "character", "character", "character", "integer", "list"))
   expect_equal(file_info$test_info, list(42))
@@ -144,25 +140,26 @@ test_that("test that aggregating file info works", {
   
   # test data
   iso_file$read_options$file_info <- TRUE
-  iso_file1 <- modifyList(iso_file, list(
-    file_info = list(file_id = "a", test_info = "x", multi_value = 1:2, only_a = TRUE)))
-  iso_file2 <- modifyList(iso_file, list(
-    file_info = list(file_id = "b", test_info = "y", multi_value = 1:3)))
+  iso_file1 <- iso_file2 <- iso_file
+  iso_file1$file_info <- mutate(iso_file1$file_info, file_id = "a", test_info = "x", multi_value = list(1:2), only_a = TRUE)
+  iso_file2$file_info <- mutate(iso_file2$file_info, file_id = "b", test_info = "y", multi_value = list(1:3))
   
   expect_message(iso_get_file_info(c(iso_file1, iso_file2), quiet = FALSE), "aggregating")
   expect_silent(agg <- iso_get_file_info(c(iso_file1, iso_file2), quiet = TRUE))
   expect_equal(names(agg), unique(names(iso_file1$file_info), names(iso_file2$file_info)))
   expect_equal(iso_get_file_info(c(iso_file1, iso_file2)) %>% unnest(multi_value) ,
-               bind_rows(as_data_frame(iso_file1$file_info), as_data_frame(iso_file2$file_info)))
+               bind_rows(unnest(iso_file1$file_info, multi_value), 
+                         unnest(iso_file2$file_info, multi_value)))
   
   # check select functionality
   expect_equal(names(iso_get_file_info(iso_file1, select = c("file_datetime", "only_a"))), c("file_id", "file_datetime", "only_a"))
   expect_equal(names(iso_get_file_info(iso_file1, select = c(file_datetime, only_a))), c("file_id", "file_datetime", "only_a"))
   expect_equal(names(iso_get_file_info(iso_file1, select = c(x = file_datetime, y = only_a))), c("file_id", "x", "y"))
   expect_equal(names(iso_get_file_info(iso_file1, select = starts_with("file"))), c("file_id", "file_root", "file_path", "file_subpath", "file_datetime"))
-  expect_equal(names(iso_get_file_info(iso_file1, select = c(x = starts_with("file")))), c("x1", "x2", "x3", "x4", "x5"))
-  expect_warning(agg <- iso_get_file_info(iso_file2, select = c("file_datetime", "only_a")), "refers to unknown column")
-  expect_equal(names(agg), c("file_id", "file_datetime"))
+  expect_error(iso_get_file_info(iso_file1, select = c(x = file_id)), "renaming.*file_id.*may lead to unpredictable")
+  expect_equal(names(iso_get_file_info(iso_file1, select = c(x = starts_with("file"), file_id))), c("file_id", "x2", "x3", "x4", "x5"))
+  # note: not sure how to implement but this should probably throw a warning
+  expect_equal(names(iso_get_file_info(iso_file2, select = c("file_datetime", "only_a"))), c("file_id", "file_datetime"))
 })
 
 

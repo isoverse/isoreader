@@ -11,7 +11,8 @@ iso_read_dual_inlet(..., root = ".",
   read_vendor_data_table = default(read_vendor_data_table),
   nu_masses = c(), discard_duplicates = TRUE, parallel = FALSE,
   parallel_plan = future::multiprocess, cache = default(cache),
-  read_cache = default(cache), quiet = default(quiet))
+  cache_files_with_errors = TRUE, read_cache = default(cache),
+  quiet = default(quiet))
 }
 \arguments{
 \item{...}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
@@ -35,6 +36,8 @@ iso_read_dual_inlet(..., root = ".",
 \item{parallel_plan}{which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multiprocess} (the default, uses multicore if supported by the operating system, otherwise multisession), \code{future::multisession} or \code{future::multicore}.}
 
 \item{cache}{whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
+
+\item{cache_files_with_errors}{whether to cache files that had errors during reading}
 
 \item{read_cache}{whether to reload from cache if a cached version exists. Note that it will only read from cache if the file was previously read with the exact same isoreader version and read options and has not been modified since.}
 

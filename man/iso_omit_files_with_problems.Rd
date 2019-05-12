@@ -2,27 +2,13 @@
 % Please edit documentation in R/problems.R
 \name{iso_omit_files_with_problems}
 \alias{iso_omit_files_with_problems}
-\title{Remove problematic files}
+\title{Renamed to iso_filter_files_with_problems}
 \usage{
-iso_omit_files_with_problems(iso_files, remove_files_with_errors = TRUE,
-  remove_files_with_warnings = FALSE, quiet = default(quiet))
+iso_omit_files_with_problems(...)
 }
 \arguments{
-\item{iso_files}{collection of iso_file objects}
-
-\item{remove_files_with_errors}{whether to remove files with errors (default is TRUE)}
-
-\item{remove_files_with_warnings}{whether to remove files with warnings (default is FALSE)}
-
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
+\item{...}{deprecated}
 }
 \description{
-Removes the files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the \link{iso_problem_functions}.
+This function has been renamed to \link{iso_filter_files_with_problems} for naming consistency.
 }
-\seealso{
-Other problem functions: \code{\link{iso_get_problems_summary}},
-  \code{\link{iso_get_problems}},
-  \code{\link{iso_has_problems}},
-  \code{\link{iso_problem_functions}}
-}
-\concept{problem functions}

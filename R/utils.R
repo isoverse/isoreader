@@ -4,6 +4,12 @@
 #' @export
 magrittr::`%>%`
 
+# check if a column is in a data frame
+col_in_df <- function(df, col) {
+  stopifnot(is.data.frame(df))
+  col %in% names(df)
+}
+
 # collapse helper to deal with naming change in the glue package
 collapse <- function(...) {
   if (exists("glue_collapse", where=asNamespace("glue"), mode="function"))
@@ -197,7 +203,7 @@ iso_get_reader_examples <- function() {
 # @param path(s)
 is_folder <- function(path, check_existence = TRUE) {
   # safety check
-  if(check_existence && !(exists <- file.exists(path)))
+  if(check_existence && !all(exists <- file.exists(path)))
     stop("paths do not exist:\n - ", str_c(path[!exists], collapse = "\n - "), call. = FALSE)
 
   # it's a folder if it exists
@@ -595,8 +601,8 @@ match_file_ext <- function(filepath, extensions) {
 # @param filepaths_df data frame with, at minimum, column 'path'
 # @param extensions_df data frame with, at miminum, column 'extension'
 match_to_supported_file_types <- function(filepaths_df, extensions_df) {
-  stopifnot("path" %in% names(filepaths_df))
-  stopifnot("extension" %in% names(extensions_df))
+  stopifnot(col_in_df(filepaths_df, "path"))
+  stopifnot(col_in_df(extensions_df, "extension"))
   files <-
     filepaths_df %>%
     mutate(extension = map_chr(path, match_file_ext, extensions_df$extension)) %>%
@@ -752,7 +758,9 @@ get_info_message_concat <- function(variable, prefix = "", suffix = "", empty = 
     if (quo_is_null(variable)) return("")
     variable <- quo_text(variable)
   }
-  if (!is_empty(variable) && !all(nchar(variable) == 0) && !variable %in% empty) {
+  if (is_empty(variable)) return("")
+  variable <- setdiff(variable, empty)
+  if (length(variable) > 0 && !all(nchar(variable) == 0)) {
     quotes <- if(quotes) "'" else ""
     vars <- str_c(variable, collapse = str_c(quotes, ", ", quotes, collapse = ""))
     return(str_c(prefix, quotes, vars, quotes, suffix))

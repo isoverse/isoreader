@@ -1,9 +1,9 @@
 ---
-title: "Advanced use of isoreader"
+title: "Development features of isoreader"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Advanced}
+  %\VignetteIndexEntry{Development}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
+This vignette introduces some of the development features of the isoreader package and is aimed primarily at code contributors interested in expanding its functionality or helping with bug fixes.
 
 # Adding new file format readers
 
