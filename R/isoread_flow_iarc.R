@@ -46,8 +46,9 @@ iso_read_flow_iarc <- function(ds, options = list()) {
   # processing lists / gas configuration ====
   all_processing_lists <- 
     tasks %>% map("info") %>% bind_rows() %>% 
-    group_by_(.dots = "ProcessingListTypeIdentifier") %>% 
+    group_by(ProcessingListTypeIdentifier) %>% 
     summarize(samples=n()) %>% 
+    ungroup() %>% 
     full_join(processing_lists, by = c("ProcessingListTypeIdentifier" = "DefinitionUniqueIdentifier"))
   
   # safety check on processing lists (make sure all processing lists defined in tasks have a ProcessingListId)
@@ -108,8 +109,9 @@ process_iarc_samples <- function(iso_file_template, tasks, gas_configs, folder_p
       sprintf("processing sample '%s' (IRMS data '%s')",
               generate_task_sample_id(task), 
               task$data_files %>% 
-                filter_(.dots = list(~TypeIdentifier == "Acquire")) %>% 
-                {.$DataFile} %>% { if(length(.) > 0) str_c(., collapse = "', '") else "" }
+                dplyr::filter(TypeIdentifier == "Acquire") %>% 
+                { .$DataFile } %>% 
+                { if(length(.) > 0) str_c(., collapse = "', '") else "" }
               #task$info$GlobalIdentifier
               ) %>% 
         log_message(prefix = "      ")
@@ -145,7 +147,7 @@ process_iarc_sample_info <- function(iso_file, task) {
 # @param gas_configs the gas configurations
 process_iarc_sample_data <- function(iso_file, task, gas_configs, folder_path) {
   # aquire = IRMS data
-  irms_data <- task$data_files %>% filter_(.dots = list(~TypeIdentifier == "Acquire")) 
+  irms_data <- task$data_files %>% dplyr::filter(TypeIdentifier == "Acquire") 
   if (nrow(irms_data) == 0) stop("no IRMS acquisitions associated with this sample", call. = FALSE)
   
   # check for gas configurations
@@ -212,7 +214,7 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
   
   # rename channels
   rename_dots <- config_channels %>% { setNames(.$channel, str_c("i", .$mass, ".", data_units)) }
-  irms_data <- irms_data %>% rename_(.dots = rename_dots)
+  irms_data <- irms_data %>% dplyr::rename(!!!rename_dots)
   
   # scale currents
   scale_data <- function(x) x / data_scaling

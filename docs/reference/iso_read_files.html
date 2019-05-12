@@ -75,7 +75,7 @@ It is made available outside the package because it can be very useful for testi
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.7</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@ It is made available outside the package because it can be very useful for testi
   <a href="../articles/operations.html">Operations</a>
 </li>
 <li>
-  <a href="../articles/advanced.html">Advanced</a>
+  <a href="../articles/development.html">Development</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -134,7 +134,8 @@ It is made available outside the package because it can be very useful for testi
   <span class='kw'>read_options</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(), <span class='kw'>reader_options</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(),
   <span class='kw'>discard_duplicates</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>parallel_plan</span> <span class='kw'>=</span> <span class='kw pkg'>future</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/future/topics/multiprocess'>multiprocess</a></span>, <span class='kw'>cache</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>cache</span>),
-  <span class='kw'>read_cache</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>cache</span>), <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+  <span class='kw'>cache_files_with_errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>read_cache</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>cache</span>),
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -178,6 +179,10 @@ It is made available outside the package because it can be very useful for testi
     <tr>
       <th>cache</th>
       <td><p>whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.</p></td>
+    </tr>
+    <tr>
+      <th>cache_files_with_errors</th>
+      <td><p>whether to cache files that had errors during reading</p></td>
     </tr>
     <tr>
       <th>read_cache</th>

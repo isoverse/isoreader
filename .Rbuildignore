@@ -15,3 +15,5 @@
 ^README-.*\.png$
 ^README\.Rmd$
 ^logo\.png$
+^vignettes/cache$
+^vignettes/fig_output$

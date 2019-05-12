@@ -1,56 +1,10 @@
-# File info and data retrieval functions 
-# @note: should make the aggregation functions type safe?
-# @note: need an "iso_get_nested_data()" funtion that nests everything together for people who would like to use that
-# @note: --> maybe provide the nest and unnest data functions from isoprocessor?
-# @note: --> maybe allow plotting and exporting functions to also work with nested data sets? 
-#            that would allow people to manipulate them easily to change certain naming fields and then go plotting?
-# @note: consider supporting the nested data sets in the plot functions
-# @note: simplify the get_file_id/path/subpath/datetime function or cut them entirely? it's all possible with the select functions anyways...
-
-# Specific file info calls ======
-
-# Get file information
-# 
-# Retrieve basic file information form an individual isotope file (iso_file) object. All of these can also be recoverd for an entire set of files using \code{\link{iso_get_file_info}} and specifiying which info to recover, for example, \code{include = c("file_id", "file_path", "file_datetime")}
-# 
-# @details \code{get_file_id()}: retrieve the file ID (this is typially the file name)
-# @param iso_file an iso_file to retrieve basic file information from
-# @rdname file_info
-# @aliases get_file_info
-# @family data retrieval functions
-# @export
-get_file_id <- function(iso_file) {
-  check_iso_file_param(iso_file)
-  return(iso_file$file_info$file_id)
-}
-
-# @details \code{get_file_path()}: retrieve the file path (this is the path to the file in case of single file formats such as .dxf or .did and the path to the archieve file in case of collective file formats such as .iarc)
-# @rdname file_info
-get_file_path <- function(iso_file) {
-  check_iso_file_param(iso_file)
-  return(iso_file$file_info$file_path)
-}
-
-# @details \code{get_file_subpath()}: retrieve the file subpath (this only exists for collective file formats such as .iarc and is the name of the metadata file inside the .iarc archive). Returns NA for iso_file without subpath.
-# @rdname file_info
-get_file_subpath <- function(iso_file) {
-  check_iso_file_param(iso_file)
-  return(iso_file$file_info$file_subpath)
-}
-
-# @details \code{get_file_datetime()}: retrieve the run date and time in \code{\link[base]{POSIXct}} format
-# @rdname file_info
-get_file_datetime <- function(iso_file) {
-  check_iso_file_param(iso_file)
-  return(iso_file$file_info$file_datetime)
-}
+# General helper functions ======
 
 # internal convenience function
 check_iso_file_param <- function(iso_file) {
   if(missing(iso_file)) stop("no iso_file provided to retrieve file information from", call. = FALSE)
   if(!iso_is_file(iso_file)) stop("can only retrieve file information from an iso_file object, not from '", class(iso_file)[1], "'", call. = FALSE)
 }
-
 
 # Data summary information =====
 
@@ -73,8 +27,12 @@ iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
   # aggregate all the info
   data_frame(
     file_id = names(iso_files),
-    file_path_ = map_chr(iso_files, ~.x$file_info$file_path),
-    file_subpath = map_chr(iso_files, ~.x$file_info$file_subpath)
+    file_path_ = map_chr(
+      iso_files, 
+      ~if (col_in_df(.x$file_info, "file_path")) { .x$file_info$file_path } else { NA_character_ }),
+    file_subpath = map_chr(
+      iso_files, 
+      ~if (col_in_df(.x$file_info, "file_path")) { .x$file_info$file_subpath } else { NA_character_ })
   ) %>%
     left_join(get_raw_data_info(iso_files), by = "file_id") %>%
     left_join(get_file_info_info(iso_files), by = "file_id") %>%
@@ -120,7 +78,7 @@ get_raw_data_info <- function(iso_files) {
       )
   } else {
     # should not get here
-    glue("cannot process '{class(iso_files[[1]])[1]}'") %>% stop(call. = FALSE)
+    glue("cannot process '{class(iso_files[[1]])[1]}' in get_raw_data_info") %>% stop(call. = FALSE)
   }
   
   return(select(raw_data_sum, file_id, raw_data = label))
@@ -129,7 +87,7 @@ get_raw_data_info <- function(iso_files) {
 # summary of file info
 get_file_info_info <- function(iso_files) {
   # make sure to convert to file list
-  iso_files <- iso_as_file_list(iso_files) %>% convert_file_info_to_data_frame()
+  iso_files <- iso_as_file_list(iso_files) %>% convert_isofiles_file_info_to_data_frame()
   
   # make sure to not process empty list
   if (length(iso_files) == 0) {
@@ -175,7 +133,7 @@ get_method_info_info <- function(iso_files) {
 # summary of vendor data table
 get_vendor_data_table_info <- function(iso_files) {
   # make sure to convert to file list
-  iso_files <- iso_as_file_list(iso_files) %>% convert_file_info_to_data_frame()
+  iso_files <- iso_as_file_list(iso_files) %>% convert_isofiles_file_info_to_data_frame()
   
   # make sure to not process empty list
   if (length(iso_files) == 0) {
@@ -279,40 +237,41 @@ iso_get_data <- function(iso_files, include_file_info = everything(), include_ra
 
 #' Aggregate file info
 #'
-#' Combine file information from multiple iso_files. By default all information is included but specific items can be specified using the \code{include} parameter. The file id is always included. File information beyond \code{file_id} and \code{file_path} is only available if the iso_files were read with parameter \code{read_file_info=TRUE}.
+#' Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the \code{select} parameter, which uses the \code{\link{iso_select_file_info}} function to select and/or rename columns. File information beyond \code{file_id}, \code{file_root}, \code{file_path} and \code{file_datetime} is only available if the \code{iso_files} were read with parameter \code{read_file_info=TRUE}.
 #'
 #' @inheritParams iso_get_raw_data
-#' @param select which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default. File id is always included no matter which selection parameters. 
+#' @param select which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. File id is always included and cannot be renamed. 
 #' @family data retrieval functions
-#' @note File info entries with multiple values are concatenated for this aggregation function. To get access to a specific multi-value file info entry, access using \code{iso_file$file_info[['INFO_NAME']]} on the iso_file object directly.
+#' @note File info entries with multiple values remain nested multi-value (=list) columns and can be unnested using \link[tidyr]{unnest}.
 #' @export
 iso_get_file_info <- function(iso_files, select = everything(), quiet = default(quiet)) {
   iso_files <- iso_as_file_list(iso_files)
-  if (!quiet) sprintf("Info: aggregating file info from %d data file(s)", length(iso_files)) %>% message()
+  select_quo <- enquo(select)
+  
+  if (!quiet) { 
+    glue::glue(
+      "Info: aggregating file info from {length(iso_files)} data file(s)",
+      "{get_info_message_concat(select_quo, prefix = ', selecting info columns ', empty = 'everything()')}") %>% message()
+  }
   check_read_options(iso_files, "file_info")
   
   # @note: for safety, could be deprecated in later version because it is also done at the end of every isoread
-  iso_files <- convert_file_info_to_data_frame(iso_files) 
+  iso_files <- convert_isofiles_file_info_to_data_frame(iso_files) 
+  
+  # select columns
+  if (quo_text(select_quo) != "everything()") {
+    # run selection unless everything is selected 
+    # (in which case it is a waste of time to run)
+    iso_files <- iso_select_file_info(iso_files, !!select_quo, quiet = TRUE)
+  }
   
   # retrieve info
-  file_info <- iso_files %>% 
-    # retrieve file info (turn into list columns)
+  iso_files %>% 
+    # retrieve file info
     map(~.x$file_info) %>% 
-    # combine in data frame
-    bind_rows()
-  
-  # nothing returned
-  if (nrow(file_info) == 0) return(file_info)
-  
-  # figure out which columns are selected
-  select_cols <- get_column_names(file_info, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
-  if (!"file_id" %in% select_cols) 
-    select_cols <- c("file_id", select_cols) # file info always included
-  
-  # return
-  file_info %>% 
-    # focus on selected columns only (also takes care of the rename)
-    dplyr::select(!!!select_cols) %>% 
+    # combine in data frame (use safe bind to make sure different data column 
+    # types of the same name don't trip up the combination)
+    safe_bind_rows() %>% 
     # unnest aggregated data frame
     unnest_aggregated_data_frame()
 }
@@ -336,7 +295,7 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
   select_quo <- enquo(select)
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
-    glue(
+    glue::glue(
       "Info: aggregating raw data from {length(iso_files)} data file(s)",
       "{get_info_message_concat(select_quo, prefix = ', selecting data columns ', empty = 'everything()')}",
       "{get_info_message_concat(include_file_info_quo, prefix = ', including file info ')}") %>% message()
@@ -364,7 +323,7 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
   # selecting columns
   select_cols <- get_column_names(data, select = select_quo, n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
   if (!"file_id" %in% select_cols) 
-    select_cols <- c("file_id", select_cols) # file info always included
+    select_cols <- c("file_id", select_cols) # file id always included
   data <- data %>% 
     # focus on selected columns only (also takes care of the rename)
     dplyr::select(!!!select_cols) 
@@ -702,7 +661,8 @@ convert_file_path_to_rooted <- function(iso_files, root = ".", ...) {
 }
 
 # helper function to turn file info from list to data frame for easier/faster aggregation
-convert_file_info_to_data_frame <- function(iso_files, ...) {
+# note: this should become obsolete as there are no more older files that have list-based file info
+convert_isofiles_file_info_to_data_frame <- function(iso_files, ...) {
   
   stopifnot(iso_is_file_list(iso_files))
   
@@ -723,10 +683,8 @@ convert_file_info_to_data_frame <- function(iso_files, ...) {
       map(
         ~{ 
           # don't convert standard fields, just custom ones generated by indiviudal file readers
-          is_standard_field <- names(.x$file_info) %in% standard_fields
-          .x$file_info[!is_standard_field] <- map(.x$file_info[!is_standard_field], list)
-          .x$file_info <- as_data_frame(.x$file_info)
-          .x  
+          .x$file_info <- ensure_data_frame_list_columns(.x$file_info, exclude = standard_fields)
+          .x
         }
       )
     
@@ -734,6 +692,32 @@ convert_file_info_to_data_frame <- function(iso_files, ...) {
   }
   
   return(iso_files)
+}
+
+# Binding Together disparate data frames ========
+
+# safely bind rows by converting all columns to list columns if they aren't already
+# works both with lists and data frames (or mixed)
+# this is typically followed by unnest_aggreated_data_frame
+safe_bind_rows <- function(df_list, exclude = names(make_iso_file_data_structure()$file_info)) {
+  map(df_list, ensure_data_frame_list_columns, exclude = exclude) %>% 
+    bind_rows()
+}
+
+# make sure that data frame columns are list columns (except those listed as exclude)
+# this is to allow for safely binding rows of data frames with unpredictable data types in the same columns
+# @param x data frame or list
+# @param exclude names of columns to leave the way they are
+ensure_data_frame_list_columns <- function(x, exclude = names(make_iso_file_data_structure()$file_info)) {
+  # make sure all columns are ready
+  cols_to_list <- names(x)[!map_lgl(x, is.list)] %>% setdiff(exclude)
+  if(length(cols_to_list) > 0) {
+    func <- if (is.data.frame(x)) as.list else list
+    x[cols_to_list] <- map(x[cols_to_list], func)
+  }
+  # convert list to tibble
+  if (!is.data.frame(x)) x <- dplyr::as_tibble(x)
+  return(x)
 }
 
 # helper function to unnest aggregated columns that have single or no values and the same data types

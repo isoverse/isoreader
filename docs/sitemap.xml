@@ -16,6 +16,9 @@
     <loc>http://isoreader.isoverse.org//reference/file_readers.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_add_file_info.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org//reference/iso_caching.html</loc>
   </url>
   <url>
@@ -50,6 +53,9 @@
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/iso_filter_files.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_filter_files_with_problems.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/iso_find_absolute_path_roots.html</loc>
@@ -100,7 +106,13 @@
     <loc>http://isoreader.isoverse.org//reference/iso_info_messages.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_mutate_file_info.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org//reference/iso_omit_files_with_problems.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_parse_file_info.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/iso_plot_continuous_flow_data.html</loc>
@@ -130,6 +142,9 @@
     <loc>http://isoreader.isoverse.org//reference/iso_read_scan.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_rename_file_info.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org//reference/iso_reread_files.html</loc>
   </url>
   <url>
@@ -137,6 +152,9 @@
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/iso_save.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_select_file_info.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/iso_set_default_read_parameters.html</loc>
@@ -160,10 +178,10 @@
     <loc>http://isoreader.isoverse.org//reference/reexports.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//articles/advanced.html</loc>
+    <loc>http://isoreader.isoverse.org//articles/continuous_flow.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//articles/continuous_flow.html</loc>
+    <loc>http://isoreader.isoverse.org//articles/development.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//articles/dual_inlet.html</loc>

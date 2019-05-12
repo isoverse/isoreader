@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Operations Example • Isoreader</title>
+<title>Operations • Isoreader</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Operations Example">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Operations">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -36,7 +36,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.7</span>
       </span>
     </div>
 
@@ -52,7 +52,7 @@
   <a href="../articles/operations.html">Operations</a>
 </li>
 <li>
-  <a href="../articles/advanced.html">Advanced</a>
+  <a href="../articles/development.html">Development</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -77,9 +77,9 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Operations Example</h1>
+      <h1>Operations</h1>
             
-            <h4 class="date">2019-01-26</h4>
+            <h4 class="date">2019-05-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/operations.Rmd"><code>vignettes/operations.Rmd</code></a></small>
       <div class="hidden name"><code>operations.Rmd</code></div>
@@ -92,7 +92,7 @@
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
 <p>Coming soon…</p>
-<p>Isoreader provides a number of general purpose operations that work on all supported IRMS data formats such as caching of read files and data exports. This will demonstrate some of these general operations.</p>
+<p>Isoreader provides a number of general purpose operations that work on all supported IRMS data formats such as caching of files, parallel processing and catching read errors. This vignette demonstrates some of these general operations.</p>
 </div>
 <div id="supported-file-types" class="section level1">
 <h1 class="hasAnchor">
@@ -101,6 +101,7 @@
 <div id="caching" class="section level1">
 <h1 class="hasAnchor">
 <a href="#caching" class="anchor"></a>Caching</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co">#iso_cleanup_reader_cache()</span></a></code></pre></div>
 </div>
 <div id="parallel-processing" class="section level1">
 <h1 class="hasAnchor">
@@ -116,11 +117,6 @@
 <a href="#combining-subsetting-isofiles" class="anchor"></a>Combining / subsetting isofiles</h1>
 <p>All isoreader objects are lists that can be combined or subset to work with only specific files or create a larger collection.</p>
 </div>
-<div id="filtering-isofiles-by-file-information" class="section level1">
-<h1 class="hasAnchor">
-<a href="#filtering-isofiles-by-file-information" class="anchor"></a>Filtering isofiles by file information</h1>
-<p>Additionally, the <code>iso_filter_files</code> function allows for subsetting a collection of isofiles based on any file information.</p>
-</div>
 <div id="dealing-with-file-read-problems" class="section level1">
 <h1 class="hasAnchor">
 <a href="#dealing-with-file-read-problems" class="anchor"></a>Dealing with file read problems</h1>
@@ -128,7 +124,7 @@
 <div id="removing-erroneous-files" class="section level1">
 <h1 class="hasAnchor">
 <a href="#removing-erroneous-files" class="anchor"></a>Removing erroneous files</h1>
-<p>Removing files with problems: <code>iso_omit_files_with_problems</code></p>
+<p>Removing files with problems: <code>iso_filter_files_with_problems</code></p>
 </div>
 <div id="re-reading-files" class="section level1">
 <h1 class="hasAnchor">
@@ -147,7 +143,6 @@
       <li><a href="#parallel-processing">Parallel processing</a></li>
       <li><a href="#messages-and-default-parameters">Messages and default parameters</a></li>
       <li><a href="#combining-subsetting-isofiles">Combining / subsetting isofiles</a></li>
-      <li><a href="#filtering-isofiles-by-file-information">Filtering isofiles by file information</a></li>
       <li><a href="#dealing-with-file-read-problems">Dealing with file read problems</a></li>
       <li><a href="#removing-erroneous-files">Removing erroneous files</a></li>
       <li><a href="#re-reading-files">Re-reading files</a></li>

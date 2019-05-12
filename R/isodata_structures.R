@@ -11,7 +11,7 @@ make_iso_file_data_structure <- function() {
         raw_data = FALSE, # whether mass data was read (Note: maybe not top-level b/c of scans?)
         vendor_data_table = FALSE # whether vendor data table was read
       ), 
-      file_info = list(
+      file_info = dplyr::tibble(
         file_id = NA_character_, # unique identifer
         file_root = NA_character_, # root directory for file path
         file_path = NA_character_, # path to file (file extension is key for processing)
@@ -19,8 +19,8 @@ make_iso_file_data_structure <- function() {
         file_datetime = NA_integer_ # the run date and time of the file
       ),
       method_info = list(), # all methods information
-      raw_data = data_frame(), # all mass data (Note: maybe not top-level b/c of scans?)
-      vendor_data_table = data_frame() %>% # vendor computed data table (no units)
+      raw_data = dplyr::tibble(), # all mass data (Note: maybe not top-level b/c of scans?)
+      vendor_data_table = dplyr::tibble() %>% # vendor computed data table (no units)
         { attr(., "units") <- NA; . }
     ),
     class = c("iso_file")
@@ -260,6 +260,10 @@ set_ds_file_path <- function(ds, file_root, file_path, file_id = basename(file_p
 }
 
 get_ds_file_path <- function(ds) {
+  if (!col_in_df(ds$file_info, "file_path"))
+    stop("file_path column does not exist in file info (lost during rename?), cannot proceed", call. = FALSE)
+  if (!col_in_df(ds$file_info, "file_root"))
+    stop("file_root column does not exist in file info (lost during rename?), cannot proceed", call. = FALSE)
   if (is.na(ds$file_info$file_root)) return(ds$file_info$file_path)
   else return(file.path(ds$file_info$file_root, ds$file_info$file_path))
 }
@@ -322,7 +326,7 @@ c.iso_file <- function(...) {
   iso_as_file_list(...)
 }
 
-# combine iso_file other things
+# combine iso_file with other things
 #' @export
 c.iso_file_list <- function(...) {
   iso_as_file_list(...)

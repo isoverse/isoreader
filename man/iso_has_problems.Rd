@@ -16,9 +16,9 @@ boolean
 Check for parsing problems
 }
 \seealso{
-Other problem functions: \code{\link{iso_get_problems_summary}},
+Other problem functions: \code{\link{iso_filter_files_with_problems}},
+  \code{\link{iso_get_problems_summary}},
   \code{\link{iso_get_problems}},
-  \code{\link{iso_omit_files_with_problems}},
   \code{\link{iso_problem_functions}}
 }
 \concept{problem functions}

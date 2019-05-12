@@ -26,7 +26,7 @@ http://isoreader.isoverse.org//reference/iso_get_supported_file_types.html
 http://isoreader.isoverse.org//reference/iso_get_vendor_data_table.html
 http://isoreader.isoverse.org//reference/iso_has_problems.html
 http://isoreader.isoverse.org//reference/iso_info_messages.html
-http://isoreader.isoverse.org//reference/iso_omit_files_with_problems.html
+http://isoreader.isoverse.org//reference/iso_filter_files_with_problems.html
 http://isoreader.isoverse.org//reference/iso_plot_continuous_flow_data.html
 http://isoreader.isoverse.org//reference/iso_plot_dual_inlet_data.html
 http://isoreader.isoverse.org//reference/iso_plot_raw_data.html

@@ -285,7 +285,7 @@ find_next_pattern <- function(bfile, ..., max_gap = NULL, value = FALSE, all = F
   pos <- grepRaw(regexps$regexp, bfile$raw, offset = bfile$pos, value = value, all = all) 
   if (length(pos) == 0) return(NULL) # return NULL if not found
   else if (!is.null(max_gap) && !value && pos > bfile$pos + max_gap) return(NULL) # return NULL if outside max gap
-  else if (!value && pos > bfile$max_pos) return (NULL) # return NULL if bigger than allowed
+  else if (!value && all(pos > bfile$max_pos)) return (NULL) # return NULL if bigger than allowed
   else return(pos)
 }
 
@@ -566,7 +566,7 @@ parse_raw_data <- function(raw, type, n = full_raw(), ignore_trailing_zeros = FA
   
   # check that regexp pattern fits 
   regexp <- str_c(sapply(dbc, function(x) if(!is.null(x$regexp)) x$regexp else ""), collapse = "")
-  if (type == "text" && (n==0 || n > 250)) {
+  if (any(type == "text") && (n == 0 || n > 250)) {
     stop(sprintf("%sinvalid number of occurences (%.0f) for pattern (%s): %s", 
                  error_prefix, n, regexp, raw_trim_text), call. = FALSE)
   }

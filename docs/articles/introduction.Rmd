@@ -10,7 +10,7 @@ This document was generated with isoreader version `r packageVersion("isoreader"
 
 
 ```{r}
-#iso_omit_files_with_problems()
+#iso_filter_files_with_problems()
 ```
 
 ```{r}

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Remove problematic files — iso_omit_files_with_problems • Isoreader</title>
+<title>Renamed to iso_filter_files_with_problems — iso_omit_files_with_problems • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Remove problematic files — iso_omit_files_with_problems" />
+<meta property="og:title" content="Renamed to iso_filter_files_with_problems — iso_omit_files_with_problems" />
 
-<meta property="og:description" content="Removes the files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the iso_problem_functions." />
+<meta property="og:description" content="This function has been renamed to iso_filter_files_with_problems for naming consistency." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -73,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.7</span>
       </span>
     </div>
 
@@ -89,7 +89,7 @@
   <a href="../articles/operations.html">Operations</a>
 </li>
 <li>
-  <a href="../articles/advanced.html">Advanced</a>
+  <a href="../articles/development.html">Development</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -115,47 +115,27 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Remove problematic files</h1>
+    <h1>Renamed to iso_filter_files_with_problems</h1>
     <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/problems.R'><code>R/problems.R</code></a></small>
     <div class="hidden name"><code>iso_omit_files_with_problems.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Removes the files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the <a href='iso_problem_functions.html'>iso_problem_functions</a>.</p>
+    <p>This function has been renamed to <a href='iso_filter_files_with_problems.html'>iso_filter_files_with_problems</a> for naming consistency.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_omit_files_with_problems</span>(<span class='no'>iso_files</span>, <span class='kw'>remove_files_with_errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>remove_files_with_warnings</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+    <pre class="usage"><span class='fu'>iso_omit_files_with_problems</span>(<span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>iso_files</th>
-      <td><p>collection of iso_file objects</p></td>
-    </tr>
-    <tr>
-      <th>remove_files_with_errors</th>
-      <td><p>whether to remove files with errors (default is TRUE)</p></td>
-    </tr>
-    <tr>
-      <th>remove_files_with_warnings</th>
-      <td><p>whether to remove files with warnings (default is FALSE)</p></td>
-    </tr>
-    <tr>
-      <th>quiet</th>
-      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
+      <th>...</th>
+      <td><p>deprecated</p></td>
     </tr>
     </table>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other problem functions: <code><a href='iso_get_problems_summary.html'>iso_get_problems_summary</a></code>,
-  <code><a href='iso_get_problems.html'>iso_get_problems</a></code>,
-  <code><a href='iso_has_problems.html'>iso_has_problems</a></code>,
-  <code><a href='iso_problem_functions.html'>iso_problem_functions</a></code></p></div>
     
 
   </div>
@@ -163,9 +143,7 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#see-also">See also</a></li>
-          </ul>
+                </ul>
 
   </div>
 </div>
