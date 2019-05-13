@@ -533,8 +533,8 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
   
   # prep for joins
   shared_cols <- intersect(names(new_file_info), names(df)) %>% { setNames(., paste0("..ni_temp_", .)) }
-  df <- mutate(df, ..df_id = row_number())
-  new_file_info <- mutate(new_file_info, ..ni_id = row_number())
+  df <- mutate(df, ..df_id = dplyr::row_number())
+  new_file_info <- mutate(new_file_info, ..ni_id = dplyr::row_number())
   
   # join new file info based on the join by and new row indices
   join_new_file_info <- function(join_by, new_rows, shared_cols) {
