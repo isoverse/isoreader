@@ -10,15 +10,30 @@ init:
 install:
   ps: Bootstrap
 
+platform: x64
+
 cache:
   - C:\RLibrary
 
 environment:
-  USE_RTOOLS: true
+  global:
+    BIOC_USE_DEVEL: "FALSE"
+    USE_RTOOLS: true
+    NOT_CRAN: true
+  matrix:
+    - configuration: oldrel
+      R_VERSION: oldrel
+    - configuration: release
+      R_VERSION: release
+    - configuration: devel
+      R_VERSION: devel
+
+matrix:
+  fast_finish: true
 
 build_script:
-  - travis-tool.sh install_deps
   - travis-tool.sh install_bioc rhdf5
+  - travis-tool.sh install_deps
 
 test_script:
   - travis-tool.sh run_tests
@@ -30,18 +45,21 @@ on_failure:
 artifacts:
   - path: '*.Rcheck\**\*.log'
     name: Logs
-
   - path: '*.Rcheck\**\*.out'
     name: Logs
-
   - path: '*.Rcheck\**\*.fail'
     name: Logs
-
   - path: '*.Rcheck\**\*.Rout'
     name: Logs
-
   - path: '\*_*.tar.gz'
     name: Bits
-
   - path: '\*_*.zip'
     name: Bits
+  - path: all-Rout.zip
+    name: AllRout
+
+notifications:
+  - provider: Email
+    to:
+      - seb.kopf@gmail.com
+    on_build_status_changed: true
