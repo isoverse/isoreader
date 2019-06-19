@@ -384,6 +384,10 @@ extract_MS_integration_time_info <- function(ds) {
 
 # extract vendor computed data table for continuous flow files
 extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NULL) {
+  
+  # global vars
+  column <- NULL
+  
   # find vendor data table
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot process vendor identified peaks") %>% 

@@ -111,6 +111,9 @@ monitor_parallel_logs <- function(processes) {
 # process parallel logs
 process_parallel_logs <- function(status) {
 
+  # global vars
+  X3 <- prefix <- NULL
+  
   # logs
   log <- get_temp("parallel_log_file")
   if (!is.null(log) && file.exists(log)) {
@@ -184,10 +187,14 @@ iso_get_reader_example <- function(filename) {
 
 #' @rdname iso_get_reader_example
 #' @details \code{iso_get_reader_examples}: list of all available isoreader example files
+#' @examples
+#' iso_get_reader_examples()
 #' @export
 iso_get_reader_examples <- function() {
+  
   # global vars
-  extension <- filename <- format <- NULL
+  extension <- filename <- format <- path <- type <- description <- NULL
+  
   file_types <- iso_get_supported_file_types()
   iso_expand_paths(
       ".", extensions = file_types$extension, root = system.file(package = "isoreader", "extdata")) %>%
@@ -218,6 +225,10 @@ is_folder <- function(path, check_existence = TRUE) {
 # @param path path(s) (relative or absolute)
 # @param root (root(s) for relative paths)
 get_paths_data_frame <- function(path, root, check_existence = TRUE) {
+  
+  # global vars
+  full_path <- absolute <- NULL
+  
   # error with dimensions
   if (length(path) != 1 && length(root) != 1 && length(path) != length(root)) {
     stop("paths and roots need to have one entry or be of the same length, not ",
@@ -275,6 +286,10 @@ has_common_start <- function(vectors, common) {
 # find the common elements from the start of the vectors
 # @param vectors list of vectors
 find_common_different_from_start <- function(vectors, empty = character(0)) {
+  
+  # global vars
+  i <- entry <- same <- v <- data <- result <- NULL
+  
   min_length <- min(map_int(vectors, length))
   if(min_length == 0) {
     return(list(common = empty, different = vectors))
@@ -354,6 +369,9 @@ get_path_segments <- function(path) {
 #' @export
 iso_expand_paths <- function(path, extensions = c(), root = ".") {
 
+  # global vars
+  full_path <- is_dir <- i <- NULL
+  
   # file paths
   paths <- get_paths_data_frame(path, root, check_existence = TRUE)
 
@@ -434,6 +452,9 @@ iso_root_paths <- function(path, root = ".", check_existence = TRUE) {
 #' iso_shorten_relative_paths(file.path("A", "B", "C"), "B") # root = ".", path stays "A/B/C"
 iso_shorten_relative_paths <- function(path, root = ".") {
 
+  # global
+  root_folders_all <- root_folders_rel <- absolute <- root_folders <- path_folders <- i <- NULL
+  
   # error with dimensions
   if (length(path) != 1 && length(root) != 1 && length(path) != length(root)) {
     stop("paths and roots need to have one entry or be of the same length, not ",
@@ -496,6 +517,9 @@ iso_shorten_relative_paths <- function(path, root = ".") {
 #' @export
 iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRUE) {
 
+  # global vars
+  absolute <- is_dir <- full_path <- rel_root_folders <- path_folders <- abs_root_folders <- has_rel_root <- new_path <- i <- NULL
+  
   # anything to work with?
   if(length(path) == 0) return(data_frame(root = character(0), path = character(0)))
 
@@ -603,6 +627,10 @@ match_file_ext <- function(filepath, extensions) {
 match_to_supported_file_types <- function(filepaths_df, extensions_df) {
   stopifnot(col_in_df(filepaths_df, "path"))
   stopifnot(col_in_df(extensions_df, "extension"))
+  
+  # global vars
+  path <- .ext_exists <- NULL
+  
   files <-
     filepaths_df %>%
     mutate(extension = map_chr(path, match_file_ext, extensions_df$extension)) %>%

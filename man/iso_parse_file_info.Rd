@@ -21,7 +21,7 @@ iso_parse_file_info(iso_files, number = c(), double = c(),
 
 \item{datetime}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a date-time using \link[readr]{parse_datetime}. Use \code{c(...)} to select multiple columns.}
 
-\item{text}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to text using \link[readr]{as.character}. Use \code{c(...)} to select multiple columns.}
+\item{text}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to text using \link[base]{as.character}. Use \code{c(...)} to select multiple columns.}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
