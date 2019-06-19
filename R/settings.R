@@ -20,7 +20,13 @@ get_temp <- function(name, allow_null = TRUE) {
   return(value)
 }
 
-# set temp option
+#' Set temporary option
+#' 
+#' Set a temporary option for parallel processing in isoprocessor.
+#' 
+#' @param name name of the temporary option
+#' @param value value of the temporary option
+#' @export
 set_temp <- function(name, value) {
   options(list(value) %>% setNames(str_c("isoreader_temp.", name)))
   return(invisible(value))

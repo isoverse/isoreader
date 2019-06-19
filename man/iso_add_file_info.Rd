@@ -3,6 +3,7 @@
 \name{iso_add_file_info.iso_file_list}
 \alias{iso_add_file_info.iso_file_list}
 \alias{iso_add_file_info.data.frame}
+\alias{iso_add_file_info}
 \title{Add additional file information}
 \usage{
 \method{iso_add_file_info}{iso_file_list}(iso_files, new_file_info, ...,
@@ -10,6 +11,8 @@
 
 \method{iso_add_file_info}{data.frame}(df, new_file_info, ...,
   quiet = default(quiet))
+
+iso_add_file_info(...)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}

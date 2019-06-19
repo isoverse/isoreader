@@ -1,7 +1,7 @@
 #' @keywords internal
 "_PACKAGE"
 
-#' @importFrom rlang enquo quo quos UQ !! !!! get_expr quo_expr quo_text quo_is_null quo_is_symbol quo_is_lang is_quosure is_empty is_integerish eval_tidy sym lang_head new_formula f_lhs f_rhs
+#' @importFrom rlang enquo quo quos UQ !! !!! := get_expr quo_expr quo_text quo_is_null quo_is_symbol quo_is_lang is_quosure is_empty is_integerish eval_tidy sym lang_head new_formula f_lhs f_rhs
 #' @importFrom tidyselect everything starts_with ends_with matches vars_select
 #' @importFrom tibble tibble is_tibble
 #' @importFrom dplyr vars n select rename arrange desc mutate mutate_at mutate_if filter distinct as_data_frame left_join right_join full_join data_frame bind_rows bind_cols group_by ungroup tally summarize do case_when
@@ -35,6 +35,10 @@ tidyselect::ends_with
 
 #' @export
 tidyselect::matches
+
+# re-export dplyr's filter function to overwrite the global filter
+#' @export
+dplyr::filter
 
 # quiets concerns of R CMD check about . that appears in pipelines 
 # and some very commonly used variable names used in NSE commands
