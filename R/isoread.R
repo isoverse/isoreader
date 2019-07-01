@@ -347,6 +347,14 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
   # turn into iso_file list
   iso_files <- iso_as_file_list(iso_files, discard_duplicates = discard_duplicates) 
 
+  # bring files into the correct order after potential parallel processing jumble
+  indices <- 
+    tibble(path = purrr::map_chr(iso_files, ~.x$file_info$file_path), idx = 1:length(path)) %>% 
+    dplyr::left_join(files, by = "path") %>% 
+    dplyr::arrange(file_n) %>% 
+    dplyr::pull(idx)
+  iso_files <- iso_files[indices]
+  
   # convert file_info to data frame in isofiles for faster access
   # @note: this is not quite ideal because it basically casts iso_as_file_list twice if there are any files that have non-data frame file_info but should happen less and less as older file objects get upgraded - should be possible to deprecate in a future version
   iso_files <- convert_isofiles_file_info_to_data_frame(iso_files, discard_duplicates = discard_duplicates)
