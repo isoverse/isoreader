@@ -86,6 +86,12 @@ setup_parallel_logs <- function() {
   progress <- paste0(tmpfile, ".progress")
   cat("", file = progress)
   set_temp("parallel_progress_file", progress)
+  
+  if (default(debug)) {
+    glue::glue("\n\nDEBUG  (log files will not be deleted afer run):\n\t",
+               "log file path '{log}'\n\tprogress file path '{progress}'") %>% 
+      message()
+  }
 }
 
 # monitor parallel log files
@@ -112,7 +118,7 @@ monitor_parallel_logs <- function(processes) {
 process_parallel_logs <- function(status) {
 
   # global vars
-  X3 <- prefix <- NULL
+  X1 <- X2 <- X3 <- prefix <- NULL
   
   # logs
   log <- get_temp("parallel_log_file")
@@ -122,7 +128,10 @@ process_parallel_logs <- function(status) {
     reset <-
       tryCatch(
         {
-          logs <- suppressMessages(readr::read_csv(log, col_names = FALSE, skip = status$log_n))
+          if (default(debug))
+            logs <- suppressMessages(readr::read_csv(log, col_names = FALSE, skip = status$log_n))
+          else
+            logs <- suppressWarnings(suppressMessages(readr::read_csv(log, col_names = FALSE, skip = status$log_n)))
           if (nrow(logs) > 0 && ncol(logs) != 3) stop("incorrect log file format", call. = FALSE)
           NULL # set reset to NULL if it gets to here
         },
@@ -131,18 +140,22 @@ process_parallel_logs <- function(status) {
 
     if (!is.null(reset)) {
       # safety precaution in case log file gets corrupted
-      log_message("resetting log file (some progress updates may not display) because of error - ", reset, prefix = "Warning: ")
+      log_message("resetting log file (some progress updates may not display) because of error - '", 
+                  reset, "'. This can happen sometimes when too many parallel processes finish at the ",
+                  "exact same time but should only affect the logs, not the file reads themselves.", prefix = "Warning: ")
       cat("", file = log)
       status$log_n <- 0L
     } else if (nrow(logs) > 0) {
       # display logs
       status$log_n <- status$log_n + nrow(logs)
       logs %>%
-        mutate(prefix = case_when(
-          X1 == "info" ~ sprintf("Info (process %d): ", X2),
-          X1 == "warning" ~ sprintf("Warning (process %d): ", X2),
-          TRUE ~ sprintf("Process %d: ", X2)
-        )) %>%
+        mutate(
+          X2 = as.character(X2),
+          prefix = case_when(
+            X1 == "info" ~ sprintf("Info (process %s): ", X2),
+            X1 == "warning" ~ sprintf("Warning (process %s): ", X2),
+            TRUE ~ sprintf("Process %s: ", X2)
+          )) %>%
         with(purrr::walk2(X3, prefix, ~log_message(.x, prefix = .y)))
     }
   }
@@ -163,9 +176,9 @@ process_parallel_logs <- function(status) {
 # cleanup parallel logs
 cleanup_parallel_logs <- function() {
   log <- get_temp("parallel_log_file")
-  if (!is.null(log) && file.exists(log)) file.remove(log)
+  if (!is.null(log) && file.exists(log) && !default(debug)) file.remove(log)
   progress <- get_temp("parallel_progress_file")
-  if (!is.null(progress) && file.exists(progress)) file.remove(progress)
+  if (!is.null(progress) && file.exists(progress) && !default(debug)) file.remove(progress)
 }
 
 # example files ====
