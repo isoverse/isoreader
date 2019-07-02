@@ -196,11 +196,18 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   }
   
   # run ratio capture
-  ratios <- data_frame(
-    pos = positions + ratio_re$size,
-    data = map(pos, capture_ratio_values)
-  ) %>% unnest(data) %>% 
-    select(!!!c("reference", "element", "ratio_name", "ratio_value"))
+  if (length(positions) > 0) {
+    ratios <- data_frame(
+      pos = positions + ratio_re$size,
+      data = map(pos, capture_ratio_values)
+    ) %>% 
+      unnest(data) %>% 
+      select(!!!c("reference", "element", "ratio_name", "ratio_value"))
+  } else {
+    # no ratios defined
+    ratios <- data_frame(reference = character(0), element = character(0), 
+                         ratio_name = character(0), ratio_value = numeric(0))
+  }
   
   # store information
   ds$method_info$standards <- unique(deltas)
@@ -400,7 +407,7 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   
   ### basic peak info
   # find basic peak information (Rts, amplitude, bg) - this information is stored separatedly from the rest of the table
-  rt_pre_re <- re_combine(re_null(19), re_direct("(\\x00|[\x01-\x1f])\\x00{3}", size = 4), re_block("x-000"))
+  rt_pre_re <- re_combine(re_null(18), re_direct("(\\x00|[\x01-\x1f])\\x00{3}", size = 4), re_block("x-000"))
   rt_re <- re_combine(rt_pre_re, re_direct("..\\x00{2}"), re_block("x-000")) 
   positions <- find_next_patterns(ds$binary, rt_re)
   rts <- list()
@@ -427,7 +434,7 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   # identical. Isodat seems to report only the major ion (first ion here) so we are doing the same
   rts_df <- bind_rows(rts) 
   if (nrow(rts_df) == 0) return(ds) # no vendor data table entries found
-  
+
   # retention times
   peak <- start <- rt <- end <- amp <- Ampl <- bg <- BGD <- NULL
   peaks <- rts_df %>% 
@@ -578,7 +585,7 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
                sprintf("mismatched data column format for column '%s', found '%s' but expected '%s'",
                        col, ds$binary$data$format, columns[[col]]$format))
     }
-    
+
     # capture data
     if (columns[[col]]$type == "text") {
       ds$binary <-
