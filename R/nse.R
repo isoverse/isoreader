@@ -65,12 +65,13 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   
   # use a safe version of vars_select to get all the column names
   safe_vars_select <- safely(vars_select)
-  cols_quos <- quos(!!!list(...)) %>% 
+  lquos <- list(...)
+  cols_quos <- quos(!!!lquos) %>% 
     # make sure to evaluate calls to default
     resolve_defaults() %>% 
     # make sure that the expressions are locally evaluated
-    map(~quo(!!get_expr(.x)))
-  cols_results <- map(cols_quos, ~safe_vars_select(names(df), !!!.x))
+    map(~quo(!!rlang::quo_get_expr(.x)))
+  cols_results <- map(cols_quos, ~safe_vars_select(names(df), !!.x))
   ok <- map_lgl(cols_results, ~is.null(.x$error))
   
   # summarize if there were any errors
@@ -93,7 +94,7 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
     } else {
       # just a warning and find the columns omitting those missing
       warning(err_msg, immediate. = TRUE, call. = FALSE)
-      cols_results <- map(cols_quos, ~safe_vars_select(names(df), !!!.x, .strict = FALSE))
+      cols_results <- map(cols_quos, ~safe_vars_select(names(df), !!.x, .strict = FALSE))
     }
   }
   
@@ -181,7 +182,7 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
 
 # resolve default cols in a list of quos
 resolve_defaults <- function(quos) {
-  resolve_default <- function(x) if (quo_is_lang(x) && lang_head(x) == sym("default")) eval_tidy(x) else x
+  resolve_default <- function(x) if (rlang::quo_is_call(x) && rlang::call_name(x) == sym("default")) eval_tidy(x) else x
   if (is_quosure(quos)) return(resolve_default(quos))
   else map(quos, resolve_default)
 }
