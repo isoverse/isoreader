@@ -82,7 +82,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
   # find all masses
   for (config in names(configs)) {
     if (default(debug)) 
-      log_message("processing ", config, " (", configs[[config]]$pos, "-", configs[[config]]$cap, ")")
+      log_message("processing config '", config, "' (", configs[[config]]$pos, "-", configs[[config]]$cap, ")")
     ds$binary <- ds$binary %>% 
       move_to_pos(configs[[config]]$pos) %>% 
       cap_at_pos(configs[[config]]$cap)
@@ -95,6 +95,38 @@ extract_dxf_raw_voltage_data <- function(ds) {
         capture_data("mass", "text", re_block("fef-x"), move_past_dots = TRUE)
       configs[[config]]$masses <- c(configs[[config]]$masses, ds$binary$data$mass)
       intensity_id <- intensity_id + 1
+    }
+  }
+  
+  # find gas config alternative names (sometimes set, sometimes not)
+  ds$binary <- ds$binary %>% 
+    move_to_C_block_range("CPeakFindParameter", "CResultArray") 
+  smoothing_positions <- find_next_patterns(ds$binary, re_text("Smoothing"))
+  peak_center_positions <- find_next_patterns(ds$binary, re_text("Peak Center"))
+  gas_name_end_re <- re_combine(re_null(4), re_direct("[\x01-\xff]"))
+  gas_name_re <- re_combine(re_block("fef-x"), re_block("text0"), gas_name_end_re)
+  
+  for (pos in smoothing_positions) {
+    gas_names <- ds$binary %>% 
+      move_to_pos(pos) %>% 
+      { cap_at_pos(., find_next_pattern(., re_text("Peak Center"))) } %>% 
+      move_to_next_pattern(gas_name_re, move_to_end = FALSE) %>% 
+      skip_pos(4) %>% # skip the fef-x at the beginning
+      capture_data("gas_name1", "text", gas_name_end_re, data_bytes_max = 50) %>% 
+      move_to_next_pattern(gas_name_re, move_to_end = FALSE) %>% 
+      skip_pos(4) %>% # skip the fef-x at the beginning
+      capture_data("gas_name2", "text", gas_name_end_re, data_bytes_max = 50) %>% 
+      { .$data[c("gas_name1", "gas_name2")] }
+    
+    # update config with alternative name
+    if (gas_names$gas_name2 != "" && gas_names$gas_name1 != gas_names$gas_name2 && 
+        any(config_idx <- gas_names$gas_name1 == names(configs))) {
+      if (default(debug)) 
+        glue::glue(
+          "renaming config '{gas_names$gas_name1}' to '{gas_names$gas_name2}' ",
+          "(non-standard config name)") %>% 
+        log_message()
+      names(configs)[config_idx] <- gas_names$gas_name2
     }
   }
   
@@ -111,20 +143,35 @@ extract_dxf_raw_voltage_data <- function(ds) {
   gas_config_re <- re_combine(re_block("fef-x"), re_block("text"), re_block("fef-0"))
   voltages <- data_frame()
   positions <- find_next_patterns(ds$binary, data_start_re)
+  
   for (pos in positions) {
     # move to beginning of data
     ds$binary <- ds$binary %>% move_to_pos(pos + data_start_re$size + 4L) # 4 byte gap before data
+    start_pos <- ds$binary$pos
     
     # find gas configuration name
-    gas_config <- ds$binary %>% 
+    gas_data_block_end <- ds$binary %>% 
       move_to_next_pattern(data_end_re) %>% 
       move_to_next_pattern(gas_config_re, move_to_end = FALSE, max_gap = 20) %>% 
       skip_pos(4) %>% # skip the fef-x at the beginning
-      capture_data("gas", "text", re_block("fef-0"), data_bytes_max = 50) %>% { .$data$gas }
+      capture_data("gas", "text", re_block("fef-0"), data_bytes_max = 50) %>% 
+      { list(gas = .$data$gas, pos = .$pos) }
+    gas_config <- gas_data_block_end$gas
+    
+    # debug message
+    if (default(debug)) 
+      glue::glue("processing data for '{gas_config}' ({start_pos}-{gas_data_block_end$pos})") %>% 
+      log_message()
+    
+    # find gas configuration
+    if (!gas_config %in% names(configs)) 
+      glue::glue("could not find gas configuration for gas '{gas_config}', ",
+                 "available: '{paste(names(configs), collapse = \"', '\")}'") %>% 
+      stop(call. = FALSE)
     
     # find gas configuration masses
     masses <- configs[[gas_config]]$masses
-    if (is.null(masses)) stop("could not identify measured ions for gas ", gas_config, call. = FALSE)
+    if (is.null(masses)) stop("could not identify measured ions for gas '", gas_config, "'", call. = FALSE)
     masses_columns <- str_c("v", masses, ".mV")
     
     # save voltage data
