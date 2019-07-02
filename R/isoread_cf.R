@@ -84,7 +84,7 @@ extract_cf_raw_voltage_data <- function(ds) {
     masses <- c(masses, text_mass)
   }
   
-  if (is.null(masses)) stop("could not identify measured ions for gas ", gas_config, call. = FALSE)
+  if (is.null(masses)) stop("could not identify measured ions for gas '", gas_config, "'", call. = FALSE)
   masses_columns <- str_c("v", masses, ".mV")
   
   # read in data

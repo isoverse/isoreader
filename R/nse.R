@@ -51,7 +51,7 @@ check_expressions <- function(df, ...) {
 # @param ... named quoted variable selection criteria (anything that tidyselect::vars_select supports)
 # @param n_reqs named list to specify how many columns are allowed/required for each selection criterion, default for all that are not specified is 1.
 # Allowed values are a specific number 1,2,3,4, etc. "*" for any number, "?" for 0 or 1 and "+" for at least one.
-# @param type_reqs named list to specify what types certain columns must be, allowed: "list", "numeric", "integer", "character"
+# @param type_reqs named list to specify what types certain columns must be, allowed: "list", "numeric", "integer", "character", "logical"
 # @param cols_must_exist - if TRUE, will throw an error if a column does not exist, otherwise just  warning
 # @return list of column names for each entry (may contain multiple depending on selection conditions)
 get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_must_exist = TRUE) {
@@ -189,8 +189,8 @@ resolve_defaults <- function(quos) {
 # Convert quo to text accounting for plain text and symbol quos
 quos_to_text <- function(lquos, check_for_validity = TRUE, variable = "variable") {
   single_quo <- is_quosure(lquos)
-  lquos <- quos(!!!lquos)
-  are_text_quos <- map_lgl(lquos, ~is.character(quo_expr(.x)))
+  lquos <- if(single_quo) quos(!!lquos) else quos(!!!lquos)
+  are_text_quos <- map_lgl(lquos, ~is.character(quo_squash(.x)))
   are_symbol_quos <- map_lgl(lquos, quo_is_symbol)
   
   # check for validity
@@ -207,7 +207,7 @@ quos_to_text <- function(lquos, check_for_validity = TRUE, variable = "variable"
   
   text_quos <-
     map2_chr(lquos, are_text_quos, function(lquo, is_text)
-      if(is_text) quo_expr(lquo) else quo_text(lquo)) %>% 
+      if(is_text) quo_squash(lquo) else quo_text(lquo)) %>% 
     as.list()
   if (single_quo) return(text_quos[[1]])
   else return(text_quos)

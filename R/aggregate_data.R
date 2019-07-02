@@ -16,7 +16,12 @@ check_iso_file_param <- function(iso_file) {
 #' @return a \code{\link[tibble]{data_frame}} that summarizes the data in the \code{iso_files}
 #' @export
 iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
+  
+  # global vars
+  file_subpath <- file_path_ <- NULL
+  
   iso_files <- iso_as_file_list(iso_files)
+  
   if (!quiet) {
     glue("Info: aggregating data summary from {length(iso_files)} data file(s)") %>% 
       message()
@@ -44,6 +49,9 @@ iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
 
 # summary of raw data info
 get_raw_data_info <- function(iso_files) {
+  
+  # global vars
+  all_ions <- n_ions <- label <- read_raw_data <- NULL
   
   # make sure to convert to file list
   iso_files <- iso_as_file_list(iso_files)
@@ -86,6 +94,10 @@ get_raw_data_info <- function(iso_files) {
 
 # summary of file info
 get_file_info_info <- function(iso_files) {
+  
+  # global vars
+  read_file_info <- file_info <- NULL
+  
   # make sure to convert to file list
   iso_files <- iso_as_file_list(iso_files) %>% convert_isofiles_file_info_to_data_frame()
   
@@ -104,6 +116,9 @@ get_file_info_info <- function(iso_files) {
 
 # summary of method info
 get_method_info_info <- function(iso_files) {
+  
+  # global vars
+  method_info <- NULL
   
   # make sure to convert to file list
   iso_files <- iso_as_file_list(iso_files) 
@@ -134,6 +149,9 @@ get_method_info_info <- function(iso_files) {
 get_vendor_data_table_info <- function(iso_files) {
   # make sure to convert to file list
   iso_files <- iso_as_file_list(iso_files) %>% convert_isofiles_file_info_to_data_frame()
+  
+  # global vars
+  vendor_data_table <- NULL
   
   # make sure to not process empty list
   if (length(iso_files) == 0) {
@@ -172,6 +190,9 @@ iso_get_data <- function(iso_files, include_file_info = everything(), include_ra
                          gather = FALSE, with_units = FALSE, with_ratios = FALSE, quiet = default(quiet)) {
   iso_files <- iso_as_file_list(iso_files)
   if (!quiet) sprintf("Info: aggregating all data from %d data file(s)", length(iso_files)) %>% message()
+  
+  # global vars
+  vendor_data_table <- NULL
   
   # file class
   file_class <- 
@@ -291,6 +312,10 @@ iso_get_file_info <- function(iso_files, select = everything(), quiet = default(
 #' @family data retrieval functions
 #' @export
 iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, include_file_info = NULL, quiet = default(quiet)) {
+  
+  # global
+  raw_data <- NULL
+  
   iso_files <- iso_as_file_list(iso_files)
   select_quo <- enquo(select)
   include_file_info_quo <- enquo(include_file_info)
@@ -361,6 +386,10 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
 #' @family data retrieval functions
 #' @export
 iso_get_bgrd_data <- function(iso_files, select = everything(), gather = FALSE, include_file_info = NULL, quiet = default(quiet)) {
+  
+  # global vars
+  bgrd_data <- NULL
+  
   iso_files <- iso_as_file_list(iso_files)
   if (!all(map_lgl(iso_files, iso_is_dual_inlet))) stop("background data is only available in dual inlet data files", call. = FALSE)
   select_quo <- enquo(select)
@@ -482,6 +511,10 @@ iso_get_standards_info <- function(iso_files, with_ratios = FALSE, include_file_
 #' @family data retrieval functions
 #' @export
 iso_get_resistors_info  <- function(iso_files, include_file_info = NULL, quiet = default(quiet)) {
+  
+  # global vars
+  resistors <- NULL
+  
   iso_files <- iso_as_file_list(iso_files)
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
@@ -525,6 +558,10 @@ iso_get_resistors_info  <- function(iso_files, include_file_info = NULL, quiet =
 #' @export
 iso_get_vendor_data_table <- function(iso_files, with_units = FALSE, select = everything(), include_file_info = NULL, 
                                         quiet = default(quiet)) {
+  
+  # globals
+  dt <- has_units <- NULL
+  
   iso_files <- iso_as_file_list(iso_files)
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
@@ -722,7 +759,10 @@ ensure_data_frame_list_columns <- function(x, exclude = names(make_iso_file_data
 
 # helper function to unnest aggregated columns that have single or no values and the same data types
 unnest_aggregated_data_frame <- function(df) {
-  
+
+  # global vars
+  column <- min_length <- main_class <- has_identical_class <- max_length <- identical_class <- is_missing <- NULL
+    
   # safety
   stopifnot(is.data.frame(df))
   if (nrow(df) == 0) return(df)

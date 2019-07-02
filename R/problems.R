@@ -116,6 +116,9 @@ iso_omit_files_with_problems <- function(...) {
 #' @family problem functions
 #' @export
 iso_filter_files_with_problems <- function(iso_files, remove_files_with_errors = TRUE, remove_files_with_warnings = FALSE, quiet = default(quiet)) {
+  # global vars
+  type <- NULL
+  
   if (missing(iso_files) || !iso_is_object(iso_files)) stop("please provide a list of iso_files", call. = FALSE)
   types <- c()
   if (remove_files_with_errors) types <- c(types, "error")

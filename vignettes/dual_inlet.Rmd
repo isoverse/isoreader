@@ -274,7 +274,7 @@ For users familiar with the nested data frames from the [tidyverse](https://www.
 
 ```{r}
 all_data <- iso_files %>% iso_get_data()
-all_data %>% rmarkdown::paged_table()
+# not printed out because this data frame is very big
 ```
 
 # Saving collections

@@ -4,6 +4,9 @@
 # @param custom reader options - specify list(nu_masses = c()) to provide masses for the channels
 iso_read_nu <- function(ds, options = list()) {
   
+  # global vars
+  header <- data <- NULL
+  
   # safety checks
   if(!iso_is_dual_inlet(ds)) 
     stop("data structure must be a 'dual_inlet' iso_file", call. = FALSE)
@@ -164,6 +167,9 @@ make_capture_pattern <- function(id, type) {
 
 # frequently used quo to extract pattern bracket
 extract_substring_bracket_quo <- function(capture_bracket) {
+  # global vars
+  header <- parser <- NULL
+  # quo
   quo(extract_substring(header, parser$pattern, capture_bracket = !!capture_bracket))
 }
 
@@ -200,7 +206,7 @@ process_nu_parser <- function(ds, parser, options = list()) {
   if (length(matches) > 0) {
     header <- ds$source$header[matches]
     data <- ds$source$data[matches]
-    if (default(debug)) nu_data <<- data
+    #if (default(debug)) nu_data <<- data
     value <- rlang::eval_tidy(rlang::get_expr(parser$parse_quo))
     if (n_problems(value) > 0) {
       ds <- set_problems(ds, combined_problems(ds, value))
@@ -219,6 +225,9 @@ process_nu_parser <- function(ds, parser, options = list()) {
 # parse nu data
 parse_nu_data <- function(data, n_blocks, n_channels, masses = c()) {
 
+  # global vars
+  group <- header <- is_ref <- is_sample <- is_zero <- block <- intensity <- background <- channel <- NULL
+  
   if (is.null(n_blocks)) stop("number of blocks not known", call. = FALSE)
   if (is.null(n_channels)) stop("number of channels not known", call. = FALSE)
   zeros <- group_lines(data, fixed("Zero Data"))
@@ -296,6 +305,9 @@ parse_nu_data <- function(data, n_blocks, n_channels, masses = c()) {
 # parse background data
 parse_nu_zero_data <- function(raw_data, masses = c()) {
   
+  # globals
+  block <- data <- n_channels <- zero_length <- NULL
+  
   # process raw data for zeros
   df <- 
     raw_data %>% 
@@ -318,6 +330,9 @@ parse_nu_zero_data <- function(raw_data, masses = c()) {
 
 # parse raw data
 parse_nu_raw_data <- function(raw_data, masses = c()) {
+  
+  # global vars
+  block <- is_ref <- data <- n_channels <- n_cycles <- cycle_length <- cycle <- type <- NULL
   
   # process raw data
   df <- 
@@ -360,6 +375,10 @@ parse_nu_raw_data <- function(raw_data, masses = c()) {
 
 # safety check on channels
 check_channels <- function(df) {
+  
+  # global vars
+  data <- channel_n <- n_channels <- NULL
+  
   channels_count <- 
     mutate(df, channel_n = map_int(data, nrow)) %>%
     mutate(check = channel_n == n_channels)
@@ -373,6 +392,10 @@ check_channels <- function(df) {
 
 # safety check on cycle length
 check_cycle_length <- function(df_channels, length_column) {
+  
+  # global vars
+  intensities <- intensities_n <- first_value_0 <- NULL
+  
   intensities_check <- df_channels %>% 
     mutate(
       intensities_n = map_int(intensities, length),
@@ -399,6 +422,9 @@ check_cycle_length <- function(df_channels, length_column) {
 # calculate intensities
 calculate_intensities <- function(df_channels, grouping, masses = c()) {
 
+  # global vars
+  intensities <- channel <- NULL
+  
   # calculate raw data intensities
   df_intensities <- df_channels %>% 
     unnest(intensities) %>% 
@@ -434,6 +460,9 @@ calculate_intensities <- function(df_channels, grouping, masses = c()) {
 
 # utility function to group text lines by the occurence of the grouping regular expression
 group_lines <- function(lines, group_regexp) {
+  # global vars
+  group <- line <- start <- end <- NULL
+  
   stopifnot(is(lines, "character"))
   data_frame(
     lines = lines,

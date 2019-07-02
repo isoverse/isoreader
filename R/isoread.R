@@ -89,15 +89,15 @@ find_func <- function(func) {
 #' @family file_types
 #' @export
 iso_get_supported_file_types <- function() {
-  dplyr::select(default("file_readers"), extension, description, type, call)
+  dplyr::select(default("file_readers"), "extension", "description", "type", "call")
 }
 
 get_supported_di_files <- function() {
-  dplyr::filter(default("file_readers"), type == "dual inlet")
+  dplyr::filter(default("file_readers"), !!sym("type") == "dual inlet")
 }
 
 get_supported_cf_files <- function() {
-  dplyr::filter(default("file_readers"), type == "continuous flow")
+  dplyr::filter(default("file_readers"), !!sym("type") == "continuous flow")
 }
 
 # file reading ===========
@@ -219,6 +219,9 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
                            cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), 
                            quiet = default(quiet)) {
 
+  # global
+  path <- file_n <- cacheable <- cachepath <- process <- data <- NULL
+  
   # start timer
   start_time <- Sys.time()
   
@@ -344,6 +347,14 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
   # turn into iso_file list
   iso_files <- iso_as_file_list(iso_files, discard_duplicates = discard_duplicates) 
 
+  # bring files into the correct order after potential parallel processing jumble
+  indices <- 
+    tibble(path = purrr::map_chr(iso_files, ~.x$file_info$file_path), idx = 1:length(path)) %>% 
+    dplyr::left_join(files, by = "path") %>% 
+    dplyr::arrange(file_n) %>% 
+    dplyr::pull(idx)
+  iso_files <- iso_files[indices]
+  
   # convert file_info to data frame in isofiles for faster access
   # @note: this is not quite ideal because it basically casts iso_as_file_list twice if there are any files that have non-data frame file_info but should happen less and less as older file objects get upgraded - should be possible to deprecate in a future version
   iso_files <- convert_isofiles_file_info_to_data_frame(iso_files, discard_duplicates = discard_duplicates)
@@ -369,6 +380,9 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
 # @param process if NA --> set up process in the current session, if integer --> set up parallel process
 create_read_process <- function(process, data_structure, files) {
   
+  # global vars
+  root <- path <- file_n <- files_n <- read_from_cache <- write_to_cache <- write_to_cache_if_errors <- cachepath <- extension <- func <- reader_options <- env <- reader_fun_env <- all_opts <- NULL
+  
   # specify relevant files columns to match read_iso_file parameters
   files <- files %>% 
     select(
@@ -392,14 +406,16 @@ create_read_process <- function(process, data_structure, files) {
           log_file = log_file, progress_file = progress_file, all_opts = get_all_options())),
         packages = packages,
         expr = {
+          # require namespace if running in a separate session during parallel processing
+          base::requireNamespace("isoprocessor", quietly = TRUE)
           # reload isoreader options
           options(all_opts)
           # set isoreader temp options for parallel processing
-          isoreader:::set_temp("parallel_process", process)
-          isoreader:::set_temp("parallel_log_file", log_file)
-          isoreader:::set_temp("parallel_progress_file", progress_file)
+          set_temp("parallel_process", process)
+          set_temp("parallel_log_file", log_file)
+          set_temp("parallel_progress_file", progress_file)
           # process isofiles
-          purrr::pmap(files, isoreader:::read_iso_file, ds = data_structure)
+          purrr::pmap(files, read_iso_file, ds = data_structure)
         })
   } else {
     # sequential (don't use future package)
@@ -408,7 +424,23 @@ create_read_process <- function(process, data_structure, files) {
   return(result)
 }
 
-# read function
+#' Read individual iso file
+#' 
+#' Low level read function for an individual iso file. Usually not called directly but available for methods development.
+#' @inheritParams iso_read_files
+#' @param ds the basic data structure for the type of iso_file
+#' @param path file path
+#' @param file_n numer of processsed file for info messages
+#' @param files_n total number of files for info messages
+#' @param read_from_cache whether to read from cache
+#' @param write_to_cache whether to write to cache
+#' @param write_to_cache_if_errors whether to write to cache even if errors are encountered
+#' @param cachepath path for the cache file
+#' @param ext file extension
+#' @param reader_fun file reader function
+#' @param reader_fun_env where to find the reader function
+#' 
+#' @export
 read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, write_to_cache, write_to_cache_if_errors, cachepath, ext, reader_fun, reader_options, reader_fun_env) {
   
   # prepare iso_file object
@@ -551,6 +583,9 @@ iso_reread_files <- function(iso_files, ..., stop_if_missing = FALSE, quiet = de
 #' @param rds_filepaths the path(s) to the iso_files R data archive(s) to re-read (can be a single file or vector of files)
 #' @export
 iso_reread_storage <- function(rds_filepaths, ..., stop_if_missing = FALSE, quiet = default(quiet)) {
+  
+  # global
+  extension <- NULL
   
   extensions <- iso_get_supported_file_types() %>% dplyr::filter(stringr::str_detect(extension, "rd[sa]"))
   file_types <- data_frame(path = rds_filepaths) %>% match_to_supported_file_types(extensions)

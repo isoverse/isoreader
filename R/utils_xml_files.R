@@ -96,8 +96,8 @@ process_iarc_methods_xml <- function(filepaths) {
 # process iarc tasks xml files
 process_iarc_tasks_xml <- function(filepaths, method_parameters) {
   
-  # global variables for NSE
-  #ID <- GlobalIdentifier <- DisplayName <- Value <- NULL
+  # global vars
+  Id <- NULL
   
   process_iarc_task_xml <- function(task_file) {
     # read file
