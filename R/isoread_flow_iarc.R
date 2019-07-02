@@ -46,7 +46,7 @@ iso_read_flow_iarc <- function(ds, options = list()) {
   # processing lists / gas configuration ====
   all_processing_lists <- 
     tasks %>% map("info") %>% bind_rows() %>% 
-    group_by(ProcessingListTypeIdentifier) %>% 
+    group_by(!!sym("ProcessingListTypeIdentifier")) %>% 
     summarize(samples=n()) %>% 
     ungroup() %>% 
     full_join(processing_lists, by = c("ProcessingListTypeIdentifier" = "DefinitionUniqueIdentifier"))
@@ -109,7 +109,7 @@ process_iarc_samples <- function(iso_file_template, tasks, gas_configs, folder_p
       sprintf("processing sample '%s' (IRMS data '%s')",
               generate_task_sample_id(task), 
               task$data_files %>% 
-                dplyr::filter(TypeIdentifier == "Acquire") %>% 
+                dplyr::filter(!!sym("TypeIdentifier") == "Acquire") %>% 
                 { .$DataFile } %>% 
                 { if(length(.) > 0) str_c(., collapse = "', '") else "" }
               #task$info$GlobalIdentifier
@@ -146,8 +146,9 @@ process_iarc_sample_info <- function(iso_file, task) {
 # @param temp_dir the temporary directory where the files are unzipped
 # @param gas_configs the gas configurations
 process_iarc_sample_data <- function(iso_file, task, gas_configs, folder_path) {
+  
   # aquire = IRMS data
-  irms_data <- task$data_files %>% dplyr::filter(TypeIdentifier == "Acquire") 
+  irms_data <- task$data_files %>% dplyr::filter(!!sym("TypeIdentifier") == "Acquire") 
   if (nrow(irms_data) == 0) stop("no IRMS acquisitions associated with this sample", call. = FALSE)
   
   # check for gas configurations

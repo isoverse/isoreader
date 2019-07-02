@@ -99,6 +99,9 @@ iso_is_continuous_flow <- function(x) {
 #' @export
 iso_as_file_list <- function(..., discard_duplicates = TRUE) {
 
+  # global vars
+  has_duplicates <- NULL
+  
   # dots passed in
   iso_objs <- list(...)
   

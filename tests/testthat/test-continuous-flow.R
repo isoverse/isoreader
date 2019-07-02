@@ -46,20 +46,26 @@ test_that("test that dxf files can be read", {
   test_folder <- file.path("test_data") # test_folder <- file.path("tests", "testthat", "test_data") # direct
   
   expect_true(file.exists(file <- file.path(test_folder, "dxf_example_H_01.dxf")))
-  expect_is(dxf1 <- iso_read_continuous_flow(file), "continuous_flow")
-  expect_equal(nrow(problems(dxf1)), 0)
+  expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
+  expect_equal(nrow(problems(dxf)), 0)
+  dxf1 <- dxf
   
   expect_true(file.exists(file <- file.path(test_folder, "dxf_example_HO_01.dxf")))
-  expect_is(dxf2 <- iso_read_continuous_flow(file), "continuous_flow")
-  expect_equal(nrow(problems(dxf2)), 0)
+  expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
+  expect_equal(nrow(problems(dxf)), 0)
+  
+  expect_true(file.exists(file <- file.path(test_folder, "dxf_example_N2_01.dxf")))
+  expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
+  expect_equal(nrow(problems(dxf)), 0)
+  dxf2 <- dxf
   
   expect_true(file.exists(file <- file.path(test_folder, "cf_example_H_01.cf")))
-  expect_is(dxf3 <- iso_read_continuous_flow(file), "continuous_flow")
-  expect_equal(nrow(problems(dxf3)), 0)
+  expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
+  expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- file.path(test_folder, "cf_example_H_02.cf")))
-  expect_is(dxf4 <- iso_read_continuous_flow(file), "continuous_flow")
-  expect_equal(nrow(problems(dxf4)), 0)
+  expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
+  expect_equal(nrow(problems(dxf)), 0)
   
   expect_true(file.exists(file <- file.path(test_folder, "cf_example_H_03.cf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
@@ -68,6 +74,7 @@ test_that("test that dxf files can be read", {
   expect_true(file.exists(file <- file.path(test_folder, "cf_example_H_04.cf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
+  dxf3 <- dxf
   
   expect_true(file.exists(file <- file.path(test_folder, "cf_example_H_05.cf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")

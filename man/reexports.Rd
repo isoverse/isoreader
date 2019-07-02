@@ -12,6 +12,7 @@
 \alias{starts_with}
 \alias{ends_with}
 \alias{matches}
+\alias{filter}
 \alias{problems}
 \alias{stop_for_problems}
 \alias{\%>\%}
@@ -22,6 +23,8 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
+  \item{dplyr}{\code{\link[dplyr]{filter}}}
+
   \item{magrittr}{\code{\link[magrittr]{\%>\%}}}
 
   \item{readr}{\code{\link[readr]{parse_number}}, \code{\link[readr]{parse_logical}}, \code{\link[readr]{parse_integer}}, \code{\link[readr]{parse_double}}, \code{\link[readr]{parse_datetime}}, \code{\link[readr]{problems}}, \code{\link[readr]{stop_for_problems}}}

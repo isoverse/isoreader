@@ -20,3 +20,6 @@ The isoreader package comes with a few example files to make it easy to illustra
 
 \code{iso_get_reader_examples}: list of all available isoreader example files
 }
+\examples{
+iso_get_reader_examples()
+}

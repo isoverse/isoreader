@@ -4,6 +4,10 @@
 
 # internal function for rename and select
 select_rename_isofile <- function(isofile, func, quos) {
+  
+  # global vars
+  to <- changed <- NULL
+  
   old_vars <- names(isofile$file_info)
   new_vars <- func(old_vars, !!!quos, .strict = FALSE)
   # make sure file_id is always included
@@ -25,12 +29,16 @@ select_rename_isofile <- function(isofile, func, quos) {
                "may lead to unpredictable behaviour and is therefore not allowed, sorry") %>% 
       stop(call. = FALSE)
   }
-  isofile$file_info <- dplyr:::select_impl(isofile$file_info, new_vars)
+  isofile$file_info <- dplyr::select(isofile$file_info, new_vars)
   return(list(isofile = isofile, vars = vars))
 }
 
 # internal function to check for rename/select duplicates
 check_names_changes <- function(vars) {
+  
+  # global vars
+  to <- from <- NULL
+  
   reps <- vars %>% group_by(file, to) %>% 
     summarize(n = n(), from = paste(from, collapse = "', '")) %>% 
     ungroup() %>% 
@@ -72,6 +80,10 @@ iso_select_file_info.iso_file <- function(iso_files, ..., quiet = default(quiet)
 
 #' @export
 iso_select_file_info.iso_file_list <- function(iso_files, ..., quiet = default(quiet)) {
+  
+  # global vars
+  changed <- to <- from <- NULL
+  
   # variables for all files
   select_quos <- quos(...)
   
@@ -143,6 +155,9 @@ iso_rename_file_info.iso_file <- function(iso_files, ..., quiet = default(quiet)
 
 #' @export
 iso_rename_file_info.iso_file_list <- function(iso_files, ..., quiet = default(quiet)) {
+  # global vars
+  changed <- to <- from <- NULL
+  
   # variables for all files
   rename_quos <- quos(...)
   
@@ -223,7 +238,7 @@ iso_filter_files.iso_file_list <- function(iso_files, ..., quiet = default(quiet
 }
 
 #' @export
-filter.iso_file <- function(.data, ...) {
+filter.iso_file <- function(.data, ..., .preserve = FALSE) {
   iso_filter_files(.data, ..., quiet = TRUE)
 }
 
@@ -308,7 +323,7 @@ mutate.iso_file_list <- function(.data, ...) {
 #' @param integer dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to an integer using \link[readr]{parse_integer}. Use \code{c(...)} to select multiple columns.
 #' @param logical dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a boolean (TRUE/FALSE) using \link[readr]{parse_logical}. Use \code{c(...)} to select multiple columns.
 #' @param datetime dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a date-time using \link[readr]{parse_datetime}. Use \code{c(...)} to select multiple columns.
-#' @param text dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to text using \link[readr]{as.character}. Use \code{c(...)} to select multiple columns.
+#' @param text dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to text using \link[base]{as.character}. Use \code{c(...)} to select multiple columns.
 #' @family file_info operations
 #' @export 
 iso_parse_file_info <- function(iso_files, number = c(), double = c(), integer = c(), logical = c(), datetime = c(), text = c(), quiet = default(quiet)) {
@@ -328,6 +343,9 @@ iso_parse_file_info.iso_file <- function(iso_files, ...) {
 
 #' @export
 iso_parse_file_info.iso_file_list <- function(iso_files, number = c(), double = c(), integer = c(), logical = c(), datetime = c(), text = c(), quiet = default(quiet)) {
+  
+  # global
+  column <- new_class <- old_class <- already_cast <- convert_to <- problem <- convert <- func <- NULL
   
   # get file info
   file_info <- iso_get_file_info(iso_files, quiet = TRUE) 
@@ -478,6 +496,9 @@ iso_add_file_info.iso_file_list <- function(iso_files, new_file_info, ..., quiet
 #' @param df a data frame of iso files data retrieved by any of the data retrieval functions (e.g. \code{\link{iso_get_file_info}}, \code{\link{iso_get_raw_data}, etc.}
 iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default(quiet)) {
   
+  # global vars
+  join_by_col <- ..priority <- new_data_idx <- data <- ..df_id <- n_ni_matches <- n_ni_considered <- n_df_matches <- ..ni_id <- n_ni_actual <- n_df_actual <- NULL
+  
   # safety checks
   join_bys <- list(...)
   if (missing(new_file_info)) stop("no new_file_info supplied", call. = FALSE)
@@ -533,8 +554,8 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
   
   # prep for joins
   shared_cols <- intersect(names(new_file_info), names(df)) %>% { setNames(., paste0("..ni_temp_", .)) }
-  df <- mutate(df, ..df_id = row_number())
-  new_file_info <- mutate(new_file_info, ..ni_id = row_number())
+  df <- mutate(df, ..df_id = dplyr::row_number())
+  new_file_info <- mutate(new_file_info, ..ni_id = dplyr::row_number())
   
   # join new file info based on the join by and new row indices
   join_new_file_info <- function(join_by, new_rows, shared_cols) {
@@ -650,7 +671,8 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
   return(select(final_data, -..df_id, -..ni_id, -..priority))
 }
 
-# here for sequence of paramters
+# check doesn't work unless it's at the beginning
+#' @rdname iso_add_file_info
 #' @export
 iso_add_file_info <- function(...) {
   UseMethod("iso_add_file_info")
