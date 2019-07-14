@@ -37,7 +37,7 @@ iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
       ~if (col_in_df(.x$file_info, "file_path")) { .x$file_info$file_path } else { NA_character_ }),
     file_subpath = map_chr(
       iso_files, 
-      ~if (col_in_df(.x$file_info, "file_path")) { .x$file_info$file_subpath } else { NA_character_ })
+      ~if (col_in_df(.x$file_info, "file_subpath")) { .x$file_info$file_subpath } else { NA_character_ })
   ) %>%
     left_join(get_raw_data_info(iso_files), by = "file_id") %>%
     left_join(get_file_info_info(iso_files), by = "file_id") %>%
