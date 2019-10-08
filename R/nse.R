@@ -144,8 +144,12 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   # check on the type requirements for each column
   if (length(type_reqs) > 0) {
     
+    # recorde list in type_reqs to vctrs_list_of
+    type_reqs[type_reqs == "list"] <- "vctrs_list_of"
+    
     # valid types
-    types <- c(list = "nested (<list>)", numeric = "numeric (<dbl>)", integer = "integer (<int>)", 
+    types <- c(list = "nested (<list>)", vctrs_list_of = "nested (<list>)",
+               numeric = "numeric (<dbl>)", integer = "integer (<int>)", 
                character = "text (<chr>)", logical = "logical (<lgl>)")
     if (!all(ok <- unlist(type_reqs) %in% names(types))) {
       type_req_unknown <- unlist(type_reqs)[!ok]

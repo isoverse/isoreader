@@ -308,7 +308,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
   set_temp("parallel_process", NA_integer_) # mark the main process
   processes <- 
     files %>% 
-    nest(-process) %>% 
+    nest(data = c(-process)) %>% 
     mutate(
       result = purrr::map2(
         process,

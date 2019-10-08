@@ -205,39 +205,39 @@ iso_get_data <- function(iso_files, include_file_info = everything(), include_ra
   include_file_info_quo <- enquo(include_file_info)
   file_info <- iso_get_file_info(iso_files, select = !!include_file_info_quo, quiet = TRUE) 
   if (ncol(file_info) > 1)
-    file_info <- nest(file_info, -file_id, .key = file_info)
+    file_info <- nest(file_info, file_info = c(-file_id))
   else
-    file_info <- data_frame(file_id = character(0), file_info = list(NULL))
+    file_info <- tibble(file_id = character(0), file_info = list(NULL))
   
   # raw data
   include_raw_data_quo <- enquo(include_raw_data)
   raw_data <- iso_get_raw_data(iso_files, select = !!include_raw_data_quo, gather = gather, quiet = TRUE)
   if (ncol(raw_data) > 1)
-    raw_data <- nest(raw_data, -file_id, .key = raw_data)
+    raw_data <- nest(raw_data, raw_data = c(-file_id))
   else
-    raw_data <- data_frame(file_id = character(0), raw_data = list(NULL))
+    raw_data <- tibble(file_id = character(0), raw_data = list(NULL))
   
   # vendor data table
   include_vendor_data_table_quo <- enquo(include_vendor_data_table)
   dt <- iso_get_vendor_data_table(iso_files, with_units = with_units, select = !!include_vendor_data_table_quo, quiet = TRUE)
   if (ncol(dt) > 1)
-    dt <- nest(dt, -file_id, .key = vendor_data_table)
+    dt <- nest(dt, vendor_data_table = c(-file_id))
   else
-    dt <- data_frame(file_id = character(0), vendor_data_table = list(NULL))
+    dt <- tibble(file_id = character(0), vendor_data_table = list(NULL))
   
   # methods_data - standards
   standards <- iso_get_standards_info(iso_files, with_ratios = with_ratios, quiet = TRUE)
   if (ncol(standards) > 1)
-    standards <- nest(standards, -file_id, .key = standards)
+    standards <- nest(standards, standards = c(-file_id))
   else
-    standards <- data_frame(file_id = character(0), standards = list(NULL))
+    standards <- tibble(file_id = character(0), standards = list(NULL))
   
   # methods_data - resistors
   resistors <- iso_get_resistors_info(iso_files, quiet = TRUE)
   if (ncol(resistors) > 1)
-    resistors <- nest(resistors, -file_id, .key = resistors)
+    resistors <- nest(resistors, resistors = c(-file_id))
   else
-    resistors <- data_frame(file_id = character(0), resistors = list(NULL))
+    resistors <- tibble(file_id = character(0), resistors = list(NULL))
   
   # combine everything
   file_class %>% 
@@ -591,7 +591,7 @@ iso_get_vendor_data_table <- function(iso_files, with_units = FALSE, select = ev
   # fetch data
   vendor_data_table <-
     # fetch data
-    data_frame(
+    tibble(
       file_id = names(iso_files),
       dt = map(iso_files, ~.x$vendor_data_table)
     ) %>% 
@@ -606,7 +606,7 @@ iso_get_vendor_data_table <- function(iso_files, with_units = FALSE, select = ev
   
     dt_units <- 
       # fetch units
-      data_frame(
+      tibble(
         file_id = names(iso_files),
         has_units = map_lgl(iso_files, ~attr(.x$vendor_data_table, "units") %>% { !is.null(.) & !identical(., NA) }),
         dt_units = map2(iso_files, has_units, ~{
@@ -614,15 +614,15 @@ iso_get_vendor_data_table <- function(iso_files, with_units = FALSE, select = ev
             attr(.x$vendor_data_table, "units") # if units provided, use them
           } else { 
             # if no units provided
-            data_frame(column = names(.x$vendor_data_table), units = NA_character_) 
+            tibble(column = names(.x$vendor_data_table), units = NA_character_) 
           }
         })
       ) %>% 
       # assemble units
-      unnest(dt_units) %>% 
-      mutate(units = ifelse(!is.na(units) & nchar(units) > 0, str_c(column, " ", units), column)) %>% 
-      dplyr::select(file_id, has_units, column, units) %>% 
-      nest(-file_id, -has_units, .key = dt_units)
+      unnest(cols = dt_units) %>% 
+      mutate(units = ifelse(!is.na(units) & nchar(units) > 0, str_c(column, " ", units), column)) %>%
+      dplyr::select(file_id, has_units, column, units) %>%
+      nest(dt_units = c(-file_id, -has_units))
   
     # join with vendor data table
     vendor_data_table <-

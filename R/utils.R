@@ -312,7 +312,7 @@ find_common_different_from_start <- function(vectors, empty = character(0)) {
   vectors <-
     map2(
       1:length(vectors), vectors,
-      ~data_frame(v = .x, i = 1:length(.y), entry = .y)
+      ~tibble(v = .x, i = 1:length(.y), entry = .y)
     ) %>%
     bind_rows()
 
@@ -333,8 +333,8 @@ find_common_different_from_start <- function(vectors, empty = character(0)) {
   different <-
     filter(vectors, !i %in% commons$i) %>%
     select(v, entry) %>%
-    nest(-v) %>%
-    full_join(data_frame(
+    nest(data = c(-v)) %>% 
+    full_join(tibble(
       v = unique(vectors$v),
       empty = list(entry = empty)), by = "v") %>%
     mutate(

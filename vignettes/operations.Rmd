@@ -32,7 +32,7 @@ Isoreader provides a number of general purpose operations that work on all suppo
 # Caching
 
 ```{r}
-
+#iso_cleanup_reader_cache()
 ```
 
 
