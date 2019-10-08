@@ -755,6 +755,7 @@ safe_bind_rows <- function(df_list, exclude = names(make_iso_file_data_structure
 # this is to allow for safely binding rows of data frames with unpredictable data types in the same columns
 # @param x data frame or list
 # @param exclude names of columns to leave the way they are
+# @note - could this use the new tidyr::chop more effectively?
 ensure_data_frame_list_columns <- function(x, exclude = names(make_iso_file_data_structure()$file_info)) {
   # make sure all columns are ready
   cols_to_list <- names(x)[!map_lgl(x, is.list)] %>% setdiff(exclude)
@@ -768,6 +769,9 @@ ensure_data_frame_list_columns <- function(x, exclude = names(make_iso_file_data
 }
 
 # helper function to unnest aggregated columns that have single or no values and the same data types
+# note: this would be nice to do with the new tidyr::unnest() but it does not handle some of the
+# the contingencies the right way (multiple values, NAs, etc.) so staying with the original appraoch
+# which is still decently fast
 unnest_aggregated_data_frame <- function(df) {
 
   # global vars
@@ -782,7 +786,7 @@ unnest_aggregated_data_frame <- function(df) {
   
   # get information about the data frame columns
   cols <- 
-    data_frame(
+    tibble(
       column = names(df),
       id = 1:length(column),
       lengths = map(column, ~map_int(df[[.x]], length)),
@@ -797,7 +801,7 @@ unnest_aggregated_data_frame <- function(df) {
       renest_missing_value = min_length == 0 & max_length > 1 & has_identical_class & identical_class %in% names(NA_defaults)
     )
   
-  # FIXME: add warning messages about inconsistent data columns with multiple data types!
+  # warning message about inconsistent data columns with multiple data types
   if (any(!cols$has_identical_class)) {
     glue("encountered different value types within the same column(s), they cannot be automatically unnested: ",
          "'{collapse(filter(cols, !has_identical_class)$column, sep = \"', '\")}'") %>% 
