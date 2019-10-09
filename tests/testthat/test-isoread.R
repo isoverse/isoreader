@@ -35,9 +35,10 @@ test_that("test that parameter checks are performed when reading file", {
 
 test_that("old file checks are run when reading stored collecionts", {
 
-  expect_message(iso_read_continuous_flow(file.path("test_data", "collection_old.cf.rds"), quiet = TRUE), "version mismatch")
-  expect_message(iso_read_dual_inlet(file.path("test_data", "collection_old.di.rda"), quiet = TRUE), "version mismatch")
-  expect_message(iso_read_dual_inlet(file.path("test_data", "collection_old.di.rda"), quiet = TRUE), "deprecated")
+  root <- "."
+  expect_message(iso_read_continuous_flow(file.path(root, "test_data", "collection_old.cf.rds"), quiet = TRUE), "version mismatch")
+  expect_message(iso_read_dual_inlet(file.path(root, "test_data", "collection_old.di.rda"), quiet = TRUE), "version mismatch")
+  expect_message(iso_read_dual_inlet(file.path(root, "test_data", "collection_old.di.rda"), quiet = TRUE), "deprecated")
 
 })
 

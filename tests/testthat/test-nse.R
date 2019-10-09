@@ -83,8 +83,8 @@ test_that("Getting column names (with # and type requirement checks) works", {
   expect_equal(get_column_names(df, a = quo(mpg), type_reqs = list(a = "numeric")), list(a = c(mpg = "mpg")))
   expect_equal(get_column_names(df, a = quo(c(mpg, cyl)), n_reqs = list(a = "+"), type_reqs = list(a = "numeric")), list(a = c(mpg = "mpg", cyl = "cyl")))
   expect_equal(get_column_names(df, a = quo(rowname), type_reqs = list(a = "character")), list(a = c(rowname = "rowname")))
-  expect_error(get_column_names(nest(df, -rowname), a = quo(data), type_reqs = list(a = "character")), "not .* the correct column types")
-  expect_equal(get_column_names(nest(df, -rowname), a = quo(data), type_reqs = list(a = "list")), list(a = c(data = "data")))
+  expect_error(get_column_names(nest(df, data = c(-rowname)), a = quo(data), type_reqs = list(a = "character")), "not .* the correct column types")
+  expect_equal(get_column_names(nest(df, data = c(-rowname)), a = quo(data), type_reqs = list(a = "list")), list(a = c(data = "data")))
 })
 
 test_that("Test that quos to text conversion works", {

@@ -32,7 +32,7 @@ test_that("test that did files can be read", {
   # test specific files
   
   # FIXME: re-enable for commits
-  #skip("Currently not testing all dual inlet data files.")
+  skip("Currently not testing all dual inlet data files.")
   # FIXME: run as one batch to make use of parallel processing
   
   iso_turn_reader_caching_off()
