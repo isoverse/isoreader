@@ -72,14 +72,14 @@ test_that("test that unnesting of aggregated data works properly", {
   df <- tibble(int = list(5L), dbl = list(4.2), chr = list("chr"), lgl = list(TRUE))
   
   # simple unnest
-  expect_equal(unnest_aggregated_data_frame(df), unnest(df))
+  expect_equal(unnest_aggregated_data_frame(df), unnest(df, cols = everything()))
   # check on datetime (not quite the same due to integer --> datetime conversion and back)
   dt <- Sys.time()
   expect_true((unnest_aggregated_data_frame(tibble(dt = list(dt)))$dt - dt) < 10)
   # unnest even with NULLs present
   expect_equal(
     bind_rows(df, select(df, -int)) %>% unnest_aggregated_data_frame(),
-    bind_rows(unnest(df), unnest(select(df, -int)))
+    bind_rows(unnest(df, cols = everything()), unnest(select(df, -int), cols = everything()))
   )
   # don't unnest mixed type columns (throw warning instead)
   expect_warning(
@@ -88,7 +88,8 @@ test_that("test that unnesting of aggregated data works properly", {
   )
   expect_equal(
     dt_unnest$dbl,
-    bind_rows(unnest(df, int, chr, lgl), unnest(mutate(df, dbl=chr), int, chr, lgl))$dbl
+    bind_rows(unnest(df, cols = c(int, chr, lgl)), 
+              unnest(mutate(df, dbl=chr), cols = c(int, chr, lgl)))$dbl
   )
   # don't unnest multi value columns
   df2 <- mutate(df, chr = map(chr, ~c("ch1", "ch2")))
@@ -393,7 +394,9 @@ test_that("test that total data aggregation works", {
   iso_file2$raw_data <- tibble(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), v45.mV = runif(10))
   expect_equal(iso_get_data(c(iso_file1, iso_file2))$has_raw_data, c(TRUE, TRUE))
   expect_true(is_tibble(out <- iso_get_data(c(iso_file1, iso_file2), include_file_info = c(x = test)) %>% unnest(raw_data)))
-  expect_equal(select(out, -file_id, -file_type, -starts_with("has")), bind_rows(iso_file1$raw_data, iso_file2$raw_data))
+  expect_equal(select(out, -file_id, -file_type, -starts_with("has"), 
+                      -file_info, -vendor_data_table, -standards, -resistors), 
+               bind_rows(iso_file1$raw_data, iso_file2$raw_data))
   
   # standards
   iso_file1 <- modifyList(iso_file, list(file_info = list(file_id = "a"), 
