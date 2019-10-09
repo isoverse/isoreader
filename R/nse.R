@@ -51,7 +51,7 @@ check_expressions <- function(df, ...) {
 # @param ... named quoted variable selection criteria (anything that tidyselect::vars_select supports)
 # @param n_reqs named list to specify how many columns are allowed/required for each selection criterion, default for all that are not specified is 1.
 # Allowed values are a specific number 1,2,3,4, etc. "*" for any number, "?" for 0 or 1 and "+" for at least one.
-# @param type_reqs named list to specify what types certain columns must be, allowed: "list", "numeric", "integer", "character", "logical"
+# @param type_reqs named list to specify what types certain columns must be, allowed: "list" (also includes "vctrs_list_of"), "numeric", "integer", "character", "logical"
 # @param cols_must_exist - if TRUE, will throw an error if a column does not exist, otherwise just  warning
 # @return list of column names for each entry (may contain multiple depending on selection conditions)
 get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_must_exist = TRUE) {
@@ -144,11 +144,8 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   # check on the type requirements for each column
   if (length(type_reqs) > 0) {
     
-    # recorde list in type_reqs to vctrs_list_of
-    type_reqs[type_reqs == "list"] <- "vctrs_list_of"
-    
     # valid types
-    types <- c(list = "nested (<list>)", vctrs_list_of = "nested (<list>)",
+    types <- c(list = "nested (<list>)", vctrs_list_of = "nested (<list of>)",
                numeric = "numeric (<dbl>)", integer = "integer (<int>)", 
                character = "text (<chr>)", logical = "logical (<lgl>)")
     if (!all(ok <- unlist(type_reqs) %in% names(types))) {
@@ -162,6 +159,8 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
     all_df_types <- map_chr(df, ~class(.x)[1])
     col_meets_type_reqs <- map2_lgl(cols, all_type_reqs, function(col, req) {
       if (is.na(req)) return(TRUE)
+      # support vctrs_list_of for nested list colulmns
+      else if (req == "list" && all_df_types[col] == "vctrs_list_of") return (TRUE)
       else if (all(all_df_types[col] == req)) return(TRUE)
       else return(FALSE)
     })
