@@ -4,7 +4,7 @@ context("File info operations")
 
 test_that("Test that selecting/renaming file info works", {
   
-  iso_file1 <- make_di_data_structure()
+  iso_file1 <- make_di_data_structure("NA")
   iso_file1$read_options$file_info <- TRUE
   iso_file1$file_info$new_info <- 42
   iso_file2 <- iso_file3 <- iso_file1
@@ -90,7 +90,7 @@ test_that("Test that selecting/renaming file info works", {
 
 test_that("Test that filtering by file info works", {
   
-  iso_file1 <- make_di_data_structure()
+  iso_file1 <- make_di_data_structure("NA")
   iso_file1$read_options$file_info <- TRUE
   iso_file1$file_info$new_info <- 42
   iso_file2 <- iso_file3 <- iso_file1
@@ -125,7 +125,7 @@ test_that("Test that filtering by file info works", {
 
 test_that("Test that mutating file info works", {
   
-  iso_file1 <- make_di_data_structure()
+  iso_file1 <- make_di_data_structure("NA")
   iso_file1$read_options$file_info <- TRUE
   iso_file1$file_info$new_info <- 42
   iso_file2 <- iso_file3 <- iso_file1
@@ -179,7 +179,7 @@ test_that("Test that mutating file info works", {
 
 test_that("Test that file info parsing works", {
   
-  iso_file1 <- make_di_data_structure()
+  iso_file1 <- make_di_data_structure("NA")
   iso_file1$read_options$file_info <- TRUE
   iso_file1$file_info$new_info <- 42.0
   iso_file2 <- iso_file3 <- iso_file1
@@ -304,7 +304,7 @@ test_that("Test that file info addition works", {
   )
   
   # test with isofiles (not just in data frame)
-  template <- make_cf_data_structure()
+  template <- make_cf_data_structure("NA")
   template$read_options$file_info <- TRUE
   iso_files <- map(split(file_info, seq(nrow(file_info))), ~{ x <- template; x$file_info <- .x; x }) %>% 
     iso_as_file_list()

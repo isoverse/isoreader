@@ -5,12 +5,12 @@ cf_example <- iso_read_continuous_flow(iso_get_reader_example("continuous_flow_e
 
 test_that("test that export to rda works properly", {
   expect_error(iso_save(42), "can only export iso files")
-  expect_error(iso_save(make_cf_data_structure()), "no filepath provided")
-  expect_error(iso_save(make_cf_data_structure(), file.path("DOESNOTEXIST", "test")), 
+  expect_error(iso_save(make_cf_data_structure("NA")), "no filepath provided")
+  expect_error(iso_save(make_cf_data_structure("NA"), file.path("DOESNOTEXIST", "test")), 
                "folder .* does not exist")
   
   # test data
-  cf <- make_cf_data_structure()
+  cf <- make_cf_data_structure("NA")
   cf$file_info$file_id <- "A"
   cf$file_info$file_root <- "."
   cf$file_info$file_path <- "test"
@@ -74,12 +74,12 @@ test_that("test that export to rda works properly", {
 library(readxl)
 test_that("test that export to Excel works properly", {
   expect_error(iso_export_to_excel(42), "can only export iso files")
-  expect_error(iso_export_to_excel(make_cf_data_structure()), "no filepath provided")
-  expect_error(iso_export_to_excel(make_cf_data_structure(), file.path("DOESNOTEXIST", "test")), 
+  expect_error(iso_export_to_excel(make_cf_data_structure("NA")), "no filepath provided")
+  expect_error(iso_export_to_excel(make_cf_data_structure("NA"), file.path("DOESNOTEXIST", "test")), 
                "folder .* does not exist")
   
   # test data
-  cf <- make_cf_data_structure()
+  cf <- make_cf_data_structure("NA")
   cf$file_info$file_id <- "A"
   cf$file_info$vector_test <- list(1:3)
   cf$read_options <- list(file_info = TRUE, method_info = TRUE, raw_data = TRUE, vendor_data_table = TRUE)
@@ -162,12 +162,12 @@ test_that("test that export to Excel works properly", {
 library(feather)
 test_that("test that export to Feather works properly", {
   expect_error(iso_export_to_feather(42), "can only export iso files")
-  expect_error(iso_export_to_feather(make_cf_data_structure()), "no filepath provided")
-  expect_error(iso_export_to_feather(make_cf_data_structure(), file.path("DOESNOTEXIST", "test")), 
+  expect_error(iso_export_to_feather(make_cf_data_structure("NA")), "no filepath provided")
+  expect_error(iso_export_to_feather(make_cf_data_structure("NA"), file.path("DOESNOTEXIST", "test")), 
                "folder .* does not exist")
   
   # test data
-  cf <- make_cf_data_structure()
+  cf <- make_cf_data_structure("NA")
   cf$file_info$file_id <- "A"
   cf$file_info$vector_test <- list(1:3)
   cf$read_options <- list(file_info = TRUE, method_info = TRUE, raw_data = TRUE, vendor_data_table = TRUE)
