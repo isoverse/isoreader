@@ -29,7 +29,7 @@ test_that("test that parameter checks are performed when reading file", {
     "not in data: \\'file_info\\'")
   expect_error(iso_read_files(
     supported_extensions = get_supported_di_files(), # func tested in test-dual-inlet 
-    data_structure = make_di_data_structure()), 
+    data_structure = make_di_data_structure("NA")), 
     "file path\\(s\\) required")
 })
 
@@ -44,8 +44,8 @@ test_that("old file checks are run when reading stored collecionts", {
 
 test_that("test that checks are run when re-reading iso_files", {
   
-  expect_message(iso_reread_files(make_cf_data_structure()), "no longer exist at the referenced location")
-  expect_error(iso_reread_files(make_cf_data_structure(), stop_if_missing = TRUE), "no longer exist at the referenced location")
+  expect_message(iso_reread_files(make_cf_data_structure("NA")), "no longer exist at the referenced location")
+  expect_error(iso_reread_files(make_cf_data_structure("NA"), stop_if_missing = TRUE), "no longer exist at the referenced location")
   expect_error(iso_reread_storage("test.csv"), "unexpected file extension")
   expect_error(iso_reread_storage("DNE.cf.rds"), "file\\(s\\) do not exist")
  

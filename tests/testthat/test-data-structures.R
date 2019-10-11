@@ -2,7 +2,7 @@ context("Data Structures")
 
 # basic iso_file data structure is correct ====
 test_that("test that basic iso_file data structure is correct", {
-  expect_is(iso_file <- make_iso_file_data_structure(), "iso_file")
+  expect_is(iso_file <- make_iso_file_data_structure("NA"), "iso_file")
   expect_equal(names(iso_file), c("version", "read_options", "file_info", "method_info", "raw_data", "vendor_data_table"))
   expect_equal(names(iso_file$read_options), c("file_info", "method_info", "raw_data", "vendor_data_table"))
   expect_equal(iso_file$version, packageVersion("isoreader"))
@@ -15,7 +15,7 @@ test_that("test that basic iso_file data structure is correct", {
 
 # dual inlet data structure is correct ====
 test_that("test that dual inlet data structure is correct", {
-  expect_is(di <- make_di_data_structure(), "iso_file")
+  expect_is(di <- make_di_data_structure("NA"), "iso_file")
   expect_is(di, "dual_inlet")
   expect_false(iso_is_dual_inlet(42))
   expect_false(iso_is_continuous_flow(di))
@@ -31,7 +31,7 @@ test_that("test that dual inlet data structure is correct", {
 
 # continuous data structure is correct ====
 test_that("test that continuous data structure is correct", {
-  expect_is(cf <- make_cf_data_structure(), "iso_file")
+  expect_is(cf <- make_cf_data_structure("NA"), "iso_file")
   expect_is(cf, "continuous_flow")
   expect_false(iso_is_continuous_flow(42))
   expect_false(iso_is_dual_inlet(cf))
@@ -47,11 +47,11 @@ test_that("test that continuous data structure is correct", {
 
 # printing of data structure works ====
 test_that("test that data structure can be printed", {
-  cf <- make_cf_data_structure()
+  cf <- make_cf_data_structure("NA")
   expect_output(print(cf), "raw data not read")
   cf$read_options$raw_data <- TRUE
   expect_output(print(cf), "0 ions")
-  di <- make_di_data_structure()
+  di <- make_di_data_structure("NA")
   expect_output(print(di), "raw data not read")
   di$read_options$raw_data <- TRUE
   expect_output(print(di), "0 ions")
@@ -61,8 +61,10 @@ test_that("test that data structure can be printed", {
 test_that("test that iso_file list checks work", {
   # empty iso file list doesn't break anything
   expect_is(iso_files <- iso_as_file_list(), "iso_file_list")
-  expect_is(make_cf_data_structure() %>% iso_as_file_list(), "iso_file_list")
-  expect_is(make_cf_data_structure() %>% iso_as_file_list() %>% 
+  expect_error(make_cf_data_structure() %>% iso_as_file_list(), "encountered undefined.*file ID")
+  
+  expect_is(make_cf_data_structure("NA") %>% iso_as_file_list(), "iso_file_list")
+  expect_is(make_cf_data_structure("NA") %>% iso_as_file_list() %>% 
               iso_as_file_list(), "iso_file_list")
   expect_equal(iso_as_file_list() %>% iso_get_problems() %>% nrow(), 0)
   expect_equal(iso_as_file_list() %>% iso_get_problems() %>% names(), c("file_id", "type", "func", "details"))
@@ -76,7 +78,7 @@ test_that("test that iso_file list checks work", {
   # expected errors
   expect_error(iso_as_file_list(1, error = "test"), "encountered incompatible data type")
   expect_false(iso_is_file_list(42))
-  expect_false(iso_is_file_list(make_iso_file_data_structure()))
+  expect_false(iso_is_file_list(make_iso_file_data_structure("NA")))
   expect_true(iso_is_file_list(iso_files))
   expect_true(iso_is_object(iso_files))
 })
@@ -84,7 +86,7 @@ test_that("test that iso_file list checks work", {
 # can set file path for data structures ====
 test_that("can set file path for data structures", {
   expect_error(set_ds_file_path(data_frame()), "can only set path for iso_file data structures")
-  expect_silent(ds <- make_iso_file_data_structure())
+  expect_silent(ds <- make_iso_file_data_structure("NA"))
   expect_error(set_ds_file_path(ds, "DNE", "DNE"), "does not exist")
   
   # default
@@ -106,7 +108,7 @@ test_that("can set file path for data structures", {
 
 # can update read options ====
 test_that("test that can update read options", {
-  expect_is(iso_file <- make_iso_file_data_structure(), "iso_file")
+  expect_is(iso_file <- make_iso_file_data_structure("NA"), "iso_file")
   expect_equal(iso_file$read_options, list(file_info = FALSE, method_info = FALSE, raw_data = FALSE, vendor_data_table = FALSE))
   expect_equal(update_read_options(iso_file, c(not_an_option = FALSE))$read_options,
                list(file_info = FALSE, method_info = FALSE, raw_data = FALSE, vendor_data_table = FALSE))
@@ -117,14 +119,14 @@ test_that("test that can update read options", {
 # isofils objects can be combined and subset ====
 test_that("test that isofils objects can be combined and subset", {
   
-  expect_is(iso_file <- make_iso_file_data_structure(), "iso_file")
+  expect_is(iso_file <- make_iso_file_data_structure("NA"), "iso_file")
   expect_equal({ iso_fileA <- iso_file %>% { .$file_info$file_id <- "A"; . }; iso_fileA$file_info$file_id }, "A")
   expect_equal({ iso_fileB <- iso_file %>% { .$file_info$file_id <- "B"; . }; iso_fileB$file_info$file_id }, "B")
   expect_equal({ iso_fileC <- iso_file %>% { .$file_info$file_id <- "C"; . }; iso_fileC$file_info$file_id }, "C")
   
   # combinining iso_files
   expect_error(c(iso_fileA, 5), "can only process iso_file and iso_file\\_list")
-  expect_error(c(make_cf_data_structure(), make_di_data_structure()), 
+  expect_error(c(make_cf_data_structure("NA"), make_di_data_structure("NA")), 
                "can only process iso_file objects with the same data type")
   expect_is(iso_filesAB <- c(iso_fileA, iso_fileB), "iso_file_list")
   expect_is(iso_filesABC <- c(iso_fileA, iso_fileB, iso_fileC), "iso_file_list")

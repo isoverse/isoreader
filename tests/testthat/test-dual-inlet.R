@@ -12,7 +12,7 @@ test_that("test that supported di files are correct", {
 
 test_that("test that parameter checks are performed", {
 
-  expect_error(iso_read_did(make_cf_data_structure()), 
+  expect_error(iso_read_did(make_cf_data_structure("NA")), 
                "data structure must be a \\'dual_inlet\\' iso_file")
   
 })
