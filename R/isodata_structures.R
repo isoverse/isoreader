@@ -56,14 +56,14 @@ make_cf_data_structure <- function(file_id = NA_character_) {
 #' @rdname iso_data_structure
 #' @export
 iso_is_file <- function(x) {
-  "iso_file" %in% class(x)
+  methods::is(x, "iso_file")
 }
 
 #' @description \code{iso_is_file_list} tests if the object is an iso_file list (collection of iso_files)
 #' @rdname iso_data_structure
 #' @export
 iso_is_file_list <- function(x) {
-  "iso_file_list" %in% class(x)
+  methods::is(x, "iso_file_list")
 }
 
 #' @description \code{iso_is_object} test if the object is an iso-object (iso_file or iso_file list)
@@ -77,16 +77,14 @@ iso_is_object <- function(x) {
 #' @rdname iso_data_structure
 #' @export
 iso_is_dual_inlet <- function(x) {
-  if(!iso_is_object(x)) return(FALSE)
-  all(sapply(iso_as_file_list(x), is, "dual_inlet"))
+  methods::is(x, "dual_inlet") || methods::is(x, "dual_inlet_list")
 }
 
 #' @description \code{iso_is_continuous_flow} tests if an iso_file or iso_file list consists exclusively of continuous flow file objects
 #' @rdname iso_data_structure
 #' @export
 iso_is_continuous_flow <- function(x) {
-  if(!iso_is_object(x)) return(FALSE)
-  all(sapply(iso_as_file_list(x), is, "continuous_flow"))
+  methods::is(x, "continuous_flow") || methods::is(x, "continuous_flow_list")
 }
 
 
@@ -110,6 +108,9 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
   
   # allow simple list to be passed in
   if (length(iso_objs) == 1 && !iso_is_object(..1) && is.list(..1)) iso_objs <- ..1
+  
+  # list classes
+  list_classes <- "iso_file_list"
   
   if (length(iso_objs) == 0) {
     # empty list
@@ -140,6 +141,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
       glue("can only process iso_file objects with the same data type (first: {classes[1]}), encountered: {wrong_dt}") %>% 
         stop(call. = FALSE)
     }
+    list_classes <- c(paste0(classes[1], "_list"), list_classes)
     
     # check for file_id duplicates
     dups <- 
@@ -192,7 +194,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
   # generate structure
   structure(
     iso_list,
-    class = c("iso_file_list")
+    class = unique(list_classes)
   ) %>% set_problems(all_problems)
 }
 
