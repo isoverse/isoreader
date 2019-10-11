@@ -84,6 +84,9 @@ get_raw_data_info <- function(iso_files) {
         n_cycles = map_int(iso_files, ~as.integer(floor(nrow(.x$raw_data)/2))),
         label = ifelse(read_raw_data, glue("{n_cycles} cycles, {n_ions} ions ({ions})"), "raw data not read")
       )
+  } else if (iso_is_file(iso_files[[1]])) {
+    # can only get here using make_iso_file_data_structure
+    stop("make_iso_file_data_structure should never be called directly", call. = FALSE)
   } else {
     # should not get here
     glue("cannot process '{class(iso_files[[1]])[1]}' in get_raw_data_info") %>% stop(call. = FALSE)
