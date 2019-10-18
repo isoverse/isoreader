@@ -744,14 +744,13 @@ convert_isofiles_file_info_to_data_frame <- function(iso_files, ...) {
   return(iso_files)
 }
 
-# Binding Together disparate data frames ========
+# Binding disparate data frames ========
 
 # safely bind rows by converting all columns to list columns if they aren't already
 # works both with lists and data frames (or mixed)
 # this is typically followed by unnest_aggreated_data_frame
 safe_bind_rows <- function(df_list, exclude = names(make_iso_file_data_structure()$file_info)) {
-  map(df_list, ensure_data_frame_list_columns, exclude = exclude) %>% 
-    bind_rows()
+  vctrs::vec_rbind(!!!map(df_list, ensure_data_frame_list_columns, exclude = exclude))
 }
 
 # make sure that data frame columns are list columns (except those listed as exclude)
