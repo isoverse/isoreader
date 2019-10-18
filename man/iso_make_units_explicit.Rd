@@ -16,6 +16,12 @@ iso_make_units_explicit(df, prefix = " [", suffix = "]")
 \description{
 This function is intended for data frames / tibbles only and makes the units of columns that have numbers with units explicit in the column name. It also strips the units attribute from those columns using \code{\link{iso_strip_units}}. The reverse function is \code{\link{iso_make_units_implicit}}.
 }
+\examples{
+df <- tibble(peak = 1:5, height = iso_double_with_units(1:5, "V"))
+df # shows data frame with implicit units
+iso_make_units_explicit(df) # with explicit units
+iso_make_units_explicit(df, prefix = ".", suffix = "") # with explicit units (custom prefix & suffix)
+}
 \seealso{
 Other functions for values with units: \code{\link{iso_double_with_units}},
   \code{\link{iso_get_units}},
