@@ -1,9 +1,5 @@
 # general helper functions ===========
 
-#' @importFrom magrittr %>%
-#' @export
-magrittr::`%>%`
-
 # check if a column is in a data frame
 col_in_df <- function(df, col) {
   stopifnot(is.data.frame(df))
