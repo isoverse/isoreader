@@ -74,7 +74,7 @@ iso_strip_units <- function(x) {
 #' @param prefix the prefix for the units
 #' @param suffix the suffix for the units
 #' @family functions for values with units
-#' @example 
+#' @examples 
 #' df <- tibble(peak = 1:5, height = iso_double_with_units(1:5, "V"))
 #' df # shows data frame with implicit units
 #' iso_make_units_explicit(df) # with explicit units
@@ -95,7 +95,7 @@ iso_make_units_explicit <- function(df, prefix = " [", suffix = "]") {
 #' This function is intended for data frames /tibbles only and tries to figure out which numeric columns have units in the column names and makes those units implicit using \code{\link{iso_double_with_units}}. The reverse function is \code{\link{iso_make_units_explicit}}.
 #' @param df the data frame in which to make the units implicit/eplicit
 #' @inheritParams iso_make_units_explicit
-#' @example 
+#' @examples 
 #' df <- tibble(peak = 1:5, `height [V]` = 1:5)
 #' iso_make_units_implicit(df) # implicit units
 #' iso_make_units_implicit(df) %>% iso_make_units_explicit() # convert back and forth
@@ -143,12 +143,21 @@ check_units_identical <- function(x, y, warn_if_not = FALSE) {
 }
 
 # formatting during printout
+#' @importFrom vctrs vec_ptype_full
+#' @method vec_ptype_full iso_double_with_units
+#' @export
 vec_ptype_full.iso_double_with_units <- function(x, ...) {
   sprintf("%s in '%s'", vctrs::vec_ptype_full(vctrs::vec_data(x), ...), iso_get_units(x))
 }
+
+#' @method format iso_double_with_units
+#' @export
 format.iso_double_with_units <- function(x, ...) {
   format(vctrs::vec_data(x), ...)
 }
+#' @importFrom vctrs vec_ptype_abbr
+#' @method vec_ptype_abbr iso_double_with_units
+#' @export
 vec_ptype_abbr.iso_double_with_units <- function(x, ...) {
   if (check_units_identical(x, new_iso_double_with_units())) x_units <- "undef"
   else x_units <- iso_get_units(x)
