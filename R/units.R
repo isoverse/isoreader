@@ -342,16 +342,19 @@ vec_arith.iso_double_with_units.MISSING <- function(op, x, y, ...) {
 # convert data frame globas units attr to implicit units using iso_double_with_unit
 # if there is no data frame units attribute, returns df
 convert_df_units_attr_to_implicit_units <- function(df) {
-  if (is.null(df) || ncol(df) == 0 || is.null(attr(df, "units")) || 
-      is.na(attr(df, "units")) || !is.data.frame(attr(df, "units")) ||
-      !all(c("column", "units") %in% names(attr(df, "units")))) {
+  
+  if (!is.data.frame(df) || length(df) == 0) return(df)
+  
+  units <- attr(df, "units")
+  if (is.null(units) || !is.data.frame(units) ||
+      !all(c("column", "units") %in% names(units))) {
     # safety checks for units attrs
     attr(df, "units") <- NULL
     return(df)
   }
   
-  # get units
-  units <- attr(df, "units") %>% 
+  # process units
+  units <- units %>% 
     # find out which columns are numeric
     dplyr::left_join(
       purrr::map_lgl(df, is.numeric) %>% tibble::enframe("column", "numeric"),
