@@ -22,7 +22,6 @@ test_that("test that export to rda works properly", {
     tibble(x = iso_double_with_units(1:5, units = "a"), 
            y = letters[1:5])
   filepath <- file.path(tempdir(), "test")
-  cf <- cf %>% iso_as_file_list %>% convert_isofiles_file_info_to_data_frame() %>% {.[[1]]}
   
   # export and reimport single file
   expect_message(cf_out <- iso_save(cf, filepath, quiet = FALSE), "exporting data .* into R Data Storage")
