@@ -336,3 +336,52 @@ vec_arith.iso_double_with_units.MISSING <- function(op, x, y, ...) {
          vctrs::stop_incompatible_op(op, x, y)
   )
 }
+
+# Convert vendor data table ======
+
+# convert data frame globas units attr to implicit units using iso_double_with_unit
+# if there is no data frame units attribute, returns df
+convert_df_units_attr_to_implicit_units <- function(df) {
+  if (is.null(df) || ncol(df) == 0 || is.null(attr(df, "units")) || 
+      is.na(attr(df, "units")) || !is.data.frame(attr(df, "units")) ||
+      !all(c("column", "units") %in% names(attr(df, "units")))) {
+    # safety checks for units attrs
+    attr(df, "units") <- NULL
+    return(df)
+  }
+  
+  # get units
+  units <- attr(df, "units") %>% 
+    # find out which columns are numeric
+    dplyr::left_join(
+      purrr::map_lgl(df, is.numeric) %>% tibble::enframe("column", "numeric"),
+      by = "column"
+    ) %>% 
+    filter(nchar(units) > 0)
+  
+  # info check
+  if (nrow(problematic <- filter(units, !numeric)) > 0) {
+    glue::glue("encountered non-numeric data table columns with units: ",
+               "{paste(problematic$units, collapse = ', ')}. Only numeric column ",
+               "units can be preserved.") %>% 
+      warning(immediate. = TRUE, call. = FALSE)
+  }
+  
+  # convert columns into double_with_units
+  units <- dplyr::filter(units, numeric) %>% 
+    dplyr::mutate(units = stringr::str_remove(units, "^\\[") %>% stringr::str_remove("\\]$"))
+  
+  # construct the conversion quos
+  unit_quos <- 
+    with(units, 
+         purrr::map2(column, units, 
+                     ~quo(iso_double_with_units(!!sym(.x), units = !!.y))) %>% 
+           setNames(column))
+  
+  # convert the units
+  df <- dplyr::mutate(df, !!!unit_quos)
+  attr(df, "units") <- NULL
+  
+  return(df)
+}
+

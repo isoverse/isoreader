@@ -465,21 +465,13 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, writ
   if (read_from_cache) {
     # read from cache
     iso_file <- load_cached_iso_file(cachepath)
+    iso_file <- ensure_iso_file_backwards_compatibility(iso_file)
   } else {
     # read from original file
     env <- if (reader_fun_env == "R_GlobalEnv") .GlobalEnv else asNamespace(reader_fun_env)
     iso_file <- exec_func_with_error_catch(reader_fun, iso_file, options = reader_options, env = env)
-    
-    # convert file info columns to list columns (and ensure it's data frame format)
-    if (iso_is_file_list(iso_file)) {
-      iso_file <- map(iso_file, ~{
-        .x$file_info <- ensure_data_frame_list_columns(.x$file_info, exclude = names(ds$file_info));
-        .x
-      }) %>% iso_as_file_list()
-    } else {
-      iso_file$file_info <- ensure_data_frame_list_columns(iso_file$file_info, exclude = names(ds$file_info))
-    }
-    
+    iso_file <- ensure_iso_file_backwards_compatibility(iso_file)
+  
     # cleanup any binary and source content depending on debug setting
     if (!default(debug)) {
       iso_file$binary <- NULL # @FIXME: binary should be renamed to source throughout
@@ -500,6 +492,28 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, writ
   
   # marke progress for progress bar
   log_progress()
+  
+  return(iso_file)
+}
+
+# ensure backwards compatibility for read isofiles
+# all operations that are needed for backwards compatibility
+ensure_iso_file_backwards_compatibility <- function(iso_file) {
+  # standard fields
+  standard_fields <- names(make_iso_file_data_structure()$file_info)
+  
+  # convert file info columns to list columns (and ensure it's data frame format)
+  # convert data frame units attribute to implicit double with units
+  if (iso_is_file_list(iso_file)) {
+    iso_file <- map(iso_file, ~{
+      .x$file_info <- ensure_data_frame_list_columns(.x$file_info, exclude = standard_fields);
+      .x$vendor_data_table <- convert_df_units_attr_to_implicit_units(.x$vendor_data_table)
+      .x
+    }) %>% iso_as_file_list()
+  } else {
+    iso_file$file_info <- ensure_data_frame_list_columns(iso_file$file_info, exclude = standard_fields)
+    iso_file$vendor_data_table <- convert_df_units_attr_to_implicit_units(iso_file$vendor_data_table)
+  }
   
   return(iso_file)
 }

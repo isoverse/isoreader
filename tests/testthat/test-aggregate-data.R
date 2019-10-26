@@ -295,26 +295,33 @@ test_that("test that aggregating of vendor data table works", {
   iso_file$read_options$vendor_data_table <- TRUE
   iso_file$read_options$file_info <- TRUE
   iso_file1 <- modifyList(iso_file, list(file_info = list(file_id = "a")))
-  iso_file1$vendor_data_table <- tibble(column1 = "col1 a", column2 = "col2 a", col_a_only = "test a")
+  iso_file1$vendor_data_table <- tibble(column1 = "col1 a", column2 = 1, col_a_only = "test a")
   iso_file2 <- modifyList(iso_file, list(file_info = list(file_id = "b")))
-  iso_file2$vendor_data_table <- tibble(column1 = "col1 b", column2 = "col2 b")
+  iso_file2$vendor_data_table <- tibble(column1 = "col1 b", column2 = 2)
   
   # unit information
-  expect_warning(iso_get_vendor_data_table(iso_file1, with_units = TRUE), "do not have unit information")
-  expect_message(iso_get_vendor_data_table(iso_file1, with_units = FALSE, quiet = FALSE), "aggregating")
-  expect_silent(iso_get_vendor_data_table(iso_file1, with_units = FALSE, quiet = TRUE))
+  expect_warning(iso_get_vendor_data_table(iso_file1, with_units = TRUE), "DEPRECATED")
+  expect_equal(
+    # the same if there are no units
+    iso_get_vendor_data_table(iso_file1, with_explicit_units = TRUE), 
+    iso_get_vendor_data_table(iso_file1, with_explicit_units = FALSE)
+  )
+  expect_message(iso_get_vendor_data_table(iso_file1, quiet = FALSE), "aggregating")
+  expect_silent(iso_get_vendor_data_table(iso_file1, quiet = TRUE))
   
   attr(iso_file1$vendor_data_table, "units") <- attr(iso_file2$vendor_data_table, "units") <- 
-    tibble(column = c("column1", "column2", "col_a_only"), units = c("[1]", "[2]", ""))
+    tibble(column = c("column2"), units = c("[2]"))
+  iso_file1$vendor_data_table <- convert_df_units_attr_to_implicit_units(iso_file1$vendor_data_table)
+  iso_file2$vendor_data_table <- convert_df_units_attr_to_implicit_units(iso_file2$vendor_data_table)
   
   # aggregated with and without units
-  expect_message(agg <- iso_get_vendor_data_table(c(iso_file1, iso_file2), with_units = TRUE, quiet = FALSE), "aggregating")
+  expect_message(agg <- iso_get_vendor_data_table(c(iso_file1, iso_file2), with_explicit_units = TRUE, quiet = FALSE), "aggregating")
   expect_equal(agg, 
-               bind_rows(mutate(iso_file1$vendor_data_table, file_id="a"),
+               vctrs::vec_rbind(mutate(iso_file1$vendor_data_table, file_id="a"),
                               mutate(iso_file2$vendor_data_table, file_id="b")) %>% 
-                 rename(`column1 [1]` = column1, `column2 [2]` = column2))
-  expect_equal(iso_get_vendor_data_table(c(iso_file1, iso_file2), with_units = FALSE), 
-               bind_rows(mutate(iso_file1$vendor_data_table, file_id="a"),
+                 iso_make_units_explicit())
+  expect_equal(iso_get_vendor_data_table(c(iso_file1, iso_file2), with_explicit_units = FALSE), 
+               vctrs::vec_rbind(mutate(iso_file1$vendor_data_table, file_id="a"),
                          mutate(iso_file2$vendor_data_table, file_id="b")))
   
   # selecting/renaming specific columns
@@ -417,6 +424,5 @@ test_that("test that total data aggregation works", {
   expect_equal(iso_get_data(c(iso_file1, iso_file2))$has_resistors, c(TRUE, TRUE))
   expect_true(is_tibble(out <- iso_get_data(c(iso_file1, iso_file2)) %>% unnest(resistors)))
   expect_equal(select(out, cup, R.Ohm), bind_rows(iso_file1$method_info$resistors, iso_file2$method_info$resistors))
-  
       
 })
