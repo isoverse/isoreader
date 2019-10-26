@@ -150,5 +150,19 @@ test_that("test that units class works properly", {
   expect_warning(out <- x ^ x, "don't know how to calculate")
   expect_equal(out, data ^ data)
   
+})
+
+test_that("test that vendor data table units conversion works", {
+  
+  units <- tibble(column = c("x", "y", "z ?"), units = c("s", "", "[V]"))
+  df <- tibble(x = 1:5, y = 1:5, `z ?` = 1:5)
+  attr(df, "units") <- units
+  
+  expect_equal(convert_df_units_attr_to_implicit_units(df)$x, iso_double_with_units(1:5, "s"))
+  expect_equal(convert_df_units_attr_to_implicit_units(df)$y, 1:5)
+  expect_equal(convert_df_units_attr_to_implicit_units(df)$`z ?`, iso_double_with_units(1:5, "V"))
+  expect_null(attr(convert_df_units_attr_to_implicit_units(df), "units"))
+  expect_warning(convert_df_units_attr_to_implicit_units({df2<-df; df2$x <- "a"; df2}),
+                 "encountered non-numeric data table columns")
   
 })

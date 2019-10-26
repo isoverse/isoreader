@@ -189,8 +189,11 @@ get_vendor_data_table_info <- function(iso_files) {
 #' @return data_frame with file_ids, file_types and nested data frames for each data type (file_info, raw_data, vendor_data_table, etc.)
 #' @family data retrieval functions
 #' @export
-iso_get_data <- function(iso_files, include_file_info = everything(), include_raw_data = everything(), include_vendor_data_table = everything(), 
-                         gather = FALSE, with_units = FALSE, with_ratios = FALSE, quiet = default(quiet)) {
+iso_get_data <- function(
+  iso_files, 
+  include_file_info = everything(), include_raw_data = everything(), include_vendor_data_table = everything(), 
+  gather = FALSE, with_explicit_units = with_units, with_units = FALSE, with_ratios = FALSE, quiet = default(quiet)) {
+  
   iso_files <- iso_as_file_list(iso_files)
   if (!quiet) sprintf("Info: aggregating all data from %d data file(s)", length(iso_files)) %>% message()
   
@@ -222,7 +225,7 @@ iso_get_data <- function(iso_files, include_file_info = everything(), include_ra
   
   # vendor data table
   include_vendor_data_table_quo <- enquo(include_vendor_data_table)
-  dt <- iso_get_vendor_data_table(iso_files, with_units = with_units, select = !!include_vendor_data_table_quo, quiet = TRUE)
+  dt <- iso_get_vendor_data_table(iso_files, with_explicit_units = with_explicit_units, select = !!include_vendor_data_table_quo, quiet = TRUE)
   if (ncol(dt) > 1)
     dt <- nest(dt, vendor_data_table = c(-file_id))
   else
@@ -566,11 +569,15 @@ iso_get_resistors_info  <- function(iso_files, include_file_info = NULL, quiet =
 #' 
 #' @inheritParams iso_get_raw_data
 #' @inheritParams iso_get_file_info
-#' @param with_units whether to include units in the column headers (if there are any) or not (default is FALSE). Note that this can slow down the function significantely. 
+#' @param with_units this parameter has been DEPRECATED with the introduction of unit-data types (see \code{\link{iso_double_with_units}}) and will be removed in future versions of isoreader. Please use \code{with_explicit_units} instead if you really want columns to have units explicitly in the column name. Alternatively, consider working with the new implicit unit system and convert vendor data tables as needed with \code{\link{iso_make_units_explicit}} and \code{\link{iso_make_units_implicit}}.
+#' @param with_explicit_units whether to include units in the column headers instead of the column data types (see \code{\link{iso_double_with_units}})
 #' @family data retrieval functions
 #' @export
-iso_get_vendor_data_table <- function(iso_files, with_units = FALSE, select = everything(), include_file_info = NULL, 
-                                        quiet = default(quiet)) {
+iso_get_vendor_data_table <- function(
+  iso_files, with_units = FALSE, 
+  select = everything(), include_file_info = NULL, 
+  with_explicit_units = with_units, 
+  quiet = default(quiet)) {
   
   # globals
   dt <- has_units <- NULL
@@ -585,6 +592,14 @@ iso_get_vendor_data_table <- function(iso_files, with_units = FALSE, select = ev
   }
   check_read_options(iso_files, "vendor_data_table")
   
+  # units
+  if (!missing(with_units)) {
+    #FIXME: continue here with a warning that this parameter is deprecated
+    warning(
+      "The 'use_units' parameter has been DEPRECATED with the introduction of unit-data types (see ?iso_double_with_units) and will be removed in future versions of isoreader. Please use parameter 'with_explicit_units' instead if you really want columns to have units explicitly in the column name. Alternatively, consider working with the new implicit unit system and convert vendor data tables as needed with ?iso_make_units_explicit.",
+      call. = FALSE, immediate. = TRUE)
+  }
+  
   # check whether there are any files
   if (length(iso_files) == 0) return(data_frame())
   
@@ -598,52 +613,16 @@ iso_get_vendor_data_table <- function(iso_files, with_units = FALSE, select = ev
       file_id = names(iso_files),
       dt = map(iso_files, ~.x$vendor_data_table)
     ) %>% 
-    # make sure to include only existing raw data
-    filter(map_lgl(dt, ~!is.null(.x) & nrow(.x) > 0)) 
+    # make sure to include only existing data
+    filter(map_lgl(dt, ~!is.null(.x) & nrow(.x) > 0))
   
   # check for any rows
   if (nrow(vendor_data_table) == 0) return(vendor_data_table)
   
-  # add units if requested
-  if (with_units) {
-  
-    dt_units <- 
-      # fetch units
-      tibble(
-        file_id = names(iso_files),
-        has_units = map_lgl(iso_files, ~attr(.x$vendor_data_table, "units") %>% { !is.null(.) & !identical(., NA) }),
-        dt_units = map2(iso_files, has_units, ~{
-          if (.y) { 
-            attr(.x$vendor_data_table, "units") # if units provided, use them
-          } else { 
-            # if no units provided
-            tibble(column = names(.x$vendor_data_table), units = NA_character_) 
-          }
-        })
-      ) %>% 
-      # assemble units
-      unnest(cols = dt_units) %>% 
-      mutate(units = ifelse(!is.na(units) & nchar(units) > 0, str_c(column, " ", units), column)) %>%
-      dplyr::select(file_id, has_units, column, units) %>%
-      nest(dt_units = c(-file_id, -has_units))
-  
-    # join with vendor data table
-    vendor_data_table <-
-      vendor_data_table %>%
-      left_join(dt_units, by = "file_id") %>% 
-      # take care of renaming with units
-      mutate(
-        dt_units = map(dt_units, deframe),
-        dt = map2(dt, dt_units, ~{ names(.x) <- .y[names(.x)]; .x })
-      )
-    
-    # warning about missing units
-    if (!all(vendor_data_table$has_units)) {
-      glue("{sum(!vendor_data_table$has_units)} of {length(iso_files)} files do not have ",
-           "unit information for their vendor data table and will have missing units") %>% 
-        warning(call. = FALSE, immediate. = TRUE)
-    }
-    
+  # make units explicit if wanted
+  if (with_explicit_units) {
+    vendor_data_table <- vendor_data_table %>% 
+      mutate(dt = map(dt, iso_make_units_explicit))
   }
   
   # unnest

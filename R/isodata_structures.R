@@ -20,8 +20,7 @@ make_iso_file_data_structure <- function(file_id = NA_character_) {
       ),
       method_info = list(), # all methods information
       raw_data = dplyr::tibble(), # all mass data (Note: maybe not top-level b/c of scans?)
-      vendor_data_table = dplyr::tibble() %>% # vendor computed data table (no units)
-        { attr(., "units") <- NA; . }
+      vendor_data_table = dplyr::tibble() # vendor computed data table (no units)
     ),
     class = c("iso_file")
   ) %>% 

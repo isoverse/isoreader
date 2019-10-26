@@ -27,13 +27,14 @@ iso_export_to_rda <- function(iso_files, filepath, quiet = default(quiet)) {
 #' @param include_method_info whether to include methods infor in the export (if available)
 #' @param include_vendor_data_table whether to include the vendor data table in the export (if available)
 #' @param include_problems whether to include the problems table
+#' @inheritParams iso_get_vendor_data_table
 #' @family export functions
 #' @return returns the iso_files object invisibly for use in pipelines
 #' @export
 iso_export_to_excel <- function(iso_files, filepath, 
                             include_raw_data = TRUE, include_file_info = TRUE, 
                             include_method_info = TRUE, include_vendor_data_table = TRUE,
-                            include_problems = TRUE,
+                            include_problems = TRUE, with_explicit_units = FALSE,
                             quiet = default(quiet)) {
   
   # safety checks
@@ -71,7 +72,8 @@ iso_export_to_excel <- function(iso_files, filepath,
   }
   if (include_vendor_data_table) {
     addWorksheet(wb, "vendor data table")
-    vendor_data <- iso_get_vendor_data_table(export_iso_files, quiet = TRUE)
+    vendor_data <- iso_get_vendor_data_table(export_iso_files, with_explicit_units = with_explicit_units, quiet = TRUE) %>% 
+      iso_strip_units()
     if (ncol(vendor_data) > 0) writeData(wb, "vendor data table", vendor_data, headerStyle = hs)
   }
   if (include_problems) {
@@ -90,13 +92,14 @@ iso_export_to_excel <- function(iso_files, filepath,
 #' 
 #' @inheritParams iso_export_to_excel
 #' @param filepath_prefix the path (folder and filename) prefix for the exported feather files. The correct suffix for different kinds of data and file extension is automatically added
+#' @inheritParams iso_get_vendor_data_table
 #' @family export functions
 #' @return returns the iso_files object invisibly for use in pipelines
 #' @export
 iso_export_to_feather <- function(iso_files, filepath_prefix, 
                               include_raw_data = TRUE, include_file_info = TRUE, 
                               include_method_info = TRUE, include_vendor_data_table = TRUE,
-                              include_problems = TRUE,
+                              include_problems = TRUE, with_explicit_units = FALSE,
                               quiet = default(quiet)) {
   
   # safety checks
@@ -125,7 +128,9 @@ iso_export_to_feather <- function(iso_files, filepath_prefix,
   }
   
   if (include_vendor_data_table) 
-    write_feather(iso_get_vendor_data_table(iso_files, quiet = TRUE), filepaths[['vendor_data_table']])
+    write_feather(
+      iso_get_vendor_data_table(iso_files, with_explicit_units = with_explicit_units, quiet = TRUE) %>% iso_strip_units(), 
+      filepaths[['vendor_data_table']])
   
   if (include_problems) 
     write_feather(problems(iso_files), filepaths[['problems']])
