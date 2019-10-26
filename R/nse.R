@@ -5,7 +5,7 @@ check_expressions <- function(df, ...) {
   
   # df name and data frame test
   if (missing(df)) stop("no data frame supplied", call. = FALSE)
-  df_name <- enquo(df) %>% quo_text()
+  df_name <- enquo(df) %>% rlang::as_label()
   df <- enquo(df) %>% eval_tidy()
   if (!is.data.frame(df))
     glue("parameter {df_name} is not a data frame") %>% stop(call. = FALSE)
@@ -28,8 +28,8 @@ check_expressions <- function(df, ...) {
   if (!all(ok)) {
     params <-
       map2_chr(names(expr_quos)[!ok], expr_quos[!ok], function(var, val) {
-        if (nchar(var) > 0 && var != quo_text(val)) str_c(var, " = ", quo_text(val))
-        else quo_text(val)
+        if (nchar(var) > 0 && var != rlang::as_label(val)) str_c(var, " = ", rlang::as_label(val))
+        else rlang::as_label(val)
       }) %>%
       collapse("', '", last = "' and '")
     errors <- map_chr(expr_errors[!ok], ~.x$message) %>% collapse("\n- ")
@@ -58,7 +58,7 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   
   # df name and data frame test
   if (missing(df)) stop("no data frame supplied", call. = FALSE)
-  df_name <- enquo(df) %>% quo_text()
+  df_name <- enquo(df) %>% rlang::as_label()
   df <- enquo(df) %>% eval_tidy()
   if (!is.data.frame(df))
     glue("parameter {df_name} is not a data frame") %>% stop(call. = FALSE)
@@ -78,8 +78,8 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   if (!all(ok)) {
     params <-
       map2_chr(names(cols_quos)[!ok], cols_quos[!ok], function(var, val) {
-        if (nchar(var) > 0 && var != quo_text(val)) str_c(var, " = ", quo_text(val))
-        else quo_text(val)
+        if (nchar(var) > 0 && var != rlang::as_label(val)) str_c(var, " = ", rlang::as_label(val))
+        else rlang::as_label(val)
       }) %>% 
       collapse("', '", last = "' and '")
     errors <- map_chr(cols_results[!ok], ~.x$error$message) %>% collapse("\n- ")
@@ -211,7 +211,7 @@ quos_to_text <- function(lquos, check_for_validity = TRUE, variable = "variable"
   
   text_quos <-
     map2_chr(lquos, are_text_quos, function(lquo, is_text)
-      if(is_text) quo_squash(lquo) else quo_text(lquo)) %>% 
+      if(is_text) quo_squash(lquo) else rlang::as_label(lquo)) %>% 
     as.list()
   if (single_quo) return(text_quos[[1]])
   else return(text_quos)

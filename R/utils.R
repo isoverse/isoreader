@@ -82,10 +82,10 @@ setup_parallel_logs <- function() {
   progress <- paste0(tmpfile, ".progress")
   cat("", file = progress)
   set_temp("parallel_progress_file", progress)
-  
+
   if (default(debug)) {
     glue::glue("\n\nDEBUG  (log files will not be deleted afer run):\n\t",
-               "log file path '{log}'\n\tprogress file path '{progress}'") %>% 
+               "log file path '{log}'\n\tprogress file path '{progress}'") %>%
       message()
   }
 }
@@ -115,7 +115,7 @@ process_parallel_logs <- function(status) {
 
   # global vars
   X1 <- X2 <- X3 <- prefix <- NULL
-  
+
   # logs
   log <- get_temp("parallel_log_file")
   if (!is.null(log) && file.exists(log)) {
@@ -136,7 +136,7 @@ process_parallel_logs <- function(status) {
 
     if (!is.null(reset)) {
       # safety precaution in case log file gets corrupted
-      log_message("resetting log file (some progress updates may not display) because of error - '", 
+      log_message("resetting log file (some progress updates may not display) because of error - '",
                   reset, "'. This can happen sometimes when too many parallel processes finish at the ",
                   "exact same time but should only affect the logs, not the file reads themselves.", prefix = "Warning: ")
       cat("", file = log)
@@ -200,10 +200,10 @@ iso_get_reader_example <- function(filename) {
 #' iso_get_reader_examples()
 #' @export
 iso_get_reader_examples <- function() {
-  
+
   # global vars
   extension <- filename <- format <- path <- type <- description <- NULL
-  
+
   file_types <- iso_get_supported_file_types()
   iso_expand_paths(
       ".", extensions = file_types$extension, root = system.file(package = "isoreader", "extdata")) %>%
@@ -234,10 +234,10 @@ is_folder <- function(path, check_existence = TRUE) {
 # @param path path(s) (relative or absolute)
 # @param root (root(s) for relative paths)
 get_paths_data_frame <- function(path, root, check_existence = TRUE) {
-  
+
   # global vars
   full_path <- absolute <- NULL
-  
+
   # error with dimensions
   if (length(path) != 1 && length(root) != 1 && length(path) != length(root)) {
     stop("paths and roots need to have one entry or be of the same length, not ",
@@ -295,10 +295,10 @@ has_common_start <- function(vectors, common) {
 # find the common elements from the start of the vectors
 # @param vectors list of vectors
 find_common_different_from_start <- function(vectors, empty = character(0)) {
-  
+
   # global vars
   i <- entry <- same <- v <- data <- result <- NULL
-  
+
   min_length <- min(map_int(vectors, length))
   if(min_length == 0) {
     return(list(common = empty, different = vectors))
@@ -329,7 +329,7 @@ find_common_different_from_start <- function(vectors, empty = character(0)) {
   different <-
     filter(vectors, !i %in% commons$i) %>%
     select(v, entry) %>%
-    nest(data = c(-v)) %>% 
+    nest(data = c(-v)) %>%
     full_join(tibble(
       v = unique(vectors$v),
       empty = list(entry = empty)), by = "v") %>%
@@ -380,7 +380,7 @@ iso_expand_paths <- function(path, extensions = c(), root = ".") {
 
   # global vars
   full_path <- is_dir <- i <- NULL
-  
+
   # file paths
   paths <- get_paths_data_frame(path, root, check_existence = TRUE)
 
@@ -463,7 +463,7 @@ iso_shorten_relative_paths <- function(path, root = ".") {
 
   # global
   root_folders_all <- root_folders_rel <- absolute <- root_folders <- path_folders <- i <- NULL
-  
+
   # error with dimensions
   if (length(path) != 1 && length(root) != 1 && length(path) != length(root)) {
     stop("paths and roots need to have one entry or be of the same length, not ",
@@ -528,7 +528,7 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
 
   # global vars
   absolute <- is_dir <- full_path <- rel_root_folders <- path_folders <- abs_root_folders <- has_rel_root <- new_path <- i <- NULL
-  
+
   # anything to work with?
   if(length(path) == 0) return(data_frame(root = character(0), path = character(0)))
 
@@ -636,10 +636,10 @@ match_file_ext <- function(filepath, extensions) {
 match_to_supported_file_types <- function(filepaths_df, extensions_df) {
   stopifnot(col_in_df(filepaths_df, "path"))
   stopifnot(col_in_df(extensions_df, "extension"))
-  
+
   # global vars
   path <- .ext_exists <- NULL
-  
+
   files <-
     filepaths_df %>%
     mutate(extension = map_chr(path, match_file_ext, extensions_df$extension)) %>%
@@ -793,7 +793,7 @@ find_parent_call <- function(current_func) {
 get_info_message_concat <- function(variable, prefix = "", suffix = "", empty = c(), quotes = TRUE){
   if (is_quosure(variable)) {
     if (quo_is_null(variable)) return("")
-    variable <- quo_text(variable)
+    variable <- rlang::as_label(variable)
   }
   if (is_empty(variable)) return("")
   variable <- setdiff(variable, empty)
