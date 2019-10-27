@@ -582,8 +582,8 @@ iso_get_vendor_data_table <- function(
   iso_files <- iso_as_file_list(iso_files)
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
-    sprintf("Info: aggregating vendor data table %s from %d data file(s)%s", 
-            if (with_explicit_units) "with explicit units" else "",
+    sprintf("Info: aggregating vendor data table%s from %d data file(s)%s", 
+            if (with_explicit_units) " with explicit units" else "",
             length(iso_files),
             get_info_message_concat(include_file_info_quo, prefix = ", including file info ")) %>% message()
   }
