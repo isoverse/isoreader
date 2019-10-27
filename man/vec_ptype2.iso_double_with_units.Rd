@@ -6,6 +6,13 @@
 \usage{
 \method{vec_ptype2}{iso_double_with_units}(x, y, ...)
 }
+\arguments{
+\item{x}{Vector types.}
+
+\item{y}{Vector types.}
+
+\item{...}{These dots are for future extensions and must be empty.}
+}
 \description{
 vec_ptype2 for iso_double_with_units
 }
