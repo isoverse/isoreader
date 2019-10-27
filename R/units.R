@@ -284,7 +284,7 @@ vec_arith.iso_double_with_units <- function(op, x, y, ...) {
 #' @method vec_arith.iso_double_with_units default
 #' @export
 vec_arith.iso_double_with_units.default <- function(op, x, y, ...) {
-  stop_incompatible_op(op, x, y)
+  vctrs::stop_incompatible_op(op, x, y)
 }
 
 downcast_for_unknown_op <- function(op, x, y, warn = TRUE) {
