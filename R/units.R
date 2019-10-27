@@ -179,6 +179,7 @@ vec_ptype_abbr.iso_double_with_units <- function(x, ...) {
 # Combinations and Casting ======
 #' vec_ptype2 for iso_double_with_units
 #' @importFrom vctrs vec_ptype2
+#' @inheritParams vctrs::vec_ptype2
 #' @method vec_ptype2 iso_double_with_units
 #' @export
 #' @export vec_ptype2.iso_double_with_units
@@ -191,6 +192,7 @@ vec_ptype2.iso_double_with_units.default <- function(x, y, ..., x_arg = "x", y_a
 
 #' vec_cast for iso_double_with_units
 #' @importFrom vctrs vec_cast
+#' @inheritParams vctrs::vec_cast
 #' @method vec_cast iso_double_with_units
 #' @export
 #' @export vec_cast.iso_double_with_units
@@ -272,6 +274,7 @@ vec_cast.factor.iso_double_with_units <- function(x, to, ...) as.factor(vctrs::v
 
 #' vec_arith for iso_double_with_units
 #' @importFrom vctrs vec_arith
+#' @inheritParams vctrs::vec_arith
 #' @method vec_arith iso_double_with_units
 #' @export
 #' @export vec_arith.iso_double_with_units
