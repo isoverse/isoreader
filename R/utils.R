@@ -665,21 +665,28 @@ match_to_supported_file_types <- function(filepaths_df, extensions_df) {
 generate_cache_filepaths <- function(filepaths, read_options = list()) {
 
   # global vars
-  rowname <- size <- mtime <- filepath <- iso_v <- modified <- hash <- cache_file <- NULL
+  rowname <- size <- mtime <- filepath <- modified <- hash <- cache_file <- NULL
 
   calculate_unf_hash <- function(filepath, size, modified) {
     obj <- c(list(filepath, size, modified), read_options)
     unf(obj)$hash %>% str_c(collapse = "")
   }
 
+  # cached files versioning --> 
+  # include minor if v < 1.0, afterwards go by major version (2.0, 3.0, etc.)
+  iso_v <- 
+    packageVersion("isoreader") %>% {
+      if (.$major < 1) paste0(.$major, ".", .$minor)
+      else paste0(.$major, ".0")
+    }
+  
   file_info <- file.info(filepaths) %>%
     as_data_frame() %>%
     rownames_to_column() %>%
     select(filepath = rowname, size = size, modified = mtime) %>%
     mutate(
-      iso_v = packageVersion("isoreader"),
       hash = mapply(calculate_unf_hash, filepath, size, modified),
-      cache_file = sprintf("iso_file_v%d.%d_%s_%s.rds", iso_v$major, iso_v$minor, basename(filepath), hash),
+      cache_file = sprintf("iso_file_v%s_%s_%s.rds", !!iso_v, basename(filepath), hash),
       cache_filepath = file.path(default("cache_dir"), cache_file)
     )
 
@@ -718,10 +725,18 @@ load_cached_iso_file <- function(filepath, check_version = TRUE) {
 
 # check for difference in isoreader version
 # @note: this function determines which version difference causes caching differences
+# considers minor versions below 1.0, afterwards only major versions
 same_as_isoreader_version <- function(version, isoreader_version = packageVersion("isoreader")) {
-  version <- version$major * 10 + version$minor
-  isoreader_version <- isoreader_version$major * 10 + isoreader_version$minor
-  return(version == isoreader_version)
+
+  file_version <- version$major * 10
+  if (version$major < 1) 
+    file_version <- file_version + version$minor
+  
+  package_version <- isoreader_version$major * 10
+  if (isoreader_version$major < 1) 
+    package_version <- package_version + isoreader_version$minor
+    
+  return(file_version == package_version)
 }
 
 #' Cleanup old cached files
