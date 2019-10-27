@@ -6,16 +6,18 @@
 \usage{
 iso_get_vendor_data_table(iso_files, with_units = FALSE,
   select = everything(), include_file_info = NULL,
-  quiet = default(quiet))
+  with_explicit_units = with_units, quiet = default(quiet))
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
-\item{with_units}{whether to include units in the column headers (if there are any) or not (default is FALSE). Note that this can slow down the function significantely.}
+\item{with_units}{this parameter has been DEPRECATED with the introduction of unit-data types (see \code{\link{iso_double_with_units}}) and will be removed in future versions of isoreader. Please use \code{with_explicit_units} instead if you really want columns to have units explicitly in the column name. Alternatively, consider working with the new implicit unit system and convert vendor data tables as needed with \code{\link{iso_make_units_explicit}} and \code{\link{iso_make_units_implicit}}.}
 
 \item{select}{which raw data columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. By default, all columns are selected.}
 
 \item{include_file_info}{which file information to include (see \code{\link{iso_get_file_info}}). Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns.}
+
+\item{with_explicit_units}{whether to include units in the column headers instead of the column data types (see \code{\link{iso_double_with_units}})}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }

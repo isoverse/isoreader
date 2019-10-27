@@ -7,7 +7,8 @@
 iso_export_to_feather(iso_files, filepath_prefix,
   include_raw_data = TRUE, include_file_info = TRUE,
   include_method_info = TRUE, include_vendor_data_table = TRUE,
-  include_problems = TRUE, quiet = default(quiet))
+  include_problems = TRUE, with_explicit_units = FALSE,
+  quiet = default(quiet))
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -23,6 +24,8 @@ iso_export_to_feather(iso_files, filepath_prefix,
 \item{include_vendor_data_table}{whether to include the vendor data table in the export (if available)}
 
 \item{include_problems}{whether to include the problems table}
+
+\item{with_explicit_units}{whether to include units in the column headers instead of the column data types (see \code{\link{iso_double_with_units}})}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
