@@ -220,7 +220,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
                            quiet = default(quiet)) {
 
   # global
-  path <- file_n <- cacheable <- cachepath <- process <- data <- NULL
+  path <- file_n <- cacheable <- cachepath <- process <- data <- idx <- NULL
   
   # start timer
   start_time <- Sys.time()

@@ -17,8 +17,14 @@ iso_make_units_implicit(df, prefix = " [", suffix = "]")
 This function is intended for data frames /tibbles only and tries to figure out which numeric columns have units in the column names and makes those units implicit using \code{\link{iso_double_with_units}}. The reverse function is \code{\link{iso_make_units_explicit}}.
 }
 \examples{
+# generate implicit units
 df <- tibble(peak = 1:5, `height [V]` = 1:5)
-iso_make_units_implicit(df) # implicit units
-iso_make_units_implicit(df) \%>\% iso_make_units_explicit() # convert back and forth
-iso_make_units_implicit(tibble(peak = 1:5, height.V = 1:5), prefix = ".", suffix = "") # implicit units from custom prefix & suffix
+iso_make_units_implicit(df) 
+
+# convert back and forth
+iso_make_units_implicit(df) \%>\% iso_make_units_explicit() 
+
+# implicit units from custom prefix & suffix
+df <- tibble(peak = 1:5, height.V = 1:5)
+iso_make_units_implicit(df, prefix = ".", suffix = "") 
 }
