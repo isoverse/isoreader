@@ -583,7 +583,7 @@ iso_get_vendor_data_table <- function(
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
     sprintf("Info: aggregating vendor data table %s from %d data file(s)%s", 
-            if (with_units) "with units" else "without units",
+            if (with_explicit_units) "with explicit units" else "",
             length(iso_files),
             get_info_message_concat(include_file_info_quo, prefix = ", including file info ")) %>% message()
   }
@@ -591,7 +591,6 @@ iso_get_vendor_data_table <- function(
   
   # units
   if (!missing(with_units)) {
-    #FIXME: continue here with a warning that this parameter is deprecated
     warning(
       "The 'use_units' parameter has been DEPRECATED with the introduction of unit-data types (see ?iso_double_with_units) and will be removed in future versions of isoreader. Please use parameter 'with_explicit_units' instead if you really want columns to have units explicitly in the column name. Alternatively, consider working with the new implicit unit system and convert vendor data tables as needed with ?iso_make_units_explicit.",
       call. = FALSE, immediate. = TRUE)
