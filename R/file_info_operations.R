@@ -91,22 +91,28 @@ iso_select_file_info.iso_file_list <- function(iso_files, ..., quiet = default(q
   isofiles_select <- map(iso_files, select_rename_isofile, tidyselect::vars_select, select_quos)
   
   # info summary
-  all_vars <- map(isofiles_select, "vars") %>% bind_rows()
+  all_vars <- map2(names(isofiles_select), isofiles_select, ~mutate(.y$vars, file_id = .x)) %>% bind_rows()
   
   # check for duplicates
   check_names_changes(all_vars)
   
   # summary information
   if (!quiet) {
-    info <- all_vars %>% group_by(to, from) %>% 
+    
+    info <- all_vars %>%
+      group_by(file_id) %>%
       summarize(
-        n = n(),
         label = 
           ifelse(
-            changed[1],
-            sprintf(" - '%s' (renamed to '%s') in %d files", from[1], to[1], n),
-            sprintf(" - '%s' in %d files", from[1], n)
-          ))
+            changed,
+            sprintf("'%s'->'%s'", from, to),
+            sprintf("'%s'", from)
+          ) %>% paste(collapse = ", ")
+      ) %>%
+      dplyr::count(label) %>%
+      mutate(label = sprintf(" - for %d file(s): %s", n, label)) %>%
+      arrange(desc(n))
+
     glue::glue("Info: keeping {length(unique(all_vars$from))} file info column(s) ",
                "wherever they exist across {length(iso_files)} isofile(s):\n",
                "{paste(info$label, collapse = '\n')}") %>% 
@@ -165,15 +171,21 @@ iso_rename_file_info.iso_file_list <- function(iso_files, ..., quiet = default(q
   isofiles_rename <- map(iso_files, select_rename_isofile, tidyselect::vars_rename, rename_quos)
   
   # info summary
-  all_vars <- map(isofiles_rename, "vars") %>% bind_rows()
+  all_vars <- map2(names(isofiles_rename), isofiles_rename, ~mutate(.y$vars, file_id = .x)) %>% bind_rows()
   
   # check for duplicates
   check_names_changes(all_vars)
   
   # summary information
   if (!quiet) {
-    info <- all_vars %>% filter(changed) %>% group_by(to, from) %>% tally() %>% 
-      mutate(label = sprintf(" - '%s' to '%s' in %d files", from, to, n))
+    
+    info <- all_vars %>%
+      filter(changed) %>% 
+      group_by(file_id) %>%
+      summarize(label = sprintf("'%s'->'%s'", from, to) %>% paste(collapse = ", ")) %>%
+      dplyr::count(label) %>%
+      mutate(label = sprintf(" - for %d file(s): %s", n, label)) %>%
+      arrange(desc(n))
     total_n <- all_vars %>% filter(changed) %>% select(from) %>% unique()
     glue::glue("Info: renaming {nrow(total_n)} file info column(s) ",
                "wherever they exist across {length(iso_files)} isofile(s):\n",
