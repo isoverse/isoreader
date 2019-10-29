@@ -40,6 +40,9 @@
     <loc>http://isoreader.isoverse.org//reference/iso_debug_mode.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_double_with_units.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org//reference/iso_expand_paths.html</loc>
   </url>
   <url>
@@ -97,6 +100,9 @@
     <loc>http://isoreader.isoverse.org//reference/iso_get_supported_file_types.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_get_units.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org//reference/iso_get_vendor_data_table.html</loc>
   </url>
   <url>
@@ -104,6 +110,15 @@
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/iso_info_messages.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_is_double_with_units.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_make_units_explicit.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_make_units_implicit.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/iso_mutate_file_info.html</loc>
@@ -166,6 +181,9 @@
     <loc>http://isoreader.isoverse.org//reference/iso_show_default_reader_parameters.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_strip_units.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org//reference/isoread.html</loc>
   </url>
   <url>
@@ -175,7 +193,22 @@
     <loc>http://isoreader.isoverse.org//reference/print.binary_structure_map.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org//reference/read_iso_file.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org//reference/reexports.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/set_temp.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/vec_arith.iso_double_with_units.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/vec_cast.iso_double_with_units.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/vec_ptype2.iso_double_with_units.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//articles/continuous_flow.html</loc>

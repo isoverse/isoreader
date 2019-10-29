@@ -1,7 +1,7 @@
 # Structures ----
 
 # basic data structure
-make_iso_file_data_structure <- function() {
+make_iso_file_data_structure <- function(file_id = NA_character_) {
   structure(
     list(
       version = packageVersion("isoreader"),
@@ -12,7 +12,7 @@ make_iso_file_data_structure <- function() {
         vendor_data_table = FALSE # whether vendor data table was read
       ), 
       file_info = dplyr::tibble(
-        file_id = NA_character_, # unique identifer
+        file_id = file_id, # unique identifer
         file_root = NA_character_, # root directory for file path
         file_path = NA_character_, # path to file (file extension is key for processing)
         file_subpath = NA_character_, # sub path in case file is an archieve
@@ -20,8 +20,7 @@ make_iso_file_data_structure <- function() {
       ),
       method_info = list(), # all methods information
       raw_data = dplyr::tibble(), # all mass data (Note: maybe not top-level b/c of scans?)
-      vendor_data_table = dplyr::tibble() %>% # vendor computed data table (no units)
-        { attr(., "units") <- NA; . }
+      vendor_data_table = dplyr::tibble() # vendor computed data table (no units)
     ),
     class = c("iso_file")
   ) %>% 
@@ -30,16 +29,16 @@ make_iso_file_data_structure <- function() {
 
 
 # basic dual inlet data structure
-make_di_data_structure <- function() {
-  struct <- make_iso_file_data_structure()
+make_di_data_structure <- function(file_id = NA_character_) {
+  struct <- make_iso_file_data_structure(file_id = file_id)
   struct$bgrd_data <- data_frame() # store background data
   class(struct) <- c("dual_inlet", class(struct))
   return(struct)
 }
 
 # basic continuous flow data structure
-make_cf_data_structure <- function() {
-  struct <- make_iso_file_data_structure()
+make_cf_data_structure <- function(file_id = NA_character_) {
+  struct <- make_iso_file_data_structure(file_id = file_id)
   class(struct) <- c("continuous_flow", class(struct))
   return(struct)
 }
@@ -56,14 +55,14 @@ make_cf_data_structure <- function() {
 #' @rdname iso_data_structure
 #' @export
 iso_is_file <- function(x) {
-  "iso_file" %in% class(x)
+  methods::is(x, "iso_file")
 }
 
 #' @description \code{iso_is_file_list} tests if the object is an iso_file list (collection of iso_files)
 #' @rdname iso_data_structure
 #' @export
 iso_is_file_list <- function(x) {
-  "iso_file_list" %in% class(x)
+  methods::is(x, "iso_file_list")
 }
 
 #' @description \code{iso_is_object} test if the object is an iso-object (iso_file or iso_file list)
@@ -77,16 +76,14 @@ iso_is_object <- function(x) {
 #' @rdname iso_data_structure
 #' @export
 iso_is_dual_inlet <- function(x) {
-  if(!iso_is_object(x)) return(FALSE)
-  all(sapply(iso_as_file_list(x), is, "dual_inlet"))
+  methods::is(x, "dual_inlet") || methods::is(x, "dual_inlet_list")
 }
 
 #' @description \code{iso_is_continuous_flow} tests if an iso_file or iso_file list consists exclusively of continuous flow file objects
 #' @rdname iso_data_structure
 #' @export
 iso_is_continuous_flow <- function(x) {
-  if(!iso_is_object(x)) return(FALSE)
-  all(sapply(iso_as_file_list(x), is, "continuous_flow"))
+  methods::is(x, "continuous_flow") || methods::is(x, "continuous_flow_list")
 }
 
 
@@ -111,6 +108,9 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
   # allow simple list to be passed in
   if (length(iso_objs) == 1 && !iso_is_object(..1) && is.list(..1)) iso_objs <- ..1
   
+  # list classes
+  list_classes <- "iso_file_list"
+  
   if (length(iso_objs) == 0) {
     # empty list
     iso_list <- list()
@@ -127,7 +127,11 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     iso_list <- map(iso_objs, ~if(iso_is_file_list(.x)) { .x } else { list(.x) }) %>% unlist(recursive = FALSE)
     
     # reset file ids
-    names(iso_list) <- map_chr(iso_list, ~.x$file_info$file_id)
+    file_ids <- map_chr(iso_list, ~.x$file_info$file_id)
+    if (any(is.na(file_ids)))
+      stop("encountered undefined (NA) file ID(s). This is prohibited because it can lead to unexpected behaviour in iso files collections.",
+           call. = FALSE)
+    names(iso_list) <- file_ids
     
     # check if al elements are the same data type
     classes <- map_chr(iso_list, ~class(.x)[1]) 
@@ -136,6 +140,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
       glue("can only process iso_file objects with the same data type (first: {classes[1]}), encountered: {wrong_dt}") %>% 
         stop(call. = FALSE)
     }
+    list_classes <- c(paste0(classes[1], "_list"), list_classes)
     
     # check for file_id duplicates
     dups <- 
@@ -188,7 +193,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
   # generate structure
   structure(
     iso_list,
-    class = c("iso_file_list")
+    class = unique(list_classes)
   ) %>% set_problems(all_problems)
 }
 

@@ -23,6 +23,11 @@
 #' @importFrom feather write_feather
 NULL
 
+# re-export magrittr functions
+#' @importFrom magrittr %>%
+#' @export
+magrittr::`%>%`
+
 # re-export select/rename functions
 #' @export
 tidyselect::everything
@@ -39,6 +44,10 @@ tidyselect::matches
 # re-export dplyr's filter function to overwrite the global filter
 #' @export
 dplyr::filter
+
+# re-export tibblef or use in examples
+#' @export
+dplyr::tibble
 
 # quiets concerns of R CMD check about . that appears in pipelines 
 # and some very commonly used variable names used in NSE commands

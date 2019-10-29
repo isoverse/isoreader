@@ -7,7 +7,8 @@
 iso_get_data(iso_files, include_file_info = everything(),
   include_raw_data = everything(),
   include_vendor_data_table = everything(), gather = FALSE,
-  with_units = FALSE, with_ratios = FALSE, quiet = default(quiet))
+  with_explicit_units = with_units, with_units = FALSE,
+  with_ratios = FALSE, quiet = default(quiet))
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -20,7 +21,9 @@ iso_get_data(iso_files, include_file_info = everything(),
 
 \item{gather}{whether to gather raw data into long format (e.g. for ease of use in plotting). Not that the \code{select} parameter applies to the data columns BEFORE gathering.}
 
-\item{with_units}{whether to include units in the column headers (if there are any) or not (default is FALSE). Note that this can slow down the function significantely.}
+\item{with_explicit_units}{whether to include units in the column headers instead of the column data types (see \code{\link{iso_double_with_units}})}
+
+\item{with_units}{this parameter has been DEPRECATED with the introduction of unit-data types (see \code{\link{iso_double_with_units}}) and will be removed in future versions of isoreader. Please use \code{with_explicit_units} instead if you really want columns to have units explicitly in the column name. Alternatively, consider working with the new implicit unit system and convert vendor data tables as needed with \code{\link{iso_make_units_explicit}} and \code{\link{iso_make_units_implicit}}.}
 
 \item{with_ratios}{whether to include ratios or just standard delta values}
 

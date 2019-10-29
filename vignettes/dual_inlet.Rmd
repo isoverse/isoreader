@@ -23,7 +23,7 @@ Isoreader supports several dual inlet IRMS data formats. This vignette shows som
 Note: this vignette is still a work in progress.
 
 
-```{r}
+```{r, message=FALSE}
 # load isoreader package
 library(isoreader)
 ```
@@ -33,9 +33,12 @@ library(isoreader)
 
 Reading dual inlet files is as simple as passing one or multiple file or folder paths to the `iso_read_dual_inlet()` function. If folders are provided, any files that have a recognized continuous flow file extensions within those folders will be processed (e.g. all `.did` and `.caf`). Here we read several files that are bundled with the package as examples (and whose paths can be retrieved using the `iso_get_reader_example()` function).
 
-```{r}
+```{r, message=FALSE}
 # all available examples
 iso_get_reader_examples() %>% rmarkdown::paged_table()
+```
+
+```{r}
 # read dual inlet examples
 iso_files <- 
   iso_read_dual_inlet(

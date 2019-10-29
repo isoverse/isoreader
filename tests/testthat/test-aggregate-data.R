@@ -4,10 +4,10 @@ context("File info")
 
 test_that("test that standard file information can be recovered from iso_files", {
   
-  expect_true(iso_is_file(iso_file <- make_iso_file_data_structure()))
+  expect_true(iso_is_file(iso_file <- make_iso_file_data_structure("NA")))
   iso_file$read_options$file_info <- TRUE
   
-  expect_equal(iso_get_file_info(iso_file)$file_id, NA_character_)
+  expect_equal(iso_get_file_info(iso_file)$file_id, "NA")
   expect_equal(iso_get_file_info(iso_file)$file_root, NA_character_)
   expect_equal(iso_get_file_info(iso_file)$file_path, NA_character_)
   expect_equal(iso_get_file_info(iso_file)$file_subpath, NA_character_)
@@ -35,7 +35,7 @@ context("Data aggregation")
 ## check read options ====
 
 test_that("test that read option checks work properly", {
-  iso_file <- make_iso_file_data_structure()
+  iso_file <- make_iso_file_data_structure("NA")
   expect_warning(check_read_options(iso_file, "raw_data"), "read without extracting the raw data")
   iso_file <- modifyList(iso_file, list(read_options = list(raw_data = TRUE)))
   expect_silent(check_read_options(iso_file, "raw_data"))
@@ -53,19 +53,6 @@ test_that("test that aggregation functions refuse to work with non iso_files", {
 })
 
 ## check aggregation helpers ====
-
-test_that("test that file info list to data frame conversion works properly", {
-  
-  # test data
-  cf <- make_cf_data_structure()
-  cf$file_info$file_id <- "A"
-  cf$file_info$test_info <- list(42)
-  cf <- iso_as_file_list(cf)
-  expect_true(is_tibble(file_info <- convert_isofiles_file_info_to_data_frame(cf)[[1]]$file_info))
-  expect_equal(names(file_info), c("file_id", "file_root", "file_path", "file_subpath", "file_datetime", "test_info"))
-  expect_equal(map_chr(file_info, ~class(.x)[1]) %>% unname(), c("character", "character", "character", "character", "integer", "list"))
-  expect_equal(file_info$test_info, list(42))
-})
 
 test_that("test that unnesting of aggregated data works properly", {
   
@@ -121,7 +108,7 @@ test_that("test that unnesting of aggregated data works properly", {
 
 test_that("test that data summary is accessible", {
   
-  iso_file <- make_cf_data_structure()
+  iso_file <- make_cf_data_structure("NA")
   expect_true(is.data.frame(iso_get_data_summary(iso_file)))
   
   # test data
@@ -136,7 +123,7 @@ test_that("test that data summary is accessible", {
 
 test_that("test that aggregating file info works", {
 
-  iso_file <- make_iso_file_data_structure()
+  iso_file <- make_iso_file_data_structure("NA")
   expect_warning(iso_get_file_info(iso_file), "read without extracting the file info")
   
   # test data
@@ -168,7 +155,7 @@ test_that("test that aggregating file info works", {
 
 test_that("test that aggregeting raw data works", {
   
-  iso_file <- make_iso_file_data_structure()
+  iso_file <- make_iso_file_data_structure("NA")
   expect_warning(iso_get_raw_data(iso_file), "read without extracting the raw data")
   
   # test data
@@ -203,7 +190,7 @@ test_that("test that aggregeting raw data works", {
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
     suppressWarnings(iso_get_raw_data(
-      c(make_iso_file_data_structure(), iso_file1, iso_file2), 
+      c(make_iso_file_data_structure("NA"), iso_file1, iso_file2), 
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
   )
@@ -214,7 +201,7 @@ test_that("test that aggregeting raw data works", {
 
 test_that("test that aggregating of methods standards works", {
   
-  iso_file <- make_iso_file_data_structure()
+  iso_file <- make_iso_file_data_structure("NA")
   expect_warning(iso_get_standards_info(iso_file), "read without extracting the method info")
   
   # test data
@@ -239,7 +226,7 @@ test_that("test that aggregating of methods standards works", {
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
     suppressWarnings(iso_get_standards_info(
-      c(make_iso_file_data_structure(), iso_file1, iso_file2), 
+      c(make_iso_file_data_structure("NA"), iso_file1, iso_file2), 
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
   )
@@ -251,7 +238,7 @@ test_that("test that aggregating of methods standards works", {
 
 test_that("test that aggregating of resistors works", {
   
-  iso_file <- make_iso_file_data_structure()
+  iso_file <- make_iso_file_data_structure("NA")
   expect_warning(iso_get_resistors_info (iso_file), "read without extracting the method info")
   
   # test data
@@ -276,7 +263,7 @@ test_that("test that aggregating of resistors works", {
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
     suppressWarnings(iso_get_resistors_info (
-      c(make_iso_file_data_structure(), iso_file1, iso_file2), 
+      c(make_iso_file_data_structure("NA"), iso_file1, iso_file2), 
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
   )
@@ -288,33 +275,40 @@ test_that("test that aggregating of resistors works", {
 
 test_that("test that aggregating of vendor data table works", {
   
-  iso_file <- make_iso_file_data_structure()
+  iso_file <- make_iso_file_data_structure("NA")
   expect_warning(iso_get_vendor_data_table(iso_file), "read without extracting the vendor data table")
   
   # test data
   iso_file$read_options$vendor_data_table <- TRUE
   iso_file$read_options$file_info <- TRUE
   iso_file1 <- modifyList(iso_file, list(file_info = list(file_id = "a")))
-  iso_file1$vendor_data_table <- tibble(column1 = "col1 a", column2 = "col2 a", col_a_only = "test a")
+  iso_file1$vendor_data_table <- tibble(column1 = "col1 a", column2 = 1, col_a_only = "test a")
   iso_file2 <- modifyList(iso_file, list(file_info = list(file_id = "b")))
-  iso_file2$vendor_data_table <- tibble(column1 = "col1 b", column2 = "col2 b")
+  iso_file2$vendor_data_table <- tibble(column1 = "col1 b", column2 = 2)
   
   # unit information
-  expect_warning(iso_get_vendor_data_table(iso_file1, with_units = TRUE), "do not have unit information")
-  expect_message(iso_get_vendor_data_table(iso_file1, with_units = FALSE, quiet = FALSE), "aggregating")
-  expect_silent(iso_get_vendor_data_table(iso_file1, with_units = FALSE, quiet = TRUE))
+  expect_warning(iso_get_vendor_data_table(iso_file1, with_units = TRUE), "DEPRECATED")
+  expect_equal(
+    # the same if there are no units
+    iso_get_vendor_data_table(iso_file1, with_explicit_units = TRUE), 
+    iso_get_vendor_data_table(iso_file1, with_explicit_units = FALSE)
+  )
+  expect_message(iso_get_vendor_data_table(iso_file1, quiet = FALSE), "aggregating")
+  expect_silent(iso_get_vendor_data_table(iso_file1, quiet = TRUE))
   
   attr(iso_file1$vendor_data_table, "units") <- attr(iso_file2$vendor_data_table, "units") <- 
-    tibble(column = c("column1", "column2", "col_a_only"), units = c("[1]", "[2]", ""))
+    tibble(column = c("column2"), units = c("[2]"))
+  iso_file1$vendor_data_table <- convert_df_units_attr_to_implicit_units(iso_file1$vendor_data_table)
+  iso_file2$vendor_data_table <- convert_df_units_attr_to_implicit_units(iso_file2$vendor_data_table)
   
   # aggregated with and without units
-  expect_message(agg <- iso_get_vendor_data_table(c(iso_file1, iso_file2), with_units = TRUE, quiet = FALSE), "aggregating")
+  expect_message(agg <- iso_get_vendor_data_table(c(iso_file1, iso_file2), with_explicit_units = TRUE, quiet = FALSE), "aggregating")
   expect_equal(agg, 
-               bind_rows(mutate(iso_file1$vendor_data_table, file_id="a"),
+               vctrs::vec_rbind(mutate(iso_file1$vendor_data_table, file_id="a"),
                               mutate(iso_file2$vendor_data_table, file_id="b")) %>% 
-                 rename(`column1 [1]` = column1, `column2 [2]` = column2))
-  expect_equal(iso_get_vendor_data_table(c(iso_file1, iso_file2), with_units = FALSE), 
-               bind_rows(mutate(iso_file1$vendor_data_table, file_id="a"),
+                 iso_make_units_explicit())
+  expect_equal(iso_get_vendor_data_table(c(iso_file1, iso_file2), with_explicit_units = FALSE), 
+               vctrs::vec_rbind(mutate(iso_file1$vendor_data_table, file_id="a"),
                          mutate(iso_file2$vendor_data_table, file_id="b")))
   
   # selecting/renaming specific columns
@@ -337,7 +331,7 @@ test_that("test that aggregating of vendor data table works", {
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
     suppressWarnings(iso_get_vendor_data_table(
-      c(make_iso_file_data_structure(), iso_file1, iso_file2),
+      c(make_iso_file_data_structure("NA"), iso_file1, iso_file2),
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
   )
@@ -349,7 +343,7 @@ test_that("test that aggregating of vendor data table works", {
 test_that("test that total data aggregation works", {
   
   # general warning messages
-  iso_file <- make_cf_data_structure()
+  iso_file <- make_cf_data_structure("NA")
   expect_warning(data <- iso_get_data(iso_file), "read without extracting the file info")
   expect_warning(data <- iso_get_data(iso_file), "read without extracting the raw data")
   expect_warning(data <- iso_get_data(iso_file), "read without extracting the vendor data table")
@@ -417,6 +411,5 @@ test_that("test that total data aggregation works", {
   expect_equal(iso_get_data(c(iso_file1, iso_file2))$has_resistors, c(TRUE, TRUE))
   expect_true(is_tibble(out <- iso_get_data(c(iso_file1, iso_file2)) %>% unnest(resistors)))
   expect_equal(select(out, cup, R.Ohm), bind_rows(iso_file1$method_info$resistors, iso_file2$method_info$resistors))
-  
       
 })

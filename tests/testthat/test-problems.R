@@ -41,7 +41,7 @@ test_that("Test that problem registration and reporting works properly", {
 
 test_that("Test that problems set for iso_file lists get propagated to all files", {
   # propagate problems for iso_files
-  expect_is(iso_file <- make_iso_file_data_structure(), "iso_file")
+  expect_is(iso_file <- make_iso_file_data_structure("NA"), "iso_file")
   iso_file1 <- iso_file %>% { .$file_info$file_id <- "A"; . }
   iso_file2 <- iso_file %>% { .$file_info$file_id <- "B"; . }
   expect_is(iso_files <- c(iso_file1, iso_file2), "iso_file_list")
@@ -87,7 +87,7 @@ test_that("Combing problems works properly", {
 test_that("Test that removing files with errors works properly", {
   
   # iso_filter_files_with_problems
-  iso_file <- make_iso_file_data_structure()
+  iso_file <- make_iso_file_data_structure("NA")
   expect_message(iso_warn <- register_warning(iso_file, "test warning"))
   expect_message(iso_err <- register_error(iso_file, "test error"))
   iso_file$file_info$file_id <- "A"

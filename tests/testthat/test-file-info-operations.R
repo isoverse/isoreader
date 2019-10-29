@@ -4,7 +4,7 @@ context("File info operations")
 
 test_that("Test that selecting/renaming file info works", {
   
-  iso_file1 <- make_di_data_structure()
+  iso_file1 <- make_di_data_structure("NA")
   iso_file1$read_options$file_info <- TRUE
   iso_file1$file_info$new_info <- 42
   iso_file2 <- iso_file3 <- iso_file1
@@ -26,12 +26,12 @@ test_that("Test that selecting/renaming file info works", {
   expect_silent(iso_select_file_info(iso_file1, quiet = TRUE))
   expect_silent(select(iso_file1)) 
   expect_message(iso_select_file_info(iso_file1, newer_info = new_info), "keeping 2 file info.*across 1 isofile")
-  expect_message(iso_select_file_info(iso_file1, newer_info = new_info), "new_info.*renamed.*newer_info.*in 1 file")
+  expect_message(iso_select_file_info(iso_file1, newer_info = new_info), "1 file.*new_info.*->.*newer_info")
   expect_message(iso_select_file_info(iso_files, newer_info = new_info2), "keeping 2 file info.*across 3 isofile")
-  expect_message(iso_select_file_info(iso_files, newer_info = new_info), "new_info.*renamed.*newer_info.*in 3 file")
+  expect_message(iso_select_file_info(iso_files, newer_info = new_info), "3 file.*new_info.*->.*newer_info")
   expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3), "keeping 3 file info.*across 3 isofile")
-  expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3), "new_info2.*renamed.*y.*in 1 file")
-  expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3), "new_info3.*renamed.*y.*in 1 file")
+  expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3), "1 file.*new_info2.*->.*y")
+  expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3), "1 file.*new_info3.*->.*y")
   
   # select outcomes
   expect_equal(
@@ -63,12 +63,12 @@ test_that("Test that selecting/renaming file info works", {
   expect_silent(iso_rename_file_info(iso_file1, quiet = TRUE))
   expect_silent(rename(iso_file1)) 
   expect_message(iso_rename_file_info(iso_file1, newer_info = new_info), "renaming 1 file info.*across 1 isofile")
-  expect_message(iso_rename_file_info(iso_file1, newer_info = new_info), "new_info.*to.*newer_info.*in 1 file")
+  expect_message(iso_rename_file_info(iso_file1, newer_info = new_info), "1 file.*new_info.*->.*newer_info")
   expect_message(iso_rename_file_info(iso_files, newer_info = new_info2), "renaming 1 file info.*across 3 isofile")
-  expect_message(iso_rename_file_info(iso_files, newer_info = new_info), "new_info.*to.*newer_info.*in 3 file")
+  expect_message(iso_rename_file_info(iso_files, newer_info = new_info), "3 file.*new_info.*->.*newer_info")
   expect_message(iso_rename_file_info(iso_files, y = new_info2, y = new_info3), "renaming 2 file info.*across 3 isofile")
-  expect_message(iso_rename_file_info(iso_files, y = new_info2, y = new_info3), "new_info2.*to.*y.*in 1 file")
-  expect_message(iso_rename_file_info(iso_files, y = new_info2, y = new_info3), "new_info3.*to.*y.*in 1 file")
+  expect_message(iso_rename_file_info(iso_files, y = new_info2, y = new_info3), "1 file.*new_info2.*->.*y")
+  expect_message(iso_rename_file_info(iso_files, y = new_info2, y = new_info3), "1 file.*new_info3.*->.*y")
   
   # rename outcomes
   expect_equal(
@@ -90,7 +90,7 @@ test_that("Test that selecting/renaming file info works", {
 
 test_that("Test that filtering by file info works", {
   
-  iso_file1 <- make_di_data_structure()
+  iso_file1 <- make_di_data_structure("NA")
   iso_file1$read_options$file_info <- TRUE
   iso_file1$file_info$new_info <- 42
   iso_file2 <- iso_file3 <- iso_file1
@@ -125,7 +125,7 @@ test_that("Test that filtering by file info works", {
 
 test_that("Test that mutating file info works", {
   
-  iso_file1 <- make_di_data_structure()
+  iso_file1 <- make_di_data_structure("NA")
   iso_file1$read_options$file_info <- TRUE
   iso_file1$file_info$new_info <- 42
   iso_file2 <- iso_file3 <- iso_file1
@@ -179,7 +179,7 @@ test_that("Test that mutating file info works", {
 
 test_that("Test that file info parsing works", {
   
-  iso_file1 <- make_di_data_structure()
+  iso_file1 <- make_di_data_structure("NA")
   iso_file1$read_options$file_info <- TRUE
   iso_file1$file_info$new_info <- 42.0
   iso_file2 <- iso_file3 <- iso_file1
@@ -304,7 +304,7 @@ test_that("Test that file info addition works", {
   )
   
   # test with isofiles (not just in data frame)
-  template <- make_cf_data_structure()
+  template <- make_cf_data_structure("NA")
   template$read_options$file_info <- TRUE
   iso_files <- map(split(file_info, seq(nrow(file_info))), ~{ x <- template; x$file_info <- .x; x }) %>% 
     iso_as_file_list()
