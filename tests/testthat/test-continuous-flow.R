@@ -11,7 +11,7 @@ test_that("test that supported cf files are correct", {
 test_that("test that parameter checks are performed", {
   
   # flow iarc
-  expect_error(iso_read_flow_iarc (make_di_data_structure()), 
+  expect_error(iso_read_flow_iarc (make_di_data_structure("NA")), 
                "data structure must be a \\'continuous_flow\\' iso_file")
   
   

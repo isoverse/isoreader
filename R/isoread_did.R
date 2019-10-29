@@ -188,6 +188,6 @@ extract_did_vendor_data_table <- function(ds) {
   ds$vendor_data_table <- bind_cols(
     data_frame(cycle = vendor_dt[[1]][[1]]), 
     lapply(vendor_dt, `[[`, 2) %>% as_data_frame())
-  attr(ds$vendor_data_table, "units") <- NA # units do not apply
+  attr(ds$vendor_data_table, "units") <- NULL # units do not apply
   return(ds)
 }

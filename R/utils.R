@@ -1,9 +1,5 @@
 # general helper functions ===========
 
-#' @importFrom magrittr %>%
-#' @export
-magrittr::`%>%`
-
 # check if a column is in a data frame
 col_in_df <- function(df, col) {
   stopifnot(is.data.frame(df))
@@ -86,10 +82,10 @@ setup_parallel_logs <- function() {
   progress <- paste0(tmpfile, ".progress")
   cat("", file = progress)
   set_temp("parallel_progress_file", progress)
-  
+
   if (default(debug)) {
     glue::glue("\n\nDEBUG  (log files will not be deleted afer run):\n\t",
-               "log file path '{log}'\n\tprogress file path '{progress}'") %>% 
+               "log file path '{log}'\n\tprogress file path '{progress}'") %>%
       message()
   }
 }
@@ -119,7 +115,7 @@ process_parallel_logs <- function(status) {
 
   # global vars
   X1 <- X2 <- X3 <- prefix <- NULL
-  
+
   # logs
   log <- get_temp("parallel_log_file")
   if (!is.null(log) && file.exists(log)) {
@@ -140,7 +136,7 @@ process_parallel_logs <- function(status) {
 
     if (!is.null(reset)) {
       # safety precaution in case log file gets corrupted
-      log_message("resetting log file (some progress updates may not display) because of error - '", 
+      log_message("resetting log file (some progress updates may not display) because of error - '",
                   reset, "'. This can happen sometimes when too many parallel processes finish at the ",
                   "exact same time but should only affect the logs, not the file reads themselves.", prefix = "Warning: ")
       cat("", file = log)
@@ -204,10 +200,10 @@ iso_get_reader_example <- function(filename) {
 #' iso_get_reader_examples()
 #' @export
 iso_get_reader_examples <- function() {
-  
+
   # global vars
   extension <- filename <- format <- path <- type <- description <- NULL
-  
+
   file_types <- iso_get_supported_file_types()
   iso_expand_paths(
       ".", extensions = file_types$extension, root = system.file(package = "isoreader", "extdata")) %>%
@@ -238,10 +234,10 @@ is_folder <- function(path, check_existence = TRUE) {
 # @param path path(s) (relative or absolute)
 # @param root (root(s) for relative paths)
 get_paths_data_frame <- function(path, root, check_existence = TRUE) {
-  
+
   # global vars
   full_path <- absolute <- NULL
-  
+
   # error with dimensions
   if (length(path) != 1 && length(root) != 1 && length(path) != length(root)) {
     stop("paths and roots need to have one entry or be of the same length, not ",
@@ -299,10 +295,10 @@ has_common_start <- function(vectors, common) {
 # find the common elements from the start of the vectors
 # @param vectors list of vectors
 find_common_different_from_start <- function(vectors, empty = character(0)) {
-  
+
   # global vars
   i <- entry <- same <- v <- data <- result <- NULL
-  
+
   min_length <- min(map_int(vectors, length))
   if(min_length == 0) {
     return(list(common = empty, different = vectors))
@@ -333,7 +329,7 @@ find_common_different_from_start <- function(vectors, empty = character(0)) {
   different <-
     filter(vectors, !i %in% commons$i) %>%
     select(v, entry) %>%
-    nest(data = c(-v)) %>% 
+    nest(data = c(-v)) %>%
     full_join(tibble(
       v = unique(vectors$v),
       empty = list(entry = empty)), by = "v") %>%
@@ -384,7 +380,7 @@ iso_expand_paths <- function(path, extensions = c(), root = ".") {
 
   # global vars
   full_path <- is_dir <- i <- NULL
-  
+
   # file paths
   paths <- get_paths_data_frame(path, root, check_existence = TRUE)
 
@@ -467,7 +463,7 @@ iso_shorten_relative_paths <- function(path, root = ".") {
 
   # global
   root_folders_all <- root_folders_rel <- absolute <- root_folders <- path_folders <- i <- NULL
-  
+
   # error with dimensions
   if (length(path) != 1 && length(root) != 1 && length(path) != length(root)) {
     stop("paths and roots need to have one entry or be of the same length, not ",
@@ -532,7 +528,7 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
 
   # global vars
   absolute <- is_dir <- full_path <- rel_root_folders <- path_folders <- abs_root_folders <- has_rel_root <- new_path <- i <- NULL
-  
+
   # anything to work with?
   if(length(path) == 0) return(data_frame(root = character(0), path = character(0)))
 
@@ -640,10 +636,10 @@ match_file_ext <- function(filepath, extensions) {
 match_to_supported_file_types <- function(filepaths_df, extensions_df) {
   stopifnot(col_in_df(filepaths_df, "path"))
   stopifnot(col_in_df(extensions_df, "extension"))
-  
+
   # global vars
   path <- .ext_exists <- NULL
-  
+
   files <-
     filepaths_df %>%
     mutate(extension = map_chr(path, match_file_ext, extensions_df$extension)) %>%
@@ -669,21 +665,28 @@ match_to_supported_file_types <- function(filepaths_df, extensions_df) {
 generate_cache_filepaths <- function(filepaths, read_options = list()) {
 
   # global vars
-  rowname <- size <- mtime <- filepath <- iso_v <- modified <- hash <- cache_file <- NULL
+  rowname <- size <- mtime <- filepath <- modified <- hash <- cache_file <- NULL
 
   calculate_unf_hash <- function(filepath, size, modified) {
     obj <- c(list(filepath, size, modified), read_options)
     unf(obj)$hash %>% str_c(collapse = "")
   }
 
+  # cached files versioning --> 
+  # include minor if v < 1.0, afterwards go by major version (2.0, 3.0, etc.)
+  iso_v <- 
+    packageVersion("isoreader") %>% {
+      if (.$major < 1) paste0(.$major, ".", .$minor)
+      else paste0(.$major, ".0")
+    }
+  
   file_info <- file.info(filepaths) %>%
     as_data_frame() %>%
     rownames_to_column() %>%
     select(filepath = rowname, size = size, modified = mtime) %>%
     mutate(
-      iso_v = packageVersion("isoreader"),
       hash = mapply(calculate_unf_hash, filepath, size, modified),
-      cache_file = sprintf("iso_file_v%d.%d_%s_%s.rds", iso_v$major, iso_v$minor, basename(filepath), hash),
+      cache_file = sprintf("iso_file_v%s_%s_%s.rds", !!iso_v, basename(filepath), hash),
       cache_filepath = file.path(default("cache_dir"), cache_file)
     )
 
@@ -722,10 +725,18 @@ load_cached_iso_file <- function(filepath, check_version = TRUE) {
 
 # check for difference in isoreader version
 # @note: this function determines which version difference causes caching differences
+# considers minor versions below 1.0, afterwards only major versions
 same_as_isoreader_version <- function(version, isoreader_version = packageVersion("isoreader")) {
-  version <- version$major * 10 + version$minor
-  isoreader_version <- isoreader_version$major * 10 + isoreader_version$minor
-  return(version == isoreader_version)
+
+  file_version <- version$major * 10
+  if (version$major < 1) 
+    file_version <- file_version + version$minor
+  
+  package_version <- isoreader_version$major * 10
+  if (isoreader_version$major < 1) 
+    package_version <- package_version + isoreader_version$minor
+    
+  return(file_version == package_version)
 }
 
 #' Cleanup old cached files
@@ -797,7 +808,7 @@ find_parent_call <- function(current_func) {
 get_info_message_concat <- function(variable, prefix = "", suffix = "", empty = c(), quotes = TRUE){
   if (is_quosure(variable)) {
     if (quo_is_null(variable)) return("")
-    variable <- quo_text(variable)
+    variable <- rlang::as_label(variable)
   }
   if (is_empty(variable)) return("")
   variable <- setdiff(variable, empty)
