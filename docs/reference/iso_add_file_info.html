@@ -16,13 +16,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -57,6 +59,7 @@
   gtag('config', 'UA-106138361-3');
 </script>
 
+
   </head>
 
   <body>
@@ -73,7 +76,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.7</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.10.1</span>
       </span>
     </div>
 
@@ -110,6 +113,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -132,7 +136,9 @@
 
 <span class='co'># S3 method for data.frame</span>
 <span class='fu'>iso_add_file_info</span>(<span class='no'>df</span>, <span class='no'>new_file_info</span>, <span class='no'>...</span>,
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))
+
+<span class='fu'>iso_add_file_info</span>(<span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -165,7 +171,7 @@
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Single <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code>: this is the most common use of this function and basically a simple left join operation (with some additional safety checks). Specify a single <code>join_by</code> in the <code>...</code>, such as e.g. <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c("file_id")</a></code> to add additional file information joining by the <code>file_id</code> column.</p>
+    <p>Single <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code>: this is the most common use of this function and basically a simple left join operation (with some additional safety checks). Specify a single <code>join_by</code> in the <code>...</code>, such as e.g. <code><a href='https://rdrr.io/r/base/c.html'>c("file_id")</a></code> to add additional file information joining by the <code>file_id</code> column.</p>
 <p>Multiple sequential <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code>: this use case is for applying a set of increasingly more specific <code>join_by</code> rules. For example, <code>... = c("Identifier 1", "Identifier 2"), c("file_id")</code> would serve to first add one set of new file information for all isofiles based on their <code>Identifier 1</code> and <code>Identifier 2</code> columns and then overwrite the new information with more specific details for a subset of isofiles based on their <code>file_id</code> column, all based on a single overview <code>new_file_info</code> data frame. Basically, each set of <code>join_by</code> conditions specified in <code>...</code> must describe a valid <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code> <code>join_by</code> parameter to merge the <code>new_file_info</code> with the existing file info. Each set of <code>new_file_info</code> data can overwrite the previous <code>join_by</code> matches such that the last set of <code>join_by</code> column(s) provided in <code>...</code> will overwrite all previous matches for which it applies, even if they have already been a match for a previous column.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -193,19 +199,23 @@
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Sebastian Kopf.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

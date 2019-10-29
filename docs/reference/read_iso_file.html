@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>moved to isoprocessor — iso_plot_raw_data • Isoreader</title>
+<title>Read individual iso file — read_iso_file • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,9 +32,9 @@
 
 
 
-<meta property="og:title" content="moved to isoprocessor — iso_plot_raw_data" />
+<meta property="og:title" content="Read individual iso file — read_iso_file" />
 
-<meta property="og:description" content="moved to isoprocessor" />
+<meta property="og:description" content="Low level read function for an individual iso file. Usually not called directly but available for methods development." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -119,25 +119,75 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>moved to isoprocessor</h1>
-    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/plotting.R'><code>R/plotting.R</code></a></small>
-    <div class="hidden name"><code>iso_plot_raw_data.Rd</code></div>
+    <h1>Read individual iso file</h1>
+    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/isoread.R'><code>R/isoread.R</code></a></small>
+    <div class="hidden name"><code>read_iso_file.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>moved to isoprocessor</p>
+    <p>Low level read function for an individual iso file. Usually not called directly but available for methods development.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_plot_raw_data</span>(<span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>read_iso_file</span>(<span class='no'>ds</span>, <span class='no'>root</span>, <span class='no'>path</span>, <span class='no'>file_n</span>, <span class='no'>files_n</span>, <span class='no'>read_from_cache</span>,
+  <span class='no'>write_to_cache</span>, <span class='no'>write_to_cache_if_errors</span>, <span class='no'>cachepath</span>, <span class='no'>ext</span>, <span class='no'>reader_fun</span>,
+  <span class='no'>reader_options</span>, <span class='no'>reader_fun_env</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>...</th>
-      <td><p>deprecated</p></td>
+      <th>ds</th>
+      <td><p>the basic data structure for the type of iso_file</p></td>
+    </tr>
+    <tr>
+      <th>root</th>
+      <td><p>root for relative paths. Can be relative to the current working directory (e.g. <code>"data"</code>) or an absolute path on the file system (e.g. <code>"/Users/..."</code> or <code>"C:/Data/.."</code>). The default is the current working directory (<code>"."</code>). Can be supplied as a vector of same length as the provided paths if the paths have different roots.</p></td>
+    </tr>
+    <tr>
+      <th>path</th>
+      <td><p>file path</p></td>
+    </tr>
+    <tr>
+      <th>file_n</th>
+      <td><p>numer of processsed file for info messages</p></td>
+    </tr>
+    <tr>
+      <th>files_n</th>
+      <td><p>total number of files for info messages</p></td>
+    </tr>
+    <tr>
+      <th>read_from_cache</th>
+      <td><p>whether to read from cache</p></td>
+    </tr>
+    <tr>
+      <th>write_to_cache</th>
+      <td><p>whether to write to cache</p></td>
+    </tr>
+    <tr>
+      <th>write_to_cache_if_errors</th>
+      <td><p>whether to write to cache even if errors are encountered</p></td>
+    </tr>
+    <tr>
+      <th>cachepath</th>
+      <td><p>path for the cache file</p></td>
+    </tr>
+    <tr>
+      <th>ext</th>
+      <td><p>file extension</p></td>
+    </tr>
+    <tr>
+      <th>reader_fun</th>
+      <td><p>file reader function</p></td>
+    </tr>
+    <tr>
+      <th>reader_options</th>
+      <td><p>list of paramters to be passed on to the reader</p></td>
+    </tr>
+    <tr>
+      <th>reader_fun_env</th>
+      <td><p>where to find the reader function</p></td>
     </tr>
     </table>
     

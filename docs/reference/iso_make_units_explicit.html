@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Aggregate standards from methods info — iso_get_standards_info • Isoreader</title>
+<title>Make units explicit — iso_make_units_explicit • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,9 +32,9 @@
 
 
 
-<meta property="og:title" content="Aggregate standards from methods info — iso_get_standards_info" />
+<meta property="og:title" content="Make units explicit — iso_make_units_explicit" />
 
-<meta property="og:description" content="Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter with_ratios to exclude/include the ratios. This information is only available if the iso_files were read with parameter read_method_info=TRUE." />
+<meta property="og:description" content="This function is intended for data frames / tibbles only and makes the units of columns that have numbers with units explicit in the column name. It also strips the units attribute from those columns using iso_strip_units. The reverse function is iso_make_units_implicit." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -119,51 +119,73 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Aggregate standards from methods info</h1>
-    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/aggregate_data.R'><code>R/aggregate_data.R</code></a></small>
-    <div class="hidden name"><code>iso_get_standards_info.Rd</code></div>
+    <h1>Make units explicit</h1>
+    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/units.R'><code>R/units.R</code></a></small>
+    <div class="hidden name"><code>iso_make_units_explicit.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter <code>with_ratios</code> to exclude/include the ratios. This information is only available if the iso_files were read with parameter <code>read_method_info=TRUE</code>.</p>
+    <p>This function is intended for data frames / tibbles only and makes the units of columns that have numbers with units explicit in the column name. It also strips the units attribute from those columns using <code><a href='iso_strip_units.html'>iso_strip_units</a></code>. The reverse function is <code><a href='iso_make_units_implicit.html'>iso_make_units_implicit</a></code>.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_get_standards_info</span>(<span class='no'>iso_files</span>, <span class='kw'>with_ratios</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>include_file_info</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+    <pre class="usage"><span class='fu'>iso_make_units_explicit</span>(<span class='no'>df</span>, <span class='kw'>prefix</span> <span class='kw'>=</span> <span class='st'>" ["</span>, <span class='kw'>suffix</span> <span class='kw'>=</span> <span class='st'>"]"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>iso_files</th>
-      <td><p>collection of iso_file objects</p></td>
+      <th>df</th>
+      <td><p>the data frame in which to make the units explicit</p></td>
     </tr>
     <tr>
-      <th>with_ratios</th>
-      <td><p>whether to include ratios or just standard delta values</p></td>
+      <th>prefix</th>
+      <td><p>the prefix for the units</p></td>
     </tr>
     <tr>
-      <th>include_file_info</th>
-      <td><p>which file information to include (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>). Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns.</p></td>
-    </tr>
-    <tr>
-      <th>quiet</th>
-      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
+      <th>suffix</th>
+      <td><p>the suffix for the units</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other data retrieval functions: <code><a href='iso_get_bgrd_data.html'>iso_get_bgrd_data</a></code>,
-  <code><a href='iso_get_data.html'>iso_get_data</a></code>,
-  <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>,
-  <code><a href='iso_get_raw_data.html'>iso_get_raw_data</a></code>,
-  <code><a href='iso_get_resistors_info.html'>iso_get_resistors_info</a></code>,
-  <code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a></code></p></div>
+    <div class='dont-index'><p>Other functions for values with units: <code><a href='iso_double_with_units.html'>iso_double_with_units</a></code>,
+  <code><a href='iso_get_units.html'>iso_get_units</a></code>,
+  <code><a href='iso_is_double_with_units.html'>iso_is_double_with_units</a></code>,
+  <code><a href='iso_strip_units.html'>iso_strip_units</a></code></p></div>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># a data frame with implicit units</span>
+<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(<span class='kw'>peak</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>height</span> <span class='kw'>=</span> <span class='fu'><a href='iso_double_with_units.html'>iso_double_with_units</a></span>(<span class='fl'>1</span>:<span class='fl'>5</span>, <span class='st'>"V"</span>))
+<span class='no'>df</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 5 x 2</span><span>
+#&gt;    peak   height
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl[V]&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span>     1        1
+#&gt; </span><span style='color: #555555;'>2</span><span>     2        2
+#&gt; </span><span style='color: #555555;'>3</span><span>     3        3
+#&gt; </span><span style='color: #555555;'>4</span><span>     4        4
+#&gt; </span><span style='color: #555555;'>5</span><span>     5        5</div><div class='input'>
+<span class='co'># show with explicit units</span>
+<span class='fu'>iso_make_units_explicit</span>(<span class='no'>df</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 5 x 2</span><span>
+#&gt;    peak `height [V]`
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>        </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span>     1            1
+#&gt; </span><span style='color: #555555;'>2</span><span>     2            2
+#&gt; </span><span style='color: #555555;'>3</span><span>     3            3
+#&gt; </span><span style='color: #555555;'>4</span><span>     4            4
+#&gt; </span><span style='color: #555555;'>5</span><span>     5            5</div><div class='input'>
+<span class='co'># show with explicit units (custom prefix &amp; suffix)</span>
+<span class='fu'>iso_make_units_explicit</span>(<span class='no'>df</span>, <span class='kw'>prefix</span> <span class='kw'>=</span> <span class='st'>"."</span>, <span class='kw'>suffix</span> <span class='kw'>=</span> <span class='st'>""</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 5 x 2</span><span>
+#&gt;    peak height.V
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span>     1        1
+#&gt; </span><span style='color: #555555;'>2</span><span>     2        2
+#&gt; </span><span style='color: #555555;'>3</span><span>     3        3
+#&gt; </span><span style='color: #555555;'>4</span><span>     4        4
+#&gt; </span><span style='color: #555555;'>5</span><span>     5        5</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -171,7 +193,9 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#see-also">See also</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 Isoreader supports several continuous flow IRMS data formats. This vignette shows some of the functionality for continuous flow files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the [operations vignette](http://isoreader.isoverse.org/articles/operations.html). For details on downstream data processing and visualization, see the [isoprocessor package](https://isoprocessor.isoverse.org).
 
-```{r}
+```{r, message=FALSE}
 # load isoreader package
 library(isoreader)
 ```
@@ -29,9 +29,12 @@ library(isoreader)
 
 Reading continuous flow files is as simple as passing one or multiple file or folder paths to the `iso_read_continuous_flow()` function. If folders are provided, any files that have a recognized continuous flow file extensions within those folders will be processed (e.g. all `.dxf`, `.cf` and `.iarc`). Here we read several files that are bundled with the package as examples (and whose paths can be retrieved using the `iso_get_reader_example()` function). Note that some of the files (.cf, .dxf) are individual analysis files whereas others (.iarc) are collections of several files.
 
-```{r}
+```{r, message = FALSE}
 # all available examples
 iso_get_reader_examples() %>% rmarkdown::paged_table()
+```
+
+```{r}
 # read a few of the continuous flow examples
 iso_files <- 
   iso_read_continuous_flow(
@@ -263,7 +266,7 @@ iso_files %>%
 # caution however: it may require changes to the `select` parameter
 iso_files %>% 
   iso_get_vendor_data_table(
-    with_units = TRUE,
+    with_explicit_units = TRUE,
     # select peak number, ret. time, overall intensity and all H delta columns
     select = c(Nr., matches("^Rt"), matches("rIntensity All"), matches("^d \\d+H")),
     # include the Analysis number fron the file info and rename it to 'run'

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>moved to isoprocessor — iso_plot_raw_data • Isoreader</title>
+<title>Generate a numeric (double) value with units — iso_double_with_units • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,9 +32,9 @@
 
 
 
-<meta property="og:title" content="moved to isoprocessor — iso_plot_raw_data" />
+<meta property="og:title" content="Generate a numeric (double) value with units — iso_double_with_units" />
 
-<meta property="og:description" content="moved to isoprocessor" />
+<meta property="og:description" content="This function generates a number with units that work well within data frames and tibbles and implement safety checks on numerical operations with numbers that have different units. To retrieve the numerical value without units, use iso_strip_units (works for single variables and data frames/tibbles) or simply as.numeric (for single variables). To retrieve the unit use iso_get_units. Note that to correctly combine data frames / tibbles that have values with units in them, use vec_rbind instead of rbind or bind_rows. vec_rbind will combine columns that have values with units if they have the same unit and otherwise convert to a simple number with a warning. The other functions will either fail or reduce the unit values to plain numbers with a cryptic warning message about not preserving attributes." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -119,27 +119,38 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>moved to isoprocessor</h1>
-    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/plotting.R'><code>R/plotting.R</code></a></small>
-    <div class="hidden name"><code>iso_plot_raw_data.Rd</code></div>
+    <h1>Generate a numeric (double) value with units</h1>
+    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/units.R'><code>R/units.R</code></a></small>
+    <div class="hidden name"><code>iso_double_with_units.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>moved to isoprocessor</p>
+    <p>This function generates a number with units that work well within data frames and tibbles and implement safety checks on numerical operations with numbers that have different units. To retrieve the numerical value without units, use <code><a href='iso_strip_units.html'>iso_strip_units</a></code> (works for single variables and data frames/tibbles) or simply <code>as.numeric</code> (for single variables). To retrieve the unit use <code><a href='iso_get_units.html'>iso_get_units</a></code>. Note that to correctly combine data frames / tibbles that have values with units in them, use <a href='https://rdrr.io/pkg/vctrs/man/vec_bind.html'>vec_rbind</a> instead of <a href='https://rdrr.io/r/base/cbind.html'>rbind</a> or <a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a>. <a href='https://rdrr.io/pkg/vctrs/man/vec_bind.html'>vec_rbind</a> will combine columns that have values with units if they have the same unit and otherwise convert to a simple number with a warning. The other functions will either fail or reduce the unit values to plain numbers with a cryptic warning message about not preserving attributes.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_plot_raw_data</span>(<span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>iso_double_with_units</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(), <span class='kw'>units</span> <span class='kw'>=</span> <span class='st'>"undefined units"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>...</th>
-      <td><p>deprecated</p></td>
+      <th>x</th>
+      <td><p>the numeric values (single value or vector)</p></td>
+    </tr>
+    <tr>
+      <th>units</th>
+      <td><p>the units the numeric value is in, by default "undefined units" but this parameter should always be supplied when working with real data that has units</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other functions for values with units: <code><a href='iso_get_units.html'>iso_get_units</a></code>,
+  <code><a href='iso_is_double_with_units.html'>iso_is_double_with_units</a></code>,
+  <code><a href='iso_make_units_explicit.html'>iso_make_units_explicit</a></code>,
+  <code><a href='iso_strip_units.html'>iso_strip_units</a></code></p></div>
     
 
   </div>
@@ -147,7 +158,9 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>moved to isoprocessor — iso_plot_raw_data • Isoreader</title>
+<title>Strip units from variables — iso_strip_units • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,9 +32,9 @@
 
 
 
-<meta property="og:title" content="moved to isoprocessor — iso_plot_raw_data" />
+<meta property="og:title" content="Strip units from variables — iso_strip_units" />
 
-<meta property="og:description" content="moved to isoprocessor" />
+<meta property="og:description" content="This function converts numbers with units back into unitless numbers both for single variables and data frames / tibbles. For single variables, this is equivalent to the as.numeric function." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -119,27 +119,34 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>moved to isoprocessor</h1>
-    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/plotting.R'><code>R/plotting.R</code></a></small>
-    <div class="hidden name"><code>iso_plot_raw_data.Rd</code></div>
+    <h1>Strip units from variables</h1>
+    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/units.R'><code>R/units.R</code></a></small>
+    <div class="hidden name"><code>iso_strip_units.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>moved to isoprocessor</p>
+    <p>This function converts numbers with units back into unitless numbers both for single variables and data frames / tibbles. For single variables, this is equivalent to the <code>as.numeric</code> function.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_plot_raw_data</span>(<span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>iso_strip_units</span>(<span class='no'>x</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>...</th>
-      <td><p>deprecated</p></td>
+      <th>x</th>
+      <td><p>variable to strip units from (vector or data frame)</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other functions for values with units: <code><a href='iso_double_with_units.html'>iso_double_with_units</a></code>,
+  <code><a href='iso_get_units.html'>iso_get_units</a></code>,
+  <code><a href='iso_is_double_with_units.html'>iso_is_double_with_units</a></code>,
+  <code><a href='iso_make_units_explicit.html'>iso_make_units_explicit</a></code></p></div>
     
 
   </div>
@@ -147,7 +154,9 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>

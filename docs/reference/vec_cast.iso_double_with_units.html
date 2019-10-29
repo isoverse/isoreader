@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>moved to isoprocessor — iso_plot_raw_data • Isoreader</title>
+<title>vec_cast for iso_double_with_units — vec_cast.iso_double_with_units • Isoreader</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,9 +32,9 @@
 
 
 
-<meta property="og:title" content="moved to isoprocessor — iso_plot_raw_data" />
+<meta property="og:title" content="vec_cast for iso_double_with_units — vec_cast.iso_double_with_units" />
 
-<meta property="og:description" content="moved to isoprocessor" />
+<meta property="og:description" content="vec_cast for iso_double_with_units" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -119,25 +119,36 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>moved to isoprocessor</h1>
-    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/plotting.R'><code>R/plotting.R</code></a></small>
-    <div class="hidden name"><code>iso_plot_raw_data.Rd</code></div>
+    <h1>vec_cast for iso_double_with_units</h1>
+    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/units.R'><code>R/units.R</code></a></small>
+    <div class="hidden name"><code>vec_cast.iso_double_with_units.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>moved to isoprocessor</p>
+    <p>vec_cast for iso_double_with_units</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>iso_plot_raw_data</span>(<span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='co'># S3 method for iso_double_with_units</span>
+<span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>x</th>
+      <td><p>Vectors to cast.</p></td>
+    </tr>
+    <tr>
+      <th>to</th>
+      <td><p>Type to cast to. If <code>NULL</code>, <code>x</code> will be returned as is.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
-      <td><p>deprecated</p></td>
+      <td><p>For <code>vec_cast_common()</code>, vectors to cast. For
+<code>vec_cast()</code> and <code>vec_restore()</code>, these dots are only for future
+extensions and should be empty.</p></td>
     </tr>
     </table>
     
