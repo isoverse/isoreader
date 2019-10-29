@@ -26,12 +26,12 @@ test_that("Test that selecting/renaming file info works", {
   expect_silent(iso_select_file_info(iso_file1, quiet = TRUE))
   expect_silent(select(iso_file1)) 
   expect_message(iso_select_file_info(iso_file1, newer_info = new_info), "keeping 2 file info.*across 1 isofile")
-  expect_message(iso_select_file_info(iso_file1, newer_info = new_info), "new_info.*renamed.*newer_info.*in 1 file")
+  expect_message(iso_select_file_info(iso_file1, newer_info = new_info), "1 file.*new_info.*->.*newer_info")
   expect_message(iso_select_file_info(iso_files, newer_info = new_info2), "keeping 2 file info.*across 3 isofile")
-  expect_message(iso_select_file_info(iso_files, newer_info = new_info), "new_info.*renamed.*newer_info.*in 3 file")
+  expect_message(iso_select_file_info(iso_files, newer_info = new_info), "3 file.*new_info.*->.*newer_info")
   expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3), "keeping 3 file info.*across 3 isofile")
-  expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3), "new_info2.*renamed.*y.*in 1 file")
-  expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3), "new_info3.*renamed.*y.*in 1 file")
+  expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3), "1 file.*new_info2.*->.*y")
+  expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3), "1 file.*new_info3.*->.*y")
   
   # select outcomes
   expect_equal(
@@ -63,12 +63,12 @@ test_that("Test that selecting/renaming file info works", {
   expect_silent(iso_rename_file_info(iso_file1, quiet = TRUE))
   expect_silent(rename(iso_file1)) 
   expect_message(iso_rename_file_info(iso_file1, newer_info = new_info), "renaming 1 file info.*across 1 isofile")
-  expect_message(iso_rename_file_info(iso_file1, newer_info = new_info), "new_info.*to.*newer_info.*in 1 file")
+  expect_message(iso_rename_file_info(iso_file1, newer_info = new_info), "1 file.*new_info.*->.*newer_info")
   expect_message(iso_rename_file_info(iso_files, newer_info = new_info2), "renaming 1 file info.*across 3 isofile")
-  expect_message(iso_rename_file_info(iso_files, newer_info = new_info), "new_info.*to.*newer_info.*in 3 file")
+  expect_message(iso_rename_file_info(iso_files, newer_info = new_info), "3 file.*new_info.*->.*newer_info")
   expect_message(iso_rename_file_info(iso_files, y = new_info2, y = new_info3), "renaming 2 file info.*across 3 isofile")
-  expect_message(iso_rename_file_info(iso_files, y = new_info2, y = new_info3), "new_info2.*to.*y.*in 1 file")
-  expect_message(iso_rename_file_info(iso_files, y = new_info2, y = new_info3), "new_info3.*to.*y.*in 1 file")
+  expect_message(iso_rename_file_info(iso_files, y = new_info2, y = new_info3), "1 file.*new_info2.*->.*y")
+  expect_message(iso_rename_file_info(iso_files, y = new_info2, y = new_info3), "1 file.*new_info3.*->.*y")
   
   # rename outcomes
   expect_equal(
