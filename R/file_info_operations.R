@@ -578,24 +578,6 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
     }
   }
   
-  # NOTE: the column overwrite leads to more confusing behaviour than probably worth it 
-  # --> people should use iso_mutate_file_info instead for adding information to columns that already exist
-  
-  # # find new file info that can overwrite existing columns (because they are empty)
-  # find_overwrite_cols <- function(data, shared_cols) {
-  #   shared_cols[map_lgl(as.character(shared_cols), ~all(is.na(data[[.x]])))]
-  # }
-  # # cleanup new file info based on overwrite columns
-  # cleanup_new_file_info <- function(data, overwrite_cols) {
-  #   if (length(overwrite_cols) > 0) {
-  #     data <- data %>%
-  #       # FIXME: do this with a mutate to preserve column order
-  #       select(!!!map(as.character(overwrite_cols), ~quo(-!!.x))) %>%
-  #       rename(!!!setNames(names(overwrite_cols), as.character(overwrite_cols)))
-  #   }
-  #   return(select(data, -starts_with("..ni_temp_")))
-  # }
-  
   # generate joined data
   joined_data <- 
     new_data_rows %>% 
@@ -619,7 +601,7 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
   
   # make sure all data is present (even those not matched by any join)
   final_data <- final_data %>% 
-    bind_rows(filter(df, !..df_id %in% final_data$..df_id)) %>% 
+    vctrs::vec_rbind(filter(df, !..df_id %in% final_data$..df_id)) %>% 
     arrange(..df_id)
   
   # safety checks
