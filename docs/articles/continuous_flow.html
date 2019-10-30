@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.10.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.11</span>
       </span>
     </div>
 
@@ -82,7 +82,7 @@
     <div class="page-header toc-ignore">
       <h1>Continuous Flow Examples</h1>
             
-            <h4 class="date">2019-10-28</h4>
+            <h4 class="date">2019-10-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/continuous_flow.Rmd"><code>vignettes/continuous_flow.Rmd</code></a></small>
       <div class="hidden name"><code>continuous_flow.Rmd</code></div>
@@ -118,11 +118,21 @@
 <a class="sourceLine" id="cb3-7" data-line-number="7">    <span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"linearity_example.dxf"</span>)</a>
 <a class="sourceLine" id="cb3-8" data-line-number="8">  )</a>
 <a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; Info: preparing to read 4 data files (all will be cached)...</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; Info: reading file 'continuous_flow_example.cf' from cache...</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; Info: reading file 'continuous_flow_example.iarc' from cache...</span></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' from cache...</span></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; Info: reading file 'linearity_example.dxf' from cache...</span></a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; Info: finished reading 4 files in 0.26 secs</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; Info: reading file 'continuous_flow_example.cf' with '.cf' reader</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; Info: reading file 'continuous_flow_example.iarc' with '.iarc' reader</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt;       unpacking isoprime archieve file...</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt;       found 1 processing list(s) in .iarc: 'ProcessingList_1'</span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt;       found 2 method(s) in .iarc: 'Method_320', 'Method_77'</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt;       found 4 sample(s) in .iarc</span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt;       searching processing list 'ProcessingList_1' for gas configurati...</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt;       found configurations for 'CO', 'SO2', 'CO2', 'H2', 'N2'</span></a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt;       processing sample '6632_WSL-2 wood' (IRMS data '133.hdf5', '135....</span></a>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt;       processing sample '6605_USGS41' (IRMS data '40.hdf5', '43.hdf5')</span></a>
+<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt;       processing sample '6617_IAEA600' (IRMS data '80.hdf5', '82.hdf5')</span></a>
+<a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co">#&gt;       processing sample '6630_GlutamicAcid04' (IRMS data '124.hdf5', '...</span></a>
+<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' with '.dxf' reader</span></a>
+<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="co">#&gt; Info: reading file 'linearity_example.dxf' with '.dxf' reader</span></a>
+<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co">#&gt; Info: finished reading 4 files in 12.71 secs</span></a></code></pre></div>
 </div>
 <div id="file-summary" class="section level1">
 <h1 class="hasAnchor">
@@ -495,7 +505,7 @@
 <a class="sourceLine" id="cb27-7" data-line-number="7"><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></a>
 <a class="sourceLine" id="cb27-8" data-line-number="8"><span class="co">#&gt; Info: reading file 'iso_files_export.cf.rds' with '.cf.rds' reader</span></a>
 <a class="sourceLine" id="cb27-9" data-line-number="9"><span class="co">#&gt; Info: loaded data for 7 data files from R Data Storage - checking load...</span></a>
-<a class="sourceLine" id="cb27-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.07 secs</span></a>
+<a class="sourceLine" id="cb27-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.15 secs</span></a>
 <a class="sourceLine" id="cb27-11" data-line-number="11">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb27-12" data-line-number="12"><span class="co">#&gt; Info: aggregating data summary from 7 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
