@@ -4,7 +4,7 @@
 # isoreader <a href='http://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
-[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.0.7-orange.svg?style=flat-square)](/commits)
+[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.0.11-orange.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](http://isoreader.isoverse.org/)
 [![Build
 Status](https://travis-ci.org/isoverse/isoreader.svg?branch=master)](https://travis-ci.org/isoverse/isoreader)
@@ -58,8 +58,13 @@ devtools::install_github("isoverse/isoreader")
 
 ## Functionality
 
-Currently supported file
-types:
+Currently supported file types:
+
+    #> 
+    #> Attaching package: 'isoreader'
+    #> The following object is masked from 'package:stats':
+    #> 
+    #>     filter
 
 | extension | format                                     | type            |
 | :-------- | :----------------------------------------- | :-------------- |
