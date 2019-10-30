@@ -17,7 +17,7 @@ version <- as.character(packageVersion("isoreader"))
 # isoreader <a href='http://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
-[![Git_Hub_Version](https://img.shields.io/badge/GitHub-`r version`-orange.svg?style=flat-square)](/commits)
+[![Git_Hub_Version](https://img.shields.io/badge/GitHub-`r version`-orange.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](http://isoreader.isoverse.org/)
 [![Build Status](https://travis-ci.org/isoverse/isoreader.svg?branch=master)](https://travis-ci.org/isoverse/isoreader)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/isoverse/isoreader?branch=master&svg=true)](https://ci.appveyor.com/project/KopfLab/isoreader)
