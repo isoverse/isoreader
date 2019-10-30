@@ -778,6 +778,14 @@ unnest_aggregated_data_frame <- function(df) {
                           map2_int(!!sym(cols$column[i]), cols$is_missing[[i]], 
                                    ~if (.y) { NA_integer_ } else { as.integer(.x[1])}) %>% 
                           as_datetime(tz = Sys.timezone()))
+      else if (cols$identical_class[i] == "iso_double_with_units") 
+        df <- mutate(df, !!cols$column[i] := 
+                       do.call(
+                         vctrs::vec_c, 
+                         map2(!!sym(cols$column[i]), cols$is_missing[[i]], 
+                              ~if(.y) { NA } else {.x[1]})
+                       )
+        )
       else {
         glue("cannot unnest file info column {cols$column[i]}, encountered unusual class {cols$identical_class[i]}") %>% 
           warning(immediate. = TRUE, call. = FALSE)
