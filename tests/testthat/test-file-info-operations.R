@@ -151,6 +151,10 @@ test_that("Test that mutating file info works", {
   expect_equal(
     mutate(iso_files, new_info = as.character(new_info)) %>% iso_get_file_info(), 
     iso_files %>% iso_get_file_info() %>% mutate(new_info = as.character(new_info)))
+  expect_equal(
+    mutate(iso_files, new_info = iso_double_with_units(1:3, "s")) %>% iso_get_file_info(), 
+    iso_files %>% iso_get_file_info() %>% mutate(new_info = iso_double_with_units(1:3, "s")))
+  
   expect_true(
     iso_is_file_list(
       mutated_iso_files <- 
