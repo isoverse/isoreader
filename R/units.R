@@ -112,6 +112,7 @@ iso_make_units_explicit <- function(df, prefix = " [", suffix = "]") {
 #' # implicit units from custom prefix & suffix
 #' df <- tibble(peak = 1:5, height.V = 1:5)
 #' iso_make_units_implicit(df, prefix = ".", suffix = "") 
+#' @family functions for values with units
 #' @export
 iso_make_units_implicit <- function(df, prefix = " [", suffix = "]") {
   if(!is.data.frame(df)) stop("can only make units implicit in data frames", call. = FALSE)

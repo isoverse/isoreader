@@ -16,6 +16,7 @@ This function converts numbers with units back into unitless numbers both for si
 Other functions for values with units: \code{\link{iso_double_with_units}},
   \code{\link{iso_get_units}},
   \code{\link{iso_is_double_with_units}},
-  \code{\link{iso_make_units_explicit}}
+  \code{\link{iso_make_units_explicit}},
+  \code{\link{iso_make_units_implicit}}
 }
 \concept{functions for values with units}
