@@ -18,6 +18,7 @@ This function generates a number with units that work well within data frames an
 Other functions for values with units: \code{\link{iso_get_units}},
   \code{\link{iso_is_double_with_units}},
   \code{\link{iso_make_units_explicit}},
+  \code{\link{iso_make_units_implicit}},
   \code{\link{iso_strip_units}}
 }
 \concept{functions for values with units}
