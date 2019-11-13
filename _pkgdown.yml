@@ -43,16 +43,29 @@ reference:
 
 - title: Data wrangeling
   desc: >
-    These functions provide tools to easily filter read files and update file information. 
+    These functions provide tools to easily filter files and update file information. 
     The package also provides a few functions that expand on useful text processing provided by the readr package (summarized in `extract_data`).
   contents:
+  - iso_add_file_info
   - iso_rename_file_info
   - iso_select_file_info
   - iso_mutate_file_info
+  - iso_parse_file_info
   - iso_filter_files
   - extract_data
   - extract_substring
   - extract_word
+
+- title: Data units
+  desc: >
+    These functions provide tools to work easily with numbers that have units associated with them. 
+  contents:
+  - iso_double_with_units
+  - iso_is_double_with_units
+  - iso_get_units
+  - iso_strip_units
+  - iso_make_units_explicit
+  - iso_make_units_implicit
 
 - title: Aggregating the data
   desc: >
