@@ -5,8 +5,8 @@
 \title{Problem Functions Overview}
 \description{
 The following functions to check for and deal with problems are available.
-
-#' @details
+}
+\details{
 \itemize{
 \item \code{iso_get_problems} is a re-export of \code{\link[readr]{problems}}
 
