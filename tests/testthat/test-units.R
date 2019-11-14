@@ -26,12 +26,14 @@ test_that("test that units class works properly", {
   expect_is(vctrs::vec_ptype2(x, double()), "numeric")
   expect_is(vctrs::vec_ptype2(double(), x), "numeric")
   expect_is(vctrs::vec_cast(x, double()), "numeric")
+  expect_equal(vctrs::vec_cast(pi, x), iso_double_with_units(pi, "permil"))
   expect_equal(vctrs::vec_c(x, 4.2), c(as.numeric(x), 4.2))
   expect_equal(vctrs::vec_c(4.2, x), c(4.2, as.numeric(x)))
   # integer
   expect_is(vctrs::vec_ptype2(x, integer()), "numeric")
   expect_is(vctrs::vec_ptype2(integer(), x), "numeric")
   expect_is(vctrs::vec_cast(x, integer()), "integer")
+  expect_equal(vctrs::vec_cast(42L, x), iso_double_with_units(42, "permil"))
   expect_equal(vctrs::vec_c(x, 42L), c(as.numeric(x), 42.))
   expect_equal(vctrs::vec_c(42L, x), c(42., as.numeric(x)))
   # others
