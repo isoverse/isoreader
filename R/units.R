@@ -248,6 +248,20 @@ vec_ptype2.integer.iso_double_with_units <- function(x, y, ...) double()
 # no other vec_c combinations are formally allowed for now
 # since double with units + character/logical/factor should really not happen
 
+
+# cast from integer or double to double with units takes the units of the object being cast to
+#' @method vec_cast.iso_double_with_units double
+#' @export
+vec_cast.iso_double_with_units.double <- function(x, to, ...) {
+  iso_double_with_units(x, units = iso_get_units(to))
+}
+#' @method vec_cast.iso_double_with_units integer
+#' @export
+vec_cast.iso_double_with_units.integer <- function(x, to, ...) {
+  iso_double_with_units(x, units = iso_get_units(to))
+}
+
+
 # cast from double with units to any other format makes it behave like a double
 # this allows c() to work as if it was a double (but other vec_c combinations are not allowed)
 #' @importFrom vctrs vec_cast.double
