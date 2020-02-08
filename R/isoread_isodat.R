@@ -33,7 +33,7 @@ extract_isodat_resistors <- function(ds) {
   R_pre_re <- re_combine(re_or(re_text("/"), re_text("-"), size = 2), re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("x-000"))
   R_post_re <- re_combine(re_block("x-000"))
   
-  positions <- find_next_patterns(ds$binary, R_pre_re, re_direct(".{20}"), R_post_re)
+  positions <- find_next_patterns(ds$binary, R_pre_re, re_direct(".{20}", label = ".{20}"), R_post_re)
   resistors <- list()
   for (pos in positions) {
     ds$binary <- ds$binary %>% 
@@ -92,7 +92,7 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   # instrument reference name reg exps
   instrument_pre1 <- re_combine(re_block("etx"), re_or(re_text("/"), re_text(","), re_text("-")), re_block("fef-0"), re_block("fef-x")) ###
   instrument_pre2 <- re_combine(re_null(4), re_block("stx"), re_block("nl"), re_text("Instrument"))
-  instrument_post2 <- re_combine(re_null(4), re_direct("[^\\x00]{2}"), re_block("etx"))
+  instrument_post2 <- re_combine(re_null(4), re_direct("[^\\x00]{2}", label = "[^00]{2}"), re_block("etx"))
   
   # capture reference names
   capture_ref_names <- function(pos) {
@@ -146,7 +146,8 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
       move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>%  
       capture_n_data("delta_value", "double", 1) %>%  
       move_to_next_pattern(re_block("stx"), re_block("fef-x")) %>% 
-      capture_data("reference", "text", re_null(12), re_direct("([^\\x00]{2})?"), re_block("x-000")) 
+      capture_data("reference", "text", re_null(12), 
+                   re_direct("([^\\x00]{2})?", label = "[^00]{2}"), re_block("x-000")) 
     
     # return as data frame
     as_data_frame(
@@ -227,7 +228,10 @@ extract_isodat_sequence_line_info <- function(ds) {
   
   seq_line_info <- list()
   # note: fef-x block seems to be used in .dxf, nl in .did
-  re_end_of_info <- re_combine(re_null(4), re_or(re_combine(re_direct(".."), re_block("etx")), re_block("C-block")))
+  re_end_of_info <- re_combine(
+    re_null(4), 
+    re_or(re_combine(re_direct("..", label = ".."), 
+                     re_block("etx")), re_block("C-block")))
   while(!is.null(find_next_pattern(ds$binary, re_end_of_info))) {
     ds$binary <- ds$binary %>%
       move_to_next_pattern(re_text("/"), re_block("fef-x")) %>% 
@@ -251,30 +255,36 @@ extract_isodat_old_sequence_line_info <- function(ds) {
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot process sequence line info") %>% 
     move_to_C_block("CSequenceLineInformationGridStorage") %>% 
-    move_to_next_pattern(re_direct("\xff{12}"))
+    move_to_next_pattern(re_direct("\xff{12}", label = "ff{12}"))
   
   # block delimiter
   cap_pos <- find_next_pattern(
-    ds$binary, re_direct("\x86{3}\\x00\x96{3}\\x00\xCB{3}\\x00\xB2{3}\\x00\xD7{3}\\x00\xDD{3}\\x00")) 
+    ds$binary, 
+    re_direct("\x86{3}\\x00\x96{3}\\x00\xCB{3}\\x00\xB2{3}\\x00\xD7{3}\\x00\xDD{3}\\x00",
+              label = "86{3}0096{3}00cb{3}00b2{3}00d7{3}00dd{3}00")
+  ) 
   if (!is.null(cap_pos)) {
     ds$binary <- ds$binary %>% cap_at_pos(cap_pos)
   } else op_error(ds$binary, "cannot find binary delimiter for end of Sequence Information")
   
   # first line marker
-  line_re <- re_combine(re_block("x-000"), re_direct(".{2,8}"), re_block("fef-x"), re_text("Line"))
+  line_re <- re_combine(
+    re_block("x-000"), re_direct(".{2,8}", label = ".{2,8}"), 
+    re_block("fef-x"), re_text("Line"))
   ds$binary <- ds$binary %>% 
     move_to_next_pattern(line_re, move_to_end = FALSE) %>% 
     capture_n_data("info_marker", "raw", 4)
   
   # regular expressions
   re_entry_start <- re_control(ds$binary$data$info_marker)
-  label_pre_re <- re_combine(re_direct(".{2,8}", size = 8), re_block("fef-x"))
+  label_pre_re <- re_combine(re_direct(".{2,8}", size = 8, label = ".{2,8}"), re_block("fef-x"))
   # NOTE: all of these seem to be valid end blocks for text segements in this part of the file, any way to make this simpler?
-  label_post_re <- re_or(re_combine(re_null(7), re_direct("\xff\\x00{3}")), 
-                         re_combine(re_block("x-000"), re_block("fef-x")),
-                         re_combine(re_null(4), re_block("fef-x")),
-                         re_combine(re_null(4), re_block("x-000")),
-                         re_combine(re_null(4), re_direct("\xff{3}\\x00", size = 4)))
+  label_post_re <- re_or(
+    re_combine(re_null(7), re_direct("\xff\\x00{3}", label = "ff00{3}")), 
+    re_combine(re_block("x-000"), re_block("fef-x")),
+    re_combine(re_null(4), re_block("fef-x")),
+    re_combine(re_null(4), re_block("x-000")),
+    re_combine(re_null(4), re_direct("\xff{3}\\x00", size = 4, label = "ff{3}00")))
   
   # extract information
   positions <- find_next_patterns(ds$binary, re_entry_start)
@@ -407,8 +417,11 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   
   ### basic peak info
   # find basic peak information (Rts, amplitude, bg) - this information is stored separatedly from the rest of the table
-  rt_pre_re <- re_combine(re_null(18), re_direct("(\\x00|[\x01-\x1f])\\x00{3}", size = 4), re_block("x-000"))
-  rt_re <- re_combine(rt_pre_re, re_direct("..\\x00{2}"), re_block("x-000")) 
+  rt_pre_re <- re_combine(
+    re_null(18), 
+    re_direct("(\\x00|[\x01-\x1f])\\x00{3}", size = 4, label = "00|[01-1f]00{3}"), 
+    re_block("x-000"))
+  rt_re <- re_combine(rt_pre_re, re_direct("..\\x00{2}", label = "..00{2}"), re_block("x-000")) 
   positions <- find_next_patterns(ds$binary, rt_re)
   rts <- list()
   for (pos in positions) {
@@ -589,8 +602,10 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
     # capture data
     if (columns[[col]]$type == "text") {
       ds$binary <-
-        ds$binary %>% move_to_next_pattern(re_block("x-000"), re_direct("\\x00{4,6}"), re_block("x-000"), re_block("x-000")) %>%
-        capture_data("value", "text", re_null(2), re_direct(".."), re_block("etx"))
+        ds$binary %>% move_to_next_pattern(
+          re_block("x-000"), re_direct("\\x00{4,6}", label = "00{4,6}"), 
+          re_block("x-000"), re_block("x-000")) %>%
+        capture_data("value", "text", re_null(2), re_direct("..", label = ".."), re_block("etx"))
     } else {
       ds$binary <- 
         ds$binary %>% move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>% 
@@ -757,8 +772,10 @@ extract_isodat_main_vendor_data_table_cell_values <- function(ds, cells) {
     bin <- ds$binary %>% move_to_pos(pos)
     if (type == "text") {
       bin <-
-        bin %>% move_to_next_pattern(re_block("x-000"), re_direct("\\x00{4,6}"), re_block("x-000"), re_block("x-000")) %>%
-        capture_data("value", "text", re_null(2), re_direct(".."), re_block("etx"))
+        bin %>% move_to_next_pattern(
+          re_block("x-000"), re_direct("\\x00{4,6}", label = "00{4,6}"), 
+          re_block("x-000"), re_block("x-000")) %>%
+        capture_data("value", "text", re_null(2), re_direct("..", label = ".."), re_block("etx"))
     } else {
       bin <- 
         bin %>% move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>% 
