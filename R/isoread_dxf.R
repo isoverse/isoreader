@@ -47,25 +47,23 @@ iso_read_dxf <- function(ds, options = list()) {
 # extract voltage data in dxf file
 extract_dxf_raw_voltage_data <- function(ds) {
   
-  # move to beginning of intensity information (the larger block coming 
-  # afterwards is not always present so not used as max pos here)
+  # search gas configurations
+  # (the larger block coming afterwards is not always present so not used as max pos here)
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot identify measured masses") %>%  
-    move_to_C_block_range("CEvalDataItemTransferPart", "CBinary") 
+    move_to_C_block_range("CEvalDataIntTransferPart", "CBinary") 
   
+  # find all gas configurations
   configs <- list()
-  gas_config_re <- re_text("Overwritten")
-  config_positions <- ds$binary %>% find_next_patterns(gas_config_re)
-  if (length(config_positions) == 0) stop("could not find gas configurations", call. = FALSE)
+  gas_config_name_re <- re_combine(re_block("fef-x"), re_block("alpha"), re_block("fef-0"), re_block("fef-x"))
+  config_positions <- ds$binary %>% find_next_patterns(gas_config_name_re)
   config_caps <- c(config_positions[-1], ds$binary$max_pos)
+  if (length(config_positions) == 0) return(list())
   
   for(i in 1:length(config_positions)) {
-
     # find name of gas configuration
     ds$binary <- ds$binary %>% 
-      move_to_pos(config_positions[i] + gas_config_re$size) %>% 
-      move_to_next_pattern(re_block("etx"), re_text("/"), re_block("fef-0")) %>% 
-      move_to_next_pattern(re_block("fef-x"), re_block("text"), re_block("fef-0"), re_block("fef-x"), move_to_end = FALSE) %>% 
+      move_to_pos(config_positions[i]) %>% 
       move_to_next_pattern(re_block("fef-x"), max_gap = 0) %>% 
       capture_data("gas", "text", re_block("fef-0"), re_block("fef-x")) 
     
@@ -77,7 +75,10 @@ extract_dxf_raw_voltage_data <- function(ds) {
       # new config
       configs[[ds$binary$data$gas]] <- list(pos = config_positions[i], cap = config_caps[i], masses = c())
     }
-  }  
+  }
+  
+  # safety check
+  if (length(configs) == 0) stop("could not find gas configurations", call. = FALSE)
   
   # find all masses
   for (config in names(configs)) {
