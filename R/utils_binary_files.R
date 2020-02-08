@@ -66,7 +66,8 @@ skip_pos <- function(bfile, nbyte) {
 }
 
 # move to position
-move_to_pos <- function(bfile, pos) {
+move_to_pos <- function(bfile, pos, reset_cap = FALSE) {
+  if (reset_cap) bfile$max_pos <- length(bfile$raw)
   if (pos > bfile$max_pos) {
     op_error(
       bfile, sprintf("cannot move to position %.0f as it exceeds position max set at %.0f", 
@@ -472,6 +473,8 @@ get_ctrl_blocks_config <- function() {
     `C-block`  = list(size = 20L, auto = FALSE, regexp = "\xff\xff(\\x00|[\x01-\x0f])\\x00.\\x00\x43[\x20-\x7e]+"),
     
     # text block (not auto processed) - note that this does NOT include non standard characters
+    latin   = list(size = 20L, auto = FALSE, regexp = "([\x41-\x5a\x61-\x7a]\\x00)+"), #a-zA-Z
+    alpha   = list(size = 20L, auto = FALSE, regexp = "([\x41-\x5a\x61-\x7a\x30-\x39]\\x00)+"), #a-zA-Z0-9
     text    = list(size = 20L, auto = FALSE, regexp = "([\x20-\x7e]\\x00)+"),
     `text0` = list(size = 20L, auto = FALSE, regexp = "([\x20-\x7e]\\x00)*"), # allows no text
     permil  = list(size = 2L, auto = FALSE, regexp = "\x30\x20")
