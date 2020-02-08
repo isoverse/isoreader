@@ -2,53 +2,11 @@
 
 # rename & select utils ========
 
-# internal function for rename and select
-select_rename_isofile <- function(isofile, func, quos) {
-  
-  # global vars
-  to <- changed <- NULL
-  
-  old_vars <- names(isofile$file_info)
-  new_vars <- func(old_vars, !!!quos, .strict = FALSE)
-  # make sure file_id is always included
-  if (!"file_id" %in% new_vars)
-    new_vars <- c(c(file_id = "file_id"), new_vars)
-  
-  # change vars data frame
-  vars <- tibble(
-    file = isofile$file_info$file_id,
-    from  = as.character(new_vars),
-    to = names(new_vars),
-    changed = !to %in% old_vars
-  )
-  
-  # check on file_id rename
-  check_vars <- "file_id"
+# check that specific columns have not been renamed
+check_forbidden_renames <- function(vars, check_vars) {
   if (any(prob <- check_vars %in% filter(vars, changed)$from)) {
     glue::glue("renaming the '{paste(check_vars[prob], collapse = \"', '\")}' column ",
-               "may lead to unpredictable behaviour and is therefore not allowed, sorry") %>% 
-      stop(call. = FALSE)
-  }
-  isofile$file_info <- dplyr::select(isofile$file_info, new_vars)
-  return(list(isofile = isofile, vars = vars))
-}
-
-# internal function to check for rename/select duplicates
-check_names_changes <- function(vars) {
-  
-  # global vars
-  to <- from <- NULL
-  
-  reps <- vars %>% group_by(file, to) %>% 
-    summarize(n = n(), from = paste(from, collapse = "', '")) %>% 
-    ungroup() %>% 
-    filter(n > 1)
-  if (nrow(reps)> 0) {
-    labels <- reps %>% select(to, from) %>% unique() %>% 
-      mutate(label = paste0(" - '", to, "' <= '", from, "'")) %>% 
-      { paste(.$label, collapse = "\n") }
-    glue::glue("the following column(s) would be assigned to the same name in at ",
-               "least 1 file leading to an unresolvable naming conflict:\n{labels}") %>% 
+               "may lead to unpredictable behaviour and is therefore not allowed, sorry") %>%
       stop(call. = FALSE)
   }
 }
@@ -85,16 +43,33 @@ iso_select_file_info.iso_file_list <- function(iso_files, ..., quiet = default(q
   changed <- to <- from <- NULL
   
   # variables for all files
-  select_quos <- quos(...)
+  select_expr <- rlang::expr(c(...))
   
-  # select
-  isofiles_select <- map(iso_files, select_rename_isofile, tidyselect::vars_select, select_quos)
+  # run select
+  isofiles_select <- map(iso_files, function(isofile) {
+    # select positions (always include file_id)
+    file_id_pos <- tidyselect::eval_select(rlang::expr(file_id), data = isofile$file_info)
+    pos <- tidyselect::eval_select(select_expr, data = isofile$file_info, strict = FALSE)
+    if (!file_id_pos %in% pos) pos <- c(file_id_pos, pos)
+    # selected variables
+    vars <- tibble(
+      file_id = isofile$file_info$file_id,
+      from  = names(isofile$file_info)[pos],
+      to = names(pos),
+      changed = from != to
+    )
+    # make selection
+    isofile$file_info <- rlang::set_names(isofile$file_info[pos], names(pos))
+    #return both
+    return(list(isofile = isofile, vars = vars))
+  }
+  )
   
-  # info summary
-  all_vars <- map2(names(isofiles_select), isofiles_select, ~mutate(.y$vars, file_id = .x)) %>% bind_rows()
+  # variable summary
+  all_vars <- map(isofiles_select, "vars") %>% bind_rows()
   
-  # check for duplicates
-  check_names_changes(all_vars)
+  # safety check on file ID rename
+  check_forbidden_renames(all_vars, "file_id")
   
   # summary information
   if (!quiet) {
@@ -165,16 +140,31 @@ iso_rename_file_info.iso_file_list <- function(iso_files, ..., quiet = default(q
   changed <- to <- from <- NULL
   
   # variables for all files
-  rename_quos <- quos(...)
+  rename_expr <- rlang::expr(c(...))
   
-  # rename
-  isofiles_rename <- map(iso_files, select_rename_isofile, tidyselect::vars_rename, rename_quos)
+  # run select
+  isofiles_rename <- map(iso_files, function(isofile) {
+    # rename positions
+    pos <- tidyselect::eval_rename(rename_expr, data = isofile$file_info, strict = FALSE)
+    # selected variables
+    vars <- tibble(
+      file_id = isofile$file_info$file_id,
+      from  = names(isofile$file_info)[pos],
+      to = names(pos),
+      changed = from != to
+    )
+    # make rename
+    names(isofile$file_info)[pos] <- names(pos)
+    #return both
+    return(list(isofile = isofile, vars = vars))
+  }
+  )
   
-  # info summary
-  all_vars <- map2(names(isofiles_rename), isofiles_rename, ~mutate(.y$vars, file_id = .x)) %>% bind_rows()
+  # variable summary
+  all_vars <- map(isofiles_rename, "vars") %>% bind_rows()
   
-  # check for duplicates
-  check_names_changes(all_vars)
+  # safety check on file ID rename
+  check_forbidden_renames(all_vars, "file_id")
   
   # summary information
   if (!quiet) {
