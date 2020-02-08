@@ -103,94 +103,104 @@ extract_dxf_raw_voltage_data <- function(ds) {
   ds$binary <- ds$binary %>% 
     move_to_C_block_range("CPeakFindParameter", "CResultArray") 
   smoothing_positions <- find_next_patterns(ds$binary, re_text("Smoothing"))
-  peak_center_positions <- find_next_patterns(ds$binary, re_text("Peak Center"))
-  gas_name_end_re <- re_combine(re_null(4), re_direct("[\x01-\xff]"))
+  gas_name_end_re <- re_combine(re_null(4), re_direct("[\x01-\xff]", label = "x01-xff"))
   gas_name_re <- re_combine(re_block("fef-x"), re_block("text0"), gas_name_end_re)
   
   for (pos in smoothing_positions) {
-    gas_names <- ds$binary %>% 
-      move_to_pos(pos) %>% 
-      { cap_at_pos(., find_next_pattern(., re_text("Peak Center"))) } %>% 
-      move_to_next_pattern(gas_name_re, move_to_end = FALSE) %>% 
+    ds$binary <- ds$binary %>%
+      move_to_pos(pos, reset_cap = TRUE) %>%
+      { cap_at_pos(., find_next_pattern(., re_text("Peak Center"))) } %>%
+      move_to_next_pattern(gas_name_re, move_to_end = FALSE) %>%
       skip_pos(4) %>% # skip the fef-x at the beginning
-      capture_data("gas_name1", "text", gas_name_end_re, data_bytes_max = 50) %>% 
-      move_to_next_pattern(gas_name_re, move_to_end = FALSE) %>% 
-      skip_pos(4) %>% # skip the fef-x at the beginning
-      capture_data("gas_name2", "text", gas_name_end_re, data_bytes_max = 50) %>% 
-      { .$data[c("gas_name1", "gas_name2")] }
+      capture_data("gas_name1", "text", gas_name_end_re, data_bytes_max = 50)
+    gas_name1 <- ds$binary$data$gas_name1
     
-    # update config with alternative name
-    if (gas_names$gas_name2 != "" && gas_names$gas_name1 != gas_names$gas_name2 && 
-        any(config_idx <- gas_names$gas_name1 == names(configs))) {
-      if (default(debug)) 
-        glue::glue(
-          "renaming config '{gas_names$gas_name1}' to '{gas_names$gas_name2}' ",
-          "(non-standard config name)") %>% 
-        log_message()
-      names(configs)[config_idx] <- gas_names$gas_name2
+    # gas name 2
+    next_gas_name <- find_next_pattern(ds$binary, gas_name_re)
+    if (!is.null(next_gas_name) && next_gas_name < ds$binary$max_pos) {
+      ds$binary <- ds$binary %>% 
+        move_to_next_pattern(gas_name_re, move_to_end = FALSE) %>%
+        skip_pos(4) %>% # skip the fef-x at the beginning
+        capture_data("gas_name2", "text", gas_name_end_re, data_bytes_max = 50)
+      gas_name2 <-  ds$binary$data$gas_name2
+      
+      # update config with alternative name
+      if (gas_name2 != "" && gas_name1 != gas_name2 &&
+          any(config_idx <- gas_name1 == names(configs))) {
+        if (default(debug))
+          glue::glue(
+            "renaming config '{gas_name1}' to '{gas_name2}' ",
+            "(non-standard config name)") %>%
+          log_message()
+        names(configs)[config_idx] <- gas_name2
+      }
     }
   }
-  
+
   # move to beginning of original data to get voltages
-  ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot recover raw voltages") %>% 
-    move_to_C_block_range("CAllMoleculeWeights", "CMethod") %>% 
-    move_to_next_C_block("CStringArray") %>% 
+  ds$binary <- ds$binary %>%
+    set_binary_file_error_prefix("cannot recover raw voltages") %>%
+    move_to_C_block_range("CAllMoleculeWeights", "CMethod") %>%
+    move_to_next_C_block("CStringArray") %>%
     move_to_next_pattern(re_text("OrigDataBlock"), re_null(4), re_block("stx"))
-  
+
   # find all data sets
-  data_start_re <- re_combine(re_block("fef-0"), re_null(4), re_block("x-000"), re_block("x-000"), re_direct("..", size = 2), re_block("x-000"))
-  data_end_re <- re_combine(re_direct(".{4}"), re_null(4), re_block("fef-0"), re_block("stx"))
+  data_start_re <- re_combine(
+    re_block("fef-0"), re_null(4), re_block("x-000"), re_block("x-000"), 
+    re_direct("..", size = 2, label = ".."), re_block("x-000"))
+  data_end_re <- re_combine(
+    re_direct(".{4}", label = ".{4}"), re_null(4), 
+    re_block("fef-0"), re_block("stx"))
   gas_config_re <- re_combine(re_block("fef-x"), re_block("text"), re_block("fef-0"))
   voltages <- data_frame()
   positions <- find_next_patterns(ds$binary, data_start_re)
-  
+
   for (pos in positions) {
     # move to beginning of data
     ds$binary <- ds$binary %>% move_to_pos(pos + data_start_re$size + 4L) # 4 byte gap before data
     start_pos <- ds$binary$pos
-    
+
     # find gas configuration name
-    gas_data_block_end <- ds$binary %>% 
-      move_to_next_pattern(data_end_re) %>% 
-      move_to_next_pattern(gas_config_re, move_to_end = FALSE, max_gap = 20) %>% 
+    gas_data_block_end <- ds$binary %>%
+      move_to_next_pattern(data_end_re) %>%
+      move_to_next_pattern(gas_config_re, move_to_end = FALSE, max_gap = 20) %>%
       skip_pos(4) %>% # skip the fef-x at the beginning
-      capture_data("gas", "text", re_block("fef-0"), data_bytes_max = 50) %>% 
+      capture_data("gas", "text", re_block("fef-0"), data_bytes_max = 50) %>%
       { list(gas = .$data$gas, pos = .$pos) }
     gas_config <- gas_data_block_end$gas
-    
+
     # debug message
-    if (default(debug)) 
-      glue::glue("processing data for '{gas_config}' ({start_pos}-{gas_data_block_end$pos})") %>% 
+    if (default(debug))
+      glue::glue("processing data for '{gas_config}' ({start_pos}-{gas_data_block_end$pos})") %>%
       log_message()
-    
+
     # find gas configuration
-    if (!gas_config %in% names(configs)) 
+    if (!gas_config %in% names(configs))
       glue::glue("could not find gas configuration for gas '{gas_config}', ",
-                 "available: '{paste(names(configs), collapse = \"', '\")}'") %>% 
+                 "available: '{paste(names(configs), collapse = \"', '\")}'") %>%
       stop(call. = FALSE)
-    
+
     # find gas configuration masses
     masses <- configs[[gas_config]]$masses
     if (is.null(masses)) stop("could not identify measured ions for gas '", gas_config, "'", call. = FALSE)
     masses_columns <- str_c("v", masses, ".mV")
-    
+
     # save voltage data
-    ds$binary <- ds$binary %>% 
+    ds$binary <- ds$binary %>%
       capture_data("voltages", c("float", rep("double", length(masses))), data_end_re)
-    voltages <- bind_rows(voltages, 
-                          ds$binary$data$voltages %>% 
+    voltages <- bind_rows(voltages,
+                          ds$binary$data$voltages %>%
                             as_data_frame() %>% setNames(c("time.s", masses_columns)))
   }
-  
+
   # check for data
   if (nrow(voltages) == 0) stop("could not find raw voltage data", call. = FALSE)
-  
+
   # add time point column
   tp <- time.s <- NULL # global vars
   ds$raw_data <-
-    voltages %>% arrange(time.s) %>% 
-    mutate(tp = 1:n()) %>% 
+    voltages %>% arrange(time.s) %>%
+    mutate(tp = 1:n()) %>%
     select(tp, time.s, everything())
  
   return(ds) 

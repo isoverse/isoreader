@@ -64,12 +64,16 @@ extract_cf_raw_voltage_data <- function(ds) {
   gas_config <- ds$binary$data$gas
   
   # data start
-  data_start_re <- re_combine(re_block("stx"), re_block("fef-0"), re_block("stx"), re_direct(".{4}", size = 4))
+  data_start_re <- re_combine(
+    re_block("stx"), re_block("fef-0"), re_block("stx"), 
+    re_direct(".{4}", size = 4, label = ".{4}"))
   ds$binary <- ds$binary %>%  move_to_next_C_block("CBinary") %>% move_to_next_pattern(data_start_re, max_gap = 0)
   data_start <- ds$binary$pos
   
   # find all masses at end of data
-  data_end_re <- re_combine(re_direct(".{2}", size = 2), re_block("stx"), re_block("fef-0"), re_block("stx"), re_null(4))
+  data_end_re <- re_combine(
+    re_direct(".{2}", size = 2, label = ".{2}"), re_block("stx"), 
+    re_block("fef-0"), re_block("stx"), re_null(4))
   mass_re <- re_combine(re_block("fef-x"), re_text("Mass "))
   mass_positions <- ds$binary %>% move_to_next_pattern(data_end_re) %>% find_next_patterns(mass_re)
   
