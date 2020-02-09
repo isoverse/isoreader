@@ -367,12 +367,18 @@ iso_parse_file_info.iso_file_list <- function(iso_files, number = c(), double = 
   # determine variables
   vars <-
     list(
-      number = tidyselect::vars_select(names(file_info), !!enquo(number)),
-      double = tidyselect::vars_select(names(file_info), !!enquo(double)),
-      integer = tidyselect::vars_select(names(file_info), !!enquo(integer)),
-      logical = tidyselect::vars_select(names(file_info), !!enquo(logical)),
-      datetime = tidyselect::vars_select(names(file_info), !!enquo(datetime)),
-      text = tidyselect::vars_select(names(file_info), !!enquo(text))
+      number = 
+        names(file_info)[tidyselect::eval_select(rlang::enexpr(number), file_info)],
+      double = 
+        names(file_info)[tidyselect::eval_select(rlang::enexpr(double), file_info)],
+      integer = 
+        names(file_info)[tidyselect::eval_select(rlang::enexpr(integer), file_info)],
+      logical = 
+        names(file_info)[tidyselect::eval_select(rlang::enexpr(logical), file_info)],
+      datetime = 
+        names(file_info)[tidyselect::eval_select(rlang::enexpr(datetime), file_info)],
+      text = 
+        names(file_info)[tidyselect::eval_select(rlang::enexpr(text), file_info)]
     ) %>% 
     tibble::enframe(name = "parse", value = "column") %>% 
     tidyr::unnest(column) %>% 

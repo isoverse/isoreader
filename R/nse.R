@@ -64,14 +64,23 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
     glue("parameter {df_name} is not a data frame") %>% stop(call. = FALSE)
   
   # use a safe version of vars_select to get all the column names
-  safe_vars_select <- safely(vars_select)
+  # note: uses tidyselect:eval_select because vars_select is in questioning stage
+  safe_vars_select <- function(col_quo, ...) {
+    safe_result <- safely(tidyselect::eval_select)(rlang::expr(c(!!col_quo)), df, ...)
+    if (is.null(safe_result$error)) {
+      safe_result$result <- rlang::set_names(names(df)[safe_result$result], names(safe_result$result))
+    }
+    return(safe_result)
+  }
+  
+  # get all quos
   lquos <- list(...)
   cols_quos <- quos(!!!lquos) %>% 
     # make sure to evaluate calls to default
     resolve_defaults() %>% 
     # make sure that the expressions are locally evaluated
     map(~quo(!!rlang::quo_get_expr(.x)))
-  cols_results <- map(cols_quos, ~safe_vars_select(names(df), !!.x))
+  cols_results <- map(cols_quos, safe_vars_select)
   ok <- map_lgl(cols_results, ~is.null(.x$error))
   
   # summarize if there were any errors
@@ -94,7 +103,7 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
     } else {
       # just a warning and find the columns omitting those missing
       warning(err_msg, immediate. = TRUE, call. = FALSE)
-      cols_results <- map(cols_quos, ~safe_vars_select(names(df), !!.x, .strict = FALSE))
+      cols_results <- map(cols_quos, safe_vars_select, strict = FALSE)
     }
   }
   
