@@ -307,6 +307,14 @@ test_that("Test that file info addition works", {
     "'file_id'\\+'y' join.*0/1 new info.*matched 0" 
   )
   
+  # sequential join including a logical column join
+  iso_add_file_info(
+    mutate(file_info, y = rep(c(TRUE, FALSE), each = 3)), 
+    mutate(new_info, y = c(TRUE, FALSE, NA, NA, NA)), 
+    by1 = "y", 
+    by2 = "file_id"
+  )
+  
   # test with isofiles (not just in data frame)
   template <- make_cf_data_structure("NA")
   template$read_options$file_info <- TRUE

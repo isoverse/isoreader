@@ -589,7 +589,12 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
     )
   
   # select data based on priority
-  final_data <- joined_data %>% select(..priority, data) %>% unnest(data) %>% 
+  final_data <-
+    joined_data %>% 
+    select(..priority, data) %>% 
+    # avoid problems with the temp columns during unnest
+    mutate(data = map(data, ~select(.x, -starts_with("..ni_temp_")))) %>% 
+    unnest(data) %>% 
     select(-starts_with("..ni_temp_")) %>% 
     group_by(..df_id) %>% 
     filter(..priority == max(..priority)) %>% 
