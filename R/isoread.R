@@ -10,25 +10,26 @@
 #' @param extension the file extension (e.g. \code{.dxf}) of the data file. Must be unique otherwise different files can not automatically be matched with the appropriate file reader based on their extension.
 #' @param func the name of the function that should be used a filter reader. All file reader functions must accept a data structure argument as the first argument and return the same data structure with added data.
 #' @param description what is this file type about?
+#' @param software what is the software program that creates this filetype?
 #' @param cacheable whether this file type is cacheable. If \code{TRUE} (the default), user requests to cache the file will be honored. If \code{FALSE}, this file type will never be cached no matter what the user requests.
 #' @param overwrite whether to overwrite an existing file reader for the same extension
 #' @param env the environment where to find the function, by default this will be determined automatically and will throw an error if there is any ambiguity (e.g. the same function name in multiple packages) in which case it should be set manually
 #' @family file_types
 #' @export
 iso_register_dual_inlet_file_reader <- function(
-  extension, func, description = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
-  register_file_reader("dual inlet", "iso_read_dual_inlet", extension, func, description, cacheable, overwrite, env)
+  extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
+  register_file_reader("dual inlet", "iso_read_dual_inlet", extension, func, description, software, cacheable, overwrite, env)
 }
 
 #' @details \code{iso_register_continuous_flow_file_reader}: use this function to register file readers for continuous flow files.
 #' @rdname file_readers
 #' @family file_types
 iso_register_continuous_flow_file_reader <- function(
-  extension, func, description = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
-  register_file_reader("continuous flow", "iso_read_continuous_flow", extension, func, description, cacheable, overwrite, env)
+  extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
+  register_file_reader("continuous flow", "iso_read_continuous_flow", extension, func, description, software, cacheable, overwrite, env)
 }
 
-register_file_reader <- function(type, call, extension, func, description, cacheable, overwrite, env) {
+register_file_reader <- function(type, call, extension, func, description, software, cacheable, overwrite, env) {
 
   if (!is.character(func))
     stop("please provide the function name rather than the function itself to register it",
@@ -50,7 +51,7 @@ register_file_reader <- function(type, call, extension, func, description, cache
     dplyr::data_frame(
       type = type, call = call, extension = extension,
       func = func, cacheable = cacheable, description = description,
-      env = env
+      software = software, env = env
     )
   
   if (!is.null(frs) && extension %in% frs$extension) {
@@ -89,7 +90,7 @@ find_func <- function(func) {
 #' @family file_types
 #' @export
 iso_get_supported_file_types <- function() {
-  dplyr::select(default("file_readers"), "extension", "description", "type", "call")
+  dplyr::select(default("file_readers"), "extension", "software", "description", "type", "call")
 }
 
 get_supported_di_files <- function() {

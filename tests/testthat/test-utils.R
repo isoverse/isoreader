@@ -307,7 +307,7 @@ test_that("test that get support file types are listed", {
   expect_true(is.data.frame(iso_get_supported_file_types()))
   expect_equal(
     iso_get_supported_file_types() %>% names(),
-    c("extension", "description", "type", "call")
+    c("extension", "software", "description", "type", "call")
   )
 })
 
