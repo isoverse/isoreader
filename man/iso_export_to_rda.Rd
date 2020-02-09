@@ -20,8 +20,9 @@ returns the iso_files object invisibly for use in pipelines
 This function is deprecated. Please use \code{\link{iso_save}} instead to save collections of isofiles.
 }
 \seealso{
-Other export functions: \code{\link{iso_export_to_excel}},
-  \code{\link{iso_export_to_feather}},
-  \code{\link{iso_save}}
+Other export functions: 
+\code{\link{iso_export_to_excel}()},
+\code{\link{iso_export_to_feather}()},
+\code{\link{iso_save}()}
 }
 \concept{export functions}

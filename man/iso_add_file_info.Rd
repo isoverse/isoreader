@@ -6,11 +6,9 @@
 \alias{iso_add_file_info}
 \title{Add additional file information}
 \usage{
-\method{iso_add_file_info}{iso_file_list}(iso_files, new_file_info, ...,
-  quiet = default(quiet))
+\method{iso_add_file_info}{iso_file_list}(iso_files, new_file_info, ..., quiet = default(quiet))
 
-\method{iso_add_file_info}{data.frame}(df, new_file_info, ...,
-  quiet = default(quiet))
+\method{iso_add_file_info}{data.frame}(df, new_file_info, ..., quiet = default(quiet))
 
 iso_add_file_info(...)
 }
@@ -32,15 +30,16 @@ the original iso files or data frame with the new file info added in.
 This function makes it easy to add additional file info (\code{\link{iso_get_file_info}}) to isofile objects and data frames by a single \code{\link[dplyr]{left_join}} or multiple sequential \code{\link[dplyr]{left_join}} operations. The function provides a detailed summary of the information that was added unless \code{quiet = TRUE}. Note that one-to-many joins are not permitted (and will fail with an informative error) since this would lead to likely unintended data duplication in the isofiles. However, one-to-one and many-to-one joins are fully supported and should cover all needed use cases for this function. Also note that for each join, only the \code{new_file_info} rows that have defined non-NA, non-empty ("") values in all \code{join_by} columns will be considered for the join and that only \code{new_file_info} columns that do NOT already exist in ANY file information will be added. For changing the values of existing file information, please use \code{\link{iso_mutate_file_info}} instead.
 }
 \details{
-Single \code{\link[dplyr]{left_join}}: this is the most common use of this function and basically a simple left join operation (with some additional safety checks). Specify a single \code{join_by} in the \code{...}, such as e.g. \code{c("file_id")} to add additional file information joining by the \code{file_id} column.
+Single \code{\link[dplyr]{left_join}}: this is the most common use of this function and basically a simple left join operation (with some additional safety checks). Specify a single \code{join_by} in the \code{...}, such as e.g. \code{c("file_id")} to add additional file information joining by the \code{file_id} column. 
 
 Multiple sequential \code{\link[dplyr]{left_join}}: this use case is for applying a set of increasingly more specific \code{join_by} rules. For example, \code{... = c("Identifier 1", "Identifier 2"), c("file_id")} would serve to first add one set of new file information for all isofiles based on their \code{Identifier 1} and \code{Identifier 2} columns and then overwrite the new information with more specific details for a subset of isofiles based on their \code{file_id} column, all based on a single overview \code{new_file_info} data frame. Basically, each set of \code{join_by} conditions specified in \code{...} must describe a valid \code{\link[dplyr]{left_join}} \code{join_by} parameter to merge the \code{new_file_info} with the existing file info. Each set of \code{new_file_info} data can overwrite the previous \code{join_by} matches such that the last set of \code{join_by} column(s) provided in \code{...} will overwrite all previous matches for which it applies, even if they have already been a match for a previous column.
 }
 \seealso{
-Other file_info operations: \code{\link{iso_filter_files}},
-  \code{\link{iso_mutate_file_info}},
-  \code{\link{iso_parse_file_info}},
-  \code{\link{iso_rename_file_info}},
-  \code{\link{iso_select_file_info}}
+Other file_info operations: 
+\code{\link{iso_filter_files}()},
+\code{\link{iso_mutate_file_info}()},
+\code{\link{iso_parse_file_info}()},
+\code{\link{iso_rename_file_info}()},
+\code{\link{iso_select_file_info}()}
 }
 \concept{file_info operations}

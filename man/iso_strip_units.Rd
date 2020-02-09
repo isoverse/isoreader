@@ -13,10 +13,11 @@ iso_strip_units(x)
 This function converts numbers with units back into unitless numbers both for single variables and data frames / tibbles. For single variables, this is equivalent to the \code{as.numeric} function.
 }
 \seealso{
-Other functions for values with units: \code{\link{iso_double_with_units}},
-  \code{\link{iso_get_units}},
-  \code{\link{iso_is_double_with_units}},
-  \code{\link{iso_make_units_explicit}},
-  \code{\link{iso_make_units_implicit}}
+Other functions for values with units: 
+\code{\link{iso_double_with_units}},
+\code{\link{iso_get_units}()},
+\code{\link{iso_is_double_with_units}()},
+\code{\link{iso_make_units_explicit}()},
+\code{\link{iso_make_units_implicit}()}
 }
 \concept{functions for values with units}

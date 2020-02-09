@@ -4,10 +4,17 @@
 \alias{iso_export_to_excel}
 \title{Export data to Excel}
 \usage{
-iso_export_to_excel(iso_files, filepath, include_raw_data = TRUE,
-  include_file_info = TRUE, include_method_info = TRUE,
-  include_vendor_data_table = TRUE, include_problems = TRUE,
-  with_explicit_units = FALSE, quiet = default(quiet))
+iso_export_to_excel(
+  iso_files,
+  filepath,
+  include_raw_data = TRUE,
+  include_file_info = TRUE,
+  include_method_info = TRUE,
+  include_vendor_data_table = TRUE,
+  include_problems = TRUE,
+  with_explicit_units = FALSE,
+  quiet = default(quiet)
+)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -35,7 +42,9 @@ returns the iso_files object invisibly for use in pipelines
 This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file but they are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters). Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export.
 }
 \seealso{
-Other export functions: \code{\link{iso_export_to_feather}},
-  \code{\link{iso_export_to_rda}}, \code{\link{iso_save}}
+Other export functions: 
+\code{\link{iso_export_to_feather}()},
+\code{\link{iso_export_to_rda}()},
+\code{\link{iso_save}()}
 }
 \concept{export functions}

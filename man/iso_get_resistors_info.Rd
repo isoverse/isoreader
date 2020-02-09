@@ -4,8 +4,11 @@
 \alias{iso_get_resistors_info}
 \title{Aggregate resistors from methods info}
 \usage{
-iso_get_resistors_info(iso_files, include_file_info = NULL,
-  quiet = default(quiet))
+iso_get_resistors_info(
+  iso_files,
+  include_file_info = NULL,
+  quiet = default(quiet)
+)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -18,11 +21,12 @@ iso_get_resistors_info(iso_files, include_file_info = NULL,
 Aggregates the resistor information recovered from the provided iso_files. This information is only available if the iso_files were read with parameter \code{read_method_info=TRUE} and only linked to specific masses if the iso_files were additionally read with parametr \code{read_raw_data=TRUE}.
 }
 \seealso{
-Other data retrieval functions: \code{\link{iso_get_bgrd_data}},
-  \code{\link{iso_get_data}},
-  \code{\link{iso_get_file_info}},
-  \code{\link{iso_get_raw_data}},
-  \code{\link{iso_get_standards_info}},
-  \code{\link{iso_get_vendor_data_table}}
+Other data retrieval functions: 
+\code{\link{iso_get_bgrd_data}()},
+\code{\link{iso_get_data}()},
+\code{\link{iso_get_file_info}()},
+\code{\link{iso_get_raw_data}()},
+\code{\link{iso_get_standards_info}()},
+\code{\link{iso_get_vendor_data_table}()}
 }
 \concept{data retrieval functions}

@@ -17,10 +17,11 @@ iso_select_file_info(iso_files, ..., quiet = default(quiet))
 Select which file info columns (\code{\link{iso_get_file_info}}) to keep within isofile objects. Works just like dplyr's \link[dplyr]{select} except that it can select different columns in different iso_files depending on what exists in each file (also works for on-the-fly renaming of columns). This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns. You can also use \link[dplyr]{select} directly but it will not provide summary information on the operation. To rename columns without removing all other information, use \link{iso_rename_file_info} instead.
 }
 \seealso{
-Other file_info operations: \code{\link{iso_add_file_info.iso_file_list}},
-  \code{\link{iso_filter_files}},
-  \code{\link{iso_mutate_file_info}},
-  \code{\link{iso_parse_file_info}},
-  \code{\link{iso_rename_file_info}}
+Other file_info operations: 
+\code{\link{iso_add_file_info.iso_file_list}()},
+\code{\link{iso_filter_files}()},
+\code{\link{iso_mutate_file_info}()},
+\code{\link{iso_parse_file_info}()},
+\code{\link{iso_rename_file_info}()}
 }
 \concept{file_info operations}

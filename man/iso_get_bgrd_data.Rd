@@ -4,8 +4,13 @@
 \alias{iso_get_bgrd_data}
 \title{Aggregate background data}
 \usage{
-iso_get_bgrd_data(iso_files, select = everything(), gather = FALSE,
-  include_file_info = NULL, quiet = default(quiet))
+iso_get_bgrd_data(
+  iso_files,
+  select = everything(),
+  gather = FALSE,
+  include_file_info = NULL,
+  quiet = default(quiet)
+)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -22,11 +27,12 @@ iso_get_bgrd_data(iso_files, select = everything(), gather = FALSE,
 Aggregate the background data from the provided iso_files. Can aggregate either in a wide table (for easy overview) or a gathered long table (for plotting and further data processing). The background data is only available if the iso_files were read with parameter \code{read_raw_data=TRUE}.
 }
 \seealso{
-Other data retrieval functions: \code{\link{iso_get_data}},
-  \code{\link{iso_get_file_info}},
-  \code{\link{iso_get_raw_data}},
-  \code{\link{iso_get_resistors_info}},
-  \code{\link{iso_get_standards_info}},
-  \code{\link{iso_get_vendor_data_table}}
+Other data retrieval functions: 
+\code{\link{iso_get_data}()},
+\code{\link{iso_get_file_info}()},
+\code{\link{iso_get_raw_data}()},
+\code{\link{iso_get_resistors_info}()},
+\code{\link{iso_get_standards_info}()},
+\code{\link{iso_get_vendor_data_table}()}
 }
 \concept{data retrieval functions}

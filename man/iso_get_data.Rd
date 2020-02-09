@@ -4,11 +4,17 @@
 \alias{iso_get_data}
 \title{Aggregate all isofiles data}
 \usage{
-iso_get_data(iso_files, include_file_info = everything(),
+iso_get_data(
+  iso_files,
+  include_file_info = everything(),
   include_raw_data = everything(),
-  include_vendor_data_table = everything(), gather = FALSE,
-  with_explicit_units = with_units, with_units = FALSE,
-  with_ratios = FALSE, quiet = default(quiet))
+  include_vendor_data_table = everything(),
+  gather = FALSE,
+  with_explicit_units = with_units,
+  with_units = FALSE,
+  with_ratios = FALSE,
+  quiet = default(quiet)
+)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -36,11 +42,12 @@ data_frame with file_ids, file_types and nested data frames for each data type (
 This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data \code{\link{iso_get_raw_data}}, \code{\link{iso_get_file_info}}, \code{\link{iso_get_vendor_data_table}}, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To \code{\link[tidyr]{unnest}} any of the specific data types (e.g. \code{raw_data}), make sure to filter first for the files that have this data type available (e.g. \code{filter(has_raw_data)}).
 }
 \seealso{
-Other data retrieval functions: \code{\link{iso_get_bgrd_data}},
-  \code{\link{iso_get_file_info}},
-  \code{\link{iso_get_raw_data}},
-  \code{\link{iso_get_resistors_info}},
-  \code{\link{iso_get_standards_info}},
-  \code{\link{iso_get_vendor_data_table}}
+Other data retrieval functions: 
+\code{\link{iso_get_bgrd_data}()},
+\code{\link{iso_get_file_info}()},
+\code{\link{iso_get_raw_data}()},
+\code{\link{iso_get_resistors_info}()},
+\code{\link{iso_get_standards_info}()},
+\code{\link{iso_get_vendor_data_table}()}
 }
 \concept{data retrieval functions}

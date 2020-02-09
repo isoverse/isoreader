@@ -17,10 +17,11 @@ iso_mutate_file_info(iso_files, ..., quiet = default(quiet))
 Mutate the file info (\code{\link{iso_get_file_info}}) within isofile objects by changing existing columns or introducing new ones. Works just like dplyr's \link[dplyr]{mutate}. You can also use \link[dplyr]{mutate} directly but it will not provide summary information on the operation. Note that this will create missing columns that exist in some but not all of the passed in isofile objects in all isofile objects (filling them with NAs) the same way that \code{\link{iso_get_file_info}} does.
 }
 \seealso{
-Other file_info operations: \code{\link{iso_add_file_info.iso_file_list}},
-  \code{\link{iso_filter_files}},
-  \code{\link{iso_parse_file_info}},
-  \code{\link{iso_rename_file_info}},
-  \code{\link{iso_select_file_info}}
+Other file_info operations: 
+\code{\link{iso_add_file_info.iso_file_list}()},
+\code{\link{iso_filter_files}()},
+\code{\link{iso_parse_file_info}()},
+\code{\link{iso_rename_file_info}()},
+\code{\link{iso_select_file_info}()}
 }
 \concept{file_info operations}
