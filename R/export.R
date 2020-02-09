@@ -50,41 +50,106 @@ iso_export_to_excel <- function(iso_files, filepath,
   
   # make excel workbook
   wb <- createWorkbook()
-  hs <- createStyle(textDecoration = "bold")
   if (include_raw_data) {
-    addWorksheet(wb, "raw data")
     raw_data <- iso_get_raw_data(export_iso_files, quiet = TRUE)
-    if (ncol(raw_data) > 0) writeData(wb, "raw data", raw_data, headerStyle = hs)
+    add_excel_sheet(wb, "raw data", raw_data)
   }
   if (include_file_info) {
-    addWorksheet(wb, "file info")
     # note: this takes care of nested vectors, they get concatenated with ', '
-    writeData(wb, "file info", 
-              iso_get_file_info(export_iso_files, quiet = TRUE) %>% collapse_list_columns(),
-              headerStyle = hs)
+    file_info <- iso_get_file_info(export_iso_files, quiet = TRUE) %>% collapse_list_columns()
+    add_excel_sheet(wb, "file info", file_info)
   }
   if (include_method_info) {
-    addWorksheet(wb, "method info")
     standards <- iso_get_standards_info(export_iso_files, quiet = TRUE)
     resistors <- iso_get_resistors_info (export_iso_files, quiet = TRUE)
-    if (ncol(standards) > 0) writeData(wb, "method info", standards, headerStyle = hs)
-    if (ncol(resistors) > 0) writeData(wb, "method info", resistors, startRow = nrow(standards) + 3, headerStyle = hs)
+    add_excel_sheet(wb, "method info", standards, resistors)
   }
   if (include_vendor_data_table) {
-    addWorksheet(wb, "vendor data table")
     vendor_data <- iso_get_vendor_data_table(export_iso_files, with_explicit_units = with_explicit_units, quiet = TRUE) %>% 
       iso_strip_units()
-    if (ncol(vendor_data) > 0) writeData(wb, "vendor data table", vendor_data, headerStyle = hs)
+    add_excel_sheet(wb, "vendor data table", vendor_data)
   }
   if (include_problems) {
-    addWorksheet(wb, "problems")
-    writeData(wb, "problems", problems(iso_files), headerStyle = hs)
+    add_excel_sheet(wb, "problems", problems(iso_files))
   }
   saveWorkbook(wb, filepath, overwrite = TRUE)
   
   return(invisible(iso_files))
 }
 
+# add an excel sheet to a workbook
+# @param ... the data frames
+# @param dbl_digits how many digits to export for dbls
+# @param col_max_width maximum column width
+add_excel_sheet <- function(wb, sheet_name, ..., dbl_digits = 2, col_max_width = 75) {
+  
+  # sheet
+  addWorksheet(wb, sheet_name)
+  hs <- createStyle(textDecoration = "bold") # header style
+  
+  # data
+  sheet_data_sets <- list(...)
+  start_row <- 1L
+  for (sheet_data in sheet_data_sets) {
+    if (ncol(sheet_data) > 0) {
+      writeData(wb, sheet_name, sheet_data, startRow = start_row, headerStyle = hs)
+      int_cols <- which(purrr::map_lgl(sheet_data, is.integer))
+      dbl_cols <- setdiff(which(purrr::map_lgl(sheet_data, is.numeric)), int_cols)
+      if (dbl_digits < 1) {
+        int_cols <- c(int_cols, dbl_cols)
+        dbl_cols <- integer()
+      }
+      # integer column formatting
+      if (length(int_cols) > 0) {
+        openxlsx::addStyle(
+          wb, sheet_name, style = createStyle(numFmt = "0"),
+          rows = (start_row + 1L):(start_row + 1L + nrow(sheet_data)),
+          cols = int_cols, gridExpand = TRUE)
+      }
+      # double column formatting
+      if (length(dbl_cols) > 0) {
+        dbl_format <- paste0("0.", paste(rep("0", dbl_digits), collapse = ""))
+        openxlsx::addStyle(
+          wb, sheet_name, style = createStyle(numFmt = dbl_format),
+          rows = (start_row + 1L):(start_row + 1L + nrow(sheet_data)),
+          cols = dbl_cols, gridExpand = TRUE)
+      }
+      # new start row
+      start_row <- start_row + nrow(sheet_data) + 2L
+    }
+  }
+  
+  # calculate header widths
+  header_widths <- 
+    sheet_data_sets %>% 
+    # account for bold width
+    purrr::map(~nchar(names(.x)))
+  max_n_cols <- purrr::map_int(header_widths, length) %>% max()
+  
+  # calculate data widths
+  if (max_n_cols > 0) {
+    calculate_data_width <- function(x) {
+      if (is.integer(x)) x <- sprintf("%d", x)
+      else if (is.numeric(x)) x <- sprintf(paste0("%.", dbl_digits, "f"), x)
+      else x <- as.character(x)
+      return(max(c(0, nchar(x)), na.rm = TRUE))
+    }
+    data_widths <-
+      sheet_data_sets %>% 
+      purrr::map(
+        ~dplyr::summarise_all(.x, list(calculate_data_width)) %>% 
+          unlist(use.names = FALSE)
+      )
+    max_widths <- purrr::map2(header_widths, data_widths , ~{
+      widths <- if (is.null(.y)) .x else pmax(.x, .y, 0)
+      widths <- pmin(col_max_width, widths)
+      c(widths, rep(0L, times = max_n_cols - length(widths)))
+    })
+    col_widths <- do.call(pmax, args = max_widths)
+    openxlsx::setColWidths(wb, sheet_name, cols = 1:length(col_widths), widths = col_widths)
+  }
+  
+}
 
 #' Export to feather
 #' 
