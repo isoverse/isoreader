@@ -52,7 +52,7 @@ Currently supported file types:
 ```{r, echo=FALSE}
 library(isoreader)
 iso_get_supported_file_types() %>% 
-  dplyr::select(extension, format = description, type) %>% 
+  dplyr::select(extension, software, description, type) %>% 
   knitr::kable()
 ```
 
