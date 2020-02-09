@@ -4,9 +4,14 @@
 \alias{iso_get_vendor_data_table}
 \title{Aggregate vendor computed table data}
 \usage{
-iso_get_vendor_data_table(iso_files, with_units = FALSE,
-  select = everything(), include_file_info = NULL,
-  with_explicit_units = with_units, quiet = default(quiet))
+iso_get_vendor_data_table(
+  iso_files,
+  with_units = FALSE,
+  select = everything(),
+  include_file_info = NULL,
+  with_explicit_units = with_units,
+  quiet = default(quiet)
+)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -25,11 +30,12 @@ iso_get_vendor_data_table(iso_files, with_units = FALSE,
 Aggregate data from the vendor-computed data table. This information is only available if the iso_files were read with parameter \code{read_vendor_data_table=TRUE}.
 }
 \seealso{
-Other data retrieval functions: \code{\link{iso_get_bgrd_data}},
-  \code{\link{iso_get_data}},
-  \code{\link{iso_get_file_info}},
-  \code{\link{iso_get_raw_data}},
-  \code{\link{iso_get_resistors_info}},
-  \code{\link{iso_get_standards_info}}
+Other data retrieval functions: 
+\code{\link{iso_get_bgrd_data}()},
+\code{\link{iso_get_data}()},
+\code{\link{iso_get_file_info}()},
+\code{\link{iso_get_raw_data}()},
+\code{\link{iso_get_resistors_info}()},
+\code{\link{iso_get_standards_info}()}
 }
 \concept{data retrieval functions}

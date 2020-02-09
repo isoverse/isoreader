@@ -24,8 +24,9 @@ iso_shorten_relative_paths(file.path("A", "C", "D"), file.path("A", "B")) # root
 iso_shorten_relative_paths(file.path("A", "B", "C"), "B") # root = ".", path stays "A/B/C"
 }
 \seealso{
-Other file system functions: \code{\link{iso_expand_paths}},
-  \code{\link{iso_find_absolute_path_roots}},
-  \code{\link{iso_root_paths}}
+Other file system functions: 
+\code{\link{iso_expand_paths}()},
+\code{\link{iso_find_absolute_path_roots}()},
+\code{\link{iso_root_paths}()}
 }
 \concept{file system functions}

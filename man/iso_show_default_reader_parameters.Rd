@@ -18,9 +18,10 @@ Note that if the output is in RMarkdown chunks, the chunk option must have \code
 Shows a table with the default function parameters for this package.
 }
 \seealso{
-Other settings functions: \code{\link{iso_caching}},
-  \code{\link{iso_get_default_reader_parameters}},
-  \code{\link{iso_info_messages}},
-  \code{\link{iso_set_default_read_parameters}}
+Other settings functions: 
+\code{\link{iso_caching}},
+\code{\link{iso_get_default_reader_parameters}()},
+\code{\link{iso_info_messages}},
+\code{\link{iso_set_default_read_parameters}()}
 }
 \concept{settings functions}

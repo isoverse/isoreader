@@ -13,9 +13,10 @@ To set messaging and caching parameters see \code{\link{iso_info_messages}} and 
 For a piping compatible version of this function, see \link{iso_show_default_reader_parameters}.
 }
 \seealso{
-Other settings functions: \code{\link{iso_caching}},
-  \code{\link{iso_info_messages}},
-  \code{\link{iso_set_default_read_parameters}},
-  \code{\link{iso_show_default_reader_parameters}}
+Other settings functions: 
+\code{\link{iso_caching}},
+\code{\link{iso_info_messages}},
+\code{\link{iso_set_default_read_parameters}()},
+\code{\link{iso_show_default_reader_parameters}()}
 }
 \concept{settings functions}

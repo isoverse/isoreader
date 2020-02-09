@@ -4,8 +4,13 @@
 \alias{extract_substring}
 \title{Extract a substring from text}
 \usage{
-extract_substring(string, pattern, capture_n = 1, capture_bracket = 0,
-  missing = NA_character_)
+extract_substring(
+  string,
+  pattern,
+  capture_n = 1,
+  capture_bracket = 0,
+  missing = NA_character_
+)
 }
 \arguments{
 \item{string}{string to extract}
@@ -27,7 +32,8 @@ This is a convenience function to capture substrings from textual data.
 Uses \code{\link[stringr]{str_match_all}} internally but instead of returning everything, always returns only one single part of the match, depending on parameters \code{capture_n} and \code{capture_group}.
 }
 \seealso{
-Other data extraction functions: \code{\link{extract_data}},
-  \code{\link{extract_word}}
+Other data extraction functions: 
+\code{\link{extract_data}},
+\code{\link{extract_word}()}
 }
 \concept{data extraction functions}

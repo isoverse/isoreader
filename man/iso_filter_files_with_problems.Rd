@@ -4,9 +4,12 @@
 \alias{iso_filter_files_with_problems}
 \title{Filter out problematic files}
 \usage{
-iso_filter_files_with_problems(iso_files,
-  remove_files_with_errors = TRUE, remove_files_with_warnings = FALSE,
-  quiet = default(quiet))
+iso_filter_files_with_problems(
+  iso_files,
+  remove_files_with_errors = TRUE,
+  remove_files_with_warnings = FALSE,
+  quiet = default(quiet)
+)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -21,9 +24,10 @@ iso_filter_files_with_problems(iso_files,
 Use this function to filter out files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the \link{iso_problem_functions}.
 }
 \seealso{
-Other problem functions: \code{\link{iso_get_problems_summary}},
-  \code{\link{iso_get_problems}},
-  \code{\link{iso_has_problems}},
-  \code{\link{iso_problem_functions}}
+Other problem functions: 
+\code{\link{iso_get_problems_summary}()},
+\code{\link{iso_get_problems}()},
+\code{\link{iso_has_problems}()},
+\code{\link{iso_problem_functions}}
 }
 \concept{problem functions}

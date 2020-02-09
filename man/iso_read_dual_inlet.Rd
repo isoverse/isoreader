@@ -4,15 +4,22 @@
 \alias{iso_read_dual_inlet}
 \title{Load dual inlet data}
 \usage{
-iso_read_dual_inlet(..., root = ".",
+iso_read_dual_inlet(
+  ...,
+  root = ".",
   read_raw_data = default(read_raw_data),
   read_file_info = default(read_file_info),
   read_method_info = default(read_method_info),
   read_vendor_data_table = default(read_vendor_data_table),
-  nu_masses = c(), discard_duplicates = TRUE, parallel = FALSE,
-  parallel_plan = future::multiprocess, cache = default(cache),
-  cache_files_with_errors = TRUE, read_cache = default(cache),
-  quiet = default(quiet))
+  nu_masses = c(),
+  discard_duplicates = TRUE,
+  parallel = FALSE,
+  parallel_plan = future::multiprocess,
+  cache = default(cache),
+  cache_files_with_errors = TRUE,
+  read_cache = default(cache),
+  quiet = default(quiet)
+)
 }
 \arguments{
 \item{...}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
@@ -47,6 +54,7 @@ iso_read_dual_inlet(..., root = ".",
 Load dual inlet data
 }
 \seealso{
-Other isoread functions for different types of IRMS data: \code{\link{iso_read_continuous_flow}}
+Other isoread functions for different types of IRMS data: 
+\code{\link{iso_read_continuous_flow}()}
 }
 \concept{isoread functions for different types of IRMS data}

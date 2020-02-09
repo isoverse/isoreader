@@ -20,8 +20,9 @@ a data frame with the root directories and paths relative to the root - order of
 Function to root both relative and absolute paths to a root directory (or directories) commonly relative to current working directory. Determines the best way to shorten relative paths and put absolute paths in a relative context (if possible) using \link{iso_shorten_relative_paths} and \link{iso_find_absolute_path_roots}, respectively.
 }
 \seealso{
-Other file system functions: \code{\link{iso_expand_paths}},
-  \code{\link{iso_find_absolute_path_roots}},
-  \code{\link{iso_shorten_relative_paths}}
+Other file system functions: 
+\code{\link{iso_expand_paths}()},
+\code{\link{iso_find_absolute_path_roots}()},
+\code{\link{iso_shorten_relative_paths}()}
 }
 \concept{file system functions}

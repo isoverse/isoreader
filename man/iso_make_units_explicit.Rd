@@ -28,10 +28,11 @@ iso_make_units_explicit(df)
 iso_make_units_explicit(df, prefix = ".", suffix = "") 
 }
 \seealso{
-Other functions for values with units: \code{\link{iso_double_with_units}},
-  \code{\link{iso_get_units}},
-  \code{\link{iso_is_double_with_units}},
-  \code{\link{iso_make_units_implicit}},
-  \code{\link{iso_strip_units}}
+Other functions for values with units: 
+\code{\link{iso_double_with_units}},
+\code{\link{iso_get_units}()},
+\code{\link{iso_is_double_with_units}()},
+\code{\link{iso_make_units_implicit}()},
+\code{\link{iso_strip_units}()}
 }
 \concept{functions for values with units}

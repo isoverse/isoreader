@@ -20,8 +20,9 @@ a data frame with the root directories and paths relative to the root - order of
 Helper function to find the roots of absolute paths. Tries to put absolute paths into the context of the relative root. For those that this is not possible (because they are not in fact a sub-path of the relative roots), identifies the greatest common denominator for absolute paths as their root. Does not change relative paths but does check wheter they do exist if \code{check_existence = TRUE} (the default). To modify relative paths, use \link{iso_shorten_relative_paths} prior to calling this function.
 }
 \seealso{
-Other file system functions: \code{\link{iso_expand_paths}},
-  \code{\link{iso_root_paths}},
-  \code{\link{iso_shorten_relative_paths}}
+Other file system functions: 
+\code{\link{iso_expand_paths}()},
+\code{\link{iso_root_paths}()},
+\code{\link{iso_shorten_relative_paths}()}
 }
 \concept{file system functions}

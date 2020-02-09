@@ -5,13 +5,23 @@
 \alias{iso_register_continuous_flow_file_reader}
 \title{Register file readers}
 \usage{
-iso_register_dual_inlet_file_reader(extension, func,
-  description = NA_character_, cacheable = TRUE, overwrite = FALSE,
-  env = find_func(func))
+iso_register_dual_inlet_file_reader(
+  extension,
+  func,
+  description = NA_character_,
+  cacheable = TRUE,
+  overwrite = FALSE,
+  env = find_func(func)
+)
 
-iso_register_continuous_flow_file_reader(extension, func,
-  description = NA_character_, cacheable = TRUE, overwrite = FALSE,
-  env = find_func(func))
+iso_register_continuous_flow_file_reader(
+  extension,
+  func,
+  description = NA_character_,
+  cacheable = TRUE,
+  overwrite = FALSE,
+  env = find_func(func)
+)
 }
 \arguments{
 \item{extension}{the file extension (e.g. \code{.dxf}) of the data file. Must be unique otherwise different files can not automatically be matched with the appropriate file reader based on their extension.}
@@ -35,8 +45,10 @@ Register file extensions and reader functions for different data files. Isoreade
 \code{iso_register_continuous_flow_file_reader}: use this function to register file readers for continuous flow files.
 }
 \seealso{
-Other file_types: \code{\link{iso_get_supported_file_types}}
+Other file_types: 
+\code{\link{iso_get_supported_file_types}()}
 
-Other file_types: \code{\link{iso_get_supported_file_types}}
+Other file_types: 
+\code{\link{iso_get_supported_file_types}()}
 }
 \concept{file_types}

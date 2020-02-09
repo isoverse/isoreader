@@ -15,10 +15,11 @@ iso_double_with_units(x = double(), units = "undefined units")
 This function generates a number with units that work well within data frames and tibbles and implement safety checks on numerical operations with numbers that have different units. To retrieve the numerical value without units, use \code{\link{iso_strip_units}} (works for single variables and data frames/tibbles) or simply \code{as.numeric} (for single variables). To retrieve the unit use \code{\link{iso_get_units}}. Note that to correctly combine data frames / tibbles that have values with units in them, use \link[vctrs]{vec_rbind} instead of \link{rbind} or \link[dplyr]{bind_rows}. \link[vctrs]{vec_rbind} will combine columns that have values with units if they have the same unit and otherwise convert to a simple number with a warning. The other functions will either fail or reduce the unit values to plain numbers with a cryptic warning message about not preserving attributes.
 }
 \seealso{
-Other functions for values with units: \code{\link{iso_get_units}},
-  \code{\link{iso_is_double_with_units}},
-  \code{\link{iso_make_units_explicit}},
-  \code{\link{iso_make_units_implicit}},
-  \code{\link{iso_strip_units}}
+Other functions for values with units: 
+\code{\link{iso_get_units}()},
+\code{\link{iso_is_double_with_units}()},
+\code{\link{iso_make_units_explicit}()},
+\code{\link{iso_make_units_implicit}()},
+\code{\link{iso_strip_units}()}
 }
 \concept{functions for values with units}

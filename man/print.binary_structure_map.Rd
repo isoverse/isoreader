@@ -4,8 +4,13 @@
 \alias{print.binary_structure_map}
 \title{Print binary structure map}
 \usage{
-\method{print}{binary_structure_map}(x, ..., data_as_raw = FALSE,
-  line_break_blocks = c("cblock", "stx", "etx"), pos_info = TRUE)
+\method{print}{binary_structure_map}(
+  x,
+  ...,
+  data_as_raw = FALSE,
+  line_break_blocks = c("cblock", "stx", "etx"),
+  pos_info = TRUE
+)
 }
 \arguments{
 \item{x}{object to show.}
