@@ -43,6 +43,7 @@ iso_get_reader_examples() %>% rmarkdown::paged_table()
 iso_files <- 
   iso_read_scan(
     iso_get_reader_example("peak_shape_scan_example.scn"),
+    iso_get_reader_example("background_scan_example.scn"),
     iso_get_reader_example("full_scan_example.scn"),
     iso_get_reader_example("time_scan_example.scn"),
     read_cache = FALSE
@@ -184,11 +185,8 @@ At the moment, isoreader supports export of all data to Excel and the [Feather f
 
 # Visualization
 
-FIXME: should go into isoprocessor vignette once the functions there exist
-
-# visualization
-
-```{r}
+```{r "scans", fig.width=10, fig.height=10}
+# FIXME: should go into isoprocessor vignette once the functions there exist
 iso_files %>% 
   iso_get_raw_data(include_file_info = type) %>%
   dplyr::mutate(panel = sprintf("%s [%s]", type, units)) %>% 
