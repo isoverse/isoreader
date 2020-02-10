@@ -94,7 +94,7 @@ cap_at_pos <- function(bfile, pos) {
 # @param min_pos minimum position where to find the block
 # @param occurence which occurence to find? (use -1 for last occurence, use NULL for all)
 # @FIXME: testing
-fetch_C_block <- function(bfile, C_block, min_pos = 1, occurence = NULL) {
+fetch_C_block <- function(bfile, C_block, min_pos = 1, occurence = NULL, regexp_match = FALSE) {
   # basic checks
   if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
   if (nrow(bfile$C_blocks) == 0) stop("no C_blocks available", call. = FALSE)
@@ -102,7 +102,10 @@ fetch_C_block <- function(bfile, C_block, min_pos = 1, occurence = NULL) {
   
   # find C_blocks
   block <- start <- NULL # global vars
-  C_blocks <- filter(bfile$C_blocks, block == C_block, start >= min_pos)
+  if (regexp_match)
+    C_blocks <- filter(bfile$C_blocks, str_detect(block, C_block), start >= min_pos)
+  else
+    C_blocks <- filter(bfile$C_blocks, block == C_block, start >= min_pos)
   if (nrow(C_blocks) == 0) {
     op_error(bfile, sprintf("block '%s' not found after position %.0f", C_block, min_pos))
   }
@@ -128,9 +131,9 @@ fetch_C_block <- function(bfile, C_block, min_pos = 1, occurence = NULL) {
 # @FIXME: testing
 # move_to_C_block(my_test$binary, "NO")
 # move_to_C_block(my_test$binary, "CData", occurence = 2)
-move_to_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1, move_to_end = TRUE, reset_cap = TRUE) {
+move_to_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1, move_to_end = TRUE, reset_cap = TRUE, regexp_match = FALSE) {
   # fetch right C block
-  cblock <- fetch_C_block(bfile, C_block, min_pos = min_pos, occurence = occurence)
+  cblock <- fetch_C_block(bfile, C_block, min_pos = min_pos, occurence = occurence, regexp_match = regexp_match)
   if (is.null(cblock)) {
     op_error(bfile, sprintf("cannot move to C block '%s'", C_block))
   } 
@@ -141,14 +144,14 @@ move_to_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1, move_to_
 }
 
 # move to next C block (does not reet cap by default)
-move_to_next_C_block <- function(bfile, C_block, reset_cap = FALSE) {
-  move_to_C_block(bfile, C_block, min_pos = bfile$pos, occurence = 1, reset_cap = reset_cap)
+move_to_next_C_block <- function(bfile, C_block, reset_cap = FALSE, regexp_match = FALSE) {
+  move_to_C_block(bfile, C_block, min_pos = bfile$pos, occurence = 1, reset_cap = reset_cap, regexp_match = regexp_match)
 }
 
 # cap valid position at the beginning of a specific C_block
-cap_at_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1) {
+cap_at_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1, regexp_match = FALSE) {
   # fetch right C block
-  cblock <- fetch_C_block(bfile, C_block, min_pos = min_pos, occurence = occurence)
+  cblock <- fetch_C_block(bfile, C_block, min_pos = min_pos, occurence = occurence, regexp_match = regexp_match)
   if (is.null(cblock)) {
     op_error(bfile, sprintf("cannot cap at C block '%s'", C_block))
   } 
@@ -156,8 +159,8 @@ cap_at_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1) {
 }
 
 # cap at next C block
-cap_at_next_C_block <- function(bfile, C_block) {
-  cap_at_C_block(bfile, C_block, min_pos = bfile$pos, occurence = 1)
+cap_at_next_C_block <- function(bfile, C_block, regexp_match = FALSE) {
+  cap_at_C_block(bfile, C_block, min_pos = bfile$pos, occurence = 1, regexp_match = regexp_match)
 }
 
 # move to C block range
@@ -202,6 +205,17 @@ re_null <- function(n) {
     list(
       label = sprintf("<%.0fx00>", n),
       regexp = str_c("\\x00{", n, "}"),
+      size = n
+    ),
+    class = "binary_regexp")
+}
+
+# regular expression for anything but null characters
+re_not_null <- function(n) {
+  structure(
+    list(
+      label = sprintf("<x01-xff{%.0f}>", n),
+      regexp = str_c("[\x01-\xff]{", n, "}"),
       size = n
     ),
     class = "binary_regexp")
@@ -331,6 +345,37 @@ move_to_next_pattern <- function(bfile, ..., max_gap = NULL, move_to_end = TRUE)
               generate_binary_structure_map_printout()))
 }
 
+# cap at next regular expression pattern
+# @param ... construct with the re... functions
+# @param max_gap maximum number of bytes until the pattern
+# @param move_to_end whether to move to the end of the pattern (default is yes)
+cap_at_next_pattern <- function(bfile, ..., max_gap = NULL) {
+  # safety check
+  if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
+  if(!is.null(max_gap) && !is.numeric(max_gap)) stop("max gap must be a number", call. = FALSE)
+  
+  # find pattern
+  pos <- find_next_pattern(bfile, ..., max_gap = max_gap)
+  
+  # cap at new position
+  if ( !is.null(pos) ) {
+    return(cap_at_pos(bfile, pos))
+  } 
+  
+  # encountered a problem
+  regexps <- re_combine(...)
+  gap_text <- if (!is.null(max_gap)) sprintf(" after maximal gap of %.0f bytes", max_gap) else ""
+  op_error(
+    bfile, 
+    sprintf("could not find '%s'%s in search interval %.0f to %.0f, found '%s...'",
+            regexps$label, 
+            gap_text, bfile$pos, bfile$max_pos,
+            bfile %>% 
+              map_binary_structure(length = regexps$size + 
+                                     (if(!is.null(max_gap)) max_gap else 50) + 10) %>% 
+              generate_binary_structure_map_printout()))
+}
+
 # capture data block data in specified type
 # uses parse_raw_data and therefore can handle multiple data types
 # @inheritParams parse_raw_data
@@ -390,6 +435,11 @@ capture_n_data <- function(bfile, id, type, n, sensible = NULL) {
   
   # find raw length
   if (!is(bfile, "binary_file")) stop("need binary file object", call. = FALSE)
+  
+  # data type safety check
+  if (length(missing <- setdiff(type, names(get_data_blocks_config()))) > 0) 
+    stop("ecountered invalid data type(s): ", str_c(missing, collapse = ", "), call. = FALSE)
+  
   dbc <- get_data_blocks_config()[type]
   size <- sum(map_int(dbc, "size"))
   
