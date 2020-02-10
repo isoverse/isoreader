@@ -1,0 +1,317 @@
+---
+title: "Dual Inlet Examples"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Dual Inlet Examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+Isoreader supports several dual inlet IRMS data formats. This vignette shows some of the functionality for dual inlet data files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the [operations vignette](http://isoreader.isoverse.org/articles/operations.html). For details on downstream data processing and visualization, see the [isoprocessor package](https://isoprocessor.isoverse.org).
+
+Note: this vignette is still a work in progress.
+
+
+```{r, message=FALSE}
+# load isoreader package
+library(isoreader)
+```
+
+
+# Reading files
+
+Reading dual inlet files is as simple as passing one or multiple file or folder paths to the `iso_read_dual_inlet()` function. If folders are provided, any files that have a recognized continuous flow file extensions within those folders will be processed (e.g. all `.did` and `.caf`). Here we read several files that are bundled with the package as examples (and whose paths can be retrieved using the `iso_get_reader_example()` function).
+
+```{r, message=FALSE}
+# all available examples
+iso_get_reader_examples() %>% rmarkdown::paged_table()
+```
+
+```{r}
+# read dual inlet examples
+iso_files <- 
+  iso_read_dual_inlet(
+    iso_get_reader_example("dual_inlet_example.did"),
+    iso_get_reader_example("dual_inlet_example2.did"),
+    iso_get_reader_example("dual_inlet_example.caf"),
+    iso_get_reader_example("dual_inlet_nu_example.txt"),
+    nu_masses = 49:44
+  )
+```
+
+# File summary
+
+The `iso_files` variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the `iso_get_data_summary()` function.
+
+```{r}
+iso_files %>% iso_get_data_summary() %>% rmarkdown::paged_table()
+```
+
+## Problems
+
+In case there was any trouble with reading any of the files, the following functions provide an overview summary as well as details of all errors and warnings, respectively. The examples here contain no errors but if you run into any unexpected file read problems, please file a bug report in the [isoreader issue tracker](https://github.com/isoverse/isoreader/issues).
+
+```{r}
+iso_files %>% iso_get_problems_summary() %>% rmarkdown::paged_table()
+iso_files %>% iso_get_problems() %>% rmarkdown::paged_table()
+```
+
+# File Information
+
+Detailed file information can be aggregated for all isofiles using the `iso_get_file_info()` function which supports the full [select syntax](https://dplyr.tidyverse.org/reference/select.html) of the [dplyr](https://dplyr.tidyverse.org/) package to specify which columns are of interest (by default, all file information is retrieved). Additionally, file information from different file formats can be renamed to the same column name for easy of downstream processing. The following provides a few examples for how this can be used (the names of the interesting info columns may vary between different file formats):
+
+```{r}
+# all file information
+iso_files %>% iso_get_file_info(select = c(-file_root)) %>% rmarkdown::paged_table()
+# select file information
+iso_files %>% 
+  iso_get_file_info(
+    select = c(
+      # rename sample id columns from the different file types to a new ID column
+      ID = `Identifier 1`, ID = `Sample Name`, 
+      # select columns without renaming
+      Analysis, Method, `Peak Center`,
+      # select the time stamp and rename it to `Date & Time`
+      `Date & Time` = file_datetime,
+      # rename weight columns from the different file types
+      `Sample Weight`, `Sample Weight` = `Weight [mg]`
+    )
+  ) %>% rmarkdown::paged_table()
+```
+
+## Select/Rename
+
+Rather than retrieving specific file info columns using the above example of `iso_get_file_info(select = ...)`, these information can also be modified across an entire collection of isofiles using the `iso_select_file_info()` and `iso_rename_file_info()` functions. For example, the above example could be similarly achieved with the following use of `iso_select_file_info()`:
+
+```{r}
+# select + rename specific file info columns
+iso_files2 <- iso_files %>% 
+  iso_select_file_info(
+    ID = `Identifier 1`, ID = `Sample Name`, Analysis, Method, 
+    `Peak Center`, `Date & Time` = file_datetime,
+    `Sample Weight`, `Sample Weight` = `Weight [mg]`
+  )
+
+# fetch all file info
+iso_files2 %>% iso_get_file_info() %>% rmarkdown::paged_table()
+```
+
+## Filter
+
+Any collection of isofiles can also be filtered based on the available file information using the function `iso_filter_files`. This function can operate on any column available in the file information and supports full [dplyr](https://dplyr.tidyverse.org/reference/filter.html) syntax. 
+
+```{r}
+# find files that have 'CIT' in the new ID field
+iso_files2 %>% iso_filter_files(grepl("CIT", ID)) %>% 
+  iso_get_file_info() %>% 
+  rmarkdown::paged_table()
+
+# find files that were run in 2017
+iso_files2 %>% 
+  iso_filter_files(`Date & Time` > "2017-01-01" & `Date & Time` < "2018-01-01") %>% 
+  iso_get_file_info() %>% 
+  rmarkdown::paged_table()
+```
+
+## Mutate
+
+The file information in any collection of isofiles can also be mutated using the function `iso_mutate_file_info`. This function can introduce new columns and operate on any existing columns available in the file information (even if it does not exist in all files) and supports full [dplyr](https://dplyr.tidyverse.org/reference/mutate.html) syntax. 
+
+```{r}
+iso_files3 <- iso_files2 %>% 
+  iso_mutate_file_info(
+    # update existing column
+    ID = paste("ID:", ID),
+    # introduce new column
+    `Run in 2017?` = `Date & Time` > "2017-01-01" & `Date & Time` < "2018-01-01"
+  ) 
+
+iso_files3 %>% 
+  iso_get_file_info() %>% 
+  rmarkdown::paged_table()
+```
+
+## Add
+
+Additionally, a wide range of new file information can be added in the form of a data frame with any number of columns (usually read from a comma-separated-value/csv file or an Excel/xlsx file) using the function `iso_add_file_info` and specifying which existing file information should be used to merge in the new information. It is similar to [dplyr's left_join](https://dplyr.tidyverse.org/reference/join.html) but with additional safety checks and the possibility to join the new information sequentially as illustrated below.
+
+```{r}
+# this kind of information data frame is frequently read in from a csv or xlsx file
+new_info <- 
+  dplyr::bind_rows(
+    # new information based on new vs. old samples
+    dplyr::tribble(
+      ~Analysis, ~`Run in 2017?`,  ~process,  ~info,
+       NA,       TRUE,              "yes",     "2017 runs",
+       NA,       FALSE,             "yes",     "other runs"
+    ),
+    # new information for a single specific file
+    dplyr::tribble(
+      ~Analysis, ~process,  ~note,
+       "16068",   "no",      "did not inject properly"
+    )
+  )
+new_info %>% rmarkdown::paged_table()
+
+# adding it to the isofiles
+iso_files3 %>% 
+  iso_add_file_info(new_info, by1 = "Run in 2017?", by2 = "Analysis") %>% 
+  iso_get_file_info(select = names(new_info)) %>% 
+  rmarkdown::paged_table()
+```
+
+
+## Parse
+
+Most file information is initially read as text to avoid cumbersome specifications during the read process and compatibility issues between different IRMS file formats. However, many file info columns are not easily processed as text. The isoreader package therefore provides several parsing and data extraction functions to facilitate processing the text-based data (some via functionality implemented by the [readr](http://readr.tidyverse.org) package). See code block below for examples. For a complete overview, see the `?extract_data` and `?iso_parse_file_info` documentation.
+
+```{r}
+# use parsing and extraction in iso_mutate_file_info
+iso_files2 %>% 
+  iso_mutate_file_info(
+    # change type of Peak Center to logical
+    `Peak Center` = parse_logical(`Peak Center`),
+    # retrieve first word of Method column
+    Method_1st = extract_word(Method),
+    # retrieve second word of Method column
+    Method_2nd = extract_word(Method, 2),
+    # retrieve file extension from the file_id using regular expression
+    extension = extract_substring(file_id, "\\.(\\w+)$", capture_bracket = 1)
+  ) %>% 
+  iso_get_file_info(select = c(extension, `Peak Center`, matches("Method"))) %>% 
+  rmarkdown::paged_table()
+
+# use parsing in iso_filter_file_info
+iso_files2 %>% 
+  iso_filter_files(parse_integer(Analysis) > 1500) %>% 
+  iso_get_file_info() %>% 
+  rmarkdown::paged_table()
+
+# use iso_parse_file_info for simplified parsing of column data types
+iso_files2 %>% 
+  iso_parse_file_info(
+    integer = Analysis, 
+    number = `Sample Weight`,
+    logical = `Peak Center`
+  ) %>% 
+  iso_get_file_info() %>% 
+  rmarkdown::paged_table()
+```
+
+# Resistors
+
+Additionally, some IRMS data files contain resistor information that are useful for downstream calculations (see e.g. section on signal conversion later in this vignette):
+
+```{r}
+iso_files %>% iso_get_resistors_info() %>% rmarkdown::paged_table()
+```
+
+# Reference values
+
+As well as isotopic reference values for the different gases:
+
+```{r}
+# reference delta values without ratio values
+iso_files %>% iso_get_standards_info() %>% rmarkdown::paged_table()
+# reference values with ratios
+iso_files %>% iso_get_standards_info(with_ratios = TRUE) %>% rmarkdown::paged_table()
+```
+
+# Raw Data
+
+The raw data read from the IRMS files can be retrieved similarly using the `iso_get_raw_data()` function. Most data aggregation functions also allow for inclusion of file information using the `include_file_info` parameter, which functions identically to the `select` parameter of the `iso_get_file_info` function discussed earlier.
+
+```{r}
+# get raw data with default selections (all raw data, no additional file info)
+iso_files %>% iso_get_raw_data() %>% head(n=10) %>% rmarkdown::paged_table()
+# get specific raw data and add some file information
+iso_files %>% 
+  iso_get_raw_data(
+    # select just time and the two ions
+    select = c(type, cycle, v28.mV, v29.mV),
+    # include the Analysis number fron the file info and rename it to 'run'
+    include_file_info = c(run = Analysis)
+  ) %>% 
+  # look at first few records only
+  head(n=10) %>% rmarkdown::paged_table()
+```
+
+
+# Data Processing
+
+The isoreader package is intended to make raw stable isotope data easily accessible. However, as with most analytical data, there is significant downstream processing required to turn these raw signal intensities into properly referenced isotopic measurement. This and similar functionality as well as data visualization is part of the [isoprocessor package](https://isoprocessor.isoverse.org) which takes isotopic data through the various corrections in a transparent, efficient and reproducible manner. 
+
+That said, most vendor software also performs some of these calculations and it can be useful to be able to compare new data reduction procecures against those implemented in the vendor software. For this purpose, isoreader retrieves vendor computed data tables whenver possible, as illustrated below.
+
+## Vendor Data Table
+
+As with most data retrieval funtions, the `iso_get_vendor_data_table()` function also allows specific column selection (by default, all columns are selected) and easy addition of file information via the `include_file_info` parameter (by default, none is included).
+
+```{r}
+# entire vendor data table
+iso_files %>% iso_get_vendor_data_table() %>% rmarkdown::paged_table()
+# get specific parts and add some file information
+iso_files %>% 
+  iso_get_vendor_data_table(
+    # select cycle and all carbon columns
+    select = c(cycle, matches("C")),
+    # include the Identifier 1 fron the file info and rename it to 'id'
+    include_file_info = c(id = `Identifier 1`)
+  ) %>% rmarkdown::paged_table()
+```
+
+## For expert users: retrieving all data 
+
+For users familiar with the nested data frames from the [tidyverse](https://www.tidyverse.org/) (particularly [tidyr](https://tidyr.tidyverse.org/)'s `nest` and `unnest`), there is an easy way to retrieve all data from the iso file objects in a single nested data frame. Use the `include_file_info`, `include_raw_data`, and `include_vendor_data_table` parameters to specify which columns to include. By default, everything is included:
+
+```{r}
+all_data <- iso_files %>% iso_get_data()
+# not printed out because this data frame is very big
+```
+
+# Saving collections
+
+Saving entire collections of isofiles for retrieval at a later point is easily done using the `iso_save` function which stores collections or individual isoreader file objects in the efficient R data storage format `.rds` (if not specified, the extension `.di.rds` will be automatically appended). These saved collections can be convientiently read back using the same `iso_read_dual_inlet` command used for raw data files.
+
+```{r}
+# export to R data archive
+iso_files %>% iso_save("iso_files_export.di.rds")
+
+# read back the exported R data storage
+iso_read_dual_inlet("iso_files_export.di.rds")
+```
+
+
+# Data Export
+
+At the moment, isoreader supports export of all data to Excel and the [Feather file format](https://blog.rstudio.com/2016/03/29/feather/) (a Python/R cross-over format). Note that both export methods have similar syntax and append the appropriate file extension for each type of export file (`.di.xlsx` and `.di.feather`, respectively).
+
+```{r}
+# export to excel
+iso_files %>% iso_export_to_excel("iso_files_export")
+
+# data sheets available in the exported data file:
+readxl::excel_sheets("iso_files_export.di.xlsx")
+```
+
+```{r}
+# export to feather
+iso_files %>% iso_export_to_feather("iso_files_export")
+
+# exported feather files
+list.files(pattern = ".di.feather")
+```
+
+
+
