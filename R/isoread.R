@@ -29,6 +29,14 @@ iso_register_continuous_flow_file_reader <- function(
   register_file_reader("continuous flow", "iso_read_continuous_flow", extension, func, description, software, cacheable, overwrite, env)
 }
 
+#' @details \code{iso_register_scan_file_reader}: use this function to register file readers for scan files.
+#' @rdname file_readers
+#' @family file_types
+iso_register_scan_file_reader <- function(
+  extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
+  register_file_reader("scan", "iso_read_scan", extension, func, description, software, cacheable, overwrite, env)
+}
+
 register_file_reader <- function(type, call, extension, func, description, software, cacheable, overwrite, env) {
 
   if (!is.character(func))
@@ -99,6 +107,10 @@ get_supported_di_files <- function() {
 
 get_supported_cf_files <- function() {
   dplyr::filter(default("file_readers"), !!sym("type") == "continuous flow")
+}
+
+get_supported_scan_files <- function() {
+  dplyr::filter(default("file_readers"), !!sym("type") == "scan")
 }
 
 # file reading ===========
@@ -193,6 +205,41 @@ iso_read_continuous_flow <- function(
     quiet = quiet
   )
 }
+
+#' Load scan data
+#' 
+#' @inheritParams iso_read_dual_inlet
+#' @family isoread functions for different types of IRMS data
+#' @export
+iso_read_scan <- function(
+  ..., 
+  root = ".",
+  read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), read_method_info = default(read_method_info),
+  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multiprocess,
+  cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
+  
+  # process data
+  iso_read_files(
+    unlist(list(...), use.names = FALSE),
+    root = root,
+    supported_extensions = get_supported_scan_files(),
+    data_structure = make_scan_data_structure(),
+    read_options = c(
+      read_raw_data = read_raw_data,
+      read_file_info = read_file_info,
+      read_method_info = read_method_info
+    ),
+    reader_options = list(),
+    discard_duplicates = discard_duplicates,
+    parallel = parallel,
+    parallel_plan = parallel_plan,
+    cache = cache,
+    cache_files_with_errors = cache_files_with_errors,
+    read_cache = read_cache,
+    quiet = quiet
+  )
+}
+
 
 #' Core function to read isotope data files
 #' 
