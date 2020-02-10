@@ -3,8 +3,8 @@ context("Data Structures")
 # basic iso_file data structure is correct ====
 test_that("test that basic iso_file data structure is correct", {
   expect_is(iso_file <- make_iso_file_data_structure("NA"), "iso_file")
-  expect_equal(names(iso_file), c("version", "read_options", "file_info", "method_info", "raw_data", "vendor_data_table"))
-  expect_equal(names(iso_file$read_options), c("file_info", "method_info", "raw_data", "vendor_data_table"))
+  expect_equal(names(iso_file), c("version", "read_options", "file_info", "method_info", "raw_data"))
+  expect_equal(names(iso_file$read_options), c("file_info", "method_info", "raw_data"))
   expect_equal(iso_file$version, packageVersion("isoreader"))
   expect_false(iso_is_file(42))
   expect_false(iso_is_file(iso_as_file_list()))
@@ -16,6 +16,8 @@ test_that("test that basic iso_file data structure is correct", {
 # dual inlet data structure is correct ====
 test_that("test that dual inlet data structure is correct", {
   expect_is(di <- make_di_data_structure("NA"), "iso_file")
+  expect_equal(names(di), c("version", "read_options", "file_info", "method_info", "raw_data", "vendor_data_table", "bgrd_data"))
+  expect_equal(names(di$read_options), c("file_info", "method_info", "raw_data", "vendor_data_table"))
   expect_is(di, "dual_inlet")
   expect_false(iso_is_dual_inlet(42))
   expect_false(iso_is_continuous_flow(di))
@@ -32,6 +34,8 @@ test_that("test that dual inlet data structure is correct", {
 # continuous data structure is correct ====
 test_that("test that continuous data structure is correct", {
   expect_is(cf <- make_cf_data_structure("NA"), "iso_file")
+  expect_equal(names(cf), c("version", "read_options", "file_info", "method_info", "raw_data", "vendor_data_table"))
+  expect_equal(names(cf$read_options), c("file_info", "method_info", "raw_data", "vendor_data_table"))
   expect_is(cf, "continuous_flow")
   expect_false(iso_is_continuous_flow(42))
   expect_false(iso_is_dual_inlet(cf))
@@ -41,6 +45,25 @@ test_that("test that continuous data structure is correct", {
     cf1$file_info$file_id <- "A"
     cf2$file_info$file_id <- "B"
     iso_is_continuous_flow(c(cf1, cf2))
+  })
+  # FIXME: expand
+})
+
+# scan data strucutre is correct ====
+test_that("test that continuous data structure is correct", {
+  expect_is(scn <- make_scan_data_structure("NA"), "iso_file")
+  expect_equal(names(scn), c("version", "read_options", "file_info", "method_info", "raw_data"))
+  expect_equal(names(scn$read_options), c("file_info", "method_info", "raw_data"))
+  expect_is(scn, "scan")
+  expect_false(iso_is_scan(42))
+  expect_false(iso_is_dual_inlet(scn))
+  expect_true(iso_is_scan(scn))
+  expect_true(is.null(scn$vendor_data_table))
+  expect_true({
+    scn1 <- scn2 <- scn
+    scn1$file_info$file_id <- "A"
+    scn2$file_info$file_id <- "B"
+    iso_is_scan(c(scn1, scn2))
   })
   # FIXME: expand
 })
@@ -55,6 +78,10 @@ test_that("test that data structure can be printed", {
   expect_output(print(di), "raw data not read")
   di$read_options$raw_data <- TRUE
   expect_output(print(di), "0 ions")
+  scn <- make_scan_data_structure("NA")
+  expect_output(print(scn), "raw data not read")
+  scn$read_options$raw_data <- TRUE
+  expect_output(print(scn), "0 ions")
 })
 
 # iso_file list checks work ====
@@ -71,11 +98,11 @@ test_that("test that iso_file list checks work", {
   expect_equal(iso_as_file_list() %>% iso_get_data_summary() %>% nrow(), 0)
   expect_equal(iso_as_file_list() %>% iso_get_raw_data() %>% nrow(), 0)
   expect_equal(iso_as_file_list() %>% iso_get_file_info() %>% nrow(), 0)
-  expect_equal(iso_as_file_list() %>% iso_get_vendor_data_table() %>% nrow(), 0)
   expect_equal(iso_as_file_list() %>% iso_get_resistors_info() %>% nrow(), 0)
   expect_equal(iso_as_file_list() %>% iso_get_standards_info() %>% nrow(), 0)
   
   # expected errors
+  expect_error(iso_as_file_list() %>% iso_get_vendor_data_table(), "only dual inlet.*continuous flow")
   expect_error(iso_as_file_list(1, error = "test"), "encountered incompatible data type")
   expect_false(iso_is_file_list(42))
   expect_false(iso_is_file_list(make_iso_file_data_structure("NA")))
@@ -109,6 +136,12 @@ test_that("can set file path for data structures", {
 # can update read options ====
 test_that("test that can update read options", {
   expect_is(iso_file <- make_iso_file_data_structure("NA"), "iso_file")
+  expect_equal(iso_file$read_options, list(file_info = FALSE, method_info = FALSE, raw_data = FALSE))
+  expect_equal(update_read_options(iso_file, c(not_an_option = FALSE))$read_options,
+               list(file_info = FALSE, method_info = FALSE, raw_data = FALSE))
+  expect_equal(update_read_options(iso_file, c(read_file_info = TRUE, raw_data = TRUE))$read_options,
+               list(file_info = TRUE, method_info = FALSE, raw_data = TRUE))
+  expect_is(iso_file <- make_di_data_structure("NA"), "dual_inlet")
   expect_equal(iso_file$read_options, list(file_info = FALSE, method_info = FALSE, raw_data = FALSE, vendor_data_table = FALSE))
   expect_equal(update_read_options(iso_file, c(not_an_option = FALSE))$read_options,
                list(file_info = FALSE, method_info = FALSE, raw_data = FALSE, vendor_data_table = FALSE))

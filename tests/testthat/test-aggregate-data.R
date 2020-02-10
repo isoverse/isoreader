@@ -275,7 +275,9 @@ test_that("test that aggregating of resistors works", {
 
 test_that("test that aggregating of vendor data table works", {
   
-  iso_file <- make_iso_file_data_structure("NA")
+  expect_error(iso_get_vendor_data_table(make_iso_file_data_structure("NA")), "only dual inlet and continuous flow files")
+  expect_error(iso_get_vendor_data_table(make_scan_data_structure("NA")), "scan files don't have")
+  iso_file <- make_cf_data_structure("NA")
   expect_warning(iso_get_vendor_data_table(iso_file), "read without extracting the vendor data table")
   
   # test data
@@ -331,7 +333,7 @@ test_that("test that aggregating of vendor data table works", {
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
     suppressWarnings(iso_get_vendor_data_table(
-      c(make_iso_file_data_structure("NA"), iso_file1, iso_file2),
+      c(make_cf_data_structure("NA"), iso_file1, iso_file2),
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
   )
