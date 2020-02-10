@@ -22,11 +22,33 @@ test_that("test that scn files can be read", {
   # test specific files
   
   # FIXME: re-enable for commits
-  skip("Currently not testing all scan data files.")
+  #skip("Currently not testing all scan data files.")
   # FIXME: run as one batch to make use of parallel processing
   
   iso_turn_reader_caching_off()
   
+  expect_true(file.exists(file <- iso_get_reader_example("peak_shape_scan_example.scn")))
+  expect_is(scan <- iso_read_scan(file), "scan")
+  expect_equal(nrow(problems(scan)), 0)
+  
+  expect_true(file.exists(file <- iso_get_reader_example("background_scan_example.scn")))
+  expect_is(scan <- iso_read_scan(file), "scan")
+  expect_equal(nrow(problems(scan)), 0)
+  
+  expect_true(file.exists(file <- iso_get_reader_example("full_scan_example.scn")))
+  expect_is(scan <- iso_read_scan(file), "scan")
+  expect_equal(nrow(problems(scan)), 0)
+  
+  expect_true(file.exists(file <- iso_get_reader_example("time_scan_example.scn")))
+  expect_is(scan <- iso_read_scan(file), "scan")
+  expect_equal(nrow(problems(scan)), 0)
+  
+  test_folder <- file.path("test_data") 
+  
+  expect_true(file.exists(file <- file.path(test_folder, "scan_hv_01.scn")))
+  expect_is(scan <- iso_read_scan(file), "scan")
+  expect_equal(nrow(problems(scan)), 0)
+
   
 })
 

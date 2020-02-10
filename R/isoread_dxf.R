@@ -190,7 +190,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
       capture_data("voltages", c("float", rep("double", length(masses))), data_end_re)
     voltages <- bind_rows(voltages,
                           ds$binary$data$voltages %>%
-                            as_data_frame() %>% setNames(c("time.s", masses_columns)))
+                            tibble::as_tibble() %>% setNames(c("time.s", masses_columns)))
   }
 
   # check for data
