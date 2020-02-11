@@ -146,7 +146,7 @@ iso_read_dual_inlet <- function(
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
   nu_masses = c(),
-  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multiprocess, 
+  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multisession, 
   cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
@@ -182,7 +182,7 @@ iso_read_continuous_flow <- function(
   root = ".",
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table), 
-  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multiprocess,
+  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multisession,
   cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
@@ -217,7 +217,7 @@ iso_read_scan <- function(
   ..., 
   root = ".",
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), read_method_info = default(read_method_info),
-  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multiprocess,
+  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multisession,
   cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
@@ -255,7 +255,7 @@ iso_read_scan <- function(
 #' @param data_structure the basic data structure for the type of iso_file
 #' @inheritParams iso_as_file_list
 #' @param parallel whether to process in parallel based on the number of available CPU cores. This may yield performance increases for files that are slow to parse such as continuous flow isodat files but usually provides little benefit for efficient data formats such as reading from R Data Archives.
-#' @param parallel_plan which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multiprocess} (the default, uses multicore if supported by the operating system, otherwise multisession), \code{future::multisession} or \code{future::multicore}.
+#' @param parallel_plan which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multisession} for compatibility with RStudio interactive mode. If supported by the operating system and running in detached mode (not interactively in RStudio) can also use \code{future::multicore}.
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}
 #' @param cache whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.
 #' @param cache_files_with_errors whether to cache files that had errors during reading
@@ -265,7 +265,7 @@ iso_read_scan <- function(
 #' @return single iso_file object (if single file) or list of iso_files (iso_file_list)
 iso_read_files <- function(paths, root, supported_extensions, data_structure, 
                            read_options = c(), reader_options = list(), discard_duplicates = TRUE, 
-                           parallel = FALSE, parallel_plan = future::multiprocess, 
+                           parallel = FALSE, parallel_plan = future::multisession, 
                            cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), 
                            quiet = default(quiet)) {
 
