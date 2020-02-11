@@ -37,6 +37,7 @@ initialize_options <- function() {
   iso_register_continuous_flow_file_reader(".cf.rda", "iso_read_rda", "R Data Archive (deprecated)", "isoreader", cacheable = FALSE, env = "isoreader")
   iso_register_continuous_flow_file_reader(".cf.rds", "iso_read_rds", "R Data Storage", "isoreader", cacheable = FALSE, env = "isoreader")
   iso_register_scan_file_reader(".scn", "iso_read_scn", "Scan file format", "Isodat", env = "isoreader")
+  iso_register_scan_file_reader(".scan.rds", "iso_read_rds", "R Data Storage", "isoreader", cacheable = FALSE, env = "isoreader")
   invisible(options()[names(default_options)])
 
 }

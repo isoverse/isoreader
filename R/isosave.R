@@ -34,6 +34,8 @@ get_rds_export_filepath <- function(iso_files, filepath) {
     ext <- ".cf.rds"
   else if (iso_is_dual_inlet(iso_files))
     ext <- ".di.rds"
+  else if (iso_is_scan(iso_files))
+    ext <- ".scan.rds"
   else
     stop("R data storage export of this type of iso_files not supported", call. = FALSE)
   return(get_export_filepath(filepath, ext))

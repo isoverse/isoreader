@@ -60,11 +60,17 @@ iso_export_to_excel <- function(iso_files, filepath,
     add_excel_sheet(wb, "file info", file_info)
   }
   if (include_method_info) {
-    standards <- iso_get_standards_info(export_iso_files, quiet = TRUE)
     resistors <- iso_get_resistors_info (export_iso_files, quiet = TRUE)
-    add_excel_sheet(wb, "method info", standards, resistors)
+    if (iso_is_scan(export_iso_files)) {
+      # scan
+      add_excel_sheet(wb, "method info", resistors)
+    } else {
+      # cf and dual inlet
+      standards <- iso_get_standards_info(export_iso_files, quiet = TRUE)
+      add_excel_sheet(wb, "method info", standards, resistors)
+    }
   }
-  if (include_vendor_data_table) {
+  if (include_vendor_data_table && !iso_is_scan(export_iso_files)) {
     vendor_data <- iso_get_vendor_data_table(export_iso_files, with_explicit_units = with_explicit_units, quiet = TRUE) %>% 
       iso_strip_units()
     add_excel_sheet(wb, "vendor data table", vendor_data)
@@ -188,11 +194,12 @@ iso_export_to_feather <- function(iso_files, filepath_prefix,
                   filepaths[['file_info']])
   
   if (include_method_info) {
-    write_feather(iso_get_standards_info(iso_files, quiet = TRUE), filepaths[['method_info_standards']])
+    if (!iso_is_scan(iso_files)) 
+      write_feather(iso_get_standards_info(iso_files, quiet = TRUE), filepaths[['method_info_standards']])
     write_feather(iso_get_resistors_info (iso_files, quiet = TRUE), filepaths[['method_info_resistors']])
   }
   
-  if (include_vendor_data_table) 
+  if (include_vendor_data_table && !iso_is_scan(iso_files)) 
     write_feather(
       iso_get_vendor_data_table(iso_files, with_explicit_units = with_explicit_units, quiet = TRUE) %>% iso_strip_units(), 
       filepaths[['vendor_data_table']])
@@ -224,6 +231,8 @@ get_excel_export_filepath <- function(iso_files, filepath) {
     ext <- ".cf.xlsx"
   else if (iso_is_dual_inlet(iso_files))
     ext <- ".di.xlsx"
+  else if (iso_is_scan(iso_files))
+    ext <- ".scan.xlsx"
   else
     stop("Excel export of this type of iso_files not yet supported", call. = FALSE) 
   return(get_export_filepath(filepath, ext))
@@ -235,6 +244,8 @@ get_feather_export_filepaths <- function(iso_files, filepath) {
     ext <- ".cf.feather"
   else if (iso_is_dual_inlet(iso_files))
     ext <- ".di.feather"
+  else if (iso_is_scan(iso_files))
+    ext <- ".scan.feather"
   else
     stop("Feather export of this type of iso_files not yet supported", call. = FALSE) 
   
