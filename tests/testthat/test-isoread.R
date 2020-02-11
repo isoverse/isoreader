@@ -94,10 +94,3 @@ test_that("test that file event expressions work", {
   set_finish_file_event_expr({})
 })
 
-# implement: parallel processing test
-
-test_that("test that parallel reading works", {
-  
-  # try both multiprocess and multisession
-  
-})

@@ -19,12 +19,14 @@ test_that("test that parameter checks are performed", {
 
 
 test_that("test that dxf files can be read", {
+  
+  # check if tests are enabled
+  run_file_tests <- getOption("isoreader.run_file_tests")
+  if (!is.null(run_file_tests) && identical(run_file_tests, FALSE)) {
+    skip("Currently not testing all continuous flow data files.")
+  }
+  
   # test specific files
-  
-  # FIXME: re-enable for commits
-  #skip("Currently not testing all continuous flow data files.")
-  # FIXME: run as one batch to make use of parallel processing
-  
   iso_turn_reader_caching_off()
   
   expect_true(file.exists(file <- iso_get_reader_example("linearity_example.dxf")))
@@ -106,6 +108,24 @@ test_that("test that dxf files can be read", {
   expect_true(iso_is_continuous_flow(reread_dxf <- iso_reread_files(iso_files)))
   expect_equal(nrow(problems(reread_dxf)), 0)
   
+  
+  # test multiprocess and multisession
+  file_paths <-
+    file.path(test_folder,
+              c("dxf_example_H_01.dxf", "dxf_example_HO_01.dxf", "dxf_example_HO_02.dxf", "dxf_example_CNS_01.dxf", "dxf_example_N2_01.dxf"))
+  
+  expect_message(files <- iso_read_continuous_flow(file_paths, parallel = TRUE, parallel_plan = future::multisession),
+                 "preparing to read 5 data files.*setting up.*parallel processes")
+  expect_equal(nrow(problems(files)), 0)
+  
+  # test multiprocess and multisession
+  file_paths <-
+    file.path(test_folder,
+              c("dxf_example_H_01.dxf", "dxf_example_HO_01.dxf", "dxf_example_HO_02.dxf", "dxf_example_CNS_01.dxf", "dxf_example_N2_01.dxf"))
+  
+  expect_message(files <- iso_read_continuous_flow(file_paths, parallel = TRUE, parallel_plan = future::multiprocess),
+                 "preparing to read 5 data files.*setting up.*parallel processes")
+  expect_equal(nrow(problems(files)), 0)
   
 })
 
