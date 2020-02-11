@@ -52,9 +52,9 @@ check_expressions <- function(df, ...) {
 # @param n_reqs named list to specify how many columns are allowed/required for each selection criterion, default for all that are not specified is 1.
 # Allowed values are a specific number 1,2,3,4, etc. "*" for any number, "?" for 0 or 1 and "+" for at least one.
 # @param type_reqs named list to specify what types certain columns must be, allowed: "list" (also includes "vctrs_list_of"), "numeric", "integer", "character", "logical"
-# @param cols_must_exist - if TRUE, will throw an error if a column does not exist, otherwise just  warning
+# @param cols_must_exist - if TRUE, will throw an error if a column does not exist, otherwise just warning (unless warn = FALSE)
 # @return list of column names for each entry (may contain multiple depending on selection conditions)
-get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_must_exist = TRUE) {
+get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_must_exist = TRUE, warn = TRUE) {
   
   # df name and data frame test
   if (missing(df)) stop("no data frame supplied", call. = FALSE)
@@ -108,7 +108,7 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
       stop(err_msg, call. = FALSE)
     } else {
       # just a warning and find the columns omitting those missing
-      warning(err_msg, immediate. = TRUE, call. = FALSE)
+      if (warn) warning(err_msg, immediate. = TRUE, call. = FALSE)
       cols_results <- map(cols_exps, safe_vars_select, strict = FALSE)
     }
   }
