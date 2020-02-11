@@ -19,12 +19,14 @@ test_that("test that parameter checks are performed", {
 
 
 test_that("test that scn files can be read", {
+  
+  # check if tests are enabled
+  run_file_tests <- getOption("isoreader.run_file_tests")
+  if (!is.null(run_file_tests) && identical(run_file_tests, FALSE)) {
+    skip("Currently not testing all scan data files.")
+  }
+  
   # test specific files
-  
-  # FIXME: re-enable for commits
-  #skip("Currently not testing all scan data files.")
-  # FIXME: run as one batch to make use of parallel processing
-  
   iso_turn_reader_caching_off()
   
   expect_true(file.exists(file <- iso_get_reader_example("peak_shape_scan_example.scn")))
