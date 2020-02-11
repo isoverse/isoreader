@@ -13,6 +13,9 @@ iso_read_scn <- function(ds, options = list()) {
   # get scan file type
   ds <- exec_func_with_error_catch(extract_scn_file_type, ds)
   
+  # get mass and cup config
+  ds <- exec_func_with_error_catch(extract_scn_mass_cup_info, ds)
+  
   # process file info
   if(ds$read_options$file_info) {
     # there does not seem to be creation date stored inside the scn files
@@ -23,18 +26,15 @@ iso_read_scn <- function(ds, options = list()) {
   }
   
   # process raw data
-  if (ds$read_option$raw_data) {
+  if (ds$read_option$raw_data && !is.null(ds$binary$data$config)) {
     ds <- exec_func_with_error_catch(extract_scn_raw_voltage_data, ds)
   }
-  return(ds)
   
-  # FIXME: should be possible to get resistor information but it's not
-  # obvious yet how
-  # # process method info
-  # if (ds$read_options$method_info) {
-  #   ds <- exec_func_with_error_catch(extract_isodat_resistors, ds)
-  # }
-  
+  # process method info
+  if (ds$read_options$method_info && !is.null(ds$binary$data$config)) {
+    ds <- exec_func_with_error_catch(extract_scn_resistors, ds)
+  }
+
   return(ds)
 }
 
@@ -69,6 +69,50 @@ extract_scn_file_info <- function(ds) {
   } else {
     ds$file_info$comment <- NA_character_
   }
+  
+  return(ds)
+}
+
+# extract mass and cup info
+extract_scn_mass_cup_info <- function(ds){
+  # find masses and cups
+  ds$binary <- ds$binary %>% 
+    set_binary_file_error_prefix("cannot identify masses/cups") %>%  
+    move_to_C_block("^CPlotRange", regexp_match = TRUE) %>% 
+    cap_at_next_pattern(re_text("Administrator"))
+  
+  # masses
+  mass_positions <- find_next_patterns(ds$binary, re_text("Mass"))
+  masses <- c()
+  cups <- c()
+  if (length(mass_positions) > 0) {
+    for (pos in mass_positions) {
+      ds$binary <- ds$binary %>% move_to_pos(pos) %>% 
+        capture_data("mass", "text", re_not_null(2)) 
+      masses <- c(masses, ds$binary$data$mass)
+    }
+    cups <- c(stringr::str_extract(masses, "C\\d+"))
+  } else {
+    # cups
+    cup_positions <- find_next_patterns(ds$binary, re_text("Cup"))
+    for (pos in cup_positions) {
+      ds$binary <- ds$binary %>% move_to_pos(pos) %>% 
+        capture_data("cup", "text", re_not_null(2)) 
+      cups <- c(cups, ds$binary$data$cup)
+    }
+    masses <- rep(NA_character_, length(cups))
+  }
+
+  ds$binary$data$config <- tibble(
+    cup = parse_number(cups) %>% as.integer(),
+    mass = parse_number(masses) %>% as.character(),
+    mass_column = ifelse(
+      !is.na(mass),
+      sprintf("v%s.mV", mass),
+      # Note: okay to designate cups in this way?
+      sprintf("vC%s.mV", cup)
+    )
+  ) %>% filter(!is.na(cup))
   
   return(ds)
 }
@@ -115,46 +159,6 @@ extract_scn_raw_voltage_data <- function(ds) {
     capture_n_data("min", "float", 1) %>% 
     capture_n_data("max", "float", 1)
   
-  # find masses and cups
-  ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot identify masses/cups") %>%  
-    move_to_C_block("^CPlotRange", regexp_match = TRUE) %>% 
-    cap_at_C_block("CIntegrationUnitGasConfPart")
-    
-  # masses
-  mass_positions <- find_next_patterns(ds$binary, re_text("Mass"))
-  masses <- c()
-  cups <- c()
-  if (length(mass_positions) > 0) {
-    for (pos in mass_positions) {
-      ds$binary <- ds$binary %>% move_to_pos(pos) %>% 
-        capture_data("mass", "text", re_not_null(2)) 
-      masses <- c(masses, ds$binary$data$mass)
-    }
-    cups <- c(stringr::str_extract(masses, "C\\d"))
-  } else {
-    # cups
-    cup_positions <- find_next_patterns(ds$binary, re_text("Cup"))
-    for (pos in cup_positions) {
-      ds$binary <- ds$binary %>% move_to_pos(pos) %>% 
-        capture_data("cup", "text", re_not_null(2)) 
-      cups <- c(cups, ds$binary$data$cup)
-    }
-    masses <- rep(NA_character_, length(cups))
-  }
-  
-  # configuration
-  config <- tibble(
-    cup = parse_number(cups) %>% as.integer(),
-    mass = parse_number(masses) %>% as.character(),
-    mass_column = ifelse(
-      !is.na(mass),
-      sprintf("v%s.mV", mass),
-      # Note: should cups be designated in some other way??
-      sprintf("v%s.mV", cup)
-    )
-  )
-  
   # raw data (=voltages)
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot read raw data") %>%  
@@ -164,10 +168,22 @@ extract_scn_raw_voltage_data <- function(ds) {
       "voltages", c("float", rep("double", ds$binary$data$n_traces)),
       ds$binary$data$n_points
     )
+  voltages <- tibble::as_tibble(ds$binary$data$voltages)
   
-  voltages <- ds$binary$data$voltages %>% 
-    tibble::as_tibble() %>% 
-    setNames(c("step", config$mass_column))
+  # safety check
+  if (ncol(voltages) - 1L != nrow(ds$binary$data$config)) {
+    if (default("debug")) {
+      print(voltages)
+      print(ds$binary$data$config)
+    }
+    glue::glue(
+      "inconsistent number of data traces ({ncol(voltages) - 1L}) ",
+      "and raw data masses/cups ({nrow(ds$binary$data$config)}) recovered") %>% 
+    stop(call. = FALSE)
+  }
+  
+  # set column names
+  voltages <- setNames(voltages, c("step", ds$binary$data$config$mass_column))
   
   # calculate x values from step
   convert_step_to_x <- function(step) {
@@ -199,4 +215,41 @@ extract_scn_raw_voltage_data <- function(ds) {
   
   return(ds)
   
+}
+
+
+# extract resistor information
+# not the same format as other isodat files
+extract_scn_resistors <- function(ds) {
+  
+  ds$binary <- ds$binary %>% 
+    move_to_C_block_range("CCupHardwarePart", "CChannelHardwarePart")
+  
+  cup_positions <- find_next_patterns(ds$binary, re_block("fef-x"), re_text("Cup"))
+  cup_caps <- c(cup_positions[-1], ds$binary$max_pos)
+  
+  cups <- c()
+  ohms <- c()
+  for (i in 1:length(cup_positions)) {
+    ds$binary <- ds$binary %>% move_to_pos(cup_positions[i]) %>% 
+      cap_at_pos(cup_caps[i]) %>% 
+      skip_pos(4) %>% 
+      capture_data("cup", "text", re_block("x-000")) %>% 
+      move_to_next_pattern(re_null(16), re_direct("(\xff\xfe\xff\\x00)?"), re_block("x-000"), re_not_null(1)) %>% 
+      capture_n_data("R.Ohm", "double", 1)
+    cups <- c(cups, ds$binary$data$cup)
+    ohms <- c(ohms, ds$binary$data$R.Ohm)
+  }
+  
+  ds$method_info$resistors <-
+    dplyr::tibble(
+      cup = parse_number(cups) %>% as.integer(), 
+      R.ohm = ohms
+    ) %>%
+    dplyr::right_join(
+      select(ds$binary$data$config, cup, mass),
+      by = "cup"
+    )
+  
+  return(ds)
 }

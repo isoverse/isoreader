@@ -288,7 +288,7 @@ re_combine <- function(...) {
     list(
       label = str_c(map_chr(regexps, "label"), collapse = ""),
       # NOTE: on windows, the following command with str_c instead of paste or map_chr instead of sapply strangly leads to the regexp not getting recognized anymore in grepRaw
-      regexp = paste(sapply(regexps, `[[`, "regexp"), collapse = ""),
+      regexp = stringr::str_c(sapply(regexps, `[[`, "regexp"), collapse = ""),
       size = sum(map_dbl(regexps, "size"))
     ),
     class = "binary_regexp")
