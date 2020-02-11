@@ -83,7 +83,7 @@ extract_scn_raw_voltage_data <- function(ds) {
   
   ds$binary <- ds$binary %>% 
     move_to_next_pattern(re_block("x-000"), re_block("fef-x"))
-  end_pos <- ds$binary %>% find_next_pattern(re_direct("\xff\xff"))
+  end_pos <- ds$binary %>% find_next_pattern(re_direct("\xff\xff", label = "xffxff"))
   
   ds$binary <- ds$binary %>% 
     skip_pos(end_pos - ds$binary$pos - 8) %>% # skip comment 
@@ -95,11 +95,14 @@ extract_scn_raw_voltage_data <- function(ds) {
     set_binary_file_error_prefix("cannot identify scan units") %>% 
     move_to_C_block_range("CVisualisationData", "CIntegrationUnitScanPart")
   ds$binary <- ds$binary %>% 
+    move_to_next_pattern(re_text("Arial")) %>% 
     move_to_next_pattern(
       # seems to begin with this unique 88 c3 40 sequence
-      re_direct("\x88\xc3\x40"), re_null(12), 
+      re_direct("\x88\xc3\x40", label = "x88xc3x40")
+    ) %>% 
+    move_to_next_pattern(
       # but this could be sufficient too if the above turns too specific
-      re_block("fef-0"), re_block("x-000"), re_block("fef-x")
+      re_block("x-000"), re_block("fef-x")
     ) %>% 
     capture_data("units", "text", re_null(4), re_not_null(1))
   
@@ -116,8 +119,8 @@ extract_scn_raw_voltage_data <- function(ds) {
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot identify masses/cups") %>%  
     move_to_C_block("^CPlotRange", regexp_match = TRUE) %>% 
-    cap_at_next_pattern(re_text("Administrator"))
-  
+    cap_at_C_block("CIntegrationUnitGasConfPart")
+    
   # masses
   mass_positions <- find_next_patterns(ds$binary, re_text("Mass"))
   masses <- c()
@@ -161,6 +164,7 @@ extract_scn_raw_voltage_data <- function(ds) {
       "voltages", c("float", rep("double", ds$binary$data$n_traces)),
       ds$binary$data$n_points
     )
+  
   voltages <- ds$binary$data$voltages %>% 
     tibble::as_tibble() %>% 
     setNames(c("step", config$mass_column))
