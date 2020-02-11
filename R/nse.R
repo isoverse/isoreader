@@ -191,38 +191,3 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   
   return(cols)
 }
-
-# resolve default cols in a list of quos
-resolve_defaults <- function(quos) {
-  resolve_default <- function(x) if (rlang::quo_is_call(x) && rlang::call_name(x) == sym("default")) eval_tidy(x) else x
-  if (is_quosure(quos)) return(resolve_default(quos))
-  else map(quos, resolve_default)
-}
-
-# Convert quo to text accounting for plain text and symbol quos
-quos_to_text <- function(lquos, check_for_validity = TRUE, variable = "variable") {
-  single_quo <- is_quosure(lquos)
-  lquos <- if(single_quo) quos(!!lquos) else quos(!!!lquos)
-  are_text_quos <- map_lgl(lquos, ~is.character(quo_squash(.x)))
-  are_symbol_quos <- map_lgl(lquos, quo_is_symbol)
-  
-  # check for validity
-  if (check_for_validity && !all(ok <- are_text_quos | are_symbol_quos)) {
-    params <-
-      str_c(names(lquos)[!ok] %>% { ifelse(nchar(.) > 0, str_c(., " = "), .) },
-            map_chr(lquos[!ok], quo_text)) %>%
-      collapse("', '", last = "' and '")
-    if (sum(!ok) > 1)
-      glue("parameters '{params}' do not refer to valid {variable} names") %>% stop(call. = FALSE)
-    else
-      glue("parameter '{params}' does not refer to a valid {variable} name") %>% stop(call. = FALSE)
-  }
-  
-  text_quos <-
-    map2_chr(lquos, are_text_quos, function(lquo, is_text)
-      if(is_text) quo_squash(lquo) else rlang::as_label(lquo)) %>% 
-    as.list()
-  if (single_quo) return(text_quos[[1]])
-  else return(text_quos)
-}
-

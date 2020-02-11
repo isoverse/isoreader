@@ -86,16 +86,3 @@ test_that("Getting column names (with # and type requirement checks) works", {
   expect_error(get_column_names(nest(df, data = c(-rowname)), a = quo(data), type_reqs = list(a = "character")), "not .* the correct column types")
   expect_equal(get_column_names(nest(df, data = c(-rowname)), a = quo(data), type_reqs = list(a = "list")), list(a = c(data = "data")))
 })
-
-test_that("Test that quos to text conversion works", {
-  
-  expect_error(quos_to_text(quo(a^2)), "not .* valid")
-  expect_error(quos_to_text(quo(NULL)), "not .* valid")
-  expect_error(quos_to_text(quo(~mean)), "not .* valid")
-  expect_error(quos_to_text(quos(a^2, NULL, mean)), "not .* valid")
-  expect_equal(quos_to_text(quo("a")), "a")
-  expect_equal(quos_to_text(quo(a)), "a")
-  expect_equal(quos_to_text(quos(a, "b")) %>% unlist(use.name = FALSE), c("a", "b"))
-  expect_equal(quos_to_text(quos(x = a)), list(x="a"))
-  
-})
