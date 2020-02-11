@@ -6,6 +6,7 @@
 \alias{iso_is_object}
 \alias{iso_is_dual_inlet}
 \alias{iso_is_continuous_flow}
+\alias{iso_is_scan}
 \alias{iso_as_file_list}
 \title{Isoreader data structure functions}
 \usage{
@@ -18,6 +19,8 @@ iso_is_object(x)
 iso_is_dual_inlet(x)
 
 iso_is_continuous_flow(x)
+
+iso_is_scan(x)
 
 iso_as_file_list(..., discard_duplicates = TRUE)
 }
@@ -38,6 +41,8 @@ iso_as_file_list(..., discard_duplicates = TRUE)
 \code{iso_is_dual_inlet} tests if an iso_file or iso_file list consists exclusively of dual inlet file objects
 
 \code{iso_is_continuous_flow} tests if an iso_file or iso_file list consists exclusively of continuous flow file objects
+
+\code{iso_is_scan} tests if an iso_file or iso_file list consists exclusively of scan file objects
 
 \code{iso_as_file_list} concatenates iso_file and iso_file list object(s) into one combined iso_file list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within iso_file lists have to be the same type of iso_file, issues warnings if there are duplicate file ids and summarizes all problems in the iso_file list. If duplicates are allowed (\code{discard_duplicates = FALSE}), their file IDs will append a #1, #2, #3, etc. to preserve unique file IDs (important for many data aggregation operations).
 }

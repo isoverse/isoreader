@@ -5,6 +5,7 @@
 \alias{print.iso_file}
 \alias{print.dual_inlet}
 \alias{print.continuous_flow}
+\alias{print.scan}
 \title{Isofile printing}
 \usage{
 \method{print}{iso_file_list}(x, ...)
@@ -14,6 +15,8 @@
 \method{print}{dual_inlet}(x, ..., show_problems = TRUE)
 
 \method{print}{continuous_flow}(x, ..., show_problems = TRUE)
+
+\method{print}{scan}(x, ..., show_problems = TRUE)
 }
 \arguments{
 \item{x}{Object to show.}
