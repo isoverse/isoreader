@@ -16,15 +16,13 @@ extract_os_file_creation_datetime <- function(ds) {
     # Linux and OS X, try it with stat, otherwise just throw a warning and use mdate
     
     # m date (meaning BSD stat didn't work)
-    get_from_mdate <- function(ds) {
+    get_creation_date <- function(ds) {
       # last modification time the only info that's available
       ds <- ds %>% register_warning(
         paste0(
-          "file creation date could not be determined on this operating system (",
-          .Platform$OS.type, "/", Sys.info()[['sysname']],
-          "), recovering 'last modified date' instead."
+          "file creation date cannot be accessed on this Linux system, using last modified time for file_datetime instead"
         ), 
-        warn = TRUE
+        warn = FALSE
       )
       ds$file_info$file_datetime <- as_datetime(file.info(path)$mtime, tz = Sys.timezone())
       return(ds)
@@ -43,8 +41,8 @@ extract_os_file_creation_datetime <- function(ds) {
           as_datetime(tz = Sys.timezone())
         ds
       }, 
-      error = function(e) { return(get_from_mdate(ds)) }, 
-      warning = function(e) { return(get_from_mdate(ds)) }) 
+      error = function(e) { return(get_creation_date(ds)) }, 
+      warning = function(e) { return(get_creation_date(ds)) }) 
   } else { 
     stop("don't know how to get file creation date on platform ", .Platform$OS.type)
   }
