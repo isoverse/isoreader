@@ -124,7 +124,6 @@ iso_files3 %>%
 Additionally, some IRMS data files contain resistor information that are useful for downstream calculations (see e.g. section on signal conversion later in this vignette):
 
 ```{r}
-# FIXME: these information are not yet extracted from scan files!
 iso_files %>% iso_get_resistors_info() %>% rmarkdown::paged_table()
 ```
 
@@ -191,7 +190,7 @@ iso_files %>%
   iso_get_raw_data(include_file_info = type) %>%
   dplyr::mutate(panel = sprintf("%s [%s]", type, units)) %>% 
   tidyr::pivot_longer(
-    matches("v\\d+"),
+    matches("vC?\\d+"),
     names_to = "mass",
     values_to = "value",
     values_drop_na = TRUE
