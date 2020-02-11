@@ -49,6 +49,13 @@ test_that("test that scn files can be read", {
   expect_is(scan <- iso_read_scan(file), "scan")
   expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
 
+  expect_true(file.exists(file <- file.path(test_folder, "scan_hv_02.scn")))
+  expect_is(scan <- iso_read_scan(file), "scan")
+  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
+  
+  expect_true(file.exists(file <- file.path(test_folder, "scan_hv_03.scn")))
+  expect_is(scan <- iso_read_scan(file), "scan")
+  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
   
 })
 
