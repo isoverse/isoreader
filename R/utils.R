@@ -113,9 +113,6 @@ monitor_parallel_logs <- function(processes) {
 # process parallel logs
 process_parallel_logs <- function(status) {
 
-  # global vars
-  X1 <- X2 <- X3 <- prefix <- NULL
-
   # logs
   log <- get_temp("parallel_log_file")
   if (!is.null(log) && file.exists(log)) {
@@ -146,13 +143,13 @@ process_parallel_logs <- function(status) {
       status$log_n <- status$log_n + nrow(logs)
       logs %>%
         mutate(
-          X2 = as.character(X2),
+          X2 = as.character(.data$X2),
           prefix = case_when(
-            X1 == "info" ~ sprintf("Info (process %s): ", X2),
-            X1 == "warning" ~ sprintf("Warning (process %s): ", X2),
-            TRUE ~ sprintf("Process %s: ", X2)
+            X1 == "info" ~ sprintf("Info (process %s): ", .data$X2),
+            X1 == "warning" ~ sprintf("Warning (process %s): ", .data$X2),
+            TRUE ~ sprintf("Process %s: ", .data$X2)
           )) %>%
-        with(purrr::walk2(X3, prefix, ~log_message(.x, prefix = .y)))
+        { purrr::walk2(.$X3, .$prefix, ~log_message(.x, prefix = .y)) }
     }
   }
 
