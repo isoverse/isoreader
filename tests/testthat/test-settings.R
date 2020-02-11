@@ -6,6 +6,7 @@ test_that("default values can be set and retrieved", {
   expect_true(set_default("quiet", TRUE))
   expect_true(default("quiet"))
   expect_true(default(quiet))
+  expect_error(default(quiet^2), "don't know how to process.*expression")
   expect_false(set_default("quiet", FALSE))
   expect_false(default("quiet"))
   expect_false(default(quiet))

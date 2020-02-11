@@ -1,9 +1,22 @@
 # retrieve package settings, internal function, not exported
 default <- function(name, allow_null = FALSE) {
-  name <- enquo(name) %>% quos_to_text(variable = "setting")
+  name_exp <- rlang::enexpr(name)
+  if (rlang::is_symbol(name_exp)) 
+    name <- rlang::as_name(name_exp)
+  else if (is.character(name_exp))
+    name <- name_exp
+  else
+    stop("don't know how to process setting expression '", rlang::as_label(name_exp), "'", call. = FALSE)
   value <- getOption(str_c("isoreader.", name))
   if (!allow_null && is.null(value)) stop("isoreader setting '", name, "' does not exist", call. = FALSE)
   return(value)
+}
+
+# resolve default cols in a list of quos
+resolve_defaults <- function(quos) {
+  resolve_default <- function(x) if (rlang::quo_is_call(x) && rlang::call_name(x) == sym("default")) eval_tidy(x) else x
+  if (is_quosure(quos)) return(resolve_default(quos))
+  else map(quos, resolve_default)
 }
 
 # set package setting, internal function, not exported
