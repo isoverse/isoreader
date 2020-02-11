@@ -12,11 +12,20 @@ default <- function(name, allow_null = FALSE) {
   return(value)
 }
 
-# resolve default cols in a list of quos
-resolve_defaults <- function(quos) {
-  resolve_default <- function(x) if (rlang::quo_is_call(x) && rlang::call_name(x) == sym("default")) eval_tidy(x) else x
-  if (is_quosure(quos)) return(resolve_default(quos))
-  else map(quos, resolve_default)
+# resolve defaults in a list of quos or expressions
+# @param q single quo or expression, or list of quos and/or expressions
+resolve_defaults <- function(q) {
+  resolve_default <- function(x) {
+    if (
+      ((rlang::is_quosure(x) && rlang::quo_is_call(x)) || (!rlang::is_quosure(x) && rlang::is_call(x))) && 
+      rlang::call_name(x) == "default") {
+      return(eval_tidy(x))
+    } else {
+      return(x)
+    }
+  }
+  if (is.list(q)) return(purrr::map(q, resolve_default))
+  else return(resolve_default(q))
 }
 
 # set package setting, internal function, not exported
