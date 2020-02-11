@@ -3,7 +3,7 @@ context("Scan")
 test_that("test that supported scan files are correct", {
   initialize_options()
   expect_is(exts <- get_supported_scan_files(), "data.frame")
-  expect_equal(exts$extension, c(".scn"))
+  expect_equal(exts$extension, c(".scn", ".scan.rds"))
   expect_true(all(exts$func %>% sapply(class) == "character"))
   expect_true(all(exts$func %>% map_lgl(exists, mode = "function", where = asNamespace("isoreader"))))
 })

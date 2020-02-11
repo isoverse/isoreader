@@ -8,6 +8,9 @@
 .Rprofile
 # Example code in package build process
 *.xlsx
+*.rds
+*.rda
+*.feather
 *-Ex.R
 # Output files from R CMD build
 /*.tar.gz
