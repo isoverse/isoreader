@@ -24,6 +24,7 @@ iso_register_dual_inlet_file_reader <- function(
 #' @details \code{iso_register_continuous_flow_file_reader}: use this function to register file readers for continuous flow files.
 #' @rdname file_readers
 #' @family file_types
+#' @export
 iso_register_continuous_flow_file_reader <- function(
   extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
   register_file_reader("continuous flow", "iso_read_continuous_flow", extension, func, description, software, cacheable, overwrite, env)
@@ -32,6 +33,7 @@ iso_register_continuous_flow_file_reader <- function(
 #' @details \code{iso_register_scan_file_reader}: use this function to register file readers for scan files.
 #' @rdname file_readers
 #' @family file_types
+#' @export
 iso_register_scan_file_reader <- function(
   extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
   register_file_reader("scan", "iso_read_scan", extension, func, description, software, cacheable, overwrite, env)
