@@ -39,7 +39,7 @@ iso_get_reader_examples() %>% rmarkdown::paged_table()
 ```
 
 ```{r}
-# read dual inlet examples
+# read scan examples
 iso_files <- 
   iso_read_scan(
     iso_get_reader_example("peak_shape_scan_example.scn"),
@@ -185,7 +185,7 @@ At the moment, isoreader supports export of all data to Excel and the [Feather f
 
 # Visualization
 
-```{r "scans", fig.width=10, fig.height=10}
+```{r "scans", fig.width=10, fig.height=10, eval=FALSE}
 # FIXME: should go into isoprocessor vignette once the functions there exist
 iso_files %>% 
   iso_get_raw_data(include_file_info = type) %>%
