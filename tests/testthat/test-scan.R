@@ -29,25 +29,25 @@ test_that("test that scn files can be read", {
   
   expect_true(file.exists(file <- iso_get_reader_example("peak_shape_scan_example.scn")))
   expect_is(scan <- iso_read_scan(file), "scan")
-  expect_equal(nrow(problems(scan)), 0)
+  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
   
   expect_true(file.exists(file <- iso_get_reader_example("background_scan_example.scn")))
   expect_is(scan <- iso_read_scan(file), "scan")
-  expect_equal(nrow(problems(scan)), 0)
+  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
   
   expect_true(file.exists(file <- iso_get_reader_example("full_scan_example.scn")))
   expect_is(scan <- iso_read_scan(file), "scan")
-  expect_equal(nrow(problems(scan)), 0)
+  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
   
   expect_true(file.exists(file <- iso_get_reader_example("time_scan_example.scn")))
   expect_is(scan <- iso_read_scan(file), "scan")
-  expect_equal(nrow(problems(scan)), 0)
+  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
   
   test_folder <- file.path("test_data") 
   
   expect_true(file.exists(file <- file.path(test_folder, "scan_hv_01.scn")))
   expect_is(scan <- iso_read_scan(file), "scan")
-  expect_equal(nrow(problems(scan)), 0)
+  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
 
   
 })
