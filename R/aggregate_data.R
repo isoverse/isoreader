@@ -490,7 +490,15 @@ iso_get_bgrd_data <- function(iso_files, select = everything(), gather = FALSE, 
 #' @family data retrieval functions
 #' @export
 iso_get_standards_info <- function(iso_files, with_ratios = FALSE, include_file_info = NULL, quiet = default(quiet)) {
+  
   iso_files <- iso_as_file_list(iso_files)
+  
+  # safety checks
+  if (iso_is_scan(iso_files))
+    stop("scan files don't have standards information", call. = FALSE)
+  else if (!iso_is_continuous_flow(iso_files) && !iso_is_dual_inlet(iso_files))
+    stop("only dual inlet and continuous flow files can have standards information", call. = FALSE)
+  
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
     sprintf("Info: aggregating standards info from %d data file(s)%s", length(iso_files),
