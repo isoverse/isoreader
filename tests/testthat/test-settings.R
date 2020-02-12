@@ -6,9 +6,19 @@ test_that("default values can be set and retrieved", {
   expect_true(set_default("quiet", TRUE))
   expect_true(default("quiet"))
   expect_true(default(quiet))
+  expect_error(default(quiet^2), "don't know how to process.*expression")
   expect_false(set_default("quiet", FALSE))
   expect_false(default("quiet"))
   expect_false(default(quiet))
+})
+
+test_that("default calls are resolved", {
+  # resolve defaults in a list of quos
+  expect_equal(resolve_defaults(quo(default(quiet))), FALSE)
+  expect_equal(resolve_defaults(expr(default(quiet))), FALSE)
+  expect_equal(resolve_defaults(list(
+    quo(default(quiet)), expr(default(quiet)), quo(x), expr(y)
+  )), list(FALSE, FALSE, quo(x), expr(y)))
 })
 
 test_that("info messages can be turned on and off", {
