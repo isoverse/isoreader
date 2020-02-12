@@ -17,14 +17,22 @@ navbar:
   title: isoreader
   type: default
   left:
-  - text: Dual Inlet
-    href: articles/dual_inlet.html
-  - text: Continuous Flow
-    href: articles/continuous_flow.html
-  - text: Operations
-    href: articles/operations.html
-  - text: Development
-    href: articles/development.html
+  - text: Quick Start
+    href: articles/quick_start.html
+  - text: Full Examples
+    menu:
+    - text: Dual Inlet
+      href: articles/dual_inlet.html
+    - text: Continuous Flow
+      href: articles/continuous_flow.html
+    - text: Scan
+      href: articles/scan.html
+  - text: Advanced
+    menu:
+    - text: Operations
+      href: articles/operations.html
+    - text: Development
+      href: articles/development.html
   - text: Reference
     href: reference/index.html
   right:
