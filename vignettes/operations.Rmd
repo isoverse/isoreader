@@ -1,7 +1,17 @@
 ---
 title: "Operations"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+  html_document:
+    code_folding: show
+    df_print: paged
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+editor_options:
+  chunk_output_type: console
 vignette: >
   %\VignetteIndexEntry{Operations}
   %\VignetteEngine{knitr::rmarkdown}
@@ -18,33 +28,93 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-Coming soon...
-
 Isoreader provides a number of general purpose operations that work on all supported IRMS data formats such as caching of files, parallel processing and catching read errors. This vignette demonstrates some of these general operations.
+
+```{r, message=FALSE}
+# load isoreader package
+library(isoreader)
+```
 
 # Supported file types
 
 ```{r}
-
+# list all suported file types
+iso_get_supported_file_types() %>% 
+  dplyr::select(extension, software, description, type) %>% 
+  knitr::kable()
 ```
 
+# Messages
+
+By default, isoreader is quite verbose to let the user know what is happening. However, most functions can be silenced by adding the parameter `quiet = TRUE` to the function call. This can also be done globally using `iso_turn_info_message_off()`
+
+```{r}
+# read a file in the default verbose mode
+iso_get_reader_example("dual_inlet_example.did") %>% 
+  iso_read_dual_inlet() %>% 
+  iso_select_file_info(file_datetime, `Identifier 1`) %>% 
+  iso_get_file_info() %>% 
+  knitr::kable()
+
+# read the same file but make the read process quiet
+iso_get_reader_example("dual_inlet_example.did") %>% 
+  iso_read_dual_inlet(quiet = TRUE) %>% 
+  iso_select_file_info(file_datetime, `Identifier 1`) %>% 
+  iso_get_file_info() %>% 
+  knitr::kable()
+
+# read the same file but turn all isoreader messages off
+iso_turn_info_messages_off()
+iso_get_reader_example("dual_inlet_example.did") %>% 
+  iso_read_dual_inlet(quiet = TRUE) %>% 
+  iso_select_file_info(file_datetime, `Identifier 1`) %>% 
+  iso_get_file_info() %>% 
+  knitr::kable()
+
+# turn message back on
+iso_turn_info_messages_on()
+```
 
 # Caching
 
-```{r}
-#iso_cleanup_reader_cache()
-```
+By default, isoreader caches files as R objects to make access faster in the future. This feature can be turned off if you want to force a fresh read from the source file. Alternatively, you can clear the entire isoreader cache in your working directory to clean up previous file reads.
 
+```{r}
+# cleanup reader cache
+iso_cleanup_reader_cache(all = TRUE)
+
+# read a new file (notice the time elapsed)
+cf_file <- iso_get_reader_example("continuous_flow_example.dxf") %>% 
+  iso_read_continuous_flow()
+
+# re-read the same file much faster (it will be read from cache)
+cf_file <- iso_get_reader_example("continuous_flow_example.dxf") %>% 
+    iso_read_continuous_flow()
+
+# turn reader caching off
+iso_turn_reader_caching_off()
+
+# re-read the same file (it will NOT be read from cache)
+cf_file <- iso_get_reader_example("continuous_flow_example.dxf") %>% 
+  iso_read_continuous_flow()
+
+# turn reader caching back on
+iso_turn_reader_caching_on()
+```
 
 # Parallel processing
 
-Whether parallel processing yields signifcant improvemens in read speeds depends on the number of available processors, file types and operating system. In theory, parallel processing always reduces computation time but in practice this is offset by various factors including the size of the data that needs to be sent back and forth between the processors, file system read/write speed, and the spin-up time for new processes. Generally speaking, parallel processing can provide significant improvements in speed with larger number of files (~10+) and more complex read operations (e.g. continuous flow vs. dual inlet). Reading from cache is so efficient that there are rarely gains from parallel processing and it is usually faster NOT to read in parallel.
-
-
-# Messages and default parameters
+Isoreader supports parallel processing of data files based on the number of processors available in a computer simply by setting the `parallel = TRUE` flag in any file read operation. This makes it possible to read large quantities of data files much more quickly on a multi-core system (i.e. most modern laptops). However, whether parallel processing yields signifcant improvemens in read speeds depends on the number of available processors, file types and operating system. In theory, parallel processing always reduces computation time but in practice this is offset by various factors including the size of the data that needs to be sent back and forth between the processors, file system read/write speed, and the spin-up time for new processes. Generally speaking, parallel processing can provide significant improvements in speed with larger number of files (~10+) and more complex read operations (e.g. continuous flow > dual inlet > scan file). Reading from cache is so efficient that there are rarely gains from parallel processing and it is usually faster NOT to read in parallel once a set of files is already cached.
 
 ```{r}
-
+# read 3 files in parallel (note that this is usually not a large enough file number to be worth it)
+di_files <- 
+  iso_read_dual_inlet(
+    iso_get_reader_example("dual_inlet_example.did"),
+    iso_get_reader_example("dual_inlet_example2.did"),
+    iso_get_reader_example("dual_inlet_example.caf"),
+    parallel = TRUE
+  )
 ```
 
 
@@ -53,25 +123,67 @@ Whether parallel processing yields signifcant improvemens in read speeds depends
 All isoreader objects are lists that can be combined or subset to work with only specific files or create a larger collection. 
 
 ```{r}
+# all 3 di_files read above
+di_files
 
+# only one of the files (by index)
+di_files[[2]]
+
+# only one of the files (by file_id)
+di_files$dual_inlet_example2.did
+
+# a subset of the files (by index)
+di_files[c(1,3)]
+
+# a subset of the files (by file_id)
+di_files[c("dual_inlet_example.did", "dual_inlet_example.caf")]
+
+# same result using iso_filter_files (more flexible + verbose output)
+di_files %>% iso_filter_files(
+  file_id %in% c("dual_inlet_example.did", "dual_inlet_example.caf")
+)
+
+# recombining subset files
+c(
+  di_files[3],
+  di_files[1]
+)
 ```
 
 # Dealing with file read problems
 
-
-
-# Removing erroneous files
-
-Removing files with problems: `iso_filter_files_with_problems`
+Isoreader is designed to catch problems during file reading without crashing the read pipeline. It keeps track of all problems encountered along the way to make it easy to see what went wrong and remove erroneous files. Most times, files that were only partly saved because of an interrupted instrument analysis will have errors. If you encounter a file that should have intact data in it but has an error in isoreader, please file a bug report and submit your file at https://github.com/isoverse/isoreader/issues
 
 ```{r}
+# read two files, one of which is erroneous
+iso_files <- 
+  iso_read_continuous_flow(
+    iso_get_reader_example("continuous_flow_example.dxf"),
+    system.file("errdata", "cf_without_data.dxf", package = "isoreader")
+  )
 
+# retrieve problem summary
+iso_files %>% iso_get_problems_summary() %>% knitr::kable()
+
+# retrieve problem details
+iso_files %>% iso_get_problems() %>% knitr::kable()
+
+# filter out erroneous files
+iso_files <- iso_files %>% iso_filter_files_with_problems()
 ```
 
 # Re-reading files
 
-```{r}
+If a file has changed (e.g. is edited through the vendor software) and the changes should be loaded in isoreader, it is easy to re-read an entire collection of files using the `iso_reread_files()` function. This function will read unchanged files from cache and re-read all changed files anew from their source. It will throw a warning for files that are no longer accessible at their original location. If the location for all files has changed, it can be easily adjusted by modifiny the `file_root` parameter in files.
 
+```{r}
+# re-read the 3 dual inlet files from their original location if any have changed
+di_files %>% iso_reread_files()
+
+# update the file_root for the files before re-read (in this case to a location
+# that does not hold these files and hence will lead to a warning)
+di_files %>% iso_mutate_file_info(file_root = ".") %>%
+  iso_reread_files()
 ```
 
 
