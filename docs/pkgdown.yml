@@ -6,6 +6,8 @@ articles:
   development: development.html
   dual_inlet: dual_inlet.html
   operations: operations.html
+  quick_start: quick_start.html
+  scan: scan.html
 urls:
   reference: http://isoreader.isoverse.org//reference
   article: http://isoreader.isoverse.org//articles

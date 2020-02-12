@@ -8,10 +8,12 @@
 
 <title>Example files — iso_get_reader_example • Isoreader</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
@@ -32,10 +34,11 @@
 
 
 
-<meta property="og:title" content="Example files — iso_get_reader_example" />
 
+<meta property="og:title" content="Example files — iso_get_reader_example" />
 <meta property="og:description" content="The isoreader package comes with a few example files to make it easy to illustrate the functionality." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -76,29 +79,52 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.11</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.17</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../articles/dual_inlet.html">Dual Inlet</a>
+  <a href="../articles/quick_start.html">Quick Start</a>
 </li>
-<li>
-  <a href="../articles/continuous_flow.html">Continuous Flow</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Full Examples
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/dual_inlet.html">Dual Inlet</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_flow.html">Continuous Flow</a>
+    </li>
+    <li>
+      <a href="../articles/scan.html">Scan</a>
+    </li>
+  </ul>
 </li>
-<li>
-  <a href="../articles/operations.html">Operations</a>
-</li>
-<li>
-  <a href="../articles/development.html">Development</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Advanced
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/operations.html">Operations</a>
+    </li>
+    <li>
+      <a href="../articles/development.html">Development</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/isoverse/isoreader">
@@ -125,15 +151,15 @@
     </div>
 
     <div class="ref-description">
-    
     <p>The isoreader package comes with a few example files to make it easy to illustrate the functionality.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>iso_get_reader_example</span>(<span class='no'>filename</span>)
 
-<span class='fu'>iso_get_reader_examples</span>()</pre>
-    
+<span class='fu'>iso_get_reader_examples</span>()
+
+<span class='fu'>iso_get_reader_examples_folder</span>()</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -142,35 +168,35 @@
       <td><p>the name of the example file for which to retrieve the system path</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p><code>iso_get_reader_example</code>: retrieve the path to an isoreader example file</p>
 <p><code>iso_get_reader_examples</code>: list of all available isoreader example files</p>
-    
+<p><code>iso_get_reader_examples_folder</code>: path to the location of the reader examples</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>iso_get_reader_examples</span>()</div><div class='output co'>#&gt; <span class='message'>Registered S3 method overwritten by 'R.oo':</span>
-#&gt; <span class='message'>  method        from       </span>
-#&gt; <span class='message'>  throw.default R.methodsS3</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 8 x 3</span><span>
-#&gt;   filename                   type          description                          
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                      </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                                
-#&gt; </span><span style='color: #555555;'>1</span><span> continuous_flow_example.cf continuous f… Isodat Continuous Flow file format (…
-#&gt; </span><span style='color: #555555;'>2</span><span> continuous_flow_example.d… continuous f… Isodat Continuous Flow file format (…
-#&gt; </span><span style='color: #555555;'>3</span><span> linearity_example.dxf      continuous f… Isodat Continuous Flow file format (…
-#&gt; </span><span style='color: #555555;'>4</span><span> continuous_flow_example.i… continuous f… IonOS Continous Flow data archieve   
-#&gt; </span><span style='color: #555555;'>5</span><span> dual_inlet_example.caf     dual inlet    Isodat Dual Inlet file format (older)
-#&gt; </span><span style='color: #555555;'>6</span><span> dual_inlet_example.did     dual inlet    Isodat Dual Inlet file format (newer)
-#&gt; </span><span style='color: #555555;'>7</span><span> dual_inlet_example2.did    dual inlet    Isodat Dual Inlet file format (newer)
-#&gt; </span><span style='color: #555555;'>8</span><span> dual_inlet_nu_example.txt  dual inlet    Nu Dual Inlet file format            </div></span></pre>
+    <pre class="examples"><div class='input'><span class='fu'>iso_get_reader_examples</span>()</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 12 x 4</span><span>
+#&gt;    filename                 type          software description                  
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                        
+#&gt; </span><span style='color: #555555;'> 1</span><span> continuous_flow_example… continuous f… Isodat   Continuous Flow file format …
+#&gt; </span><span style='color: #555555;'> 2</span><span> continuous_flow_example… continuous f… Isodat   Continuous Flow file format …
+#&gt; </span><span style='color: #555555;'> 3</span><span> linearity_example.dxf    continuous f… Isodat   Continuous Flow file format …
+#&gt; </span><span style='color: #555555;'> 4</span><span> continuous_flow_example… continuous f… ionOS    Continous Flow data archieve 
+#&gt; </span><span style='color: #555555;'> 5</span><span> dual_inlet_example.caf   dual inlet    Isodat   Dual Inlet file format (olde…
+#&gt; </span><span style='color: #555555;'> 6</span><span> dual_inlet_example.did   dual inlet    Isodat   Dual Inlet file format (newe…
+#&gt; </span><span style='color: #555555;'> 7</span><span> dual_inlet_example2.did  dual inlet    Isodat   Dual Inlet file format (newe…
+#&gt; </span><span style='color: #555555;'> 8</span><span> dual_inlet_nu_example.t… dual inlet    Nu       Dual Inlet file format       
+#&gt; </span><span style='color: #555555;'> 9</span><span> background_scan_example… scan          Isodat   Scan file format             
+#&gt; </span><span style='color: #555555;'>10</span><span> full_scan_example.scn    scan          Isodat   Scan file format             
+#&gt; </span><span style='color: #555555;'>11</span><span> peak_shape_scan_example… scan          Isodat   Scan file format             
+#&gt; </span><span style='color: #555555;'>12</span><span> time_scan_example.scn    scan          Isodat   Scan file format             </div><div class='input'><span class='fu'>iso_get_reader_examples_folder</span>()</div><div class='output co'>#&gt; [1] "/private/var/folders/8z/hxk97xk1763cz5crb3wp7h840000gn/T/RtmpHjZNFY/temp_libpath182775933fe17/isoreader/extdata"</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#details">Details</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

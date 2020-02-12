@@ -46,3 +46,5 @@ vignettes/**/*.pdf
 # documentation
 !/docs/*
 inst/doc
+doc
+Meta
