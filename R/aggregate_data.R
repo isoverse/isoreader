@@ -42,7 +42,12 @@ iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
     left_join(get_raw_data_info(iso_files), by = "file_id") %>%
     left_join(get_file_info_info(iso_files), by = "file_id") %>%
     left_join(get_method_info_info(iso_files), by = "file_id") %>%
-    left_join(get_vendor_data_table_info(iso_files), by = "file_id") %>%
+    {
+      # scan files don't have vendor data table
+      if (!iso_is_scan(iso_files))
+        left_join(., get_vendor_data_table_info(iso_files), by = "file_id")
+      else .
+    } %>% 
     mutate(file_path = ifelse(!is.na(file_subpath), glue("{file_path_}|{file_subpath}"), file_path_)) %>%
     select(-file_path_, -file_subpath)
 }
@@ -72,17 +77,23 @@ get_raw_data_info <- function(iso_files) {
         str_replace_all("[^0-9,]", "")
     )
   
-  if (iso_is_continuous_flow(iso_files[[1]])) {
+  if (iso_is_continuous_flow(iso_files)) {
     raw_data_sum <- raw_data_sum %>% 
       mutate(
         n_tps = map_int(iso_files, ~nrow(.x$raw_data)),
         label = ifelse(read_raw_data, glue("{n_tps} time points, {n_ions} ions ({ions})"), "raw data not read")
       )
-  } else if (iso_is_dual_inlet(iso_files[[1]])) {
+  } else if (iso_is_dual_inlet(iso_files)) {
     raw_data_sum <- raw_data_sum %>% 
       mutate(
         n_cycles = map_int(iso_files, ~as.integer(floor(nrow(.x$raw_data)/2))),
         label = ifelse(read_raw_data, glue("{n_cycles} cycles, {n_ions} ions ({ions})"), "raw data not read")
+      )
+  } else if (iso_is_scan(iso_files)) {
+    raw_data_sum <- raw_data_sum %>% 
+      mutate(
+        n_tps = map_int(iso_files, ~nrow(.x$raw_data)),
+        label = ifelse(read_raw_data, glue("{n_tps} measurements, {n_ions} ions ({ions})"), "raw data not read")
       )
   } else if (iso_is_file(iso_files[[1]])) {
     # can only get here using make_iso_file_data_structure
@@ -223,13 +234,15 @@ iso_get_data <- function(
   else
     raw_data <- tibble(file_id = character(0), raw_data = list(NULL))
   
-  # vendor data table
-  include_vendor_data_table_quo <- enquo(include_vendor_data_table)
-  dt <- iso_get_vendor_data_table(iso_files, with_explicit_units = with_explicit_units, select = !!include_vendor_data_table_quo, quiet = TRUE)
-  if (ncol(dt) > 1)
-    dt <- nest(dt, vendor_data_table = c(-file_id))
-  else
-    dt <- tibble(file_id = character(0), vendor_data_table = list(NULL))
+  # vendor data table (only cflow and dual inlet)
+  if (add_dt <- iso_is_continuous_flow(iso_files) || iso_is_dual_inlet(iso_files)) {
+    include_vendor_data_table_quo <- enquo(include_vendor_data_table)
+    dt <- iso_get_vendor_data_table(iso_files, with_explicit_units = with_explicit_units, select = !!include_vendor_data_table_quo, quiet = TRUE)
+    if (ncol(dt) > 1)
+      dt <- nest(dt, vendor_data_table = c(-file_id))
+    else
+      dt <- tibble(file_id = character(0), vendor_data_table = list(NULL))
+  }
   
   # methods_data - standards
   standards <- iso_get_standards_info(iso_files, with_ratios = with_ratios, quiet = TRUE)
@@ -249,14 +262,16 @@ iso_get_data <- function(
   file_class %>% 
     left_join(file_info, by = "file_id") %>% 
     left_join(raw_data, by = "file_id") %>%
-    left_join(dt, by = "file_id") %>% 
+    { if (add_dt) left_join(., dt, by = "file_id") else . } %>% 
     left_join(standards, by = "file_id") %>% 
     left_join(resistors, by = "file_id") %>% 
     # info about what's missing
     mutate(
       has_file_info = !map_lgl(file_info, is.null),
-      has_raw_data = !map_lgl(raw_data, is.null),
-      has_vendor_data_table = !map_lgl(vendor_data_table, is.null),
+      has_raw_data = !map_lgl(raw_data, is.null)
+    ) %>% 
+    { if (add_dt) mutate(., has_vendor_data_table = !map_lgl(vendor_data_table, is.null)) else . } %>% 
+    mutate(
       has_standards = !map_lgl(standards, is.null),
       has_resistors = !map_lgl(resistors, is.null)
     )
@@ -475,7 +490,15 @@ iso_get_bgrd_data <- function(iso_files, select = everything(), gather = FALSE, 
 #' @family data retrieval functions
 #' @export
 iso_get_standards_info <- function(iso_files, with_ratios = FALSE, include_file_info = NULL, quiet = default(quiet)) {
+  
   iso_files <- iso_as_file_list(iso_files)
+  
+  # safety checks
+  if (iso_is_scan(iso_files))
+    stop("scan files don't have standards information", call. = FALSE)
+  else if (!iso_is_continuous_flow(iso_files) && !iso_is_dual_inlet(iso_files))
+    stop("only dual inlet and continuous flow files can have standards information", call. = FALSE)
+  
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
     sprintf("Info: aggregating standards info from %d data file(s)%s", length(iso_files),
@@ -578,8 +601,15 @@ iso_get_vendor_data_table <- function(
   
   # globals
   dt <- has_units <- NULL
-  
   iso_files <- iso_as_file_list(iso_files)
+  
+  # safety checks
+  if (iso_is_scan(iso_files))
+    stop("scan files don't have vendor data tables", call. = FALSE)
+  else if (!iso_is_continuous_flow(iso_files) && !iso_is_dual_inlet(iso_files))
+    stop("only dual inlet and continuous flow files can have vendor data tables", call. = FALSE)
+  
+  # process
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
     sprintf("Info: aggregating vendor data table%s from %d data file(s)%s", 

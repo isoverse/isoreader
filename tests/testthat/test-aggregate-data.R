@@ -201,7 +201,10 @@ test_that("test that aggregeting raw data works", {
 
 test_that("test that aggregating of methods standards works", {
   
-  iso_file <- make_iso_file_data_structure("NA")
+  expect_error(iso_get_standards_info(make_iso_file_data_structure("NA")), "only dual inlet and continuous flow files")
+  expect_error(iso_get_standards_info(make_scan_data_structure("NA")), "scan files don't have")
+  
+  iso_file <- make_di_data_structure("NA")
   expect_warning(iso_get_standards_info(iso_file), "read without extracting the method info")
   
   # test data
@@ -226,7 +229,7 @@ test_that("test that aggregating of methods standards works", {
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
     suppressWarnings(iso_get_standards_info(
-      c(make_iso_file_data_structure("NA"), iso_file1, iso_file2), 
+      c(make_di_data_structure("NA"), iso_file1, iso_file2), 
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
   )
@@ -275,7 +278,10 @@ test_that("test that aggregating of resistors works", {
 
 test_that("test that aggregating of vendor data table works", {
   
-  iso_file <- make_iso_file_data_structure("NA")
+  expect_error(iso_get_vendor_data_table(make_iso_file_data_structure("NA")), "only dual inlet and continuous flow files")
+  expect_error(iso_get_vendor_data_table(make_scan_data_structure("NA")), "scan files don't have")
+  
+  iso_file <- make_cf_data_structure("NA")
   expect_warning(iso_get_vendor_data_table(iso_file), "read without extracting the vendor data table")
   
   # test data
@@ -331,7 +337,7 @@ test_that("test that aggregating of vendor data table works", {
   # make sure that files that have no raw data do not get added back in by including file info
   expect_equal(
     suppressWarnings(iso_get_vendor_data_table(
-      c(make_iso_file_data_structure("NA"), iso_file1, iso_file2),
+      c(make_cf_data_structure("NA"), iso_file1, iso_file2),
       include_file_info = c("test_info")))$test_info %>% unique(),
     c("x", "y")
   )
@@ -413,3 +419,4 @@ test_that("test that total data aggregation works", {
   expect_equal(select(out, cup, R.Ohm), bind_rows(iso_file1$method_info$resistors, iso_file2$method_info$resistors))
       
 })
+

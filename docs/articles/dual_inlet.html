@@ -37,23 +37,47 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.11</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.17</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../articles/dual_inlet.html">Dual Inlet</a>
+  <a href="../articles/quick_start.html">Quick Start</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Full Examples
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
 <li>
-  <a href="../articles/continuous_flow.html">Continuous Flow</a>
+      <a href="../articles/dual_inlet.html">Dual Inlet</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_flow.html">Continuous Flow</a>
+    </li>
+    <li>
+      <a href="../articles/scan.html">Scan</a>
+    </li>
+  </ul>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Advanced
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
 <li>
-  <a href="../articles/operations.html">Operations</a>
-</li>
-<li>
-  <a href="../articles/development.html">Development</a>
+      <a href="../articles/operations.html">Operations</a>
+    </li>
+    <li>
+      <a href="../articles/development.html">Development</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -82,7 +106,7 @@
     <div class="page-header toc-ignore">
       <h1>Dual Inlet Examples</h1>
             
-            <h4 class="date">2019-10-30</h4>
+            <h4 class="date">2020-02-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/dual_inlet.Rmd"><code>vignettes/dual_inlet.Rmd</code></a></small>
       <div class="hidden name"><code>dual_inlet.Rmd</code></div>
@@ -95,7 +119,6 @@
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
 <p>Isoreader supports several dual inlet IRMS data formats. This vignette shows some of the functionality for dual inlet data files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the <a href="http://isoreader.isoverse.org/articles/operations.html">operations vignette</a>. For details on downstream data processing and visualization, see the <a href="https://isoprocessor.isoverse.org">isoprocessor package</a>.</p>
-<p>Note: this vignette is still a work in progress.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># load isoreader package</span></a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(isoreader)</a></code></pre></div>
 </div>
@@ -107,7 +130,7 @@
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["filename"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["description"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"continuous flow","3":"Isodat Continuous Flow file format (older)"},{"1":"continuous_flow_example.dxf","2":"continuous flow","3":"Isodat Continuous Flow file format (newer)"},{"1":"linearity_example.dxf","2":"continuous flow","3":"Isodat Continuous Flow file format (newer)"},{"1":"continuous_flow_example.iarc","2":"continuous flow","3":"IonOS Continous Flow data archieve"},{"1":"dual_inlet_example.caf","2":"dual inlet","3":"Isodat Dual Inlet file format (older)"},{"1":"dual_inlet_example.did","2":"dual inlet","3":"Isodat Dual Inlet file format (newer)"},{"1":"dual_inlet_example2.did","2":"dual inlet","3":"Isodat Dual Inlet file format (newer)"},{"1":"dual_inlet_nu_example.txt","2":"dual inlet","3":"Nu Dual Inlet file format"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["filename"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["software"],"name":[3],"type":["chr"],"align":["left"]},{"label":["description"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"continuous flow","3":"Isodat","4":"Continuous Flow file format (older)"},{"1":"continuous_flow_example.dxf","2":"continuous flow","3":"Isodat","4":"Continuous Flow file format (newer)"},{"1":"linearity_example.dxf","2":"continuous flow","3":"Isodat","4":"Continuous Flow file format (newer)"},{"1":"continuous_flow_example.iarc","2":"continuous flow","3":"ionOS","4":"Continous Flow data archieve"},{"1":"dual_inlet_example.caf","2":"dual inlet","3":"Isodat","4":"Dual Inlet file format (older)"},{"1":"dual_inlet_example.did","2":"dual inlet","3":"Isodat","4":"Dual Inlet file format (newer)"},{"1":"dual_inlet_example2.did","2":"dual inlet","3":"Isodat","4":"Dual Inlet file format (newer)"},{"1":"dual_inlet_nu_example.txt","2":"dual inlet","3":"Nu","4":"Dual Inlet file format"},{"1":"background_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"full_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"peak_shape_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"time_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># read dual inlet examples</span></a>
@@ -124,7 +147,7 @@
 <a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; Info: reading file 'dual_inlet_example2.did' with '.did' reader</span></a>
 <a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader</span></a>
 <a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; Info: reading file 'dual_inlet_nu_example.txt' with '.txt' reader</span></a>
-<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; Info: finished reading 4 files in 8.42 secs</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; Info: finished reading 4 files in 6.01 secs</span></a></code></pre></div>
 </div>
 <div id="file-summary" class="section level1">
 <h1 class="hasAnchor">
@@ -321,7 +344,7 @@
 <a class="sourceLine" id="cb15-10" data-line-number="10">    <span class="co"># retrieve file extension from the file_id using regular expression</span></a>
 <a class="sourceLine" id="cb15-11" data-line-number="11">    <span class="dt">extension =</span> <span class="kw"><a href="../reference/extract_substring.html">extract_substring</a></span>(file_id, <span class="st">"</span><span class="ch">\\</span><span class="st">.(</span><span class="ch">\\</span><span class="st">w+)$"</span>, <span class="dt">capture_bracket =</span> <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb15-12" data-line-number="12">  ) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>(<span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(extension, <span class="st">`</span><span class="dt">Peak Center</span><span class="st">`</span>, <span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">matches</a></span>(<span class="st">"Method"</span>))) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>(<span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(extension, <span class="st">`</span><span class="dt">Peak Center</span><span class="st">`</span>, <span class="kw"><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">matches</a></span>(<span class="st">"Method"</span>))) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb15-14" data-line-number="14"><span class="st">  </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb15-15" data-line-number="15"><span class="co">#&gt; Info: mutating file info for 4 data file(s)</span></a>
 <a class="sourceLine" id="cb15-16" data-line-number="16"><span class="co">#&gt; Info: aggregating file info from 4 data file(s), selecting info columns 'c(extension, `Peak Center`, matches("Method"))'</span></a></code></pre></div>
@@ -448,7 +471,7 @@
 <a class="sourceLine" id="cb24-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb24-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span>(</a>
 <a class="sourceLine" id="cb24-4" data-line-number="4">    <span class="co"># select cycle and all carbon columns</span></a>
-<a class="sourceLine" id="cb24-5" data-line-number="5">    <span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(cycle, <span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">matches</a></span>(<span class="st">"C"</span>)),</a>
+<a class="sourceLine" id="cb24-5" data-line-number="5">    <span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(cycle, <span class="kw"><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">matches</a></span>(<span class="st">"C"</span>)),</a>
 <a class="sourceLine" id="cb24-6" data-line-number="6">    <span class="co"># include the Identifier 1 fron the file info and rename it to 'id'</span></a>
 <a class="sourceLine" id="cb24-7" data-line-number="7">    <span class="dt">include_file_info =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dt">id =</span> <span class="st">`</span><span class="dt">Identifier 1</span><span class="st">`</span>)</a>
 <a class="sourceLine" id="cb24-8" data-line-number="8">  ) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
@@ -480,16 +503,16 @@
 <a class="sourceLine" id="cb26-6" data-line-number="6"><span class="kw"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span>(<span class="st">"iso_files_export.di.rds"</span>)</a>
 <a class="sourceLine" id="cb26-7" data-line-number="7"><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></a>
 <a class="sourceLine" id="cb26-8" data-line-number="8"><span class="co">#&gt; Info: reading file 'iso_files_export.di.rds' with '.di.rds' reader</span></a>
-<a class="sourceLine" id="cb26-9" data-line-number="9"><span class="co">#&gt; Info: loaded data for 4 data files from R Data Storage - checking load...</span></a>
-<a class="sourceLine" id="cb26-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.11 secs</span></a>
+<a class="sourceLine" id="cb26-9" data-line-number="9"><span class="co">#&gt; Info: loaded data for 4 data files from R Data Storage - checking loaded fi...</span></a>
+<a class="sourceLine" id="cb26-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.13 secs</span></a>
 <a class="sourceLine" id="cb26-11" data-line-number="11"><span class="co">#&gt; Data from 4 dual inlet iso files: </span></a>
 <a class="sourceLine" id="cb26-12" data-line-number="12"><span class="co">#&gt; # A tibble: 4 x 6</span></a>
-<a class="sourceLine" id="cb26-13" data-line-number="13"><span class="co">#&gt;   file_id   raw_data     file_info  method_info vendor_data_tab… file_path </span></a>
-<a class="sourceLine" id="cb26-14" data-line-number="14"><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;            &lt;chr&gt;     </span></a>
-<a class="sourceLine" id="cb26-15" data-line-number="15"><span class="co">#&gt; 1 dual_inl… 15 cycles, … 16 entries standards,… 15 rows, 7 colu… dual_inle…</span></a>
-<a class="sourceLine" id="cb26-16" data-line-number="16"><span class="co">#&gt; 2 dual_inl… 7 cycles, 6… 15 entries standards,… 7 rows, 8 colum… dual_inle…</span></a>
-<a class="sourceLine" id="cb26-17" data-line-number="17"><span class="co">#&gt; 3 dual_inl… 8 cycles, 6… 22 entries standards,… 8 rows, 9 colum… dual_inle…</span></a>
-<a class="sourceLine" id="cb26-18" data-line-number="18"><span class="co">#&gt; 4 dual_inl… 82 cycles, … 8 entries  no method … no vendor data … dual_inle…</span></a></code></pre></div>
+<a class="sourceLine" id="cb26-13" data-line-number="13"><span class="co">#&gt;   file_id    raw_data       file_info  method_info  vendor_data_tab… file_path  </span></a>
+<a class="sourceLine" id="cb26-14" data-line-number="14"><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
+<a class="sourceLine" id="cb26-15" data-line-number="15"><span class="co">#&gt; 1 dual_inle… 15 cycles, 8 … 16 entries standards, … 15 rows, 7 colu… dual_inlet…</span></a>
+<a class="sourceLine" id="cb26-16" data-line-number="16"><span class="co">#&gt; 2 dual_inle… 7 cycles, 6 i… 15 entries standards, … 7 rows, 8 colum… dual_inlet…</span></a>
+<a class="sourceLine" id="cb26-17" data-line-number="17"><span class="co">#&gt; 3 dual_inle… 8 cycles, 6 i… 22 entries standards, … 8 rows, 9 colum… dual_inlet…</span></a>
+<a class="sourceLine" id="cb26-18" data-line-number="18"><span class="co">#&gt; 4 dual_inle… 82 cycles, 6 … 8 entries  no method i… no vendor data … dual_inlet…</span></a></code></pre></div>
 </div>
 <div id="data-export" class="section level1">
 <h1 class="hasAnchor">
@@ -498,12 +521,11 @@
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="co"># export to excel</span></a>
 <a class="sourceLine" id="cb27-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(<span class="st">"iso_files_export"</span>)</a>
 <a class="sourceLine" id="cb27-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 4 iso_files into Excel 'iso_files_export.di.xlsx'</span></a>
-<a class="sourceLine" id="cb27-4" data-line-number="4"><span class="co">#&gt; Note: zip::zip() is deprecated, please use zip::zipr() instead</span></a>
-<a class="sourceLine" id="cb27-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb27-6" data-line-number="6"><span class="co"># data sheets available in the exported data file:</span></a>
-<a class="sourceLine" id="cb27-7" data-line-number="7">readxl<span class="op">::</span><span class="kw"><a href="https://readxl.tidyverse.org/reference/excel_sheets.html">excel_sheets</a></span>(<span class="st">"iso_files_export.di.xlsx"</span>)</a>
-<a class="sourceLine" id="cb27-8" data-line-number="8"><span class="co">#&gt; [1] "raw data"          "file info"         "method info"      </span></a>
-<a class="sourceLine" id="cb27-9" data-line-number="9"><span class="co">#&gt; [4] "vendor data table" "problems"</span></a></code></pre></div>
+<a class="sourceLine" id="cb27-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb27-5" data-line-number="5"><span class="co"># data sheets available in the exported data file:</span></a>
+<a class="sourceLine" id="cb27-6" data-line-number="6">readxl<span class="op">::</span><span class="kw"><a href="https://readxl.tidyverse.org/reference/excel_sheets.html">excel_sheets</a></span>(<span class="st">"iso_files_export.di.xlsx"</span>)</a>
+<a class="sourceLine" id="cb27-7" data-line-number="7"><span class="co">#&gt; [1] "raw data"          "file info"         "method info"      </span></a>
+<a class="sourceLine" id="cb27-8" data-line-number="8"><span class="co">#&gt; [4] "vendor data table" "problems"</span></a></code></pre></div>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="co"># export to feather</span></a>
 <a class="sourceLine" id="cb28-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_export_to_feather.html">iso_export_to_feather</a></span>(<span class="st">"iso_files_export"</span>)</a>
 <a class="sourceLine" id="cb28-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 4 iso_files into .di.feather files at 'iso_files_export'</span></a>
@@ -520,6 +542,7 @@
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+
         <div id="tocnav">
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>

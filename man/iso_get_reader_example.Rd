@@ -3,11 +3,14 @@
 \name{iso_get_reader_example}
 \alias{iso_get_reader_example}
 \alias{iso_get_reader_examples}
+\alias{iso_get_reader_examples_folder}
 \title{Example files}
 \usage{
 iso_get_reader_example(filename)
 
 iso_get_reader_examples()
+
+iso_get_reader_examples_folder()
 }
 \arguments{
 \item{filename}{the name of the example file for which to retrieve the system path}
@@ -19,7 +22,10 @@ The isoreader package comes with a few example files to make it easy to illustra
 \code{iso_get_reader_example}: retrieve the path to an isoreader example file
 
 \code{iso_get_reader_examples}: list of all available isoreader example files
+
+\code{iso_get_reader_examples_folder}: path to the location of the reader examples
 }
 \examples{
 iso_get_reader_examples()
+iso_get_reader_examples_folder()
 }

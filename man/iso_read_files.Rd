@@ -13,7 +13,7 @@ iso_read_files(
   reader_options = list(),
   discard_duplicates = TRUE,
   parallel = FALSE,
-  parallel_plan = future::multiprocess,
+  parallel_plan = future::multisession,
   cache = default(cache),
   cache_files_with_errors = TRUE,
   read_cache = default(cache),
@@ -37,7 +37,7 @@ iso_read_files(
 
 \item{parallel}{whether to process in parallel based on the number of available CPU cores. This may yield performance increases for files that are slow to parse such as continuous flow isodat files but usually provides little benefit for efficient data formats such as reading from R Data Archives.}
 
-\item{parallel_plan}{which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multiprocess} (the default, uses multicore if supported by the operating system, otherwise multisession), \code{future::multisession} or \code{future::multicore}.}
+\item{parallel_plan}{which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multisession} for compatibility with RStudio interactive mode. If supported by the operating system and running in detached mode (not interactively in RStudio) can also use \code{future::multicore}.}
 
 \item{cache}{whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
 

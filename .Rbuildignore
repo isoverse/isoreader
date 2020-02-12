@@ -17,3 +17,5 @@
 ^logo\.png$
 ^vignettes/cache$
 ^vignettes/fig_output$
+^doc$
+^Meta$

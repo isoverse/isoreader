@@ -1,7 +1,17 @@
 ---
 title: "Dual Inlet Examples"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+  html_document:
+    code_folding: show
+    df_print: paged
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+editor_options:
+  chunk_output_type: console
 vignette: >
   %\VignetteIndexEntry{Dual Inlet Examples}
   %\VignetteEngine{knitr::rmarkdown}
@@ -19,8 +29,6 @@ knitr::opts_chunk$set(
 # Introduction
 
 Isoreader supports several dual inlet IRMS data formats. This vignette shows some of the functionality for dual inlet data files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the [operations vignette](http://isoreader.isoverse.org/articles/operations.html). For details on downstream data processing and visualization, see the [isoprocessor package](https://isoprocessor.isoverse.org).
-
-Note: this vignette is still a work in progress.
 
 
 ```{r, message=FALSE}

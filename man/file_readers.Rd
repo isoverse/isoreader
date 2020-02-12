@@ -3,12 +3,14 @@
 \name{iso_register_dual_inlet_file_reader}
 \alias{iso_register_dual_inlet_file_reader}
 \alias{iso_register_continuous_flow_file_reader}
+\alias{iso_register_scan_file_reader}
 \title{Register file readers}
 \usage{
 iso_register_dual_inlet_file_reader(
   extension,
   func,
   description = NA_character_,
+  software = NA_character_,
   cacheable = TRUE,
   overwrite = FALSE,
   env = find_func(func)
@@ -18,6 +20,17 @@ iso_register_continuous_flow_file_reader(
   extension,
   func,
   description = NA_character_,
+  software = NA_character_,
+  cacheable = TRUE,
+  overwrite = FALSE,
+  env = find_func(func)
+)
+
+iso_register_scan_file_reader(
+  extension,
+  func,
+  description = NA_character_,
+  software = NA_character_,
   cacheable = TRUE,
   overwrite = FALSE,
   env = find_func(func)
@@ -29,6 +42,8 @@ iso_register_continuous_flow_file_reader(
 \item{func}{the name of the function that should be used a filter reader. All file reader functions must accept a data structure argument as the first argument and return the same data structure with added data.}
 
 \item{description}{what is this file type about?}
+
+\item{software}{what is the software program that creates this filetype?}
 
 \item{cacheable}{whether this file type is cacheable. If \code{TRUE} (the default), user requests to cache the file will be honored. If \code{FALSE}, this file type will never be cached no matter what the user requests.}
 
@@ -43,8 +58,13 @@ Register file extensions and reader functions for different data files. Isoreade
 \code{iso_register_dual_inlet_file_reader}: use this function to register file readers for dual inlet files.
 
 \code{iso_register_continuous_flow_file_reader}: use this function to register file readers for continuous flow files.
+
+\code{iso_register_scan_file_reader}: use this function to register file readers for scan files.
 }
 \seealso{
+Other file_types: 
+\code{\link{iso_get_supported_file_types}()}
+
 Other file_types: 
 \code{\link{iso_get_supported_file_types}()}
 

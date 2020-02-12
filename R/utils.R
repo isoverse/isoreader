@@ -113,9 +113,6 @@ monitor_parallel_logs <- function(processes) {
 # process parallel logs
 process_parallel_logs <- function(status) {
 
-  # global vars
-  X1 <- X2 <- X3 <- prefix <- NULL
-
   # logs
   log <- get_temp("parallel_log_file")
   if (!is.null(log) && file.exists(log)) {
@@ -146,13 +143,13 @@ process_parallel_logs <- function(status) {
       status$log_n <- status$log_n + nrow(logs)
       logs %>%
         mutate(
-          X2 = as.character(X2),
+          X2 = as.character(.data$X2),
           prefix = case_when(
-            X1 == "info" ~ sprintf("Info (process %s): ", X2),
-            X1 == "warning" ~ sprintf("Warning (process %s): ", X2),
-            TRUE ~ sprintf("Process %s: ", X2)
+            X1 == "info" ~ sprintf("Info (process %s): ", .data$X2),
+            X1 == "warning" ~ sprintf("Warning (process %s): ", .data$X2),
+            TRUE ~ sprintf("Process %s: ", .data$X2)
           )) %>%
-        with(purrr::walk2(X3, prefix, ~log_message(.x, prefix = .y)))
+        { purrr::walk2(.$X3, .$prefix, ~log_message(.x, prefix = .y)) }
     }
   }
 
@@ -200,17 +197,22 @@ iso_get_reader_example <- function(filename) {
 #' iso_get_reader_examples()
 #' @export
 iso_get_reader_examples <- function() {
-
-  # global vars
-  extension <- filename <- format <- path <- type <- description <- NULL
-
   file_types <- iso_get_supported_file_types()
   iso_expand_paths(
       ".", extensions = file_types$extension, root = system.file(package = "isoreader", "extdata")) %>%
-    mutate(filename = basename(path)) %>%
+    mutate(filename = basename(.data$path)) %>%
     match_to_supported_file_types(file_types) %>%
-    arrange(type, extension, filename) %>%
-    select(filename, type, description)
+    arrange(.data$type, .data$extension, .data$filename) %>%
+    select(.data$filename, .data$type, .data$software, .data$description)
+}
+
+#' @rdname iso_get_reader_example
+#' @details \code{iso_get_reader_examples_folder}: path to the location of the reader examples
+#' @examples
+#' iso_get_reader_examples_folder()
+#' @export
+iso_get_reader_examples_folder <- function() {
+  return(system.file(package = "isoreader", "extdata"))
 }
 
 # file paths ====

@@ -8,10 +8,12 @@
 
 <title>Add additional file information — iso_add_file_info.iso_file_list • Isoreader</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
@@ -32,10 +34,11 @@
 
 
 
-<meta property="og:title" content="Add additional file information — iso_add_file_info.iso_file_list" />
 
+<meta property="og:title" content="Add additional file information — iso_add_file_info.iso_file_list" />
 <meta property="og:description" content="This function makes it easy to add additional file info (iso_get_file_info) to isofile objects and data frames by a single left_join or multiple sequential left_join operations. The function provides a detailed summary of the information that was added unless quiet = TRUE. Note that one-to-many joins are not permitted (and will fail with an informative error) since this would lead to likely unintended data duplication in the isofiles. However, one-to-one and many-to-one joins are fully supported and should cover all needed use cases for this function. Also note that for each join, only the new_file_info rows that have defined non-NA, non-empty (&quot;&quot;) values in all join_by columns will be considered for the join and that only new_file_info columns that do NOT already exist in ANY file information will be added. For changing the values of existing file information, please use iso_mutate_file_info instead." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -76,29 +79,52 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.11</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.17</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../articles/dual_inlet.html">Dual Inlet</a>
+  <a href="../articles/quick_start.html">Quick Start</a>
 </li>
-<li>
-  <a href="../articles/continuous_flow.html">Continuous Flow</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Full Examples
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/dual_inlet.html">Dual Inlet</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_flow.html">Continuous Flow</a>
+    </li>
+    <li>
+      <a href="../articles/scan.html">Scan</a>
+    </li>
+  </ul>
 </li>
-<li>
-  <a href="../articles/operations.html">Operations</a>
-</li>
-<li>
-  <a href="../articles/development.html">Development</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Advanced
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/operations.html">Operations</a>
+    </li>
+    <li>
+      <a href="../articles/development.html">Development</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/isoverse/isoreader">
@@ -125,21 +151,17 @@
     </div>
 
     <div class="ref-description">
-    
     <p>This function makes it easy to add additional file info (<code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>) to isofile objects and data frames by a single <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code> or multiple sequential <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code> operations. The function provides a detailed summary of the information that was added unless <code>quiet = TRUE</code>. Note that one-to-many joins are not permitted (and will fail with an informative error) since this would lead to likely unintended data duplication in the isofiles. However, one-to-one and many-to-one joins are fully supported and should cover all needed use cases for this function. Also note that for each join, only the <code>new_file_info</code> rows that have defined non-NA, non-empty ("") values in all <code>join_by</code> columns will be considered for the join and that only <code>new_file_info</code> columns that do NOT already exist in ANY file information will be added. For changing the values of existing file information, please use <code><a href='iso_mutate_file_info.html'>iso_mutate_file_info</a></code> instead.</p>
-    
     </div>
 
     <pre class="usage"><span class='co'># S3 method for iso_file_list</span>
-<span class='fu'>iso_add_file_info</span>(<span class='no'>iso_files</span>, <span class='no'>new_file_info</span>, <span class='no'>...</span>,
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))
+<span class='fu'>iso_add_file_info</span>(<span class='no'>iso_files</span>, <span class='no'>new_file_info</span>, <span class='no'>...</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))
 
 <span class='co'># S3 method for data.frame</span>
-<span class='fu'>iso_add_file_info</span>(<span class='no'>df</span>, <span class='no'>new_file_info</span>, <span class='no'>...</span>,
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))
+<span class='fu'>iso_add_file_info</span>(<span class='no'>df</span>, <span class='no'>new_file_info</span>, <span class='no'>...</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))
 
 <span class='fu'>iso_add_file_info</span>(<span class='no'>...</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -164,37 +186,32 @@
       <td><p>a data frame of iso files data retrieved by any of the data retrieval functions (e.g. <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>, <code><a href='iso_get_raw_data.html'>iso_get_raw_data</a>, etc.</code></p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>the original iso files or data frame with the new file info added in.</p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Single <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code>: this is the most common use of this function and basically a simple left join operation (with some additional safety checks). Specify a single <code>join_by</code> in the <code>...</code>, such as e.g. <code><a href='https://rdrr.io/r/base/c.html'>c("file_id")</a></code> to add additional file information joining by the <code>file_id</code> column.</p>
 <p>Multiple sequential <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code>: this use case is for applying a set of increasingly more specific <code>join_by</code> rules. For example, <code>... = c("Identifier 1", "Identifier 2"), c("file_id")</code> would serve to first add one set of new file information for all isofiles based on their <code>Identifier 1</code> and <code>Identifier 2</code> columns and then overwrite the new information with more specific details for a subset of isofiles based on their <code>file_id</code> column, all based on a single overview <code>new_file_info</code> data frame. Basically, each set of <code>join_by</code> conditions specified in <code>...</code> must describe a valid <code><a href='https://dplyr.tidyverse.org/reference/join.html'>left_join</a></code> <code>join_by</code> parameter to merge the <code>new_file_info</code> with the existing file info. Each set of <code>new_file_info</code> data can overwrite the previous <code>join_by</code> matches such that the last set of <code>join_by</code> column(s) provided in <code>...</code> will overwrite all previous matches for which it applies, even if they have already been a match for a previous column.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other file_info operations: <code><a href='iso_filter_files.html'>iso_filter_files</a></code>,
-  <code><a href='iso_mutate_file_info.html'>iso_mutate_file_info</a></code>,
-  <code><a href='iso_parse_file_info.html'>iso_parse_file_info</a></code>,
-  <code><a href='iso_rename_file_info.html'>iso_rename_file_info</a></code>,
-  <code><a href='iso_select_file_info.html'>iso_select_file_info</a></code></p></div>
-    
+    <div class='dont-index'><p>Other file_info operations: 
+<code><a href='iso_filter_files.html'>iso_filter_files</a>()</code>,
+<code><a href='iso_mutate_file_info.html'>iso_mutate_file_info</a>()</code>,
+<code><a href='iso_parse_file_info.html'>iso_parse_file_info</a>()</code>,
+<code><a href='iso_rename_file_info.html'>iso_rename_file_info</a>()</code>,
+<code><a href='iso_select_file_info.html'>iso_select_file_info</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-
       <li><a href="#see-also">See also</a></li>
-          </ul>
+    </ul>
 
   </div>
 </div>
