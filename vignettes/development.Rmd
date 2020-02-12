@@ -1,7 +1,17 @@
 ---
 title: "Development features of isoreader"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+  html_document:
+    code_folding: show
+    df_print: paged
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+editor_options:
+  chunk_output_type: console
 vignette: >
   %\VignetteIndexEntry{Development}
   %\VignetteEngine{knitr::rmarkdown}

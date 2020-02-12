@@ -1,7 +1,17 @@
 ---
 title: "Continuous Flow Examples"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+  html_document:
+    code_folding: show
+    df_print: paged
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+editor_options:
+  chunk_output_type: console
 vignette: >
   %\VignetteIndexEntry{Continuous Flow Examples}
   %\VignetteEngine{knitr::rmarkdown}
@@ -23,7 +33,6 @@ Isoreader supports several continuous flow IRMS data formats. This vignette show
 # load isoreader package
 library(isoreader)
 ```
-
 
 # Reading files
 
