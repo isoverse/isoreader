@@ -197,17 +197,22 @@ iso_get_reader_example <- function(filename) {
 #' iso_get_reader_examples()
 #' @export
 iso_get_reader_examples <- function() {
-
-  # global vars
-  extension <- filename <- format <- path <- type <- description <- NULL
-
   file_types <- iso_get_supported_file_types()
   iso_expand_paths(
       ".", extensions = file_types$extension, root = system.file(package = "isoreader", "extdata")) %>%
-    mutate(filename = basename(path)) %>%
+    mutate(filename = basename(.data$path)) %>%
     match_to_supported_file_types(file_types) %>%
-    arrange(type, extension, filename) %>%
-    select(filename, type, description)
+    arrange(.data$type, .data$extension, .data$filename) %>%
+    select(.data$filename, .data$type, .data$software, .data$description)
+}
+
+#' @rdname iso_get_reader_example
+#' @details \code{iso_get_reader_examples_folder}: path to the location of the reader examples
+#' @examples
+#' iso_get_reader_examples_folder()
+#' @export
+iso_get_reader_examples_folder <- function() {
+  return(system.file(package = "isoreader", "extdata"))
 }
 
 # file paths ====
