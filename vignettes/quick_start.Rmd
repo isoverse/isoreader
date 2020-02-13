@@ -1,0 +1,85 @@
+---
+title: "Quick Start Guide"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+  html_document:
+    code_folding: show
+    df_print: paged
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+editor_options:
+  chunk_output_type: console
+vignette: >
+  %\VignetteIndexEntry{Quick Start Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+Isoreader supports various dual inlet, continuous flow, and scan file formats. This vignette shows how to get started reading these raw IRMS data files and exporting the information to Excel. For more details on isoreader functionality and each file type, please read the **Full Examples** vignettes. For more information on downstream processing with isoverse, check out the [isoprocessor](https://isoprocessor.isoverse.org) package.
+
+```{r, message=FALSE}
+# load isoreader package
+library(isoreader)
+```
+
+# Data files
+
+For demonstration purposes, this vignette simply reads all supported dual inlet, continuous flow, and scan files that are bundled with the isoreader package.
+
+```{r}
+# all available examples
+iso_get_reader_examples() %>% rmarkdown::paged_table()
+```
+
+# Dual Inlet Files
+
+```{r}
+# read all available examples
+di_files <- iso_read_dual_inlet(iso_get_reader_examples_folder())
+
+# save as r data storage (read back in with iso_read_dual_inlet)
+iso_save(di_files, filepath = "di_save")
+
+# export to excel
+iso_export_to_excel(di_files, filepath = "di_export")
+```
+
+# Continuous Flow Files
+
+```{r}
+# read all available examples
+cf_files <- iso_read_continuous_flow(iso_get_reader_examples_folder())
+
+# save as r data storage (read back in with iso_read_continuous_flow)
+iso_save(cf_files, filepath = "cf_save")
+
+# export to excel
+iso_export_to_excel(cf_files, filepath = "cf_export")
+```
+
+# Scan Files
+
+```{r}
+# read all available examples
+scan_files <- iso_read_scan(iso_get_reader_examples_folder())
+
+# save as r data storage (read back in with iso_read_scan)
+iso_save(scan_files, filepath = "scan_save")
+
+# export to excel
+iso_export_to_excel(scan_files, filepath = "scan_export")
+```
+

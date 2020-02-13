@@ -1,9 +1,31 @@
 # retrieve package settings, internal function, not exported
 default <- function(name, allow_null = FALSE) {
-  name <- enquo(name) %>% quos_to_text(variable = "setting")
+  name_exp <- rlang::enexpr(name)
+  if (rlang::is_symbol(name_exp)) 
+    name <- rlang::as_name(name_exp)
+  else if (is.character(name_exp))
+    name <- name_exp
+  else
+    stop("don't know how to process setting expression '", rlang::as_label(name_exp), "'", call. = FALSE)
   value <- getOption(str_c("isoreader.", name))
   if (!allow_null && is.null(value)) stop("isoreader setting '", name, "' does not exist", call. = FALSE)
   return(value)
+}
+
+# resolve defaults in a list of quos or expressions
+# @param q single quo or expression, or list of quos and/or expressions
+resolve_defaults <- function(q) {
+  resolve_default <- function(x) {
+    if (
+      ((rlang::is_quosure(x) && rlang::quo_is_call(x)) || (!rlang::is_quosure(x) && rlang::is_call(x))) && 
+      rlang::call_name(x) == "default") {
+      return(eval_tidy(x))
+    } else {
+      return(x)
+    }
+  }
+  if (is.list(q)) return(purrr::map(q, resolve_default))
+  else return(resolve_default(q))
 }
 
 # set package setting, internal function, not exported
@@ -53,7 +75,7 @@ iso_get_default_reader_parameters <- function() {
     c("quiet", "cache", "cache_dir", "read_raw_data", "read_file_info", "read_method_info", "read_vendor_data_table") %>% 
     sapply(function(x) list(default(!!x))) %>% 
     {
-      data_frame(parameter = names(.),
+      tibble(parameter = names(.),
                  value = as.character(unlist(.)))
     }
 }

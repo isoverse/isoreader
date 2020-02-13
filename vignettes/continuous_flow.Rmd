@@ -1,7 +1,17 @@
 ---
 title: "Continuous Flow Examples"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+  html_document:
+    code_folding: show
+    df_print: paged
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+editor_options:
+  chunk_output_type: console
 vignette: >
   %\VignetteIndexEntry{Continuous Flow Examples}
   %\VignetteEngine{knitr::rmarkdown}
@@ -24,7 +34,6 @@ Isoreader supports several continuous flow IRMS data formats. This vignette show
 library(isoreader)
 ```
 
-
 # Reading files
 
 Reading continuous flow files is as simple as passing one or multiple file or folder paths to the `iso_read_continuous_flow()` function. If folders are provided, any files that have a recognized continuous flow file extensions within those folders will be processed (e.g. all `.dxf`, `.cf` and `.iarc`). Here we read several files that are bundled with the package as examples (and whose paths can be retrieved using the `iso_get_reader_example()` function). Note that some of the files (.cf, .dxf) are individual analysis files whereas others (.iarc) are collections of several files.
@@ -36,7 +45,7 @@ iso_get_reader_examples() %>% rmarkdown::paged_table()
 
 ```{r}
 # read a few of the continuous flow examples
-iso_files <- 
+cf_files <- 
   iso_read_continuous_flow(
     iso_get_reader_example("continuous_flow_example.cf"),
     iso_get_reader_example("continuous_flow_example.iarc"),
@@ -47,10 +56,10 @@ iso_files <-
 
 # File summary
 
-The `iso_files` variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the `iso_get_data_summary()` function.
+The `cf_files` variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the `iso_get_data_summary()` function.
 
 ```{r}
-iso_files %>% iso_get_data_summary() %>% rmarkdown::paged_table() 
+cf_files %>% iso_get_data_summary() %>% rmarkdown::paged_table() 
 ```
 
 ## Problems
@@ -58,8 +67,8 @@ iso_files %>% iso_get_data_summary() %>% rmarkdown::paged_table()
 In case there was any trouble with reading any of the files, the following functions provide an overview summary as well as details of all errors and warnings, respectively. The examples here contain no errors but if you run into any unexpected file read problems, please file a bug report in the [isoreader issue tracker](https://github.com/isoverse/isoreader/issues).
 
 ```{r}
-iso_files %>% iso_get_problems_summary() %>% rmarkdown::paged_table()
-iso_files %>% iso_get_problems() %>% rmarkdown::paged_table()
+cf_files %>% iso_get_problems_summary() %>% rmarkdown::paged_table()
+cf_files %>% iso_get_problems() %>% rmarkdown::paged_table()
 ```
 
 # File Information
@@ -68,9 +77,9 @@ Detailed file information can be aggregated for all isofiles using the `iso_get_
 
 ```{r}
 # all file information
-iso_files %>% iso_get_file_info(select = c(-file_root)) %>% rmarkdown::paged_table()
+cf_files %>% iso_get_file_info(select = c(-file_root)) %>% rmarkdown::paged_table()
 # select file information
-iso_files %>% 
+cf_files %>% 
   iso_get_file_info(
     select = c(
        # rename sample id columns from the different file types to a new ID column
@@ -89,14 +98,14 @@ Rather than retrieving specific file info columns using the above example of `is
 
 ```{r}
 # select + rename specific file info columns
-iso_files2 <- iso_files %>% 
+cf_files2 <- cf_files %>% 
   iso_select_file_info(
     ID = `Identifier 1`, ID = `Name`, Analysis, `Peak Center`, `H3 Factor`, 
     `Date & Time` = file_datetime
   )
 
 # fetch all file info
-iso_files2 %>% iso_get_file_info() %>% rmarkdown::paged_table()
+cf_files2 %>% iso_get_file_info() %>% rmarkdown::paged_table()
 ```
 
 ## Filter
@@ -105,12 +114,12 @@ Any collection of isofiles can also be filtered based on the available file info
 
 ```{r}
 # find files that have 'linearity' in the new ID field
-iso_files2 %>% iso_filter_files(grepl("linearity", ID)) %>% 
+cf_files2 %>% iso_filter_files(grepl("linearity", ID)) %>% 
   iso_get_file_info() %>% 
   rmarkdown::paged_table()
 
 # find files that were run since 2015
-iso_files2 %>% 
+cf_files2 %>% 
   iso_filter_files(`Date & Time` > "2015-01-01") %>% 
   iso_get_file_info() %>% 
   rmarkdown::paged_table()
@@ -121,8 +130,8 @@ iso_files2 %>%
 The file information in any collection of isofiles can also be mutated using the function `iso_mutate_file_info`. This function can introduce new columns and operate on any existing columns available in the file information (even if it does not exist in all files) and supports full [dplyr](https://dplyr.tidyverse.org/reference/mutate.html) syntax. 
 
 ```{r}
-iso_files3 <- 
-  iso_files2 %>% 
+cf_files3 <- 
+  cf_files2 %>% 
   iso_mutate_file_info(
     # update existing column
     ID = paste("ID:", ID),
@@ -130,7 +139,7 @@ iso_files3 <-
     `Run since 2015?` = `Date & Time` > "2015-01-01"
   ) 
 
-iso_files3 %>% 
+cf_files3 %>% 
   iso_get_file_info() %>% 
   rmarkdown::paged_table()
 ```
@@ -158,7 +167,7 @@ new_info <-
 new_info %>% rmarkdown::paged_table()
 
 # adding it to the isofiles
-iso_files3 %>% 
+cf_files3 %>% 
   iso_add_file_info(new_info, by1 = "Run since 2015?", by2 = "file_id") %>% 
   iso_get_file_info(select = names(new_info)) %>% 
   rmarkdown::paged_table()
@@ -171,7 +180,7 @@ Most file information is initially read as text to avoid cumbersome specificatio
 
 ```{r}
 # use parsing and extraction in iso_mutate_file_info
-iso_files2 %>% 
+cf_files2 %>% 
   iso_mutate_file_info(
     # change type of Peak Center to logical
     `Peak Center` = parse_logical(`Peak Center`),
@@ -186,13 +195,13 @@ iso_files2 %>%
   rmarkdown::paged_table()
 
 # use parsing in iso_filter_file_info
-iso_files2 %>% 
+cf_files2 %>% 
   iso_filter_files(parse_number(`H3 Factor`) > 2) %>% 
   iso_get_file_info() %>% 
   rmarkdown::paged_table()
 
 # use iso_parse_file_info for simplified parsing of column data types
-iso_files2 %>% 
+cf_files2 %>% 
   iso_parse_file_info(
     integer = Analysis, 
     number = `H3 Factor`,
@@ -207,7 +216,7 @@ iso_files2 %>%
 Additionally, some IRMS data files contain resistor information that are useful for downstream calculations (see e.g. section on signal conversion later in this vignette):
 
 ```{r}
-iso_files %>% iso_get_resistors_info() %>% rmarkdown::paged_table()
+cf_files %>% iso_get_resistors() %>% rmarkdown::paged_table()
 ```
 
 # Reference values
@@ -216,9 +225,9 @@ As well as isotopic reference values for the different gases:
 
 ```{r}
 # reference delta values without ratio values
-iso_files %>% iso_get_standards_info() %>% rmarkdown::paged_table()
+cf_files %>% iso_get_standards(file_id:reference) %>% rmarkdown::paged_table()
 # reference values with ratios
-iso_files %>% iso_get_standards_info(with_ratios = TRUE) %>% rmarkdown::paged_table()
+cf_files %>% iso_get_standards() %>% rmarkdown::paged_table()
 ```
 
 
@@ -228,9 +237,9 @@ The raw data read from the IRMS files can be retrieved similarly using the `iso_
 
 ```{r}
 # get raw data with default selections (all raw data, no additional file info)
-iso_files %>% iso_get_raw_data() %>% head(n=10) %>% rmarkdown::paged_table()
+cf_files %>% iso_get_raw_data() %>% head(n=10) %>% rmarkdown::paged_table()
 # get specific raw data and add some file information
-iso_files %>% 
+cf_files %>% 
   iso_get_raw_data(
     # select just time and the m/z 2 and 3 ions
     select = c(time.s, v2.mV, v3.mV),
@@ -253,33 +262,36 @@ As with most data retrieval funtions, the `iso_get_vendor_data_table()` function
 
 ```{r}
 # entire vendor data table
-iso_files %>% iso_get_vendor_data_table() %>% rmarkdown::paged_table()
+cf_files %>% iso_get_vendor_data_table() %>% rmarkdown::paged_table()
 # get specific parts and add some file information
-iso_files %>% 
+cf_files %>% 
   iso_get_vendor_data_table(
     # select peak number, ret. time, overall intensity and all H delta columns
     select = c(Nr., Rt, area = `rIntensity All`, matches("^d \\d+H")),
     # include the Analysis number fron the file info and rename it to 'run'
     include_file_info = c(run = Analysis)
   ) %>% rmarkdown::paged_table() 
+
 # the data table also provides units if included in the original data file
-# caution however: it may require changes to the `select` parameter
-iso_files %>% 
+# which can be made explicit using the function iso_make_units_explicit()
+cf_files %>% 
   iso_get_vendor_data_table(
-    with_explicit_units = TRUE,
     # select peak number, ret. time, overall intensity and all H delta columns
-    select = c(Nr., matches("^Rt"), matches("rIntensity All"), matches("^d \\d+H")),
+    select = c(Nr., Rt, area = `rIntensity All`, matches("^d \\d+H")),
     # include the Analysis number fron the file info and rename it to 'run'
     include_file_info = c(run = Analysis)
-  ) %>% rmarkdown::paged_table() 
+  ) %>% 
+  # make column units explicit
+  iso_make_units_explicit() %>% 
+  rmarkdown::paged_table() 
 ```
 
-## For expert users: retrieving all data 
+# For expert users: retrieving all data 
 
-For users familiar with the nested data frames from the [tidyverse](https://www.tidyverse.org/) (particularly [tidyr](https://tidyr.tidyverse.org/)'s `nest` and `unnest`), there is an easy way to retrieve all data from the iso file objects in a single nested data frame. Use the `include_file_info`, `include_raw_data`, and `include_vendor_data_table` parameters to specify which columns to include. By default, everything is included:
+For users familiar with the nested data frames from the [tidyverse](https://www.tidyverse.org/) (particularly [tidyr](https://tidyr.tidyverse.org/)'s `nest` and `unnest`), there is an easy way to retrieve all data from the iso file objects in a single nested data frame:
 
 ```{r}
-all_data <- iso_files %>% iso_get_data()
+all_data <- cf_files %>% iso_get_all_data()
 # not printed out because this data frame is very big
 ```
 
@@ -289,11 +301,11 @@ Saving entire collections of isofiles for retrieval at a later point is easily d
 
 ```{r}
 # export to R data archive
-iso_files %>% iso_save("iso_files_export.cf.rds")
+cf_files %>% iso_save("cf_files_export.cf.rds")
 
 # read back the exported R data archive
-iso_files <- iso_read_continuous_flow("iso_files_export.cf.rds")
-iso_files %>% iso_get_data_summary() %>% rmarkdown::paged_table()
+cf_files <- iso_read_continuous_flow("cf_files_export.cf.rds")
+cf_files %>% iso_get_data_summary() %>% rmarkdown::paged_table()
 ```
 
 
@@ -303,15 +315,15 @@ At the moment, isoreader supports export of all data to Excel and the [Feather f
 
 ```{r}
 # export to excel
-iso_files %>% iso_export_to_excel("iso_files_export")
+cf_files %>% iso_export_to_excel("cf_files_export")
 
 # data sheets available in the exported data file:
-readxl::excel_sheets("iso_files_export.cf.xlsx")
+readxl::excel_sheets("cf_files_export.cf.xlsx")
 ```
 
 ```{r}
 # export to feather
-iso_files %>% iso_export_to_feather("iso_files_export")
+cf_files %>% iso_export_to_feather("cf_files_export")
 
 # exported feather files
 list.files(pattern = ".cf.feather")

@@ -4,8 +4,7 @@
 \alias{iso_get_file_info}
 \title{Aggregate file info}
 \usage{
-iso_get_file_info(iso_files, select = everything(),
-  quiet = default(quiet))
+iso_get_file_info(iso_files, select = everything(), quiet = default(quiet))
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -21,11 +20,12 @@ Combine file information from multiple iso_files. By default all information is 
 File info entries with multiple values remain nested multi-value (=list) columns and can be unnested using \link[tidyr]{unnest}.
 }
 \seealso{
-Other data retrieval functions: \code{\link{iso_get_bgrd_data}},
-  \code{\link{iso_get_data}},
-  \code{\link{iso_get_raw_data}},
-  \code{\link{iso_get_resistors_info}},
-  \code{\link{iso_get_standards_info}},
-  \code{\link{iso_get_vendor_data_table}}
+Other data retrieval functions: 
+\code{\link{iso_get_all_data}()},
+\code{\link{iso_get_bgrd_data}()},
+\code{\link{iso_get_raw_data}()},
+\code{\link{iso_get_resistors}()},
+\code{\link{iso_get_standards}()},
+\code{\link{iso_get_vendor_data_table}()}
 }
 \concept{data retrieval functions}

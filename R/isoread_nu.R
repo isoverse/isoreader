@@ -269,7 +269,7 @@ parse_nu_data <- function(data, n_blocks, n_channels, masses = c()) {
   
   # check for problems (log & return empty dta frames)
   if (n_problems(zero_data) > 0 || n_problems(raw_data) > 0) {
-    retval <- list(bgrd_data = data_frame(), raw_data = data_frame()) %>% 
+    retval <- list(bgrd_data = tibble(), raw_data = tibble()) %>% 
       set_problems(combined_problems(zero_data, raw_data)) 
     return(retval)
   }
@@ -312,7 +312,7 @@ parse_nu_zero_data <- function(raw_data, masses = c()) {
   df <- 
     raw_data %>% 
     group_by(block) %>% 
-    mutate(data = map(data, ~data_frame(channel = seq_along(.x), intensities = stringr::str_split(.x, "\\s+")))) %>% 
+    mutate(data = map(data, ~tibble(channel = seq_along(.x), intensities = stringr::str_split(.x, "\\s+")))) %>% 
     select(block, n_channels, zero_length, data)
 
   # safety checks
@@ -343,7 +343,7 @@ parse_nu_raw_data <- function(raw_data, masses = c()) {
     # convert string data to numeric data
     mutate(
       type = ifelse(is_ref, "standard", "sample"),
-      data = map(data, ~data_frame(channel = seq_along(.x), intensities = stringr::str_split(.x, "\\s+")))
+      data = map(data, ~tibble(channel = seq_along(.x), intensities = stringr::str_split(.x, "\\s+")))
     ) %>% 
     select(block, n_channels, n_cycles, cycle_length, data, cycle, type)
   
@@ -464,7 +464,7 @@ group_lines <- function(lines, group_regexp) {
   group <- line <- start <- end <- NULL
   
   stopifnot(is(lines, "character"))
-  data_frame(
+  tibble(
     lines = lines,
     line = seq_along(lines),
     group = cumsum(str_detect(lines, group_regexp))

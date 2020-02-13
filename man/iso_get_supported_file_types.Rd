@@ -10,6 +10,7 @@ iso_get_supported_file_types()
 Get an overview of all the file types currently supported by the isoreader package. To register additional file readers, use the \code{\link{iso_register_dual_inlet_file_reader}} and \code{\link{iso_register_continuous_flow_file_reader}} functions.
 }
 \seealso{
-Other file_types: \code{\link{iso_register_dual_inlet_file_reader}}
+Other file_types: 
+\code{\link{iso_register_dual_inlet_file_reader}()}
 }
 \concept{file_types}

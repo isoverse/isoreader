@@ -8,8 +8,7 @@ make_iso_file_data_structure <- function(file_id = NA_character_) {
       read_options = list( # records read options+defaults
         file_info = FALSE, # whether file info was read
         method_info = FALSE, # whether method info was read
-        raw_data = FALSE, # whether mass data was read (Note: maybe not top-level b/c of scans?)
-        vendor_data_table = FALSE # whether vendor data table was read
+        raw_data = FALSE # whether mass data was read 
       ), 
       file_info = dplyr::tibble(
         file_id = file_id, # unique identifer
@@ -19,8 +18,7 @@ make_iso_file_data_structure <- function(file_id = NA_character_) {
         file_datetime = NA_integer_ # the run date and time of the file
       ),
       method_info = list(), # all methods information
-      raw_data = dplyr::tibble(), # all mass data (Note: maybe not top-level b/c of scans?)
-      vendor_data_table = dplyr::tibble() # vendor computed data table (no units)
+      raw_data = dplyr::tibble() # all mass data
     ),
     class = c("iso_file")
   ) %>% 
@@ -31,7 +29,11 @@ make_iso_file_data_structure <- function(file_id = NA_character_) {
 # basic dual inlet data structure
 make_di_data_structure <- function(file_id = NA_character_) {
   struct <- make_iso_file_data_structure(file_id = file_id)
-  struct$bgrd_data <- data_frame() # store background data
+  # vendor data table
+  struct$read_options$vendor_data_table <- FALSE
+  struct$vendor_data_table <- dplyr::tibble()
+  # background
+  struct$bgrd_data <- dplyr::tibble()
   class(struct) <- c("dual_inlet", class(struct))
   return(struct)
 }
@@ -39,10 +41,19 @@ make_di_data_structure <- function(file_id = NA_character_) {
 # basic continuous flow data structure
 make_cf_data_structure <- function(file_id = NA_character_) {
   struct <- make_iso_file_data_structure(file_id = file_id)
+  # vendor data table
+  struct$read_options$vendor_data_table <- FALSE
+  struct$vendor_data_table <- dplyr::tibble()
   class(struct) <- c("continuous_flow", class(struct))
   return(struct)
 }
 
+# basic scan data structure
+make_scan_data_structure <- function(file_id = NA_character_) {
+  struct <- make_iso_file_data_structure(file_id = file_id)
+  class(struct) <- c("scan", class(struct))
+  return(struct)
+}
 
 # Class testing ====
 
@@ -86,6 +97,12 @@ iso_is_continuous_flow <- function(x) {
   methods::is(x, "continuous_flow") || methods::is(x, "continuous_flow_list")
 }
 
+#' @description \code{iso_is_scan} tests if an iso_file or iso_file list consists exclusively of scan file objects
+#' @rdname iso_data_structure
+#' @export
+iso_is_scan <- function(x) {
+  methods::is(x, "scan") || methods::is(x, "scan_list")
+}
 
 # Iso file list ----
 
@@ -144,7 +161,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     
     # check for file_id duplicates
     dups <- 
-      data_frame(
+      tibble(
         idx = 1:length(iso_list),
         file_id = names(iso_list)
       ) %>% 
@@ -180,14 +197,14 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     }
     
     # propagate problems
-    all_problems <- map(iso_list, ~get_problems(.x) %>% mutate(file_id = .x$file_info$file_id)) %>% bind_rows()
+    all_problems <- map(iso_list, ~get_problems(.x) %>% mutate(file_id = .x$file_info$file_id)) %>% 
+      bind_rows() %>% dplyr::select(file_id, everything())
   }
   
   # problems
-  if (nrow(all_problems)) {
-    all_problems <- all_problems %>% 
-      unique() %>% # remove duplicate entries
-      select(file_id, everything())
+  if (nrow(all_problems) > 0) {
+    # remove duplicate entries
+    all_problems <- unique(all_problems)
   }
   
   # generate structure
@@ -249,6 +266,12 @@ print.dual_inlet <- function(x, ..., show_problems = TRUE) {
 #' @rdname iso_printing
 #' @export
 print.continuous_flow <- function(x, ..., show_problems = TRUE) {
+  NextMethod("print", x, ..., show_problems = show_problems)
+}
+
+#' @rdname iso_printing
+#' @export
+print.scan <- function(x, ..., show_problems = TRUE) {
   NextMethod("print", x, ..., show_problems = show_problems)
 }
 

@@ -8,10 +8,12 @@
 
 <title>Export data to Excel — iso_export_to_excel • Isoreader</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
@@ -32,10 +34,11 @@
 
 
 
-<meta property="og:title" content="Export data to Excel — iso_export_to_excel" />
 
-<meta property="og:description" content="This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file but they are only exported if the corresponding include_ parameter is set to TRUE and only for data types for which this type of data is available and was read (see iso_read_dual_inlet, iso_read_continuous_flow for details on read parameters). Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export." />
+<meta property="og:title" content="Export data to Excel — iso_export_to_excel" />
+<meta property="og:description" content="This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file. Use the various include_... parameters to specifiy what information to include. Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -76,29 +79,52 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.11</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../articles/dual_inlet.html">Dual Inlet</a>
+  <a href="../articles/quick_start.html">Quick Start</a>
 </li>
-<li>
-  <a href="../articles/continuous_flow.html">Continuous Flow</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Full Examples
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/dual_inlet.html">Dual Inlet</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_flow.html">Continuous Flow</a>
+    </li>
+    <li>
+      <a href="../articles/scan.html">Scan</a>
+    </li>
+  </ul>
 </li>
-<li>
-  <a href="../articles/operations.html">Operations</a>
-</li>
-<li>
-  <a href="../articles/development.html">Development</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Advanced
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/operations.html">Operations</a>
+    </li>
+    <li>
+      <a href="../articles/development.html">Development</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/isoverse/isoreader">
@@ -125,16 +151,24 @@
     </div>
 
     <div class="ref-description">
-    
-    <p>This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file but they are only exported if the corresponding <code>include_</code> parameter is set to <code>TRUE</code> and only for data types for which this type of data is available and was read (see <code><a href='iso_read_dual_inlet.html'>iso_read_dual_inlet</a></code>, <code><a href='iso_read_continuous_flow.html'>iso_read_continuous_flow</a></code> for details on read parameters). Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export.</p>
-    
+    <p>This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file. Use the various <code>include_...</code> parameters to specifiy what information to include. Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_export_to_excel</span>(<span class='no'>iso_files</span>, <span class='no'>filepath</span>, <span class='kw'>include_raw_data</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>include_file_info</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>include_method_info</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>include_vendor_data_table</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>include_problems</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>with_explicit_units</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
-    
+    <pre class="usage"><span class='fu'>iso_export_to_excel</span>(
+  <span class='no'>iso_files</span>,
+  <span class='no'>filepath</span>,
+  <span class='kw'>include_file_info</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
+  <span class='kw'>include_raw_data</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
+  <span class='kw'>include_standards</span> <span class='kw'>=</span> !!<span class='fu'>enexpr</span>(<span class='no'>include_method_info</span>),
+  <span class='kw'>include_resistors</span> <span class='kw'>=</span> !!<span class='fu'>enquo</span>(<span class='no'>include_method_info</span>),
+  <span class='kw'>include_vendor_data_table</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
+  <span class='kw'>include_problems</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
+  <span class='kw'>with_explicit_units</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>include_method_info</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
+  <span class='kw'>with_ratios</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -147,55 +181,62 @@
       <td><p>the path (folder and filename) to the export file. The correct file extension is automatically added if not already in the filename, i.e. filename can be provided with or without extension.</p></td>
     </tr>
     <tr>
-      <th>include_raw_data</th>
-      <td><p>whether to include the raw data in the export (if available)</p></td>
-    </tr>
-    <tr>
       <th>include_file_info</th>
-      <td><p>whether to include the file info in the export (if available)</p></td>
+      <td><p>which file information to include (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>). Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns.</p></td>
     </tr>
     <tr>
-      <th>include_method_info</th>
-      <td><p>whether to include methods infor in the export (if available)</p></td>
+      <th>include_raw_data</th>
+      <td><p>which columns from the raw data to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set to NULL to include no raw data.</p></td>
+    </tr>
+    <tr>
+      <th>include_standards</th>
+      <td><p>which columns from the standards info to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. By default, everything is included (both standards and ratios). To omit the ratios, change to <code>select = file_id:reference</code>. Set to NULL to include no standards info.
+#' @param include_resistors which columns from the resistors info to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set to NULL to include no resistors info.</p></td>
     </tr>
     <tr>
       <th>include_vendor_data_table</th>
-      <td><p>whether to include the vendor data table in the export (if available)</p></td>
+      <td><p>which columns from the vendor data table to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set parameter <code>with_explicit_units = TRUE</code> to make column units explicit (keep in mind that this will require specific <code>include_vendor_data_table</code> column selections to reflect the column names including the units). Set to NULL to include no vendor data table.</p></td>
     </tr>
     <tr>
       <th>include_problems</th>
-      <td><p>whether to include the problems table</p></td>
+      <td><p>which columns from problems to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes none of the read problems by default. Set to <code>include_problems = everything()</code> to include all columns.</p></td>
     </tr>
     <tr>
       <th>with_explicit_units</th>
-      <td><p>whether to include units in the column headers instead of the column data types (see <code><a href='iso_double_with_units.html'>iso_double_with_units</a></code>)</p></td>
+      <td><p>whether to include units in the column headers of the returned data frame instead of the column data types (see <code><a href='iso_double_with_units.html'>iso_double_with_units</a></code>). Note that any <code>select</code> conditions have to refer to the column names including the full units.</p></td>
+    </tr>
+    <tr>
+      <th>include_method_info</th>
+      <td><p>deprecated in favor of the more specific include_standards and include_resistors</p></td>
+    </tr>
+    <tr>
+      <th>with_ratios</th>
+      <td><p>deprecated, please use the <code>select</code> paramter to explicitly include or exclude ratio columns</p></td>
     </tr>
     <tr>
       <th>quiet</th>
       <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>returns the iso_files object invisibly for use in pipelines</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other export functions: <code><a href='iso_export_to_feather.html'>iso_export_to_feather</a></code>,
-  <code><a href='iso_export_to_rda.html'>iso_export_to_rda</a></code>, <code><a href='iso_save.html'>iso_save</a></code></p></div>
-    
+    <div class='dont-index'><p>Other export functions: 
+<code><a href='iso_export_to_feather.html'>iso_export_to_feather</a>()</code>,
+<code><a href='iso_export_to_rda.html'>iso_export_to_rda</a>()</code>,
+<code><a href='iso_save.html'>iso_save</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#see-also">See also</a></li>
-          </ul>
+    </ul>
 
   </div>
 </div>

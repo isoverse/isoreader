@@ -19,121 +19,267 @@ iso_export_to_rda <- function(iso_files, filepath, quiet = default(quiet)) {
 
 #' Export data to Excel
 #' 
-#' This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file but they are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters). Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export.
+#' This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file. Use the various \code{include_...} parameters to specifiy what information to include. Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export.
 #' 
 #' @inheritParams iso_save
-#' @param include_raw_data whether to include the raw data in the export (if available)
-#' @param include_file_info whether to include the file info in the export (if available)
-#' @param include_method_info whether to include methods infor in the export (if available)
-#' @param include_vendor_data_table whether to include the vendor data table in the export (if available)
-#' @param include_problems whether to include the problems table
-#' @inheritParams iso_get_vendor_data_table
+#' @inheritParams iso_get_all_data
+#' @param include_method_info deprecated in favor of the more specific include_standards and include_resistors
 #' @family export functions
 #' @return returns the iso_files object invisibly for use in pipelines
 #' @export
-iso_export_to_excel <- function(iso_files, filepath, 
-                            include_raw_data = TRUE, include_file_info = TRUE, 
-                            include_method_info = TRUE, include_vendor_data_table = TRUE,
-                            include_problems = TRUE, with_explicit_units = FALSE,
-                            quiet = default(quiet)) {
+iso_export_to_excel <- function(
+  iso_files, filepath, 
+  include_file_info = everything(), include_raw_data = everything(), 
+  include_standards = !!enexpr(include_method_info), include_resistors = !!enquo(include_method_info), 
+  include_vendor_data_table = everything(), include_problems = everything(), 
+  with_explicit_units = FALSE,
+  include_method_info = everything(),
+  with_ratios = NULL,
+  quiet = default(quiet)) {
   
   # safety checks
   if(!iso_is_object(iso_files)) stop("can only export iso files or lists of iso files", call. = FALSE)
-  filepath <- get_excel_export_filepath(iso_files, filepath)
-  
-  # save iso_files
   export_iso_files <- iso_as_file_list(iso_files)
+  filepath <- get_excel_export_filepath(export_iso_files, filepath)
+  
+  # info message
   if (!quiet) {
     sprintf("Info: exporting data from %d iso_files into Excel '%s'", length(export_iso_files), 
             str_replace(filepath, "^\\.(/|\\\\)", "")) %>% message()
   }
+
+  # include method info message
+  if (!missing(include_method_info)) {
+    warning("the 'include_method_info' parameter was deprecated in favor of the more specific 'include_resistors' and 'include_standards' parameters. Please use those directly instead in the future.", immediate. = TRUE, call. = FALSE)
+  }
+  
+  # deprecated parameter
+  if (!missing(with_ratios)) {
+    warning("the 'with_ratios' parameter is deprecated, please use the column selection parameter 'include_standards' to explicitly include or exclude ratio columns", immediate. = TRUE, call. = FALSE)
+  }
+  
+  # get all data
+  all_data <- iso_get_all_data(
+    export_iso_files,
+    include_file_info = !!enexpr(include_file_info),
+    include_raw_data = !!enexpr(include_raw_data),
+    include_standards = !!enexpr(include_standards),
+    include_resistors = !!enexpr(include_resistors),
+    include_vendor_data_table = !!enexpr(include_vendor_data_table),
+    include_problems = !!enexpr(include_problems),
+    with_explicit_units = with_explicit_units,
+    quiet = FALSE
+  )
   
   # make excel workbook
   wb <- createWorkbook()
-  hs <- createStyle(textDecoration = "bold")
-  if (include_raw_data) {
-    addWorksheet(wb, "raw data")
-    raw_data <- iso_get_raw_data(export_iso_files, quiet = TRUE)
-    if (ncol(raw_data) > 0) writeData(wb, "raw data", raw_data, headerStyle = hs)
+  
+  # file info
+  if ("file_info" %in% names(all_data)) {
+    # note: collapse_list_columns takes care of nested vectors, they get concatenated with ', '
+    file_info <- 
+      all_data %>% select(file_id, file_info) %>% 
+      unnest(file_info) %>% 
+      collapse_list_columns()
+    add_excel_sheet(wb, "file info", file_info)
   }
-  if (include_file_info) {
-    addWorksheet(wb, "file info")
-    # note: this takes care of nested vectors, they get concatenated with ', '
-    writeData(wb, "file info", 
-              iso_get_file_info(export_iso_files, quiet = TRUE) %>% collapse_list_columns(),
-              headerStyle = hs)
+  
+  # raw data
+  if ("raw_data" %in% names(all_data)) {
+    raw_data <- all_data %>% select(file_id, raw_data) %>% unnest(raw_data)
+    add_excel_sheet(wb, "raw data", raw_data)
   }
-  if (include_method_info) {
-    addWorksheet(wb, "method info")
-    standards <- iso_get_standards_info(export_iso_files, quiet = TRUE)
-    resistors <- iso_get_resistors_info (export_iso_files, quiet = TRUE)
-    if (ncol(standards) > 0) writeData(wb, "method info", standards, headerStyle = hs)
-    if (ncol(resistors) > 0) writeData(wb, "method info", resistors, startRow = nrow(standards) + 3, headerStyle = hs)
+  
+  # standards
+  if ("standards" %in% names(all_data)) {
+    standards <- all_data %>% select(file_id, standards) %>% unnest(standards)
+    add_excel_sheet(wb, "standards", standards)
+  } 
+  
+  # resistors
+  if ("resistors" %in% names(all_data)) {
+    resistors <- all_data %>% select(file_id, resistors) %>% unnest(resistors)
+    add_excel_sheet(wb, "resistors", resistors)
+  } 
+  
+  # vendor data table
+  if ("vendor_data_table" %in% names(all_data)) {
+    vendor_data <- all_data %>% select(file_id, vendor_data_table) %>% 
+      unnest(vendor_data_table) %>% iso_strip_units()
+    add_excel_sheet(wb, "vendor data table", vendor_data)
   }
-  if (include_vendor_data_table) {
-    addWorksheet(wb, "vendor data table")
-    vendor_data <- iso_get_vendor_data_table(export_iso_files, with_explicit_units = with_explicit_units, quiet = TRUE) %>% 
-      iso_strip_units()
-    if (ncol(vendor_data) > 0) writeData(wb, "vendor data table", vendor_data, headerStyle = hs)
-  }
-  if (include_problems) {
-    addWorksheet(wb, "problems")
-    writeData(wb, "problems", problems(iso_files), headerStyle = hs)
+  
+  # problems
+  if ("problems" %in% names(all_data)) {
+    problems <- all_data %>% select(file_id, problems) %>% unnest(problems)
+    add_excel_sheet(wb, "problems", problems)
   }
   saveWorkbook(wb, filepath, overwrite = TRUE)
   
   return(invisible(iso_files))
 }
 
+# add an excel sheet to a workbook
+# @param ... the data frames
+# @param dbl_digits how many digits to export for dbls
+# @param col_max_width maximum column width
+add_excel_sheet <- function(wb, sheet_name, ..., dbl_digits = 2, col_max_width = 75) {
+  
+  # sheet
+  addWorksheet(wb, sheet_name)
+  hs <- createStyle(textDecoration = "bold") # header style
+  
+  # data
+  sheet_data_sets <- list(...)
+  start_row <- 1L
+  for (sheet_data in sheet_data_sets) {
+    if (ncol(sheet_data) > 0) {
+      writeData(wb, sheet_name, sheet_data, startRow = start_row, headerStyle = hs)
+      int_cols <- which(purrr::map_lgl(sheet_data, is.integer))
+      dbl_cols <- setdiff(which(purrr::map_lgl(sheet_data, is.numeric)), int_cols)
+      if (dbl_digits < 1) {
+        int_cols <- c(int_cols, dbl_cols)
+        dbl_cols <- integer()
+      }
+      # integer column formatting
+      if (length(int_cols) > 0) {
+        openxlsx::addStyle(
+          wb, sheet_name, style = createStyle(numFmt = "0"),
+          rows = (start_row + 1L):(start_row + 1L + nrow(sheet_data)),
+          cols = int_cols, gridExpand = TRUE)
+      }
+      # double column formatting
+      if (length(dbl_cols) > 0) {
+        dbl_format <- paste0("0.", paste(rep("0", dbl_digits), collapse = ""))
+        openxlsx::addStyle(
+          wb, sheet_name, style = createStyle(numFmt = dbl_format),
+          rows = (start_row + 1L):(start_row + 1L + nrow(sheet_data)),
+          cols = dbl_cols, gridExpand = TRUE)
+      }
+      # new start row
+      start_row <- start_row + nrow(sheet_data) + 2L
+    }
+  }
+  
+  # calculate header widths
+  header_widths <- 
+    sheet_data_sets %>% 
+    # account for bold width
+    purrr::map(~nchar(names(.x)))
+  max_n_cols <- purrr::map_int(header_widths, length) %>% max()
+  
+  # calculate data widths
+  if (max_n_cols > 0) {
+    calculate_data_width <- function(x) {
+      if (is.integer(x)) x <- sprintf("%d", x)
+      else if (is.numeric(x)) x <- sprintf(paste0("%.", dbl_digits, "f"), x)
+      else x <- as.character(x)
+      return(max(c(0, nchar(x)), na.rm = TRUE))
+    }
+    data_widths <-
+      sheet_data_sets %>% 
+      purrr::map(
+        ~dplyr::summarise_all(.x, list(calculate_data_width)) %>% 
+          unlist(use.names = FALSE)
+      )
+    max_widths <- purrr::map2(header_widths, data_widths , ~{
+      widths <- if (is.null(.y)) .x else pmax(.x, .y, 0)
+      widths <- pmin(col_max_width, widths)
+      c(widths, rep(0L, times = max_n_cols - length(widths)))
+    })
+    col_widths <- do.call(pmax, args = max_widths)
+    openxlsx::setColWidths(wb, sheet_name, cols = 1:length(col_widths), widths = col_widths)
+  }
+  
+}
 
 #' Export to feather
 #' 
 #' This function exports the passed in iso_files to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided \code{filepath_prefix} as prefix. All are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters). Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in feather output.
 #' 
+#' @inheritParams iso_save
 #' @inheritParams iso_export_to_excel
-#' @param filepath_prefix the path (folder and filename) prefix for the exported feather files. The correct suffix for different kinds of data and file extension is automatically added
-#' @inheritParams iso_get_vendor_data_table
 #' @family export functions
 #' @return returns the iso_files object invisibly for use in pipelines
 #' @export
-iso_export_to_feather <- function(iso_files, filepath_prefix, 
-                              include_raw_data = TRUE, include_file_info = TRUE, 
-                              include_method_info = TRUE, include_vendor_data_table = TRUE,
-                              include_problems = TRUE, with_explicit_units = FALSE,
-                              quiet = default(quiet)) {
+iso_export_to_feather <- function(
+  iso_files, filepath_prefix, 
+  include_file_info = everything(), include_raw_data = everything(), 
+  include_standards = !!enexpr(include_method_info), include_resistors = !!enquo(include_method_info), 
+  include_vendor_data_table = everything(), include_problems = everything(), 
+  with_explicit_units = FALSE,
+  include_method_info = everything(),
+  quiet = default(quiet)) {
   
   # safety checks
   if(!iso_is_object(iso_files)) stop("can only export iso files or lists of iso files", call. = FALSE)
+  export_iso_files <- iso_as_file_list(iso_files)
+  filepaths <- get_feather_export_filepaths(export_iso_files, filepath_prefix)
   
-  # save iso_files
-  # note: not sure yet how to best implement different data types such as scan here
-  filepaths <- get_feather_export_filepaths(iso_files, filepath_prefix)
+  # include method info message
+  if (!missing(include_method_info)) {
+    warning("the 'include_method_info' parameter was deprecated in favor of the more specific 'include_resistors' and 'include_standards' parameters. Please use those directly instead in the future.", immediate. = TRUE, call. = FALSE)
+  }
+  
+  # info
   if (!quiet) {
     sprintf("Info: exporting data from %d iso_files into %s files at '%s'", length(iso_as_file_list(iso_files)), 
             filepaths[['ext']], str_replace(filepaths[['base']], "^\\.(/|\\\\)", "")) %>% message()
   }
+
+  # get all data
+  all_data <- iso_get_all_data(
+    export_iso_files,
+    include_file_info = !!enexpr(include_file_info),
+    include_raw_data = !!enexpr(include_raw_data),
+    include_standards = !!enexpr(include_standards),
+    include_resistors = !!enexpr(include_resistors),
+    include_vendor_data_table = !!enexpr(include_vendor_data_table),
+    include_problems = !!enexpr(include_problems),
+    with_explicit_units = with_explicit_units,
+    quiet = FALSE
+  )
   
-  # make feather files in temporary dir
-  if (include_raw_data) 
-    write_feather(iso_get_raw_data(iso_files, quiet = TRUE), filepaths[['raw_data']])
-  
-  if (include_file_info) 
-    # note: this takes care of nested vectors, they get concatenated with ', '
-    write_feather(iso_get_file_info(iso_files, quiet = TRUE) %>% collapse_list_columns(), 
-                  filepaths[['file_info']])
-  
-  if (include_method_info) {
-    write_feather(iso_get_standards_info(iso_files, quiet = TRUE), filepaths[['method_info_standards']])
-    write_feather(iso_get_resistors_info (iso_files, quiet = TRUE), filepaths[['method_info_resistors']])
+  # create feather files in temporary dir
+  # file info
+  if ("file_info" %in% names(all_data)) {
+    # note: collapse_list_columns takes care of nested vectors, they get concatenated with ', '
+    all_data %>% select(file_id, file_info) %>% 
+      unnest(file_info) %>% 
+      collapse_list_columns() %>% 
+      write_feather(filepaths[['file_info']])
   }
   
-  if (include_vendor_data_table) 
-    write_feather(
-      iso_get_vendor_data_table(iso_files, with_explicit_units = with_explicit_units, quiet = TRUE) %>% iso_strip_units(), 
-      filepaths[['vendor_data_table']])
+  # raw data
+  if ("raw_data" %in% names(all_data)) {
+    all_data %>% select(file_id, raw_data) %>% unnest(raw_data) %>% 
+      write_feather(filepaths[['raw_data']])
+  }
   
-  if (include_problems) 
-    write_feather(problems(iso_files), filepaths[['problems']])
+  # standards
+  if ("standards" %in% names(all_data)) {
+   all_data %>% select(file_id, standards) %>% unnest(standards) %>% 
+      write_feather(filepaths[['method_info_standards']])
+  } 
+  
+  # resistors
+  if ("resistors" %in% names(all_data)) {
+    all_data %>% select(file_id, resistors) %>% unnest(resistors) %>% 
+      write_feather(filepaths[['method_info_resistors']])
+  } 
+  
+  # vendor data table
+  if ("vendor_data_table" %in% names(all_data)) {
+    all_data %>% select(file_id, vendor_data_table) %>% 
+      unnest(vendor_data_table) %>% iso_strip_units() %>% 
+      write_feather(filepaths[['vendor_data_table']])
+  }
+  
+  # problems
+  if ("problems" %in% names(all_data)) {
+   all_data %>% select(file_id, problems) %>% unnest(problems) %>% 
+      write_feather(filepaths[['problems']])
+  }
   
   return(invisible(iso_files))
 }
@@ -159,6 +305,8 @@ get_excel_export_filepath <- function(iso_files, filepath) {
     ext <- ".cf.xlsx"
   else if (iso_is_dual_inlet(iso_files))
     ext <- ".di.xlsx"
+  else if (iso_is_scan(iso_files))
+    ext <- ".scan.xlsx"
   else
     stop("Excel export of this type of iso_files not yet supported", call. = FALSE) 
   return(get_export_filepath(filepath, ext))
@@ -170,6 +318,8 @@ get_feather_export_filepaths <- function(iso_files, filepath) {
     ext <- ".cf.feather"
   else if (iso_is_dual_inlet(iso_files))
     ext <- ".di.feather"
+  else if (iso_is_scan(iso_files))
+    ext <- ".scan.feather"
   else
     stop("Feather export of this type of iso_files not yet supported", call. = FALSE) 
   
@@ -180,8 +330,8 @@ get_feather_export_filepaths <- function(iso_files, filepath) {
       ext = ext,
       raw_data = str_c(filepath, "_raw_data", ext),
       file_info = str_c(filepath, "_file_info", ext),
-      method_info_standards = str_c(filepath, "_method_info-standards", ext),
-      method_info_resistors = str_c(filepath, "_method_info-resistors", ext),
+      method_info_standards = str_c(filepath, "_standards", ext),
+      method_info_resistors = str_c(filepath, "_resistors", ext),
       vendor_data_table = str_c(filepath, "_vendor_data_table", ext),
       problems = str_c(filepath, "_problems", ext)
     )

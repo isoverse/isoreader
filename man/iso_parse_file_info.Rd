@@ -4,9 +4,16 @@
 \alias{iso_parse_file_info}
 \title{Parse file info}
 \usage{
-iso_parse_file_info(iso_files, number = c(), double = c(),
-  integer = c(), logical = c(), datetime = c(), text = c(),
-  quiet = default(quiet))
+iso_parse_file_info(
+  iso_files,
+  number = c(),
+  double = c(),
+  integer = c(),
+  logical = c(),
+  datetime = c(),
+  text = c(),
+  quiet = default(quiet)
+)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
@@ -29,10 +36,11 @@ iso_parse_file_info(iso_files, number = c(), double = c(),
 Convenience function to batch parse file info (\code{\link{iso_get_file_info}}) columns in isofile objects for the most common parsing calls. Uses the \code{parse_} functions exported from \link{readr} and described in \link{extract_data}. Note that for less common parsing calls or calls that require additional parameters to the parsing function, it is better to parse columns one-by-one using \code{\link{iso_mutate_file_info}} instead.
 }
 \seealso{
-Other file_info operations: \code{\link{iso_add_file_info.iso_file_list}},
-  \code{\link{iso_filter_files}},
-  \code{\link{iso_mutate_file_info}},
-  \code{\link{iso_rename_file_info}},
-  \code{\link{iso_select_file_info}}
+Other file_info operations: 
+\code{\link{iso_add_file_info.iso_file_list}()},
+\code{\link{iso_filter_files}()},
+\code{\link{iso_mutate_file_info}()},
+\code{\link{iso_rename_file_info}()},
+\code{\link{iso_select_file_info}()}
 }
 \concept{file_info operations}

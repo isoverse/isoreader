@@ -113,9 +113,6 @@ monitor_parallel_logs <- function(processes) {
 # process parallel logs
 process_parallel_logs <- function(status) {
 
-  # global vars
-  X1 <- X2 <- X3 <- prefix <- NULL
-
   # logs
   log <- get_temp("parallel_log_file")
   if (!is.null(log) && file.exists(log)) {
@@ -146,13 +143,13 @@ process_parallel_logs <- function(status) {
       status$log_n <- status$log_n + nrow(logs)
       logs %>%
         mutate(
-          X2 = as.character(X2),
+          X2 = as.character(.data$X2),
           prefix = case_when(
-            X1 == "info" ~ sprintf("Info (process %s): ", X2),
-            X1 == "warning" ~ sprintf("Warning (process %s): ", X2),
-            TRUE ~ sprintf("Process %s: ", X2)
+            X1 == "info" ~ sprintf("Info (process %s): ", .data$X2),
+            X1 == "warning" ~ sprintf("Warning (process %s): ", .data$X2),
+            TRUE ~ sprintf("Process %s: ", .data$X2)
           )) %>%
-        with(purrr::walk2(X3, prefix, ~log_message(.x, prefix = .y)))
+        { purrr::walk2(.$X3, .$prefix, ~log_message(.x, prefix = .y)) }
     }
   }
 
@@ -200,17 +197,22 @@ iso_get_reader_example <- function(filename) {
 #' iso_get_reader_examples()
 #' @export
 iso_get_reader_examples <- function() {
-
-  # global vars
-  extension <- filename <- format <- path <- type <- description <- NULL
-
   file_types <- iso_get_supported_file_types()
   iso_expand_paths(
       ".", extensions = file_types$extension, root = system.file(package = "isoreader", "extdata")) %>%
-    mutate(filename = basename(path)) %>%
+    mutate(filename = basename(.data$path)) %>%
     match_to_supported_file_types(file_types) %>%
-    arrange(type, extension, filename) %>%
-    select(filename, type, description)
+    arrange(.data$type, .data$extension, .data$filename) %>%
+    select(.data$filename, .data$type, .data$software, .data$description)
+}
+
+#' @rdname iso_get_reader_example
+#' @details \code{iso_get_reader_examples_folder}: path to the location of the reader examples
+#' @examples
+#' iso_get_reader_examples_folder()
+#' @export
+iso_get_reader_examples_folder <- function() {
+  return(system.file(package = "isoreader", "extdata"))
 }
 
 # file paths ====
@@ -251,7 +253,7 @@ get_paths_data_frame <- function(path, root, check_existence = TRUE) {
 
   # paths data frame
   paths <-
-    data_frame(
+    tibble(
       i = 1:max(length(root), length(path)),
       root = root,
       path = path,
@@ -475,7 +477,7 @@ iso_shorten_relative_paths <- function(path, root = ".") {
 
   # generate paths dataframe (WITHOUT concatenating path and root ulnike get_paths_data_frame)
   paths <-
-    data_frame(
+    tibble(
       i = 1:max(length(root), length(path)),
       path = path,
       root = root,
@@ -530,7 +532,7 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
   absolute <- is_dir <- full_path <- rel_root_folders <- path_folders <- abs_root_folders <- has_rel_root <- new_path <- i <- NULL
 
   # anything to work with?
-  if(length(path) == 0) return(data_frame(root = character(0), path = character(0)))
+  if(length(path) == 0) return(tibble(root = character(0), path = character(0)))
 
   # generate data frame and check existence
   paths <- get_paths_data_frame(path, root, check_existence = check_existence)
@@ -672,16 +674,16 @@ generate_cache_filepaths <- function(filepaths, read_options = list()) {
     unf(obj)$hash %>% str_c(collapse = "")
   }
 
-  # cached files versioning --> 
+  # cached files versioning -->
   # include minor if v < 1.0, afterwards go by major version (2.0, 3.0, etc.)
-  iso_v <- 
+  iso_v <-
     packageVersion("isoreader") %>% {
       if (.$major < 1) paste0(.$major, ".", .$minor)
       else paste0(.$major, ".0")
     }
-  
+
   file_info <- file.info(filepaths) %>%
-    as_data_frame() %>%
+    dplyr::as_tibble() %>%
     rownames_to_column() %>%
     select(filepath = rowname, size = size, modified = mtime) %>%
     mutate(
@@ -729,13 +731,13 @@ load_cached_iso_file <- function(filepath, check_version = TRUE) {
 same_as_isoreader_version <- function(version, isoreader_version = packageVersion("isoreader")) {
 
   file_version <- version$major * 10
-  if (version$major < 1) 
+  if (version$major < 1)
     file_version <- file_version + version$minor
-  
+
   package_version <- isoreader_version$major * 10
-  if (isoreader_version$major < 1) 
+  if (isoreader_version$major < 1)
     package_version <- package_version + isoreader_version$minor
-    
+
   return(file_version == package_version)
 }
 
@@ -806,9 +808,9 @@ find_parent_call <- function(current_func) {
 
 # convience function for information message
 get_info_message_concat <- function(variable, prefix = "", suffix = "", empty = c(), quotes = TRUE){
-  if (is_quosure(variable)) {
-    if (quo_is_null(variable)) return("")
+  if (is_quosure(variable) || rlang::is_expression(variable)) {
     variable <- rlang::as_label(variable)
+    if (variable == "NULL") return("")
   }
   if (is_empty(variable)) return("")
   variable <- setdiff(variable, empty)

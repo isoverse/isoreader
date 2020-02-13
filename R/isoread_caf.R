@@ -53,7 +53,7 @@ extract_caf_raw_voltage_data <- function(ds) {
   # read all masses
   masses_re <- re_combine(re_block("x-000"), re_block("fef-x"), re_text("rIntensity"))
   masses <- 
-    data_frame(
+    tibble(
       pos = find_next_patterns(ds$binary, masses_re) + masses_re$size,
       # capture cup and mass
       data = map(pos, function(pos) {
@@ -62,7 +62,7 @@ extract_caf_raw_voltage_data <- function(ds) {
           capture_data("cup", "text", re_block("fef-x"), data_bytes_max = 8, move_past_dots = TRUE) %>%
           move_to_next_pattern(re_text("rIntensity "), max_gap = 0L) %>% 
           capture_data("mass", "text", re_block("fef-x"), data_bytes_max = 8) %>% 
-          { as_data_frame(.$data[c("cup", "mass")]) }
+          { dplyr::as_tibble(.$data[c("cup", "mass")]) }
       })
     ) %>% 
     # unnest data
@@ -111,11 +111,11 @@ extract_caf_raw_voltage_data <- function(ds) {
       capture_n_data("voltage", "double", n = nrow(masses), sensible = c(-1000, 100000))
     
     # return voltage data
-    return(data_frame(cup = 1:nrow(masses), voltage = bin$data$voltage))
+    return(tibble(cup = 1:nrow(masses), voltage = bin$data$voltage))
   }
   
   # assemble voltages data frame
-  voltages <- data_frame(
+  voltages <- tibble(
     pos = positions + read_blocks_re$size,
     # note last read in the sample block is actually the "pre"-read of the standard
     type = ifelse(pos < sample_block_start | pos==max(pos), "standard", "sample")
@@ -192,7 +192,7 @@ extract_caf_vendor_data_table <- function(ds) {
   # save information on the column units
   attr(ds$vendor_data_table, "units") <- 
     bind_rows(
-      data_frame(column = c("cycle"), units = ""),
+      tibble(column = c("cycle"), units = ""),
       filter(extracted_dt$columns, column %in% names(ds$vendor_data_table))[c("column", "units")]
     )
   return(ds)

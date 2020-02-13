@@ -8,10 +8,12 @@
 
 <title>Aggregate background data — iso_get_bgrd_data • Isoreader</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
@@ -32,10 +34,11 @@
 
 
 
-<meta property="og:title" content="Aggregate background data — iso_get_bgrd_data" />
 
+<meta property="og:title" content="Aggregate background data — iso_get_bgrd_data" />
 <meta property="og:description" content="Aggregate the background data from the provided iso_files. Can aggregate either in a wide table (for easy overview) or a gathered long table (for plotting and further data processing). The background data is only available if the iso_files were read with parameter read_raw_data=TRUE." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -76,29 +79,52 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.11</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../articles/dual_inlet.html">Dual Inlet</a>
+  <a href="../articles/quick_start.html">Quick Start</a>
 </li>
-<li>
-  <a href="../articles/continuous_flow.html">Continuous Flow</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Full Examples
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/dual_inlet.html">Dual Inlet</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_flow.html">Continuous Flow</a>
+    </li>
+    <li>
+      <a href="../articles/scan.html">Scan</a>
+    </li>
+  </ul>
 </li>
-<li>
-  <a href="../articles/operations.html">Operations</a>
-</li>
-<li>
-  <a href="../articles/development.html">Development</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Advanced
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/operations.html">Operations</a>
+    </li>
+    <li>
+      <a href="../articles/development.html">Development</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/isoverse/isoreader">
@@ -125,14 +151,17 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Aggregate the background data from the provided iso_files. Can aggregate either in a wide table (for easy overview) or a gathered long table (for plotting and further data processing). The background data is only available if the iso_files were read with parameter <code>read_raw_data=TRUE</code>.</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>iso_get_bgrd_data</span>(<span class='no'>iso_files</span>, <span class='kw'>select</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/tidyselect/man/select_helpers.html'>everything</a></span>(), <span class='kw'>gather</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>include_file_info</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
-    
+    <pre class="usage"><span class='fu'>iso_get_bgrd_data</span>(
+  <span class='no'>iso_files</span>,
+  <span class='kw'>select</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
+  <span class='kw'>gather</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>include_file_info</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -142,7 +171,7 @@
     </tr>
     <tr>
       <th>select</th>
-      <td><p>which raw data columns to select - use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax. By default, all columns are selected.</p></td>
+      <td><p>which data columns to select - use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax. By default, all columns are selected.</p></td>
     </tr>
     <tr>
       <th>gather</th>
@@ -157,25 +186,24 @@
       <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other data retrieval functions: <code><a href='iso_get_data.html'>iso_get_data</a></code>,
-  <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>,
-  <code><a href='iso_get_raw_data.html'>iso_get_raw_data</a></code>,
-  <code><a href='iso_get_resistors_info.html'>iso_get_resistors_info</a></code>,
-  <code><a href='iso_get_standards_info.html'>iso_get_standards_info</a></code>,
-  <code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a></code></p></div>
-    
+    <div class='dont-index'><p>Other data retrieval functions: 
+<code><a href='iso_get_all_data.html'>iso_get_all_data</a>()</code>,
+<code><a href='iso_get_file_info.html'>iso_get_file_info</a>()</code>,
+<code><a href='iso_get_raw_data.html'>iso_get_raw_data</a>()</code>,
+<code><a href='iso_get_resistors.html'>iso_get_resistors</a>()</code>,
+<code><a href='iso_get_standards.html'>iso_get_standards</a>()</code>,
+<code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#see-also">See also</a></li>
-          </ul>
+    </ul>
 
   </div>
 </div>

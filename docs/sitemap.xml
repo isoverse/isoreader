@@ -64,6 +64,9 @@
     <loc>http://isoreader.isoverse.org//reference/iso_find_absolute_path_roots.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_get_all_data.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org//reference/iso_get_bgrd_data.html</loc>
   </url>
   <url>
@@ -91,7 +94,13 @@
     <loc>http://isoreader.isoverse.org//reference/iso_get_reader_example.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_get_resistors.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org//reference/iso_get_resistors_info.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_get_standards.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/iso_get_standards_info.html</loc>
@@ -221,5 +230,11 @@
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//articles/operations.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//articles/quick_start.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//articles/scan.html</loc>
   </url>
 </urlset>

@@ -186,7 +186,7 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
   config <- gas_config$species[[dataset_attributes$Species]]
   
   # read irms data and determine which beams are used
-  irms_data <- h5read(filepath, "DataSet") %>% as_data_frame()
+  irms_data <- h5read(filepath, "DataSet") %>% dplyr::as_tibble()
   H5close() # garbage collect
   
   if (!"Scan" %in% names(irms_data)) 
@@ -225,7 +225,7 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
   dt <- run_time.s / nrow(irms_data)
   irms_data <- irms_data %>% 
     rename(tp = Scan) %>% 
-    mutate(time.s = dt * tp) %>% 
+    mutate(tp = as.integer(tp), time.s = dt * tp) %>% 
     select(tp, time.s, everything())
   
   # store mass data

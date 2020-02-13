@@ -2,27 +2,10 @@
 % Please edit documentation in R/aggregate_data.R
 \name{iso_get_resistors_info}
 \alias{iso_get_resistors_info}
-\title{Aggregate resistors from methods info}
+\title{DEPRECATED}
 \usage{
-iso_get_resistors_info(iso_files, include_file_info = NULL,
-  quiet = default(quiet))
-}
-\arguments{
-\item{iso_files}{collection of iso_file objects}
-
-\item{include_file_info}{which file information to include (see \code{\link{iso_get_file_info}}). Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns.}
-
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
+iso_get_resistors_info(...)
 }
 \description{
-Aggregates the resistor information recovered from the provided iso_files. This information is only available if the iso_files were read with parameter \code{read_method_info=TRUE} and only linked to specific masses if the iso_files were additionally read with parametr \code{read_raw_data=TRUE}.
+Please use \link{iso_get_resistors} instead.
 }
-\seealso{
-Other data retrieval functions: \code{\link{iso_get_bgrd_data}},
-  \code{\link{iso_get_data}},
-  \code{\link{iso_get_file_info}},
-  \code{\link{iso_get_raw_data}},
-  \code{\link{iso_get_standards_info}},
-  \code{\link{iso_get_vendor_data_table}}
-}
-\concept{data retrieval functions}

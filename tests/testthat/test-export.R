@@ -2,6 +2,10 @@ context("Export functions")
 
 di_example <- iso_read_dual_inlet(iso_get_reader_example("dual_inlet_example.did"))
 cf_example <- iso_read_continuous_flow(iso_get_reader_example("continuous_flow_example.cf"))
+capture.output(cf_err_example <- suppressMessages(iso_read_continuous_flow(system.file("errdata", "cf_without_data.dxf", package = "isoreader"))))
+scan_example <- iso_read_scan(iso_get_reader_example("peak_shape_scan_example.scn"))
+
+# iso_save =====
 
 test_that("test that export to rda works properly", {
   expect_error(iso_save(42), "can only export iso files")
@@ -60,17 +64,30 @@ test_that("test that export to rda works properly", {
   expect_true(file.remove(str_c(filepath, ".di.rds")))
   
   # export real data files - continuous flow
-  expect_message(iso_save(cf_example, filepath, quiet = FALSE), "exporting data .* into R Data Storage")
+  expect_message(iso_save(c(cf_example, cf_err_example), filepath, quiet = FALSE), "exporting data .* into R Data Storage")
   expect_true(file.exists(str_c(filepath, ".cf.rds")))
-  expect_message(cf_example_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rds"), quiet = FALSE), "reading file")
-  expect_equal(cf_example$raw_data, cf_example_back$raw_data)  
+  expect_message(capture.output(cf_examples_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rds"), quiet = FALSE)), "reading file")
+  expect_equal(cf_example$raw_data, cf_examples_back[[1]]$raw_data)  
   expect_equal(cf_example$file_info %>% unnest_aggregated_data_frame(), 
-               cf_example_back$file_info %>% unnest_aggregated_data_frame())
-  expect_equal(cf_example$method_info$standards, cf_example_back$method_info$standards)
-  expect_equal(cf_example$method_info$resistors, cf_example_back$method_info$resistors)
-  expect_equal(cf_example$vendor_data_table, cf_example_back$vendor_data_table)
+               cf_examples_back[[1]]$file_info %>% unnest_aggregated_data_frame())
+  expect_equal(cf_example$method_info$standards, cf_examples_back[[1]]$method_info$standards)
+  expect_equal(cf_example$method_info$resistors, cf_examples_back[[1]]$method_info$resistors)
+  expect_equal(cf_example$vendor_data_table, cf_examples_back[[1]]$vendor_data_table)
+  expect_equal(iso_get_problems(cf_err_example), iso_get_problems(cf_examples_back))
   expect_true(file.remove(str_c(filepath, ".cf.rds")))
+  
+  # export real data files - scan
+  expect_message(iso_save(scan_example, filepath, quiet = FALSE), "exporting data .* into R Data Storage")
+  expect_true(file.exists(str_c(filepath, ".scan.rds")))
+  expect_message(scan_example_back <- iso_read_scan(str_c(filepath, ".scan.rds"), quiet = FALSE), "reading file")
+  expect_equal(scan_example$raw_data, scan_example_back$raw_data)  
+  expect_equal(scan_example$file_info %>% unnest_aggregated_data_frame(), 
+               scan_example_back$file_info %>% unnest_aggregated_data_frame())
+  expect_equal(scan_example$method_info$resistors, scan_example_back$method_info$resistors)
+  expect_true(file.remove(str_c(filepath, ".scan.rds")))
 })
+
+# excel expor ======
 
 library(readxl)
 test_that("test that export to Excel works properly", {
@@ -109,10 +126,16 @@ test_that("test that export to Excel works properly", {
                readxl::read_excel(str_c(filepath, ".cf.xlsx"), "file info",
                           col_types = c("text", "text", "text", "text", "numeric", "text")) %>% 
                  mutate(file_datetime = as.integer(file_datetime))) 
+  expect_equal(iso_get_standards(cf), 
+               readxl::read_excel(str_c(filepath, ".cf.xlsx"), "standards", col_types = c("text", "text")))
+  expect_equal(iso_get_resistors(cf), 
+               readxl::read_excel(str_c(filepath, ".cf.xlsx"), "resistors", col_types = c("text", "numeric", "numeric")) %>% 
+                 mutate(cup = as.integer(cup))) 
   expect_equal(iso_get_vendor_data_table(cf), 
                readxl::read_excel(str_c(filepath, ".cf.xlsx"), "vendor data table") %>% 
                  mutate(x = as.integer(x))) 
-  # TODO: also test the standards and resistor values (from the same tab)
+  expect_equal(iso_get_problems(cf) %>% select(file_id), 
+               readxl::read_excel(str_c(filepath, ".cf.xlsx"), "problems", col_types = c("text")))
   expect_true(file.remove(str_c(filepath, ".cf.xlsx")))
   
   # export real data files - dual inlet
@@ -120,42 +143,57 @@ test_that("test that export to Excel works properly", {
   expect_true(file.exists(str_c(filepath, ".di.xlsx")))
   expect_equal(iso_get_raw_data(di_example) %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
-               read_excel(str_c(filepath, ".di.xlsx"), "raw data") %>% 
+               readxl::read_excel(str_c(filepath, ".di.xlsx"), "raw data") %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif)) 
   expect_equal(iso_get_file_info(di_example) %>% collapse_list_columns() %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif) %>% 
                  dplyr::select_if(function(x) !is.na(x)) %>% 
                  select(-file_datetime), # never exactly identical, 
-               read_excel(str_c(filepath, ".di.xlsx"), "file info") %>% 
+               readxl::read_excel(str_c(filepath, ".di.xlsx"), "file info") %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif) %>% 
                  dplyr::select_if(function(x) !is.na(x)) %>% 
                  select(-file_datetime))
+  expect_equal(iso_get_standards(di_example), 
+               readxl::read_excel(str_c(filepath, ".di.xlsx"), "standards"))
+  expect_equal(iso_get_resistors(di_example), 
+               readxl::read_excel(str_c(filepath, ".di.xlsx"), "resistors") %>% 
+                 mutate(cup = as.integer(cup))) 
   expect_equal(iso_get_vendor_data_table(di_example) %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
-               read_excel(str_c(filepath, ".di.xlsx"), "vendor data table") %>% 
+               readxl::read_excel(str_c(filepath, ".di.xlsx"), "vendor data table") %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif)) 
+  expect_equal(iso_get_problems(di_example) %>% select(file_id), 
+               readxl::read_excel(str_c(filepath, ".di.xlsx"), "problems", col_types = c("text")))
   expect_true(file.remove(str_c(filepath, ".di.xlsx")))
   
   # export real data files - continuous flow
-  expect_message(iso_export_to_excel(cf_example, filepath, quiet = FALSE), "exporting data .* into Excel")
+  cf_examples <- c(cf_example, cf_err_example)
+  expect_message(iso_export_to_excel(cf_examples, filepath, quiet = FALSE), "exporting data .* into Excel")
   expect_true(file.exists(str_c(filepath, ".cf.xlsx")))
-  expect_equal(iso_get_raw_data(cf_example) %>% 
+  expect_equal(iso_get_raw_data(cf_examples) %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
                read_excel(str_c(filepath, ".cf.xlsx"), "raw data") %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif)) 
-  expect_equal(iso_get_file_info(cf_example) %>% collapse_list_columns() %>% 
+  expect_equal(iso_get_file_info(cf_examples) %>% collapse_list_columns() %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif) %>% 
-                 dplyr::select_if(function(x) !is.na(x)) %>% 
+                 dplyr::select_if(function(x) !all(is.na(x))) %>% 
                  select(-file_datetime), # never exactly identical, 
                read_excel(str_c(filepath, ".cf.xlsx"), "file info") %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif) %>% 
-                 dplyr::select_if(function(x) !is.na(x)) %>% 
+                 dplyr::select_if(function(x) !all(is.na(x))) %>% 
                  select(-file_datetime))
-  expect_equal(iso_get_vendor_data_table(cf_example) %>% 
+  expect_equal(iso_get_standards(cf_examples), 
+               readxl::read_excel(str_c(filepath, ".cf.xlsx"), "standards"))
+  expect_equal(iso_get_resistors(cf_examples), 
+               readxl::read_excel(str_c(filepath, ".cf.xlsx"), "resistors") %>% 
+                 mutate(cup = as.integer(cup))) 
+  expect_equal(iso_get_vendor_data_table(cf_examples) %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif) %>% 
                  iso_strip_units(), 
                read_excel(str_c(filepath, ".cf.xlsx"), "vendor data table") %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif)) 
+  expect_equal(iso_get_problems(cf_examples), 
+               readxl::read_excel(str_c(filepath, ".cf.xlsx"), "problems", col_types = c("text", "text", "text", "text")))
   expect_true(file.remove(str_c(filepath, ".cf.xlsx")))
   
   # export real data files with explicit units
@@ -167,8 +205,31 @@ test_that("test that export to Excel works properly", {
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif)) 
   expect_true(file.remove(str_c(filepath, ".cf.xlsx")))
   
+  # export real data files - scan
+  expect_message(iso_export_to_excel(scan_example, filepath, quiet = FALSE), "exporting data .* into Excel")
+  expect_true(file.exists(str_c(filepath, ".scan.xlsx")))
+  expect_equal(iso_get_raw_data(scan_example) %>% 
+                 dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
+               read_excel(str_c(filepath, ".scan.xlsx"), "raw data") %>% 
+                 dplyr::mutate_if(.predicate = is.numeric, .funs = signif)) 
+  expect_equal(iso_get_file_info(scan_example) %>% collapse_list_columns() %>% 
+                 dplyr::mutate_if(.predicate = is.numeric, .funs = signif) %>% 
+                 dplyr::select_if(function(x) !is.na(x)) %>% 
+                 select(-file_datetime), # never exactly identical, 
+               read_excel(str_c(filepath, ".scan.xlsx"), "file info") %>% 
+                 dplyr::mutate_if(.predicate = is.numeric, .funs = signif) %>% 
+                 dplyr::select_if(function(x) !is.na(x)) %>% 
+                 select(-file_datetime))
+  expect_equal(iso_get_resistors(scan_example) %>% 
+                 dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
+               read_excel(str_c(filepath, ".scan.xlsx"), "resistors") %>% 
+                 dplyr::mutate_if(.predicate = is.numeric, .funs = signif))
+  expect_true(file.remove(str_c(filepath, ".scan.xlsx")))
+  
+  
 })
 
+# feather export ======
 
 library(feather)
 test_that("test that export to Feather works properly", {
@@ -199,14 +260,15 @@ test_that("test that export to Feather works properly", {
   expect_equal(cf$vendor_data_table, cf_out$vendor_data_table)
   expect_true(file.exists(str_c(filepath, "_raw_data.cf.feather")))
   expect_true(file.exists(str_c(filepath, "_file_info.cf.feather")))
-  expect_true(file.exists(str_c(filepath, "_method_info-standards.cf.feather")))
-  expect_true(file.exists(str_c(filepath, "_method_info-resistors.cf.feather")))
+  expect_true(file.exists(str_c(filepath, "_standards.cf.feather")))
+  expect_true(file.exists(str_c(filepath, "_resistors.cf.feather")))
   expect_true(file.exists(str_c(filepath, "_vendor_data_table.cf.feather")))
+  expect_true(file.exists(str_c(filepath, "_problems.cf.feather")))
   # note for comparisons: rounding is NOT necessary because storage is equivalent to values in R
   expect_equal(iso_get_raw_data(cf), read_feather(str_c(filepath, "_raw_data.cf.feather")))
   expect_equal(iso_get_file_info(cf) %>% collapse_list_columns(), read_feather(str_c(filepath, "_file_info.cf.feather")))
-  expect_equal(iso_get_standards_info(cf), read_feather(str_c(filepath, "_method_info-standards.cf.feather")))
-  expect_equal(iso_get_resistors_info (cf), read_feather(str_c(filepath, "_method_info-resistors.cf.feather")))
+  expect_equal(iso_get_standards(cf), read_feather(str_c(filepath, "_standards.cf.feather")))
+  expect_equal(iso_get_resistors (cf), read_feather(str_c(filepath, "_resistors.cf.feather")))
   expect_equal(iso_get_vendor_data_table(cf), read_feather(str_c(filepath, "_vendor_data_table.cf.feather")))
   expect_true(all(file.remove(list.files(dirname(filepath), pattern = "\\.cf\\.feather$", full.names = TRUE))))
   
@@ -214,31 +276,36 @@ test_that("test that export to Feather works properly", {
   expect_message(iso_export_to_feather(di_example, filepath, quiet = FALSE), "exporting data .* into .di.feather")
   expect_true(file.exists(str_c(filepath, "_raw_data.di.feather")))
   expect_true(file.exists(str_c(filepath, "_file_info.di.feather")))
-  expect_true(file.exists(str_c(filepath, "_method_info-standards.di.feather")))
-  expect_true(file.exists(str_c(filepath, "_method_info-resistors.di.feather")))
+  expect_true(file.exists(str_c(filepath, "_standards.di.feather")))
+  expect_true(file.exists(str_c(filepath, "_resistors.di.feather")))
   expect_true(file.exists(str_c(filepath, "_vendor_data_table.di.feather")))
+  expect_true(file.exists(str_c(filepath, "_problems.di.feather")))
   # note for comparisons: rounding is NOT necessary because storage is equivalent to values in R
   expect_equal(iso_get_raw_data(di_example), read_feather(str_c(filepath, "_raw_data.di.feather")))
   expect_equal(iso_get_file_info(di_example) %>% collapse_list_columns(), read_feather(str_c(filepath, "_file_info.di.feather")))
-  expect_equal(iso_get_standards_info(di_example), read_feather(str_c(filepath, "_method_info-standards.di.feather")))
-  expect_equal(iso_get_resistors_info (di_example), read_feather(str_c(filepath, "_method_info-resistors.di.feather")))
+  expect_equal(iso_get_standards(di_example), read_feather(str_c(filepath, "_standards.di.feather")))
+  expect_equal(iso_get_resistors (di_example), read_feather(str_c(filepath, "_resistors.di.feather")))
   expect_equal(iso_get_vendor_data_table(di_example), read_feather(str_c(filepath, "_vendor_data_table.di.feather")))
+  expect_equal(iso_get_problems(di_example) %>% select(file_id), read_feather(str_c(filepath, "_problems.di.feather")))
   expect_true(all(file.remove(list.files(dirname(filepath), pattern = "\\.di\\.feather$", full.names = TRUE))))
   
   # export real data files - continuous flow
-  expect_message(iso_export_to_feather(cf_example, filepath, quiet = FALSE), "exporting data .* into .cf.feather")
+  cf_examples <- c(cf_example, cf_err_example)
+  expect_message(iso_export_to_feather(cf_examples, filepath, quiet = FALSE), "exporting data .* into .cf.feather")
   expect_true(file.exists(str_c(filepath, "_raw_data.cf.feather")))
   expect_true(file.exists(str_c(filepath, "_file_info.cf.feather")))
-  expect_true(file.exists(str_c(filepath, "_method_info-standards.cf.feather")))
-  expect_true(file.exists(str_c(filepath, "_method_info-resistors.cf.feather")))
+  expect_true(file.exists(str_c(filepath, "_standards.cf.feather")))
+  expect_true(file.exists(str_c(filepath, "_resistors.cf.feather")))
   expect_true(file.exists(str_c(filepath, "_vendor_data_table.cf.feather")))
+  expect_true(file.exists(str_c(filepath, "_problems.cf.feather")))
   # note for comparisons: rounding is NOT necessary because storage is equivalent to values in R
-  expect_equal(iso_get_raw_data(cf_example), read_feather(str_c(filepath, "_raw_data.cf.feather")))
-  expect_equal(iso_get_file_info(cf_example) %>% collapse_list_columns(), read_feather(str_c(filepath, "_file_info.cf.feather")))
-  expect_equal(iso_get_standards_info(cf_example), read_feather(str_c(filepath, "_method_info-standards.cf.feather")))
-  expect_equal(iso_get_resistors_info (cf_example), read_feather(str_c(filepath, "_method_info-resistors.cf.feather")))
-  expect_equal(iso_get_vendor_data_table(cf_example) %>% iso_strip_units(), 
+  expect_equal(iso_get_raw_data(cf_examples), read_feather(str_c(filepath, "_raw_data.cf.feather")))
+  expect_equal(iso_get_file_info(cf_examples) %>% collapse_list_columns(), read_feather(str_c(filepath, "_file_info.cf.feather")))
+  expect_equal(iso_get_standards(cf_examples), read_feather(str_c(filepath, "_standards.cf.feather")))
+  expect_equal(iso_get_resistors (cf_examples), read_feather(str_c(filepath, "_resistors.cf.feather")))
+  expect_equal(iso_get_vendor_data_table(cf_examples) %>% iso_strip_units(), 
                read_feather(str_c(filepath, "_vendor_data_table.cf.feather")))
+  expect_equal(iso_get_problems(cf_examples), read_feather(str_c(filepath, "_problems.cf.feather")))
   expect_true(all(file.remove(list.files(dirname(filepath), pattern = "\\.cf\\.feather$", full.names = TRUE))))
   
   # export with explicit units
@@ -247,5 +314,17 @@ test_that("test that export to Feather works properly", {
   expect_equal(iso_get_vendor_data_table(cf_example, with_explicit_units = TRUE), 
                read_feather(str_c(filepath, "_vendor_data_table.cf.feather")))
   expect_true(all(file.remove(list.files(dirname(filepath), pattern = "\\.cf\\.feather$", full.names = TRUE))))
+  
+  # export real data files - scan
+  expect_message(iso_export_to_feather(scan_example, filepath, quiet = FALSE), "exporting data .* into .scan.feather")
+  expect_true(file.exists(str_c(filepath, "_raw_data.scan.feather")))
+  expect_true(file.exists(str_c(filepath, "_file_info.scan.feather")))
+  expect_true(file.exists(str_c(filepath, "_resistors.scan.feather")))
+  # note for comparisons: rounding is NOT necessary because storage is equivalent to values in R
+  expect_equal(iso_get_raw_data(scan_example), read_feather(str_c(filepath, "_raw_data.scan.feather")))
+  expect_equal(iso_get_file_info(scan_example) %>% collapse_list_columns(), read_feather(str_c(filepath, "_file_info.scan.feather")))
+  expect_equal(iso_get_resistors (scan_example), read_feather(str_c(filepath, "_resistors.scan.feather")))
+  expect_true(all(file.remove(list.files(dirname(filepath), pattern = "\\.scan\\.feather$", full.names = TRUE))))
+  
   
 })

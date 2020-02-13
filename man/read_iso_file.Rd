@@ -4,9 +4,21 @@
 \alias{read_iso_file}
 \title{Read individual iso file}
 \usage{
-read_iso_file(ds, root, path, file_n, files_n, read_from_cache,
-  write_to_cache, write_to_cache_if_errors, cachepath, ext, reader_fun,
-  reader_options, reader_fun_env)
+read_iso_file(
+  ds,
+  root,
+  path,
+  file_n,
+  files_n,
+  read_from_cache,
+  write_to_cache,
+  write_to_cache_if_errors,
+  cachepath,
+  ext,
+  reader_fun,
+  reader_options,
+  reader_fun_env
+)
 }
 \arguments{
 \item{ds}{the basic data structure for the type of iso_file}

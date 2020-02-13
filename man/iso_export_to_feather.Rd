@@ -4,28 +4,37 @@
 \alias{iso_export_to_feather}
 \title{Export to feather}
 \usage{
-iso_export_to_feather(iso_files, filepath_prefix,
-  include_raw_data = TRUE, include_file_info = TRUE,
-  include_method_info = TRUE, include_vendor_data_table = TRUE,
-  include_problems = TRUE, with_explicit_units = FALSE,
-  quiet = default(quiet))
+iso_export_to_feather(
+  iso_files,
+  filepath_prefix,
+  include_file_info = everything(),
+  include_raw_data = everything(),
+  include_standards = !!enexpr(include_method_info),
+  include_resistors = !!enquo(include_method_info),
+  include_vendor_data_table = everything(),
+  include_problems = everything(),
+  with_explicit_units = FALSE,
+  include_method_info = everything(),
+  quiet = default(quiet)
+)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
-\item{filepath_prefix}{the path (folder and filename) prefix for the exported feather files. The correct suffix for different kinds of data and file extension is automatically added}
+\item{include_file_info}{which file information to include (see \code{\link{iso_get_file_info}}). Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns.}
 
-\item{include_raw_data}{whether to include the raw data in the export (if available)}
+\item{include_raw_data}{which columns from the raw data to include. Use \code{c(...)} to select multiple columns, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default. Set to NULL to include no raw data.}
 
-\item{include_file_info}{whether to include the file info in the export (if available)}
+\item{include_standards}{which columns from the standards info to include. Use \code{c(...)} to select multiple columns, supports all \link[dplyr]{select} syntax including renaming columns. By default, everything is included (both standards and ratios). To omit the ratios, change to \code{select = file_id:reference}. Set to NULL to include no standards info.
+#' @param include_resistors which columns from the resistors info to include. Use \code{c(...)} to select multiple columns, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default. Set to NULL to include no resistors info.}
 
-\item{include_method_info}{whether to include methods infor in the export (if available)}
+\item{include_vendor_data_table}{which columns from the vendor data table to include. Use \code{c(...)} to select multiple columns, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default. Set parameter \code{with_explicit_units = TRUE} to make column units explicit (keep in mind that this will require specific \code{include_vendor_data_table} column selections to reflect the column names including the units). Set to NULL to include no vendor data table.}
 
-\item{include_vendor_data_table}{whether to include the vendor data table in the export (if available)}
+\item{include_problems}{which columns from problems to include. Use \code{c(...)} to select multiple columns, supports all \link[dplyr]{select} syntax including renaming columns. Includes none of the read problems by default. Set to \code{include_problems = everything()} to include all columns.}
 
-\item{include_problems}{whether to include the problems table}
+\item{with_explicit_units}{whether to include units in the column headers of the returned data frame instead of the column data types (see \code{\link{iso_double_with_units}}). Note that any \code{select} conditions have to refer to the column names including the full units.}
 
-\item{with_explicit_units}{whether to include units in the column headers instead of the column data types (see \code{\link{iso_double_with_units}})}
+\item{include_method_info}{deprecated in favor of the more specific include_standards and include_resistors}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
@@ -36,7 +45,9 @@ returns the iso_files object invisibly for use in pipelines
 This function exports the passed in iso_files to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided \code{filepath_prefix} as prefix. All are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters). Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in feather output.
 }
 \seealso{
-Other export functions: \code{\link{iso_export_to_excel}},
-  \code{\link{iso_export_to_rda}}, \code{\link{iso_save}}
+Other export functions: 
+\code{\link{iso_export_to_excel}()},
+\code{\link{iso_export_to_rda}()},
+\code{\link{iso_save}()}
 }
 \concept{export functions}

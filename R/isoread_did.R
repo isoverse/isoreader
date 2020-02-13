@@ -91,21 +91,21 @@ extract_did_raw_voltage_data <- function(ds) {
     }
 
     # return voltage data
-    return(data_frame(cycle = bin$data$cycle, cup = 1:length(bin$data$voltage), voltage = bin$data$voltage))
+    return(tibble(cycle = bin$data$cycle, cup = 1:length(bin$data$voltage), voltage = bin$data$voltage))
   }
   
   # assemble voltages data frame
   voltages <- 
     bind_rows(
-      data_frame(pos = standard_positions + standard_voltage_start_re$size, type = "standard"),
-      data_frame(pos = sample_positions + sample_voltage_start_re$size, type = "sample")
+      tibble(pos = standard_positions + standard_voltage_start_re$size, type = "standard"),
+      tibble(pos = sample_positions + sample_voltage_start_re$size, type = "sample")
     ) %>% 
     mutate(
       voltages = map(pos, capture_voltages)
     ) %>% 
     unnest(voltages) %>% 
     # join in the mass information
-    left_join(data_frame(cup = 1:length(masses), mass = masses_columns), by = "cup") %>% 
+    left_join(tibble(cup = 1:length(masses), mass = masses_columns), by = "cup") %>% 
     # spread out the volrages
     select(-pos, -cup) %>% spread(mass, voltage) %>% 
     # update cycle
@@ -186,8 +186,8 @@ extract_did_vendor_data_table <- function(ds) {
   
   # vendor table
   ds$vendor_data_table <- bind_cols(
-    data_frame(cycle = vendor_dt[[1]][[1]]), 
-    lapply(vendor_dt, `[[`, 2) %>% as_data_frame())
+    tibble(cycle = vendor_dt[[1]][[1]]), 
+    lapply(vendor_dt, `[[`, 2) %>% dplyr::as_tibble())
   attr(ds$vendor_data_table, "units") <- NULL # units do not apply
   return(ds)
 }

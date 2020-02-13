@@ -19,7 +19,7 @@ test_that("Test that selecting/renaming file info works", {
   expect_error(iso_select_file_info(42), "not defined")
   expect_error(iso_select_file_info(iso_file1, new = file_id), "renaming.*not allowed")
   expect_error(iso_select_file_info(iso_files, new = file_id), "renaming.*not allowed")
-  expect_error(iso_select_file_info(iso_files, y = new_info, y = new_info2), "unresolvable naming conflict")
+  expect_error(iso_select_file_info(iso_files, y = new_info, y = new_info2), class = "vctrs_error_names_must_be_unique", "must be unique")
   
   # select info message
   expect_message(iso_select_file_info(iso_file1), "keeping 1") # always file_info
@@ -55,8 +55,8 @@ test_that("Test that selecting/renaming file info works", {
   expect_error(iso_rename_file_info(42), "not defined")
   expect_error(iso_rename_file_info(iso_file1, new = file_id), "renaming.*not allowed")
   expect_error(iso_rename_file_info(iso_files, new = file_id), "renaming.*not allowed")
-  expect_error(iso_rename_file_info(iso_files, new_info = new_info2), "unresolvable naming conflict")
-  expect_error(iso_rename_file_info(iso_files, y = new_info, y = new_info2), "unresolvable naming conflict")
+  expect_error(iso_rename_file_info(iso_files, new_info = new_info2), class = "vctrs_error_names_must_be_unique", "must be unique")
+  expect_error(iso_rename_file_info(iso_files, y = new_info, y = new_info2), class = "vctrs_error_names_must_be_unique", "must be unique")
   
   # rename info message
   expect_message(iso_rename_file_info(iso_file1), "renaming 0")
@@ -305,6 +305,14 @@ test_that("Test that file info addition works", {
   expect_message(
     iso_add_file_info(file_info, new_info, by1 = "y", by2 = c("file_id", "y")),
     "'file_id'\\+'y' join.*0/1 new info.*matched 0" 
+  )
+  
+  # sequential join including a logical column join
+  iso_add_file_info(
+    mutate(file_info, y = rep(c(TRUE, FALSE), each = 3)), 
+    mutate(new_info, y = c(TRUE, FALSE, NA, NA, NA)), 
+    by1 = "y", 
+    by2 = "file_id"
   )
   
   # test with isofiles (not just in data frame)
