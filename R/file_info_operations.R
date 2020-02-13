@@ -43,14 +43,12 @@ iso_select_file_info.iso_file_list <- function(iso_files, ..., quiet = default(q
   changed <- to <- from <- NULL
   
   # variables for all files
-  select_expr <- rlang::expr(c(...))
+  select_expr <- rlang::expr(c(!!!rlang::enexprs(...)))
   
   # run select
   isofiles_select <- map(iso_files, function(isofile) {
     # select positions (always include file_id)
-    file_id_pos <- tidyselect::eval_select(rlang::expr(file_id), data = isofile$file_info)
-    pos <- tidyselect::eval_select(select_expr, data = isofile$file_info, strict = FALSE)
-    if (!file_id_pos %in% pos) pos <- c(file_id_pos, pos)
+    pos <- local_eval_select(select_expr, data = isofile$file_info, strict = FALSE, include = "file_id")
     # selected variables
     vars <- tibble(
       file_id = isofile$file_info$file_id,
@@ -140,12 +138,12 @@ iso_rename_file_info.iso_file_list <- function(iso_files, ..., quiet = default(q
   changed <- to <- from <- NULL
   
   # variables for all files
-  rename_expr <- rlang::expr(c(...))
+  rename_expr <- rlang::expr(c(!!!rlang::enexprs(...)))
   
   # run select
   isofiles_rename <- map(iso_files, function(isofile) {
     # rename positions
-    pos <- tidyselect::eval_rename(rename_expr, data = isofile$file_info, strict = FALSE)
+    pos <- local_eval_rename(rename_expr, data = isofile$file_info, strict = FALSE)
     # selected variables
     vars <- tibble(
       file_id = isofile$file_info$file_id,
