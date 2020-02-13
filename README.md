@@ -4,7 +4,7 @@
 # isoreader <a href='http://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
-[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.0.15-orange.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
+[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.1.0-orange.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](http://isoreader.isoverse.org/)
 [![Build
 Status](https://travis-ci.org/isoverse/isoreader.svg?branch=master)](https://travis-ci.org/isoverse/isoreader)
@@ -84,6 +84,8 @@ Currently supported file types:
 | .iarc     | ionOS     | Continous Flow data archieve        | continuous flow |
 | .cf.rda   | isoreader | R Data Archive (deprecated)         | continuous flow |
 | .cf.rds   | isoreader | R Data Storage                      | continuous flow |
+| .scn      | Isodat    | Scan file format                    | scan            |
+| .scan.rds | isoreader | R Data Storage                      | scan            |
 
   - for a full reference of all available functions, see the **[Function
     Reference](http://isoreader.isoverse.org/reference/)**
