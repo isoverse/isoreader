@@ -224,8 +224,6 @@ test_that("test that export to Excel works properly", {
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
                read_excel(str_c(filepath, ".scan.xlsx"), "resistors") %>% 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif))
-  expect_equal(iso_get_problems(scan_example) %>% select(file_id), 
-               readxl::read_excel(str_c(filepath, ".scan.xlsx"), "problems", col_types = c("text")))
   expect_true(file.remove(str_c(filepath, ".scan.xlsx")))
   
   
