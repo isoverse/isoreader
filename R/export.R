@@ -34,6 +34,7 @@ iso_export_to_excel <- function(
   include_vendor_data_table = everything(), include_problems = everything(), 
   with_explicit_units = FALSE,
   include_method_info = everything(),
+  with_ratios = NULL,
   quiet = default(quiet)) {
   
   # safety checks
@@ -41,15 +42,20 @@ iso_export_to_excel <- function(
   export_iso_files <- iso_as_file_list(iso_files)
   filepath <- get_excel_export_filepath(export_iso_files, filepath)
   
+  # info message
+  if (!quiet) {
+    sprintf("Info: exporting data from %d iso_files into Excel '%s'", length(export_iso_files), 
+            str_replace(filepath, "^\\.(/|\\\\)", "")) %>% message()
+  }
+
   # include method info message
   if (!missing(include_method_info)) {
     warning("the 'include_method_info' parameter was deprecated in favor of the more specific 'include_resistors' and 'include_standards' parameters. Please use those directly instead in the future.", immediate. = TRUE, call. = FALSE)
   }
   
-  # info message
-  if (!quiet) {
-    sprintf("Info: exporting data from %d iso_files into Excel '%s'", length(export_iso_files), 
-            str_replace(filepath, "^\\.(/|\\\\)", "")) %>% message()
+  # deprecated parameter
+  if (!missing(with_ratios)) {
+    warning("the 'with_ratios' parameter is deprecated, please use the column selection parameter 'include_standards' to explicitly include or exclude ratio columns", immediate. = TRUE, call. = FALSE)
   }
   
   # get all data
