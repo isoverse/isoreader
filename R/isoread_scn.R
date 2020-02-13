@@ -168,7 +168,7 @@ extract_scn_raw_voltage_data <- function(ds) {
       "voltages", c("float", rep("double", ds$binary$data$n_traces)),
       ds$binary$data$n_points
     )
-  voltages <- tibble::as_tibble(ds$binary$data$voltages)
+  voltages <- dplyr::as_tibble(ds$binary$data$voltages)
   
   # safety check
   if (ncol(voltages) - 1L != nrow(ds$binary$data$config)) {

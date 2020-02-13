@@ -114,11 +114,11 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
     }
     
     # store information
-    data_frame(name = bin$data$ref_name, config = bin$data$config, pos = bin$pos)
+    tibble(name = bin$data$ref_name, config = bin$data$config, pos = bin$pos)
   }
   
   # run refs capture
-  refs <- data_frame(
+  refs <- tibble(
     start_pos = find_next_patterns(
       ds$binary, re_combine(instrument_pre1, re_block("text"), instrument_pre2)),
     data = map(start_pos, capture_ref_names)
@@ -150,7 +150,7 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
                    re_direct("([^\\x00]{2})?", label = "[^00]{2}"), re_block("x-000")) 
     
     # return as data frame
-    as_data_frame(
+    dplyr::as_tibble(
       bin$data[c("gas", "delta_code", "delta_name", "delta_value", "delta_format", "reference")]
     ) %>% mutate(
       standard = refs$name[max(which(bin$pos > refs$pos))]
@@ -159,7 +159,7 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   }
   
   # run delta capture
-  deltas <- data_frame(
+  deltas <- tibble(
     pos = positions + delta_re$size,
     data = map(pos, capture_delta_values)
   ) %>% unnest(data) %>% 
@@ -190,7 +190,7 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
       capture_n_data("ratio_value", "double", 1) 
     
     # return as data frame
-    as_data_frame(bin$data[c("ratio_code", "element", "ratio_name", "ratio_value", "ratio_format")]) %>% 
+    dplyr::as_tibble(bin$data[c("ratio_code", "element", "ratio_name", "ratio_value", "ratio_format")]) %>% 
       mutate(
         reference = refs$name[max(which(bin$pos > refs$pos))]
       )
@@ -198,7 +198,7 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   
   # run ratio capture
   if (length(positions) > 0) {
-    ratios <- data_frame(
+    ratios <- tibble(
       pos = positions + ratio_re$size,
       data = map(pos, capture_ratio_values)
     ) %>% 
@@ -206,7 +206,7 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
       select(!!!c("reference", "element", "ratio_name", "ratio_value"))
   } else {
     # no ratios defined
-    ratios <- data_frame(reference = character(0), element = character(0), 
+    ratios <- tibble(reference = character(0), element = character(0), 
                          ratio_name = character(0), ratio_value = numeric(0))
   }
   
@@ -689,7 +689,7 @@ extract_isodat_main_vendor_data_table_cells <- function(ds) {
       capture_data("format", "text", re_block("fef-x"), move_past_dots = TRUE) # retrieve format (!not always the same)
       
     # skip data columns without formatting infromation right away
-    if(bin$data$format %in% c("", " ")) return(data_frame())
+    if(bin$data$format %in% c("", " ")) return(tibble())
 
     # check for columns starting with delta symbol, replace with d instead of delta symbol
     if (identical(bin$data$column[1:2], as.raw(c(180, 03))))
@@ -697,7 +697,7 @@ extract_isodat_main_vendor_data_table_cells <- function(ds) {
     col <- bin$data$column <- parse_raw_data(bin$data$column, "text")
 
     # return column information
-    data_frame(column = col, format = bin$data$format, continue_pos = bin$pos)
+    tibble(column = col, format = bin$data$format, continue_pos = bin$pos)
   }
   
   # capture the table cell details

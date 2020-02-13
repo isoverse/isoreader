@@ -54,16 +54,16 @@ test_that("test that file extension helpers work correctly", {
   
   # match supported filed types
   expect_error(match_to_supported_file_types())
-  expect_error(match_to_supported_file_types(data_frame(), data_frame()))
+  expect_error(match_to_supported_file_types(tibble(), tibble()))
   expect_error(
-    match_to_supported_file_types(data_frame(path = "test.txt"), data_frame(extension = ".csv")),
+    match_to_supported_file_types(tibble(path = "test.txt"), tibble(extension = ".csv")),
     "unexpected file extension"
   )
   expect_equal(
     match_to_supported_file_types(
-      data_frame(path = c("test.csv", "test.dxf")), 
-      data_frame(extension = c(".dxf", "t.dxf", ".csv"))),
-    data_frame(path = c("test.csv", "test.dxf"), extension = c(".csv", "t.dxf"))
+      tibble(path = c("test.csv", "test.dxf")), 
+      tibble(extension = c(".dxf", "t.dxf", ".csv"))),
+    tibble(path = c("test.csv", "test.dxf"), extension = c(".csv", "t.dxf"))
   )
 })
 
@@ -129,44 +129,44 @@ test_that("relative path shortening works correctly", {
   
   # shoretning of sequential ././.
   expect_equal(iso_shorten_relative_paths(file.path(".", ".", "A", "B", ".", "C")), 
-               data_frame(root = ".", path = file.path("A", "B", "C")))
+               tibble(root = ".", path = file.path("A", "B", "C")))
   
   # shortening of relative paths
   expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), "A"), 
-               data_frame(root = "A", path = file.path("B", "C")))
+               tibble(root = "A", path = file.path("B", "C")))
   expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "B")), 
-               data_frame(root = file.path("A", "B"), path = "C"))
+               tibble(root = file.path("A", "B"), path = "C"))
   expect_equal(iso_shorten_relative_paths(file.path("A", "C", "D"), file.path("A", "B")), 
-               data_frame(root = "A", path = file.path("C", "D")))
+               tibble(root = "A", path = file.path("C", "D")))
   expect_equal(iso_shorten_relative_paths(file.path("A", ".", ".", "B", "C"), file.path(".", "A", "B")), 
-               data_frame(root = file.path("A", "B"), path = "C"))
+               tibble(root = file.path("A", "B"), path = "C"))
   expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), "B"), 
-               data_frame(root = ".", path = file.path("A", "B", "C")))
+               tibble(root = ".", path = file.path("A", "B", "C")))
   expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "B", "C")), 
-               data_frame(root = file.path("A", "B", "C"), path = "."))
+               tibble(root = file.path("A", "B", "C"), path = "."))
   expect_equal(iso_shorten_relative_paths(file.path("A", "B", "C"), file.path("A", "B", "C", "D")), 
-               data_frame(root = file.path("A", "B", "C"), path = "."))
+               tibble(root = file.path("A", "B", "C"), path = "."))
   
   # path and root absolute - stay the same
   expect_equal(iso_shorten_relative_paths(getwd(), system.file(package = "base")),
-               data_frame(root = system.file(package = "base"), path = getwd()))
+               tibble(root = system.file(package = "base"), path = getwd()))
   
   # root gets shortened to wd if a subpath
   expect_equal(iso_shorten_relative_paths(file.path("A", "B"), getwd()),
-               data_frame(root = ".", path = file.path("A", "B")))
+               tibble(root = ".", path = file.path("A", "B")))
   
   expect_equal(iso_shorten_relative_paths(file.path("A", "B"), file.path(getwd(), "A")),
-               data_frame(root = "A", path = "B"))
+               tibble(root = "A", path = "B"))
   
   # no shortening for absolute paths (only roots)
   expect_equal(iso_shorten_relative_paths(getwd(), getwd()), 
-               data_frame(root = ".", path = getwd()))
+               tibble(root = ".", path = getwd()))
   
   # mixed test
   expect_equal(
     iso_shorten_relative_paths(
       c(file.path("A", "B", "C"), file.path("A", "C"), file.path("B", "C"), getwd()), file.path("A", "B")),
-    data_frame(root = c(file.path("A", "B"), "A", ".", file.path("A", "B")),
+    tibble(root = c(file.path("A", "B"), "A", ".", file.path("A", "B")),
                path = c("C", "C", c(file.path("B", "C"), getwd())))
   )
   
@@ -174,7 +174,7 @@ test_that("relative path shortening works correctly", {
   expect_equal(
     iso_root_paths(
       c(file.path("A", "B", "C"), file.path("A", "C"), file.path("B", "C"), getwd()), file.path("A", "B"), check_existence = FALSE),
-    data_frame(root = c(file.path("A", "B"), "A", ".", getwd()),
+    tibble(root = c(file.path("A", "B"), "A", ".", getwd()),
                path = c("C", "C", c(file.path("B", "C"), ".")))
   )
   
@@ -190,41 +190,41 @@ test_that("test that root folder finding works correctly", {
   expect_error(iso_find_absolute_path_roots(".", "DNE"), "do not exist")
   expect_error(iso_find_absolute_path_roots(c(".", ".", "."), c(".", ".")), "one entry or be of the same length")
   expect_error(iso_find_absolute_path_roots(""), "empty paths .* are not valid")
-  expect_equal(iso_find_absolute_path_roots(c()), data_frame(root = character(0), path = character(0)))
+  expect_equal(iso_find_absolute_path_roots(c()), tibble(root = character(0), path = character(0)))
   
   # general checks on relative paths (should remain unchanged)
   test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
-  expect_equal(iso_find_absolute_path_roots(test_folder), data_frame(root = ".", path = test_folder))
-  expect_equal(iso_find_absolute_path_roots(".", root = test_folder), data_frame(root = test_folder, path = "."))
-  expect_equal(iso_find_absolute_path_roots(c(test_folder, ".")), data_frame(root = ".", path = c(test_folder, ".")))
-  expect_equal(iso_find_absolute_path_roots(c(test_folder, "."), "."), data_frame(root = ".", path = c(test_folder, ".")))
-  expect_equal(iso_find_absolute_path_roots(c(test_folder, "."), c(".", ".")), data_frame(root = ".", path = c(test_folder, ".")))
-  expect_equal(iso_find_absolute_path_roots(c(test_folder, "."), c(".", getwd())), data_frame(root = c(".", getwd()), path = c(test_folder, ".")))
-  expect_equal(iso_find_absolute_path_roots(c(".", test_folder)), data_frame(root = ".", path = c(".", test_folder)))
-  expect_equal(iso_find_absolute_path_roots("cf_example_H_01.cf", test_folder), data_frame(root = test_folder, path = "cf_example_H_01.cf"))
+  expect_equal(iso_find_absolute_path_roots(test_folder), tibble(root = ".", path = test_folder))
+  expect_equal(iso_find_absolute_path_roots(".", root = test_folder), tibble(root = test_folder, path = "."))
+  expect_equal(iso_find_absolute_path_roots(c(test_folder, ".")), tibble(root = ".", path = c(test_folder, ".")))
+  expect_equal(iso_find_absolute_path_roots(c(test_folder, "."), "."), tibble(root = ".", path = c(test_folder, ".")))
+  expect_equal(iso_find_absolute_path_roots(c(test_folder, "."), c(".", ".")), tibble(root = ".", path = c(test_folder, ".")))
+  expect_equal(iso_find_absolute_path_roots(c(test_folder, "."), c(".", getwd())), tibble(root = c(".", getwd()), path = c(test_folder, ".")))
+  expect_equal(iso_find_absolute_path_roots(c(".", test_folder)), tibble(root = ".", path = c(".", test_folder)))
+  expect_equal(iso_find_absolute_path_roots("cf_example_H_01.cf", test_folder), tibble(root = test_folder, path = "cf_example_H_01.cf"))
   expect_equal(
     iso_find_absolute_path_roots(c(test_folder, file.path(test_folder, "cf_example_H_01.cf"))), 
-    data_frame(root = ".", path = c(test_folder, file.path(test_folder, "cf_example_H_01.cf"))))
+    tibble(root = ".", path = c(test_folder, file.path(test_folder, "cf_example_H_01.cf"))))
   
   # absolute paths that fit the relative path
-  expect_equal(iso_find_absolute_path_roots(getwd()), data_frame(root = ".", path = "."))
-  expect_equal(iso_find_absolute_path_roots(file.path(getwd(), test_folder)), data_frame(root = ".", path = test_folder))
-  expect_equal(iso_find_absolute_path_roots(c(file.path(getwd(), test_folder), test_folder)), data_frame(root = ".", path = c(test_folder, test_folder)))
+  expect_equal(iso_find_absolute_path_roots(getwd()), tibble(root = ".", path = "."))
+  expect_equal(iso_find_absolute_path_roots(file.path(getwd(), test_folder)), tibble(root = ".", path = test_folder))
+  expect_equal(iso_find_absolute_path_roots(c(file.path(getwd(), test_folder), test_folder)), tibble(root = ".", path = c(test_folder, test_folder)))
   expect_equal(
     iso_find_absolute_path_roots(c(file.path(getwd(), test_folder), test_folder), c(test_folder, ".")), 
-    data_frame(root = c(test_folder, "."), path = c(".", test_folder)))
+    tibble(root = c(test_folder, "."), path = c(".", test_folder)))
   expect_equal(
     iso_find_absolute_path_roots(c(file.path(getwd(), test_folder), file.path(getwd(), test_folder, "cf_example_H_01.cf")), test_folder),
-    data_frame(root = test_folder, path = c(".", "cf_example_H_01.cf")))
+    tibble(root = test_folder, path = c(".", "cf_example_H_01.cf")))
   expect_equal(
     iso_find_absolute_path_roots(c(file.path(getwd(), test_folder), file.path(getwd(), test_folder, "cf_example_H_01.cf")), c(".", test_folder)),
-    data_frame(root = c(".", test_folder), path = c(test_folder, "cf_example_H_01.cf")))
+    tibble(root = c(".", test_folder), path = c(test_folder, "cf_example_H_01.cf")))
   
   # add absolute paths that don't fit the relative path (this don't work interactively if package installed in current path with devtools)
   td <- system.file(package = "isoreader")
   expect_equal(
     iso_find_absolute_path_roots(c(td, file.path(getwd(), test_folder), file.path(test_folder, "cf_example_H_01.cf"))), 
-    data_frame(root = c(td, ".", "."), path = c(".", test_folder, file.path(test_folder, "cf_example_H_01.cf")))
+    tibble(root = c(td, ".", "."), path = c(".", test_folder, file.path(test_folder, "cf_example_H_01.cf")))
   )
   expect_equal(
     iso_find_absolute_path_roots(
@@ -232,7 +232,7 @@ test_that("test that root folder finding works correctly", {
         system.file("extdata", package = "isoreader"),
         system.file("extdata", "dual_inlet_example.did", package = "isoreader"))
     ),
-    data_frame(
+    tibble(
       root = system.file(package = "isoreader"),
       path = c(".", "extdata", file.path("extdata", "dual_inlet_example.did"))
     )
@@ -243,7 +243,7 @@ test_that("test that root folder finding works correctly", {
       c(system.file("extdata", package = "isoreader"),
         system.file("extdata", "dual_inlet_example.did", package = "isoreader")),
     ),
-    data_frame(
+    tibble(
       root = system.file("extdata", package = "isoreader"),
       path = c(".", "dual_inlet_example.did")
     )
@@ -255,7 +255,7 @@ test_that("test that root folder finding works correctly", {
       c(system.file("extdata", "dual_inlet_example.did", package = "isoreader"),
         system.file("extdata", "dual_inlet_example.did", package = "isoreader"))
     ),
-    data_frame(
+    tibble(
       root = system.file("extdata", package = "isoreader"),
       path = c("dual_inlet_example.did", "dual_inlet_example.did")
     )
@@ -280,11 +280,11 @@ test_that("test that retrieving file paths works correctly", {
   # check expected result
   direct_list <-  system.file("extdata", package = "isoreader") %>% list.files(full.names = T, pattern = "\\.(dxf|did|cf)$")
   expect_identical(
-    data_frame(root = ".", path = direct_list),
+    tibble(root = ".", path = direct_list),
     system.file("extdata", package = "isoreader") %>% iso_expand_paths(c("did", "dxf", "cf"))
   )
   expect_identical(
-    data_frame(root = ".", path = direct_list %>% {.[c(2,1,3:length(.))]}),
+    tibble(root = ".", path = direct_list %>% {.[c(2,1,3:length(.))]}),
     c(direct_list[2], system.file("extdata", package = "isoreader")) %>% iso_expand_paths(c("did", "dxf", "cf"))
   )
   
@@ -296,10 +296,10 @@ test_that("test that retrieving file paths works correctly", {
 })
 
 test_that("test that column name checks work correctly", {
-  expect_error(col_check("x", data_frame(y=1:5)), "not in data")
-  expect_error(col_check(c("x", "y"), data_frame(x=1:5)), "not in data")
-  expect_silent(col_check("x", data_frame(x=1:5)))
-  expect_silent(col_check(c("x", "y"), data_frame(x=1:5, y="test")))
+  expect_error(col_check("x", tibble(y=1:5)), "not in data")
+  expect_error(col_check(c("x", "y"), tibble(x=1:5)), "not in data")
+  expect_silent(col_check("x", tibble(x=1:5)))
+  expect_silent(col_check(c("x", "y"), tibble(x=1:5, y="test")))
 })
 
 
@@ -330,7 +330,7 @@ test_that("test that error catching works correctly", {
   expect_error(exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
   expect_equal( {suppressMessages(iso_turn_debug_off()); default(debug)}, FALSE)
   expect_message(y <- exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
-  expect_equal(problems(y) %>% select(type, details), data_frame(type = "error", details = "problem"))
+  expect_equal(problems(y) %>% select(type, details), tibble(type = "error", details = "problem"))
 })
 
 

@@ -152,7 +152,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
     re_direct(".{4}", label = ".{4}"), re_null(4), 
     re_block("fef-0"), re_block("stx"))
   gas_config_re <- re_combine(re_block("fef-x"), re_block("text"), re_block("fef-0"))
-  voltages <- data_frame()
+  voltages <- tibble()
   positions <- find_next_patterns(ds$binary, data_start_re)
 
   for (pos in positions) {
@@ -190,7 +190,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
       capture_data("voltages", c("float", rep("double", length(masses))), data_end_re)
     voltages <- bind_rows(voltages,
                           ds$binary$data$voltages %>%
-                            tibble::as_tibble() %>% setNames(c("time.s", masses_columns)))
+                            dplyr::as_tibble() %>% setNames(c("time.s", masses_columns)))
   }
 
   # check for data

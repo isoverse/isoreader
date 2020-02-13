@@ -27,10 +27,10 @@ iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
       message()
   }
   
-  if (length(iso_files) == 0) return(data_frame())
+  if (length(iso_files) == 0) return(tibble())
   
   # aggregate all the info
-  data_frame(
+  tibble(
     file_id = names(iso_files),
     file_path_ = map_chr(
       iso_files, 
@@ -63,12 +63,12 @@ get_raw_data_info <- function(iso_files) {
   
   # make sure to not process empty list
   if (length(iso_files) == 0)
-    return(data_frame(file_id = character(), raw_data = character()))
+    return(tibble(file_id = character(), raw_data = character()))
   raw_data_not_read <- "raw data not read"
   
   # retrieve the raw data info
   raw_data_sum <- 
-    data_frame(
+    tibble(
       file_id = names(iso_files),
       read_raw_data = map_lgl(iso_files, ~.x$read_options$raw_data),
       all_ions = map(iso_files, ~names(.x$raw_data) %>% str_subset("^[iIvV](\\d+)\\.")),
@@ -139,10 +139,10 @@ get_method_info_info <- function(iso_files) {
   
   # make sure to not process empty list
   if (length(iso_files) == 0) {
-    data_frame(file_id = character(), method_info = character())
+    tibble(file_id = character(), method_info = character())
   } else {
     # retrieve the raw data info
-    data_frame(
+    tibble(
       file_id = names(iso_files),
       read_method_info = map_lgl(iso_files, ~.x$read_options$method_info),
       has_standards = map_lgl(iso_files, ~!is.null(.x$method_info$standards)),
@@ -469,12 +469,12 @@ iso_get_bgrd_data <- function(iso_files, select = everything(), gather = FALSE, 
   check_read_options(iso_files, "raw_data")
   
   # check whether there are any
-  if (length(iso_files) == 0) return(data_frame())
+  if (length(iso_files) == 0) return(tibble())
   
   # fetch data
   data <-
     # fetch data
-    data_frame(
+    tibble(
       file_id = names(iso_files),
       bgrd_data = map(iso_files, ~.x$bgrd_data)
     ) %>% 
@@ -555,7 +555,7 @@ iso_get_standards <- function(iso_files, select = everything(), include_file_inf
   check_read_options(iso_files, "method_info")
   
   # check whether there are any
-  if (length(iso_files) == 0) return(data_frame())
+  if (length(iso_files) == 0) return(tibble())
   
   # fetch data
   data <-

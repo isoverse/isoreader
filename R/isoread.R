@@ -58,7 +58,7 @@ register_file_reader <- function(type, call, extension, func, description, softw
   frs <- default("file_readers", allow_null = TRUE)
   
   new_fr <-
-    dplyr::data_frame(
+    dplyr::tibble(
       type = type, call = call, extension = extension,
       func = func, cacheable = cacheable, description = description,
       software = software, env = env
@@ -648,7 +648,7 @@ iso_reread_storage <- function(rds_filepaths, ..., stop_if_missing = FALSE, quie
   extension <- NULL
   
   extensions <- iso_get_supported_file_types() %>% dplyr::filter(stringr::str_detect(extension, "rd[sa]"))
-  file_types <- data_frame(path = rds_filepaths) %>% match_to_supported_file_types(extensions)
+  file_types <- tibble(path = rds_filepaths) %>% match_to_supported_file_types(extensions)
   
   if (any(missing <- !file.exists(rds_filepaths))) 
     stop("file(s) do not exist: ", str_c(rds_filepaths[missing], collapse = ", "), call. = FALSE)

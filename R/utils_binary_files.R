@@ -13,7 +13,7 @@ read_binary_file <- function(filepath) {
     structure(
       list(
         raw = raw(),
-        C_blocks = data_frame(),
+        C_blocks = tibble(),
         data = list(),
         pos = 1L, # current position within the file
         max_pos = NULL, # max position to consider during operations
@@ -536,7 +536,7 @@ get_ctrl_blocks_config <- function() {
 get_ctrl_blocks_config_df <- function() {
   get_ctrl_blocks_config() %>%
     {
-      data_frame(
+      tibble(
         block = names(.),
         regexp = map_chr(., "regexp"),
         hexadecimal = map_chr(
@@ -809,7 +809,7 @@ map_binary_structure <- function(bfile, length = 100, start = bfile$pos, ctrl_bl
   # data blocks processing
   data_block_configs <- get_data_blocks_config() %>% {.[map_lgl(., "auto")] }
   data_block_types <- names(data_block_configs)
-  data_matches <- data_frame(data_type = data_block_types, matches = FALSE, 
+  data_matches <- tibble(data_type = data_block_types, matches = FALSE, 
                              trailing_zeros = 0, n_values = 0, rep_value = NA_character_, 
                              min_value = NA_real_, max_value = NA_real_)
   
@@ -894,7 +894,7 @@ generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, lin
     data_overview <- 
       lapply(bsm$blocks, function(block) {
         if (block$type == "data") 
-          data_frame(
+          tibble(
             rep_value = sprintf("{%s}", str_c(as.character(block$raw), collapse = " ")), 
             start = block$start)
         else NULL
@@ -925,14 +925,14 @@ generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, lin
           
           # combine
           data_text <- with(data, str_c("{", rep_value, "}", trailing00_block))
-          if (length(data_text) > 1) data_frame(rep_value = str_c("{", str_c(data_text, collapse = "|"), "}"))
-          else data_frame(rep_value = data_text)
+          if (length(data_text) > 1) tibble(rep_value = str_c("{", str_c(data_text, collapse = "|"), "}"))
+          else tibble(rep_value = data_text)
         }) 
     }
   }
   
   # process blocks and block data for printing
-  if (nrow(data_overview) == 0) data_overview <- data_frame(start = integer(0), rep_value = character(0))
+  if (nrow(data_overview) == 0) data_overview <- tibble(start = integer(0), rep_value = character(0))
   all_blocks <- blocks %>% left_join(data_overview, by = "start") 
   
   # indentation
