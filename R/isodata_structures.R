@@ -197,14 +197,14 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     }
     
     # propagate problems
-    all_problems <- map(iso_list, ~get_problems(.x) %>% mutate(file_id = .x$file_info$file_id)) %>% bind_rows()
+    all_problems <- map(iso_list, ~get_problems(.x) %>% mutate(file_id = .x$file_info$file_id)) %>% 
+      bind_rows() %>% dplyr::select(file_id, everything())
   }
   
   # problems
-  if (nrow(all_problems)) {
-    all_problems <- all_problems %>% 
-      unique() %>% # remove duplicate entries
-      select(file_id, everything())
+  if (nrow(all_problems) > 0) {
+    # remove duplicate entries
+    all_problems <- unique(all_problems)
   }
   
   # generate structure

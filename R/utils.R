@@ -808,9 +808,9 @@ find_parent_call <- function(current_func) {
 
 # convience function for information message
 get_info_message_concat <- function(variable, prefix = "", suffix = "", empty = c(), quotes = TRUE){
-  if (is_quosure(variable)) {
-    if (quo_is_null(variable)) return("")
+  if (is_quosure(variable) || rlang::is_expression(variable)) {
     variable <- rlang::as_label(variable)
+    if (variable == "NULL") return("")
   }
   if (is_empty(variable)) return("")
   variable <- setdiff(variable, empty)
