@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Export data to Excel — iso_export_to_excel • Isoreader</title>
+<title>Aggregate all isofiles data — iso_get_all_data • Isoreader</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Export data to Excel — iso_export_to_excel" />
-<meta property="og:description" content="This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file. Use the various include_... parameters to specifiy what information to include. Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export." />
+<meta property="og:title" content="Aggregate all isofiles data — iso_get_all_data" />
+<meta property="og:description" content="This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data iso_get_raw_data, iso_get_file_info, iso_get_vendor_data_table, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To unnest any of the specific data types (e.g. raw_data), make sure to filter first for the files that have this data type available (e.g. filter(has_raw_data)). Exclude specific types of information by setting its include... parameter to NULL (Note: for historical reasons, setting it to FALSE will also include the information)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -145,26 +145,26 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Export data to Excel</h1>
-    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/export.R'><code>R/export.R</code></a></small>
-    <div class="hidden name"><code>iso_export_to_excel.Rd</code></div>
+    <h1>Aggregate all isofiles data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/aggregate_data.R'><code>R/aggregate_data.R</code></a></small>
+    <div class="hidden name"><code>iso_get_all_data.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file. Use the various <code>include_...</code> parameters to specifiy what information to include. Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export.</p>
+    <p>This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data <code><a href='iso_get_raw_data.html'>iso_get_raw_data</a></code>, <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>, <code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a></code>, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To <code><a href='https://tidyr.tidyverse.org/reference/nest.html'>unnest</a></code> any of the specific data types (e.g. <code>raw_data</code>), make sure to filter first for the files that have this data type available (e.g. <code><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter(has_raw_data)</a></code>). Exclude specific types of information by setting its <code>include...</code> parameter to <code>NULL</code> (Note: for historical reasons, setting it to <code>FALSE</code> will also include the information).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_export_to_excel</span>(
+    <pre class="usage"><span class='fu'>iso_get_all_data</span>(
   <span class='no'>iso_files</span>,
-  <span class='no'>filepath</span>,
   <span class='kw'>include_file_info</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
   <span class='kw'>include_raw_data</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
-  <span class='kw'>include_standards</span> <span class='kw'>=</span> !!<span class='fu'>enexpr</span>(<span class='no'>include_method_info</span>),
-  <span class='kw'>include_resistors</span> <span class='kw'>=</span> !!<span class='fu'>enquo</span>(<span class='no'>include_method_info</span>),
+  <span class='kw'>include_standards</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
+  <span class='kw'>include_resistors</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
   <span class='kw'>include_vendor_data_table</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
-  <span class='kw'>include_problems</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
-  <span class='kw'>with_explicit_units</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>include_method_info</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
+  <span class='kw'>include_problems</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>gather</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>with_explicit_units</span> <span class='kw'>=</span> <span class='no'>with_units</span>,
+  <span class='kw'>with_units</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>with_ratios</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
 )</pre>
@@ -175,10 +175,6 @@
     <tr>
       <th>iso_files</th>
       <td><p>collection of iso_file objects</p></td>
-    </tr>
-    <tr>
-      <th>filepath</th>
-      <td><p>the path (folder and filename) to the export file. The correct file extension is automatically added if not already in the filename, i.e. filename can be provided with or without extension.</p></td>
     </tr>
     <tr>
       <th>include_file_info</th>
@@ -202,12 +198,16 @@
       <td><p>which columns from problems to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes none of the read problems by default. Set to <code>include_problems = everything()</code> to include all columns.</p></td>
     </tr>
     <tr>
+      <th>gather</th>
+      <td><p>whether to gather raw data into long format (e.g. for ease of use in plotting). Not that the <code>select</code> parameter applies to the data columns BEFORE gathering.</p></td>
+    </tr>
+    <tr>
       <th>with_explicit_units</th>
       <td><p>whether to include units in the column headers of the returned data frame instead of the column data types (see <code><a href='iso_double_with_units.html'>iso_double_with_units</a></code>). Note that any <code>select</code> conditions have to refer to the column names including the full units.</p></td>
     </tr>
     <tr>
-      <th>include_method_info</th>
-      <td><p>deprecated in favor of the more specific include_standards and include_resistors</p></td>
+      <th>with_units</th>
+      <td><p>this parameter has been DEPRECATED with the introduction of unit-data types (see <code><a href='iso_double_with_units.html'>iso_double_with_units</a></code>) and will be removed in future versions of isoreader. Please use <code>with_explicit_units</code> instead if you really want columns to have units explicitly in the column name. Alternatively, consider working with the new implicit unit system and convert vendor data tables as needed with <code><a href='iso_make_units_explicit.html'>iso_make_units_explicit</a></code> and <code><a href='iso_make_units_implicit.html'>iso_make_units_implicit</a></code>.</p></td>
     </tr>
     <tr>
       <th>with_ratios</th>
@@ -221,13 +221,16 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>returns the iso_files object invisibly for use in pipelines</p>
+    <p>data_frame with file_ids, file_types and nested data frames for each data type (file_info, raw_data, vendor_data_table, etc.)</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other export functions: 
-<code><a href='iso_export_to_feather.html'>iso_export_to_feather</a>()</code>,
-<code><a href='iso_export_to_rda.html'>iso_export_to_rda</a>()</code>,
-<code><a href='iso_save.html'>iso_save</a>()</code></p></div>
+    <div class='dont-index'><p>Other data retrieval functions: 
+<code><a href='iso_get_bgrd_data.html'>iso_get_bgrd_data</a>()</code>,
+<code><a href='iso_get_file_info.html'>iso_get_file_info</a>()</code>,
+<code><a href='iso_get_raw_data.html'>iso_get_raw_data</a>()</code>,
+<code><a href='iso_get_resistors.html'>iso_get_resistors</a>()</code>,
+<code><a href='iso_get_standards.html'>iso_get_standards</a>()</code>,
+<code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

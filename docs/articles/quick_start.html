@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.17</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.0</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@
     <div class="page-header toc-ignore">
       <h1>Quick Start Guide</h1>
             
-            <h4 class="date">2020-02-11</h4>
+            <h4 class="date">2020-02-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/quick_start.Rmd"><code>vignettes/quick_start.Rmd</code></a></small>
       <div class="hidden name"><code>quick_start.Rmd</code></div>
@@ -146,7 +146,7 @@
 <a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; Info: reading file 'dual_inlet_nu_example.txt' with '.txt' reader</span></a>
 <a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; Warning: caught error - found 6 channels but 0 masses were specified for th...</span></a>
 <a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; Warning: caught error - found 6 channels but 0 masses were specified for th...</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 4 files in 6.01 secs</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 4 files in 5.23 secs</span></a>
 <a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; Info: encountered 2 problems in total</span></a>
 <a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; # A tibble: 2 x 4</span></a>
 <a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt;   file_id          type  func         details                                   </span></a>
@@ -154,9 +154,14 @@
 <a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; 1 dual_inlet_nu_e… error parse_nu_ze… found 6 channels but 0 masses were specif…</span></a>
 <a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; 2 dual_inlet_nu_e… error parse_nu_ra… found 6 channels but 0 masses were specif…</span></a>
 <a class="sourceLine" id="cb3-17" data-line-number="17"></a>
-<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co"># export to excel</span></a>
-<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(di_files, <span class="dt">filepath =</span> <span class="st">"di_export"</span>)</a>
-<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt; Info: exporting data from 4 iso_files into Excel 'di_export.di.xlsx'</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co"># save as r data storage (read back in with iso_read_dual_inlet)</span></a>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="kw"><a href="../reference/iso_save.html">iso_save</a></span>(di_files, <span class="dt">filepath =</span> <span class="st">"di_save"</span>)</a>
+<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt; Info: exporting data from 4 iso_files into R Data Storage 'di_save.di.rds'</span></a>
+<a class="sourceLine" id="cb3-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co"># export to excel</span></a>
+<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(di_files, <span class="dt">filepath =</span> <span class="st">"di_export"</span>)</a>
+<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co">#&gt; Info: exporting data from 4 iso_files into Excel 'di_export.di.xlsx'</span></a>
+<a class="sourceLine" id="cb3-25" data-line-number="25"><span class="co">#&gt; Info: aggregating all data from 4 data file(s)</span></a></code></pre></div>
 </div>
 <div id="continuous-flow-files" class="section level1">
 <h1 class="hasAnchor">
@@ -178,11 +183,16 @@
 <a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt;       processing sample '6617_IAEA600' (IRMS data '80.hdf5', '82.hdf5')</span></a>
 <a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt;       processing sample '6630_GlutamicAcid04' (IRMS data '124.hdf5', '126.h...</span></a>
 <a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#&gt; Info: reading file 'linearity_example.dxf' with '.dxf' reader</span></a>
-<a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt; Info: finished reading 4 files in 13.90 secs</span></a>
+<a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt; Info: finished reading 4 files in 10.89 secs</span></a>
 <a class="sourceLine" id="cb4-19" data-line-number="19"></a>
-<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="co"># export to excel</span></a>
-<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(cf_files, <span class="dt">filepath =</span> <span class="st">"cf_export"</span>)</a>
-<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; Info: exporting data from 7 iso_files into Excel 'cf_export.cf.xlsx'</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="co"># save as r data storage (read back in with iso_read_continuous_flow)</span></a>
+<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="kw"><a href="../reference/iso_save.html">iso_save</a></span>(cf_files, <span class="dt">filepath =</span> <span class="st">"cf_save"</span>)</a>
+<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; Info: exporting data from 7 iso_files into R Data Storage 'cf_save.cf.rds'</span></a>
+<a class="sourceLine" id="cb4-23" data-line-number="23"></a>
+<a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co"># export to excel</span></a>
+<a class="sourceLine" id="cb4-25" data-line-number="25"><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(cf_files, <span class="dt">filepath =</span> <span class="st">"cf_export"</span>)</a>
+<a class="sourceLine" id="cb4-26" data-line-number="26"><span class="co">#&gt; Info: exporting data from 7 iso_files into Excel 'cf_export.cf.xlsx'</span></a>
+<a class="sourceLine" id="cb4-27" data-line-number="27"><span class="co">#&gt; Info: aggregating all data from 7 data file(s)</span></a></code></pre></div>
 </div>
 <div id="scan-files" class="section level1">
 <h1 class="hasAnchor">
@@ -194,11 +204,16 @@
 <a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader</span></a>
 <a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt; Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader</span></a>
 <a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt; Info: reading file 'time_scan_example.scn' with '.scn' reader</span></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; Info: finished reading 4 files in 0.78 secs</span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; Info: finished reading 4 files in 0.75 secs</span></a>
 <a class="sourceLine" id="cb5-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co"># export to excel</span></a>
-<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(scan_files, <span class="dt">filepath =</span> <span class="st">"scan_export"</span>)</a>
-<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt; Info: exporting data from 4 iso_files into Excel 'scan_export.scan.xlsx'</span></a></code></pre></div>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co"># save as r data storage (read back in with iso_read_scan)</span></a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="kw"><a href="../reference/iso_save.html">iso_save</a></span>(scan_files, <span class="dt">filepath =</span> <span class="st">"scan_save"</span>)</a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt; Info: exporting data from 4 iso_files into R Data Storage 'scan_save.scan.rds'</span></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co"># export to excel</span></a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(scan_files, <span class="dt">filepath =</span> <span class="st">"scan_export"</span>)</a>
+<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">#&gt; Info: exporting data from 4 iso_files into Excel 'scan_export.scan.xlsx'</span></a>
+<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co">#&gt; Info: aggregating all data from 4 data file(s)</span></a></code></pre></div>
 </div>
   </div>
 

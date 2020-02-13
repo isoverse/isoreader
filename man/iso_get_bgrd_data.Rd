@@ -15,7 +15,7 @@ iso_get_bgrd_data(
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
-\item{select}{which raw data columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. By default, all columns are selected.}
+\item{select}{which data columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. By default, all columns are selected.}
 
 \item{gather}{whether to gather raw data into long format (e.g. for ease of use in plotting). Not that the \code{select} parameter applies to the data columns BEFORE gathering.}
 
@@ -28,11 +28,11 @@ Aggregate the background data from the provided iso_files. Can aggregate either 
 }
 \seealso{
 Other data retrieval functions: 
-\code{\link{iso_get_data}()},
+\code{\link{iso_get_all_data}()},
 \code{\link{iso_get_file_info}()},
 \code{\link{iso_get_raw_data}()},
-\code{\link{iso_get_resistors_info}()},
-\code{\link{iso_get_standards_info}()},
+\code{\link{iso_get_resistors}()},
+\code{\link{iso_get_standards}()},
 \code{\link{iso_get_vendor_data_table}()}
 }
 \concept{data retrieval functions}

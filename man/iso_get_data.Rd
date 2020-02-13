@@ -2,52 +2,10 @@
 % Please edit documentation in R/aggregate_data.R
 \name{iso_get_data}
 \alias{iso_get_data}
-\title{Aggregate all isofiles data}
+\title{DEPRECATED}
 \usage{
-iso_get_data(
-  iso_files,
-  include_file_info = everything(),
-  include_raw_data = everything(),
-  include_vendor_data_table = everything(),
-  gather = FALSE,
-  with_explicit_units = with_units,
-  with_units = FALSE,
-  with_ratios = FALSE,
-  quiet = default(quiet)
-)
-}
-\arguments{
-\item{iso_files}{collection of iso_file objects}
-
-\item{include_file_info}{which file information to include (see \code{\link{iso_get_file_info}}). Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns.}
-
-\item{include_raw_data}{which columns from the raw data to include use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default.}
-
-\item{include_vendor_data_table}{which columns from the vendor data table to include - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default.}
-
-\item{gather}{whether to gather raw data into long format (e.g. for ease of use in plotting). Not that the \code{select} parameter applies to the data columns BEFORE gathering.}
-
-\item{with_explicit_units}{whether to include units in the column headers instead of the column data types (see \code{\link{iso_double_with_units}})}
-
-\item{with_units}{this parameter has been DEPRECATED with the introduction of unit-data types (see \code{\link{iso_double_with_units}}) and will be removed in future versions of isoreader. Please use \code{with_explicit_units} instead if you really want columns to have units explicitly in the column name. Alternatively, consider working with the new implicit unit system and convert vendor data tables as needed with \code{\link{iso_make_units_explicit}} and \code{\link{iso_make_units_implicit}}.}
-
-\item{with_ratios}{whether to include ratios or just standard delta values}
-
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
-}
-\value{
-data_frame with file_ids, file_types and nested data frames for each data type (file_info, raw_data, vendor_data_table, etc.)
+iso_get_data(...)
 }
 \description{
-This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data \code{\link{iso_get_raw_data}}, \code{\link{iso_get_file_info}}, \code{\link{iso_get_vendor_data_table}}, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To \code{\link[tidyr]{unnest}} any of the specific data types (e.g. \code{raw_data}), make sure to filter first for the files that have this data type available (e.g. \code{filter(has_raw_data)}).
+Please use \link{iso_get_all_data} instead.
 }
-\seealso{
-Other data retrieval functions: 
-\code{\link{iso_get_bgrd_data}()},
-\code{\link{iso_get_file_info}()},
-\code{\link{iso_get_raw_data}()},
-\code{\link{iso_get_resistors_info}()},
-\code{\link{iso_get_standards_info}()},
-\code{\link{iso_get_vendor_data_table}()}
-}
-\concept{data retrieval functions}

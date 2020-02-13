@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.17</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.0</span>
       </span>
     </div>
 
@@ -157,12 +157,14 @@
     <pre class="usage"><span class='fu'>iso_export_to_feather</span>(
   <span class='no'>iso_files</span>,
   <span class='no'>filepath_prefix</span>,
-  <span class='kw'>include_raw_data</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>include_file_info</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>include_method_info</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>include_vendor_data_table</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>include_problems</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>include_file_info</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
+  <span class='kw'>include_raw_data</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
+  <span class='kw'>include_standards</span> <span class='kw'>=</span> !!<span class='fu'>enexpr</span>(<span class='no'>include_method_info</span>),
+  <span class='kw'>include_resistors</span> <span class='kw'>=</span> !!<span class='fu'>enquo</span>(<span class='no'>include_method_info</span>),
+  <span class='kw'>include_vendor_data_table</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
+  <span class='kw'>include_problems</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
   <span class='kw'>with_explicit_units</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>include_method_info</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
   <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
 )</pre>
 
@@ -174,32 +176,33 @@
       <td><p>collection of iso_file objects</p></td>
     </tr>
     <tr>
-      <th>filepath_prefix</th>
-      <td><p>the path (folder and filename) prefix for the exported feather files. The correct suffix for different kinds of data and file extension is automatically added</p></td>
+      <th>include_file_info</th>
+      <td><p>which file information to include (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>). Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns.</p></td>
     </tr>
     <tr>
       <th>include_raw_data</th>
-      <td><p>whether to include the raw data in the export (if available)</p></td>
+      <td><p>which columns from the raw data to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set to NULL to include no raw data.</p></td>
     </tr>
     <tr>
-      <th>include_file_info</th>
-      <td><p>whether to include the file info in the export (if available)</p></td>
-    </tr>
-    <tr>
-      <th>include_method_info</th>
-      <td><p>whether to include methods infor in the export (if available)</p></td>
+      <th>include_standards</th>
+      <td><p>which columns from the standards info to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. By default, everything is included (both standards and ratios). To omit the ratios, change to <code>select = file_id:reference</code>. Set to NULL to include no standards info.
+#' @param include_resistors which columns from the resistors info to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set to NULL to include no resistors info.</p></td>
     </tr>
     <tr>
       <th>include_vendor_data_table</th>
-      <td><p>whether to include the vendor data table in the export (if available)</p></td>
+      <td><p>which columns from the vendor data table to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set parameter <code>with_explicit_units = TRUE</code> to make column units explicit (keep in mind that this will require specific <code>include_vendor_data_table</code> column selections to reflect the column names including the units). Set to NULL to include no vendor data table.</p></td>
     </tr>
     <tr>
       <th>include_problems</th>
-      <td><p>whether to include the problems table</p></td>
+      <td><p>which columns from problems to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes none of the read problems by default. Set to <code>include_problems = everything()</code> to include all columns.</p></td>
     </tr>
     <tr>
       <th>with_explicit_units</th>
-      <td><p>whether to include units in the column headers instead of the column data types (see <code><a href='iso_double_with_units.html'>iso_double_with_units</a></code>)</p></td>
+      <td><p>whether to include units in the column headers of the returned data frame instead of the column data types (see <code><a href='iso_double_with_units.html'>iso_double_with_units</a></code>). Note that any <code>select</code> conditions have to refer to the column names including the full units.</p></td>
+    </tr>
+    <tr>
+      <th>include_method_info</th>
+      <td><p>deprecated in favor of the more specific include_standards and include_resistors</p></td>
     </tr>
     <tr>
       <th>quiet</th>

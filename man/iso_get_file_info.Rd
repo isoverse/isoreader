@@ -21,11 +21,11 @@ File info entries with multiple values remain nested multi-value (=list) columns
 }
 \seealso{
 Other data retrieval functions: 
+\code{\link{iso_get_all_data}()},
 \code{\link{iso_get_bgrd_data}()},
-\code{\link{iso_get_data}()},
 \code{\link{iso_get_raw_data}()},
-\code{\link{iso_get_resistors_info}()},
-\code{\link{iso_get_standards_info}()},
+\code{\link{iso_get_resistors}()},
+\code{\link{iso_get_standards}()},
 \code{\link{iso_get_vendor_data_table}()}
 }
 \concept{data retrieval functions}

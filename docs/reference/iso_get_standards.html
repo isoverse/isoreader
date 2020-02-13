@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Export data to R Data Archive (.rda) (deprecated) — iso_export_to_rda • Isoreader</title>
+<title>Aggregate standards from methods info — iso_get_standards • Isoreader</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Export data to R Data Archive (.rda) (deprecated) — iso_export_to_rda" />
-<meta property="og:description" content="This function is deprecated. Please use iso_save instead to save collections of isofiles." />
+<meta property="og:title" content="Aggregate standards from methods info — iso_get_standards" />
+<meta property="og:description" content="Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter select to exclude/include the ratios. All standards info is only available if the iso_files were read with parameter read_method_info=TRUE." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -145,16 +145,22 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Export data to R Data Archive (.rda) (deprecated)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/export.R'><code>R/export.R</code></a></small>
-    <div class="hidden name"><code>iso_export_to_rda.Rd</code></div>
+    <h1>Aggregate standards from methods info</h1>
+    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/aggregate_data.R'><code>R/aggregate_data.R</code></a></small>
+    <div class="hidden name"><code>iso_get_standards.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function is deprecated. Please use <code><a href='iso_save.html'>iso_save</a></code> instead to save collections of isofiles.</p>
+    <p>Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter <code>select</code> to exclude/include the ratios. All standards info is only available if the iso_files were read with parameter <code>read_method_info=TRUE</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_export_to_rda</span>(<span class='no'>iso_files</span>, <span class='no'>filepath</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+    <pre class="usage"><span class='fu'>iso_get_standards</span>(
+  <span class='no'>iso_files</span>,
+  <span class='kw'>select</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
+  <span class='kw'>include_file_info</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>with_ratios</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,8 +170,16 @@
       <td><p>collection of iso_file objects</p></td>
     </tr>
     <tr>
-      <th>filepath</th>
-      <td><p>the path (folder and filename) to the export file. The correct file extension is automatically added if not already in the filename, i.e. filename can be provided with or without extension.</p></td>
+      <th>select</th>
+      <td><p>which data columns to select - use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax. By default, everything is included (both standards and ratios). To omit the ratios, change to <code>select = file_id:reference</code>.</p></td>
+    </tr>
+    <tr>
+      <th>include_file_info</th>
+      <td><p>which file information to include (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>). Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns.</p></td>
+    </tr>
+    <tr>
+      <th>with_ratios</th>
+      <td><p>deprecated, please use the <code>select</code> paramter to explicitly include or exclude ratio columns</p></td>
     </tr>
     <tr>
       <th>quiet</th>
@@ -173,22 +187,21 @@
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>returns the iso_files object invisibly for use in pipelines</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other export functions: 
-<code><a href='iso_export_to_excel.html'>iso_export_to_excel</a>()</code>,
-<code><a href='iso_export_to_feather.html'>iso_export_to_feather</a>()</code>,
-<code><a href='iso_save.html'>iso_save</a>()</code></p></div>
+    <div class='dont-index'><p>Other data retrieval functions: 
+<code><a href='iso_get_all_data.html'>iso_get_all_data</a>()</code>,
+<code><a href='iso_get_bgrd_data.html'>iso_get_bgrd_data</a>()</code>,
+<code><a href='iso_get_file_info.html'>iso_get_file_info</a>()</code>,
+<code><a href='iso_get_raw_data.html'>iso_get_raw_data</a>()</code>,
+<code><a href='iso_get_resistors.html'>iso_get_resistors</a>()</code>,
+<code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
       <li><a href="#see-also">See also</a></li>
     </ul>
 

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Aggregate resistors from methods info — iso_get_resistors_info • Isoreader</title>
+<title>DEPRECATED — iso_get_resistors_info • Isoreader</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Aggregate resistors from methods info — iso_get_resistors_info" />
-<meta property="og:description" content="Aggregates the resistor information recovered from the provided iso_files. This information is only available if the iso_files were read with parameter read_method_info=TRUE and only linked to specific masses if the iso_files were additionally read with parametr read_raw_data=TRUE." />
+<meta property="og:title" content="DEPRECATED — iso_get_resistors_info" />
+<meta property="og:description" content="Please use iso_get_resistors instead." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.17</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.0</span>
       </span>
     </div>
 
@@ -145,54 +145,23 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Aggregate resistors from methods info</h1>
+    <h1>DEPRECATED</h1>
     <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/aggregate_data.R'><code>R/aggregate_data.R</code></a></small>
     <div class="hidden name"><code>iso_get_resistors_info.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Aggregates the resistor information recovered from the provided iso_files. This information is only available if the iso_files were read with parameter <code>read_method_info=TRUE</code> and only linked to specific masses if the iso_files were additionally read with parametr <code>read_raw_data=TRUE</code>.</p>
+    <p>Please use <a href='iso_get_resistors.html'>iso_get_resistors</a> instead.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_get_resistors_info</span>(
-  <span class='no'>iso_files</span>,
-  <span class='kw'>include_file_info</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>iso_get_resistors_info</span>(<span class='no'>...</span>)</pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>iso_files</th>
-      <td><p>collection of iso_file objects</p></td>
-    </tr>
-    <tr>
-      <th>include_file_info</th>
-      <td><p>which file information to include (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>). Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns.</p></td>
-    </tr>
-    <tr>
-      <th>quiet</th>
-      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other data retrieval functions: 
-<code><a href='iso_get_bgrd_data.html'>iso_get_bgrd_data</a>()</code>,
-<code><a href='iso_get_data.html'>iso_get_data</a>()</code>,
-<code><a href='iso_get_file_info.html'>iso_get_file_info</a>()</code>,
-<code><a href='iso_get_raw_data.html'>iso_get_raw_data</a>()</code>,
-<code><a href='iso_get_standards_info.html'>iso_get_standards_info</a>()</code>,
-<code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#see-also">See also</a></li>
     </ul>
 
   </div>

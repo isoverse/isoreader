@@ -80,13 +80,13 @@ reference:
     These functions aggregate the data collected from one or many IRMS data files.
   contents:
   - iso_get_data_summary
-  - iso_get_data
+  - iso_get_all_data
   - iso_get_file_info
   - iso_get_raw_data
   - iso_get_bgrd_data
   - iso_get_vendor_data_table
-  - iso_get_resistors_info
-  - iso_get_standards_info
+  - iso_get_resistors
+  - iso_get_standards
 
 - title: "Exporting/saving data: Feather, Excel, and R Data Archives"
   desc: >

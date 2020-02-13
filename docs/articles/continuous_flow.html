@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.17</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.0</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@
     <div class="page-header toc-ignore">
       <h1>Continuous Flow Examples</h1>
             
-            <h4 class="date">2020-02-11</h4>
+            <h4 class="date">2020-02-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/continuous_flow.Rmd"><code>vignettes/continuous_flow.Rmd</code></a></small>
       <div class="hidden name"><code>continuous_flow.Rmd</code></div>
@@ -134,7 +134,7 @@
   </script>
 </div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># read a few of the continuous flow examples</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">iso_files &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">cf_files &lt;-<span class="st"> </span></a>
 <a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span>(</a>
 <a class="sourceLine" id="cb3-4" data-line-number="4">    <span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"continuous_flow_example.cf"</span>),</a>
 <a class="sourceLine" id="cb3-5" data-line-number="5">    <span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"continuous_flow_example.iarc"</span>),</a>
@@ -156,13 +156,13 @@
 <a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co">#&gt;       processing sample '6630_GlutamicAcid04' (IRMS data '124.hdf5', '126.h...</span></a>
 <a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' with '.dxf' reader</span></a>
 <a class="sourceLine" id="cb3-23" data-line-number="23"><span class="co">#&gt; Info: reading file 'linearity_example.dxf' with '.dxf' reader</span></a>
-<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co">#&gt; Info: finished reading 4 files in 8.57 secs</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co">#&gt; Info: finished reading 4 files in 8.37 secs</span></a></code></pre></div>
 </div>
 <div id="file-summary" class="section level1">
 <h1 class="hasAnchor">
 <a href="#file-summary" class="anchor"></a>File summary</h1>
-<p>The <code>iso_files</code> variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the <code><a href="../reference/iso_get_data_summary.html">iso_get_data_summary()</a></code> function.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>() </a>
+<p>The <code>cf_files</code> variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the <code><a href="../reference/iso_get_data_summary.html">iso_get_data_summary()</a></code> function.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>() </a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; Info: aggregating data summary from 7 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -173,16 +173,16 @@
 <h2 class="hasAnchor">
 <a href="#problems" class="anchor"></a>Problems</h2>
 <p>In case there was any trouble with reading any of the files, the following functions provide an overview summary as well as details of all errors and warnings, respectively. The examples here contain no errors but if you run into any unexpected file read problems, please file a bug report in the <a href="https://github.com/isoverse/isoreader/issues">isoreader issue tracker</a>.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["error"],"name":[2],"type":["lgl"],"align":["right"]},{"label":["warning"],"name":[3],"type":["lgl"],"align":["right"]}],"data":[],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_problems.html">iso_get_problems</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_problems.html">iso_get_problems</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["type"],"name":[1],"type":["chr"],"align":["left"]},{"label":["func"],"name":[2],"type":["chr"],"align":["left"]},{"label":["details"],"name":[3],"type":["chr"],"align":["left"]},{"label":["file_id"],"name":[4],"type":["chr"],"align":["left"]}],"data":[],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["func"],"name":[3],"type":["chr"],"align":["left"]},{"label":["details"],"name":[4],"type":["chr"],"align":["left"]}],"data":[],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -192,7 +192,7 @@
 <a href="#file-information" class="anchor"></a>File Information</h1>
 <p>Detailed file information can be aggregated for all isofiles using the <code><a href="../reference/iso_get_file_info.html">iso_get_file_info()</a></code> function which supports the full <a href="https://dplyr.tidyverse.org/reference/select.html">select syntax</a> of the <a href="https://dplyr.tidyverse.org/">dplyr</a> package to specify which columns are of interest (by default, all file information is retrieved). Additionally, file information from different file formats can be renamed to the same column name for easy of downstream processing. The following provides a few examples for how this can be used (the names of the interesting info columns may vary between different file formats):</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># all file information</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>(<span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span>file_root)) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>(<span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span>file_root)) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; Info: aggregating file info from 7 data file(s), selecting info columns 'c(-file_root)'</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -200,7 +200,7 @@
   </script>
 </div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># select file information</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">cf_files <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>(</a>
 <a class="sourceLine" id="cb8-4" data-line-number="4">    <span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</a>
 <a class="sourceLine" id="cb8-5" data-line-number="5">       <span class="co"># rename sample id columns from the different file types to a new ID column</span></a>
@@ -211,10 +211,12 @@
 <a class="sourceLine" id="cb8-10" data-line-number="10">      <span class="st">`</span><span class="dt">Date &amp; Time</span><span class="st">`</span> =<span class="st"> </span>file_datetime</a>
 <a class="sourceLine" id="cb8-11" data-line-number="11">    )</a>
 <a class="sourceLine" id="cb8-12" data-line-number="12">  ) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>() </a>
-<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt; Info: aggregating file info from 7 data file(s), selecting info columns 'c(...)'</span></a></code></pre></div>
+<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt; Info: aggregating file info from 7 data file(s), selecting info columns 'c(...)'</span></a>
+<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt; Warning: 'select = c(...)' refers to unknown column(s) in data frame 'file_info':</span></a>
+<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt; - Names must be unique.</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ID"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[4],"type":["chr"],"align":["left"]},{"label":["H3 Factor"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[6],"type":["S3: POSIXct"],"align":["right"]}],"data":[{"1":"continuous_flow_example.cf","2":"F8-5.5uL","3":"6520","4":"NA","5":"2.79431047797221","6":"2013-07-13 17:42:40"},{"1":"6632_WSL-2 wood","2":"WSL-2 wood","3":"NA","4":"NA","5":"NA","6":"2014-10-08 12:27:23"},{"1":"6605_USGS41","2":"USGS41","3":"NA","4":"NA","5":"NA","6":"2014-10-08 08:14:35"},{"1":"6617_IAEA600","2":"IAEA600","3":"NA","4":"NA","5":"NA","6":"2014-10-08 10:01:14"},{"1":"6630_GlutamicAcid04","2":"GlutamicAcid04","3":"NA","4":"NA","5":"NA","6":"2014-10-08 12:00:50"},{"1":"continuous_flow_example.dxf","2":"acetanilide_1","3":"2921","4":"1","5":"0","6":"2017-02-09 12:55:40"},{"1":"linearity_example.dxf","2":"linearity","3":"MAT25391411","4":"1","5":"0","6":"2015-02-19 07:07:53"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf"},{"1":"6632_WSL-2 wood"},{"1":"6605_USGS41"},{"1":"6617_IAEA600"},{"1":"6630_GlutamicAcid04"},{"1":"continuous_flow_example.dxf"},{"1":"linearity_example.dxf"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <div id="selectrename" class="section level2">
@@ -222,7 +224,7 @@
 <a href="#selectrename" class="anchor"></a>Select/Rename</h2>
 <p>Rather than retrieving specific file info columns using the above example of <code><a href="../reference/iso_get_file_info.html">iso_get_file_info(select = ...)</a></code>, these information can also be modified across an entire collection of isofiles using the <code><a href="../reference/iso_select_file_info.html">iso_select_file_info()</a></code> and <code><a href="../reference/iso_rename_file_info.html">iso_rename_file_info()</a></code> functions. For example, the above example could be similarly achieved with the following use of <code><a href="../reference/iso_select_file_info.html">iso_select_file_info()</a></code>:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># select + rename specific file info columns</span></a>
-<a class="sourceLine" id="cb9-2" data-line-number="2">iso_files2 &lt;-<span class="st"> </span>iso_files <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">cf_files2 &lt;-<span class="st"> </span>cf_files <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/iso_select_file_info.html">iso_select_file_info</a></span>(</a>
 <a class="sourceLine" id="cb9-4" data-line-number="4">    <span class="dt">ID =</span> <span class="st">`</span><span class="dt">Identifier 1</span><span class="st">`</span>, <span class="dt">ID =</span> <span class="st">`</span><span class="dt">Name</span><span class="st">`</span>, Analysis, <span class="st">`</span><span class="dt">Peak Center</span><span class="st">`</span>, <span class="st">`</span><span class="dt">H3 Factor</span><span class="st">`</span>, </a>
 <a class="sourceLine" id="cb9-5" data-line-number="5">    <span class="st">`</span><span class="dt">Date &amp; Time</span><span class="st">`</span> =<span class="st"> </span>file_datetime</a>
@@ -232,7 +234,7 @@
 <a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt;  - for 3 file(s): 'file_id', 'Identifier 1'-&gt;'ID', 'Analysis', 'Peak Center', 'H3 Factor', 'file_datetime'-&gt;'Date &amp; Time'</span></a>
 <a class="sourceLine" id="cb9-10" data-line-number="10"></a>
 <a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co"># fetch all file info</span></a>
-<a class="sourceLine" id="cb9-12" data-line-number="12">iso_files2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
+<a class="sourceLine" id="cb9-12" data-line-number="12">cf_files2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb9-13" data-line-number="13"><span class="co">#&gt; Info: aggregating file info from 7 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -245,7 +247,7 @@
 <a href="#filter" class="anchor"></a>Filter</h2>
 <p>Any collection of isofiles can also be filtered based on the available file information using the function <code>iso_filter_files</code>. This function can operate on any column available in the file information and supports full <a href="https://dplyr.tidyverse.org/reference/filter.html">dplyr</a> syntax.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># find files that have 'linearity' in the new ID field</span></a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">iso_files2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="st">"linearity"</span>, ID)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">cf_files2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="st">"linearity"</span>, ID)) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">  </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; Info: applying file filter, keeping 1 of 7 files</span></a>
@@ -257,7 +259,7 @@
 </div>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="co"># find files that were run since 2015</span></a>
-<a class="sourceLine" id="cb11-3" data-line-number="3">iso_files2 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">cf_files2 <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span>(<span class="st">`</span><span class="dt">Date &amp; Time</span><span class="st">`</span> <span class="op">&gt;</span><span class="st"> "2015-01-01"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb11-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb11-6" data-line-number="6"><span class="st">  </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
@@ -273,8 +275,8 @@
 <h2 class="hasAnchor">
 <a href="#mutate" class="anchor"></a>Mutate</h2>
 <p>The file information in any collection of isofiles can also be mutated using the function <code>iso_mutate_file_info</code>. This function can introduce new columns and operate on any existing columns available in the file information (even if it does not exist in all files) and supports full <a href="https://dplyr.tidyverse.org/reference/mutate.html">dplyr</a> syntax.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">iso_files3 &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span>iso_files2 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">cf_files3 &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span>cf_files2 <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb12-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/iso_mutate_file_info.html">iso_mutate_file_info</a></span>(</a>
 <a class="sourceLine" id="cb12-4" data-line-number="4">    <span class="co"># update existing column</span></a>
 <a class="sourceLine" id="cb12-5" data-line-number="5">    <span class="dt">ID =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"ID:"</span>, ID),</a>
@@ -283,7 +285,7 @@
 <a class="sourceLine" id="cb12-8" data-line-number="8">  ) </a>
 <a class="sourceLine" id="cb12-9" data-line-number="9"><span class="co">#&gt; Info: mutating file info for 7 data file(s)</span></a>
 <a class="sourceLine" id="cb12-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb12-11" data-line-number="11">iso_files3 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-11" data-line-number="11">cf_files3 <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb12-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb12-13" data-line-number="13"><span class="st">  </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb12-14" data-line-number="14"><span class="co">#&gt; Info: aggregating file info from 7 data file(s)</span></a></code></pre></div>
@@ -320,17 +322,19 @@
 </div>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb14-2" data-line-number="2"><span class="co"># adding it to the isofiles</span></a>
-<a class="sourceLine" id="cb14-3" data-line-number="3">iso_files3 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3">cf_files3 <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb14-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../reference/iso_add_file_info.html">iso_add_file_info</a></span>(new_info, <span class="dt">by1 =</span> <span class="st">"Run since 2015?"</span>, <span class="dt">by2 =</span> <span class="st">"file_id"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb14-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>(<span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(new_info)) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb14-6" data-line-number="6"><span class="st">  </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb14-7" data-line-number="7"><span class="co">#&gt; Info: adding new file information ('process', 'info', 'note') to 7 data file(s), joining by 'Run since 2015?' then 'file_id'...</span></a>
 <a class="sourceLine" id="cb14-8" data-line-number="8"><span class="co">#&gt;  - 'Run since 2015?' join: 2/2 new info rows matched 7/7 data files - 1 of these was/were also matched by subsequent joins which took precedence</span></a>
 <a class="sourceLine" id="cb14-9" data-line-number="9"><span class="co">#&gt;  - 'file_id' join: 1/1 new info rows matched 1/7 data files</span></a>
-<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt; Info: aggregating file info from 7 data file(s), selecting info columns 'names(new_info)'</span></a></code></pre></div>
+<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt; Info: aggregating file info from 7 data file(s), selecting info columns 'names(new_info)'</span></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="co">#&gt; Warning: 'select = names(new_info)' refers to unknown column(s) in data frame 'file_info':</span></a>
+<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co">#&gt; - object 'new_info' not found</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Run since 2015?"],"name":[2],"type":["lgl"],"align":["right"]},{"label":["process"],"name":[3],"type":["chr"],"align":["left"]},{"label":["info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["note"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"FALSE","3":"yes","4":"old runs","5":"NA"},{"1":"6632_WSL-2 wood","2":"FALSE","3":"yes","4":"old runs","5":"NA"},{"1":"6605_USGS41","2":"FALSE","3":"yes","4":"old runs","5":"NA"},{"1":"6617_IAEA600","2":"FALSE","3":"no","4":"NA","5":"did not inject properly"},{"1":"6630_GlutamicAcid04","2":"FALSE","3":"yes","4":"old runs","5":"NA"},{"1":"continuous_flow_example.dxf","2":"TRUE","3":"yes","4":"new runs","5":"NA"},{"1":"linearity_example.dxf","2":"TRUE","3":"yes","4":"new runs","5":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf"},{"1":"6632_WSL-2 wood"},{"1":"6605_USGS41"},{"1":"6617_IAEA600"},{"1":"6630_GlutamicAcid04"},{"1":"continuous_flow_example.dxf"},{"1":"linearity_example.dxf"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -339,7 +343,7 @@
 <a href="#parse" class="anchor"></a>Parse</h2>
 <p>Most file information is initially read as text to avoid cumbersome specifications during the read process and compatibility issues between different IRMS file formats. However, many file info columns are not easily processed as text. The isoreader package therefore provides several parsing and data extraction functions to facilitate processing the text-based data (some via functionality implemented by the <a href="http://readr.tidyverse.org">readr</a> package). See code block below for examples. For a complete overview, see the <code><a href="../reference/extract_data.html">?extract_data</a></code> and <code><a href="../reference/iso_parse_file_info.html">?iso_parse_file_info</a></code> documentation.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="co"># use parsing and extraction in iso_mutate_file_info</span></a>
-<a class="sourceLine" id="cb15-2" data-line-number="2">iso_files2 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">cf_files2 <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/iso_mutate_file_info.html">iso_mutate_file_info</a></span>(</a>
 <a class="sourceLine" id="cb15-4" data-line-number="4">    <span class="co"># change type of Peak Center to logical</span></a>
 <a class="sourceLine" id="cb15-5" data-line-number="5">    <span class="st">`</span><span class="dt">Peak Center</span><span class="st">`</span> =<span class="st"> </span><span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">parse_logical</a></span>(<span class="st">`</span><span class="dt">Peak Center</span><span class="st">`</span>),</a>
@@ -361,7 +365,7 @@
 </div>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb16-2" data-line-number="2"><span class="co"># use parsing in iso_filter_file_info</span></a>
-<a class="sourceLine" id="cb16-3" data-line-number="3">iso_files2 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">cf_files2 <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb16-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span>(<span class="kw"><a href="https://readr.tidyverse.org/reference/parse_number.html">parse_number</a></span>(<span class="st">`</span><span class="dt">H3 Factor</span><span class="st">`</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb16-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb16-6" data-line-number="6"><span class="st">  </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
@@ -374,7 +378,7 @@
 </div>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb17-2" data-line-number="2"><span class="co"># use iso_parse_file_info for simplified parsing of column data types</span></a>
-<a class="sourceLine" id="cb17-3" data-line-number="3">iso_files2 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb17-3" data-line-number="3">cf_files2 <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb17-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../reference/iso_parse_file_info.html">iso_parse_file_info</a></span>(</a>
 <a class="sourceLine" id="cb17-5" data-line-number="5">    <span class="dt">integer =</span> Analysis, </a>
 <a class="sourceLine" id="cb17-6" data-line-number="6">    <span class="dt">number =</span> <span class="st">`</span><span class="dt">H3 Factor</span><span class="st">`</span>,</a>
@@ -401,7 +405,7 @@
 <h1 class="hasAnchor">
 <a href="#resistors" class="anchor"></a>Resistors</h1>
 <p>Additionally, some IRMS data files contain resistor information that are useful for downstream calculations (see e.g. section on signal conversion later in this vignette):</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_resistors_info.html">iso_get_resistors_info</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_resistors.html">iso_get_resistors</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb18-2" data-line-number="2"><span class="co">#&gt; Info: aggregating resistors info from 7 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -414,7 +418,7 @@
 <a href="#reference-values" class="anchor"></a>Reference values</h1>
 <p>As well as isotopic reference values for the different gases:</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="co"># reference delta values without ratio values</span></a>
-<a class="sourceLine" id="cb19-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_standards_info.html">iso_get_standards_info</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_standards.html">iso_get_standards</a></span>(file_id<span class="op">:</span>reference) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb19-3" data-line-number="3"><span class="co">#&gt; Info: aggregating standards info from 7 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -422,7 +426,7 @@
   </script>
 </div>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="co"># reference values with ratios</span></a>
-<a class="sourceLine" id="cb20-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_standards_info.html">iso_get_standards_info</a></span>(<span class="dt">with_ratios =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_standards.html">iso_get_standards</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb20-3" data-line-number="3"><span class="co">#&gt; Info: aggregating standards info from 7 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -435,7 +439,7 @@
 <a href="#raw-data" class="anchor"></a>Raw Data</h1>
 <p>The raw data read from the IRMS files can be retrieved similarly using the <code><a href="../reference/iso_get_raw_data.html">iso_get_raw_data()</a></code> function. Most data aggregation functions also allow for inclusion of file information using the <code>include_file_info</code> parameter, which functions identically to the <code>select</code> parameter of the <code>iso_get_file_info</code> function discussed earlier.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="co"># get raw data with default selections (all raw data, no additional file info)</span></a>
-<a class="sourceLine" id="cb21-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="dt">n=</span><span class="dv">10</span>) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="dt">n=</span><span class="dv">10</span>) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb21-3" data-line-number="3"><span class="co">#&gt; Info: aggregating raw data from 7 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -443,7 +447,7 @@
   </script>
 </div>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="co"># get specific raw data and add some file information</span></a>
-<a class="sourceLine" id="cb22-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">cf_files <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb22-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span>(</a>
 <a class="sourceLine" id="cb22-4" data-line-number="4">    <span class="co"># select just time and the m/z 2 and 3 ions</span></a>
 <a class="sourceLine" id="cb22-5" data-line-number="5">    <span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(time.s, v2.mV, v3.mV),</a>
@@ -469,7 +473,7 @@
 <a href="#vendor-data-table" class="anchor"></a>Vendor Data Table</h2>
 <p>As with most data retrieval funtions, the <code><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table()</a></code> function also allows specific column selection (by default, all columns are selected) and easy addition of file information via the <code>include_file_info</code> parameter (by default, none is included).</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="co"># entire vendor data table</span></a>
-<a class="sourceLine" id="cb23-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb23-3" data-line-number="3"><span class="co">#&gt; Info: aggregating vendor data table from 7 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -477,7 +481,7 @@
   </script>
 </div>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="co"># get specific parts and add some file information</span></a>
-<a class="sourceLine" id="cb24-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb24-2" data-line-number="2">cf_files <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb24-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span>(</a>
 <a class="sourceLine" id="cb24-4" data-line-number="4">    <span class="co"># select peak number, ret. time, overall intensity and all H delta columns</span></a>
 <a class="sourceLine" id="cb24-5" data-line-number="5">    <span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(Nr., Rt, <span class="dt">area =</span> <span class="st">`</span><span class="dt">rIntensity All</span><span class="st">`</span>, <span class="kw"><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">matches</a></span>(<span class="st">"^d </span><span class="ch">\\</span><span class="st">d+H"</span>)),</a>
@@ -490,47 +494,50 @@
 {"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["run"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Nr."],"name":[3],"type":["int"],"align":["right"]},{"label":["Rt"],"name":[4],"type":["S3: iso_double_with_units"],"align":["right"]},{"label":["area"],"name":[5],"type":["S3: iso_double_with_units"],"align":["right"]},{"label":["d 3H2/2H2"],"name":[6],"type":["S3: iso_double_with_units"],"align":["right"]},{"label":["d 2H/1H"],"name":[7],"type":["S3: iso_double_with_units"],"align":["right"]}],"data":[{"1":"continuous_flow_example.cf","2":"6520","3":"1","4":"286.330","5":"23408.20","6":"-160.8789","7":"-160.8789"},{"1":"continuous_flow_example.cf","2":"6520","3":"2","4":"321.233","5":"23416.43","6":"-160.3969","7":"-160.3969"},{"1":"continuous_flow_example.cf","2":"6520","3":"3","4":"611.952","5":"30831.79","6":"-154.2084","7":"-154.2084"},{"1":"continuous_flow_example.cf","2":"6520","3":"4","4":"671.517","5":"30820.41","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"5","4":"747.802","5":"22771.98","6":"-218.1169","7":"-218.1169"},{"1":"continuous_flow_example.cf","2":"6520","3":"6","4":"809.457","5":"26112.21","6":"-210.4288","7":"-210.4288"},{"1":"continuous_flow_example.cf","2":"6520","3":"7","4":"860.662","5":"26587.23","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"8","4":"936.529","5":"26290.90","6":"-155.5230","7":"-155.5230"},{"1":"continuous_flow_example.cf","2":"6520","3":"9","4":"1002.155","5":"23773.71","6":"-198.1282","7":"-198.1282"},{"1":"continuous_flow_example.cf","2":"6520","3":"10","4":"1055.032","5":"25686.76","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"11","4":"1135.915","5":"25330.88","6":"-189.4838","7":"-189.4838"},{"1":"continuous_flow_example.cf","2":"6520","3":"12","4":"1201.332","5":"25168.19","6":"-207.8967","7":"-207.8967"},{"1":"continuous_flow_example.cf","2":"6520","3":"13","4":"1249.402","5":"26176.27","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"14","4":"1333.629","5":"25778.35","6":"-168.1422","7":"-168.1422"},{"1":"continuous_flow_example.cf","2":"6520","3":"15","4":"1395.284","5":"20869.48","6":"-193.2927","7":"-193.2927"},{"1":"continuous_flow_example.cf","2":"6520","3":"16","4":"1459.447","5":"28121.88","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"17","4":"1608.673","5":"28883.22","6":"-154.3318","7":"-154.3318"},{"1":"continuous_flow_example.cf","2":"6520","3":"18","4":"1739.716","5":"23336.75","6":"-160.1244","7":"-160.1244"},{"1":"continuous_flow_example.cf","2":"6520","3":"19","4":"1779.426","5":"23358.98","6":"-160.5503","7":"-160.5503"},{"1":"continuous_flow_example.dxf","2":"2921","3":"1","4":"59.983","5":"110929.75","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"2","4":"110.770","5":"110486.88","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"3","4":"155.287","5":"98168.61","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"4","4":"300.124","5":"240551.17","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"5","4":"436.183","5":"328751.58","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"6","4":"486.761","5":"330289.66","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"1","4":"47.234","5":"32970.31","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"2","4":"107.426","5":"65905.71","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"3","4":"167.618","5":"181512.88","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"4","4":"227.601","5":"257111.14","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"5","4":"287.793","5":"336995.32","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"6","4":"347.985","5":"421670.46","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"7","4":"408.177","5":"561563.77","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"8","4":"468.996","5":"864632.08","6":"NA","7":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co"># the data table also provides units if included in the original data file</span></a>
-<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="co"># caution however: it may require changes to the `select` parameter</span></a>
-<a class="sourceLine" id="cb25-3" data-line-number="3">iso_files <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb25-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span>(</a>
-<a class="sourceLine" id="cb25-5" data-line-number="5">    <span class="dt">with_explicit_units =</span> <span class="ot">TRUE</span>,</a>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="co"># the data table also provides units if included in the original data file</span></a>
+<a class="sourceLine" id="cb25-3" data-line-number="3"><span class="co"># which can be made explicit using the function iso_make_units_explicit()</span></a>
+<a class="sourceLine" id="cb25-4" data-line-number="4">cf_files <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb25-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span>(</a>
 <a class="sourceLine" id="cb25-6" data-line-number="6">    <span class="co"># select peak number, ret. time, overall intensity and all H delta columns</span></a>
-<a class="sourceLine" id="cb25-7" data-line-number="7">    <span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(Nr., <span class="kw"><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">matches</a></span>(<span class="st">"^Rt"</span>), <span class="kw"><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">matches</a></span>(<span class="st">"rIntensity All"</span>), <span class="kw"><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">matches</a></span>(<span class="st">"^d </span><span class="ch">\\</span><span class="st">d+H"</span>)),</a>
+<a class="sourceLine" id="cb25-7" data-line-number="7">    <span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(Nr., Rt, <span class="dt">area =</span> <span class="st">`</span><span class="dt">rIntensity All</span><span class="st">`</span>, <span class="kw"><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">matches</a></span>(<span class="st">"^d </span><span class="ch">\\</span><span class="st">d+H"</span>)),</a>
 <a class="sourceLine" id="cb25-8" data-line-number="8">    <span class="co"># include the Analysis number fron the file info and rename it to 'run'</span></a>
 <a class="sourceLine" id="cb25-9" data-line-number="9">    <span class="dt">include_file_info =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dt">run =</span> Analysis)</a>
-<a class="sourceLine" id="cb25-10" data-line-number="10">  ) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>() </a>
-<a class="sourceLine" id="cb25-11" data-line-number="11"><span class="co">#&gt; Info: aggregating vendor data table with explicit units from 7 data file(s), including file info 'c(run = Analysis)'</span></a></code></pre></div>
+<a class="sourceLine" id="cb25-10" data-line-number="10">  ) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb25-11" data-line-number="11"><span class="st">  </span><span class="co"># make column units explicit</span></a>
+<a class="sourceLine" id="cb25-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="../reference/iso_make_units_explicit.html">iso_make_units_explicit</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb25-13" data-line-number="13"><span class="st">  </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>() </a>
+<a class="sourceLine" id="cb25-14" data-line-number="14"><span class="co">#&gt; Info: aggregating vendor data table from 7 data file(s), including file info 'c(run = Analysis)'</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["run"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Nr."],"name":[3],"type":["int"],"align":["right"]},{"label":["Rt [s]"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["rIntensity All [mVs]"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["d 3H2/2H2 [permil]"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["d 2H/1H [permil]"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"continuous_flow_example.cf","2":"6520","3":"1","4":"286.330","5":"23408.20","6":"-160.8789","7":"-160.8789"},{"1":"continuous_flow_example.cf","2":"6520","3":"2","4":"321.233","5":"23416.43","6":"-160.3969","7":"-160.3969"},{"1":"continuous_flow_example.cf","2":"6520","3":"3","4":"611.952","5":"30831.79","6":"-154.2084","7":"-154.2084"},{"1":"continuous_flow_example.cf","2":"6520","3":"4","4":"671.517","5":"30820.41","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"5","4":"747.802","5":"22771.98","6":"-218.1169","7":"-218.1169"},{"1":"continuous_flow_example.cf","2":"6520","3":"6","4":"809.457","5":"26112.21","6":"-210.4288","7":"-210.4288"},{"1":"continuous_flow_example.cf","2":"6520","3":"7","4":"860.662","5":"26587.23","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"8","4":"936.529","5":"26290.90","6":"-155.5230","7":"-155.5230"},{"1":"continuous_flow_example.cf","2":"6520","3":"9","4":"1002.155","5":"23773.71","6":"-198.1282","7":"-198.1282"},{"1":"continuous_flow_example.cf","2":"6520","3":"10","4":"1055.032","5":"25686.76","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"11","4":"1135.915","5":"25330.88","6":"-189.4838","7":"-189.4838"},{"1":"continuous_flow_example.cf","2":"6520","3":"12","4":"1201.332","5":"25168.19","6":"-207.8967","7":"-207.8967"},{"1":"continuous_flow_example.cf","2":"6520","3":"13","4":"1249.402","5":"26176.27","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"14","4":"1333.629","5":"25778.35","6":"-168.1422","7":"-168.1422"},{"1":"continuous_flow_example.cf","2":"6520","3":"15","4":"1395.284","5":"20869.48","6":"-193.2927","7":"-193.2927"},{"1":"continuous_flow_example.cf","2":"6520","3":"16","4":"1459.447","5":"28121.88","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"17","4":"1608.673","5":"28883.22","6":"-154.3318","7":"-154.3318"},{"1":"continuous_flow_example.cf","2":"6520","3":"18","4":"1739.716","5":"23336.75","6":"-160.1244","7":"-160.1244"},{"1":"continuous_flow_example.cf","2":"6520","3":"19","4":"1779.426","5":"23358.98","6":"-160.5503","7":"-160.5503"},{"1":"continuous_flow_example.dxf","2":"2921","3":"1","4":"59.983","5":"110929.75","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"2","4":"110.770","5":"110486.88","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"3","4":"155.287","5":"98168.61","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"4","4":"300.124","5":"240551.17","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"5","4":"436.183","5":"328751.58","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"6","4":"486.761","5":"330289.66","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"1","4":"47.234","5":"32970.31","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"2","4":"107.426","5":"65905.71","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"3","4":"167.618","5":"181512.88","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"4","4":"227.601","5":"257111.14","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"5","4":"287.793","5":"336995.32","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"6","4":"347.985","5":"421670.46","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"7","4":"408.177","5":"561563.77","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"8","4":"468.996","5":"864632.08","6":"NA","7":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["run"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Nr."],"name":[3],"type":["int"],"align":["right"]},{"label":["Rt [s]"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["area [mVs]"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["d 3H2/2H2 [permil]"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["d 2H/1H [permil]"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"continuous_flow_example.cf","2":"6520","3":"1","4":"286.330","5":"23408.20","6":"-160.8789","7":"-160.8789"},{"1":"continuous_flow_example.cf","2":"6520","3":"2","4":"321.233","5":"23416.43","6":"-160.3969","7":"-160.3969"},{"1":"continuous_flow_example.cf","2":"6520","3":"3","4":"611.952","5":"30831.79","6":"-154.2084","7":"-154.2084"},{"1":"continuous_flow_example.cf","2":"6520","3":"4","4":"671.517","5":"30820.41","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"5","4":"747.802","5":"22771.98","6":"-218.1169","7":"-218.1169"},{"1":"continuous_flow_example.cf","2":"6520","3":"6","4":"809.457","5":"26112.21","6":"-210.4288","7":"-210.4288"},{"1":"continuous_flow_example.cf","2":"6520","3":"7","4":"860.662","5":"26587.23","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"8","4":"936.529","5":"26290.90","6":"-155.5230","7":"-155.5230"},{"1":"continuous_flow_example.cf","2":"6520","3":"9","4":"1002.155","5":"23773.71","6":"-198.1282","7":"-198.1282"},{"1":"continuous_flow_example.cf","2":"6520","3":"10","4":"1055.032","5":"25686.76","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"11","4":"1135.915","5":"25330.88","6":"-189.4838","7":"-189.4838"},{"1":"continuous_flow_example.cf","2":"6520","3":"12","4":"1201.332","5":"25168.19","6":"-207.8967","7":"-207.8967"},{"1":"continuous_flow_example.cf","2":"6520","3":"13","4":"1249.402","5":"26176.27","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"14","4":"1333.629","5":"25778.35","6":"-168.1422","7":"-168.1422"},{"1":"continuous_flow_example.cf","2":"6520","3":"15","4":"1395.284","5":"20869.48","6":"-193.2927","7":"-193.2927"},{"1":"continuous_flow_example.cf","2":"6520","3":"16","4":"1459.447","5":"28121.88","6":"-151.9000","7":"-151.9000"},{"1":"continuous_flow_example.cf","2":"6520","3":"17","4":"1608.673","5":"28883.22","6":"-154.3318","7":"-154.3318"},{"1":"continuous_flow_example.cf","2":"6520","3":"18","4":"1739.716","5":"23336.75","6":"-160.1244","7":"-160.1244"},{"1":"continuous_flow_example.cf","2":"6520","3":"19","4":"1779.426","5":"23358.98","6":"-160.5503","7":"-160.5503"},{"1":"continuous_flow_example.dxf","2":"2921","3":"1","4":"59.983","5":"110929.75","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"2","4":"110.770","5":"110486.88","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"3","4":"155.287","5":"98168.61","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"4","4":"300.124","5":"240551.17","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"5","4":"436.183","5":"328751.58","6":"NA","7":"NA"},{"1":"continuous_flow_example.dxf","2":"2921","3":"6","4":"486.761","5":"330289.66","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"1","4":"47.234","5":"32970.31","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"2","4":"107.426","5":"65905.71","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"3","4":"167.618","5":"181512.88","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"4","4":"227.601","5":"257111.14","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"5","4":"287.793","5":"336995.32","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"6","4":"347.985","5":"421670.46","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"7","4":"408.177","5":"561563.77","6":"NA","7":"NA"},{"1":"linearity_example.dxf","2":"MAT25391411","3":"8","4":"468.996","5":"864632.08","6":"NA","7":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
-<div id="for-expert-users-retrieving-all-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#for-expert-users-retrieving-all-data" class="anchor"></a>For expert users: retrieving all data</h2>
-<p>For users familiar with the nested data frames from the <a href="https://www.tidyverse.org/">tidyverse</a> (particularly <a href="https://tidyr.tidyverse.org/">tidyr</a>’s <code>nest</code> and <code>unnest</code>), there is an easy way to retrieve all data from the iso file objects in a single nested data frame. Use the <code>include_file_info</code>, <code>include_raw_data</code>, and <code>include_vendor_data_table</code> parameters to specify which columns to include. By default, everything is included:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">all_data &lt;-<span class="st"> </span>iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_data.html">iso_get_data</a></span>()</a>
+</div>
+<div id="for-expert-users-retrieving-all-data" class="section level1">
+<h1 class="hasAnchor">
+<a href="#for-expert-users-retrieving-all-data" class="anchor"></a>For expert users: retrieving all data</h1>
+<p>For users familiar with the nested data frames from the <a href="https://www.tidyverse.org/">tidyverse</a> (particularly <a href="https://tidyr.tidyverse.org/">tidyr</a>’s <code>nest</code> and <code>unnest</code>), there is an easy way to retrieve all data from the iso file objects in a single nested data frame:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">all_data &lt;-<span class="st"> </span>cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_all_data.html">iso_get_all_data</a></span>()</a>
 <a class="sourceLine" id="cb26-2" data-line-number="2"><span class="co">#&gt; Info: aggregating all data from 7 data file(s)</span></a>
 <a class="sourceLine" id="cb26-3" data-line-number="3"><span class="co"># not printed out because this data frame is very big</span></a></code></pre></div>
-</div>
 </div>
 <div id="saving-collections" class="section level1">
 <h1 class="hasAnchor">
 <a href="#saving-collections" class="anchor"></a>Saving collections</h1>
 <p>Saving entire collections of isofiles for retrieval at a later point is easily done using the <code>iso_save</code> function which stores collections or individual isoreader file objects in the efficient R data storage format <code>.rds</code> (if not specified, the extension <code>.cf.rds</code> will be automatically appended). These saved collections can be convientiently read back using the same <code>iso_read_continuous_flow</code> command used for raw data files.</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="co"># export to R data archive</span></a>
-<a class="sourceLine" id="cb27-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_save.html">iso_save</a></span>(<span class="st">"iso_files_export.cf.rds"</span>)</a>
-<a class="sourceLine" id="cb27-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 7 iso_files into R Data Storage 'iso_files_export.cf.rds'</span></a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_save.html">iso_save</a></span>(<span class="st">"cf_files_export.cf.rds"</span>)</a>
+<a class="sourceLine" id="cb27-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 7 iso_files into R Data Storage 'cf_files_export.cf.rds'</span></a>
 <a class="sourceLine" id="cb27-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb27-5" data-line-number="5"><span class="co"># read back the exported R data archive</span></a>
-<a class="sourceLine" id="cb27-6" data-line-number="6">iso_files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span>(<span class="st">"iso_files_export.cf.rds"</span>)</a>
+<a class="sourceLine" id="cb27-6" data-line-number="6">cf_files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span>(<span class="st">"cf_files_export.cf.rds"</span>)</a>
 <a class="sourceLine" id="cb27-7" data-line-number="7"><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></a>
-<a class="sourceLine" id="cb27-8" data-line-number="8"><span class="co">#&gt; Info: reading file 'iso_files_export.cf.rds' with '.cf.rds' reader</span></a>
+<a class="sourceLine" id="cb27-8" data-line-number="8"><span class="co">#&gt; Info: reading file 'cf_files_export.cf.rds' with '.cf.rds' reader</span></a>
 <a class="sourceLine" id="cb27-9" data-line-number="9"><span class="co">#&gt; Info: loaded data for 7 data files from R Data Storage - checking loaded fi...</span></a>
-<a class="sourceLine" id="cb27-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.11 secs</span></a>
-<a class="sourceLine" id="cb27-11" data-line-number="11">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
+<a class="sourceLine" id="cb27-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.10 secs</span></a>
+<a class="sourceLine" id="cb27-11" data-line-number="11">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb27-12" data-line-number="12"><span class="co">#&gt; Info: aggregating data summary from 7 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -543,25 +550,33 @@
 <a href="#data-export" class="anchor"></a>Data Export</h1>
 <p>At the moment, isoreader supports export of all data to Excel and the <a href="https://blog.rstudio.com/2016/03/29/feather/">Feather file format</a> (a Python/R cross-over format). Note that both export methods have similar syntax and append the appropriate file extension for each type of export file (<code>.cf.xlsx</code> and <code>.cf.feather</code>, respectively).</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="co"># export to excel</span></a>
-<a class="sourceLine" id="cb28-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(<span class="st">"iso_files_export"</span>)</a>
-<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 7 iso_files into Excel 'iso_files_export.cf.xlsx'</span></a>
-<a class="sourceLine" id="cb28-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb28-5" data-line-number="5"><span class="co"># data sheets available in the exported data file:</span></a>
-<a class="sourceLine" id="cb28-6" data-line-number="6">readxl<span class="op">::</span><span class="kw"><a href="https://readxl.tidyverse.org/reference/excel_sheets.html">excel_sheets</a></span>(<span class="st">"iso_files_export.cf.xlsx"</span>)</a>
-<a class="sourceLine" id="cb28-7" data-line-number="7"><span class="co">#&gt; [1] "raw data"          "file info"         "method info"      </span></a>
-<a class="sourceLine" id="cb28-8" data-line-number="8"><span class="co">#&gt; [4] "vendor data table" "problems"</span></a></code></pre></div>
+<a class="sourceLine" id="cb28-2" data-line-number="2">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(<span class="st">"cf_files_export"</span>)</a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 7 iso_files into Excel 'cf_files_export.cf.xlsx'</span></a>
+<a class="sourceLine" id="cb28-4" data-line-number="4"><span class="co">#&gt; Info: aggregating all data from 7 data file(s)</span></a>
+<a class="sourceLine" id="cb28-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb28-6" data-line-number="6"><span class="co"># data sheets available in the exported data file:</span></a>
+<a class="sourceLine" id="cb28-7" data-line-number="7">readxl<span class="op">::</span><span class="kw"><a href="https://readxl.tidyverse.org/reference/excel_sheets.html">excel_sheets</a></span>(<span class="st">"cf_files_export.cf.xlsx"</span>)</a>
+<a class="sourceLine" id="cb28-8" data-line-number="8"><span class="co">#&gt; [1] "file info"         "raw data"          "standards"        </span></a>
+<a class="sourceLine" id="cb28-9" data-line-number="9"><span class="co">#&gt; [4] "resistors"         "vendor data table" "problems"</span></a></code></pre></div>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="co"># export to feather</span></a>
-<a class="sourceLine" id="cb29-2" data-line-number="2">iso_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_export_to_feather.html">iso_export_to_feather</a></span>(<span class="st">"iso_files_export"</span>)</a>
-<a class="sourceLine" id="cb29-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 7 iso_files into .cf.feather files at 'iso_files_export'</span></a>
-<a class="sourceLine" id="cb29-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb29-5" data-line-number="5"><span class="co"># exported feather files</span></a>
-<a class="sourceLine" id="cb29-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="dt">pattern =</span> <span class="st">".cf.feather"</span>)</a>
-<a class="sourceLine" id="cb29-7" data-line-number="7"><span class="co">#&gt; [1] "iso_files_export_file_info.cf.feather"            </span></a>
-<a class="sourceLine" id="cb29-8" data-line-number="8"><span class="co">#&gt; [2] "iso_files_export_method_info-resistors.cf.feather"</span></a>
-<a class="sourceLine" id="cb29-9" data-line-number="9"><span class="co">#&gt; [3] "iso_files_export_method_info-standards.cf.feather"</span></a>
-<a class="sourceLine" id="cb29-10" data-line-number="10"><span class="co">#&gt; [4] "iso_files_export_problems.cf.feather"             </span></a>
-<a class="sourceLine" id="cb29-11" data-line-number="11"><span class="co">#&gt; [5] "iso_files_export_raw_data.cf.feather"             </span></a>
-<a class="sourceLine" id="cb29-12" data-line-number="12"><span class="co">#&gt; [6] "iso_files_export_vendor_data_table.cf.feather"</span></a></code></pre></div>
+<a class="sourceLine" id="cb29-2" data-line-number="2">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_export_to_feather.html">iso_export_to_feather</a></span>(<span class="st">"cf_files_export"</span>)</a>
+<a class="sourceLine" id="cb29-3" data-line-number="3"><span class="co">#&gt; Info: exporting data from 7 iso_files into .cf.feather files at 'cf_files_export'</span></a>
+<a class="sourceLine" id="cb29-4" data-line-number="4"><span class="co">#&gt; Info: aggregating all data from 7 data file(s)</span></a>
+<a class="sourceLine" id="cb29-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb29-6" data-line-number="6"><span class="co"># exported feather files</span></a>
+<a class="sourceLine" id="cb29-7" data-line-number="7"><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="dt">pattern =</span> <span class="st">".cf.feather"</span>)</a>
+<a class="sourceLine" id="cb29-8" data-line-number="8"><span class="co">#&gt;  [1] "cf_files_export_file_info.cf.feather"             </span></a>
+<a class="sourceLine" id="cb29-9" data-line-number="9"><span class="co">#&gt;  [2] "cf_files_export_problems.cf.feather"              </span></a>
+<a class="sourceLine" id="cb29-10" data-line-number="10"><span class="co">#&gt;  [3] "cf_files_export_raw_data.cf.feather"              </span></a>
+<a class="sourceLine" id="cb29-11" data-line-number="11"><span class="co">#&gt;  [4] "cf_files_export_resistors.cf.feather"             </span></a>
+<a class="sourceLine" id="cb29-12" data-line-number="12"><span class="co">#&gt;  [5] "cf_files_export_standards.cf.feather"             </span></a>
+<a class="sourceLine" id="cb29-13" data-line-number="13"><span class="co">#&gt;  [6] "cf_files_export_vendor_data_table.cf.feather"     </span></a>
+<a class="sourceLine" id="cb29-14" data-line-number="14"><span class="co">#&gt;  [7] "iso_files_export_file_info.cf.feather"            </span></a>
+<a class="sourceLine" id="cb29-15" data-line-number="15"><span class="co">#&gt;  [8] "iso_files_export_method_info-resistors.cf.feather"</span></a>
+<a class="sourceLine" id="cb29-16" data-line-number="16"><span class="co">#&gt;  [9] "iso_files_export_method_info-standards.cf.feather"</span></a>
+<a class="sourceLine" id="cb29-17" data-line-number="17"><span class="co">#&gt; [10] "iso_files_export_problems.cf.feather"             </span></a>
+<a class="sourceLine" id="cb29-18" data-line-number="18"><span class="co">#&gt; [11] "iso_files_export_raw_data.cf.feather"             </span></a>
+<a class="sourceLine" id="cb29-19" data-line-number="19"><span class="co">#&gt; [12] "iso_files_export_vendor_data_table.cf.feather"</span></a></code></pre></div>
 </div>
   </div>
 
@@ -593,9 +608,9 @@
       <li>
 <a href="#data-processing">Data Processing</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#vendor-data-table">Vendor Data Table</a></li>
-      <li><a href="#for-expert-users-retrieving-all-data">For expert users: retrieving all data</a></li>
       </ul>
 </li>
+      <li><a href="#for-expert-users-retrieving-all-data">For expert users: retrieving all data</a></li>
       <li><a href="#saving-collections">Saving collections</a></li>
       <li><a href="#data-export">Data Export</a></li>
       </ul>

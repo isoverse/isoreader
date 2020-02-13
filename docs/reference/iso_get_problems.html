@@ -36,7 +36,7 @@
 
 
 <meta property="og:title" content="Retrieve parsing problems — iso_get_problems" />
-<meta property="og:description" content="This is identical to the readr problems function." />
+<meta property="og:description" content="This function retrieves parsing problems encountered during the reading of a set of iso files." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.0.17</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.0</span>
       </span>
     </div>
 
@@ -151,10 +151,10 @@
     </div>
 
     <div class="ref-description">
-    <p>This is identical to the readr <code><a href='https://readr.tidyverse.org/reference/problems.html'>problems</a></code> function.</p>
+    <p>This function retrieves parsing problems encountered during the reading of a set of iso files.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_get_problems</span>(<span class='no'>iso_files</span>)</pre>
+    <pre class="usage"><span class='fu'>iso_get_problems</span>(<span class='no'>iso_files</span>, <span class='kw'>select</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>())</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -162,6 +162,10 @@
     <tr>
       <th>iso_files</th>
       <td><p>collection of iso_file objects</p></td>
+    </tr>
+    <tr>
+      <th>select</th>
+      <td><p>which data columns to select - use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax. By default, all columns are selected.</p></td>
     </tr>
     </table>
 
