@@ -18,11 +18,11 @@ iso_get_vendor_data_table(
 
 \item{with_units}{this parameter has been DEPRECATED with the introduction of unit-data types (see \code{\link{iso_double_with_units}}) and will be removed in future versions of isoreader. Please use \code{with_explicit_units} instead if you really want columns to have units explicitly in the column name. Alternatively, consider working with the new implicit unit system and convert vendor data tables as needed with \code{\link{iso_make_units_explicit}} and \code{\link{iso_make_units_implicit}}.}
 
-\item{select}{which raw data columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. By default, all columns are selected.}
+\item{select}{which data columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. By default, all columns are selected.}
 
 \item{include_file_info}{which file information to include (see \code{\link{iso_get_file_info}}). Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns.}
 
-\item{with_explicit_units}{whether to include units in the column headers instead of the column data types (see \code{\link{iso_double_with_units}})}
+\item{with_explicit_units}{whether to include units in the column headers of the returned data frame instead of the column data types (see \code{\link{iso_double_with_units}}). Note that any \code{select} conditions have to refer to the column names including the full units.}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
@@ -31,11 +31,11 @@ Aggregate data from the vendor-computed data table. This information is only ava
 }
 \seealso{
 Other data retrieval functions: 
+\code{\link{iso_get_all_data}()},
 \code{\link{iso_get_bgrd_data}()},
-\code{\link{iso_get_data}()},
 \code{\link{iso_get_file_info}()},
 \code{\link{iso_get_raw_data}()},
-\code{\link{iso_get_resistors_info}()},
-\code{\link{iso_get_standards_info}()}
+\code{\link{iso_get_resistors}()},
+\code{\link{iso_get_standards}()}
 }
 \concept{data retrieval functions}

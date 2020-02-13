@@ -4,13 +4,15 @@
 \alias{iso_get_problems}
 \title{Retrieve parsing problems}
 \usage{
-iso_get_problems(iso_files)
+iso_get_problems(iso_files, select = everything())
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
+
+\item{select}{which data columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. By default, all columns are selected.}
 }
 \description{
-This is identical to the readr \code{\link[readr]{problems}} function.
+This function retrieves parsing problems encountered during the reading of a set of iso files.
 }
 \seealso{
 Other problem functions: 
