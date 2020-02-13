@@ -75,7 +75,7 @@ iso_get_default_reader_parameters <- function() {
     c("quiet", "cache", "cache_dir", "read_raw_data", "read_file_info", "read_method_info", "read_vendor_data_table") %>% 
     sapply(function(x) list(default(!!x))) %>% 
     {
-      data_frame(parameter = names(.),
+      tibble(parameter = names(.),
                  value = as.character(unlist(.)))
     }
 }

@@ -24,7 +24,7 @@ test_that("Test that problem registration and reporting works properly", {
   }, x)
   
   expect_equal(n_problems(y), 1)
-  expect_equal(problems(y) %>% select(func, details), data_frame(func = "testing", details = "problem"))
+  expect_equal(problems(y) %>% select(func, details), tibble(func = "testing", details = "problem"))
   
   # add another problem
   expect_equal({
@@ -32,7 +32,7 @@ test_that("Test that problem registration and reporting works properly", {
     as.character(z)
   }, x)
   expect_equal(n_problems(z), 2)
-  expect_equal(problems(z) %>% select(details, code), data_frame(details = c("problem", "problem2"), code = c(NA, 5)))
+  expect_equal(problems(z) %>% select(details, code), tibble(details = c("problem", "problem2"), code = c(NA, 5)))
   
   # stop for problems
   expect_error(stop_for_problems(z), "2 parsing failures")
@@ -52,9 +52,9 @@ test_that("Test that problems set for iso_file lists get propagated to all files
   expect_is(iso_files_w_probs <- register_problem(iso_files, type = "test"), "iso_file_list")
   expect_true(iso_has_problems(iso_files_w_probs))
   expect_equal(problems(iso_files_w_probs) %>% select(file_id, type),
-               data_frame(file_id = c("A", "B"), type = c("test")))
-  expect_equal(problems(iso_files_w_probs[[1]]) %>% select(type), data_frame(type = "test"))
-  expect_equal(problems(iso_files_w_probs[[2]]) %>% select(type), data_frame(type = "test"))
+               tibble(file_id = c("A", "B"), type = c("test")))
+  expect_equal(problems(iso_files_w_probs[[1]]) %>% select(type), tibble(type = "test"))
+  expect_equal(problems(iso_files_w_probs[[2]]) %>% select(type), tibble(type = "test"))
 })
 
 test_that("Test that warning and error registration works properly", {
@@ -65,14 +65,14 @@ test_that("Test that warning and error registration works properly", {
   expect_silent(y <- register_warning(x, details = "problem", warn = FALSE))
   expect_equal(as.character(y), x)
   expect_equal(n_problems(y), 1)
-  expect_equal(problems(y) %>% select(type, details), data_frame(type = "warning", details = "problem"))
+  expect_equal(problems(y) %>% select(type, details), tibble(type = "warning", details = "problem"))
   
   # add an error
   expect_message(y <- register_error(x, details = "problem", warn = TRUE), "caught error - problem")
   expect_silent(y <- register_error(x, details = "problem", warn = FALSE))
   expect_equal(as.character(y), x)
   expect_equal(n_problems(y), 1)
-  expect_equal(problems(y) %>% select(type, details), data_frame(type = "error", details = "problem"))
+  expect_equal(problems(y) %>% select(type, details), tibble(type = "error", details = "problem"))
 })
   
 test_that("Combing problems works properly", {

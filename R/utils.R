@@ -253,7 +253,7 @@ get_paths_data_frame <- function(path, root, check_existence = TRUE) {
 
   # paths data frame
   paths <-
-    data_frame(
+    tibble(
       i = 1:max(length(root), length(path)),
       root = root,
       path = path,
@@ -477,7 +477,7 @@ iso_shorten_relative_paths <- function(path, root = ".") {
 
   # generate paths dataframe (WITHOUT concatenating path and root ulnike get_paths_data_frame)
   paths <-
-    data_frame(
+    tibble(
       i = 1:max(length(root), length(path)),
       path = path,
       root = root,
@@ -532,7 +532,7 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
   absolute <- is_dir <- full_path <- rel_root_folders <- path_folders <- abs_root_folders <- has_rel_root <- new_path <- i <- NULL
 
   # anything to work with?
-  if(length(path) == 0) return(data_frame(root = character(0), path = character(0)))
+  if(length(path) == 0) return(tibble(root = character(0), path = character(0)))
 
   # generate data frame and check existence
   paths <- get_paths_data_frame(path, root, check_existence = check_existence)
@@ -674,16 +674,16 @@ generate_cache_filepaths <- function(filepaths, read_options = list()) {
     unf(obj)$hash %>% str_c(collapse = "")
   }
 
-  # cached files versioning --> 
+  # cached files versioning -->
   # include minor if v < 1.0, afterwards go by major version (2.0, 3.0, etc.)
-  iso_v <- 
+  iso_v <-
     packageVersion("isoreader") %>% {
       if (.$major < 1) paste0(.$major, ".", .$minor)
       else paste0(.$major, ".0")
     }
-  
+
   file_info <- file.info(filepaths) %>%
-    as_data_frame() %>%
+    dplyr::as_tibble() %>%
     rownames_to_column() %>%
     select(filepath = rowname, size = size, modified = mtime) %>%
     mutate(
@@ -731,13 +731,13 @@ load_cached_iso_file <- function(filepath, check_version = TRUE) {
 same_as_isoreader_version <- function(version, isoreader_version = packageVersion("isoreader")) {
 
   file_version <- version$major * 10
-  if (version$major < 1) 
+  if (version$major < 1)
     file_version <- file_version + version$minor
-  
+
   package_version <- isoreader_version$major * 10
-  if (isoreader_version$major < 1) 
+  if (isoreader_version$major < 1)
     package_version <- package_version + isoreader_version$minor
-    
+
   return(file_version == package_version)
 }
 

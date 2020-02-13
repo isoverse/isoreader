@@ -161,7 +161,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     
     # check for file_id duplicates
     dups <- 
-      data_frame(
+      tibble(
         idx = 1:length(iso_list),
         file_id = names(iso_list)
       ) %>% 

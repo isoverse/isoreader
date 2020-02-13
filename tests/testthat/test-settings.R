@@ -45,7 +45,7 @@ test_that("info messages can be switched for just one function", {
 })
 
 test_that("info message functions can be part of a pipeline", {
-  df <- data_frame(a = 1:5)
+  df <- tibble(a = 1:5)
   expect_equal(df %>% iso_turn_info_messages_on(), df)
   expect_equal(df %>% iso_turn_info_messages_off(), df)
 })
@@ -79,7 +79,7 @@ test_that("setting default read_parameters", {
   expect_message(iso_set_default_read_parameters(read_method_info = FALSE, quiet=FALSE))
   expect_false(default(read_file_info))
   expect_false(default(read_method_info))
-  df <- data_frame(a = 1:5)
+  df <- tibble(a = 1:5)
   expect_equal(iso_set_default_read_parameters(df, read_file_info = TRUE, read_method_info = TRUE, quiet=TRUE), df)
   expect_true(default(read_file_info))
   expect_true(default(read_method_info))
