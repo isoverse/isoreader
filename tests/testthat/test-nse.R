@@ -1,26 +1,5 @@
 context("Standard and non-standard evaluation")
 
-test_that("Testing expression checks", {
-  
-  df <- as_data_frame(mtcars) %>% tibble::rownames_to_column()
-  
-  # basic errors
-  expect_error(check_expressions(), "no data frame supplied")
-  expect_error(check_expressions(5), "not a data frame")
-  
-  # error messages
-  expect_error(check_expressions(df, quo(x == 5)), "not a valid expression")
-  expect_error(check_expressions(df, quo(x == 5), quo(y == 42)), "invalid expressions")
-  
-  # test evaluations
-  expect_equal(
-    check_expressions(df, quo(mpg > 20), quo(ifelse(grepl("Merc", rowname), "test", rowname)), z = NULL),
-    df
-  )
-  
-})
-
-
 test_that("Getting column names (with # and type requirement checks) works", {
   
   df <- tibble::as_tibble(mtcars) %>% tibble::rownames_to_column()
@@ -78,11 +57,11 @@ test_that("Getting column names (with # and type requirement checks) works", {
   expect_equal(get_column_names(df, a = quo(c(x = starts_with("c"))), n_reqs = list(a = "*")), list(a = c(x1 = "cyl", x2 = "carb")))
   
   # expected error from conversion to expressions inside get_column_names (may not work interactively!)
-  test <- "c"
-  expect_error(get_column_names(df, a = quo(c(x = starts_with(test))), n_reqs = list(a = "*")), "'test' not found")
-  expect_error(get_column_names(df, a = expr(c(x = starts_with(test))), n_reqs = list(a = "*")), "'test' not found")
-  expect_equal(get_column_names(df, a = quo(c(x = starts_with(!!test))), n_reqs = list(a = "*")), list(a = c(x1 = "cyl", x2 = "carb")))
-  expect_equal(get_column_names(df, a = expr(c(x = starts_with(!!test))), n_reqs = list(a = "*")), list(a = c(x1 = "cyl", x2 = "carb")))
+  ..test.. <- "c"
+  expect_error(get_column_names(df, a = quo(c(x = starts_with(..test..))), n_reqs = list(a = "*")), "'..test..' not found")
+  expect_error(get_column_names(df, a = expr(c(x = starts_with(..test..))), n_reqs = list(a = "*")), "'..test..' not found")
+  expect_equal(get_column_names(df, a = quo(c(x = starts_with(!!..test..))), n_reqs = list(a = "*")), list(a = c(x1 = "cyl", x2 = "carb")))
+  expect_equal(get_column_names(df, a = expr(c(x = starts_with(!!..test..))), n_reqs = list(a = "*")), list(a = c(x1 = "cyl", x2 = "carb")))
   
   # allow missing columns
   expect_warning(get_column_names(df, a = quo(x), n_reqs = list(a = "*"), cols_must_exist = FALSE), "unknown column")

@@ -1,52 +1,4 @@
-# Test quo expressions by confirming they can create a valid column in a mutate
-# @note that global variables will be interpreted even in the context of the data frame
-# ideally this will be only within the data frame
-check_expressions <- function(df, ...) {
-  
-  # df name and data frame test
-  if (missing(df)) stop("no data frame supplied", call. = FALSE)
-  df_name <- enquo(df) %>% rlang::as_label()
-  df <- enquo(df) %>% eval_tidy()
-  if (!is.data.frame(df))
-    glue("parameter {df_name} is not a data frame") %>% stop(call. = FALSE)
-  
-  # use a safe version of mutate to check all expresions
-  # (use mutate instead of eval_tidy to make sure it's absolutely valid)
-  safe_eval <- safely(mutate)
-  expr_quos <- quos(!!!list(...)) %>% 
-    # make sure to evaluate calls to default
-    resolve_defaults() %>% 
-    # make sure that the expressions are locally evaluated
-    map(~quo(!!get_expr(.x)))
-  expr_quos <- expr_quos[!map_lgl(expr_quos, quo_is_null)]
-  expr_errors <- map(expr_quos, ~safe_eval(df, !!.x)$error)
-
-  # check results
-  ok <- map_lgl(expr_errors, ~is.null(.x))
-
-  # summarize if there were any errors
-  if (!all(ok)) {
-    params <-
-      map2_chr(names(expr_quos)[!ok], expr_quos[!ok], function(var, val) {
-        if (nchar(var) > 0 && var != rlang::as_label(val)) str_c(var, " = ", rlang::as_label(val))
-        else rlang::as_label(val)
-      }) %>%
-      collapse("', '", last = "' and '")
-    errors <- map_chr(expr_errors[!ok], ~.x$message) %>% collapse("\n- ")
-    err_msg <-
-      if (sum(!ok) > 1)
-        glue("'{params}' are invalid expressions in data frame '{df_name}':\n- {errors}")
-      else
-        glue("'{params}' is not a valid expression in data frame '{df_name}':\n- {errors}")
-    stop(err_msg, call. = FALSE)
-  }
-
-  return(invisible(df))
-}
-
-# Get the column names for a set of parameters referencing columns in a data frame. Compatible with all dplyr type column selection
-# criteria including both standard and non-standard evaluation. Throws errors if expressions cannot be evaluated or if an incorrect
-# number of columns are identified for a given parameter.
+# Get the column names for a set of parameters referencing columns in a data frame. Compatible with all dplyr type column selection criteria including both standard and non-standard evaluation. Throws errors if expressions cannot be evaluated (unless \code{cols_must_exist = FALSE}) or if an incorrect number of columns are identified for a given parameter. To ignore missing columns entirely, set \code{cols_must_exist = FALSE} and \code{warn = FALSE}.
 # @param df the data frame
 # @param ... named expressions with variable selection criteria (anything that tidyselect::eval_select supports)
 # @param n_reqs named list to specify how many columns are allowed/required for each selection criterion, default for all that are not specified is 1.
@@ -63,20 +15,6 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   if (!is.data.frame(df))
     sprintf("parameter '%s' is not a data frame", df_name) %>% stop(call. = FALSE)
   
-  # use a safe version of eval select to get all the column names
-  # note: uses tidyselect:eval_select because vars_select is in questioning stage
-  safe_vars_select <- function(col_exp, ...) {
-    safe_pos <- safely(tidyselect::eval_select)(col_exp, data = df, ...)
-    if (is.null(safe_pos$error)) {
-      # assign names based on opsition indices
-      safe_pos$result <- rlang::set_names(names(df)[safe_pos$result], names(safe_pos$result))
-      # assign any missing names with the values
-      names(safe_pos$result)[nchar(names(safe_pos$result)) == 0] <- 
-        safe_pos$result[nchar(names(safe_pos$result)) == 0]
-    }
-    return(safe_pos)
-  }
-  
   # get colum name expressions from ...
   cols_exps <- list(...) %>% 
     # make sure to evaluate calls to default
@@ -86,8 +24,9 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
     # naming
     { if(is.null(names(.))) setNames(., rep("", length(.))) else . }
   
-  cols_results <- map(cols_exps, safe_vars_select)
-  ok <- map_lgl(cols_results, ~is.null(.x$error))
+  # find column positions
+  pos_results <- map(cols_exps, safe_local_eval_select, data = df)
+  ok <- map_lgl(pos_results, ~is.null(.x$error))
   
   # summarize if there were any errors
   if (!all(ok)) {
@@ -97,7 +36,9 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
         else rlang::as_label(val)
       }) %>% 
       collapse("', '", last = "' and '")
-    errors <- map_chr(cols_results[!ok], ~.x$error$message) %>% collapse("\n- ")
+    # have to use capture.output because rlang errors don't store their error in $error$message
+    errors <- map_chr(pos_results[!ok], ~stringr::str_replace(.x$error, "\n", " ")) %>% 
+      paste(collapse = "\n- ")
     err_msg <- 
       if (sum(!ok) > 1) 
         glue("'{params}' refer to unknown columns in data frame '{df_name}':\n- {errors}") 
@@ -109,12 +50,12 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
     } else {
       # just a warning and find the columns omitting those missing
       if (warn) warning(err_msg, immediate. = TRUE, call. = FALSE)
-      cols_results <- map(cols_exps, safe_vars_select, strict = FALSE)
+      pos_results <- map(cols_exps, safe_local_eval_select, data = df, strict = FALSE)
     }
   }
   
   # check on the number requirements for each column match
-  cols <- map(cols_results, ~(.x$result))
+  cols <- map(pos_results, ~eval_select_pos_to_cols(.x$result, data = df))
   if (any(missing <- !names(n_reqs) %in% names(cols)))
     glue("column requirements for unknow parameter(s) provided: {collapse(names(n_reqs[missing]), ', ')}") %>%
     stop(call. = FALSE)
@@ -196,4 +137,39 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
   }
   
   return(cols)
+}
+
+# convert positions to column names
+# @param the positions
+# @param df the data frame
+eval_select_pos_to_cols <- function(pos, data) {
+  # assign names based on position indices
+  cols <- rlang::set_names(names(data)[pos], names(pos))
+  # assign any missing names based on the values (this might be a fix for tidyselect bug)
+  names(cols)[nchar(names(cols)) == 0] <- cols[nchar(names(cols)) == 0]
+  return(cols)
+}
+
+# note: uses tidyselect:eval_select because vars_select is in questioning stage
+# note: force local scope to avoid conflicts with variables in the global environment
+# force local evaluation of tidyselect::eval_select
+local_eval_select <- local(function(expr, data, ...) {
+  tidyselect::eval_select(expr, data = data, ...)
+}, as.environment(2))
+
+# force local evaluation of tidyselect::eval_rename
+local_eval_rename <- local(function(expr, data, ...) {
+  tidyselect::eval_rename(expr, data = data, ...)
+}, as.environment(2))
+
+# safe local evaluation of tidyselect::eval_select
+# note: don't use purrr::safely as it invalidates the local scope!
+# @return list(return = value, error = NULL) if successful or list(return = NULL, error = character) if failed
+safe_local_eval_select <- function(expr, data, ...) {
+  # try catch find positions
+  pos <- tryCatch(local_eval_select(expr, data, ...), error = conditionMessage)
+  if (is.integer(pos)) 
+    return(list(result = pos, error = NULL))
+  else
+    return(list(result = NULL, error = pos))
 }
