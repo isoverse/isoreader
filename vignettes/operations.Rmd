@@ -186,6 +186,34 @@ di_files %>% iso_mutate_file_info(file_root = ".") %>%
   iso_reread_files()
 ```
 
+# Units
 
+Isoreader provides a built in data type with units (`iso_double_with_units`) that can be used to easily keep track of units inside data frame. These units can be made explicit (=included in the column header), stripped altogher, or turned back to be implicit.
+
+```{r}
+# strip all units
+cf_file %>% 
+  iso_get_vendor_data_table(select = c(`Ampl 28`, `rIntensity 28`, `d 15N/14N`)) %>% 
+  iso_strip_units() %>% head(3)
+
+# make units explicit
+cf_file %>% 
+  iso_get_vendor_data_table(select = c(`Ampl 28`, `rIntensity 28`, `d 15N/14N`)) %>% 
+  iso_make_units_explicit() %>% head(3)
+
+# introduce new unit columns e.g. in the file info
+cf_file %>% 
+  iso_mutate_file_info(weight = iso_double_with_units(0.42, "mg")) %>% 
+  iso_get_vendor_data_table(select = c(`Ampl 28`, `rIntensity 28`, `d 15N/14N`),
+                            include_file_info = weight) %>%
+  iso_make_units_explicit() %>% head(3)
+
+# or turn a column e.g. with custom format units in the header into implicit units
+cf_file %>% 
+  iso_mutate_file_info(weight.mg = 0.42) %>% 
+  iso_get_vendor_data_table(select = c(`Ampl 28`, `rIntensity 28`, `d 15N/14N`),
+                            include_file_info = weight.mg) %>%
+  iso_make_units_implicit(prefix = ".", suffix = "") %>% head(3)
+```
 
 
