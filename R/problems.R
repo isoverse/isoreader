@@ -37,14 +37,18 @@ readr::problems
 
 #' Retrieve parsing problems
 #' 
-#' This is identical to the readr \code{\link[readr]{problems}} function.
+#' This function retrieves parsing problems encountered during the reading of a set of iso files.
 #' 
 #' @importFrom readr problems
 #' @inheritParams iso_get_raw_data
 #' @family problem functions
 #' @export
-iso_get_problems <- function(iso_files) {
-  problems(iso_files)
+iso_get_problems <- function(iso_files, select = everything()) {
+  probs <- problems(iso_as_file_list(iso_files))
+  select_cols <- get_column_names(probs, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
+  if (!"file_id" %in% select_cols) 
+    select_cols <- c("file_id", select_cols) # file info always included
+  return(dplyr::select(probs, !!!select_cols))
 }
 
 #' @importFrom readr stop_for_problems

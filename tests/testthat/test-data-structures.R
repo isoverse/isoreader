@@ -98,11 +98,11 @@ test_that("test that iso_file list checks work", {
   expect_equal(iso_as_file_list() %>% iso_get_data_summary() %>% nrow(), 0)
   expect_equal(iso_as_file_list() %>% iso_get_raw_data() %>% nrow(), 0)
   expect_equal(iso_as_file_list() %>% iso_get_file_info() %>% nrow(), 0)
-  expect_equal(iso_as_file_list() %>% iso_get_resistors_info() %>% nrow(), 0)
+  expect_equal(iso_as_file_list() %>% iso_get_resistors() %>% nrow(), 0)
   
   # expected errors
   expect_error(iso_as_file_list() %>% iso_get_vendor_data_table(), "only dual inlet.*continuous flow")
-  expect_error(iso_as_file_list() %>% iso_get_standards_info(), "only dual inlet.*continuous flow")
+  expect_error(iso_as_file_list() %>% iso_get_standards(), "only dual inlet.*continuous flow")
   expect_error(iso_as_file_list(1, error = "test"), "encountered incompatible data type")
   expect_false(iso_is_file_list(42))
   expect_false(iso_is_file_list(make_iso_file_data_structure("NA")))
