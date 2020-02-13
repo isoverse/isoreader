@@ -4,15 +4,22 @@
 \alias{iso_read_dual_inlet}
 \title{Load dual inlet data}
 \usage{
-iso_read_dual_inlet(..., root = ".",
+iso_read_dual_inlet(
+  ...,
+  root = ".",
   read_raw_data = default(read_raw_data),
   read_file_info = default(read_file_info),
   read_method_info = default(read_method_info),
   read_vendor_data_table = default(read_vendor_data_table),
-  nu_masses = c(), discard_duplicates = TRUE, parallel = FALSE,
-  parallel_plan = future::multiprocess, cache = default(cache),
-  cache_files_with_errors = TRUE, read_cache = default(cache),
-  quiet = default(quiet))
+  nu_masses = c(),
+  discard_duplicates = TRUE,
+  parallel = FALSE,
+  parallel_plan = future::multisession,
+  cache = default(cache),
+  cache_files_with_errors = TRUE,
+  read_cache = default(cache),
+  quiet = default(quiet)
+)
 }
 \arguments{
 \item{...}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read).}
@@ -33,7 +40,7 @@ iso_read_dual_inlet(..., root = ".",
 
 \item{parallel}{whether to process in parallel based on the number of available CPU cores. This may yield performance increases for files that are slow to parse such as continuous flow isodat files but usually provides little benefit for efficient data formats such as reading from R Data Archives.}
 
-\item{parallel_plan}{which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multiprocess} (the default, uses multicore if supported by the operating system, otherwise multisession), \code{future::multisession} or \code{future::multicore}.}
+\item{parallel_plan}{which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multisession} for compatibility with RStudio interactive mode. If supported by the operating system and running in detached mode (not interactively in RStudio) can also use \code{future::multicore}.}
 
 \item{cache}{whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
 
@@ -47,6 +54,8 @@ iso_read_dual_inlet(..., root = ".",
 Load dual inlet data
 }
 \seealso{
-Other isoread functions for different types of IRMS data: \code{\link{iso_read_continuous_flow}}
+Other isoread functions for different types of IRMS data: 
+\code{\link{iso_read_continuous_flow}()},
+\code{\link{iso_read_scan}()}
 }
 \concept{isoread functions for different types of IRMS data}

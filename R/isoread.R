@@ -10,25 +10,36 @@
 #' @param extension the file extension (e.g. \code{.dxf}) of the data file. Must be unique otherwise different files can not automatically be matched with the appropriate file reader based on their extension.
 #' @param func the name of the function that should be used a filter reader. All file reader functions must accept a data structure argument as the first argument and return the same data structure with added data.
 #' @param description what is this file type about?
+#' @param software what is the software program that creates this filetype?
 #' @param cacheable whether this file type is cacheable. If \code{TRUE} (the default), user requests to cache the file will be honored. If \code{FALSE}, this file type will never be cached no matter what the user requests.
 #' @param overwrite whether to overwrite an existing file reader for the same extension
 #' @param env the environment where to find the function, by default this will be determined automatically and will throw an error if there is any ambiguity (e.g. the same function name in multiple packages) in which case it should be set manually
 #' @family file_types
 #' @export
 iso_register_dual_inlet_file_reader <- function(
-  extension, func, description = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
-  register_file_reader("dual inlet", "iso_read_dual_inlet", extension, func, description, cacheable, overwrite, env)
+  extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
+  register_file_reader("dual inlet", "iso_read_dual_inlet", extension, func, description, software, cacheable, overwrite, env)
 }
 
 #' @details \code{iso_register_continuous_flow_file_reader}: use this function to register file readers for continuous flow files.
 #' @rdname file_readers
 #' @family file_types
+#' @export
 iso_register_continuous_flow_file_reader <- function(
-  extension, func, description = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
-  register_file_reader("continuous flow", "iso_read_continuous_flow", extension, func, description, cacheable, overwrite, env)
+  extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
+  register_file_reader("continuous flow", "iso_read_continuous_flow", extension, func, description, software, cacheable, overwrite, env)
 }
 
-register_file_reader <- function(type, call, extension, func, description, cacheable, overwrite, env) {
+#' @details \code{iso_register_scan_file_reader}: use this function to register file readers for scan files.
+#' @rdname file_readers
+#' @family file_types
+#' @export
+iso_register_scan_file_reader <- function(
+  extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
+  register_file_reader("scan", "iso_read_scan", extension, func, description, software, cacheable, overwrite, env)
+}
+
+register_file_reader <- function(type, call, extension, func, description, software, cacheable, overwrite, env) {
 
   if (!is.character(func))
     stop("please provide the function name rather than the function itself to register it",
@@ -47,10 +58,10 @@ register_file_reader <- function(type, call, extension, func, description, cache
   frs <- default("file_readers", allow_null = TRUE)
   
   new_fr <-
-    dplyr::data_frame(
+    dplyr::tibble(
       type = type, call = call, extension = extension,
       func = func, cacheable = cacheable, description = description,
-      env = env
+      software = software, env = env
     )
   
   if (!is.null(frs) && extension %in% frs$extension) {
@@ -89,7 +100,7 @@ find_func <- function(func) {
 #' @family file_types
 #' @export
 iso_get_supported_file_types <- function() {
-  dplyr::select(default("file_readers"), "extension", "description", "type", "call")
+  dplyr::select(default("file_readers"), "extension", "software", "description", "type", "call")
 }
 
 get_supported_di_files <- function() {
@@ -98,6 +109,10 @@ get_supported_di_files <- function() {
 
 get_supported_cf_files <- function() {
   dplyr::filter(default("file_readers"), !!sym("type") == "continuous flow")
+}
+
+get_supported_scan_files <- function() {
+  dplyr::filter(default("file_readers"), !!sym("type") == "scan")
 }
 
 # file reading ===========
@@ -131,7 +146,7 @@ iso_read_dual_inlet <- function(
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
   nu_masses = c(),
-  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multiprocess, 
+  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multisession, 
   cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
@@ -167,7 +182,7 @@ iso_read_continuous_flow <- function(
   root = ".",
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table), 
-  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multiprocess,
+  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multisession,
   cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
@@ -193,6 +208,41 @@ iso_read_continuous_flow <- function(
   )
 }
 
+#' Load scan data
+#' 
+#' @inheritParams iso_read_dual_inlet
+#' @family isoread functions for different types of IRMS data
+#' @export
+iso_read_scan <- function(
+  ..., 
+  root = ".",
+  read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), read_method_info = default(read_method_info),
+  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multisession,
+  cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
+  
+  # process data
+  iso_read_files(
+    unlist(list(...), use.names = FALSE),
+    root = root,
+    supported_extensions = get_supported_scan_files(),
+    data_structure = make_scan_data_structure(),
+    read_options = c(
+      read_raw_data = read_raw_data,
+      read_file_info = read_file_info,
+      read_method_info = read_method_info
+    ),
+    reader_options = list(),
+    discard_duplicates = discard_duplicates,
+    parallel = parallel,
+    parallel_plan = parallel_plan,
+    cache = cache,
+    cache_files_with_errors = cache_files_with_errors,
+    read_cache = read_cache,
+    quiet = quiet
+  )
+}
+
+
 #' Core function to read isotope data files
 #' 
 #' This function takes care of extracting basic information about iso_files, dealing with problems and making sure only valid fire formats are processed. 
@@ -205,7 +255,7 @@ iso_read_continuous_flow <- function(
 #' @param data_structure the basic data structure for the type of iso_file
 #' @inheritParams iso_as_file_list
 #' @param parallel whether to process in parallel based on the number of available CPU cores. This may yield performance increases for files that are slow to parse such as continuous flow isodat files but usually provides little benefit for efficient data formats such as reading from R Data Archives.
-#' @param parallel_plan which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multiprocess} (the default, uses multicore if supported by the operating system, otherwise multisession), \code{future::multisession} or \code{future::multicore}.
+#' @param parallel_plan which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multisession} for compatibility with RStudio interactive mode. If supported by the operating system and running in detached mode (not interactively in RStudio) can also use \code{future::multicore}.
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}
 #' @param cache whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.
 #' @param cache_files_with_errors whether to cache files that had errors during reading
@@ -215,7 +265,7 @@ iso_read_continuous_flow <- function(
 #' @return single iso_file object (if single file) or list of iso_files (iso_file_list)
 iso_read_files <- function(paths, root, supported_extensions, data_structure, 
                            read_options = c(), reader_options = list(), discard_duplicates = TRUE, 
-                           parallel = FALSE, parallel_plan = future::multiprocess, 
+                           parallel = FALSE, parallel_plan = future::multisession, 
                            cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), 
                            quiet = default(quiet)) {
 
@@ -598,7 +648,7 @@ iso_reread_storage <- function(rds_filepaths, ..., stop_if_missing = FALSE, quie
   extension <- NULL
   
   extensions <- iso_get_supported_file_types() %>% dplyr::filter(stringr::str_detect(extension, "rd[sa]"))
-  file_types <- data_frame(path = rds_filepaths) %>% match_to_supported_file_types(extensions)
+  file_types <- tibble(path = rds_filepaths) %>% match_to_supported_file_types(extensions)
   
   if (any(missing <- !file.exists(rds_filepaths))) 
     stop("file(s) do not exist: ", str_c(rds_filepaths[missing], collapse = ", "), call. = FALSE)

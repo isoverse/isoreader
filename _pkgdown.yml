@@ -17,14 +17,22 @@ navbar:
   title: isoreader
   type: default
   left:
-  - text: Dual Inlet
-    href: articles/dual_inlet.html
-  - text: Continuous Flow
-    href: articles/continuous_flow.html
-  - text: Operations
-    href: articles/operations.html
-  - text: Development
-    href: articles/development.html
+  - text: Quick Start
+    href: articles/quick_start.html
+  - text: Full Examples
+    menu:
+    - text: Dual Inlet
+      href: articles/dual_inlet.html
+    - text: Continuous Flow
+      href: articles/continuous_flow.html
+    - text: Scan
+      href: articles/scan.html
+  - text: Advanced
+    menu:
+    - text: Operations
+      href: articles/operations.html
+    - text: Development
+      href: articles/development.html
   - text: Reference
     href: reference/index.html
   right:
@@ -72,13 +80,13 @@ reference:
     These functions aggregate the data collected from one or many IRMS data files.
   contents:
   - iso_get_data_summary
-  - iso_get_data
+  - iso_get_all_data
   - iso_get_file_info
   - iso_get_raw_data
   - iso_get_bgrd_data
   - iso_get_vendor_data_table
-  - iso_get_resistors_info
-  - iso_get_standards_info
+  - iso_get_resistors
+  - iso_get_standards
 
 - title: "Exporting/saving data: Feather, Excel, and R Data Archives"
   desc: >

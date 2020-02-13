@@ -37,14 +37,18 @@ readr::problems
 
 #' Retrieve parsing problems
 #' 
-#' This is identical to the readr \code{\link[readr]{problems}} function.
+#' This function retrieves parsing problems encountered during the reading of a set of iso files.
 #' 
 #' @importFrom readr problems
 #' @inheritParams iso_get_raw_data
 #' @family problem functions
 #' @export
-iso_get_problems <- function(iso_files) {
-  problems(iso_files)
+iso_get_problems <- function(iso_files, select = everything()) {
+  probs <- problems(iso_as_file_list(iso_files))
+  select_cols <- get_column_names(probs, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
+  if (!"file_id" %in% select_cols) 
+    select_cols <- c("file_id", select_cols) # file info always included
+  return(dplyr::select(probs, !!!select_cols))
 }
 
 #' @importFrom readr stop_for_problems
@@ -68,7 +72,7 @@ iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE) {
   error <- warning <- type <- NULL
   
   # tally up problems
-  probs_templ <- data_frame(file_id = character(0), error = integer(0), warning = integer(0))
+  probs_templ <- tibble(file_id = character(0), error = integer(0), warning = integer(0))
   if (n_problems(iso_files) > 0) {
     probs <- problems(iso_files) %>% 
       # tally up number of warnings/errors per file
@@ -84,7 +88,7 @@ iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE) {
   
   if (!problem_files_only) {
     # merge with file list to get all listed
-    probs <- data_frame(
+    probs <- tibble(
       file_id = names(iso_files)
     ) %>%
       left_join(probs, by = "file_id") 
@@ -151,7 +155,7 @@ iso_filter_files_with_problems <- function(iso_files, remove_files_with_errors =
 register_problem <- function(obj, type = NA_character_, details = NA_character_, ..., 
                                   func = find_parent_call("register_problem"), keep_duplicates = FALSE) {
   if (func == "NULL") func <- NA_character_
-  problem <- data_frame(type = type, func = func, details = details, ...)
+  problem <- tibble(type = type, func = func, details = details, ...)
   if (iso_is_file_list(obj)) {
     obj <- as.list(obj)
     for (i in 1:length(obj)) {
@@ -214,7 +218,7 @@ combined_problems <- function(...) {
 
 # isoreader problems structure
 get_problems_structure <- function() {
-  data_frame(
+  tibble(
     type = character(),
     func = character(),
     details = character()

@@ -19,7 +19,7 @@ test_that("test that file reader registration works", {
 test_that("test that parameter checks are performed when reading file", {
   # make sure adequate parameter supplied
   expect_error(iso_read_files(), "missing")
-  expect_error(iso_read_files(supported_extensions = data_frame()), "not in data\\: \\'extension\\', \\'func\\'")
+  expect_error(iso_read_files(supported_extensions = tibble()), "not in data\\: \\'extension\\', \\'func\\'")
   expect_error(iso_read_files(
     supported_extensions = get_supported_di_files(), 
     data_structure = structure(list())), "data structure must include class \\'iso_file\\'")
@@ -94,10 +94,3 @@ test_that("test that file event expressions work", {
   set_finish_file_event_expr({})
 })
 
-# implement: parallel processing test
-
-test_that("test that parallel reading works", {
-  
-  # try both multiprocess and multisession
-  
-})

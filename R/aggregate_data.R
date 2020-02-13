@@ -27,10 +27,10 @@ iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
       message()
   }
   
-  if (length(iso_files) == 0) return(data_frame())
+  if (length(iso_files) == 0) return(tibble())
   
   # aggregate all the info
-  data_frame(
+  tibble(
     file_id = names(iso_files),
     file_path_ = map_chr(
       iso_files, 
@@ -42,7 +42,12 @@ iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
     left_join(get_raw_data_info(iso_files), by = "file_id") %>%
     left_join(get_file_info_info(iso_files), by = "file_id") %>%
     left_join(get_method_info_info(iso_files), by = "file_id") %>%
-    left_join(get_vendor_data_table_info(iso_files), by = "file_id") %>%
+    {
+      # scan files don't have vendor data table
+      if (!iso_is_scan(iso_files))
+        left_join(., get_vendor_data_table_info(iso_files), by = "file_id")
+      else .
+    } %>% 
     mutate(file_path = ifelse(!is.na(file_subpath), glue("{file_path_}|{file_subpath}"), file_path_)) %>%
     select(-file_path_, -file_subpath)
 }
@@ -58,12 +63,12 @@ get_raw_data_info <- function(iso_files) {
   
   # make sure to not process empty list
   if (length(iso_files) == 0)
-    return(data_frame(file_id = character(), raw_data = character()))
+    return(tibble(file_id = character(), raw_data = character()))
   raw_data_not_read <- "raw data not read"
   
   # retrieve the raw data info
   raw_data_sum <- 
-    data_frame(
+    tibble(
       file_id = names(iso_files),
       read_raw_data = map_lgl(iso_files, ~.x$read_options$raw_data),
       all_ions = map(iso_files, ~names(.x$raw_data) %>% str_subset("^[iIvV](\\d+)\\.")),
@@ -72,17 +77,23 @@ get_raw_data_info <- function(iso_files) {
         str_replace_all("[^0-9,]", "")
     )
   
-  if (iso_is_continuous_flow(iso_files[[1]])) {
+  if (iso_is_continuous_flow(iso_files)) {
     raw_data_sum <- raw_data_sum %>% 
       mutate(
         n_tps = map_int(iso_files, ~nrow(.x$raw_data)),
         label = ifelse(read_raw_data, glue("{n_tps} time points, {n_ions} ions ({ions})"), "raw data not read")
       )
-  } else if (iso_is_dual_inlet(iso_files[[1]])) {
+  } else if (iso_is_dual_inlet(iso_files)) {
     raw_data_sum <- raw_data_sum %>% 
       mutate(
         n_cycles = map_int(iso_files, ~as.integer(floor(nrow(.x$raw_data)/2))),
         label = ifelse(read_raw_data, glue("{n_cycles} cycles, {n_ions} ions ({ions})"), "raw data not read")
+      )
+  } else if (iso_is_scan(iso_files)) {
+    raw_data_sum <- raw_data_sum %>% 
+      mutate(
+        n_tps = map_int(iso_files, ~nrow(.x$raw_data)),
+        label = ifelse(read_raw_data, glue("{n_tps} measurements, {n_ions} ions ({ions})"), "raw data not read")
       )
   } else if (iso_is_file(iso_files[[1]])) {
     # can only get here using make_iso_file_data_structure
@@ -92,7 +103,7 @@ get_raw_data_info <- function(iso_files) {
     glue("cannot process '{class(iso_files[[1]])[1]}' in get_raw_data_info") %>% stop(call. = FALSE)
   }
   
-  return(select(raw_data_sum, file_id, raw_data = label))
+  return(dplyr::select(raw_data_sum, file_id, raw_data = label))
 }
 
 # summary of file info
@@ -128,10 +139,10 @@ get_method_info_info <- function(iso_files) {
   
   # make sure to not process empty list
   if (length(iso_files) == 0) {
-    data_frame(file_id = character(), method_info = character())
+    tibble(file_id = character(), method_info = character())
   } else {
     # retrieve the raw data info
-    data_frame(
+    tibble(
       file_id = names(iso_files),
       read_method_info = map_lgl(iso_files, ~.x$read_options$method_info),
       has_standards = map_lgl(iso_files, ~!is.null(.x$method_info$standards)),
@@ -177,89 +188,126 @@ get_vendor_data_table_info <- function(iso_files) {
 
 # Specific data aggregation calls =====
 
+#' DEPRECATED
+#' 
+#' Please use \link{iso_get_all_data} instead.
+#' 
+#' @export
+iso_get_data <- function(...) {
+  warning("'iso_get_data()' is deprecated in favor of the more descriptive 'iso_get_all_data()'. Please use 'iso_get_all_data()' directly to avoid this warning.", immediate. = TRUE, call. = FALSE)
+  iso_get_all_data(...)
+}
+
 #' Aggregate all isofiles data
 #' 
-#' This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data \code{\link{iso_get_raw_data}}, \code{\link{iso_get_file_info}}, \code{\link{iso_get_vendor_data_table}}, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To \code{\link[tidyr]{unnest}} any of the specific data types (e.g. \code{raw_data}), make sure to filter first for the files that have this data type available (e.g. \code{filter(has_raw_data)}). 
+#' This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data \code{\link{iso_get_raw_data}}, \code{\link{iso_get_file_info}}, \code{\link{iso_get_vendor_data_table}}, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To \code{\link[tidyr]{unnest}} any of the specific data types (e.g. \code{raw_data}), make sure to filter first for the files that have this data type available (e.g. \code{filter(has_raw_data)}). Exclude specific types of information by setting its \code{include...} parameter to \code{NULL} (Note: for historical reasons, setting it to \code{FALSE} will also include the information).
 #' 
 #' @inheritParams iso_get_raw_data
-#' @inheritParams iso_get_standards_info
+#' @inheritParams iso_get_standards
 #' @inheritParams iso_get_vendor_data_table
-#' @param include_raw_data which columns from the raw data to include use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default.
-#' @param include_vendor_data_table which columns from the vendor data table to include - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default.
+#' @param include_raw_data which columns from the raw data to include. Use \code{c(...)} to select multiple columns, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default. Set to NULL to include no raw data.
+#' @param include_standards which columns from the standards info to include. Use \code{c(...)} to select multiple columns, supports all \link[dplyr]{select} syntax including renaming columns. By default, everything is included (both standards and ratios). To omit the ratios, change to \code{select = file_id:reference}. Set to NULL to include no standards info.
+#' #' @param include_resistors which columns from the resistors info to include. Use \code{c(...)} to select multiple columns, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default. Set to NULL to include no resistors info.
+#' @param include_vendor_data_table which columns from the vendor data table to include. Use \code{c(...)} to select multiple columns, supports all \link[dplyr]{select} syntax including renaming columns. Includes all columns by default. Set parameter \code{with_explicit_units = TRUE} to make column units explicit (keep in mind that this will require specific \code{include_vendor_data_table} column selections to reflect the column names including the units). Set to NULL to include no vendor data table.
+#' @param include_problems which columns from problems to include. Use \code{c(...)} to select multiple columns, supports all \link[dplyr]{select} syntax including renaming columns. Includes none of the read problems by default. Set to \code{include_problems = everything()} to include all columns.
 #' @return data_frame with file_ids, file_types and nested data frames for each data type (file_info, raw_data, vendor_data_table, etc.)
 #' @family data retrieval functions
 #' @export
-iso_get_data <- function(
+iso_get_all_data <- function(
   iso_files, 
-  include_file_info = everything(), include_raw_data = everything(), include_vendor_data_table = everything(), 
-  gather = FALSE, with_explicit_units = with_units, with_units = FALSE, with_ratios = FALSE, quiet = default(quiet)) {
+  include_file_info = everything(), include_raw_data = everything(), 
+  include_standards = everything(), include_resistors = everything(), 
+  include_vendor_data_table = everything(), 
+  include_problems = NULL,
+  gather = FALSE, with_explicit_units = with_units, 
+  with_units = FALSE, with_ratios = NULL, quiet = default(quiet)) {
   
+  # info
   iso_files <- iso_as_file_list(iso_files)
   if (!quiet) sprintf("Info: aggregating all data from %d data file(s)", length(iso_files)) %>% message()
   
-  # global vars
-  vendor_data_table <- NULL
+  # deprecated parameter
+  if (!missing(with_ratios)) {
+    warning("the 'with_ratios' parameter is deprecated, please use the column selection parameter 'include_standards' to explicitly include or exclude ratio columns", immediate. = TRUE, call. = FALSE)
+  }
+  
+  # is di or cf?
+  di_or_cf <- iso_is_continuous_flow(iso_files) || iso_is_dual_inlet(iso_files)
+  
+  # select expressions
+  include_file_info_exp <- rlang::enexpr(include_file_info)
+  include_file_info <- !rlang::as_label(include_file_info_exp) %in% c("NULL", "FALSE")
+  include_raw_data_exp <- rlang::enexpr(include_raw_data)
+  include_raw_data <- !rlang::as_label(include_raw_data_exp) %in% c("NULL", "FALSE")
+  include_standards_exp <- rlang::enexpr(include_standards)
+  include_standards <- di_or_cf && !rlang::as_label(include_standards_exp) %in% c("NULL", "FALSE")
+  include_resistors_exp <- rlang::enexpr(include_resistors)
+  include_resistors <- !rlang::as_label(include_resistors_exp) %in% c("NULL", "FALSE")
+  include_vendor_data_table_exp <- rlang::enexpr(include_vendor_data_table)
+  include_vendor_data_table <- di_or_cf && !rlang::as_label(include_vendor_data_table_exp) %in% c("NULL", "FALSE")
+  include_problems_exp <- rlang::enexpr(include_problems)
+  include_problems <- !rlang::as_label(include_problems_exp) %in% c("NULL", "FALSE")
   
   # file class
   file_class <- 
-    data_frame(
+    tibble(
       file_id = names(iso_files),
       file_type = map_chr(iso_files, ~class(.x)[1])
     )
   
+  # all file data
+  # note that this uses the iso_get_... functions to have some built in error
+  # checking although a straight up map(~.x$...) would be faster
+  
+  # data merge function
+  merge_with_file_class <- function(new_df, col_name) {
+    nested_df <- nest(new_df[c(),], !!col_name := c(-file_id))
+    if (ncol(new_df) > 1)
+      nested_df <- nest(new_df, !!col_name := c(-file_id))
+    nested_df <- bind_rows(nested_df, tibble(file_id = setdiff(file_class$file_id, nested_df$file_id), !!col_name := list(tibble())))
+    left_join(file_class, nested_df, by = "file_id")
+  }
+  
   # file info
-  include_file_info_quo <- enquo(include_file_info)
-  file_info <- iso_get_file_info(iso_files, select = !!include_file_info_quo, quiet = TRUE) 
-  if (ncol(file_info) > 1)
-    file_info <- nest(file_info, file_info = c(-file_id))
-  else
-    file_info <- tibble(file_id = character(0), file_info = list(NULL))
+  if (include_file_info) {
+    file_class <- iso_get_file_info(iso_files, select = !!include_file_info_exp, quiet = TRUE) %>% 
+      merge_with_file_class("file_info")
+  }
   
   # raw data
-  include_raw_data_quo <- enquo(include_raw_data)
-  raw_data <- iso_get_raw_data(iso_files, select = !!include_raw_data_quo, gather = gather, quiet = TRUE)
-  if (ncol(raw_data) > 1)
-    raw_data <- nest(raw_data, raw_data = c(-file_id))
-  else
-    raw_data <- tibble(file_id = character(0), raw_data = list(NULL))
+  if (include_raw_data) {
+    file_class <- iso_get_raw_data(iso_files, select = !!include_raw_data_exp, gather = gather, quiet = TRUE) %>% 
+      merge_with_file_class("raw_data")
+  }
   
-  # vendor data table
-  include_vendor_data_table_quo <- enquo(include_vendor_data_table)
-  dt <- iso_get_vendor_data_table(iso_files, with_explicit_units = with_explicit_units, select = !!include_vendor_data_table_quo, quiet = TRUE)
-  if (ncol(dt) > 1)
-    dt <- nest(dt, vendor_data_table = c(-file_id))
-  else
-    dt <- tibble(file_id = character(0), vendor_data_table = list(NULL))
+  # standards
+  if (include_standards) {
+    file_class <- iso_get_standards(iso_files, select = !!include_standards_exp, quiet = TRUE) %>% 
+      merge_with_file_class("standards")
+  }
   
-  # methods_data - standards
-  standards <- iso_get_standards_info(iso_files, with_ratios = with_ratios, quiet = TRUE)
-  if (ncol(standards) > 1)
-    standards <- nest(standards, standards = c(-file_id))
-  else
-    standards <- tibble(file_id = character(0), standards = list(NULL))
+  # resistors
+  if (include_resistors) {
+    file_class <- iso_get_resistors(iso_files, select = !!include_resistors_exp, quiet = TRUE) %>% 
+      merge_with_file_class("resistors")
+  }
   
-  # methods_data - resistors
-  resistors <- iso_get_resistors_info(iso_files, quiet = TRUE)
-  if (ncol(resistors) > 1)
-    resistors <- nest(resistors, resistors = c(-file_id))
-  else
-    resistors <- tibble(file_id = character(0), resistors = list(NULL))
+  # vendor data table (only cflow and dual inlet)
+  if (include_vendor_data_table) {
+    file_class <- iso_get_vendor_data_table(
+      iso_files, 
+      with_explicit_units = with_explicit_units, 
+      select = !!include_vendor_data_table_exp, quiet = TRUE) %>% 
+      merge_with_file_class("vendor_data_table")
+  }
   
-  # combine everything
-  file_class %>% 
-    left_join(file_info, by = "file_id") %>% 
-    left_join(raw_data, by = "file_id") %>%
-    left_join(dt, by = "file_id") %>% 
-    left_join(standards, by = "file_id") %>% 
-    left_join(resistors, by = "file_id") %>% 
-    # info about what's missing
-    mutate(
-      has_file_info = !map_lgl(file_info, is.null),
-      has_raw_data = !map_lgl(raw_data, is.null),
-      has_vendor_data_table = !map_lgl(vendor_data_table, is.null),
-      has_standards = !map_lgl(standards, is.null),
-      has_resistors = !map_lgl(resistors, is.null)
-    )
+  # problems
+  if (include_problems) {
+    file_class <- iso_get_problems(iso_files, select = !!include_problems_exp) %>% 
+      merge_with_file_class("problems")
+  }
+  
+  return(file_class)
 }
 
 #' Aggregate file info
@@ -272,32 +320,42 @@ iso_get_data <- function(
 #' @note File info entries with multiple values remain nested multi-value (=list) columns and can be unnested using \link[tidyr]{unnest}.
 #' @export
 iso_get_file_info <- function(iso_files, select = everything(), quiet = default(quiet)) {
+  
+  # make sure it's an iso file list
   iso_files <- iso_as_file_list(iso_files)
-  select_quo <- enquo(select)
+  select_exp <- rlang::enexpr(select)
   
   if (!quiet) { 
     glue::glue(
       "Info: aggregating file info from {length(iso_files)} data file(s)",
-      "{get_info_message_concat(select_quo, prefix = ', selecting info columns ', empty = 'everything()')}") %>% message()
+      "{get_info_message_concat(select_exp, prefix = ', selecting info columns ', empty = 'everything()')}") %>% message()
   }
   check_read_options(iso_files, "file_info")
   
-  # select columns
-  if ( rlang::as_label(select_quo) != "everything()") {
-    # run selection unless everything is selected 
-    # (in which case it is a waste of time to run)
-    iso_files <- iso_select_file_info(iso_files, !!select_quo, quiet = TRUE)
-  }
-  
   # retrieve info
-  iso_files %>% 
+  file_info <- iso_files %>% 
     # retrieve file info
     map(~.x$file_info) %>% 
     # combine in data frame (use safe bind to make sure different data column 
     # types of the same name don't trip up the combination)
-    safe_bind_rows() %>% 
-    # unnest aggregated data frame
+    safe_bind_rows() 
+  
+  if(nrow(file_info) == 0) return(tibble(file_id = character(0)))
+  
+  # selecting columns
+  select_cols <- get_column_names(file_info, select = select_exp, n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
+  if (!"file_id" %in% select_cols) 
+    select_cols <- c("file_id", select_cols) # file id always included
+  
+  # final processing
+  file_info <- 
+    file_info %>% 
+    # focus on selected columns only (also takes care of the rename)
+    dplyr::select(!!!select_cols) %>%
+    # unnest aggregated columns
     unnest_aggregated_data_frame()
+  
+  return(file_info)
 }
 
 # note: consider providing a separate iso_gather_raw_data method that works just on the raw data table and could be used in other contexts
@@ -308,7 +366,7 @@ iso_get_file_info <- function(iso_files, select = everything(), quiet = default(
 #' 
 #' @inheritParams iso_read_files
 #' @param iso_files collection of iso_file objects
-#' @param select which raw data columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. By default, all columns are selected.
+#' @param select which data columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. By default, all columns are selected.
 #' @family data retrieval functions
 #' @param gather whether to gather raw data into long format (e.g. for ease of use in plotting). Not that the \code{select} parameter applies to the data columns BEFORE gathering.
 #' @param include_file_info which file information to include (see \code{\link{iso_get_file_info}}). Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns.
@@ -320,23 +378,23 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
   raw_data <- NULL
   
   iso_files <- iso_as_file_list(iso_files)
-  select_quo <- enquo(select)
+  select_exp <- rlang::enexpr(select)
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
     glue::glue(
       "Info: aggregating raw data from {length(iso_files)} data file(s)",
-      "{get_info_message_concat(select_quo, prefix = ', selecting data columns ', empty = 'everything()')}",
+      "{get_info_message_concat(select_exp, prefix = ', selecting data columns ', empty = 'everything()')}",
       "{get_info_message_concat(include_file_info_quo, prefix = ', including file info ')}") %>% message()
   }
   check_read_options(iso_files, "raw_data")
   
   # check whether there are any
-  if (length(iso_files) == 0) return(data_frame())
+  if (length(iso_files) == 0) return(tibble())
   
   # fetch data
   data <-
     # fetch data
-    data_frame(
+    tibble(
       file_id = names(iso_files),
       raw_data = map(iso_files, ~.x$raw_data)
     ) %>% 
@@ -346,10 +404,10 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
     unnest(raw_data)
   
   # check for rows
-  if (nrow(data) == 0) return(data)
+  if (nrow(data) == 0) return(dplyr::select(data, file_id))
   
   # selecting columns
-  select_cols <- get_column_names(data, select = select_quo, n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
+  select_cols <- get_column_names(data, select = select_exp, n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
   if (!"file_id" %in% select_cols) 
     select_cols <- c("file_id", select_cols) # file id always included
   data <- data %>% 
@@ -405,23 +463,23 @@ iso_get_bgrd_data <- function(iso_files, select = everything(), gather = FALSE, 
   
   iso_files <- iso_as_file_list(iso_files)
   if (!all(map_lgl(iso_files, iso_is_dual_inlet))) stop("background data is only available in dual inlet data files", call. = FALSE)
-  select_quo <- enquo(select)
+  select_exp <- rlang::enexpr(select)
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
     glue(
       "Info: aggregating background data from {length(iso_files)} data file(s)",
-      "{get_info_message_concat(select_quo, prefix = ', selecting data columns ', empty = 'everything()')}",
+      "{get_info_message_concat(select_exp, prefix = ', selecting data columns ', empty = 'everything()')}",
       "{get_info_message_concat(include_file_info_quo, prefix = ', including file info ')}") %>% message()
   }
   check_read_options(iso_files, "raw_data")
   
   # check whether there are any
-  if (length(iso_files) == 0) return(data_frame())
+  if (length(iso_files) == 0) return(tibble())
   
   # fetch data
   data <-
     # fetch data
-    data_frame(
+    tibble(
       file_id = names(iso_files),
       bgrd_data = map(iso_files, ~.x$bgrd_data)
     ) %>% 
@@ -431,10 +489,10 @@ iso_get_bgrd_data <- function(iso_files, select = everything(), gather = FALSE, 
     unnest(bgrd_data)
   
   # check for rows
-  if (nrow(data) == 0) return(data)
+  if (nrow(data) == 0) return(dplyr::select(data, file_id))
   
   # selecting columns
-  select_cols <- get_column_names(data, select = select_quo, n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
+  select_cols <- get_column_names(data, select = select_exp, n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
   if (!"file_id" %in% select_cols) 
     select_cols <- c("file_id", select_cols) # file info always included
   data <- data %>% 
@@ -465,48 +523,84 @@ iso_get_bgrd_data <- function(iso_files, select = everything(), gather = FALSE, 
   return(data)
 }
 
+#' DEPRECATED
+#' 
+#' Please use \link{iso_get_standards} instead.
+#' 
+#' @export
+iso_get_standards_info <- function(...) {
+  warning("'iso_get_standards_info()' is deprecated in favor of the simpler 'iso_get_standards()'. Please use 'iso_get_standards()' directly to avoid this warning.", immediate. = TRUE, call. = FALSE)
+  iso_get_standards(...)
+}
 
 #' Aggregate standards from methods info
 #'
-#' Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios. This information is only available if the iso_files were read with parameter \code{read_method_info=TRUE}.
+#' Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{select} to exclude/include the ratios. All standards info is only available if the iso_files were read with parameter \code{read_method_info=TRUE}.
 #'
 #' @inheritParams iso_get_raw_data
-#' @param with_ratios whether to include ratios or just standard delta values
+#' @param select which data columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. By default, everything is included (both standards and ratios). To omit the ratios, change to \code{select = file_id:reference}.
+#' @param with_ratios deprecated, please use the \code{select} paramter to explicitly include or exclude ratio columns
 #' @family data retrieval functions
 #' @export
-iso_get_standards_info <- function(iso_files, with_ratios = FALSE, include_file_info = NULL, quiet = default(quiet)) {
+iso_get_standards <- function(iso_files, select = everything(), include_file_info = NULL, with_ratios = NULL, quiet = default(quiet)) {
+  
   iso_files <- iso_as_file_list(iso_files)
+  
+  # safety checks
+  if (iso_is_scan(iso_files))
+    stop("scan files don't have standards information", call. = FALSE)
+  else if (!iso_is_continuous_flow(iso_files) && !iso_is_dual_inlet(iso_files))
+    stop("only dual inlet and continuous flow files can have standards information", call. = FALSE)
+  
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
     sprintf("Info: aggregating standards info from %d data file(s)%s", length(iso_files),
             get_info_message_concat(include_file_info_quo, prefix = ", including file info ")) %>% message()
   }
   
+  # deprecated parameter
+  if (!missing(with_ratios)) {
+    warning("the 'with_ratios' parameter is deprecated, please use the column selection parameter 'select' to explicitly include or exclude ratio columns", immediate. = TRUE, call. = FALSE)
+  }
+  
   check_read_options(iso_files, "method_info")
   
   # check whether there are any
-  if (length(iso_files) == 0) return(data_frame())
+  if (length(iso_files) == 0) return(tibble())
   
   # fetch data
   data <-
     # fetch data
-    data_frame(
+    tibble(
       file_id = names(iso_files),
       standards = map(iso_files, ~.x$method_info$standard),
       ref_ratios = map(iso_files, ~.x$method_info$reference_ratios)
     ) 
   
   # check for rows
-  if (nrow(data) == 0) return(data)
+  if (nrow(data) == 0) return(dplyr::select(data, file_id))
   
   # merge info
-  standards <- data %>% select(file_id, standards) %>% filter(!map_lgl(standards, is.null)) %>% unnest(standards) 
-  if (with_ratios) {
-    ref_ratios <- data %>% select(file_id, ref_ratios) %>% filter(!map_lgl(ref_ratios, is.null)) %>% unnest(ref_ratios) 
-    data <- left_join(standards, ref_ratios, by = c("file_id", "reference"))
-  } else {
+  standards <- data %>% 
+    dplyr::select(file_id, standards) %>% 
+    dplyr::filter(!map_lgl(standards, is.null)) %>% unnest(standards) 
+  ref_ratios <- data %>% dplyr::select(file_id, ref_ratios) %>% 
+      dplyr::filter(!map_lgl(ref_ratios, is.null)) %>% 
+      tidyr::unnest(ref_ratios) 
+  if ("reference" %in% names(ref_ratios))
+    data <- dplyr::left_join(standards, ref_ratios, by = c("file_id", "reference"))
+  else
     data <- standards
-  }
+  
+  # select columns (only warn if it's not the default and cols don't exist)
+  select_exp <- rlang::enexpr(select)
+  warn <- rlang::as_label(select_exp) != rlang::as_label(formals(iso_get_standards)$select)
+  select_cols <- get_column_names(data, select = select_exp, n_reqs = list(select = "*"), cols_must_exist = FALSE, warn = warn)$select
+  if (!"file_id" %in% select_cols) 
+    select_cols <- c("file_id", select_cols) # file info always included
+  
+  # focus on selected columns only (also takes care of the rename)
+  data <- dplyr::select(data, !!!select_cols) %>% unique()
   
   # if file info
   if (!quo_is_null(include_file_info_quo)) {
@@ -516,6 +610,17 @@ iso_get_standards_info <- function(iso_files, with_ratios = FALSE, include_file_
   return(data)
 }
 
+
+#' DEPRECATED
+#' 
+#' Please use \link{iso_get_resistors} instead.
+#' 
+#' @export
+iso_get_resistors_info <- function(...) {
+  warning("'iso_get_resistors_info()' is deprecated in favor of the simpler 'iso_get_resistors()'. Please use 'iso_get_resistors()' directly to avoid this warning.", immediate. = TRUE, call. = FALSE)
+  iso_get_resistors(...)
+}
+
 #' Aggregate resistors from methods info
 #'
 #' Aggregates the resistor information recovered from the provided iso_files. This information is only available if the iso_files were read with parameter \code{read_method_info=TRUE} and only linked to specific masses if the iso_files were additionally read with parametr \code{read_raw_data=TRUE}.
@@ -523,7 +628,7 @@ iso_get_standards_info <- function(iso_files, with_ratios = FALSE, include_file_
 #' @inheritParams iso_get_raw_data
 #' @family data retrieval functions
 #' @export
-iso_get_resistors_info  <- function(iso_files, include_file_info = NULL, quiet = default(quiet)) {
+iso_get_resistors  <- function(iso_files, select = everything(), include_file_info = NULL, quiet = default(quiet)) {
   
   # global vars
   resistors <- NULL
@@ -538,20 +643,31 @@ iso_get_resistors_info  <- function(iso_files, include_file_info = NULL, quiet =
   check_read_options(iso_files, "method_info")
   
   # check whether there are any files
-  if (length(iso_files) == 0) return(data_frame())
+  if (length(iso_files) == 0) return(tibble())
   
   # fetch data
   data <-
     # fetch data
-    data_frame(
+    tibble(
       file_id = names(iso_files),
       resistors = map(iso_files, ~.x$method_info$resistors)
     ) %>% 
     # make sure to include only existing raw data
-    filter(!map_lgl(resistors, is.null)) %>% 
+    dplyr::filter(!map_lgl(resistors, is.null)) %>% 
     # unnest
-    unnest(resistors)
+    tidyr::unnest(resistors)
 
+  # check for rows
+  if (nrow(data) == 0) return(dplyr::select(data, file_id))
+  
+  # select columns
+  select_cols <- get_column_names(data, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
+  if (!"file_id" %in% select_cols) 
+    select_cols <- c("file_id", select_cols) # file info always included
+  
+  # focus on selected columns only (also takes care of the rename)
+  data <- dplyr::select(data, !!!select_cols) 
+  
   # if file info
   if (!quo_is_null(include_file_info_quo)) {
     info <- iso_get_file_info(iso_files, select = !!include_file_info_quo, quiet = TRUE)
@@ -567,7 +683,7 @@ iso_get_resistors_info  <- function(iso_files, include_file_info = NULL, quiet =
 #' @inheritParams iso_get_raw_data
 #' @inheritParams iso_get_file_info
 #' @param with_units this parameter has been DEPRECATED with the introduction of unit-data types (see \code{\link{iso_double_with_units}}) and will be removed in future versions of isoreader. Please use \code{with_explicit_units} instead if you really want columns to have units explicitly in the column name. Alternatively, consider working with the new implicit unit system and convert vendor data tables as needed with \code{\link{iso_make_units_explicit}} and \code{\link{iso_make_units_implicit}}.
-#' @param with_explicit_units whether to include units in the column headers instead of the column data types (see \code{\link{iso_double_with_units}})
+#' @param with_explicit_units whether to include units in the column headers of the returned data frame instead of the column data types (see \code{\link{iso_double_with_units}}). Note that any \code{select} conditions have to refer to the column names including the full units.
 #' @family data retrieval functions
 #' @export
 iso_get_vendor_data_table <- function(
@@ -578,8 +694,15 @@ iso_get_vendor_data_table <- function(
   
   # globals
   dt <- has_units <- NULL
-  
   iso_files <- iso_as_file_list(iso_files)
+  
+  # safety checks
+  if (iso_is_scan(iso_files))
+    stop("scan files don't have vendor data tables", call. = FALSE)
+  else if (!iso_is_continuous_flow(iso_files) && !iso_is_dual_inlet(iso_files))
+    stop("only dual inlet and continuous flow files can have vendor data tables", call. = FALSE)
+  
+  # process
   include_file_info_quo <- enquo(include_file_info)
   if (!quiet) { 
     sprintf("Info: aggregating vendor data table%s from %d data file(s)%s", 
@@ -597,7 +720,7 @@ iso_get_vendor_data_table <- function(
   }
   
   # check whether there are any files
-  if (length(iso_files) == 0) return(data_frame())
+  if (length(iso_files) == 0) return(tibble())
   
   # get vendor data
   column <- units <- NULL # global vars
@@ -613,7 +736,7 @@ iso_get_vendor_data_table <- function(
     filter(map_lgl(dt, ~!is.null(.x) & nrow(.x) > 0))
   
   # check for any rows
-  if (nrow(vendor_data_table) == 0) return(vendor_data_table)
+  if (nrow(vendor_data_table) == 0) return(dplyr::select(vendor_data_table, file_id))
   
   # make units explicit if wanted
   if (with_explicit_units) {
@@ -622,7 +745,7 @@ iso_get_vendor_data_table <- function(
   }
   
   # unnest
-  vendor_data_table <- dplyr::select(vendor_data_table, file_id, dt) %>% unnest(dt)
+  vendor_data_table <- dplyr::select(vendor_data_table, .data$file_id, .data$dt) %>% unnest(.data$dt)
 
   # get include information
   select_cols <- get_column_names(vendor_data_table, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select

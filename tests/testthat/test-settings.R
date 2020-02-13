@@ -6,9 +6,19 @@ test_that("default values can be set and retrieved", {
   expect_true(set_default("quiet", TRUE))
   expect_true(default("quiet"))
   expect_true(default(quiet))
+  expect_error(default(quiet^2), "don't know how to process.*expression")
   expect_false(set_default("quiet", FALSE))
   expect_false(default("quiet"))
   expect_false(default(quiet))
+})
+
+test_that("default calls are resolved", {
+  # resolve defaults in a list of quos
+  expect_equal(resolve_defaults(quo(default(quiet))), FALSE)
+  expect_equal(resolve_defaults(expr(default(quiet))), FALSE)
+  expect_equal(resolve_defaults(list(
+    quo(default(quiet)), expr(default(quiet)), quo(x), expr(y)
+  )), list(FALSE, FALSE, quo(x), expr(y)))
 })
 
 test_that("info messages can be turned on and off", {
@@ -35,7 +45,7 @@ test_that("info messages can be switched for just one function", {
 })
 
 test_that("info message functions can be part of a pipeline", {
-  df <- data_frame(a = 1:5)
+  df <- tibble(a = 1:5)
   expect_equal(df %>% iso_turn_info_messages_on(), df)
   expect_equal(df %>% iso_turn_info_messages_off(), df)
 })
@@ -69,7 +79,7 @@ test_that("setting default read_parameters", {
   expect_message(iso_set_default_read_parameters(read_method_info = FALSE, quiet=FALSE))
   expect_false(default(read_file_info))
   expect_false(default(read_method_info))
-  df <- data_frame(a = 1:5)
+  df <- tibble(a = 1:5)
   expect_equal(iso_set_default_read_parameters(df, read_file_info = TRUE, read_method_info = TRUE, quiet=TRUE), df)
   expect_true(default(read_file_info))
   expect_true(default(read_method_info))

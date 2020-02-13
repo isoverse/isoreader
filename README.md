@@ -4,7 +4,7 @@
 # isoreader <a href='http://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
-[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.0.11-orange.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
+[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.0.15-orange.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](http://isoreader.isoverse.org/)
 [![Build
 Status](https://travis-ci.org/isoverse/isoreader.svg?branch=master)](https://travis-ci.org/isoverse/isoreader)
@@ -52,6 +52,12 @@ You can install isoreader from github with the devtools package (version
 \> 1.13.2 required for bioconductor support).
 
 ``` r
+# restart your R session (this command only works in RStudio)
+.rs.restartR()
+
+# installs the development tools package if not yet installed
+if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools") 
+
 # install.packages("devtools") # only needed once
 devtools::install_github("isoverse/isoreader")
 ```
@@ -66,18 +72,18 @@ Currently supported file types:
     #> 
     #>     filter
 
-| extension | format                                     | type            |
-| :-------- | :----------------------------------------- | :-------------- |
-| .did      | Isodat Dual Inlet file format (newer)      | dual inlet      |
-| .caf      | Isodat Dual Inlet file format (older)      | dual inlet      |
-| .txt      | Nu Dual Inlet file format                  | dual inlet      |
-| .di.rda   | Isoreader R Data Archive (deprecated)      | dual inlet      |
-| .di.rds   | Isoreader R Data Storage                   | dual inlet      |
-| .cf       | Isodat Continuous Flow file format (older) | continuous flow |
-| .dxf      | Isodat Continuous Flow file format (newer) | continuous flow |
-| .iarc     | IonOS Continous Flow data archieve         | continuous flow |
-| .cf.rda   | Isoreader R Data Archive (deprecated)      | continuous flow |
-| .cf.rds   | Isoreader R Data Storage                   | continuous flow |
+| extension | software  | description                         | type            |
+| :-------- | :-------- | :---------------------------------- | :-------------- |
+| .did      | Isodat    | Dual Inlet file format (newer)      | dual inlet      |
+| .caf      | Isodat    | Dual Inlet file format (older)      | dual inlet      |
+| .txt      | Nu        | Dual Inlet file format              | dual inlet      |
+| .di.rda   | isoreader | R Data Archive (deprecated)         | dual inlet      |
+| .di.rds   | isoreader | R Data Storage                      | dual inlet      |
+| .cf       | Isodat    | Continuous Flow file format (older) | continuous flow |
+| .dxf      | Isodat    | Continuous Flow file format (newer) | continuous flow |
+| .iarc     | ionOS     | Continous Flow data archieve        | continuous flow |
+| .cf.rda   | isoreader | R Data Archive (deprecated)         | continuous flow |
+| .cf.rds   | isoreader | R Data Storage                      | continuous flow |
 
   - for a full reference of all available functions, see the **[Function
     Reference](http://isoreader.isoverse.org/reference/)**

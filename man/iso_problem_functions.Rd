@@ -20,9 +20,10 @@ The following functions to check for and deal with problems are available.
 }
 }
 \seealso{
-Other problem functions: \code{\link{iso_filter_files_with_problems}},
-  \code{\link{iso_get_problems_summary}},
-  \code{\link{iso_get_problems}},
-  \code{\link{iso_has_problems}}
+Other problem functions: 
+\code{\link{iso_filter_files_with_problems}()},
+\code{\link{iso_get_problems_summary}()},
+\code{\link{iso_get_problems}()},
+\code{\link{iso_has_problems}()}
 }
 \concept{problem functions}

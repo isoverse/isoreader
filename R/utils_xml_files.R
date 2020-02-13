@@ -10,7 +10,7 @@ map_xml_children <- function(nodes, select = NULL) {
         # map all as text ignoring everything that does not have exactly 1 value
         map_chr(function(x) if (length(x) == 1) x[[1]] else NA_character_) %>% 
         # convert to data frame
-        as.list() %>% as_data_frame()
+        as.list() %>% dplyr::as_tibble()
     })
 }
 
@@ -64,7 +64,7 @@ process_iarc_info_xml <- function(filepath) {
 # process iarc methods xml files
 process_iarc_methods_xml <- function(filepaths) {
   
-  if (length(filepaths) == 0) return(data_frame())
+  if (length(filepaths) == 0) return(tibble())
   
   method_params <- 
     filepaths %>% 
@@ -123,7 +123,7 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
         ) %>% 
         left_join(method_parameters, by = c("MethodId" = "MethodId", "ParameterIdentifier" = "Id"))
     } else {
-      task_values <- data_frame()
+      task_values <- tibble()
     }
     
     # @NOTE: TypeIdentifier in the method_parameters holds the data type but even for numbers it seems to always be "String", currently not processed further (i.e. not turned into a different data type)
@@ -146,7 +146,7 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
       filename = basename(task_file),
       # combine task info with task values 
       info = 
-        task_info %>% as_data_frame() %>% 
+        task_info %>% dplyr::as_tibble() %>% 
         {
           if (nrow(task_values) > 0) {
             left_join(., 
@@ -213,7 +213,7 @@ process_iarc_processing_xml <- function(processing_list_id, filepath) {
       xml_find_all(".//SerialisablePropertyBag[Identifier[.='{42D28191-A6E9-4B7B-8C3D-0F0037624F7D}']]") %>%  
       map(xml_fetch_container_value, c("NumeratorBeamChannel", "DenominatorBeamChannel", "Label")) %>%
       bind_rows() 
-    if (nrow(ratio_defs) == 0) return (data_frame(channel = character(), mass = character()))  
+    if (nrow(ratio_defs) == 0) return (tibble(channel = character(), mass = character()))  
     
     # derive channel defintions
     channel_defs <-

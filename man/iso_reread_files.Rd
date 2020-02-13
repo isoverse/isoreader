@@ -6,11 +6,19 @@
 \alias{iso_reread_archive}
 \title{Re-read iso_files}
 \usage{
-iso_reread_files(iso_files, ..., stop_if_missing = FALSE,
-  quiet = default(quiet))
+iso_reread_files(
+  iso_files,
+  ...,
+  stop_if_missing = FALSE,
+  quiet = default(quiet)
+)
 
-iso_reread_storage(rds_filepaths, ..., stop_if_missing = FALSE,
-  quiet = default(quiet))
+iso_reread_storage(
+  rds_filepaths,
+  ...,
+  stop_if_missing = FALSE,
+  quiet = default(quiet)
+)
 
 iso_reread_archive(...)
 }

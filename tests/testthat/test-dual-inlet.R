@@ -29,15 +29,16 @@ test_that("test that nu file processor works properly", {
 # actual files ========
 
 test_that("test that did files can be read", {
+  
+  
+  # check if tests are enabled
+  run_file_tests <- getOption("isoreader.run_file_tests")
+  if (!is.null(run_file_tests) && identical(run_file_tests, FALSE)) {
+    skip("Currently not testing all dual inlet data files.")
+  }
+  
   # test specific files
-  
-  # FIXME: re-enable for commits
-  skip("Currently not testing all dual inlet data files.")
-  # FIXME: run as one batch to make use of parallel processing
-  
   iso_turn_reader_caching_off()
-  
-  # .did files
   
   expect_true(file.exists(file <- iso_get_reader_example("dual_inlet_example.did")))
   expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
@@ -52,6 +53,10 @@ test_that("test that did files can be read", {
   expect_equal(nrow(problems(did)), 0)
   
   expect_true(file.exists(file <- file.path("test_data", "did_example_unicode.did")))
+  expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
+  expect_equal(nrow(problems(did)), 0)
+
+  expect_true(file.exists(file <- file.path("test_data", "did_ultra_example.did")))
   expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
   

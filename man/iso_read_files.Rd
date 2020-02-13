@@ -4,12 +4,21 @@
 \alias{iso_read_files}
 \title{Core function to read isotope data files}
 \usage{
-iso_read_files(paths, root, supported_extensions, data_structure,
-  read_options = c(), reader_options = list(),
-  discard_duplicates = TRUE, parallel = FALSE,
-  parallel_plan = future::multiprocess, cache = default(cache),
-  cache_files_with_errors = TRUE, read_cache = default(cache),
-  quiet = default(quiet))
+iso_read_files(
+  paths,
+  root,
+  supported_extensions,
+  data_structure,
+  read_options = c(),
+  reader_options = list(),
+  discard_duplicates = TRUE,
+  parallel = FALSE,
+  parallel_plan = future::multisession,
+  cache = default(cache),
+  cache_files_with_errors = TRUE,
+  read_cache = default(cache),
+  quiet = default(quiet)
+)
 }
 \arguments{
 \item{paths}{one or multiple file/folder paths. All files must have a supported file extension. All folders are expanded and searched for files with supported file extensions (which are then included in the read). Paths can be absolute paths or relative to the provided file \code{root} (which is the current working directory by default). For absolute paths, a common root directory will be guessed using \link{iso_find_absolute_path_roots}. The root portion of paths will never be displayed in info messages.}
@@ -28,7 +37,7 @@ iso_read_files(paths, root, supported_extensions, data_structure,
 
 \item{parallel}{whether to process in parallel based on the number of available CPU cores. This may yield performance increases for files that are slow to parse such as continuous flow isodat files but usually provides little benefit for efficient data formats such as reading from R Data Archives.}
 
-\item{parallel_plan}{which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multiprocess} (the default, uses multicore if supported by the operating system, otherwise multisession), \code{future::multisession} or \code{future::multicore}.}
+\item{parallel_plan}{which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multisession} for compatibility with RStudio interactive mode. If supported by the operating system and running in detached mode (not interactively in RStudio) can also use \code{future::multicore}.}
 
 \item{cache}{whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
 
