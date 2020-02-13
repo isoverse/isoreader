@@ -220,11 +220,16 @@ iso_get_all_data <- function(
   include_vendor_data_table = everything(), 
   include_problems = NULL,
   gather = FALSE, with_explicit_units = with_units, 
-  with_units = FALSE, quiet = default(quiet)) {
+  with_units = FALSE, with_ratios = NULL, quiet = default(quiet)) {
   
   # info
   iso_files <- iso_as_file_list(iso_files)
   if (!quiet) sprintf("Info: aggregating all data from %d data file(s)", length(iso_files)) %>% message()
+  
+  # deprecated parameter
+  if (!missing(with_ratios)) {
+    warning("the 'with_ratios' parameter is deprecated, please use the column selection parameter 'include_standards' to explicitly include or exclude ratio columns", immediate. = TRUE, call. = FALSE)
+  }
   
   # is di or cf?
   di_or_cf <- iso_is_continuous_flow(iso_files) || iso_is_dual_inlet(iso_files)
@@ -530,13 +535,14 @@ iso_get_standards_info <- function(...) {
 
 #' Aggregate standards from methods info
 #'
-#' Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{with_ratios} to exclude/include the ratios. This information is only available if the iso_files were read with parameter \code{read_method_info=TRUE}.
+#' Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{select} to exclude/include the ratios. All standards info is only available if the iso_files were read with parameter \code{read_method_info=TRUE}.
 #'
 #' @inheritParams iso_get_raw_data
 #' @param select which data columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax. By default, everything is included (both standards and ratios). To omit the ratios, change to \code{select = file_id:reference}.
+#' @param with_ratios deprecated, please use the \code{select} paramter to explicitly include or exclude ratio columns
 #' @family data retrieval functions
 #' @export
-iso_get_standards <- function(iso_files, select = everything(), include_file_info = NULL, quiet = default(quiet)) {
+iso_get_standards <- function(iso_files, select = everything(), include_file_info = NULL, with_ratios = NULL, quiet = default(quiet)) {
   
   iso_files <- iso_as_file_list(iso_files)
   
@@ -550,6 +556,11 @@ iso_get_standards <- function(iso_files, select = everything(), include_file_inf
   if (!quiet) { 
     sprintf("Info: aggregating standards info from %d data file(s)%s", length(iso_files),
             get_info_message_concat(include_file_info_quo, prefix = ", including file info ")) %>% message()
+  }
+  
+  # deprecated parameter
+  if (!missing(with_ratios)) {
+    warning("the 'with_ratios' parameter is deprecated, please use the column selection parameter 'select' to explicitly include or exclude ratio columns", immediate. = TRUE, call. = FALSE)
   }
   
   check_read_options(iso_files, "method_info")
