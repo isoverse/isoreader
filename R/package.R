@@ -17,7 +17,6 @@
 #' @importFrom utils unzip head tail modifyList packageVersion
 #' @importFrom xml2 xml_find_all xml_child xml_text read_xml xml_children as_list
 #' @importFrom rhdf5 h5ls h5read h5readAttributes H5close
-#' @importFrom lazyeval as.lazy
 #' @importFrom UNF unf
 #' @importFrom openxlsx createWorkbook createStyle addWorksheet writeData saveWorkbook
 #' @importFrom feather write_feather
