@@ -809,7 +809,9 @@ find_parent_call <- function(current_func) {
 # convience function for information message
 get_info_message_concat <- function(variable, prefix = "", suffix = "", empty = c(), quotes = TRUE, include_names = FALSE, names_sep = "=", flip_names_and_values = FALSE){
   if (is_quosure(variable) || rlang::is_expression(variable)) {
-    variable <- rlang::as_label(variable)
+    # note that as_label does not provide enough information if it is a long call
+    # quo_text is in questioning stage but no good replacement exists yet
+    variable <- rlang::quo_text(variable, width = 500L)
     if (variable == "NULL") return("")
   } else if (is.list(variable)) {
     variable <- purrr::map_chr(variable, ~{

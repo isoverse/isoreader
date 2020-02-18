@@ -21,8 +21,9 @@ test_that("Test that selecting/renaming file info works", {
   expect_error(iso_select_file_info(iso_files, new = file_id), "renaming.*not allowed")
   expect_warning(iso_select_file_info(iso_files, y = DNE), "doesn't exist")
   expect_warning(iso_select_file_info(iso_files, y = DNE, file_specific = TRUE), "doesn't exist")
-  expect_warning(iso_select_file_info(iso_files, y = new_info, y = new_info2), "must be unique")
-  expect_message(iso_select_file_info(iso_files, y = new_info, y = new_info2, file_specific = TRUE), "selecting/renaming")
+  expect_error(iso_select_file_info(iso_files, y = new_info, y = new_info2), "renamed columns must be unique")
+  expect_message(iso_select_file_info(iso_files, y = new_info, y = new_info2, file_specific = TRUE, cols_must_exist = FALSE), 
+                 "selecting/renaming")
   
   # select info message
   expect_message(iso_select_file_info(iso_file1), "keeping only 'file_id'") # always file_info
@@ -71,7 +72,7 @@ test_that("Test that selecting/renaming file info works", {
   expect_error(iso_rename_file_info(iso_file1, new = file_id), "renaming.*not allowed")
   expect_error(iso_rename_file_info(iso_files, new = file_id), "renaming.*not allowed")
   expect_error(iso_rename_file_info(iso_files, new_info = new_info2), class = "vctrs_error_names_must_be_unique", "must be unique")
-  expect_warning(iso_rename_file_info(iso_files, y = new_info, y = new_info2), "must be unique")
+  expect_error(iso_rename_file_info(iso_files, y = new_info, y = new_info2), "must be unique")
   
   # rename info message
   expect_message(iso_rename_file_info(iso_file1), "renaming.*1 data file")
@@ -79,7 +80,7 @@ test_that("Test that selecting/renaming file info works", {
   expect_silent(rename(iso_file1)) 
   expect_message(iso_rename_file_info(iso_file1, newer_info = new_info), "renaming.*1.*file.*'new_info'->'newer_info'")
   expect_message(iso_rename_file_info(iso_files, newer_info = new_info2), "renaming.*3.*file.*'new_info2'->'newer_info'")
-  expect_warning(iso_rename_file_info(iso_files, y = new_info2, y = new_info3), "must be unique")
+  expect_error(iso_rename_file_info(iso_files, y = new_info2, y = new_info3), "renamed columns must be unique")
   expect_message(iso_rename_file_info(iso_files, y = new_info2, y = new_info3, file_specific = TRUE), 
                  "1 file.*'new_info2'->'y'.*1 file.*'new_info3'->'y'")
   
