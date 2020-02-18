@@ -135,28 +135,56 @@ iso_select_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
     
   } else {
     # across all files  - fast but less flexible
-    # retrieve file info using the aggregate function
-    file_info <- iso_get_file_info(iso_files, select = !!select_exp, quiet = TRUE, simplify = FALSE)
+    # retrieve info
+    file_info <- iso_files %>% 
+      # retrieve file info
+      map(~.x$file_info) %>% 
+      # combine in data frame (use safe bind to make sure different data column 
+      # types of the same name don't trip up the combination)
+      safe_bind_rows() 
     
-    # check for file id
-    if (!"file_id" %in% names(file_info)) {
-      stop("renaming the 'file_id' column inside an isofile may lead to unpredictable behaviour and is therefore not allowed, sorry", call. = FALSE)
+    # check if there are any file_info
+    if (nrow(file_info) > 0L) {
+      
+      # selecting columns
+      select_cols <- get_column_names(
+        file_info, select = select_exp, 
+        n_reqs = list(select = "*"), 
+        cols_must_exist = FALSE)$select
+      
+      if (!"file_id" %in% select_cols) 
+        select_cols <- c("file_id", select_cols) # file id always included
+      
+      # final processing
+      file_info <- 
+        file_info %>% 
+        # focus on selected columns only (also takes care of the rename)
+        dplyr::select(!!!select_cols) 
+      
+      # check for file id
+      if (!"file_id" %in% names(file_info)) {
+        stop("renaming the 'file_id' column inside an isofile may lead to unpredictable behaviour and is therefore not allowed, sorry", call. = FALSE)
+      }
+      
+      # convert back to list format
+      file_info <-
+        file_info %>%
+        # should still be list columns but doesn't hurt to check
+        ensure_data_frame_list_columns() %>%
+        # split by file info
+        split(seq(nrow(file_info))) %>% 
+        # clean back out the columns that were only added through the row bind
+        map(~.x[!map_lgl(.x, ~is.list(.x) && all(map_lgl(.x, is.null)))])
+      
+      # update
+      updated_iso_files <-
+        map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) %>%
+        iso_as_file_list()
+      
+    } else {
+      # no updates
+      updated_iso_files <- iso_files
     }
-    
-    # convert back to list format
-    file_info <-
-      file_info %>%
-      # should still be list columns but doesn't hurt to check
-      ensure_data_frame_list_columns() %>%
-      # split by file info
-      split(seq(nrow(file_info))) %>% 
-      # clean back out the columns that were only added through the row bind
-      map(~.x[!map_lgl(.x, ~is.list(.x) && all(map_lgl(.x, is.null)))])
-    
-    # update
-    updated_iso_files <-
-      map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) %>%
-      iso_as_file_list()
   }
   
   # return updated iso files
@@ -295,12 +323,20 @@ iso_rename_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
     
   } else {
     # across all files  - fast but less flexible
-    # retrieve file info using the aggregate function
-    file_info <- iso_get_file_info(iso_files, quiet = TRUE, simplify = FALSE)
+    # retrieve info
+    file_info <- iso_files %>% 
+      # retrieve file info
+      map(~.x$file_info) %>% 
+      # combine in data frame (use safe bind to make sure different data column 
+      # types of the same name don't trip up the combination)
+      safe_bind_rows() 
+    
+    # renaming columns
     rename_cols <- get_column_names(
       file_info, df_name = "file_info",
       rename = rename_exp, n_reqs = list(rename = "*"), 
       cols_must_exist = FALSE)$rename
+    
     # then run the rename
     file_info <- dplyr::rename(file_info, !!!rename_cols)
     

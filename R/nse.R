@@ -36,9 +36,14 @@ get_column_names <- function(df, ..., df_name = rlang::as_label(rlang::enexpr(df
         else rlang::as_label(val)
       }) %>% 
       collapse("', '", last = "' and '")
-    # have to use capture.output because rlang errors don't store their error in $error$message
     errors <- map_chr(pos_results[!ok], ~stringr::str_replace(.x$error, "\n", " ")) %>% 
       paste(collapse = "\n- ")
+    
+    # check for unique names error
+    if (any(stringr::str_detect(errors, "Names must be unique"))) {
+      stop("as of isoreader 1.1.0, renamed columns must be unique by default, to allow for faster processing. To allow for the recoding of column names across different iso_files, please set 'file_specific = TRUE' (this is slower but more flexible).", call. = FALSE)
+    }
+    
     err_msg <- 
       if (sum(!ok) > 1) 
         glue("'{params}' refer to unknown columns in data frame '{df_name}':\n- {errors}") 
