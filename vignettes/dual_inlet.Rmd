@@ -94,7 +94,9 @@ di_files %>%
       `Date & Time` = file_datetime,
       # rename weight columns from the different file types
       `Sample Weight`, `Sample Weight` = `Weight [mg]`
-    )
+    ),
+    # explicitly allow for file specific rename (for the new ID column)
+    file_specific = TRUE 
   ) %>% rmarkdown::paged_table()
 ```
 
@@ -108,7 +110,8 @@ di_files2 <- di_files %>%
   iso_select_file_info(
     ID = `Identifier 1`, ID = `Sample Name`, Analysis, Method, 
     `Peak Center`, `Date & Time` = file_datetime,
-    `Sample Weight`, `Sample Weight` = `Weight [mg]`
+    `Sample Weight`, `Sample Weight` = `Weight [mg]`,
+    file_specific = TRUE 
   )
 
 # fetch all file info

@@ -36,7 +36,7 @@
 
 
 <meta property="og:title" content="Aggregate file info — iso_get_file_info" />
-<meta property="og:description" content="Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the select parameter, which uses the iso_select_file_info function to select and/or rename columns. File information beyond file_id, file_root, file_path and file_datetime is only available if the iso_files were read with parameter read_file_info=TRUE." />
+<meta property="og:description" content="Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the select parameter to select and/or rename columns. File information beyond file_id, file_root, file_path and file_datetime is only available if the iso_files were read with parameter read_file_info=TRUE." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.0</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.1</span>
       </span>
     </div>
 
@@ -151,10 +151,16 @@
     </div>
 
     <div class="ref-description">
-    <p>Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the <code>select</code> parameter, which uses the <code><a href='iso_select_file_info.html'>iso_select_file_info</a></code> function to select and/or rename columns. File information beyond <code>file_id</code>, <code>file_root</code>, <code>file_path</code> and <code>file_datetime</code> is only available if the <code>iso_files</code> were read with parameter <code>read_file_info=TRUE</code>.</p>
+    <p>Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the <code>select</code> parameter to select and/or rename columns. File information beyond <code>file_id</code>, <code>file_root</code>, <code>file_path</code> and <code>file_datetime</code> is only available if the <code>iso_files</code> were read with parameter <code>read_file_info=TRUE</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_get_file_info</span>(<span class='no'>iso_files</span>, <span class='kw'>select</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(), <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+    <pre class="usage"><span class='fu'>iso_get_file_info</span>(
+  <span class='no'>iso_files</span>,
+  <span class='kw'>select</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
+  <span class='kw'>file_specific</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -168,6 +174,14 @@
       <td><p>which columns to select - use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. File id is always included and cannot be renamed.</p></td>
     </tr>
     <tr>
+      <th>file_specific</th>
+      <td><p>whether to run the select criteria (<code>...</code>) specifically within each individual file rather than on all files jointly. This is a lot slower but makes it possible to  select different columns in different iso_files depending on what exists in each file and is mostly of use when working with data from multiple instruments.</p></td>
+    </tr>
+    <tr>
+      <th>simplify</th>
+      <td><p>if set to TRUE (the default), nested value columns in the file info will be unnested as long as they are compatible across file types. Note that file info entries with multiple values still remain nested multi-value (=list) columns even with <code>simplify=TRUE</code>. These can be unnested using <a href='https://tidyr.tidyverse.org/reference/nest.html'>unnest</a>.</p></td>
+    </tr>
+    <tr>
       <th>quiet</th>
       <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
     </tr>
@@ -175,7 +189,7 @@
 
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>File info entries with multiple values remain nested multi-value (=list) columns and can be unnested using <a href='https://tidyr.tidyverse.org/reference/nest.html'>unnest</a>.</p>
+    <p>this function used to allow selecting/renaming different file_info_columns in different files to the same column. This was a significant speed impediment and only covered very rare use cases. It is still available in the related function <code><a href='iso_select_file_info.html'>iso_select_file_info</a></code> with a special flag but is no longer the default and not incouraged for use in the frequently called <code>iso_get_file_info</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other data retrieval functions: 

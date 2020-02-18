@@ -6,6 +6,9 @@
 \usage{
 iso_get_data(...)
 }
+\arguments{
+\item{...}{forwarded to \link{iso_get_all_data}}
+}
 \description{
 Please use \link{iso_get_all_data} instead.
 }

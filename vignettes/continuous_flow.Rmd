@@ -88,7 +88,9 @@ cf_files %>%
       Analysis, `Peak Center`, `H3 Factor`,
       # select the time stamp and rename it to `Date & Time`
       `Date & Time` = file_datetime
-    )
+    ),
+    # explicitly allow for file specific rename (for the new ID column)
+    file_specific = TRUE
   ) %>% rmarkdown::paged_table() 
 ```
 
@@ -101,7 +103,8 @@ Rather than retrieving specific file info columns using the above example of `is
 cf_files2 <- cf_files %>% 
   iso_select_file_info(
     ID = `Identifier 1`, ID = `Name`, Analysis, `Peak Center`, `H3 Factor`, 
-    `Date & Time` = file_datetime
+    `Date & Time` = file_datetime,
+    file_specific = TRUE
   )
 
 # fetch all file info

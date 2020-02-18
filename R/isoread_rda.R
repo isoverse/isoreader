@@ -35,7 +35,7 @@ iso_read_rda <- function(ds, options = list()) {
     stop(call. = FALSE)
   
   # information
-  if (!default(quiet)) {
+  if (!default("quiet")) {
     sprintf("loaded data for %d data files from R Data Archive - checking loaded files for content consistency...", length(iso_files)) %>% 
       log_message()
   }

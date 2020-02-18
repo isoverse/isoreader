@@ -42,9 +42,7 @@ iso_read_caf <- function(ds, options = list()) {
 
 # extract voltage data in caf file
 extract_caf_raw_voltage_data <- function(ds) {
-  # global vars
-  pos <- cup <- data <- type <- column <- bin <- voltage <- cycle <- NULL
-  
+
   # locate masses
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot identify measured masses") %>% 
@@ -66,10 +64,10 @@ extract_caf_raw_voltage_data <- function(ds) {
       })
     ) %>% 
     # unnest data
-    unnest(data) %>% 
+    unnest(.data$data) %>% 
     mutate(
-      cup = as.integer(cup),
-      column = str_c("v", mass, ".mV")
+      cup = as.integer(.data$cup),
+      column = str_c("v", .data$mass, ".mV")
     )
 
   # locate voltage data
@@ -118,18 +116,18 @@ extract_caf_raw_voltage_data <- function(ds) {
   voltages <- tibble(
     pos = positions + read_blocks_re$size,
     # note last read in the sample block is actually the "pre"-read of the standard
-    type = ifelse(pos < sample_block_start | pos==max(pos), "standard", "sample")
+    type = ifelse(.data$pos < sample_block_start | .data$pos==max(.data$pos), "standard", "sample")
   ) %>% 
-    group_by(type) %>% 
+    group_by(.data$type) %>% 
     mutate(
-      cycle = as.integer(ifelse(type[1] == "standard" & pos == max(pos), 0L, 1L:n())),
+      cycle = as.integer(ifelse(.data$type[1] == "standard" & .data$pos == max(.data$pos), 0L, 1L:n())),
       # capture voltages
-      voltages = map(pos, capture_voltages)
+      voltages = map(.data$pos, capture_voltages)
     ) %>% ungroup() %>% 
     # unnest voltager data
-    unnest(voltages) %>% 
+    unnest(.data$voltages) %>% 
     # combine with cup/mass information
-    left_join(select(masses, cup, column), by = "cup") 
+    left_join(select(masses, .data$cup, .data$column), by = "cup") 
   
   # safety check
   if (any(notok <- is.na(voltages$column))) {
@@ -139,9 +137,9 @@ extract_caf_raw_voltage_data <- function(ds) {
   # voltages data frame
   ds$raw_data <- 
     voltages %>% 
-    select(-pos, -cup) %>% 
-    spread(column, voltage) %>% 
-    arrange(desc(type), cycle)
+    select(-.data$pos, -.data$cup) %>% 
+    spread(.data$column, .data$voltage) %>% 
+    arrange(desc(.data$type), .data$cycle)
   
   return(ds)
 }

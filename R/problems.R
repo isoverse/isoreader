@@ -68,17 +68,15 @@ iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE) {
   if (missing(iso_files) || !iso_is_object(iso_files)) stop("please provide iso_files", call. = FALSE)
   iso_files <- iso_as_file_list(iso_files)
   
-  # global vars
-  error <- warning <- type <- NULL
-  
+
   # tally up problems
   probs_templ <- tibble(file_id = character(0), error = integer(0), warning = integer(0))
   if (n_problems(iso_files) > 0) {
     probs <- problems(iso_files) %>% 
       # tally up number of warnings/errors per file
-      group_by(file_id, type) %>%
+      group_by(.data$file_id, .data$type) %>%
       tally() %>% 
-      spread(type, n) %>%
+      spread(.data$type, .data$n) %>%
       # to ensure these columns exists
       bind_rows(probs_templ) %>% 
       ungroup()
@@ -96,8 +94,8 @@ iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE) {
   
   probs %>%
     mutate(
-      warning = ifelse(!is.na(warning), warning, 0L),
-      error = ifelse(!is.na(error), error, 0L)
+      warning = ifelse(!is.na(warning), .data$warning, 0L),
+      error = ifelse(!is.na(error), .data$error, 0L)
     ) 
 }
  

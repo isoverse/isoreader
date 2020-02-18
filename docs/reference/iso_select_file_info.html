@@ -36,7 +36,7 @@
 
 
 <meta property="og:title" content="Select file info columns — iso_select_file_info" />
-<meta property="og:description" content="Select which file info columns (iso_get_file_info) to keep within isofile objects. Works just like dplyr's select except that it can select different columns in different iso_files depending on what exists in each file (also works for on-the-fly renaming of columns). This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns. You can also use select directly but it will not provide summary information on the operation. To rename columns without removing all other information, use iso_rename_file_info instead." />
+<meta property="og:description" content="Select which file info columns (iso_get_file_info) to keep within isofile objects. Works just like dplyr's select and can rename columns on-the-fly. You can also use select directly but it will not provide summary information on the operation. To rename columns without removing all other information, use iso_rename_file_info instead. Set file_specific = TRUE to select different columns in different iso_files depending on what exists in each file. This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.0</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.1</span>
       </span>
     </div>
 
@@ -151,10 +151,15 @@
     </div>
 
     <div class="ref-description">
-    <p>Select which file info columns (<code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>) to keep within isofile objects. Works just like dplyr's <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> except that it can select different columns in different iso_files depending on what exists in each file (also works for on-the-fly renaming of columns). This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns. You can also use <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> directly but it will not provide summary information on the operation. To rename columns without removing all other information, use <a href='iso_rename_file_info.html'>iso_rename_file_info</a> instead.</p>
+    <p>Select which file info columns (<code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>) to keep within isofile objects. Works just like dplyr's <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> and can rename columns on-the-fly. You can also use <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> directly but it will not provide summary information on the operation. To rename columns without removing all other information, use <a href='iso_rename_file_info.html'>iso_rename_file_info</a> instead. Set <code>file_specific = TRUE</code> to select different columns in different iso_files depending on what exists in each file. This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_select_file_info</span>(<span class='no'>iso_files</span>, <span class='no'>...</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+    <pre class="usage"><span class='fu'>iso_select_file_info</span>(
+  <span class='no'>iso_files</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>file_specific</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,6 +171,10 @@
     <tr>
       <th>...</th>
       <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> conditions applied based on each file's file_info (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>). Note that the <code>file_id</code> column will always be kept, no matter the selection criteria, and cannot be renamed to protect from unexpected behaviour.</p></td>
+    </tr>
+    <tr>
+      <th>file_specific</th>
+      <td><p>whether to run the select criteria (<code>...</code>) specifically within each individual file rather than on all files jointly. This is a lot slower but makes it possible to  select different columns in different iso_files depending on what exists in each file and is mostly of use when working with data from multiple instruments.</p></td>
     </tr>
     <tr>
       <th>quiet</th>

@@ -14,7 +14,7 @@ iso_read_flow_iarc <- function(ds, options = list()) {
   folder_name <- ds$file_info$file_path %>% basename() %>% { str_replace(., fixed(get_file_ext(.)), "") }
   folder_path <- file.path(tempdir(), folder_name)
   if (!file.exists(folder_path)) {
-    if (!default(quiet)) log_message("unpacking isoprime archieve file...", prefix = "      ")
+    if (!default("quiet")) log_message("unpacking isoprime archieve file...", prefix = "      ")
     unzip(get_ds_file_path(ds), exdir = folder_path)
   }
   
@@ -105,7 +105,7 @@ process_iarc_samples <- function(iso_file_template, tasks, gas_configs, folder_p
         file_subpath = task$filename)
     
     # processing info
-    if (!default(quiet)) {
+    if (!default("quiet")) {
       sprintf("processing sample '%s' (IRMS data '%s')",
               generate_task_sample_id(task), 
               task$data_files %>% 
