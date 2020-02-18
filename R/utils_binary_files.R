@@ -204,7 +204,8 @@ re_null <- function(n) {
   structure(
     list(
       label = sprintf("<%.0fx00>", n),
-      regexp = str_c("\\x00{", n, "}"),
+      # NOTE: this works both with paste0 and str_c
+      regexp = paste0("\\x00{", n, "}"),
       size = n
     ),
     class = "binary_regexp")
@@ -215,7 +216,8 @@ re_not_null <- function(n) {
   structure(
     list(
       label = sprintf("<x01-xff{%.0f}>", n),
-      regexp = str_c("[\x01-\xff]{", n, "}"),
+      # NOTE: this does not work on windows if it's str_c!
+      regexp = paste0("[\x01-\xff]{", n, "}"),
       size = n
     ),
     class = "binary_regexp")
