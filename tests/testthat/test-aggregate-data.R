@@ -164,8 +164,8 @@ test_that("test that aggregeting raw data works", {
   iso_file$read_options$file_info <- TRUE
   iso_file1 <- modifyList(iso_file, list(file_info = list(file_id = "a")))
   iso_file2 <- modifyList(iso_file, list(file_info = list(file_id = "b")))
-  iso_file1$raw_data <- dplyr::tibble(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), `r46/44` = v46.mV/v44.mV)
-  iso_file2$raw_data <- dplyr::tibble(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), v45.mV = runif(10))
+  iso_file1$raw_data <- tibble::tibble(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), `r46/44` = v46.mV/v44.mV)
+  iso_file2$raw_data <- tibble::tibble(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), v45.mV = runif(10))
   
   expect_message(iso_get_raw_data(c(iso_file1, iso_file2), quiet = FALSE), "aggregating")
   expect_silent(iso_get_raw_data(c(iso_file1, iso_file2), quiet = TRUE))

@@ -19,23 +19,30 @@ test_that("Test that selecting/renaming file info works", {
   expect_error(iso_select_file_info(42), "not defined")
   expect_error(iso_select_file_info(iso_file1, new = file_id), "renaming.*not allowed")
   expect_error(iso_select_file_info(iso_files, new = file_id), "renaming.*not allowed")
-  expect_error(iso_select_file_info(iso_files, y = new_info, y = new_info2), class = "vctrs_error_names_must_be_unique", "must be unique")
+  expect_warning(iso_select_file_info(iso_files, y = DNE), "doesn't exist")
+  expect_warning(iso_select_file_info(iso_files, y = DNE, file_specific = TRUE), "doesn't exist")
+  expect_warning(iso_select_file_info(iso_files, y = new_info, y = new_info2), "must be unique")
+  expect_message(iso_select_file_info(iso_files, y = new_info, y = new_info2, file_specific = TRUE), "selecting/renaming")
   
   # select info message
-  expect_message(iso_select_file_info(iso_file1), "keeping 1") # always file_info
+  expect_message(iso_select_file_info(iso_file1), "keeping only 'file_id'") # always file_info
   expect_silent(iso_select_file_info(iso_file1, quiet = TRUE))
   expect_silent(select(iso_file1)) 
-  expect_message(iso_select_file_info(iso_file1, newer_info = new_info), "keeping 2 file info.*across 1 isofile")
-  expect_message(iso_select_file_info(iso_file1, newer_info = new_info), "1 file.*new_info.*->.*newer_info")
-  expect_message(iso_select_file_info(iso_files, newer_info = new_info2), "keeping 2 file info.*across 3 isofile")
-  expect_message(iso_select_file_info(iso_files, newer_info = new_info), "3 file.*new_info.*->.*newer_info")
-  expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3), "keeping 3 file info.*across 3 isofile")
-  expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3), "1 file.*new_info2.*->.*y")
-  expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3), "1 file.*new_info3.*->.*y")
+  expect_message(iso_select_file_info(iso_file1, newer_info = new_info), "1 data file.*'new_info'->'newer_info'")
+  expect_message(iso_select_file_info(iso_file1, newer_info = new_info, file_specific = TRUE), 
+                 "1 data file.*'new_info'->'newer_info'")
+  expect_message(iso_select_file_info(iso_files, newer_info = new_info2), "3 data file.*'new_info2'->'newer_info'")
+  expect_message(iso_select_file_info(iso_files, newer_info = new_info2, file_specific = TRUE), 
+                 "2 file.*'file_id'.*1 file.*'file_id', 'new_info2'->'newer_info'")
+  expect_message(iso_select_file_info(iso_files, newer_info = new_info), "3 data file.*'new_info'->'newer_info'")
+  expect_message(iso_select_file_info(iso_files, newer_info = new_info, file_specific = TRUE), 
+                 "3 file.*'new_info'->'newer_info'")
+  expect_message(iso_select_file_info(iso_files, y = new_info2, y = new_info3, file_specific = TRUE), 
+                 "1 file.*'file_id'.*1 file.*'file_id', 'new_info2'->'y'.*1 file.*'file_id', 'new_info3'->'y'")
   
   # select outcomes
   expect_equal(
-    iso_select_file_info(iso_files, y = new_info2, y = new_info3) %>% iso_get_file_info(),
+    iso_select_file_info(iso_files, y = new_info2, y = new_info3, file_specific = TRUE) %>% iso_get_file_info(),
     tibble(file_id = c("A", "B", "C"), y = c(NA, 2, 3))
   )
   expect_equal(
@@ -43,11 +50,19 @@ test_that("Test that selecting/renaming file info works", {
     tibble(file_id = c("A", "B", "C"), new_info2 = c(NA, 2, NA), new_info3 = c(NA, NA, 3))
   )
   expect_equal(
+    iso_select_file_info(iso_files, -starts_with("file"), -new_info, file_specific = TRUE) %>% iso_get_file_info(),
+    tibble(file_id = c("A", "B", "C"), new_info2 = c(NA, 2, NA), new_info3 = c(NA, NA, 3))
+  )
+  expect_equal(
     iso_select_file_info(iso_files, newer_info = new_info) %>% iso_get_file_info(),
     tibble(file_id = c("A", "B", "C"), newer_info = 42)
   )
   expect_equal(
-    iso_select_file_info(iso_files, newest_info = new_info, new_info2, new_info2 = new_info3) %>% iso_get_file_info(),
+    iso_select_file_info(iso_files, newer_info = new_info, file_specific = TRUE) %>% iso_get_file_info(),
+    tibble(file_id = c("A", "B", "C"), newer_info = 42)
+  )
+  expect_equal(
+    iso_select_file_info(iso_files, newest_info = new_info, new_info2, new_info2 = new_info3, file_specific = TRUE) %>% iso_get_file_info(),
     tibble(file_id = c("A", "B", "C"), newest_info = 42, new_info2 = c(NA, 2, 3))
   )
   

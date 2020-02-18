@@ -312,14 +312,15 @@ iso_get_all_data <- function(
 
 #' Aggregate file info
 #'
-#' Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the \code{select} parameter, which uses the \code{\link{iso_select_file_info}} function to select and/or rename columns. File information beyond \code{file_id}, \code{file_root}, \code{file_path} and \code{file_datetime} is only available if the \code{iso_files} were read with parameter \code{read_file_info=TRUE}.
+#' Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the \code{select} parameter to select and/or rename columns. File information beyond \code{file_id}, \code{file_root}, \code{file_path} and \code{file_datetime} is only available if the \code{iso_files} were read with parameter \code{read_file_info=TRUE}.
 #'
 #' @inheritParams iso_get_raw_data
 #' @param select which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. File id is always included and cannot be renamed. 
+#' @param simplify if set to TRUE (the default), nested value columns in the file info will be unnested as long as they are compatible across file types. Note that file info entries with multiple values still remain nested multi-value (=list) columns even with \code{simplify=TRUE}. These can be unnested using \link[tidyr]{unnest}.
 #' @family data retrieval functions
-#' @note File info entries with multiple values remain nested multi-value (=list) columns and can be unnested using \link[tidyr]{unnest}.
+#' @note this function used to allow selecting/renaming different file_info_columns in different files to the same column. This was a significant speed impediment and only covered very rare use cases. It is still available in the related function \code{\link{iso_select_file_info}} with a special flag but is no longer the default and not incouraged for use in the frequently called \code{iso_get_file_info}.
 #' @export
-iso_get_file_info <- function(iso_files, select = everything(), quiet = default(quiet)) {
+iso_get_file_info <- function(iso_files, select = everything(), quiet = default(quiet), simplify = TRUE) {
   
   # make sure it's an iso file list
   iso_files <- iso_as_file_list(iso_files)
@@ -351,9 +352,12 @@ iso_get_file_info <- function(iso_files, select = everything(), quiet = default(
   file_info <- 
     file_info %>% 
     # focus on selected columns only (also takes care of the rename)
-    dplyr::select(!!!select_cols) %>%
+    dplyr::select(!!!select_cols) 
+  
+  # simplify by disaggregated columns
+  if (simplify)
     # unnest aggregated columns
-    unnest_aggregated_data_frame()
+    file_info <- unnest_aggregated_data_frame(file_info)
   
   return(file_info)
 }
