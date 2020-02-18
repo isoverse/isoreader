@@ -6,6 +6,9 @@
 \usage{
 iso_get_resistors_info(...)
 }
+\arguments{
+\item{...}{forwarded to \link{iso_get_resistors}}
+}
 \description{
 Please use \link{iso_get_resistors} instead.
 }

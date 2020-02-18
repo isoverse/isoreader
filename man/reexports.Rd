@@ -24,11 +24,13 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{dplyr}{\code{\link[dplyr]{filter}}, \code{\link[dplyr]{tibble}}}
+  \item{dplyr}{\code{\link[dplyr]{filter}}}
 
   \item{magrittr}{\code{\link[magrittr]{\%>\%}}}
 
   \item{readr}{\code{\link[readr]{parse_datetime}}, \code{\link[readr]{parse_double}}, \code{\link[readr]{parse_integer}}, \code{\link[readr]{parse_logical}}, \code{\link[readr]{parse_number}}, \code{\link[readr]{problems}}, \code{\link[readr]{stop_for_problems}}}
+
+  \item{tibble}{\code{\link[tibble]{tibble}}}
 
   \item{tidyselect}{\code{\link[tidyselect]{ends_with}}, \code{\link[tidyselect]{everything}}, \code{\link[tidyselect]{matches}}, \code{\link[tidyselect]{starts_with}}}
 }}

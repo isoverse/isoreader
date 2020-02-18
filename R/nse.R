@@ -6,11 +6,11 @@
 # @param type_reqs named list to specify what types certain columns must be, allowed: "list" (also includes "vctrs_list_of"), "numeric", "integer", "character", "logical"
 # @param cols_must_exist - if TRUE, will throw an error if a column does not exist, otherwise just warning (unless warn = FALSE)
 # @return list of column names for each entry (may contain multiple depending on selection conditions)
-get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_must_exist = TRUE, warn = TRUE) {
+get_column_names <- function(df, ..., df_name = rlang::as_label(rlang::enexpr(df)), n_reqs = list(), type_reqs = list(), cols_must_exist = TRUE, warn = TRUE) {
   
   # df name and data frame test
   if (missing(df)) stop("no data frame supplied", call. = FALSE)
-  df_name <- rlang::as_label(rlang::enexpr(df))
+  df_name <- force(df_name)
   df <- force(df)
   if (!is.data.frame(df))
     sprintf("parameter '%s' is not a data frame", df_name) %>% stop(call. = FALSE)
@@ -36,9 +36,14 @@ get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_
         else rlang::as_label(val)
       }) %>% 
       collapse("', '", last = "' and '")
-    # have to use capture.output because rlang errors don't store their error in $error$message
     errors <- map_chr(pos_results[!ok], ~stringr::str_replace(.x$error, "\n", " ")) %>% 
       paste(collapse = "\n- ")
+    
+    # check for unique names error
+    if (any(stringr::str_detect(errors, "Names must be unique"))) {
+      stop("as of isoreader 1.1.0, renamed columns must be unique by default, to allow for faster processing. To allow for the recoding of column names across different iso_files, please set 'file_specific = TRUE' (this is slower but more flexible).", call. = FALSE)
+    }
+    
     err_msg <- 
       if (sum(!ok) > 1) 
         glue("'{params}' refer to unknown columns in data frame '{df_name}':\n- {errors}") 

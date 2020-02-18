@@ -204,7 +204,8 @@ re_null <- function(n) {
   structure(
     list(
       label = sprintf("<%.0fx00>", n),
-      regexp = str_c("\\x00{", n, "}"),
+      # NOTE: this works both with paste0 and str_c
+      regexp = paste0("\\x00{", n, "}"),
       size = n
     ),
     class = "binary_regexp")
@@ -215,7 +216,8 @@ re_not_null <- function(n) {
   structure(
     list(
       label = sprintf("<x01-xff{%.0f}>", n),
-      regexp = str_c("[\x01-\xff]{", n, "}"),
+      # NOTE: this does not work on windows if it's str_c!
+      regexp = paste0("[\x01-\xff]{", n, "}"),
       size = n
     ),
     class = "binary_regexp")
@@ -287,9 +289,17 @@ re_combine <- function(...) {
   structure(
     list(
       label = str_c(map_chr(regexps, "label"), collapse = ""),
-      # NOTE: on windows, the following command with str_c instead of paste or map_chr instead of sapply strangly leads to the regexp not getting recognized anymore in grepRaw
-      regexp = stringr::str_c(sapply(regexps, `[[`, "regexp"), collapse = ""),
-      size = sum(map_dbl(regexps, "size"))
+      size = sum(map_dbl(regexps, "size")),
+      # WARNING WARNING WARNING
+      # do not change this
+      # on all platforms: map_chr messes up the regexps
+      # on windows: str_c instead of paste leads to regexp fail in grepRaw
+      # on unix: paste instead of str_c breaks concatenating a few specific regexps (e.g. re_combine(re_not_null(2), re_block("fef-x")))
+      regexp = 
+        if (.Platform$OS.type == "windows") 
+          paste(sapply(regexps, `[[`, "regexp"), collapse = "")
+        else
+          stringr::str_c(sapply(regexps, `[[`, "regexp"), collapse = "")
     ),
     class = "binary_regexp")
 }

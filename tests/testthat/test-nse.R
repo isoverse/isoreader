@@ -16,6 +16,9 @@ test_that("Getting column names (with # and type requirement checks) works", {
   expect_error(get_column_names(df, a = quo(x)), "'a = x'.*unknown column")
   set_default("x", quo(y))
   expect_error(get_column_names(df, a = quo(default(x))), "'a = y'.*unknown column")
+  expect_error(get_column_names(df, a = quo(c(b = mpg, b = cyl))), "renamed columns must be unique")
+  expect_error(get_column_names(df, a = quo(c(b = mpg, b = DNE))), "unknown column")
+  expect_warning(get_column_names(df, a = quo(c(b = mpg, b = DNE)), cols_must_exist = FALSE), "unknown column")
   
   # single column per identifier
   expect_equal(get_column_names(df, a = quo(mpg), b = expr(wt)), list(a=c(mpg = "mpg"), b = c(wt = "wt")))

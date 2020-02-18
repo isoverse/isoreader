@@ -114,7 +114,7 @@ NULL
 #' @export
 iso_turn_reader_caching_on <- function(data = NULL) {
   set_default("cache", TRUE)
-  if (!default(quiet)) message("Info: caching turned on")
+  if (!default("quiet")) message("Info: caching turned on")
   if (!missing(data)) return(invisible(data))
 }
 
@@ -122,7 +122,7 @@ iso_turn_reader_caching_on <- function(data = NULL) {
 #' @export
 iso_turn_reader_caching_off <- function(data = NULL) {
   set_default("cache", FALSE)
-  if (!default(quiet)) message("Info: caching turned off")
+  if (!default("quiet")) message("Info: caching turned off")
   if (!missing(data)) return(invisible(data))
 }
 

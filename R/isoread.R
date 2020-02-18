@@ -58,7 +58,7 @@ register_file_reader <- function(type, call, extension, func, description, softw
   frs <- default("file_readers", allow_null = TRUE)
   
   new_fr <-
-    dplyr::tibble(
+    tibble::tibble(
       type = type, call = call, extension = extension,
       func = func, cacheable = cacheable, description = description,
       software = software, env = env
@@ -313,7 +313,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
   pb$tick(0)
   
   # overview
-  if (!default(quiet)) {
+  if (!default("quiet")) {
     glue::glue(
       "preparing to read {nrow(filepaths)} data files",
       if (cache && !cache_files_with_errors) { " (all will be cached unless they have errors)" }
@@ -385,7 +385,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
   while (!pb$finished) pb$tick()
   
   # final user update
-  if (!default(quiet)) {
+  if (!default("quiet")) {
     end_time <- Sys.time()
     sprintf(
       "finished reading %s files in %.2f %s",
@@ -411,7 +411,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
   iso_files <- convert_file_path_to_rooted(iso_files, root = root)
   
   # report problems
-  if (!default(quiet) && iso_has_problems(iso_files)) {
+  if (!default("quiet") && iso_has_problems(iso_files)) {
     sprintf("encountered %.0f problems in total", n_problems(iso_files)) %>% log_message()
     print(problems(iso_files))
     cat("\n")
@@ -493,7 +493,7 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, writ
   iso_file <- set_ds_file_path(ds, root, path)
   
   # progress update
-  if (!default(quiet)) {
+  if (!default("quiet")) {
     if (read_from_cache) { 
       msg <- glue("reading file '{path}' from cache...")
     } else {
@@ -590,7 +590,7 @@ iso_reread_files <- function(iso_files, ..., stop_if_missing = FALSE, quiet = de
   files_exist <- filepaths %>% map_lgl(file.exists)
   
   # overview
-  if (!default(quiet)) {
+  if (!default("quiet")) {
     log_message("re-reading ", length(filepaths), " data file(s)...")
   }
   

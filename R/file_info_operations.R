@@ -1,99 +1,185 @@
 # dplyr style functions that operate on file info
 
-# rename & select utils ========
-
-# check that specific columns have not been renamed
-check_forbidden_renames <- function(vars, check_vars) {
-  if (any(prob <- check_vars %in% filter(vars, changed)$from)) {
-    glue::glue("renaming the '{paste(check_vars[prob], collapse = \"', '\")}' column ",
-               "may lead to unpredictable behaviour and is therefore not allowed, sorry") %>%
-      stop(call. = FALSE)
-  }
-}
-
 # select ==================
 
 #' Select file info columns
 #' 
-#' Select which file info columns (\code{\link{iso_get_file_info}}) to keep within isofile objects. Works just like dplyr's \link[dplyr]{select} except that it can select different columns in different iso_files depending on what exists in each file (also works for on-the-fly renaming of columns). This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns. You can also use \link[dplyr]{select} directly but it will not provide summary information on the operation. To rename columns without removing all other information, use \link{iso_rename_file_info} instead.
+#' Select which file info columns (\code{\link{iso_get_file_info}}) to keep within isofile objects. Works just like dplyr's \link[dplyr]{select} and can rename columns on-the-fly. You can also use \link[dplyr]{select} directly but it will not provide summary information on the operation. To rename columns without removing all other information, use \link{iso_rename_file_info} instead. Set \code{file_specific = TRUE} to select different columns in different iso_files depending on what exists in each file. This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns. 
 #' 
 #' @inheritParams iso_get_raw_data
 #' @param ... dplyr-style \link[dplyr]{select} conditions applied based on each file's file_info (see \code{\link{iso_get_file_info}}). Note that the \code{file_id} column will always be kept, no matter the selection criteria, and cannot be renamed to protect from unexpected behaviour.
+#' @param file_specific whether to run the select criteria (\code{...}) specifically within each individual file rather than on all files jointly. This is a lot slower but makes it possible to  select different columns in different iso_files depending on what exists in each file and is mostly of use when working with data from multiple instruments.
 #' @family file_info operations
 #' @export 
-iso_select_file_info <- function(iso_files, ..., quiet = default(quiet)) {
+iso_select_file_info <- function(iso_files, ..., file_specific = FALSE, quiet = default(quiet)) {
   UseMethod("iso_select_file_info")
 }
 
 #' @export
-iso_select_file_info.default <- function(iso_files, ..., quiet = default(quiet)) {
+iso_select_file_info.default <- function(iso_files, ..., file_specific = FALSE, quiet = default(quiet)) {
   stop("this function is not defined for objects of type '", 
        class(iso_files)[1], "'", call. = FALSE)
 }
 
 #' @export
-iso_select_file_info.iso_file <- function(iso_files, ..., quiet = default(quiet)) {
-  iso_select_file_info(iso_as_file_list(iso_files), ..., quiet = quiet)[[1]]
+iso_select_file_info.iso_file <- function(iso_files, ..., file_specific = FALSE, quiet = default(quiet)) {
+  iso_select_file_info(iso_as_file_list(iso_files), ..., file_specific = FALSE, quiet = quiet)[[1]]
 }
 
 #' @export
-iso_select_file_info.iso_file_list <- function(iso_files, ..., quiet = default(quiet)) {
+iso_select_file_info.iso_file_list <- function(iso_files, ..., file_specific = FALSE, quiet = default(quiet)) {
   
-  # global vars
-  changed <- to <- from <- NULL
-  
-  # variables for all files
-  select_expr <- rlang::expr(c(!!!rlang::enexprs(...)))
-  
-  # run select
-  isofiles_select <- map(iso_files, function(isofile) {
-    # select positions (always include file_id)
-    pos <- local_eval_select(select_expr, data = isofile$file_info, strict = FALSE, include = "file_id")
-    # selected variables
-    vars <- tibble(
-      file_id = isofile$file_info$file_id,
-      from  = names(isofile$file_info)[pos],
-      to = names(pos),
-      changed = from != to
-    )
-    # make selection
-    isofile$file_info <- rlang::set_names(isofile$file_info[pos], names(pos))
-    #return both
-    return(list(isofile = isofile, vars = vars))
+  # info message
+  select_exps <- rlang::enexprs(...)
+  select_exp <- rlang::expr(c(!!!select_exps))
+  if (!quiet) { 
+    if (file_specific) {
+      message( "Info: selecting/renaming the following file info:")
+    } else{
+      glue::glue(
+        "Info: selecting/renaming the following file info across {length(iso_files)} data file(s): ",
+        if (length(select_exps) == 0) "keeping only 'file_id'" 
+        else get_info_message_concat(select_exps, include_names = TRUE, names_sep = "->", flip_names_and_values = TRUE)
+      ) %>% message()
+    }
   }
-  )
   
-  # variable summary
-  all_vars <- map(isofiles_select, "vars") %>% bind_rows()
-  
-  # safety check on file ID rename
-  check_forbidden_renames(all_vars, "file_id")
-  
-  # summary information
-  if (!quiet) {
+  # perform selections
+  if (file_specific) {
     
-    info <- all_vars %>%
-      group_by(file_id) %>%
-      summarize(
-        label = 
-          ifelse(
-            changed,
-            sprintf("'%s'->'%s'", from, to),
-            sprintf("'%s'", from)
-          ) %>% paste(collapse = ", ")
-      ) %>%
-      dplyr::count(label) %>%
-      mutate(label = sprintf(" - for %d file(s): %s", n, label)) %>%
-      arrange(desc(n))
-
-    glue::glue("Info: keeping {length(unique(all_vars$from))} file info column(s) ",
-               "wherever they exist across {length(iso_files)} isofile(s):\n",
-               "{paste(info$label, collapse = '\n')}") %>% 
-      message()
+    # run select
+    isofiles_select <- map(iso_files, function(isofile) {
+      # get column names
+      select_cols <- 
+        tryCatch(
+          get_column_names(
+            isofile$file_info, df_name = "file_info",
+            select = select_exp, n_reqs = list(select = "*"), 
+            cols_must_exist = FALSE)$select,
+          warning = function(w) {
+            w$message
+          })
+      
+      # check if there was an error
+      error_msg <- NA_character_
+      if (is.null(names(select_cols))) {
+        error_msg <- select_cols
+        select_cols <-  get_column_names(
+          isofile$file_info, df_name = "file_info", 
+          select = select_exp, n_reqs = list(select = "*"), 
+          cols_must_exist = FALSE, warn = FALSE)$select
+      }
+      
+      # make sure to include file_id
+      if (!"file_id" %in% select_cols)
+        select_cols <- c(c(file_id = "file_id"), select_cols) 
+      
+      # selected variables
+      vars <- tibble(
+        file_id = isofile$file_info$file_id,
+        from  = select_cols,
+        to = names(select_cols),
+        changed = .data$from != .data$to
+      )
+      
+      # select file_info columns
+      isofile$file_info <- dplyr::select(isofile$file_info, !!!select_cols)
+      
+      # check for file id
+      if (!"file_id" %in% names(isofile$file_info)) {
+        stop("renaming the 'file_id' column inside an isofile may lead to unpredictable behaviour and is therefore not allowed, sorry", call. = FALSE)
+      }
+      
+      #return both
+      return(list(isofile = isofile, vars = vars, error = error_msg))
+    })
+    
+    # get iso files
+    updated_iso_files <- iso_as_file_list(map(isofiles_select, "isofile"))
+    
+    # summarize individual file updates
+    if (!quiet) {
+      info <- map(isofiles_select, "vars") %>% 
+        bind_rows() %>%
+        group_by(.data$file_id) %>%
+        summarize(
+          label = 
+            ifelse(
+              changed,
+              sprintf("'%s'->'%s'", .data$from, .data$to),
+              sprintf("'%s'", .data$from)
+            ) %>% paste(collapse = ", ")
+        ) %>%
+        dplyr::count(label) %>%
+        mutate(label = sprintf(" - for %d file(s): %s", .data$n, .data$label)) %>%
+        arrange(desc(.data$n))
+      message(paste(info$label, collapse = "\n"))
+    }
+    
+    # check if same error for all files
+    errors <- map_chr(isofiles_select, "error")
+    if (!any(is.na(errors)) && all(errors == errors[1])) {
+      warning(errors[[1]], immediate. = TRUE, call. = FALSE)
+    }
+    
+  } else {
+    # across all files  - fast but less flexible
+    # retrieve info
+    file_info <- iso_files %>% 
+      # retrieve file info
+      map(~.x$file_info) %>% 
+      # combine in data frame (use safe bind to make sure different data column 
+      # types of the same name don't trip up the combination)
+      safe_bind_rows() 
+    
+    # check if there are any file_info
+    if (nrow(file_info) > 0L) {
+      
+      # selecting columns
+      select_cols <- get_column_names(
+        file_info, select = select_exp, 
+        n_reqs = list(select = "*"), 
+        cols_must_exist = FALSE)$select
+      
+      if (!"file_id" %in% select_cols) 
+        select_cols <- c("file_id", select_cols) # file id always included
+      
+      # final processing
+      file_info <- 
+        file_info %>% 
+        # focus on selected columns only (also takes care of the rename)
+        dplyr::select(!!!select_cols) 
+      
+      # check for file id
+      if (!"file_id" %in% names(file_info)) {
+        stop("renaming the 'file_id' column inside an isofile may lead to unpredictable behaviour and is therefore not allowed, sorry", call. = FALSE)
+      }
+      
+      # convert back to list format
+      file_info <-
+        file_info %>%
+        # should still be list columns but doesn't hurt to check
+        ensure_data_frame_list_columns() %>%
+        # split by file info
+        split(seq(nrow(file_info))) %>% 
+        # clean back out the columns that were only added through the row bind
+        map(~.x[!map_lgl(.x, ~is.list(.x) && all(map_lgl(.x, is.null)))])
+      
+      # update
+      updated_iso_files <-
+        map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) %>%
+        iso_as_file_list()
+      
+    } else {
+      # no updates
+      updated_iso_files <- iso_files
+    }
   }
   
-  return(iso_as_file_list(map(isofiles_select, "isofile")))
+  # return updated iso files
+  return(updated_iso_files)
 }
+  
 
 #' @export
 select.iso_file <- function(.data, ...) {
@@ -111,77 +197,161 @@ select.iso_file_list <- function(.data, ...) {
 
 #' Rename file info columns
 #' 
-#' Rename individual file info columns (\code{\link{iso_get_file_info}}) within isofile objects. Works just like dplyr's \link[dplyr]{rename} except that it can rename different columns into the same name in different iso_files depending on what exists in each file. This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns. You can also use \link[dplyr]{rename} directly but it will not provide summary information on the operation. To select specific columns to keep (discarding all others), use \link{iso_select_file_info} instead.
+#' Rename file info columns (\code{\link{iso_get_file_info}}) within isofile objects. Works just like dplyr's \link[dplyr]{rename}. You can also use \link[dplyr]{rename} directly but it will not provide summary information on the operation. To select specific columns to keep (discarding all others), use \link{iso_select_file_info} instead. Set \code{file_specific = TRUE} to rename different columns in different iso_files depending on what exists in each file. This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns. 
 #' 
-#' @inheritParams iso_get_raw_data
+#' @inheritParams iso_select_file_info
 #' @param ... dplyr-style \link[dplyr]{rename} conditions applied based on each file's file_info (see \code{\link{iso_get_file_info}})
 #' @family file_info operations
 #' @export 
-iso_rename_file_info <- function(iso_files, ..., quiet = default(quiet)) {
+iso_rename_file_info <- function(iso_files, ..., file_specific = FALSE, quiet = default(quiet)) {
   UseMethod("iso_rename_file_info")
 }
 
 #' @export
-iso_rename_file_info.default <- function(iso_files, ..., quiet = default(quiet)) {
+iso_rename_file_info.default <- function(iso_files, ..., file_specific = FALSE, quiet = default(quiet)) {
   stop("this function is not defined for objects of type '", 
        class(iso_files)[1], "'", call. = FALSE)
 }
 
 #' @export
-iso_rename_file_info.iso_file <- function(iso_files, ..., quiet = default(quiet)) {
-  iso_rename_file_info(iso_as_file_list(iso_files), ..., quiet = quiet)[[1]]
+iso_rename_file_info.iso_file <- function(iso_files, ..., file_specific = FALSE, quiet = default(quiet)) {
+  iso_rename_file_info(iso_as_file_list(iso_files), ..., file_specific = FALSE, quiet = quiet)[[1]]
 }
 
 #' @export
-iso_rename_file_info.iso_file_list <- function(iso_files, ..., quiet = default(quiet)) {
-  # global vars
-  changed <- to <- from <- NULL
+iso_rename_file_info.iso_file_list <- function(iso_files, ..., file_specific = FALSE, quiet = default(quiet)) {
   
-  # variables for all files
-  rename_expr <- rlang::expr(c(!!!rlang::enexprs(...)))
-  
-  # run select
-  isofiles_rename <- map(iso_files, function(isofile) {
-    # rename positions
-    pos <- local_eval_rename(rename_expr, data = isofile$file_info, strict = FALSE)
-    # selected variables
-    vars <- tibble(
-      file_id = isofile$file_info$file_id,
-      from  = names(isofile$file_info)[pos],
-      to = names(pos),
-      changed = from != to
-    )
-    # make rename
-    names(isofile$file_info)[pos] <- names(pos)
-    #return both
-    return(list(isofile = isofile, vars = vars))
+  # info message
+  rename_exps <- rlang::enexprs(...)
+  rename_exp <- rlang::expr(c(!!!rename_exps))
+  if (!quiet) { 
+    if (file_specific) {
+      message( "Info: renaming the following file info:")
+    } else{
+      glue::glue(
+        "Info: renaming the following file info across {length(iso_files)} data file(s): ",
+        get_info_message_concat(rename_exps, include_names = TRUE, names_sep = "->", flip_names_and_values = TRUE)
+      ) %>% message()
+    }
   }
-  )
   
-  # variable summary
-  all_vars <- map(isofiles_rename, "vars") %>% bind_rows()
-  
-  # safety check on file ID rename
-  check_forbidden_renames(all_vars, "file_id")
-  
-  # summary information
-  if (!quiet) {
+  # perform renames
+  if (file_specific) {
     
-    info <- all_vars %>%
-      filter(changed) %>% 
-      group_by(file_id) %>%
-      summarize(label = sprintf("'%s'->'%s'", from, to) %>% paste(collapse = ", ")) %>%
-      dplyr::count(label) %>%
-      mutate(label = sprintf(" - for %d file(s): %s", n, label)) %>%
-      arrange(desc(n))
-    total_n <- all_vars %>% filter(changed) %>% select(from) %>% unique()
-    glue::glue("Info: renaming {nrow(total_n)} file info column(s) ",
-               "wherever they exist across {length(iso_files)} isofile(s):\n",
-               "{paste(info$label, collapse = '\n')}") %>% 
-      message()
+    # run rename
+    isofiles_rename <- map(iso_files, function(isofile) {
+      # get column names
+      rename_cols <- 
+        tryCatch(
+          get_column_names(
+            isofile$file_info, df_name = "file_info",
+            rename = rename_exp, n_reqs = list(rename = "*"), 
+            cols_must_exist = FALSE)$rename,
+          warning = function(w) {
+            w$message
+          })
+      
+      # check if there was an error
+      error_msg <- NA_character_
+      if (is.null(names(rename_cols))) {
+        error_msg <- rename_cols
+        rename_cols <- get_column_names(
+          isofile$file_info, df_name = "file_info",
+          rename = rename_exp, n_reqs = list(rename = "*"), 
+          cols_must_exist = FALSE, warn = FALSE)$rename
+      }
+      
+      # rename variables
+      vars <- tibble(
+        file_id = isofile$file_info$file_id,
+        from  = rename_cols,
+        to = names(rename_cols),
+        changed = .data$from != .data$to
+      )
+      
+      # rename file_info columns
+      if (length(rename_cols) > 0)
+      isofile$file_info <- dplyr::rename(isofile$file_info, !!!rename_cols)
+      
+      # check for file id
+      if (!"file_id" %in% names(isofile$file_info)) {
+        stop("renaming the 'file_id' column inside an isofile may lead to unpredictable behaviour and is therefore not allowed, sorry", call. = FALSE)
+      }
+      
+      #return both
+      return(list(isofile = isofile, vars = vars, error = error_msg))
+    })
+    
+    # get iso files
+    updated_iso_files <- iso_as_file_list(map(isofiles_rename, "isofile"))
+    
+    # summarize individual file updates
+    if (!quiet) {
+      info <- map(isofiles_rename, "vars") %>% 
+        bind_rows() %>%
+        group_by(.data$file_id) %>%
+        summarize(
+          label = 
+            ifelse(
+              changed,
+              sprintf("'%s'->'%s'", .data$from, .data$to),
+              sprintf("'%s'", .data$from)
+            ) %>% paste(collapse = ", ")
+        ) %>%
+        dplyr::count(label) %>%
+        mutate(label = sprintf(" - for %d file(s): %s", .data$n, .data$label)) %>%
+        arrange(desc(.data$n))
+      message(paste(info$label, collapse = "\n"))
+    }
+    
+    # check if same error for all files
+    errors <- map_chr(isofiles_rename, "error")
+    if (!any(is.na(errors)) && all(errors == errors[1])) {
+      warning(errors[[1]], immediate. = TRUE, call. = FALSE)
+    }
+    
+  } else {
+    # across all files  - fast but less flexible
+    # retrieve info
+    file_info <- iso_files %>% 
+      # retrieve file info
+      map(~.x$file_info) %>% 
+      # combine in data frame (use safe bind to make sure different data column 
+      # types of the same name don't trip up the combination)
+      safe_bind_rows() 
+    
+    # renaming columns
+    rename_cols <- get_column_names(
+      file_info, df_name = "file_info",
+      rename = rename_exp, n_reqs = list(rename = "*"), 
+      cols_must_exist = FALSE)$rename
+    
+    # then run the rename
+    file_info <- dplyr::rename(file_info, !!!rename_cols)
+    
+    # check for file id
+    if (!"file_id" %in% names(file_info)) {
+      stop("renaming the 'file_id' column inside an isofile may lead to unpredictable behaviour and is therefore not allowed, sorry", call. = FALSE)
+    }
+    
+    # convert back to list format
+    file_info <-
+      file_info %>%
+      # should still be list columns but doesn't hurt to check
+      ensure_data_frame_list_columns() %>%
+      # split by file info
+      split(seq(nrow(file_info))) %>% 
+      # clean back out the columns that were only added through the row bind
+      map(~.x[!map_lgl(.x, ~is.list(.x) && all(map_lgl(.x, is.null)))])
+    
+    # update
+    updated_iso_files <-
+      map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) %>%
+      iso_as_file_list()
   }
   
-  return(iso_as_file_list(map(isofiles_rename, "isofile")))
+  # return updated iso files
+  return(updated_iso_files)
 }
 
 #' @export
@@ -473,7 +643,7 @@ iso_parse_file_info.iso_file_list <- function(iso_files, number = c(), double = 
 #' @export
 iso_add_file_info.iso_file_list <- function(iso_files, new_file_info, ..., quiet = default(quiet)) {
 
-  # mutate iso_files' file info
+  # add to iso_files' file_info
   file_info <- 
     iso_get_file_info(iso_files, quiet = TRUE) %>% 
     iso_add_file_info(new_file_info = new_file_info, ..., quiet = quiet)

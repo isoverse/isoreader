@@ -6,6 +6,9 @@
 \usage{
 iso_get_standards_info(...)
 }
+\arguments{
+\item{...}{forwarded to \link{iso_get_standards}}
+}
 \description{
 Please use \link{iso_get_standards} instead.
 }

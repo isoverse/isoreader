@@ -242,7 +242,7 @@ extract_scn_resistors <- function(ds) {
   }
   
   ds$method_info$resistors <-
-    dplyr::tibble(
+    tibble::tibble(
       cup = parse_number(cups) %>% as.integer(), 
       R.ohm = ohms
     ) %>%
