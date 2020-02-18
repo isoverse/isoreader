@@ -1,16 +1,5 @@
 # dplyr style functions that operate on file info
 
-# rename & select utils ========
-
-# check that specific columns have not been renamed
-check_forbidden_renames <- function(vars, check_vars) {
-  if (any(prob <- check_vars %in% filter(vars, changed)$from)) {
-    glue::glue("renaming the '{paste(check_vars[prob], collapse = \"', '\")}' column ",
-               "may lead to unpredictable behaviour and is therefore not allowed, sorry") %>%
-      stop(call. = FALSE)
-  }
-}
-
 # select ==================
 
 #' Select file info columns

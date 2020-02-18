@@ -30,7 +30,7 @@ iso_read_rds <- function(ds, options = list()) {
     stop(call. = FALSE)
   
   # information
-  if (!default(quiet)) {
+  if (!default("quiet")) {
     sprintf("loaded data for %d data files from R Data Storage - checking loaded files for content consistency...", length(iso_files)) %>% 
       log_message()
   }

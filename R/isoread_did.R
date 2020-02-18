@@ -37,10 +37,7 @@ iso_read_did <- function(ds, options = list()) {
 
 # extract voltage data in did file
 extract_did_raw_voltage_data <- function(ds) {
-  
-  # global vars
-  type <- cycle <- pos <- cup <- voltage <- NULL
-  
+
   # mass information
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot identify measured masses") %>% 
@@ -101,18 +98,19 @@ extract_did_raw_voltage_data <- function(ds) {
       tibble(pos = sample_positions + sample_voltage_start_re$size, type = "sample")
     ) %>% 
     mutate(
-      voltages = map(pos, capture_voltages)
+      voltages = map(.data$pos, capture_voltages)
     ) %>% 
     unnest(voltages) %>% 
     # join in the mass information
     left_join(tibble(cup = 1:length(masses), mass = masses_columns), by = "cup") %>% 
     # spread out the volrages
-    select(-pos, -cup) %>% spread(mass, voltage) %>% 
+    select(-.data$pos, -.data$cup) %>% 
+    spread(.data$mass, .data$voltage) %>% 
     # update cycle
-    mutate(cycle = as.integer(ifelse(cycle == "Pre", -1L, cycle)) + 1L)
+    mutate(cycle = as.integer(ifelse(.data$cycle == "Pre", -1L, .data$cycle)) + 1L)
   
   # voltages data frame
-  ds$raw_data <- arrange(voltages, desc(type), cycle)
+  ds$raw_data <- arrange(voltages, desc(.data$type), .data$cycle)
   return(ds)
 }
 
