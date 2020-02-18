@@ -326,8 +326,12 @@ iso_get_file_info <- function(iso_files, select = everything(), file_specific = 
   
   # retrieve info
   file_info <- iso_files %>% 
-    # select files
-    iso_select_file_info(!!select_exp, file_specific = file_specific, quiet = TRUE) %>% 
+    { 
+      if (rlang::as_label(select_exp) != "everything()")
+        # select columns
+        iso_select_file_info(., !!select_exp, file_specific = file_specific, quiet = TRUE) 
+      else . # much faster (if selecting everything)
+    } %>% 
     # retrieve file info
     map(~.x$file_info) %>% 
     # combine in data frame (use safe bind to make sure different data column 
