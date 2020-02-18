@@ -58,7 +58,7 @@ register_file_reader <- function(type, call, extension, func, description, softw
   frs <- default("file_readers", allow_null = TRUE)
   
   new_fr <-
-    dplyr::tibble(
+    tibble::tibble(
       type = type, call = call, extension = extension,
       func = func, cacheable = cacheable, description = description,
       software = software, env = env

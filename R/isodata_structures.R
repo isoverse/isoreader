@@ -10,7 +10,7 @@ make_iso_file_data_structure <- function(file_id = NA_character_) {
         method_info = FALSE, # whether method info was read
         raw_data = FALSE # whether mass data was read 
       ), 
-      file_info = dplyr::tibble(
+      file_info = tibble::tibble(
         file_id = file_id, # unique identifer
         file_root = NA_character_, # root directory for file path
         file_path = NA_character_, # path to file (file extension is key for processing)
@@ -18,7 +18,7 @@ make_iso_file_data_structure <- function(file_id = NA_character_) {
         file_datetime = NA_integer_ # the run date and time of the file
       ),
       method_info = list(), # all methods information
-      raw_data = dplyr::tibble() # all mass data
+      raw_data = tibble::tibble() # all mass data
     ),
     class = c("iso_file")
   ) %>% 
@@ -31,9 +31,9 @@ make_di_data_structure <- function(file_id = NA_character_) {
   struct <- make_iso_file_data_structure(file_id = file_id)
   # vendor data table
   struct$read_options$vendor_data_table <- FALSE
-  struct$vendor_data_table <- dplyr::tibble()
+  struct$vendor_data_table <- tibble::tibble()
   # background
-  struct$bgrd_data <- dplyr::tibble()
+  struct$bgrd_data <- tibble::tibble()
   class(struct) <- c("dual_inlet", class(struct))
   return(struct)
 }
@@ -43,7 +43,7 @@ make_cf_data_structure <- function(file_id = NA_character_) {
   struct <- make_iso_file_data_structure(file_id = file_id)
   # vendor data table
   struct$read_options$vendor_data_table <- FALSE
-  struct$vendor_data_table <- dplyr::tibble()
+  struct$vendor_data_table <- tibble::tibble()
   class(struct) <- c("continuous_flow", class(struct))
   return(struct)
 }

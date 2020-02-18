@@ -47,7 +47,7 @@ dplyr::filter
 
 # re-export tibblef or use in examples
 #' @export
-dplyr::tibble
+tibble::tibble
 
 # quiets concerns of R CMD check about . in pipelineds
 # and .data in tidyverse functions
