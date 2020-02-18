@@ -6,11 +6,11 @@
 # @param type_reqs named list to specify what types certain columns must be, allowed: "list" (also includes "vctrs_list_of"), "numeric", "integer", "character", "logical"
 # @param cols_must_exist - if TRUE, will throw an error if a column does not exist, otherwise just warning (unless warn = FALSE)
 # @return list of column names for each entry (may contain multiple depending on selection conditions)
-get_column_names <- function(df, ..., n_reqs = list(), type_reqs = list(), cols_must_exist = TRUE, warn = TRUE) {
+get_column_names <- function(df, ..., df_name = rlang::as_label(rlang::enexpr(df)), n_reqs = list(), type_reqs = list(), cols_must_exist = TRUE, warn = TRUE) {
   
   # df name and data frame test
   if (missing(df)) stop("no data frame supplied", call. = FALSE)
-  df_name <- rlang::as_label(rlang::enexpr(df))
+  df_name <- force(df_name)
   df <- force(df)
   if (!is.data.frame(df))
     sprintf("parameter '%s' is not a data frame", df_name) %>% stop(call. = FALSE)
