@@ -422,15 +422,12 @@ check_cycle_length <- function(df_channels, length_column) {
 # calculate intensities
 calculate_intensities <- function(df_channels, grouping, masses = c()) {
 
-  # global vars
-  intensities <- channel <- NULL
-  
   # calculate raw data intensities
   df_intensities <- df_channels %>% 
-    unnest(intensities) %>% 
-    mutate(intensities = as.numeric(intensities)) %>% 
+    unnest(.data$intensities) %>% 
+    mutate(intensities = as.numeric(.data$intensities)) %>% 
     group_by(!!!map(grouping, sym)) %>% 
-    summarize(intensity = mean(intensities[-1])) %>% 
+    summarize(intensity = mean(.data$intensities[-1])) %>% 
     ungroup() 
   
   # convert channels to masses
@@ -443,7 +440,8 @@ calculate_intensities <- function(df_channels, grouping, masses = c()) {
       )
     df_intensities <- df_intensities %>% 
       left_join(masses, by = "channel") %>% 
-      select(-channel) %>% rename(channel = mass)
+      select(-.data$channel) %>% 
+      rename(channel = .data$mass)
     
   } else {
     # don't allow this scenario

@@ -750,7 +750,7 @@ iso_cleanup_reader_cache <- function(all = FALSE) {
   files <- list.files(default("cache_dir"), pattern = "^iso_?file_.*\\.rds$", full.names = TRUE)
   if (all) {
     file.remove(files)
-    if (!default(quiet)) message("Info: removed all (", length(files), ") cached isoreader files.")
+    if (!default("quiet")) message("Info: removed all (", length(files), ") cached isoreader files.")
   } else {
     iso_file <- NULL
     remove <- sapply(files, function(file){
@@ -762,7 +762,7 @@ iso_cleanup_reader_cache <- function(all = FALSE) {
     # remove files
     if (any(remove)) file.remove(files[remove])
     # info message
-    if (!default(quiet)) message("Info: removed ", sum(unlist(remove)), " cached isoreader files.")
+    if (!default("quiet")) message("Info: removed ", sum(unlist(remove)), " cached isoreader files.")
   }
   invisible(NULL)
 }
@@ -819,19 +819,19 @@ get_info_message_concat <- function(variable, prefix = "", suffix = "", empty = 
       else as.character(.x)
     })
   }
-  
+
   # totally empty?
   if (length(variable) == 0) return("")
-  
+
   # exclude empty strings
   variable <- variable[!variable %in% empty]
-  
+
   # now empty or all no strings?
   if (length(variable) == 0 || all(nchar(variable) == 0)) return("")
-  
+
   # any quotes?
   quotes <- if(quotes) "'" else ""
-  
+
   # include names
   if (include_names && !is.null(names(variable))) {
     var_names <- names(variable)
