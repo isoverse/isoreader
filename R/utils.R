@@ -807,19 +807,44 @@ find_parent_call <- function(current_func) {
 # formatting =====
 
 # convience function for information message
-get_info_message_concat <- function(variable, prefix = "", suffix = "", empty = c(), quotes = TRUE){
+get_info_message_concat <- function(variable, prefix = "", suffix = "", empty = c(), quotes = TRUE, include_names = FALSE, names_sep = "=", flip_names_and_values = FALSE){
   if (is_quosure(variable) || rlang::is_expression(variable)) {
     variable <- rlang::as_label(variable)
     if (variable == "NULL") return("")
+  } else if (is.list(variable)) {
+    variable <- purrr::map_chr(variable, ~{
+      if (is_quosure(.x) || rlang::is_expression(.x)) rlang::as_label(.x)
+      else as.character(.x)
+    })
   }
-  if (is_empty(variable)) return("")
-  variable <- setdiff(variable, empty)
-  if (length(variable) > 0 && !all(nchar(variable) == 0)) {
-    quotes <- if(quotes) "'" else ""
-    vars <- str_c(variable, collapse = str_c(quotes, ", ", quotes, collapse = ""))
-    return(str_c(prefix, quotes, vars, quotes, suffix))
-  } else
-    return("")
+  
+  # totally empty?
+  if (length(variable) == 0) return("")
+  
+  # exclude empty strings
+  variable <- variable[!variable %in% empty]
+  
+  # now empty or all no strings?
+  if (length(variable) == 0 || all(nchar(variable) == 0)) return("")
+  
+  # any quotes?
+  quotes <- if(quotes) "'" else ""
+  
+  # include names
+  if (include_names && !is.null(names(variable))) {
+    var_names <- names(variable)
+    if (flip_names_and_values)
+      var_names[!nchar(var_names) == 0] <- paste0(quotes, names_sep, quotes, var_names[!nchar(var_names) == 0])
+    else
+      var_names[!nchar(var_names) == 0] <- paste0(var_names[!nchar(var_names) == 0], quotes, names_sep, quotes)
+  } else {
+    var_names <- ""
+  }
+  if (flip_names_and_values)
+    vars <- paste(paste0(variable, var_names), collapse = sprintf("%s, %s", quotes, quotes))
+  else
+    vars <- paste(paste0(var_names, variable), collapse = sprintf("%s, %s", quotes, quotes))
+  return(str_c(prefix, quotes, vars, quotes, suffix))
 }
 
 
