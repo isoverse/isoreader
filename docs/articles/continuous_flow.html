@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.0</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.1</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@
     <div class="page-header toc-ignore">
       <h1>Continuous Flow Examples</h1>
             
-            <h4 class="date">2020-02-13</h4>
+            <h4 class="date">2020-02-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/continuous_flow.Rmd"><code>vignettes/continuous_flow.Rmd</code></a></small>
       <div class="hidden name"><code>continuous_flow.Rmd</code></div>
@@ -156,7 +156,7 @@
 <a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co">#&gt;       processing sample '6630_GlutamicAcid04' (IRMS data '124.hdf5', '126.h...</span></a>
 <a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' with '.dxf' reader</span></a>
 <a class="sourceLine" id="cb3-23" data-line-number="23"><span class="co">#&gt; Info: reading file 'linearity_example.dxf' with '.dxf' reader</span></a>
-<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co">#&gt; Info: finished reading 4 files in 8.37 secs</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co">#&gt; Info: finished reading 4 files in 16.53 secs</span></a></code></pre></div>
 </div>
 <div id="file-summary" class="section level1">
 <h1 class="hasAnchor">
@@ -209,14 +209,14 @@
 <a class="sourceLine" id="cb8-8" data-line-number="8">      Analysis, <span class="st">`</span><span class="dt">Peak Center</span><span class="st">`</span>, <span class="st">`</span><span class="dt">H3 Factor</span><span class="st">`</span>,</a>
 <a class="sourceLine" id="cb8-9" data-line-number="9">      <span class="co"># select the time stamp and rename it to `Date &amp; Time`</span></a>
 <a class="sourceLine" id="cb8-10" data-line-number="10">      <span class="st">`</span><span class="dt">Date &amp; Time</span><span class="st">`</span> =<span class="st"> </span>file_datetime</a>
-<a class="sourceLine" id="cb8-11" data-line-number="11">    )</a>
-<a class="sourceLine" id="cb8-12" data-line-number="12">  ) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>() </a>
-<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt; Info: aggregating file info from 7 data file(s), selecting info columns 'c(...)'</span></a>
-<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt; Warning: 'select = c(...)' refers to unknown column(s) in data frame 'file_info':</span></a>
-<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt; - Names must be unique.</span></a></code></pre></div>
+<a class="sourceLine" id="cb8-11" data-line-number="11">    ),</a>
+<a class="sourceLine" id="cb8-12" data-line-number="12">    <span class="co"># explicitly allow for file specific rename (for the new ID column)</span></a>
+<a class="sourceLine" id="cb8-13" data-line-number="13">    <span class="dt">file_specific =</span> <span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb8-14" data-line-number="14">  ) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>() </a>
+<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt; Info: aggregating file info from 7 data file(s), selecting info columns 'c(ID = `Identifier 1`, ID = Name, Analysis, `Peak Center`, `H3 Factor`, `Date &amp; Time` = file_datetime)'</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf"},{"1":"6632_WSL-2 wood"},{"1":"6605_USGS41"},{"1":"6617_IAEA600"},{"1":"6630_GlutamicAcid04"},{"1":"continuous_flow_example.dxf"},{"1":"linearity_example.dxf"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ID"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[4],"type":["chr"],"align":["left"]},{"label":["H3 Factor"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[6],"type":["S3: POSIXct"],"align":["right"]}],"data":[{"1":"continuous_flow_example.cf","2":"F8-5.5uL","3":"6520","4":"NA","5":"2.79431047797221","6":"2013-07-13 17:42:40"},{"1":"6632_WSL-2 wood","2":"WSL-2 wood","3":"NA","4":"NA","5":"NA","6":"2014-10-08 12:27:23"},{"1":"6605_USGS41","2":"USGS41","3":"NA","4":"NA","5":"NA","6":"2014-10-08 08:14:35"},{"1":"6617_IAEA600","2":"IAEA600","3":"NA","4":"NA","5":"NA","6":"2014-10-08 10:01:14"},{"1":"6630_GlutamicAcid04","2":"GlutamicAcid04","3":"NA","4":"NA","5":"NA","6":"2014-10-08 12:00:50"},{"1":"continuous_flow_example.dxf","2":"acetanilide_1","3":"2921","4":"1","5":"0","6":"2017-02-09 12:55:40"},{"1":"linearity_example.dxf","2":"linearity","3":"MAT25391411","4":"1","5":"0","6":"2015-02-19 07:07:53"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <div id="selectrename" class="section level2">
@@ -227,15 +227,16 @@
 <a class="sourceLine" id="cb9-2" data-line-number="2">cf_files2 &lt;-<span class="st"> </span>cf_files <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/iso_select_file_info.html">iso_select_file_info</a></span>(</a>
 <a class="sourceLine" id="cb9-4" data-line-number="4">    <span class="dt">ID =</span> <span class="st">`</span><span class="dt">Identifier 1</span><span class="st">`</span>, <span class="dt">ID =</span> <span class="st">`</span><span class="dt">Name</span><span class="st">`</span>, Analysis, <span class="st">`</span><span class="dt">Peak Center</span><span class="st">`</span>, <span class="st">`</span><span class="dt">H3 Factor</span><span class="st">`</span>, </a>
-<a class="sourceLine" id="cb9-5" data-line-number="5">    <span class="st">`</span><span class="dt">Date &amp; Time</span><span class="st">`</span> =<span class="st"> </span>file_datetime</a>
-<a class="sourceLine" id="cb9-6" data-line-number="6">  )</a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; Info: keeping 7 file info column(s) wherever they exist across 7 isofile(s):</span></a>
-<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt;  - for 4 file(s): 'file_id', 'Name'-&gt;'ID', 'file_datetime'-&gt;'Date &amp; Time'</span></a>
-<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt;  - for 3 file(s): 'file_id', 'Identifier 1'-&gt;'ID', 'Analysis', 'Peak Center', 'H3 Factor', 'file_datetime'-&gt;'Date &amp; Time'</span></a>
-<a class="sourceLine" id="cb9-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co"># fetch all file info</span></a>
-<a class="sourceLine" id="cb9-12" data-line-number="12">cf_files2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
-<a class="sourceLine" id="cb9-13" data-line-number="13"><span class="co">#&gt; Info: aggregating file info from 7 data file(s)</span></a></code></pre></div>
+<a class="sourceLine" id="cb9-5" data-line-number="5">    <span class="st">`</span><span class="dt">Date &amp; Time</span><span class="st">`</span> =<span class="st"> </span>file_datetime,</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">    <span class="dt">file_specific =</span> <span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">  )</a>
+<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; Info: selecting/renaming the following file info:</span></a>
+<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt;  - for 4 file(s): 'file_id', 'Name'-&gt;'ID', 'file_datetime'-&gt;'Date &amp; Time'</span></a>
+<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt;  - for 3 file(s): 'file_id', 'Identifier 1'-&gt;'ID', 'Analysis', 'Peak Center', 'H3 Factor', 'file_datetime'-&gt;'Date &amp; Time'</span></a>
+<a class="sourceLine" id="cb9-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="co"># fetch all file info</span></a>
+<a class="sourceLine" id="cb9-13" data-line-number="13">cf_files2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
+<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="co">#&gt; Info: aggregating file info from 7 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ID"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[4],"type":["chr"],"align":["left"]},{"label":["H3 Factor"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[6],"type":["S3: POSIXct"],"align":["right"]}],"data":[{"1":"continuous_flow_example.cf","2":"F8-5.5uL","3":"6520","4":"NA","5":"2.79431047797221","6":"2013-07-13 17:42:40"},{"1":"6632_WSL-2 wood","2":"WSL-2 wood","3":"NA","4":"NA","5":"NA","6":"2014-10-08 12:27:23"},{"1":"6605_USGS41","2":"USGS41","3":"NA","4":"NA","5":"NA","6":"2014-10-08 08:14:35"},{"1":"6617_IAEA600","2":"IAEA600","3":"NA","4":"NA","5":"NA","6":"2014-10-08 10:01:14"},{"1":"6630_GlutamicAcid04","2":"GlutamicAcid04","3":"NA","4":"NA","5":"NA","6":"2014-10-08 12:00:50"},{"1":"continuous_flow_example.dxf","2":"acetanilide_1","3":"2921","4":"1","5":"0","6":"2017-02-09 12:55:40"},{"1":"linearity_example.dxf","2":"linearity","3":"MAT25391411","4":"1","5":"0","6":"2015-02-19 07:07:53"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -330,7 +331,7 @@
 <a class="sourceLine" id="cb14-8" data-line-number="8"><span class="co">#&gt;  - 'Run since 2015?' join: 2/2 new info rows matched 7/7 data files - 1 of these was/were also matched by subsequent joins which took precedence</span></a>
 <a class="sourceLine" id="cb14-9" data-line-number="9"><span class="co">#&gt;  - 'file_id' join: 1/1 new info rows matched 1/7 data files</span></a>
 <a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt; Info: aggregating file info from 7 data file(s), selecting info columns 'names(new_info)'</span></a>
-<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="co">#&gt; Warning: 'select = names(new_info)' refers to unknown column(s) in data frame 'file_info':</span></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="co">#&gt; Warning: 'select = c(names(new_info))' refers to unknown column(s) in data frame 'file_info':</span></a>
 <a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co">#&gt; - object 'new_info' not found</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -536,7 +537,7 @@
 <a class="sourceLine" id="cb27-7" data-line-number="7"><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></a>
 <a class="sourceLine" id="cb27-8" data-line-number="8"><span class="co">#&gt; Info: reading file 'cf_files_export.cf.rds' with '.cf.rds' reader</span></a>
 <a class="sourceLine" id="cb27-9" data-line-number="9"><span class="co">#&gt; Info: loaded data for 7 data files from R Data Storage - checking loaded fi...</span></a>
-<a class="sourceLine" id="cb27-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.10 secs</span></a>
+<a class="sourceLine" id="cb27-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.35 secs</span></a>
 <a class="sourceLine" id="cb27-11" data-line-number="11">cf_files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
 <a class="sourceLine" id="cb27-12" data-line-number="12"><span class="co">#&gt; Info: aggregating data summary from 7 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">

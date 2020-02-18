@@ -36,7 +36,7 @@
 
 
 <meta property="og:title" content="Rename file info columns — iso_rename_file_info" />
-<meta property="og:description" content="Rename individual file info columns (iso_get_file_info) within isofile objects. Works just like dplyr's rename except that it can rename different columns into the same name in different iso_files depending on what exists in each file. This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns. You can also use rename directly but it will not provide summary information on the operation. To select specific columns to keep (discarding all others), use iso_select_file_info instead." />
+<meta property="og:description" content="Rename file info columns (iso_get_file_info) within isofile objects. Works just like dplyr's rename. You can also use rename directly but it will not provide summary information on the operation. To select specific columns to keep (discarding all others), use iso_select_file_info instead. Set file_specific = TRUE to rename different columns in different iso_files depending on what exists in each file. This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.0</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.1</span>
       </span>
     </div>
 
@@ -151,10 +151,15 @@
     </div>
 
     <div class="ref-description">
-    <p>Rename individual file info columns (<code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>) within isofile objects. Works just like dplyr's <a href='https://dplyr.tidyverse.org/reference/select.html'>rename</a> except that it can rename different columns into the same name in different iso_files depending on what exists in each file. This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns. You can also use <a href='https://dplyr.tidyverse.org/reference/select.html'>rename</a> directly but it will not provide summary information on the operation. To select specific columns to keep (discarding all others), use <a href='iso_select_file_info.html'>iso_select_file_info</a> instead.</p>
+    <p>Rename file info columns (<code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>) within isofile objects. Works just like dplyr's <a href='https://dplyr.tidyverse.org/reference/select.html'>rename</a>. You can also use <a href='https://dplyr.tidyverse.org/reference/select.html'>rename</a> directly but it will not provide summary information on the operation. To select specific columns to keep (discarding all others), use <a href='iso_select_file_info.html'>iso_select_file_info</a> instead. Set <code>file_specific = TRUE</code> to rename different columns in different iso_files depending on what exists in each file. This is very useful when working with data from multiple instruments that may have the same information (e.g. sample name) stored in different columns.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_rename_file_info</span>(<span class='no'>iso_files</span>, <span class='no'>...</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>))</pre>
+    <pre class="usage"><span class='fu'>iso_rename_file_info</span>(
+  <span class='no'>iso_files</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>file_specific</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,6 +171,10 @@
     <tr>
       <th>...</th>
       <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/select.html'>rename</a> conditions applied based on each file's file_info (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>)</p></td>
+    </tr>
+    <tr>
+      <th>file_specific</th>
+      <td><p>whether to run the select criteria (<code>...</code>) specifically within each individual file rather than on all files jointly. This is a lot slower but makes it possible to  select different columns in different iso_files depending on what exists in each file and is mostly of use when working with data from multiple instruments.</p></td>
     </tr>
     <tr>
       <th>quiet</th>

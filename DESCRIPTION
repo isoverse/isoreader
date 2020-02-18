@@ -28,7 +28,8 @@ Imports:
     rhdf5,
     feather,
     UNF,
-    openxlsx
+    openxlsx,
+    stats
 Suggests:
     testthat,
     readxl,
