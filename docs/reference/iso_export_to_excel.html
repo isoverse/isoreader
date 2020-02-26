@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.2</span>
       </span>
     </div>
 
@@ -190,8 +190,11 @@
     </tr>
     <tr>
       <th>include_standards</th>
-      <td><p>which columns from the standards info to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. By default, everything is included (both standards and ratios). To omit the ratios, change to <code>select = file_id:reference</code>. Set to NULL to include no standards info.
-#' @param include_resistors which columns from the resistors info to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set to NULL to include no resistors info.</p></td>
+      <td><p>which columns from the standards info to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. By default, everything is included (both standards and ratios). To omit the ratios, change to <code>select = file_id:reference</code>. Set to NULL to include no standards info.</p></td>
+    </tr>
+    <tr>
+      <th>include_resistors</th>
+      <td><p>which columns from the resistors info to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set to NULL to include no resistors info.</p></td>
     </tr>
     <tr>
       <th>include_vendor_data_table</th>
@@ -203,7 +206,7 @@
     </tr>
     <tr>
       <th>with_explicit_units</th>
-      <td><p>whether to include units in the column headers of the returned data frame instead of the column data types (see <code><a href='iso_double_with_units.html'>iso_double_with_units</a></code>). Note that any <code>select</code> conditions have to refer to the column names including the full units.</p></td>
+      <td><p>whether to include units in the column headers of the returned data frame instead of the column data types (see <code><a href='iso_with_units.html'>iso_double_with_units</a></code>). Note that any <code>select</code> conditions have to refer to the column names including the full units.</p></td>
     </tr>
     <tr>
       <th>include_method_info</th>

@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.2</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@
     <div class="page-header toc-ignore">
       <h1>Scan Examples</h1>
             
-            <h4 class="date">2020-02-17</h4>
+            <h4 class="date">2020-02-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/scan.Rmd"><code>vignettes/scan.Rmd</code></a></small>
       <div class="hidden name"><code>scan.Rmd</code></div>
@@ -147,7 +147,7 @@
 <a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; Info: reading file 'background_scan_example.scn' with '.scn' reader</span></a>
 <a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader</span></a>
 <a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; Info: reading file 'time_scan_example.scn' from cache...</span></a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; Info: finished reading 4 files in 1.51 secs</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; Info: finished reading 4 files in 0.70 secs</span></a></code></pre></div>
 </div>
 <div id="file-summary" class="section level1">
 <h1 class="hasAnchor">
@@ -157,7 +157,7 @@
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; Info: aggregating data summary from 4 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_data"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_info"],"name":[3],"type":["chr"],"align":["left"]},{"label":["method_info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"220 measurements, 3 ions (44,45,46)","3":"7 entries","4":"resistors","5":"peak_shape_scan_example.scn"},{"1":"background_scan_example.scn","2":"525 measurements, 7 ions (44,45,46,47,54,48,49)","3":"7 entries","4":"resistors","5":"background_scan_example.scn"},{"1":"full_scan_example.scn","2":"799 measurements, 0 ions ()","3":"7 entries","4":"resistors","5":"full_scan_example.scn"},{"1":"time_scan_example.scn","2":"5532 measurements, 2 ions (38,40)","3":"7 entries","4":"resistors","5":"time_scan_example.scn"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_data"],"name":[2],"type":["S3: glue"],"align":["right"]},{"label":["file_info"],"name":[3],"type":["chr"],"align":["left"]},{"label":["method_info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"220 measurements, 3 ions (44,45,46)","3":"7 entries","4":"resistors","5":"peak_shape_scan_example.scn"},{"1":"background_scan_example.scn","2":"525 measurements, 7 ions (44,45,46,47,54,48,49)","3":"7 entries","4":"resistors","5":"background_scan_example.scn"},{"1":"full_scan_example.scn","2":"799 measurements, 3 channels (2,4,6)","3":"7 entries","4":"resistors","5":"full_scan_example.scn"},{"1":"time_scan_example.scn","2":"5532 measurements, 2 ions (38,40)","3":"7 entries","4":"resistors","5":"time_scan_example.scn"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <div id="problems" class="section level2">
@@ -187,7 +187,7 @@
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; Info: aggregating file info from 4 data file(s), selecting info columns 'c(-file_root)'</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["file_datetime"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["type"],"name":[5],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"High Voltage","6":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"High Voltage","6":"NA"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"MagnetCurrent","6":"NA"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"Clock","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["file_datetime"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["type"],"name":[5],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"High Voltage","6":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"High Voltage","6":"NA"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"MagnetCurrent","6":"NA"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"Clock","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <div id="selectrename" class="section level2">
@@ -206,7 +206,7 @@
 <a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt; Info: aggregating file info from 4 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["type"],"name":[5],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"High Voltage","6":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"High Voltage","6":"NA"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"MagnetCurrent","6":"NA"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"Clock","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["type"],"name":[5],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"High Voltage","6":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"High Voltage","6":"NA"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"MagnetCurrent","6":"NA"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"Clock","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -223,7 +223,7 @@
 <a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; Info: aggregating file info from 2 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["type"],"name":[5],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"High Voltage","6":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"High Voltage","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["type"],"name":[5],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"High Voltage","6":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"High Voltage","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -244,7 +244,7 @@
 <a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; Info: aggregating file info from 4 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["type"],"name":[5],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[6],"type":["chr"],"align":["left"]},{"label":["Run in 2019?"],"name":[7],"type":["lgl"],"align":["right"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"High Voltage","6":"test this comment feature","7":"FALSE"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"High Voltage","6":"NA","7":"FALSE"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"MagnetCurrent","6":"NA","7":"FALSE"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2020-02-17 23:09:56","5":"Clock","6":"NA","7":"FALSE"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["type"],"name":[5],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[6],"type":["chr"],"align":["left"]},{"label":["Run in 2019?"],"name":[7],"type":["lgl"],"align":["right"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"High Voltage","6":"test this comment feature","7":"FALSE"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"High Voltage","6":"NA","7":"FALSE"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"MagnetCurrent","6":"NA","7":"FALSE"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2020-02-26 10:25:23","5":"Clock","6":"NA","7":"FALSE"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -311,14 +311,14 @@
 <a class="sourceLine" id="cb15-7" data-line-number="7"><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></a>
 <a class="sourceLine" id="cb15-8" data-line-number="8"><span class="co">#&gt; Info: reading file 'scan_files_export.scan.rds' with '.scan.rds' reader</span></a>
 <a class="sourceLine" id="cb15-9" data-line-number="9"><span class="co">#&gt; Info: loaded data for 4 data files from R Data Storage - checking loaded fi...</span></a>
-<a class="sourceLine" id="cb15-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.47 secs</span></a>
+<a class="sourceLine" id="cb15-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.22 secs</span></a>
 <a class="sourceLine" id="cb15-11" data-line-number="11"><span class="co">#&gt; Data from 4 scan iso files: </span></a>
 <a class="sourceLine" id="cb15-12" data-line-number="12"><span class="co">#&gt; # A tibble: 4 x 5</span></a>
 <a class="sourceLine" id="cb15-13" data-line-number="13"><span class="co">#&gt;   file_id         raw_data                file_info method_info file_path       </span></a>
-<a class="sourceLine" id="cb15-14" data-line-number="14"><span class="co">#&gt;   &lt;chr&gt;           &lt;chr&gt;                   &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;           </span></a>
+<a class="sourceLine" id="cb15-14" data-line-number="14"><span class="co">#&gt;   &lt;chr&gt;           &lt;glue&gt;                  &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;           </span></a>
 <a class="sourceLine" id="cb15-15" data-line-number="15"><span class="co">#&gt; 1 peak_shape_sca… 220 measurements, 3 io… 7 entries resistors   peak_shape_scan…</span></a>
 <a class="sourceLine" id="cb15-16" data-line-number="16"><span class="co">#&gt; 2 background_sca… 525 measurements, 7 io… 7 entries resistors   background_scan…</span></a>
-<a class="sourceLine" id="cb15-17" data-line-number="17"><span class="co">#&gt; 3 full_scan_exam… 799 measurements, 0 io… 7 entries resistors   full_scan_examp…</span></a>
+<a class="sourceLine" id="cb15-17" data-line-number="17"><span class="co">#&gt; 3 full_scan_exam… 799 measurements, 3 ch… 7 entries resistors   full_scan_examp…</span></a>
 <a class="sourceLine" id="cb15-18" data-line-number="18"><span class="co">#&gt; 4 time_scan_exam… 5532 measurements, 2 i… 7 entries resistors   time_scan_examp…</span></a></code></pre></div>
 </div>
 <div id="data-export" class="section level1">

@@ -437,7 +437,7 @@ convert_df_units_attr_to_implicit_units <- function(df) {
 
 #' Format values
 #'
-#' Convenience function to easily format and concatenate text and numeric values. Automatically detects \code{\link{iso_with_units}} values and incorporates the units into the formatting.
+#' Convenience function to easily format and concatenate text and numeric values. Can be used with any test and number data. Automatically detects \code{\link{iso_with_units}} values and incorporates the units into the formatting.
 #' 
 #' @param ... variable names with data. Must have the same dimensions if multiple are supplied. Can be named to rename variable name output. Will include units in output for all \link{iso_with_units}.
 #' @param signif number of significant digits for numbered data

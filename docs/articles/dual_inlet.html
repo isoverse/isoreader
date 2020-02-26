@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.2</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@
     <div class="page-header toc-ignore">
       <h1>Dual Inlet Examples</h1>
             
-            <h4 class="date">2020-02-17</h4>
+            <h4 class="date">2020-02-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/dual_inlet.Rmd"><code>vignettes/dual_inlet.Rmd</code></a></small>
       <div class="hidden name"><code>dual_inlet.Rmd</code></div>
@@ -147,7 +147,7 @@
 <a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; Info: reading file 'dual_inlet_example2.did' with '.did' reader</span></a>
 <a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader</span></a>
 <a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; Info: reading file 'dual_inlet_nu_example.txt' with '.txt' reader</span></a>
-<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; Info: finished reading 4 files in 10.51 secs</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; Info: finished reading 4 files in 14.14 secs</span></a></code></pre></div>
 </div>
 <div id="file-summary" class="section level1">
 <h1 class="hasAnchor">
@@ -157,7 +157,7 @@
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; Info: aggregating data summary from 4 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_data"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_info"],"name":[3],"type":["chr"],"align":["left"]},{"label":["method_info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["vendor_data_table"],"name":[5],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.did","2":"15 cycles, 8 ions (28,29,32,33,34,38,40,44)","3":"16 entries","4":"standards, resistors","5":"15 rows, 7 columns","6":"dual_inlet_example.did"},{"1":"dual_inlet_example2.did","2":"7 cycles, 6 ions (44,45,46,47,48,49)","3":"15 entries","4":"standards, resistors","5":"7 rows, 8 columns","6":"dual_inlet_example2.did"},{"1":"dual_inlet_example.caf","2":"8 cycles, 6 ions (44,45,46,47,48,49)","3":"22 entries","4":"standards, resistors","5":"8 rows, 9 columns","6":"dual_inlet_example.caf"},{"1":"dual_inlet_nu_example.txt","2":"82 cycles, 6 ions (44,45,46,47,48,49)","3":"8 entries","4":"no method info","5":"no vendor data table","6":"dual_inlet_nu_example.txt"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_data"],"name":[2],"type":["S3: glue"],"align":["right"]},{"label":["file_info"],"name":[3],"type":["chr"],"align":["left"]},{"label":["method_info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["vendor_data_table"],"name":[5],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.did","2":"15 cycles, 8 ions (28,29,32,33,34,38,40,44)","3":"16 entries","4":"standards, resistors","5":"15 rows, 7 columns","6":"dual_inlet_example.did"},{"1":"dual_inlet_example2.did","2":"7 cycles, 6 ions (44,45,46,47,48,49)","3":"15 entries","4":"standards, resistors","5":"7 rows, 8 columns","6":"dual_inlet_example2.did"},{"1":"dual_inlet_example.caf","2":"8 cycles, 6 ions (44,45,46,47,48,49)","3":"22 entries","4":"standards, resistors","5":"8 rows, 9 columns","6":"dual_inlet_example.caf"},{"1":"dual_inlet_nu_example.txt","2":"82 cycles, 6 ions (44,45,46,47,48,49)","3":"8 entries","4":"no method info","5":"no vendor data table","6":"dual_inlet_nu_example.txt"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <div id="problems" class="section level2">
@@ -270,23 +270,26 @@
 <div id="mutate" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mutate" class="anchor"></a>Mutate</h2>
-<p>The file information in any collection of isofiles can also be mutated using the function <code>iso_mutate_file_info</code>. This function can introduce new columns and operate on any existing columns available in the file information (even if it does not exist in all files) and supports full <a href="https://dplyr.tidyverse.org/reference/mutate.html">dplyr</a> syntax.</p>
+<p>The file information in any collection of isofiles can also be mutated using the function <code>iso_mutate_file_info</code>. This function can introduce new columns and operate on/overwrite any existing columns available in the file information (even if it does not exist in all files) and supports full <a href="https://dplyr.tidyverse.org/reference/mutate.html">dplyr</a> syntax. It can also be used in conjuction with <code>iso_with_unit</code> to generate values with implicit units.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">di_files3 &lt;-<span class="st"> </span>di_files2 <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/iso_mutate_file_info.html">iso_mutate_file_info</a></span>(</a>
 <a class="sourceLine" id="cb12-3" data-line-number="3">    <span class="co"># update existing column</span></a>
 <a class="sourceLine" id="cb12-4" data-line-number="4">    <span class="dt">ID =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"ID:"</span>, ID),</a>
 <a class="sourceLine" id="cb12-5" data-line-number="5">    <span class="co"># introduce new column</span></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6">    <span class="st">`</span><span class="dt">Run in 2017?</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">Date &amp; Time</span><span class="st">`</span> <span class="op">&gt;</span><span class="st"> "2017-01-01"</span> <span class="op">&amp;</span><span class="st"> `</span><span class="dt">Date &amp; Time</span><span class="st">`</span> <span class="op">&lt;</span><span class="st"> "2018-01-01"</span></a>
-<a class="sourceLine" id="cb12-7" data-line-number="7">  ) </a>
-<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="co">#&gt; Info: mutating file info for 4 data file(s)</span></a>
-<a class="sourceLine" id="cb12-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb12-10" data-line-number="10">di_files3 <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb12-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb12-12" data-line-number="12"><span class="st">  </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
-<a class="sourceLine" id="cb12-13" data-line-number="13"><span class="co">#&gt; Info: aggregating file info from 4 data file(s)</span></a></code></pre></div>
+<a class="sourceLine" id="cb12-6" data-line-number="6">    <span class="st">`</span><span class="dt">Run in 2017?</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">Date &amp; Time</span><span class="st">`</span> <span class="op">&gt;</span><span class="st"> "2017-01-01"</span> <span class="op">&amp;</span><span class="st"> `</span><span class="dt">Date &amp; Time</span><span class="st">`</span> <span class="op">&lt;</span><span class="st"> "2018-01-01"</span>,</a>
+<a class="sourceLine" id="cb12-7" data-line-number="7">    <span class="co"># parse weight as a number and turn into a column with units</span></a>
+<a class="sourceLine" id="cb12-8" data-line-number="8">    <span class="st">`</span><span class="dt">Sample Weight</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">Sample Weight</span><span class="st">`</span> <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://readr.tidyverse.org/reference/parse_number.html">parse_number</a></span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/iso_with_units.html">iso_with_units</a></span>(<span class="st">"mg"</span>)</a>
+<a class="sourceLine" id="cb12-9" data-line-number="9">  ) </a>
+<a class="sourceLine" id="cb12-10" data-line-number="10"><span class="co">#&gt; Info: mutating file info for 4 data file(s)</span></a>
+<a class="sourceLine" id="cb12-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb12-12" data-line-number="12">di_files3 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="../reference/iso_make_units_explicit.html">iso_make_units_explicit</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-15" data-line-number="15"><span class="st">  </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
+<a class="sourceLine" id="cb12-16" data-line-number="16"><span class="co">#&gt; Info: aggregating file info from 4 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ID"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Method"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[6],"type":["S3: POSIXct"],"align":["right"]},{"label":["Sample Weight"],"name":[7],"type":["chr"],"align":["left"]},{"label":["Run in 2017?"],"name":[8],"type":["lgl"],"align":["right"]}],"data":[{"1":"dual_inlet_example.did","2":"ID: Stability","3":"1481","4":"dual inlet Paul.met","5":"1","6":"2013-03-12 10:04:52","7":"NA","8":"FALSE"},{"1":"dual_inlet_example2.did","2":"ID: CIT Carrara","3":"49077","4":"CO2_multiply_16V.met","5":"1","6":"2014-10-27 05:23:54","7":"NA","8":"FALSE"},{"1":"dual_inlet_example.caf","2":"ID: 2H6","3":"16068","4":"CARBO IIIUvU_Clump.met","5":"NA","6":"2017-07-03 16:57:57","7":"113","8":"TRUE"},{"1":"dual_inlet_nu_example.txt","2":"ID: ETH-01","3":"NA","4":"NA","5":"NA","6":"2017-02-21 10:46:17","7":"3480","8":"TRUE"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ID"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Method"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[6],"type":["S3: POSIXct"],"align":["right"]},{"label":["Sample Weight [mg]"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["Run in 2017?"],"name":[8],"type":["lgl"],"align":["right"]}],"data":[{"1":"dual_inlet_example.did","2":"ID: Stability","3":"1481","4":"dual inlet Paul.met","5":"1","6":"2013-03-12 10:04:52","7":"NA","8":"FALSE"},{"1":"dual_inlet_example2.did","2":"ID: CIT Carrara","3":"49077","4":"CO2_multiply_16V.met","5":"1","6":"2014-10-27 05:23:54","7":"NA","8":"FALSE"},{"1":"dual_inlet_example.caf","2":"ID: 2H6","3":"16068","4":"CARBO IIIUvU_Clump.met","5":"NA","6":"2017-07-03 16:57:57","7":"113","8":"TRUE"},{"1":"dual_inlet_nu_example.txt","2":"ID: ETH-01","3":"NA","4":"NA","5":"NA","6":"2017-02-21 10:46:17","7":"3480","8":"TRUE"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -509,11 +512,11 @@
 <a class="sourceLine" id="cb26-7" data-line-number="7"><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></a>
 <a class="sourceLine" id="cb26-8" data-line-number="8"><span class="co">#&gt; Info: reading file 'di_files_export.di.rds' with '.di.rds' reader</span></a>
 <a class="sourceLine" id="cb26-9" data-line-number="9"><span class="co">#&gt; Info: loaded data for 4 data files from R Data Storage - checking loaded fi...</span></a>
-<a class="sourceLine" id="cb26-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.28 secs</span></a>
+<a class="sourceLine" id="cb26-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.22 secs</span></a>
 <a class="sourceLine" id="cb26-11" data-line-number="11"><span class="co">#&gt; Data from 4 dual inlet iso files: </span></a>
 <a class="sourceLine" id="cb26-12" data-line-number="12"><span class="co">#&gt; # A tibble: 4 x 6</span></a>
 <a class="sourceLine" id="cb26-13" data-line-number="13"><span class="co">#&gt;   file_id    raw_data       file_info  method_info  vendor_data_tab… file_path  </span></a>
-<a class="sourceLine" id="cb26-14" data-line-number="14"><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
+<a class="sourceLine" id="cb26-14" data-line-number="14"><span class="co">#&gt;   &lt;chr&gt;      &lt;glue&gt;         &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
 <a class="sourceLine" id="cb26-15" data-line-number="15"><span class="co">#&gt; 1 dual_inle… 15 cycles, 8 … 16 entries standards, … 15 rows, 7 colu… dual_inlet…</span></a>
 <a class="sourceLine" id="cb26-16" data-line-number="16"><span class="co">#&gt; 2 dual_inle… 7 cycles, 6 i… 15 entries standards, … 7 rows, 8 colum… dual_inlet…</span></a>
 <a class="sourceLine" id="cb26-17" data-line-number="17"><span class="co">#&gt; 3 dual_inle… 8 cycles, 6 i… 22 entries standards, … 8 rows, 9 colum… dual_inlet…</span></a>

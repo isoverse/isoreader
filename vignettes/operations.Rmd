@@ -233,10 +233,10 @@ iso_format(
 # example inside a data frame
 cf_file %>% 
   iso_get_vendor_data_table(select = c(`Nr.`, `Ampl 28`, `d 15N/14N`)) %>% 
-  select(-file_id) %>% 
+  dplyr::select(-file_id) %>% 
   head(3) %>%
   # introduce new label columns using iso_format
-  mutate(
+  dplyr::mutate(
     # default concatenation of values
     label_default = iso_format(
       `Nr.`, `Ampl 28`, `d 15N/14N`, 

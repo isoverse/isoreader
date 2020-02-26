@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.2</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@
     <div class="page-header toc-ignore">
       <h1>Development features of isoreader</h1>
             
-            <h4 class="date">2020-02-17</h4>
+            <h4 class="date">2020-02-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/development.Rmd"><code>vignettes/development.Rmd</code></a></small>
       <div class="hidden name"><code>development.Rmd</code></div>
@@ -146,7 +146,7 @@
 <a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; Info: this is the new reader!</span></a>
 <a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; List of 7</span></a>
 <a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt;  $ version          :Classes 'package_version', 'numeric_version'  hidden list of 1</span></a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;   ..$ : int [1:3] 1 1 1</span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;   ..$ : int [1:3] 1 1 2</span></a>
 <a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt;  $ read_options     :List of 4</span></a>
 <a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt;   ..$ file_info        : logi TRUE</span></a>
 <a class="sourceLine" id="cb2-16" data-line-number="16"><span class="co">#&gt;   ..$ method_info      : logi TRUE</span></a>
@@ -167,7 +167,7 @@
 <a class="sourceLine" id="cb2-31" data-line-number="31"><span class="co">#&gt;   ..$ type   : chr(0) </span></a>
 <a class="sourceLine" id="cb2-32" data-line-number="32"><span class="co">#&gt;   ..$ func   : chr(0) </span></a>
 <a class="sourceLine" id="cb2-33" data-line-number="33"><span class="co">#&gt;   ..$ details: chr(0)</span></a>
-<a class="sourceLine" id="cb2-34" data-line-number="34"><span class="co">#&gt; Info: finished reading 1 files in 0.91 secs</span></a>
+<a class="sourceLine" id="cb2-34" data-line-number="34"><span class="co">#&gt; Info: finished reading 1 files in 0.65 secs</span></a>
 <a class="sourceLine" id="cb2-35" data-line-number="35"><span class="co">#&gt; Dual inlet iso file 'example.new.did': 0 cycles, 0 ions ()</span></a>
 <a class="sourceLine" id="cb2-36" data-line-number="36"><span class="kw"><a href="https://rdrr.io/r/base/files.html">file.remove</a></span>(<span class="st">"example.new.did"</span>)</a>
 <a class="sourceLine" id="cb2-37" data-line-number="37"><span class="co">#&gt; [1] TRUE</span></a></code></pre></div>
@@ -196,11 +196,11 @@
 <a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader</span></a>
 <a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; Info: starting file #2, named 'dual_inlet_example.caf'</span></a>
 <a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; Info: finished file #2</span></a>
-<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt; Info: finished reading 2 files in 11.11 secs</span></a>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt; Info: finished reading 2 files in 10.93 secs</span></a>
 <a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt; Data from 2 dual inlet iso files: </span></a>
 <a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co">#&gt; # A tibble: 2 x 6</span></a>
 <a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">#&gt;   file_id    raw_data        file_info method_info  vendor_data_tab… file_path  </span></a>
-<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;           &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
+<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="co">#&gt;   &lt;chr&gt;      &lt;glue&gt;          &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
 <a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co">#&gt; 1 dual_inle… 15 cycles, 8 i… 16 entri… standards, … 15 rows, 7 colu… dual_inlet…</span></a>
 <a class="sourceLine" id="cb3-25" data-line-number="25"><span class="co">#&gt; 2 dual_inle… 8 cycles, 6 io… 22 entri… standards, … 8 rows, 9 colum… dual_inlet…</span></a>
 <a class="sourceLine" id="cb3-26" data-line-number="26">  </a>
@@ -225,7 +225,7 @@
 <a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co"># use structure mapping</span></a>
 <a class="sourceLine" id="cb4-10" data-line-number="10">bin <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb4-11" data-line-number="11"><span class="st">  </span>isoreader<span class="op">:::</span><span class="kw">move_to_pos</span>(<span class="dv">1340</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="st">  </span>isoreader<span class="op">:::</span><span class="kw">map_binary_structure</span>(<span class="dt">length =</span> <span class="dv">200</span>)</a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="st">  </span>isoreader<span class="op">:::</span><span class="kw"><a href="../reference/map_binary_structure.html">map_binary_structure</a></span>(<span class="dt">length =</span> <span class="dv">200</span>)</a>
 <a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt; # Binary data structure:  </span></a>
 <a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt; 0001340: &lt;3x00&gt;&lt;fef-1c&gt;{Peak Center found at [58910]}&lt;fef-09&gt;{CUserInfo}&lt;ffff&gt;{00 00 00 00 1a 80}</span></a>
 <a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt; 0001435: &lt;etx&gt;</span></a>
@@ -250,7 +250,7 @@
 <p>Same as for specific byte positions, one can use the control blocks to navigate the file and <code>map_binary_structure</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">bin <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span>isoreader<span class="op">:::</span><span class="kw">move_to_C_block</span>(<span class="st">"CMethod"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span>isoreader<span class="op">:::</span><span class="kw">map_binary_structure</span>(<span class="dt">length =</span> <span class="dv">200</span>)</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span>isoreader<span class="op">:::</span><span class="kw"><a href="../reference/map_binary_structure.html">map_binary_structure</a></span>(<span class="dt">length =</span> <span class="dv">200</span>)</a>
 <a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt; # Binary data structure:  </span></a>
 <a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt; 0216402: &lt;etx&gt;</span></a>
 <a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt; 0216406:   {/}&lt;fef-0&gt;&lt;fef-06&gt;{Method}&lt;4x00&gt;</span></a>

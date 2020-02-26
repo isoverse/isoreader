@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.2</span>
       </span>
     </div>
 
@@ -105,7 +105,7 @@
     <div class="page-header toc-ignore">
       <h1>Operations</h1>
             
-            <h4 class="date">2020-02-17</h4>
+            <h4 class="date">2020-02-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/operations.Rmd"><code>vignettes/operations.Rmd</code></a></small>
       <div class="hidden name"><code>operations.Rmd</code></div>
@@ -223,7 +223,7 @@
 <a class="sourceLine" id="cb3-6" data-line-number="6"><span class="st">  </span>knitr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</a>
 <a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></a>
 <a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; Info: reading file 'dual_inlet_example.did' from cache...</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; Info: finished reading 1 files in 0.42 secs</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; Info: finished reading 1 files in 0.35 secs</span></a>
 <a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; Info: selecting/renaming the following file info across 1 data file(s): 'file_datetime', 'Identifier 1'</span></a>
 <a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; Info: aggregating file info from 1 data file(s)</span></a></code></pre></div>
 <table class="table">
@@ -290,21 +290,21 @@
 <p>By default, isoreader caches files as R objects to make access faster in the future. This feature can be turned off if you want to force a fresh read from the source file. Alternatively, you can clear the entire isoreader cache in your working directory to clean up previous file reads.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># cleanup reader cache</span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="../reference/iso_cleanup_reader_cache.html">iso_cleanup_reader_cache</a></span>(<span class="dt">all =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; Info: removed all (46) cached isoreader files.</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; Info: removed all (15) cached isoreader files.</span></a>
 <a class="sourceLine" id="cb7-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co"># read a new file (notice the time elapsed)</span></a>
 <a class="sourceLine" id="cb7-6" data-line-number="6">cf_file &lt;-<span class="st"> </span><span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"continuous_flow_example.dxf"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb7-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span>()</a>
 <a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></a>
 <a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' with '.dxf' reader</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 6.38 secs</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 2.80 secs</span></a>
 <a class="sourceLine" id="cb7-11" data-line-number="11"></a>
 <a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co"># re-read the same file much faster (it will be read from cache)</span></a>
 <a class="sourceLine" id="cb7-13" data-line-number="13">cf_file &lt;-<span class="st"> </span><span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"continuous_flow_example.dxf"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb7-14" data-line-number="14"><span class="st">    </span><span class="kw"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span>()</a>
 <a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></a>
 <a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' from cache...</span></a>
-<a class="sourceLine" id="cb7-17" data-line-number="17"><span class="co">#&gt; Info: finished reading 1 files in 0.37 secs</span></a>
+<a class="sourceLine" id="cb7-17" data-line-number="17"><span class="co">#&gt; Info: finished reading 1 files in 0.22 secs</span></a>
 <a class="sourceLine" id="cb7-18" data-line-number="18"></a>
 <a class="sourceLine" id="cb7-19" data-line-number="19"><span class="co"># turn reader caching off</span></a>
 <a class="sourceLine" id="cb7-20" data-line-number="20"><span class="kw"><a href="../reference/iso_caching.html">iso_turn_reader_caching_off</a></span>()</a>
@@ -315,7 +315,7 @@
 <a class="sourceLine" id="cb7-25" data-line-number="25"><span class="st">  </span><span class="kw"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span>()</a>
 <a class="sourceLine" id="cb7-26" data-line-number="26"><span class="co">#&gt; Info: preparing to read 1 data files...</span></a>
 <a class="sourceLine" id="cb7-27" data-line-number="27"><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' with '.dxf' reader</span></a>
-<a class="sourceLine" id="cb7-28" data-line-number="28"><span class="co">#&gt; Info: finished reading 1 files in 3.52 secs</span></a>
+<a class="sourceLine" id="cb7-28" data-line-number="28"><span class="co">#&gt; Info: finished reading 1 files in 3.91 secs</span></a>
 <a class="sourceLine" id="cb7-29" data-line-number="29"></a>
 <a class="sourceLine" id="cb7-30" data-line-number="30"><span class="co"># turn reader caching back on</span></a>
 <a class="sourceLine" id="cb7-31" data-line-number="31"><span class="kw"><a href="../reference/iso_caching.html">iso_turn_reader_caching_on</a></span>()</a>
@@ -337,7 +337,7 @@
 <a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt; Info (process 1): reading file 'dual_inlet_example.did' with '.did' reader</span></a>
 <a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co">#&gt; Info (process 2): reading file 'dual_inlet_example2.did' with '.did' reader</span></a>
 <a class="sourceLine" id="cb8-12" data-line-number="12"><span class="co">#&gt; Info (process 3): reading file 'dual_inlet_example.caf' with '.caf' reader</span></a>
-<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt; Info: finished reading 3 files in 20.90 secs</span></a></code></pre></div>
+<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt; Info: finished reading 3 files in 18.70 secs</span></a></code></pre></div>
 </div>
 <div id="combining-subsetting-isofiles" class="section level1">
 <h1 class="hasAnchor">
@@ -348,7 +348,7 @@
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">#&gt; Data from 3 dual inlet iso files: </span></a>
 <a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; # A tibble: 3 x 6</span></a>
 <a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt;   file_id    raw_data       file_info  method_info  vendor_data_tab… file_path  </span></a>
-<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt;   &lt;chr&gt;      &lt;glue&gt;         &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
 <a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; 1 dual_inle… 15 cycles, 8 … 16 entries standards, … 15 rows, 7 colu… dual_inlet…</span></a>
 <a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; 2 dual_inle… 7 cycles, 6 i… 15 entries standards, … 7 rows, 8 colum… dual_inlet…</span></a>
 <a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; 3 dual_inle… 8 cycles, 6 i… 22 entries standards, … 8 rows, 9 colum… dual_inlet…</span></a>
@@ -366,7 +366,7 @@
 <a class="sourceLine" id="cb9-21" data-line-number="21"><span class="co">#&gt; Data from 2 dual inlet iso files: </span></a>
 <a class="sourceLine" id="cb9-22" data-line-number="22"><span class="co">#&gt; # A tibble: 2 x 6</span></a>
 <a class="sourceLine" id="cb9-23" data-line-number="23"><span class="co">#&gt;   file_id    raw_data        file_info method_info  vendor_data_tab… file_path  </span></a>
-<a class="sourceLine" id="cb9-24" data-line-number="24"><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;           &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
+<a class="sourceLine" id="cb9-24" data-line-number="24"><span class="co">#&gt;   &lt;chr&gt;      &lt;glue&gt;          &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
 <a class="sourceLine" id="cb9-25" data-line-number="25"><span class="co">#&gt; 1 dual_inle… 15 cycles, 8 i… 16 entri… standards, … 15 rows, 7 colu… dual_inlet…</span></a>
 <a class="sourceLine" id="cb9-26" data-line-number="26"><span class="co">#&gt; 2 dual_inle… 8 cycles, 6 io… 22 entri… standards, … 8 rows, 9 colum… dual_inlet…</span></a>
 <a class="sourceLine" id="cb9-27" data-line-number="27"></a>
@@ -375,7 +375,7 @@
 <a class="sourceLine" id="cb9-30" data-line-number="30"><span class="co">#&gt; Data from 2 dual inlet iso files: </span></a>
 <a class="sourceLine" id="cb9-31" data-line-number="31"><span class="co">#&gt; # A tibble: 2 x 6</span></a>
 <a class="sourceLine" id="cb9-32" data-line-number="32"><span class="co">#&gt;   file_id    raw_data        file_info method_info  vendor_data_tab… file_path  </span></a>
-<a class="sourceLine" id="cb9-33" data-line-number="33"><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;           &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
+<a class="sourceLine" id="cb9-33" data-line-number="33"><span class="co">#&gt;   &lt;chr&gt;      &lt;glue&gt;          &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
 <a class="sourceLine" id="cb9-34" data-line-number="34"><span class="co">#&gt; 1 dual_inle… 15 cycles, 8 i… 16 entri… standards, … 15 rows, 7 colu… dual_inlet…</span></a>
 <a class="sourceLine" id="cb9-35" data-line-number="35"><span class="co">#&gt; 2 dual_inle… 8 cycles, 6 io… 22 entri… standards, … 8 rows, 9 colum… dual_inlet…</span></a>
 <a class="sourceLine" id="cb9-36" data-line-number="36"></a>
@@ -387,7 +387,7 @@
 <a class="sourceLine" id="cb9-42" data-line-number="42"><span class="co">#&gt; Data from 2 dual inlet iso files: </span></a>
 <a class="sourceLine" id="cb9-43" data-line-number="43"><span class="co">#&gt; # A tibble: 2 x 6</span></a>
 <a class="sourceLine" id="cb9-44" data-line-number="44"><span class="co">#&gt;   file_id    raw_data        file_info method_info  vendor_data_tab… file_path  </span></a>
-<a class="sourceLine" id="cb9-45" data-line-number="45"><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;           &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
+<a class="sourceLine" id="cb9-45" data-line-number="45"><span class="co">#&gt;   &lt;chr&gt;      &lt;glue&gt;          &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
 <a class="sourceLine" id="cb9-46" data-line-number="46"><span class="co">#&gt; 1 dual_inle… 15 cycles, 8 i… 16 entri… standards, … 15 rows, 7 colu… dual_inlet…</span></a>
 <a class="sourceLine" id="cb9-47" data-line-number="47"><span class="co">#&gt; 2 dual_inle… 8 cycles, 6 io… 22 entri… standards, … 8 rows, 9 colum… dual_inlet…</span></a>
 <a class="sourceLine" id="cb9-48" data-line-number="48"></a>
@@ -399,7 +399,7 @@
 <a class="sourceLine" id="cb9-54" data-line-number="54"><span class="co">#&gt; Data from 2 dual inlet iso files: </span></a>
 <a class="sourceLine" id="cb9-55" data-line-number="55"><span class="co">#&gt; # A tibble: 2 x 6</span></a>
 <a class="sourceLine" id="cb9-56" data-line-number="56"><span class="co">#&gt;   file_id    raw_data        file_info method_info  vendor_data_tab… file_path  </span></a>
-<a class="sourceLine" id="cb9-57" data-line-number="57"><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;           &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
+<a class="sourceLine" id="cb9-57" data-line-number="57"><span class="co">#&gt;   &lt;chr&gt;      &lt;glue&gt;          &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
 <a class="sourceLine" id="cb9-58" data-line-number="58"><span class="co">#&gt; 1 dual_inle… 8 cycles, 6 io… 22 entri… standards, … 8 rows, 9 colum… dual_inlet…</span></a>
 <a class="sourceLine" id="cb9-59" data-line-number="59"><span class="co">#&gt; 2 dual_inle… 15 cycles, 8 i… 16 entri… standards, … 15 rows, 7 colu… dual_inlet…</span></a></code></pre></div>
 </div>
@@ -417,7 +417,7 @@
 <a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt; Info: reading file 'extdata/continuous_flow_example.dxf' from cache...</span></a>
 <a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt; Info: reading file 'errdata/cf_without_data.dxf' with '.dxf' reader</span></a>
 <a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">#&gt; Warning: caught error - cannot identify measured masses - block 'CEvalDataI...</span></a>
-<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; Info: finished reading 2 files in 0.78 secs</span></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; Info: finished reading 2 files in 0.45 secs</span></a>
 <a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt; Info: encountered 1 problems in total</span></a>
 <a class="sourceLine" id="cb10-13" data-line-number="13"><span class="co">#&gt; # A tibble: 1 x 4</span></a>
 <a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt;   file_id       type  func             details                                  </span></a>
@@ -471,11 +471,11 @@
 <a class="sourceLine" id="cb13-5" data-line-number="5"><span class="co">#&gt; Info: reading file 'dual_inlet_example.did' from cache...</span></a>
 <a class="sourceLine" id="cb13-6" data-line-number="6"><span class="co">#&gt; Info: reading file 'dual_inlet_example2.did' from cache...</span></a>
 <a class="sourceLine" id="cb13-7" data-line-number="7"><span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' from cache...</span></a>
-<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt; Info: finished reading 3 files in 0.47 secs</span></a>
+<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt; Info: finished reading 3 files in 0.23 secs</span></a>
 <a class="sourceLine" id="cb13-9" data-line-number="9"><span class="co">#&gt; Data from 3 dual inlet iso files: </span></a>
 <a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">#&gt; # A tibble: 3 x 6</span></a>
 <a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">#&gt;   file_id    raw_data       file_info  method_info  vendor_data_tab… file_path  </span></a>
-<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
+<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#&gt;   &lt;chr&gt;      &lt;glue&gt;         &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
 <a class="sourceLine" id="cb13-13" data-line-number="13"><span class="co">#&gt; 1 dual_inle… 15 cycles, 8 … 16 entries standards, … 15 rows, 7 colu… dual_inlet…</span></a>
 <a class="sourceLine" id="cb13-14" data-line-number="14"><span class="co">#&gt; 2 dual_inle… 7 cycles, 6 i… 15 entries standards, … 7 rows, 8 colum… dual_inlet…</span></a>
 <a class="sourceLine" id="cb13-15" data-line-number="15"><span class="co">#&gt; 3 dual_inle… 8 cycles, 6 i… 22 entries standards, … 8 rows, 9 colum… dual_inlet…</span></a>
@@ -493,7 +493,7 @@
 <a class="sourceLine" id="cb13-27" data-line-number="27"><span class="co">#&gt; Data from 3 dual inlet iso files: </span></a>
 <a class="sourceLine" id="cb13-28" data-line-number="28"><span class="co">#&gt; # A tibble: 3 x 6</span></a>
 <a class="sourceLine" id="cb13-29" data-line-number="29"><span class="co">#&gt;   file_id    raw_data       file_info  method_info  vendor_data_tab… file_path  </span></a>
-<a class="sourceLine" id="cb13-30" data-line-number="30"><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
+<a class="sourceLine" id="cb13-30" data-line-number="30"><span class="co">#&gt;   &lt;chr&gt;      &lt;glue&gt;         &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span></a>
 <a class="sourceLine" id="cb13-31" data-line-number="31"><span class="co">#&gt; 1 dual_inle… 15 cycles, 8 … 24 entries standards, … 15 rows, 7 colu… dual_inlet…</span></a>
 <a class="sourceLine" id="cb13-32" data-line-number="32"><span class="co">#&gt; 2 dual_inle… 7 cycles, 6 i… 24 entries standards, … 7 rows, 8 colum… dual_inlet…</span></a>
 <a class="sourceLine" id="cb13-33" data-line-number="33"><span class="co">#&gt; 3 dual_inle… 8 cycles, 6 i… 24 entries standards, … 8 rows, 9 colum… dual_inlet…</span></a>
@@ -509,7 +509,7 @@
 <div id="units" class="section level1">
 <h1 class="hasAnchor">
 <a href="#units" class="anchor"></a>Units</h1>
-<p>Isoreader provides a built in data type with units (<code>iso_double_with_units</code>) that can be used to easily keep track of units inside data frame. These units can be made explicit (=included in the column header), stripped altogher, or turned back to be implicit.</p>
+<p>Isoreader provides a built in data type with units (<code>iso_with_units</code>) that can be used to easily keep track of units inside data frame. These units can be made explicit (=included in the column header), stripped altogher, or turned back to be implicit.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="co"># strip all units</span></a>
 <a class="sourceLine" id="cb14-2" data-line-number="2">cf_file <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb14-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span>(<span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">`</span><span class="dt">Ampl 28</span><span class="st">`</span>, <span class="st">`</span><span class="dt">rIntensity 28</span><span class="st">`</span>, <span class="st">`</span><span class="dt">d 15N/14N</span><span class="st">`</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -536,7 +536,7 @@
 <a class="sourceLine" id="cb14-24" data-line-number="24"></a>
 <a class="sourceLine" id="cb14-25" data-line-number="25"><span class="co"># introduce new unit columns e.g. in the file info</span></a>
 <a class="sourceLine" id="cb14-26" data-line-number="26">cf_file <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb14-27" data-line-number="27"><span class="st">  </span><span class="kw"><a href="../reference/iso_mutate_file_info.html">iso_mutate_file_info</a></span>(<span class="dt">weight =</span> <span class="kw"><a href="../reference/iso_double_with_units.html">iso_double_with_units</a></span>(<span class="fl">0.42</span>, <span class="st">"mg"</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-27" data-line-number="27"><span class="st">  </span><span class="kw"><a href="../reference/iso_mutate_file_info.html">iso_mutate_file_info</a></span>(<span class="dt">weight =</span> <span class="kw"><a href="../reference/iso_with_units.html">iso_with_units</a></span>(<span class="fl">0.42</span>, <span class="st">"mg"</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb14-28" data-line-number="28"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span>(<span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">`</span><span class="dt">Ampl 28</span><span class="st">`</span>, <span class="st">`</span><span class="dt">rIntensity 28</span><span class="st">`</span>, <span class="st">`</span><span class="dt">d 15N/14N</span><span class="st">`</span>),</a>
 <a class="sourceLine" id="cb14-29" data-line-number="29">                            <span class="dt">include_file_info =</span> weight) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb14-30" data-line-number="30"><span class="st">  </span><span class="kw"><a href="../reference/iso_make_units_explicit.html">iso_make_units_explicit</a></span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="dv">3</span>)</a>
@@ -564,6 +564,51 @@
 <a class="sourceLine" id="cb14-52" data-line-number="52"><span class="co">#&gt; 2 continuous_flow_example.dxf      0.42  3022.789        57383.21    0.00000000</span></a>
 <a class="sourceLine" id="cb14-53" data-line-number="53"><span class="co">#&gt; 3 continuous_flow_example.dxf      0.42  2073.872        52731.67    1.04910065</span></a></code></pre></div>
 </div>
+<div id="formatting" class="section level1">
+<h1 class="hasAnchor">
+<a href="#formatting" class="anchor"></a>Formatting</h1>
+<p>Formatting data into text is easily achieved with the built in R function <code>sprintf</code> but this package also provides a convenience function that knows how to incorporate units information from <code>iso_with_units</code> values. Use <code>iso_format</code> to format and concatenate any single values or entire columns inside a data frame.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="co"># concatenation example with single values</span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="kw"><a href="../reference/iso_format.html">iso_format</a></span>(</a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">   <span class="dt">pi =</span> <span class="fl">3.14159</span>, </a>
+<a class="sourceLine" id="cb15-4" data-line-number="4">   <span class="dt">x =</span> <span class="kw"><a href="../reference/iso_with_units.html">iso_with_units</a></span>(<span class="dv">42</span>, <span class="st">"mg"</span>), </a>
+<a class="sourceLine" id="cb15-5" data-line-number="5">   <span class="dt">ID =</span> <span class="st">"ABC"</span>, </a>
+<a class="sourceLine" id="cb15-6" data-line-number="6">   <span class="dt">signif =</span> <span class="dv">4</span>, </a>
+<a class="sourceLine" id="cb15-7" data-line-number="7">   <span class="dt">sep =</span> <span class="st">" | "</span></a>
+<a class="sourceLine" id="cb15-8" data-line-number="8">)</a>
+<a class="sourceLine" id="cb15-9" data-line-number="9"><span class="co">#&gt; [1] "pi: 3.142 | x: 42mg | ID: ABC"</span></a>
+<a class="sourceLine" id="cb15-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb15-11" data-line-number="11"><span class="co"># example inside a data frame</span></a>
+<a class="sourceLine" id="cb15-12" data-line-number="12">cf_file <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span>(<span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">`</span><span class="dt">Nr.</span><span class="st">`</span>, <span class="st">`</span><span class="dt">Ampl 28</span><span class="st">`</span>, <span class="st">`</span><span class="dt">d 15N/14N</span><span class="st">`</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-14" data-line-number="14"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>file_id) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="dv">3</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb15-16" data-line-number="16"><span class="st">  </span><span class="co"># introduce new label columns using iso_format</span></a>
+<a class="sourceLine" id="cb15-17" data-line-number="17"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(</a>
+<a class="sourceLine" id="cb15-18" data-line-number="18">    <span class="co"># default concatenation of values</span></a>
+<a class="sourceLine" id="cb15-19" data-line-number="19">    <span class="dt">label_default =</span> <span class="kw"><a href="../reference/iso_format.html">iso_format</a></span>(</a>
+<a class="sourceLine" id="cb15-20" data-line-number="20">      <span class="st">`</span><span class="dt">Nr.</span><span class="st">`</span>, <span class="st">`</span><span class="dt">Ampl 28</span><span class="st">`</span>, <span class="st">`</span><span class="dt">d 15N/14N</span><span class="st">`</span>, </a>
+<a class="sourceLine" id="cb15-21" data-line-number="21">      <span class="dt">sep =</span> <span class="st">", "</span></a>
+<a class="sourceLine" id="cb15-22" data-line-number="22">    ),</a>
+<a class="sourceLine" id="cb15-23" data-line-number="23">    <span class="co"># concatenate with custom names for each value</span></a>
+<a class="sourceLine" id="cb15-24" data-line-number="24">    <span class="dt">label_named =</span> <span class="kw"><a href="../reference/iso_format.html">iso_format</a></span>(</a>
+<a class="sourceLine" id="cb15-25" data-line-number="25">      <span class="st">`</span><span class="dt">#</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">Nr.</span><span class="st">`</span>, <span class="dt">A =</span> <span class="st">`</span><span class="dt">Ampl 28</span><span class="st">`</span>, <span class="dt">d15 =</span> <span class="st">`</span><span class="dt">d 15N/14N</span><span class="st">`</span>, </a>
+<a class="sourceLine" id="cb15-26" data-line-number="26">      <span class="dt">sep =</span> <span class="st">", "</span></a>
+<a class="sourceLine" id="cb15-27" data-line-number="27">    ),</a>
+<a class="sourceLine" id="cb15-28" data-line-number="28">    <span class="co"># concatenate just the values and increase significant digits</span></a>
+<a class="sourceLine" id="cb15-29" data-line-number="29">    <span class="dt">label_value =</span> <span class="kw"><a href="../reference/iso_format.html">iso_format</a></span>(</a>
+<a class="sourceLine" id="cb15-30" data-line-number="30">      <span class="st">`</span><span class="dt">Nr.</span><span class="st">`</span>, <span class="st">`</span><span class="dt">Ampl 28</span><span class="st">`</span>, <span class="st">`</span><span class="dt">d 15N/14N</span><span class="st">`</span>, </a>
+<a class="sourceLine" id="cb15-31" data-line-number="31">      <span class="dt">sep =</span> <span class="st">", "</span>, <span class="dt">format_names =</span> <span class="ot">NULL</span>, <span class="dt">signif =</span> <span class="dv">6</span></a>
+<a class="sourceLine" id="cb15-32" data-line-number="32">    )</a>
+<a class="sourceLine" id="cb15-33" data-line-number="33">  )</a>
+<a class="sourceLine" id="cb15-34" data-line-number="34"><span class="co">#&gt; Info: aggregating vendor data table from 1 data file(s)</span></a>
+<a class="sourceLine" id="cb15-35" data-line-number="35"><span class="co">#&gt; # A tibble: 3 x 6</span></a>
+<a class="sourceLine" id="cb15-36" data-line-number="36"><span class="co">#&gt;     Nr. `Ampl 28`  `d 15N/14N` label_default        label_named    label_value  </span></a>
+<a class="sourceLine" id="cb15-37" data-line-number="37"><span class="co">#&gt;   &lt;int&gt; &lt;dbl[mV]&gt; &lt;dbl[permil&gt; &lt;chr&gt;                &lt;chr&gt;          &lt;chr&gt;        </span></a>
+<a class="sourceLine" id="cb15-38" data-line-number="38"><span class="co">#&gt; 1     1  3024.040   0.01600287 Nr.: 1, Ampl 28: 30… #: 1, A: 3020… 1, 3024.04mV…</span></a>
+<a class="sourceLine" id="cb15-39" data-line-number="39"><span class="co">#&gt; 2     2  3022.789   0.00000000 Nr.: 2, Ampl 28: 30… #: 2, A: 3020… 2, 3022.79mV…</span></a>
+<a class="sourceLine" id="cb15-40" data-line-number="40"><span class="co">#&gt; 3     3  2073.872   1.04910065 Nr.: 3, Ampl 28: 20… #: 3, A: 2070… 3, 2073.87mV…</span></a></code></pre></div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -581,6 +626,7 @@
       <li><a href="#dealing-with-file-read-problems">Dealing with file read problems</a></li>
       <li><a href="#re-reading-files">Re-reading files</a></li>
       <li><a href="#units">Units</a></li>
+      <li><a href="#formatting">Formatting</a></li>
       </ul>
 </div>
       </div>

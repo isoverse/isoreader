@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.2</span>
       </span>
     </div>
 
@@ -172,7 +172,7 @@
     </tr>
     <tr>
       <th>with_units</th>
-      <td><p>this parameter has been DEPRECATED with the introduction of unit-data types (see <code><a href='iso_double_with_units.html'>iso_double_with_units</a></code>) and will be removed in future versions of isoreader. Please use <code>with_explicit_units</code> instead if you really want columns to have units explicitly in the column name. Alternatively, consider working with the new implicit unit system and convert vendor data tables as needed with <code><a href='iso_make_units_explicit.html'>iso_make_units_explicit</a></code> and <code><a href='iso_make_units_implicit.html'>iso_make_units_implicit</a></code>.</p></td>
+      <td><p>this parameter has been DEPRECATED with the introduction of unit-data types (see <code><a href='iso_with_units.html'>iso_double_with_units</a></code>) and will be removed in future versions of isoreader. Please use <code>with_explicit_units</code> instead if you really want columns to have units explicitly in the column name. Alternatively, consider working with the new implicit unit system and convert vendor data tables as needed with <code><a href='iso_make_units_explicit.html'>iso_make_units_explicit</a></code> and <code><a href='iso_make_units_implicit.html'>iso_make_units_implicit</a></code>.</p></td>
     </tr>
     <tr>
       <th>select</th>
@@ -184,7 +184,7 @@
     </tr>
     <tr>
       <th>with_explicit_units</th>
-      <td><p>whether to include units in the column headers of the returned data frame instead of the column data types (see <code><a href='iso_double_with_units.html'>iso_double_with_units</a></code>). Note that any <code>select</code> conditions have to refer to the column names including the full units.</p></td>
+      <td><p>whether to include units in the column headers of the returned data frame instead of the column data types (see <code><a href='iso_with_units.html'>iso_double_with_units</a></code>). Note that any <code>select</code> conditions have to refer to the column names including the full units.</p></td>
     </tr>
     <tr>
       <th>quiet</th>
