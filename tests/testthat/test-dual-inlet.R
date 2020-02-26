@@ -78,7 +78,9 @@ test_that("test that did files can be read", {
   
   # nu files
   expect_true(file.exists(file <- iso_get_reader_example("dual_inlet_nu_example.txt")))
-  expect_is(did <- iso_read_dual_inlet(file, nu_masses = 49:44), "dual_inlet")
+  expect_is(did <- iso_read_dual_inlet(file, nu_masses = 49:44, read_cache = FALSE), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
+  expect_message(did <- iso_read_dual_inlet(file, read_cache = FALSE), "6 channels but 0 masses")
+  expect_equal(nrow(problems(did)), 1)
   
 })

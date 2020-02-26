@@ -137,7 +137,7 @@ di_files2 %>%
 
 ## Mutate
 
-The file information in any collection of isofiles can also be mutated using the function `iso_mutate_file_info`. This function can introduce new columns and operate on any existing columns available in the file information (even if it does not exist in all files) and supports full [dplyr](https://dplyr.tidyverse.org/reference/mutate.html) syntax. 
+The file information in any collection of isofiles can also be mutated using the function `iso_mutate_file_info`. This function can introduce new columns and operate on/overwrite any existing columns available in the file information (even if it does not exist in all files) and supports full [dplyr](https://dplyr.tidyverse.org/reference/mutate.html) syntax. It can also be used in conjuction with `iso_with_unit` to generate values with implicit units.
 
 ```{r}
 di_files3 <- di_files2 %>% 
@@ -145,11 +145,14 @@ di_files3 <- di_files2 %>%
     # update existing column
     ID = paste("ID:", ID),
     # introduce new column
-    `Run in 2017?` = `Date & Time` > "2017-01-01" & `Date & Time` < "2018-01-01"
+    `Run in 2017?` = `Date & Time` > "2017-01-01" & `Date & Time` < "2018-01-01",
+    # parse weight as a number and turn into a column with units
+    `Sample Weight` = `Sample Weight` %>% parse_number() %>% iso_with_units("mg")
   ) 
 
 di_files3 %>% 
   iso_get_file_info() %>% 
+  iso_make_units_explicit() %>% 
   rmarkdown::paged_table()
 ```
 
