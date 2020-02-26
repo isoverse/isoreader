@@ -40,9 +40,6 @@
     <loc>http://isoreader.isoverse.org//reference/iso_debug_mode.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_double_with_units.html</loc>
-  </url>
-  <url>
     <loc>http://isoreader.isoverse.org//reference/iso_expand_paths.html</loc>
   </url>
   <url>
@@ -62,6 +59,9 @@
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/iso_find_absolute_path_roots.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_format.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/iso_get_all_data.html</loc>
@@ -193,10 +193,16 @@
     <loc>http://isoreader.isoverse.org//reference/iso_strip_units.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_with_units.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org//reference/isoread.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/isoreader-package.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/map_binary_structure.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/print.binary_structure_map.html</loc>

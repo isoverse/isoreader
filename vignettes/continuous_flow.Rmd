@@ -103,7 +103,9 @@ Rather than retrieving specific file info columns using the above example of `is
 cf_files2 <- cf_files %>% 
   iso_select_file_info(
     ID = `Identifier 1`, ID = `Name`, Analysis, `Peak Center`, `H3 Factor`, 
-    `Date & Time` = file_datetime,
+    `Date & Time` = file_datetime, 
+    # recode to the same name in different files
+    `Sample Weight` = `Identifier 2`, `Sample Weight` = `EA Sample Weight`,
     file_specific = TRUE
   )
 
@@ -130,7 +132,7 @@ cf_files2 %>%
 
 ## Mutate
 
-The file information in any collection of isofiles can also be mutated using the function `iso_mutate_file_info`. This function can introduce new columns and operate on any existing columns available in the file information (even if it does not exist in all files) and supports full [dplyr](https://dplyr.tidyverse.org/reference/mutate.html) syntax. 
+The file information in any collection of isofiles can also be mutated using the function `iso_mutate_file_info`. This function can introduce new columns and operate on any existing columns available in the file information (even if it does not exist in all files) and supports full [dplyr](https://dplyr.tidyverse.org/reference/mutate.html) syntax. It can also be used in conjuction with `iso_with_unit` to generate values with implicit units.
 
 ```{r}
 cf_files3 <- 
@@ -139,11 +141,14 @@ cf_files3 <-
     # update existing column
     ID = paste("ID:", ID),
     # introduce new column
-    `Run since 2015?` = `Date & Time` > "2015-01-01"
+    `Run since 2015?` = `Date & Time` > "2015-01-01",
+    # parse weight as a number and turn into a column with units
+    `Sample Weight` = `Sample Weight` %>% parse_number() %>% iso_with_units("mg")
   ) 
 
 cf_files3 %>% 
   iso_get_file_info() %>% 
+  iso_make_units_explicit() %>% 
   rmarkdown::paged_table()
 ```
 
@@ -273,7 +278,8 @@ cf_files %>%
     select = c(Nr., Rt, area = `rIntensity All`, matches("^d \\d+H")),
     # include the Analysis number fron the file info and rename it to 'run'
     include_file_info = c(run = Analysis)
-  ) %>% rmarkdown::paged_table() 
+  ) %>% 
+  rmarkdown::paged_table() 
 
 # the data table also provides units if included in the original data file
 # which can be made explicit using the function iso_make_units_explicit()

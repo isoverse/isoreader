@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Register file readers — iso_register_dual_inlet_file_reader • Isoreader</title>
+<title>Format values — iso_format • Isoreader</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Register file readers — iso_register_dual_inlet_file_reader" />
-<meta property="og:description" content="Register file extensions and reader functions for different data files. Isoreader automatically registers all built-in file readers so this function is usually only needed when registering additional readers provided for testing purposes from outside of the isoreader package. Note that file extensions are case-insensitive, i.e. a reader for .ext will also recognize .Ext and .EXT" />
+<meta property="og:title" content="Format values — iso_format" />
+<meta property="og:description" content="Convenience function to easily format and concatenate text and numeric values. Can be used with any test and number data. Automatically detects iso_with_units values and incorporates the units into the formatting." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -145,99 +145,66 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Register file readers</h1>
-    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/isoread.R'><code>R/isoread.R</code></a></small>
-    <div class="hidden name"><code>file_readers.Rd</code></div>
+    <h1>Format values</h1>
+    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/units.R'><code>R/units.R</code></a></small>
+    <div class="hidden name"><code>iso_format.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Register file extensions and reader functions for different data files. Isoreader automatically registers all built-in file readers so this function is usually only needed when registering additional readers provided for testing purposes from outside of the isoreader package. Note that file extensions are case-insensitive, i.e. a reader for <code>.ext</code> will also recognize <code>.Ext</code> and <code>.EXT</code></p>
+    <p>Convenience function to easily format and concatenate text and numeric values. Can be used with any test and number data. Automatically detects <code><a href='iso_with_units.html'>iso_with_units</a></code> values and incorporates the units into the formatting.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_register_dual_inlet_file_reader</span>(
-  <span class='no'>extension</span>,
-  <span class='no'>func</span>,
-  <span class='kw'>description</span> <span class='kw'>=</span> <span class='fl'>NA_character_</span>,
-  <span class='kw'>software</span> <span class='kw'>=</span> <span class='fl'>NA_character_</span>,
-  <span class='kw'>cacheable</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>find_func</span>(<span class='no'>func</span>)
-)
-
-<span class='fu'>iso_register_continuous_flow_file_reader</span>(
-  <span class='no'>extension</span>,
-  <span class='no'>func</span>,
-  <span class='kw'>description</span> <span class='kw'>=</span> <span class='fl'>NA_character_</span>,
-  <span class='kw'>software</span> <span class='kw'>=</span> <span class='fl'>NA_character_</span>,
-  <span class='kw'>cacheable</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>find_func</span>(<span class='no'>func</span>)
-)
-
-<span class='fu'>iso_register_scan_file_reader</span>(
-  <span class='no'>extension</span>,
-  <span class='no'>func</span>,
-  <span class='kw'>description</span> <span class='kw'>=</span> <span class='fl'>NA_character_</span>,
-  <span class='kw'>software</span> <span class='kw'>=</span> <span class='fl'>NA_character_</span>,
-  <span class='kw'>cacheable</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>find_func</span>(<span class='no'>func</span>)
+    <pre class="usage"><span class='fu'>iso_format</span>(
+  <span class='no'>...</span>,
+  <span class='kw'>signif</span> <span class='kw'>=</span> <span class='fl'>3</span>,
+  <span class='kw'>format_names</span> <span class='kw'>=</span> <span class='st'>"%s: "</span>,
+  <span class='kw'>format_units</span> <span class='kw'>=</span> <span class='st'>"%s"</span>,
+  <span class='kw'>replace_permil</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>extension</th>
-      <td><p>the file extension (e.g. <code>.dxf</code>) of the data file. Must be unique otherwise different files can not automatically be matched with the appropriate file reader based on their extension.</p></td>
+      <th>...</th>
+      <td><p>variable names with data. Must have the same dimensions if multiple are supplied. Can be named to rename variable name output. Will include units in output for all <a href='iso_with_units.html'>iso_with_units</a>.</p></td>
     </tr>
     <tr>
-      <th>func</th>
-      <td><p>the name of the function that should be used a filter reader. All file reader functions must accept a data structure argument as the first argument and return the same data structure with added data.</p></td>
+      <th>signif</th>
+      <td><p>number of significant digits for numbered data</p></td>
     </tr>
     <tr>
-      <th>description</th>
-      <td><p>what is this file type about?</p></td>
+      <th>format_names</th>
+      <td><p>how to format the variable names, set to <code>NULL</code> to remove names</p></td>
     </tr>
     <tr>
-      <th>software</th>
-      <td><p>what is the software program that creates this filetype?</p></td>
+      <th>format_units</th>
+      <td><p>how to format the units from <code><a href='iso_with_units.html'>iso_double_with_units</a></code> variables, set to <code>NULL</code> to omit units</p></td>
     </tr>
     <tr>
-      <th>cacheable</th>
-      <td><p>whether this file type is cacheable. If <code>TRUE</code> (the default), user requests to cache the file will be honored. If <code>FALSE</code>, this file type will never be cached no matter what the user requests.</p></td>
+      <th>replace_permil</th>
+      <td><p>whether to replace the term 'permil' with the permil symbol (\u2030)</p></td>
     </tr>
     <tr>
-      <th>overwrite</th>
-      <td><p>whether to overwrite an existing file reader for the same extension</p></td>
-    </tr>
-    <tr>
-      <th>env</th>
-      <td><p>the environment where to find the function, by default this will be determined automatically and will throw an error if there is any ambiguity (e.g. the same function name in multiple packages) in which case it should be set manually</p></td>
+      <th>sep</th>
+      <td><p>separator between variables if multiple are provided in <code>...</code></p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>iso_register_dual_inlet_file_reader</code>: use this function to register file readers for dual inlet files.</p>
-<p><code>iso_register_continuous_flow_file_reader</code>: use this function to register file readers for continuous flow files.</p>
-<p><code>iso_register_scan_file_reader</code>: use this function to register file readers for scan files.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other file_types: 
-<code><a href='iso_get_supported_file_types.html'>iso_get_supported_file_types</a>()</code></p>
-<p>Other file_types: 
-<code><a href='iso_get_supported_file_types.html'>iso_get_supported_file_types</a>()</code></p>
-<p>Other file_types: 
-<code><a href='iso_get_supported_file_types.html'>iso_get_supported_file_types</a>()</code></p></div>
-
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='iso_with_units.html'>iso_with_units</a></span>(<span class='fl'>1</span>:<span class='fl'>5</span>, <span class='st'>"V"</span>)
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='iso_with_units.html'>iso_with_units</a></span>(<span class='fl'>1</span>:<span class='fl'>5</span>, <span class='st'>"permil"</span>)
+<span class='fu'>iso_format</span>(<span class='no'>x</span>, <span class='no'>y</span>)</div><div class='output co'>#&gt; [1] "x: 1V\ny: 1‰" "x: 2V\ny: 2‰" "x: 3V\ny: 3‰" "x: 4V\ny: 4‰" "x: 5V\ny: 5‰"</div><div class='input'><span class='fu'>iso_format</span>(<span class='kw'>amplitude</span> <span class='kw'>=</span> <span class='no'>x</span>, <span class='kw'>d13C</span> <span class='kw'>=</span> <span class='no'>y</span>)</div><div class='output co'>#&gt; [1] "amplitude: 1V\nd13C: 1‰" "amplitude: 2V\nd13C: 2‰"
+#&gt; [3] "amplitude: 3V\nd13C: 3‰" "amplitude: 4V\nd13C: 4‰"
+#&gt; [5] "amplitude: 5V\nd13C: 5‰"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#see-also">See also</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>

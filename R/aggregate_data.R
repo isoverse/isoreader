@@ -68,29 +68,41 @@ get_raw_data_info <- function(iso_files) {
     tibble(
       file_id = names(iso_files),
       read_raw_data = map_lgl(iso_files, ~.x$read_options$raw_data),
-      all_ions = map(iso_files, ~names(.x$raw_data) %>% str_subset("^[iIvV](\\d+)\\.")),
+      all_ions = map(iso_files, ~names(.x$raw_data) %>% str_subset("^[iIvV]C?(\\d+)\\.")),
       n_ions = map_int(.data$all_ions, length),
-      ions = map2_chr(.data$all_ions, .data$n_ions, ~if(.y > 0) { collapse(.x, sep = ", ") } else {""}) %>% 
-        str_replace_all("[^0-9,]", "")
+      full_ions = map2_chr(.data$all_ions, .data$n_ions, ~if(.y > 0) { collapse(.x, sep = ", ") } else {""}),
+      ions = full_ions %>% str_replace_all("[^0-9,]", "")
     )
   
   if (iso_is_continuous_flow(iso_files)) {
     raw_data_sum <- raw_data_sum %>% 
       mutate(
         n_tps = map_int(iso_files, ~nrow(.x$raw_data)),
-        label = ifelse(read_raw_data, glue("{n_tps} time points, {n_ions} ions ({ions})"), "raw data not read")
+        label = case_when(
+          read_raw_data & stringr::str_detect(full_ions, "[iIvV]C") ~ glue("{n_tps} time points, {n_ions} channels ({ions})"),
+          read_raw_data ~ glue("{n_tps} time points, {n_ions} ions ({ions})"), 
+          TRUE ~ "raw data not read"
+        )
       )
   } else if (iso_is_dual_inlet(iso_files)) {
     raw_data_sum <- raw_data_sum %>% 
       mutate(
         n_cycles = map_int(iso_files, ~as.integer(floor(nrow(.x$raw_data)/2))),
-        label = ifelse(read_raw_data, glue("{n_cycles} cycles, {n_ions} ions ({ions})"), "raw data not read")
+        label = case_when(
+          read_raw_data & stringr::str_detect(full_ions, "[iIvV]C") ~ glue("{n_cycles} cycles, {n_ions} channels ({ions})"),
+          read_raw_data ~ glue("{n_cycles} cycles, {n_ions} ions ({ions})"), 
+          TRUE ~ "raw data not read"
+        )
       )
   } else if (iso_is_scan(iso_files)) {
     raw_data_sum <- raw_data_sum %>% 
       mutate(
         n_tps = map_int(iso_files, ~nrow(.x$raw_data)),
-        label = ifelse(read_raw_data, glue("{n_tps} measurements, {n_ions} ions ({ions})"), "raw data not read")
+        label = case_when(
+          read_raw_data & stringr::str_detect(full_ions, "[iIvV]C") ~ glue("{n_tps} measurements, {n_ions} channels ({ions})"),
+          read_raw_data ~ glue("{n_tps} measurements, {n_ions} ions ({ions})"), 
+          TRUE ~ "raw data not read"
+        )
       )
   } else if (iso_is_file(iso_files[[1]])) {
     # can only get here using make_iso_file_data_structure
@@ -326,8 +338,12 @@ iso_get_file_info <- function(iso_files, select = everything(), file_specific = 
   
   # retrieve info
   file_info <- iso_files %>% 
-    # select files
-    iso_select_file_info(!!select_exp, file_specific = file_specific, quiet = TRUE) %>% 
+    { 
+      if (rlang::as_label(select_exp) != "everything()")
+        # select columns
+        iso_select_file_info(., !!select_exp, file_specific = file_specific, quiet = TRUE) 
+      else . # much faster (if selecting everything)
+    } %>% 
     # retrieve file info
     map(~.x$file_info) %>% 
     # combine in data frame (use safe bind to make sure different data column 

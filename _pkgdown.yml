@@ -74,6 +74,7 @@ reference:
   - iso_strip_units
   - iso_make_units_explicit
   - iso_make_units_implicit
+  - iso_format
 
 - title: Aggregating the data
   desc: >
@@ -88,7 +89,7 @@ reference:
   - iso_get_resistors
   - iso_get_standards
 
-- title: "Exporting/saving data: Feather, Excel, and R Data Archives"
+- title: "Exporting/saving data: Feather, Excel, and R Data Storage"
   desc: >
     These functions provide tools to save the data to specific file formats.
   contents:
@@ -113,7 +114,6 @@ reference:
   desc: >
     
   contents:
-  - iso_problem_functions
   - iso_has_problems
   - iso_get_problems_summary
   - iso_get_problems
@@ -139,6 +139,7 @@ reference:
   - iso_is_continuous_flow
   - iso_is_dual_inlet
   - iso_debug_mode
+  - map_binary_structure
   - print.binary_structure_map
   - print.iso_file_list
   - print.iso_file

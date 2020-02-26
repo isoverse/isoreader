@@ -188,7 +188,7 @@ di_files %>% iso_mutate_file_info(file_root = ".") %>%
 
 # Units
 
-Isoreader provides a built in data type with units (`iso_double_with_units`) that can be used to easily keep track of units inside data frame. These units can be made explicit (=included in the column header), stripped altogher, or turned back to be implicit.
+Isoreader provides a built in data type with units (`iso_with_units`) that can be used to easily keep track of units inside data frame. These units can be made explicit (=included in the column header), stripped altogher, or turned back to be implicit.
 
 ```{r}
 # strip all units
@@ -203,7 +203,7 @@ cf_file %>%
 
 # introduce new unit columns e.g. in the file info
 cf_file %>% 
-  iso_mutate_file_info(weight = iso_double_with_units(0.42, "mg")) %>% 
+  iso_mutate_file_info(weight = iso_with_units(0.42, "mg")) %>% 
   iso_get_vendor_data_table(select = c(`Ampl 28`, `rIntensity 28`, `d 15N/14N`),
                             include_file_info = weight) %>%
   iso_make_units_explicit() %>% head(3)
@@ -214,6 +214,45 @@ cf_file %>%
   iso_get_vendor_data_table(select = c(`Ampl 28`, `rIntensity 28`, `d 15N/14N`),
                             include_file_info = weight.mg) %>%
   iso_make_units_implicit(prefix = ".", suffix = "") %>% head(3)
+```
+
+# Formatting
+
+Formatting data into text is easily achieved with the built in R function `sprintf` but this package also provides a convenience function that knows how to incorporate units information from `iso_with_units` values. Use `iso_format` to format and concatenate any single values or entire columns inside a data frame.
+
+```{r}
+# concatenation example with single values
+iso_format(
+   pi = 3.14159, 
+   x = iso_with_units(42, "mg"), 
+   ID = "ABC", 
+   signif = 4, 
+   sep = " | "
+)
+
+# example inside a data frame
+cf_file %>% 
+  iso_get_vendor_data_table(select = c(`Nr.`, `Ampl 28`, `d 15N/14N`)) %>% 
+  dplyr::select(-file_id) %>% 
+  head(3) %>%
+  # introduce new label columns using iso_format
+  dplyr::mutate(
+    # default concatenation of values
+    label_default = iso_format(
+      `Nr.`, `Ampl 28`, `d 15N/14N`, 
+      sep = ", "
+    ),
+    # concatenate with custom names for each value
+    label_named = iso_format(
+      `#` = `Nr.`, A = `Ampl 28`, d15 = `d 15N/14N`, 
+      sep = ", "
+    ),
+    # concatenate just the values and increase significant digits
+    label_value = iso_format(
+      `Nr.`, `Ampl 28`, `d 15N/14N`, 
+      sep = ", ", format_names = NULL, signif = 6
+    )
+  )
 ```
 
 
