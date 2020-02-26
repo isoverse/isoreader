@@ -1,7 +1,15 @@
 context("Units")
 
+# iso_with_units ====
+
 test_that("test that units class works properly", {
   
+  # generic with units
+  expect_error(iso_with_units("test"), "cannot add units to.*character")
+  expect_is(iso_with_units(pi), "iso_double_with_units")
+  expect_is(iso_with_units(42L), "iso_double_with_units")
+  
+  # double with units
   data <- seq(1., 5., by = 0.5)
   x <- iso_double_with_units(data, "permil")
   y <- iso_double_with_units(data, "not permil")
@@ -168,3 +176,34 @@ test_that("test that vendor data table units conversion works", {
                  "encountered non-numeric data table columns")
   
 })
+
+
+# iso_format ====
+
+test_that("test that iso_format works properly", {
+  
+  expect_error(iso_format(1:5, 1), "unequal lengths")
+  x <- 1:2
+  expect_equal(
+    iso_format(x, b = iso_double_with_units(pi * 1:2, "V"), signif = 3),
+    c("x: 1\nb: 3.14V", "x: 2\nb: 6.28V")
+  )
+  expect_equal(
+    iso_format(a = x, b = iso_double_with_units(pi * 1:2, "V"), signif = 3),
+    c("a: 1\nb: 3.14V", "a: 2\nb: 6.28V")
+  )
+  expect_equal(
+    iso_format(a = x, b = iso_double_with_units(pi * 1:2, "V"), signif = 4),
+    c("a: 1\nb: 3.142V", "a: 2\nb: 6.283V")
+  )
+  expect_equal(
+    iso_format(x, iso_double_with_units(pi * 1:2, "V"), signif = 3, format_names = NULL),
+    c("1\n3.14V", "2\n6.28V")
+  )
+  expect_equal(
+    iso_format(x, iso_double_with_units(pi * 1:2, "V"), signif = 3, format_names = NULL, format_units = NULL),
+    c("1\n3.14", "2\n6.28")
+  )
+  
+})
+

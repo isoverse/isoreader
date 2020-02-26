@@ -1,25 +1,37 @@
 # Class Definitions ======
 
-# double with units constructor
-new_iso_double_with_units <- function(x = double(), units = "undefined units") {
-  vctrs::vec_assert(x, ptype = double())
-  vctrs::vec_assert(units, ptype = character(), size = 1)
-  if (is.na(units[1])) stop("units must be set (NA is not permissible)", call. = FALSE)
-  vctrs::new_vctr(x, units = units, class = "iso_double_with_units")
+#' Generate values with units
+#' 
+#' These functions generate values with units that work well within data frames and tibbles and implement safety checks on operations that combine values with different units. To retrieve the value without units, use \code{\link{iso_strip_units}} (works for single variables and data frames/tibbles). To retrieve the unit use \code{\link{iso_get_units}}. Note that to correctly combine data frames / tibbles that have values with units in them, use \link[vctrs]{vec_rbind} instead of \link{rbind} or \link[dplyr]{bind_rows}. \link[vctrs]{vec_rbind} will combine columns that have values with units if they have the same unit and otherwise convert back to plain values without units with a warning. The other functions will either fail or reduce the unit values to plain values with a cryptic warning message about not preserving attributes.
+#' 
+#' @details \code{iso_with_units} is the primary function to generate values with units. At present, only numeric values are supported so this function is just a shorter alias for the number-specific \code{iso_double_with_units}. It is not clear yet whether any non-numeric values with units make sense to be supported at a later point or whether integer and decimal numbers should be treated differently when they have units.
+#' 
+#' @param x the values (single value or vector)
+#' @param units the units for the value, by default "undefined units" but this parameter should always be supplied when working with real data that has units
+#' @family functions for values with units
+#' @export
+iso_with_units <- function(x, units = "undefined units") {
+  if (is.numeric(x)) 
+    iso_double_with_units(x, units)
+  else
+    stop("cannot add units to a value of type '", class(x)[1], "', try parse_number() to turn your value into a number first", call. = FALSE)
 }
 
-#' Generate a numeric (double) value with units
-#' 
-#' This function generates a number with units that work well within data frames and tibbles and implement safety checks on numerical operations with numbers that have different units. To retrieve the numerical value without units, use \code{\link{iso_strip_units}} (works for single variables and data frames/tibbles) or simply \code{as.numeric} (for single variables). To retrieve the unit use \code{\link{iso_get_units}}. Note that to correctly combine data frames / tibbles that have values with units in them, use \link[vctrs]{vec_rbind} instead of \link{rbind} or \link[dplyr]{bind_rows}. \link[vctrs]{vec_rbind} will combine columns that have values with units if they have the same unit and otherwise convert to a simple number with a warning. The other functions will either fail or reduce the unit values to plain numbers with a cryptic warning message about not preserving attributes.
-#' 
-#' @param x the numeric values (single value or vector)
-#' @param units the units the numeric value is in, by default "undefined units" but this parameter should always be supplied when working with real data that has units
+#' @rdname iso_with_units
 #' @family functions for values with units
 #' @export
 iso_double_with_units <- function(x = double(), units = "undefined units") {
   x <- vctrs::vec_cast(x, double())
   units <- vctrs::vec_recycle(vctrs::vec_cast(units, character()), 1L)
   new_iso_double_with_units(x, units = units)
+}
+
+# double with units constructor
+new_iso_double_with_units <- function(x = double(), units = "undefined units") {
+  vctrs::vec_assert(x, ptype = double())
+  vctrs::vec_assert(units, ptype = character(), size = 1)
+  if (is.na(units[1])) stop("units must be set (NA is not permissible)", call. = FALSE)
+  vctrs::new_vctr(x, units = units, class = "iso_double_with_units")
 }
 
 #' @importFrom methods setOldClass
@@ -420,4 +432,56 @@ convert_df_units_attr_to_implicit_units <- function(df) {
   
   return(df)
 }
+
+# Formatting =====
+
+#' Format values
+#'
+#' Convenience function to easily format and concatenate text and numeric values. Automatically detects \code{\link{iso_with_units}} values and incorporates the units into the formatting.
+#' 
+#' @param ... variable names with data. Must have the same dimensions if multiple are supplied. Can be named to rename variable name output. Will include units in output for all \link{iso_with_units}.
+#' @param signif number of significant digits for numbered data
+#' @param format_names how to format the variable names, set to \code{NULL} to remove names
+#' @param format_units how to format the units from \code{\link{iso_double_with_units}} variables, set to \code{NULL} to omit units
+#' @param replace_permil whether to replace the term 'permil' with the permil symbol (\\u2030)
+#' @param sep separator between variables if multiple are provided in \code{...}
+#' @examples
+#' x <- iso_with_units(1:5, "V")
+#' y <- iso_with_units(1:5, "permil")
+#' iso_format(x, y)
+#' iso_format(amplitude = x, d13C = y)
+#' @export
+iso_format <- function(..., signif = 3, format_names = "%s: ", format_units="%s", replace_permil = TRUE, sep = "\n") {
+  # find variable names
+  vars <- rlang::enquos(...)
+  has_name <- nchar(names(vars)) > 0
+  names(vars)[!has_name] <- map_chr(vars[!has_name], rlang::as_label)
+  
+  # evaluate variables
+  vars <- purrr::map(vars, rlang::eval_tidy)
+  
+  # check length
+  vars_size <- purrr::map_int(vars, length)
+  if (!all(vars_size == vars_size[1]))
+    stop("iso_format encountered variables with unequal lengths", call. = FALSE)
+  
+  # format data
+  values <- purrr::map2(vars, names(vars), ~{
+    value <-
+      if (iso_is_double_with_units(.x) && !is.null(format_units))
+        paste0(signif(.x, digits = signif), sprintf(format_units, iso_get_units(.x)))
+    else if (iso_is_double_with_units(.x) || is.numeric(.x))
+      as.character(signif(as.numeric(.x), digits = signif))
+    else as.character(.x)
+    if (!is.null(format_names)) value <- paste0(sprintf(format_names, .y), value)
+    value
+  })
+  
+  # full text
+  return(
+    do.call(paste, args = c(values, list(sep = sep))) %>%
+      stringr::str_replace_all(fixed("permil"), "\u2030")
+  )
+}
+
 
