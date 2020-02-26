@@ -105,6 +105,19 @@ iso_read_nu <- function(ds, options = list()) {
       msg_prefix = str_c(str_c(parser$id, collapse = ", "), ": "))
   }
   
+  # check on raw data masses vs. channels
+  if (!is.null(ds$raw_data) && nrow(ds$raw_data) > 0) {
+    if (any(n_channels <- stringr::str_detect(names(ds$raw_data), "^[iIvV]C(\\d+)"))) {
+      # only have channel information, provide warning
+      ds <- ds %>% register_warning(
+        glue::glue(
+          "found {sum(n_channels)} channels but {length(options$nu_masses)} masses were specified ",
+          "- the raw data will be reported in channels instead of masses. ",
+          "To correct this problem, make sure to fully specify the nu_masses parameter during file read.")
+      )
+    }
+  }
+  
   return(ds)
 }
 
@@ -433,6 +446,7 @@ calculate_intensities <- function(df_channels, grouping, masses = c()) {
   # convert channels to masses
   n_channels <- length(unique(df_intensities$channel))
   if (length(masses) == n_channels) {
+    # got the right number
     masses <- 
       tibble(
         channel = 1L:n_channels,
@@ -444,11 +458,9 @@ calculate_intensities <- function(df_channels, grouping, masses = c()) {
       rename(channel = .data$mass)
     
   } else {
-    # don't allow this scenario
-    glue::glue("found {n_channels} channels but ",
-               "{length(masses)} masses were specified for these channels, make sure ",
-               "to specify the nu_masses parameter with the correct channel masses") %>% 
-      stop(call. = FALSE)
+    # don't have the right number
+    df_intensities <- df_intensities %>% 
+      mutate(channel = sprintf("iC%d.A", channel))
   }
   
   return(df_intensities)
