@@ -420,26 +420,28 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
   # if gathering
   if (gather) {
     column <- value <- extra_parens <- category <- NULL # global vars
-    masses_ratios_re <- "^([^0-9]+)(\\d+/?\\d*)(\\.(.+))?$"
-    raw_data_info_cols <- c("file_id", "block", "cycle", "type", "tp")
-    gather_cols <- names(data)[!names(data) %in% raw_data_info_cols] %>% 
-      stringr::str_subset("^time", negate = TRUE)
+    data_cols_re <- "^([^0-9]+)(\\d+/?\\d*)(\\.(.+))?$"
+    gather_cols <- stringr::str_subset(names(data), data_cols_re)
     data <- data %>% 
       # gather all masses and ratios
       gather(column, value, !!!gather_cols) %>% 
       # extract unit information
-      extract(column, into = c("category", "data", "extra_parens", "units"), regex = masses_ratios_re) %>% 
+      extract(column, into = c("category", "data", "extra_parens", "units"), regex = data_cols_re) %>% 
       dplyr::select(-extra_parens) %>% 
       # remove unknown data
       filter(!is.na(value)) %>% 
       # assign category
       mutate(
-        data = ifelse(category %in% c("r", "i", "v"), data, paste0(category, data)),
         category = case_when(
           category %in% c("i", "v") ~ "mass",
-          category == "r" ~ "ratio", 
+          category %in% c("iC", "vC") ~ "channel",
+          category == "r" ~ "ratio",
           category == "d" ~ "delta",
-          TRUE ~ "other")
+          TRUE ~ "other"),
+        data = case_when(
+          category %in% c("mass", "channel", "ratio") ~ data,
+          TRUE ~ paste0(category, data)
+        )
       )
   } 
   
