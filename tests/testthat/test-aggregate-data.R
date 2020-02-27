@@ -164,8 +164,26 @@ test_that("test that aggregeting raw data works", {
   iso_file$read_options$file_info <- TRUE
   iso_file1 <- modifyList(iso_file, list(file_info = list(file_id = "a")))
   iso_file2 <- modifyList(iso_file, list(file_info = list(file_id = "b")))
-  iso_file1$raw_data <- tibble::tibble(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), `r46/44` = v46.mV/v44.mV)
-  iso_file2$raw_data <- tibble::tibble(tp = 1:10, time.s = tp*0.2, v44.mV = runif(10), v46.mV = runif(10), v45.mV = runif(10))
+  iso_file1$raw_data <-
+    tibble::tibble(
+      tp = 1:10,
+      time.s = tp * 0.2,
+      v44.mV = runif(10),
+      v46.mV = runif(10),
+      i47.mA = runif(10),
+      vC1.mV = runif(10),
+      `r46/44` = v46.mV / v44.mV,
+      `d46/44.permil` = runif(10),
+      `x45.mA` = runif(10)
+    )
+  iso_file2$raw_data <-
+    tibble::tibble(
+      tp = 1:10,
+      time.s = tp * 0.2,
+      v44.mV = runif(10),
+      v46.mV = runif(10),
+      v45.mV = runif(10)
+    )
   
   expect_message(iso_get_raw_data(c(iso_file1, iso_file2), quiet = FALSE), "aggregating")
   expect_silent(iso_get_raw_data(c(iso_file1, iso_file2), quiet = TRUE))
@@ -174,13 +192,13 @@ test_that("test that aggregeting raw data works", {
                                  mutate(iso_file2$raw_data, file_id = "b")))
   
   expect_equal(iso_get_raw_data(c(iso_file1, iso_file2), gather = TRUE), 
-               data %>% gather(column, value, starts_with("v"), starts_with("r")) %>% 
+               data %>% tidyr::pivot_longer(matches("^[virdx]"), names_to = "column", values_to = "value", values_drop_na = TRUE) %>% 
                  left_join(tibble(
-                   column = c("v44.mV", "v45.mV", "v46.mV", "r46/44"),
-                   category = c("mass", "mass", "mass", "ratio"),
-                   data = c("44", "45", "46", "46/44"),
-                   units = c("mV", "mV", "mV", NA_character_)
-                 ), by = "column") %>% select(-column) %>% filter(!is.na(value)))
+                   column = c("v44.mV", "v46.mV", "i47.mA", "vC1.mV", "r46/44", "d46/44.permil", "x45.mA", "v45.mV"),
+                   category = c("mass", "mass", "mass", "channel", "ratio", "delta", "other", "mass"),
+                   data = c("44", "46", "47", "1", "46/44", "d46/44", "x45", "45"),
+                   units = c("mV", "mV", "mA", "mV", NA_character_, "permil", "mA", "mV")
+                 ), by = "column") %>% select(-column))
   
   # include file info
   iso_file1 <- modifyList(iso_file1, list(file_info = list(test_info = "x")))
