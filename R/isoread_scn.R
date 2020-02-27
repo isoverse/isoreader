@@ -244,7 +244,7 @@ extract_scn_resistors <- function(ds) {
   ds$method_info$resistors <-
     tibble::tibble(
       cup = parse_number(cups) %>% as.integer(), 
-      R.ohm = ohms
+      R.Ohm = ohms
     ) %>%
     dplyr::right_join(
       select(ds$binary$data$config, cup, mass),
