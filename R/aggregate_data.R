@@ -419,30 +419,29 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
   
   # if gathering
   if (gather) {
-    column <- value <- extra_parens <- category <- NULL # global vars
     data_cols_re <- "^([^0-9]+)(\\d+/?\\d*)(\\.(.+))?$"
     gather_cols <- stringr::str_subset(names(data), data_cols_re)
     data <- data %>% 
       # gather all masses and ratios
-      gather(column, value, !!!gather_cols) %>% 
+      tidyr::pivot_longer(gather_cols, names_to = "column", values_to = "value", values_drop_na = TRUE) %>% 
       # extract unit information
-      extract(column, into = c("category", "data", "extra_parens", "units"), regex = data_cols_re) %>% 
-      dplyr::select(-extra_parens) %>% 
-      # remove unknown data
-      filter(!is.na(value)) %>% 
+      extract(.data$column, into = c("prefix", "data", "extra_parens", "units"), regex = data_cols_re) %>% 
+      dplyr::select(-.data$extra_parens) %>% 
       # assign category
       mutate(
         category = case_when(
-          category %in% c("i", "v") ~ "mass",
-          category %in% c("iC", "vC") ~ "channel",
-          category == "r" ~ "ratio",
-          category == "d" ~ "delta",
+          .data$prefix %in% c("i", "v") ~ "mass",
+          .data$prefix %in% c("iC", "vC") ~ "channel",
+          .data$prefix == "r" ~ "ratio",
+          .data$prefix == "d" ~ "delta",
           TRUE ~ "other"),
         data = case_when(
-          category %in% c("mass", "channel", "ratio") ~ data,
-          TRUE ~ paste0(category, data)
+          .data$category %in% c("mass", "channel", "ratio") ~ .data$data,
+          .data$category == "delta" ~ paste0("d", .data$data),
+          TRUE ~ paste0(.data$prefix, .data$data)
         )
-      )
+      ) %>% 
+      dplyr::select(-.data$prefix)
   } 
   
   # if file info
