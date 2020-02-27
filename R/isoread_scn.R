@@ -208,10 +208,10 @@ extract_scn_raw_voltage_data <- function(ds) {
     dplyr::mutate(
       # calculate x values
       x = convert_step_to_x(step),
-      # set units
-      units = ds$binary$data$units
+      # set x units
+      x_units = ds$binary$data$units
     ) %>% 
-    dplyr::select(step, x, units, everything())
+    dplyr::select(step, x, x_units, everything())
   
   return(ds)
   
