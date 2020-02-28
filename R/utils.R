@@ -2,7 +2,10 @@
 
 # check if a column is in a data frame
 col_in_df <- function(df, col) {
-  stopifnot(is.data.frame(df))
+  df_expr <- rlang::enexpr(df)
+  if (!is.data.frame(df)) {
+    stop(rlang::quo_text(df_expr), " is not a data frame but ", class(df)[1], call. = FALSE)
+  }
   col %in% names(df)
 }
 
