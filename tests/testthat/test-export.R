@@ -124,8 +124,8 @@ test_that("test that export to Excel works properly", {
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif)) 
   expect_equal(iso_get_file_info(cf) %>% collapse_list_columns(), 
                readxl::read_excel(str_c(filepath, ".cf.xlsx"), "file info",
-                          col_types = c("text", "text", "text", "text", "numeric", "text")) %>% 
-                 mutate(file_datetime = as.integer(file_datetime))) 
+                          col_types = c("text", "text", "text", "text", "numeric", "numeric", "text")) %>% 
+                 mutate(file_datetime = as.integer(file_datetime), file_size = as.integer(file_size))) 
   expect_equal(iso_get_standards(cf), 
                readxl::read_excel(str_c(filepath, ".cf.xlsx"), "standards", col_types = c("text", "text")))
   expect_equal(iso_get_resistors(cf), 
