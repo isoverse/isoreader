@@ -619,6 +619,9 @@ iso_reread_files <- function(iso_files, ..., stop_if_missing = FALSE, quiet = de
     } else if (iso_is_dual_inlet(iso_files)) {
       # read dual inlet
       new_iso_files <- iso_as_file_list(do.call(iso_read_dual_inlet, args = args))
+    } else if (iso_is_scan(iso_files)) {
+      # read scan
+      new_iso_files <- iso_as_file_list(do.call(iso_read_scan, args = args))
     } else {
       stop("re-reading iso_files objects of type ", class(iso_files[[1]])[1], " is not yet supported", call. = FALSE)
     }
