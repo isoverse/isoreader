@@ -15,7 +15,8 @@ make_iso_file_data_structure <- function(file_id = NA_character_) {
         file_root = NA_character_, # root directory for file path
         file_path = NA_character_, # path to file (file extension is key for processing)
         file_subpath = NA_character_, # sub path in case file is an archieve
-        file_datetime = NA_integer_ # the run date and time of the file
+        file_datetime = NA_integer_, # the run date and time of the file
+        file_size = NA_integer_ # the size of the file in bytes
       ),
       method_info = list(), # all methods information
       raw_data = tibble::tibble() # all mass data
@@ -307,6 +308,37 @@ update_read_options <- function(ds, read_options) {
   update <- read_options[names(read_options) %in% names(ds$read_options)]
   # update all that exist in the read options
   ds$read_options <- modifyList(ds$read_options, update)
+  return(ds)
+}
+
+# set ds file size if not already set
+# safe function, only sets the file size if the path exists
+set_ds_file_size <- function(ds) {
+  if (!col_in_df(ds$file_info, "file_root")) {
+    # legacy file that doesnt have file root info yet
+    return(ds)
+  }
+  
+  col_exists <- col_in_df(ds$file_info, "file_size")
+  if (col_exists && !is.na(ds$file_info$file_size)) {
+    # already set
+    return(ds)
+  }
+  
+  # setting file size    
+  file_path <- get_ds_file_path(ds)
+  if (file.exists(file_path)) 
+    file_size <- as.integer(round(file.size(file_path)))
+  else
+    file_size <- NA_integer_
+  
+  # update file size
+  ds$file_info <- dplyr::mutate(ds$file_info, file_size = !!file_size)
+  
+  # make sure file size is at the proper position if it is introduced for the first time
+  if (!col_exists) {
+    ds$file_info <- dplyr::select(ds$file_info, starts_with("file_"), everything())
+  }
   return(ds)
 }
 

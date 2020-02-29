@@ -515,6 +515,7 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, writ
   } else {
     # read from original file
     env <- if (reader_fun_env == "R_GlobalEnv") .GlobalEnv else asNamespace(reader_fun_env)
+    iso_file <- set_ds_file_size(iso_file)
     iso_file <- exec_func_with_error_catch(reader_fun, iso_file, options = reader_options, env = env)
     iso_file <- ensure_iso_file_backwards_compatibility(iso_file)
   
@@ -553,11 +554,13 @@ ensure_iso_file_backwards_compatibility <- function(iso_file) {
   if (iso_is_file_list(iso_file)) {
     iso_file <- map(iso_file, ~{
       .x$file_info <- ensure_data_frame_list_columns(.x$file_info, exclude = standard_fields);
+      .x <- set_ds_file_size(.x)
       .x$vendor_data_table <- convert_df_units_attr_to_implicit_units(.x$vendor_data_table)
       .x
     }) %>% iso_as_file_list()
   } else {
     iso_file$file_info <- ensure_data_frame_list_columns(iso_file$file_info, exclude = standard_fields)
+    iso_file <- set_ds_file_size(iso_file)
     iso_file$vendor_data_table <- convert_df_units_attr_to_implicit_units(iso_file$vendor_data_table)
   }
   
@@ -619,6 +622,9 @@ iso_reread_files <- function(iso_files, ..., stop_if_missing = FALSE, quiet = de
     } else if (iso_is_dual_inlet(iso_files)) {
       # read dual inlet
       new_iso_files <- iso_as_file_list(do.call(iso_read_dual_inlet, args = args))
+    } else if (iso_is_scan(iso_files)) {
+      # read scan
+      new_iso_files <- iso_as_file_list(do.call(iso_read_scan, args = args))
     } else {
       stop("re-reading iso_files objects of type ", class(iso_files[[1]])[1], " is not yet supported", call. = FALSE)
     }

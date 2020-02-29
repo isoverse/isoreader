@@ -63,12 +63,12 @@ readr::stop_for_problems
 #' @family problem functions
 #' @return data frame with file_id and number of encountered errors and warnings
 #' @export
-iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE) {
+iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE, include_file_info = NULL) {
   # safety checks
   if (missing(iso_files) || !iso_is_object(iso_files)) stop("please provide iso_files", call. = FALSE)
   iso_files <- iso_as_file_list(iso_files)
+  include_file_info_quo <- rlang::enquo(include_file_info)
   
-
   # tally up problems
   probs_templ <- tibble(file_id = character(0), error = integer(0), warning = integer(0))
   if (n_problems(iso_files) > 0) {
@@ -92,11 +92,20 @@ iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE) {
       left_join(probs, by = "file_id") 
   }
   
-  probs %>%
+  # finalize data frame
+  probs <- probs %>%
     mutate(
       warning = ifelse(!is.na(warning), .data$warning, 0L),
       error = ifelse(!is.na(error), .data$error, 0L)
     ) 
+  
+  # if file info
+  if (!quo_is_null(include_file_info_quo)) {
+    info <- iso_get_file_info(iso_files, select = !!include_file_info_quo, quiet = TRUE)
+    probs <- right_join(info, probs, by = "file_id")
+  }
+  
+  return(probs)
 }
  
 #' Renamed to iso_filter_files_with_problems

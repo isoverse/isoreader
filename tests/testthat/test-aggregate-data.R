@@ -143,9 +143,9 @@ test_that("test that aggregating file info works", {
   expect_equal(names(iso_get_file_info(iso_file1, select = c("file_datetime", "only_a"))), c("file_id", "file_datetime", "only_a"))
   expect_equal(names(iso_get_file_info(iso_file1, select = c(file_datetime, only_a))), c("file_id", "file_datetime", "only_a"))
   expect_equal(names(iso_get_file_info(iso_file1, select = c(x = file_datetime, y = only_a))), c("file_id", "x", "y"))
-  expect_equal(names(iso_get_file_info(iso_file1, select = starts_with("file"))), c("file_id", "file_root", "file_path", "file_subpath", "file_datetime"))
+  expect_equal(names(iso_get_file_info(iso_file1, select = starts_with("file"))), c("file_id", "file_root", "file_path", "file_subpath", "file_datetime", "file_size"))
   expect_warning(iso_get_file_info(iso_file1, select = c(DNE)), "unknown column")
-  expect_equal(names(iso_get_file_info(c(iso_file1, iso_file2), select = c(starts_with("file"), "only_a"))), c("file_id", "file_root", "file_path", "file_subpath", "file_datetime", "only_a"))
+  expect_equal(names(iso_get_file_info(c(iso_file1, iso_file2), select = c(starts_with("file"), "only_a"))), c("file_id", "file_root", "file_path", "file_subpath", "file_datetime", "file_size", "only_a"))
   # note: not sure how to implement but this should probably throw a warning
   expect_warning(out <- names(iso_get_file_info(iso_file2, select = c("file_datetime", "only_a"))), "unknown column")
   expect_equal(out, c("file_id", "file_datetime"))
