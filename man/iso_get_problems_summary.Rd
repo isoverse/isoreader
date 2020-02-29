@@ -4,12 +4,18 @@
 \alias{iso_get_problems_summary}
 \title{Retrieve a summary of the problems}
 \usage{
-iso_get_problems_summary(iso_files, problem_files_only = TRUE)
+iso_get_problems_summary(
+  iso_files,
+  problem_files_only = TRUE,
+  include_file_info = NULL
+)
 }
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
 \item{problem_files_only}{whether to list only problem files or all files}
+
+\item{include_file_info}{which file information to include (see \code{\link{iso_get_file_info}}). Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns.}
 }
 \value{
 data frame with file_id and number of encountered errors and warnings
