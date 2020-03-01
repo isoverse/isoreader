@@ -30,7 +30,8 @@ extract_isodat_resistors <- function(ds) {
   }
   
   # find resistors
-  R_pre_re <- re_combine(re_or(re_text("/"), re_text("-"), size = 2), re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("x-000"))
+  R_pre_re <- re_combine(re_or(re_text("/"), re_text("-"), re_text(","), re_text("."), size = 2), 
+                         re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("x-000"))
   R_post_re <- re_combine(re_block("x-000"))
   
   positions <- find_next_patterns(ds$binary, R_pre_re, re_direct(".{20}", label = ".{20}"), R_post_re)
@@ -90,7 +91,7 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   }
   
   # instrument reference name reg exps
-  instrument_pre1 <- re_combine(re_block("etx"), re_or(re_text("/"), re_text(","), re_text("-")), re_block("fef-0"), re_block("fef-x")) ###
+  instrument_pre1 <- re_combine(re_block("etx"), re_or(re_text("/"), re_text(","), re_text("-"), re_text(".")), re_block("fef-0"), re_block("fef-x")) 
   instrument_pre2 <- re_combine(re_null(4), re_block("stx"), re_block("nl"), re_text("Instrument"))
   instrument_post2 <- re_combine(re_null(4), re_direct("[^\\x00]{2}", label = "[^00]{2}"), re_block("etx"))
   
@@ -118,9 +119,15 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   }
   
   # run refs capture
+  start_pos <- find_next_patterns(
+    ds$binary, re_combine(instrument_pre1, re_block("text"), instrument_pre2))
+  if (length(start_pos) == 0) {
+    stop("could not find reference names at position ", ds$binary$pos, 
+         ", no match for search ", 
+         instrument_pre1$label, "<NAME>", instrument_pre2$label, call. = FALSE)
+  }
   refs <- tibble(
-    start_pos = find_next_patterns(
-      ds$binary, re_combine(instrument_pre1, re_block("text"), instrument_pre2)),
+    start_pos = start_pos,
     data = map(start_pos, capture_ref_names)
   ) %>% unnest(data)
   
@@ -227,20 +234,34 @@ extract_isodat_sequence_line_info <- function(ds) {
     move_to_next_pattern(re_text("Sequence Line Information"))
   
   seq_line_info <- list()
-  # note: fef-x block seems to be used in .dxf, nl in .did
   re_end_of_info <- re_combine(
     re_null(4), 
-    re_or(re_combine(re_direct("..", label = ".."), 
-                     re_block("etx")), re_block("C-block")))
-  while(!is.null(find_next_pattern(ds$binary, re_end_of_info))) {
-    ds$binary <- ds$binary %>%
-      move_to_next_pattern(re_text("/"), re_block("fef-x")) %>% 
-      capture_data("value", "text", re_or(re_block("fef-x"), re_block("nl")), re_block("text"), re_null(4), 
-                   data_bytes_max = 500, move_past_dots = FALSE) %>% 
-      move_to_next_pattern(re_or(re_block("fef-x"), re_block("nl"))) %>% 
-      capture_data("info", "text", re_end_of_info, 
-                   data_bytes_max = 500, move_past_dots = FALSE) %>% 
-      move_to_next_pattern(re_null(4))
+    re_or(re_combine(re_not_null(2), re_block("etx")), 
+          re_block("C-block")))
+  caps <- find_next_patterns(ds$binary, re_end_of_info)
+  if (length(caps) == 0) stop("could not any data", call. = FALSE)
+  positions <- c(ds$binary$pos, head(caps, -1))
+  # note: fef-x block seems to be used in .dxf, nl in .did
+  re_val_var_break <- re_or(re_block("fef-x"), re_block("nl"))
+  re_val_var_break$size <- 4
+  
+  # loop through all
+  for (i in 1:length(positions)) {
+    # capture value
+    ds$binary <- ds$binary %>% 
+      move_to_pos(positions[i], reset_cap = TRUE) %>% 
+      cap_at_pos(caps[i]) %>% 
+      move_to_next_pattern(re_or(re_text("/"), re_text(".")), re_block("fef-x")) %>% 
+      capture_data("value", "text", re_val_var_break, data_bytes_max = 500, move_past_dots = TRUE)
+    
+    # capture info name
+    info_length <- (ds$binary$max_pos - ds$binary$pos)/2
+    if (info_length %% 1 > 0)
+      stop("length of sequence info for value '", ds$binary$data$value, "' is not an integer (", info_length, ")", call. = FALSE)
+    ds$binary <- ds$binary %>% 
+      capture_n_data("info", "text", (ds$binary$max_pos - ds$binary$pos)/2)
+    
+    # store info
     if (!is.null(ds$binary$data$info))
       ds$file_info[[ds$binary$data$info]] <- ds$binary$data$value
   }
@@ -445,7 +466,9 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   # NOTE: the retention time is only ALMOST repeated each time, if there are significant 
   # chromatographic shifts (as is alwayst he case for H2), these will in fact NOT quite be
   # identical. Isodat seems to report only the major ion (first ion here) so we are doing the same
-  rts_df <- bind_rows(rts) 
+  rts_df <- dplyr::bind_rows(rts) %>% 
+    # filter out false matches
+    dplyr::filter(mass > 0)
   if (nrow(rts_df) == 0) return(ds) # no vendor data table entries found
 
   # retention times
@@ -471,14 +494,16 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   
   ### rest of data table
   extracted_dt <- extract_isodat_main_vendor_data_table(ds, C_block = "CGCPeakList", cap_at_fun = cap_at_fun)
+  if (nrow(extracted_dt$cell_values) == 0L) {
+    stop("could not find any vendor table data", call. = FALSE)
+  }
   
   # store vendor data table
-  .check. <- NULL # global var
-  data_table <- full_join(peaks, mutate(extracted_dt$cell_values, .check. = TRUE), by = "Nr.")
-  if (any(is.na(data_table$Start) | any(is.na(data_table$.check.)))) {
+  data_table <- full_join(peaks, mutate(extracted_dt$cell_values, .check = TRUE), by = "Nr.")
+  if (any(is.na(data_table$Start) | any(is.na(data_table$.check)))) {
     ds <- register_warning(ds, details = "vendor data table has unexpected empty cells, process vendor table with care")
   }
-  ds$vendor_data_table <- select(data_table, -.check.)
+  ds$vendor_data_table <- select(data_table, -.data$.check)
   
   # safe information on the column units
   attr(ds$vendor_data_table, "units") <- 
@@ -501,9 +526,6 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
 extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL, col_include = "*",
                                                   skip_row_check = function(column, value) FALSE) {
   
-  # global vars
-  column <- continue_pos <- NULL
-  
   # main data table
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot process vendor data table") %>% 
@@ -517,7 +539,7 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
   
   # find columns and row data for the whole data table
   pre_column_re <- re_combine(
-    re_or(re_text("/"), re_text("-"), size = 2), 
+    re_or(re_text("/"), re_text("-"), re_text(","), re_text("."), size = 2), 
     re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("x-000"), re_block("fef-x")) 
   positions <- find_next_patterns(ds$binary, pre_column_re)
   
@@ -531,7 +553,11 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
     # get column name
     ds$binary <- ds$binary %>% 
       move_to_pos(pos + pre_column_re$size) %>% 
-      move_to_next_pattern(re_block("fef-x")) %>% # skip ID column since it is not unique in peak jumping files
+      # skip ID column since it is not unique in peak jumping files
+      move_to_next_pattern(re_block("fef-x")) 
+      
+    # capture column
+    ds$binary <- ds$binary %>%
       capture_data("column", "raw", re_block("fef-x"), move_past_dots = TRUE, ignore_trailing_zeros = FALSE) 
     
     # check for columns starting with delta symbol, replace with d instead of delta symbol
@@ -552,12 +578,21 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
     # check whether still in row skip
     if (skip_row) next # skip
     
+    # check if have a proper units next
+    if (is.null(find_next_pattern(ds$binary, re_block("text"), re_block("fef-x"), max_gap = 0))) {
+      # this is something else, not a proper units block
+      next # skip
+    }
+    
     # get column formatting
     ds$binary <- ds$binary %>% 
-      capture_data("format", "text", re_block("fef-x"), move_past_dots = TRUE) # retrieve format (!not always the same)
+      # retrieve format (!not always the same)
+      capture_data("format", "text", re_block("fef-x"), move_past_dots = TRUE)
     
-    # skip data columns without formatting infromation right away
-    if(ds$binary$data$format %in% c("", " ")) next # skip 
+    # skip data columns without propre formatting infromation right away
+    if(ds$binary$data$format %in% c("", " ") || nchar(ds$binary$data$format) > 4) {
+      next # skip 
+    }
     
     # store information about new column if not already stored
     if (!col %in% names(columns)) {

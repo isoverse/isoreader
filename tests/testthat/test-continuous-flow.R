@@ -34,12 +34,32 @@ test_that("test that dxf files can be read", {
   expect_equal(nrow(problems(dxf)), 0)
 
   expect_true(file.exists(file <- iso_get_reader_example("continuous_flow_example.cf")))
-  expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
-  expect_equal(nrow(problems(dxf)), 0)
+  expect_is(cf <- iso_read_continuous_flow(file), "continuous_flow")
+  expect_equal(nrow(problems(cf)), 0)
+  expect_equal(nrow(iso_get_file_info(cf)), 1)
+  expect_equal(ncol(iso_get_file_info(cf)), 21)
+  expect_equal(nrow(iso_get_raw_data(cf)), 8605)
+  expect_equal(ncol(iso_get_raw_data(cf)), 5)
+  expect_equal(nrow(iso_get_resistors(cf)), 2)
+  expect_equal(ncol(iso_get_resistors(cf)), 4)
+  expect_equal(nrow(iso_get_standards(cf)), 3)
+  expect_equal(ncol(iso_get_standards(cf)), 9)
+  expect_equal(nrow(iso_get_vendor_data_table(cf)), 19)
+  expect_equal(ncol(iso_get_vendor_data_table(cf)), 26)
   
   expect_true(file.exists(file <- iso_get_reader_example("continuous_flow_example.dxf")))
-  expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
-  expect_equal(nrow(problems(dxf)), 0)
+  expect_is(cf <- iso_read_continuous_flow(file), "continuous_flow")
+  expect_equal(nrow(problems(cf)), 0)
+  expect_equal(nrow(iso_get_file_info(cf)), 1)
+  expect_equal(ncol(iso_get_file_info(cf)), 21)
+  expect_equal(nrow(iso_get_raw_data(cf)), 2435)
+  expect_equal(ncol(iso_get_raw_data(cf)), 9)
+  expect_equal(nrow(iso_get_resistors(cf)), 6)
+  expect_equal(ncol(iso_get_resistors(cf)), 4)
+  expect_equal(nrow(iso_get_standards(cf)), 7)
+  expect_equal(ncol(iso_get_standards(cf)), 9)
+  expect_equal(nrow(iso_get_vendor_data_table(cf)), 6)
+  expect_equal(ncol(iso_get_vendor_data_table(cf)), 61)
   
   expect_true(file.exists(file <- iso_get_reader_example("continuous_flow_example.iarc")))
   expect_is(iarc <- iso_read_continuous_flow(file), "iso_file_list")
@@ -59,7 +79,11 @@ test_that("test that dxf files can be read", {
   expect_true(file.exists(file <- file.path(test_folder, "dxf_example_HO_02.dxf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
-  
+ 
+  expect_true(file.exists(file <- file.path(test_folder, "dxf_example_CN_01.dxf")))
+  expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
+  expect_equal(nrow(problems(dxf)), 0)
+   
   expect_true(file.exists(file <- file.path(test_folder, "dxf_example_CNS_01.dxf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
@@ -68,6 +92,10 @@ test_that("test that dxf files can be read", {
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
   dxf2 <- dxf
+  
+  expect_true(file.exists(file <- file.path(test_folder, "cf_example_CN_01.cf")))
+  expect_is(cf <- iso_read_continuous_flow(file), "continuous_flow")
+  expect_equal(nrow(problems(cf)), 0)
   
   expect_true(file.exists(file <- file.path(test_folder, "cf_example_H_01.cf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
