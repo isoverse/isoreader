@@ -30,7 +30,8 @@ extract_isodat_resistors <- function(ds) {
   }
   
   # find resistors
-  R_pre_re <- re_combine(re_or(re_text("/"), re_text("-"), size = 2), re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("x-000"))
+  R_pre_re <- re_combine(re_or(re_text("/"), re_text("-"), re_text(","), size = 2), 
+                         re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("x-000"))
   R_post_re <- re_combine(re_block("x-000"))
   
   positions <- find_next_patterns(ds$binary, R_pre_re, re_direct(".{20}", label = ".{20}"), R_post_re)
@@ -445,7 +446,9 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   # NOTE: the retention time is only ALMOST repeated each time, if there are significant 
   # chromatographic shifts (as is alwayst he case for H2), these will in fact NOT quite be
   # identical. Isodat seems to report only the major ion (first ion here) so we are doing the same
-  rts_df <- bind_rows(rts) 
+  rts_df <- dplyr::bind_rows(rts) %>% 
+    # filter out false matches
+    dplyr::filter(mass > 0)
   if (nrow(rts_df) == 0) return(ds) # no vendor data table entries found
 
   # retention times
@@ -517,7 +520,7 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
   
   # find columns and row data for the whole data table
   pre_column_re <- re_combine(
-    re_or(re_text("/"), re_text("-"), size = 2), 
+    re_or(re_text("/"), re_text("-"), re_text(","), size = 2), 
     re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("x-000"), re_block("fef-x")) 
   positions <- find_next_patterns(ds$binary, pre_column_re)
   
@@ -531,7 +534,17 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
     # get column name
     ds$binary <- ds$binary %>% 
       move_to_pos(pos + pre_column_re$size) %>% 
-      move_to_next_pattern(re_block("fef-x")) %>% # skip ID column since it is not unique in peak jumping files
+      # skip ID column since it is not unique in peak jumping files
+      move_to_next_pattern(re_block("fef-x")) 
+      
+    # check if have a proper column next
+    if (is.null(find_next_pattern(ds$binary, re_block("text"), re_block("fef-x"), max_gap = 0))) {
+      # this is something else, not a proper column name block
+      next # skip
+    }
+    
+    # capture column
+    ds$binary <- ds$binary %>%
       capture_data("column", "raw", re_block("fef-x"), move_past_dots = TRUE, ignore_trailing_zeros = FALSE) 
     
     # check for columns starting with delta symbol, replace with d instead of delta symbol
@@ -552,12 +565,19 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
     # check whether still in row skip
     if (skip_row) next # skip
     
+    # check if have a proper units next
+    if (is.null(find_next_pattern(ds$binary, re_block("text"), re_block("fef-x"), max_gap = 0))) {
+      # this is something else, not a proper units block
+      next # skip
+    }
+    
     # get column formatting
     ds$binary <- ds$binary %>% 
-      capture_data("format", "text", re_block("fef-x"), move_past_dots = TRUE) # retrieve format (!not always the same)
+      # retrieve format (!not always the same)
+      capture_data("format", "text", re_block("fef-x"), move_past_dots = TRUE)
     
-    # skip data columns without formatting infromation right away
-    if(ds$binary$data$format %in% c("", " ")) next # skip 
+    # skip data columns without propre formatting infromation right away
+    if(ds$binary$data$format %in% c("", " ") || nchar(ds$binary$data$format) > 4) next # skip 
     
     # store information about new column if not already stored
     if (!col %in% names(columns)) {
