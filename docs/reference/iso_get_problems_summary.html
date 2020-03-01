@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.4</span>
       </span>
     </div>
 
@@ -154,7 +154,11 @@
     <p>Returns a data frame listing how many errors and warnings were encountered for each file. For details on each error/warning, see <a href='https://readr.tidyverse.org/reference/problems.html'>problems</a> and the <a href='iso_problem_functions.html'>iso_problem_functions</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_get_problems_summary</span>(<span class='no'>iso_files</span>, <span class='kw'>problem_files_only</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>iso_get_problems_summary</span>(
+  <span class='no'>iso_files</span>,
+  <span class='kw'>problem_files_only</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>include_file_info</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,6 +170,10 @@
     <tr>
       <th>problem_files_only</th>
       <td><p>whether to list only problem files or all files</p></td>
+    </tr>
+    <tr>
+      <th>include_file_info</th>
+      <td><p>which file information to include (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>). Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns.</p></td>
     </tr>
     </table>
 

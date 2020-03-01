@@ -36,7 +36,7 @@
 
 
 <meta property="og:title" content="Aggregate file info — iso_get_file_info" />
-<meta property="og:description" content="Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the select parameter to select and/or rename columns. File information beyond file_id, file_root, file_path and file_datetime is only available if the iso_files were read with parameter read_file_info=TRUE." />
+<meta property="og:description" content="Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the select parameter to select and/or rename columns. File information beyond file_id, file_root, file_path, file_datetime and file_size (in bytes) is only available if the iso_files were read with parameter read_file_info=TRUE." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.4</span>
       </span>
     </div>
 
@@ -151,7 +151,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the <code>select</code> parameter to select and/or rename columns. File information beyond <code>file_id</code>, <code>file_root</code>, <code>file_path</code> and <code>file_datetime</code> is only available if the <code>iso_files</code> were read with parameter <code>read_file_info=TRUE</code>.</p>
+    <p>Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the <code>select</code> parameter to select and/or rename columns. File information beyond <code>file_id</code>, <code>file_root</code>, <code>file_path</code>, <code>file_datetime</code> and <code>file_size</code> (in bytes) is only available if the <code>iso_files</code> were read with parameter <code>read_file_info=TRUE</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>iso_get_file_info</span>(
