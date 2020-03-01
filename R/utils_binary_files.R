@@ -266,6 +266,19 @@ re_direct <- function(regexp, label = "re-direct", size = length(charToRaw(regex
     class = "binary_regexp")
 }
 
+# helper funtion to combine regexps
+combine_regexps <- function(regexps, collapse, var = "regexp") {
+  # WARNING WARNING WARNING
+  # do not change this
+  # on all platforms: map_chr messes up the regexps
+  # on windows: str_c instead of paste leads to regexp fail in grepRaw
+  # on unix: paste instead of str_c breaks concatenating a few specific regexps (e.g. re_combine(re_not_null(2), re_block("fef-x")))
+  if (.Platform$OS.type == "windows") 
+    paste(sapply(regexps, `[[`, var), collapse = collapse)
+  else
+    stringr::str_c(sapply(regexps, `[[`, var), collapse = collapse)
+}
+
 # or regexp
 re_or <- function(..., size = estimate_size()) {
   regexps <- list(...)
@@ -275,7 +288,7 @@ re_or <- function(..., size = estimate_size()) {
     list(
       label = sprintf("(%s)", str_c(map_chr(regexps, "label"), collapse = "|")),
       # NOTE: on windows, the following command with str_c instead of paste or map_chr instead of sapply strangly leads to the regexp not getting recognized anymore in grepRaw
-      regexp = paste0("((", paste(sapply(regexps, `[[`, "regexp"), collapse = ")|("), "))"),
+      regexp = paste0("((", combine_regexps(regexps, collapse = ")|("), "))"),
       size = size
     ),
     class = "binary_regexp")
@@ -290,16 +303,7 @@ re_combine <- function(...) {
     list(
       label = str_c(map_chr(regexps, "label"), collapse = ""),
       size = sum(map_dbl(regexps, "size")),
-      # WARNING WARNING WARNING
-      # do not change this
-      # on all platforms: map_chr messes up the regexps
-      # on windows: str_c instead of paste leads to regexp fail in grepRaw
-      # on unix: paste instead of str_c breaks concatenating a few specific regexps (e.g. re_combine(re_not_null(2), re_block("fef-x")))
-      regexp = 
-        if (.Platform$OS.type == "windows") 
-          paste(sapply(regexps, `[[`, "regexp"), collapse = "")
-        else
-          stringr::str_c(sapply(regexps, `[[`, "regexp"), collapse = "")
+      regexp = combine_regexps(regexps, collapse = "")
     ),
     class = "binary_regexp")
 }
