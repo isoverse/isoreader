@@ -413,7 +413,7 @@ capture_data <- function(bfile, id, type, ..., data_bytes_min = 0, data_bytes_ma
       # simplify for speed
       bfile$data[[id]] <- bfile$raw[start:end]
     } else {
-      id_text <- sprintf("'%s' capture failed: ", id)
+      id_text <- sprintf("'%s' capture failed at pos %d: ", id, start)
       bfile$data[[id]] <-
         parse_raw_data(bfile$raw[start:end], type,
                        ignore_trailing_zeros = ignore_trailing_zeros,
@@ -563,7 +563,9 @@ get_ctrl_blocks_config_df <- function() {
 get_data_blocks_config <- function() {
   list(
     raw     = list(type = "raw", auto = FALSE, size = 1L),
-    text    = list(type = "character", auto = TRUE, size = 2L, regexp = "[\x20-\xff]\\x00"), # extended unicode characters
+    # extended unicode characters
+    text    = list(type = "character", auto = TRUE, size = 2L, regexp = "[\x20-\xff]\\x00"), 
+    # numeric data types
     integer = list(type = "integer", auto = TRUE, size = 4L),
     float   = list(type = "numeric", auto = TRUE, size = 4L),
     double  = list(type = "numeric", auto = TRUE, size = 8L)
@@ -574,7 +576,7 @@ get_data_blocks_config <- function() {
 # can parse multiple type data blocks efficienctly, to do so provide multiple types (Details elow)
 #
 # @param raw the raw data, will be processed from position 1
-# @param type data type(s), can be a single unit (e.g. "double") or a vector of sequential data types (e.g. c("float", "double")) see get_data_blocks_config() for details
+# @param type data type(s), can be a single unit (e.g. "double") or a vector of sequential data types (e.g. c("float", "double")) see get_data_blocks_config() for details. Note that text cannot be combined with other data types.
 # @param n how many instances to read (of EACH type if more than 1 supplied), default is to try to read the whole raw sequence
 # @param ignore_trailing_zeros - whether to remove trailing zeros
 # @param exact_length - whether to require exactly the right length
@@ -588,6 +590,10 @@ parse_raw_data <- function(raw, type, n = full_raw(), ignore_trailing_zeros = FA
   # data type
   if (length(missing <- setdiff(type, names(get_data_blocks_config()))) > 0) 
     stop("ecountered invalid data type(s): ", str_c(missing, collapse = ", "), call. = FALSE)
+  
+  # check for text
+  if (any(type == "text") && length(type) > 1) 
+    stop("data type 'text' cannot reliably be parsed jointly with other data types", call. = FALSE)
   
   # errors
   if (!is.null(sensible) && is.null(errors)) errors <- "" 
@@ -628,19 +634,31 @@ parse_raw_data <- function(raw, type, n = full_raw(), ignore_trailing_zeros = FA
     return(NULL)
   }
   
-  # check that regexp pattern fits 
-  regexp <- str_c(sapply(dbc, function(x) if(!is.null(x$regexp)) x$regexp else ""), collapse = "")
-  if (any(type == "text") && (n == 0 || n > 250)) {
-    stop(sprintf("%sinvalid number of occurences (%.0f) for pattern (%s): %s", 
-                 error_prefix, n, regexp, raw_trim_text), call. = FALSE)
-  }
-  
-  if (regexp != "") {
-    regexp <- sprintf("(%s){%.0f}", regexp, n)
+  # if text capture, check that it is truly all text
+  if (any(type == "text")) {
+    
+    if (n == 0) {
+      stop(sprintf("%stext of length 0 does not make sense: %s", error_prefix, raw_trim_text), call. = FALSE)
+    } else if (n > 250) {
+      stop(sprintf("%stext with more than 250 characters (%.0f) is likely an error in finding the termination pattern: %s", 
+                   error_prefix, n, raw_trim_text), call. = FALSE)
+    }
+
+    regexp <- sprintf("(%s){%.0f}", dbc[[1]]$regexp, n)
     if (length(grepRaw(regexp, raw_trim)) == 0) {
+      # something that is NOT text is in the raw_trim
+      non_text_pos <- grepRaw("([\x20-\xff][\x01-\xff])|(\\x00\\x00)", raw_trim)
+      actual_text <- intToUtf8(raw_trim[1:(non_text_pos - 1)])
       if (!is.null(errors)) {
-        stop(sprintf("%sraw data does not match requested data pattern (%s): %s", 
-                     error_prefix, regexp, raw_trim_text), call. = FALSE)
+        stop(
+          sprintf("%sexpected unicode data for %.0f bytes but found only %.0f ('%s'), non-text raw data afterwards: %s", 
+                  error_prefix, n*2, non_text_pos, actual_text, 
+                  raw_trim[(non_text_pos + 1):length(raw_trim)] %>% {
+                    if (length(.) > 10) c(as.character(head(., 10)), sprintf("+%d more", length(.) - 10))
+                    else as.character(.)
+                  } %>% paste(collapse = " ")
+          ), 
+          call. = FALSE)
       }
       return(NULL)
     }
