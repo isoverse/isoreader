@@ -35,9 +35,6 @@ This package is intended as a unified one-stop command line interface to all com
 You can install isoreader from github with the devtools package (version > 1.13.2 required for bioconductor support).
 
 ```{r gh-installation, eval = FALSE}
-# restart your R session (this command only works in RStudio)
-.rs.restartR()
-
 # installs the development tools package if not yet installed
 if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools") 
 
@@ -45,11 +42,13 @@ if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
 devtools::install_github("isoverse/isoreader")
 ```
 
+Troubleshooting note: depending on your workspace and operating system, you may have to re-start your R session, delete previous versions of these packages (`remove.packages("isoreader")`), and/or manually install some dependencies (e.g. the `digest` package tends to cause trouble: `remove.packages("digest"); install.packages("digest")`).
+
 ## Functionality
 
 Currently supported file types:
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(isoreader)
 iso_get_supported_file_types() %>% 
   dplyr::select(extension, software, description, type) %>% 
