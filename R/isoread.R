@@ -399,7 +399,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
 
   # bring files into the correct order after potential parallel processing jumble
   indices <- 
-    tibble(path = purrr::map_chr(iso_files, ~.x$file_info$file_path), idx = 1:length(path)) %>% 
+    tibble(path = purrr::map_chr(iso_files, ~.x$file_info$file_path) %>% unname(), idx = 1:length(path)) %>% 
     dplyr::left_join(files, by = "path") %>% 
     dplyr::arrange(file_n) %>% 
     dplyr::pull(idx)

@@ -358,9 +358,14 @@ extract_isodat_old_sequence_line_info <- function(ds) {
     by = "n"
   )
   
-  # in file object
-  if (nrow(file_info) > 0)
-    ds$file_info[file_info$label] <- file_info$value
+  # transfer to 
+  if (nrow(file_info) > 0) {
+    ds$file_info <- 
+      dplyr::mutate(
+        ds$file_info, 
+        !!!rlang::set_names(file_info$value, file_info$label)
+      )
+  }
   
   return(ds)
 }
