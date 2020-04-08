@@ -11,7 +11,7 @@ test_that("test that standard file information can be recovered from iso_files",
   expect_equal(iso_get_file_info(iso_file)$file_root, NA_character_)
   expect_equal(iso_get_file_info(iso_file)$file_path, NA_character_)
   expect_equal(iso_get_file_info(iso_file)$file_subpath, NA_character_)
-  expect_equal(iso_get_file_info(iso_file)$file_datetime, NA_integer_)
+  expect_equal(iso_get_file_info(iso_file)$file_datetime, as_datetime(NA, tz = Sys.timezone()))
   
   iso_file$file_info$file_id <- "id"
   iso_file$file_info$file_root <- "root"
@@ -135,9 +135,12 @@ test_that("test that aggregating file info works", {
   expect_message(iso_get_file_info(c(iso_file1, iso_file2), quiet = FALSE), "aggregating")
   expect_silent(agg <- iso_get_file_info(c(iso_file1, iso_file2), quiet = TRUE))
   expect_equal(names(agg), unique(names(iso_file1$file_info), names(iso_file2$file_info)))
-  expect_equal(iso_get_file_info(c(iso_file1, iso_file2)) %>% unnest(multi_value) ,
-               bind_rows(unnest(iso_file1$file_info, multi_value), 
-                         unnest(iso_file2$file_info, multi_value)))
+  expect_true(identical(
+    iso_get_file_info(c(iso_file1, iso_file2)) %>% unnest(multi_value),
+    bind_rows(unnest(iso_file1$file_info, multi_value), 
+              unnest(iso_file2$file_info, multi_value)) %>% 
+      mutate(file_datetime = as_datetime(file_datetime, tz = Sys.timezone()))
+  ))
   
   # check select functionality
   expect_equal(names(iso_get_file_info(iso_file1, select = c("file_datetime", "only_a"))), c("file_id", "file_datetime", "only_a"))

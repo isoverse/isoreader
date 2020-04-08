@@ -905,9 +905,11 @@ unnest_aggregated_data_frame <- function(df) {
                                    ~if(.y) { NA_integer_ } else {.x[1]}))
       else if (cols$identical_class[i] == "POSIXct") 
         df <- mutate(df, !!cols$column[i] := 
-                          map2_int(!!sym(cols$column[i]), cols$is_missing[[i]], 
-                                   ~if (.y) { NA_integer_ } else { as.integer(.x[1])}) %>% 
-                          as_datetime(tz = Sys.timezone()))
+                       # have to switch to int b/c there is no map2_datetime yet
+                       map2_int(!!sym(cols$column[i]), cols$is_missing[[i]], 
+                                # NA_integer_ is okay here because of the as_datetime wrapper afterwards
+                                ~if (.y) { NA_integer_ } else { as.integer(.x[1]) }) %>% 
+                       as_datetime(tz = Sys.timezone()))
       else if (cols$identical_class[i] == "iso_double_with_units") 
         df <- mutate(df, !!cols$column[i] := 
                        do.call(
