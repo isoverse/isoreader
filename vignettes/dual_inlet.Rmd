@@ -181,7 +181,7 @@ new_info %>% rmarkdown::paged_table()
 # adding it to the isofiles
 di_files3 %>% 
   iso_add_file_info(new_info, by1 = "Run in 2017?", by2 = "Analysis") %>% 
-  iso_get_file_info(select = names(new_info)) %>% 
+  iso_get_file_info(select = !!names(new_info)) %>% 
   rmarkdown::paged_table()
 ```
 

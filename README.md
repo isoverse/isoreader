@@ -52,9 +52,6 @@ You can install isoreader from github with the devtools package (version
 \> 1.13.2 required for bioconductor support).
 
 ``` r
-# restart your R session (this command only works in RStudio)
-.rs.restartR()
-
 # installs the development tools package if not yet installed
 if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools") 
 
@@ -62,15 +59,16 @@ if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
 devtools::install_github("isoverse/isoreader")
 ```
 
+Troubleshooting note: depending on your workspace and operating system,
+you may have to re-start your R session, delete previous versions of
+these packages (`remove.packages("isoreader")`), and/or manually install
+some dependencies (e.g. the `digest` package tends to cause trouble:
+`remove.packages("digest"); install.packages("digest")`).
+
 ## Functionality
 
-Currently supported file types:
-
-    #> 
-    #> Attaching package: 'isoreader'
-    #> The following object is masked from 'package:stats':
-    #> 
-    #>     filter
+Currently supported file
+types:
 
 | extension | software  | description                         | type            |
 | :-------- | :-------- | :---------------------------------- | :-------------- |

@@ -15,7 +15,7 @@ make_iso_file_data_structure <- function(file_id = NA_character_) {
         file_root = NA_character_, # root directory for file path
         file_path = NA_character_, # path to file (file extension is key for processing)
         file_subpath = NA_character_, # sub path in case file is an archieve
-        file_datetime = NA_integer_, # the run date and time of the file
+        file_datetime = lubridate::as_datetime(NA), # the run date and time of the file
         file_size = NA_integer_ # the size of the file in bytes
       ),
       method_info = list(), # all methods information

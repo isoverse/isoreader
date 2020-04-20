@@ -100,6 +100,15 @@ test_that("test that iso_file list checks work", {
   expect_equal(iso_as_file_list() %>% iso_get_file_info() %>% nrow(), 0)
   expect_equal(iso_as_file_list() %>% iso_get_resistors() %>% nrow(), 0)
   
+  # combining data structures with filled and unfilled file_datetime
+  cf1 <- make_cf_data_structure("A")
+  cf1$read_options$file_info <- TRUE
+  cf2 <- make_cf_data_structure("B")
+  cf2$read_options$file_info <- TRUE
+  cf2$file_info$file_datetime <- lubridate::ymd_hms("2020-01-01 01:01:01")
+  expect_equal(iso_get_file_info(c(cf1, cf2))$file_datetime, 
+               as_datetime(c(NA, cf2$file_info$file_datetime), tz = Sys.timezone()))
+  
   # expected errors
   expect_error(iso_as_file_list() %>% iso_get_vendor_data_table(), "only dual inlet.*continuous flow")
   expect_error(iso_as_file_list() %>% iso_get_standards(), "only dual inlet.*continuous flow")
