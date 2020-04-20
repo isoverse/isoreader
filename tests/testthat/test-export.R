@@ -125,7 +125,7 @@ test_that("test that export to Excel works properly", {
   expect_equal(iso_get_file_info(cf) %>% collapse_list_columns(), 
                readxl::read_excel(str_c(filepath, ".cf.xlsx"), "file info",
                           col_types = c("text", "text", "text", "text", "numeric", "numeric", "text")) %>% 
-                 mutate(file_datetime = as.integer(file_datetime), file_size = as.integer(file_size))) 
+                 mutate(file_datetime = as_datetime(file_datetime), file_size = as.integer(file_size))) 
   expect_equal(iso_get_standards(cf), 
                readxl::read_excel(str_c(filepath, ".cf.xlsx"), "standards", col_types = c("text", "text")))
   expect_equal(iso_get_resistors(cf), 
@@ -266,7 +266,9 @@ test_that("test that export to Feather works properly", {
   expect_true(file.exists(str_c(filepath, "_problems.cf.feather")))
   # note for comparisons: rounding is NOT necessary because storage is equivalent to values in R
   expect_equal(iso_get_raw_data(cf), read_feather(str_c(filepath, "_raw_data.cf.feather")))
-  expect_equal(iso_get_file_info(cf) %>% collapse_list_columns(), read_feather(str_c(filepath, "_file_info.cf.feather")))
+  expect_true(identical(
+    iso_get_file_info(cf) %>% collapse_list_columns(), read_feather(str_c(filepath, "_file_info.cf.feather"))
+  ))
   expect_equal(iso_get_standards(cf), read_feather(str_c(filepath, "_standards.cf.feather")))
   expect_equal(iso_get_resistors (cf), read_feather(str_c(filepath, "_resistors.cf.feather")))
   expect_equal(iso_get_vendor_data_table(cf), read_feather(str_c(filepath, "_vendor_data_table.cf.feather")))

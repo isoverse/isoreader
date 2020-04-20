@@ -147,7 +147,7 @@ scan_files %>% iso_get_raw_data() %>% head(n=10) %>% rmarkdown::paged_table()
 scan_files %>% 
   iso_get_raw_data(
     # select just time and the two ions
-    select = c(x, units, v44.mV, v45.mV),
+    select = c(x, x_units, v44.mV, v45.mV),
     # include the scan type and rename the column
     include_file_info = c(`Scan Type` = type)
   ) %>% 

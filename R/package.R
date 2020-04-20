@@ -22,6 +22,13 @@
 #' @importFrom feather write_feather
 NULL
 
+# re-export rlang !! and !!!
+#' @export
+rlang::`!!`
+
+#' @export
+rlang::`!!!`
+
 # re-export magrittr functions
 #' @importFrom magrittr %>%
 #' @export

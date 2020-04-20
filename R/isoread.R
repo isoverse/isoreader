@@ -399,7 +399,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
 
   # bring files into the correct order after potential parallel processing jumble
   indices <- 
-    tibble(path = purrr::map_chr(iso_files, ~.x$file_info$file_path), idx = 1:length(path)) %>% 
+    tibble(path = purrr::map_chr(iso_files, ~.x$file_info$file_path) %>% unname(), idx = 1:length(path)) %>% 
     dplyr::left_join(files, by = "path") %>% 
     dplyr::arrange(file_n) %>% 
     dplyr::pull(idx)
@@ -555,15 +555,24 @@ ensure_iso_file_backwards_compatibility <- function(iso_file) {
     iso_file <- map(iso_file, ~{
       .x$file_info <- ensure_data_frame_list_columns(.x$file_info, exclude = standard_fields);
       .x <- set_ds_file_size(.x)
+      .x <- check_file_datetime(.x)
       .x$vendor_data_table <- convert_df_units_attr_to_implicit_units(.x$vendor_data_table)
       .x
     }) %>% iso_as_file_list()
   } else {
     iso_file$file_info <- ensure_data_frame_list_columns(iso_file$file_info, exclude = standard_fields)
     iso_file <- set_ds_file_size(iso_file)
+    iso_file <- check_file_datetime(iso_file)
     iso_file$vendor_data_table <- convert_df_units_attr_to_implicit_units(iso_file$vendor_data_table)
   }
   
+  return(iso_file)
+}
+
+# check file_datetime (no longer allowed to be a NA_integer_, has to be datetime NA)
+check_file_datetime <- function(iso_file) {
+  if ("file_datetime" %in% names(iso_file$file_info) && is.na(iso_file$file_info$file_datetime[1]))
+    iso_file$file_info$file_datetime <- lubridate::as_datetime(NA)
   return(iso_file)
 }
 
