@@ -1,5 +1,7 @@
 context("Utility functions")
 
+# package version comparisons =====
+
 test_that("package version comparisons works correctly", {
   
   # versions < 1.0
@@ -29,6 +31,8 @@ test_that("package version comparisons works correctly", {
   
 })
 
+# example files =====
+
 test_that("retrieving example files works correctly", {
   
   expect_true(is.data.frame(iso_get_reader_examples()))
@@ -37,6 +41,8 @@ test_that("retrieving example files works correctly", {
   expect_true(file.exists(path))
   
 })
+
+# file extensions helpers ======
 
 test_that("test that file extension helpers work correctly", {
   
@@ -349,4 +355,31 @@ test_that("test that info concatenation works", {
   expect_equal(get_info_message_concat(rlang::exprs(a = xyz, abc), include_names = TRUE), "'a'='xyz', 'abc'")
   expect_equal(get_info_message_concat(rlang::exprs(a = xyz, b = abc), include_names = TRUE, quotes = FALSE, names_sep = " -> "), "a -> xyz, b -> abc")
   expect_equal(get_info_message_concat(rlang::quos(a = xyz, b = abc), include_names = TRUE, quotes = FALSE, names_sep = " -> "), "a -> xyz, b -> abc")
+})
+
+# cached file paths ======
+
+test_that("test that cached file path hashes work okay", {
+  
+  test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
+  
+  file_paths <- file.path(test_folder, c(
+    "cache_test.did",
+    file.path("cache_test1", "cache_test.did"),
+    file.path("cache_test2", "cache_test.did"),
+    file.path("cache_test3", "cache_test.did")
+  ))
+  
+  cache_paths <- generate_cache_filepaths(file_paths)
+  
+  # exact same file in different locations
+  expect_true(identical(cache_paths[1], cache_paths[2]))
+  
+  # same names but different file sizes
+  expect_false(identical(cache_paths[1], cache_paths[3]))
+  
+  # same names but different modified different dates
+  expect_false(identical(cache_paths[1], cache_paths[4]))
+
+  
 })
