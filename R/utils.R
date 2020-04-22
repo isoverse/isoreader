@@ -666,42 +666,32 @@ match_to_supported_file_types <- function(filepaths_df, extensions_df) {
 
 # caching ====
 
-# generates the cash file paths for iso_files
+# generates the cash file paths for iso_files inclulding a hash
+# hash includes the file name, the file size and last modified, as well as the the read options
+# does NOT include: file path, isoreader version, file contents
 generate_cache_filepaths <- function(filepaths, read_options = list()) {
 
-  # global vars
-  rowname <- size <- mtime <- filepath <- modified <- hash <- cache_file <- NULL
-
-  calculate_unf_hash <- function(filepath, size, modified) {
-    obj <- c(list(filepath, size, modified), read_options)
-    unf(obj)$hash %>% str_c(collapse = "")
+  # calculate the hash
+  calculate_unf_hash <- function(filename, size, modified) {
+    obj <- c(list(filename, size, modified), read_options)
+    paste(unf(obj)$hash, collapse = "")
   }
-
-  # cached files versioning -->
-  # include minor if v < 1.0, afterwards go by major version (2.0, 3.0, etc.)
-  iso_v <-
-    packageVersion("isoreader") %>% {
-      if (.$major < 1) paste0(.$major, ".", .$minor)
-      else paste0(.$major, ".0")
-    }
-
-  file_info <- file.info(filepaths) %>%
-    dplyr::as_tibble() %>%
-    rownames_to_column() %>%
-    select(filepath = rowname, size = size, modified = mtime) %>%
-    mutate(
-      hash = mapply(calculate_unf_hash, filepath, size, modified),
-      cache_file = sprintf("iso_file_v%s_%s_%s.rds", !!iso_v, basename(filepath), hash),
+  
+  # generate cache filepaths
+  file.info(filepaths) %>%
+    tibble::rownames_to_column(var = "filepath") %>%
+    dplyr::mutate(
+      hash = purrr::pmap_chr(list(filename = basename(filepath), size = size, modified = mtime), calculate_unf_hash),
+      cache_file = sprintf("iso_file_%s_%s.rds", basename(filepath), hash),
       cache_filepath = file.path(default("cache_dir"), cache_file)
-    )
-
-  return(file_info$cache_filepath)
+    ) %>% 
+    dplyr::pull(cache_filepath)
 }
 
 # Cache iso_file
 cache_iso_file <- function(iso_file, cachepath) {
   if (!file.exists(default("cache_dir"))) dir.create(default("cache_dir"))
-  saveRDS(iso_file, file = cachepath)
+  readr::write_rds(iso_file, path = cachepath)
 }
 
 # Load cached iso_file
