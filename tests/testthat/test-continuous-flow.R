@@ -129,10 +129,6 @@ test_that("test that dxf files can be read", {
   # test re-reading
   # NOTE: ideally this should also include an iarc file
   iso_files <- c(dxf1, dxf2, dxf3)
-  expect_equal(
-    iso_files %>% get_reread_filepaths(),
-    iso_files %>% map_chr(get_ds_file_path) %>% as.character()
-  )
   expect_true(iso_is_continuous_flow(reread_dxf <- iso_reread_files(iso_files)))
   expect_equal(nrow(problems(reread_dxf)), 0)
   

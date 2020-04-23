@@ -121,16 +121,26 @@ test_that("test that iso_file list checks work", {
 
 # can set file path for data structures ====
 test_that("can set file path for data structures", {
+  
+  # errors
   expect_error(set_ds_file_path(tibble()), "can only set path for iso_file data structures")
   expect_silent(ds <- make_iso_file_data_structure("NA"))
   expect_error(set_ds_file_path(ds, "DNE", "DNE"), "does not exist")
+  ds$file_info$file_root <- NULL
+  expect_error(get_ds_file_root(ds), "file_root.*does not exist.*lost during rename")
+  ds$file_info$file_path <- NULL
+  expect_error(get_ds_file_path(ds), "file_path.*does not exist.*lost during rename")
   
-  # default
+  # check path
   expect_is(ds <- set_ds_file_path(ds, system.file(package = "isoreader"), "extdata"), "iso_file")
   expect_equal(ds$file_info$file_root, system.file(package = "isoreader"))
   expect_equal(ds$file_info$file_path, "extdata")
   expect_equal(ds$file_info$file_id, "extdata")
   expect_equal(ds$file_info$file_subpath, NA_character_)
+  expect_equal(get_ds_file_root(ds), system.file(package = "isoreader"))
+  expect_equal(get_ds_file_path(ds), file.path(system.file(package = "isoreader"), ds$file_info$file_path))
+  expect_equal(get_ds_file_path(ds, include_root = FALSE), "extdata")
+  
   
   # custom id and subpath
   expect_is(ds <- set_ds_file_path(ds, system.file(package = "isoreader"), "extdata",
