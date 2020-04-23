@@ -377,7 +377,7 @@ get_path_segments <- function(path) {
 #'
 #' @param path vector of file/folder paths, mixed relative and absolute paths are allowed.
 #' @param extensions which extensions to look for? (with or without leading .) - this is typically one or more of the extensions listed by \code{\link{iso_get_supported_file_types}}
-#' @param root root for relative paths. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). The default is the current working directory (\code{"."}). Can be supplied as a vector of same length as the provided paths if the paths have different roots.
+#' @param root root directory for the isofiles. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). The default is the current working directory (\code{"."}). Can be supplied as a vector of same length as the provided paths if the paths have different roots.
 #' @return data frame with columns \code{root} (\code{root} as provided) and \code{path} of all the found files.
 #' @family file system functions
 #' @export
@@ -607,14 +607,6 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
   paths <- bind_rows(abs_paths, filter(paths, !absolute)) %>%  arrange(i)
 
   return(select(paths, root, path))
-}
-
-# get re-read filepaths
-get_reread_filepaths <- function(iso_files) {
-  if(!iso_is_object(iso_files)) stop("can only re-read iso_files", call. = FALSE)
-  iso_files <- iso_as_file_list(iso_files)
-  info <- map_chr(iso_files, get_ds_file_path) %>% unique()
-  return(info)
 }
 
 # file extensions ======

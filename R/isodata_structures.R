@@ -1,5 +1,6 @@
 # Structures ----
 
+
 # basic data structure
 make_iso_file_data_structure <- function(file_id = NA_character_) {
   structure(
@@ -277,7 +278,7 @@ print.scan <- function(x, ..., show_problems = TRUE) {
 }
 
 
-# Update structures =====
+# Set structures fields =====
 
 # set data structure file path
 set_ds_file_path <- function(ds, file_root, file_path, file_id = basename(file_path), file_subpath = NA_character_) {
@@ -291,13 +292,22 @@ set_ds_file_path <- function(ds, file_root, file_path, file_id = basename(file_p
   return(ds)
 }
 
-get_ds_file_path <- function(ds) {
-  if (!col_in_df(ds$file_info, "file_path"))
-    stop("file_path column does not exist in file info (lost during rename?), cannot proceed", call. = FALSE)
+get_ds_file_root <- function(ds) {
   if (!col_in_df(ds$file_info, "file_root"))
     stop("file_root column does not exist in file info (lost during rename?), cannot proceed", call. = FALSE)
-  if (is.na(ds$file_info$file_root)) return(ds$file_info$file_path)
-  else return(file.path(ds$file_info$file_root, ds$file_info$file_path))
+  return(ds$file_info$file_root)
+}
+
+get_ds_file_path <- function(ds, include_root = TRUE) {
+  if (!col_in_df(ds$file_info, "file_path"))
+    stop("file_path column does not exist in file info (lost during rename?), cannot proceed", call. = FALSE)
+  
+  if (include_root) {
+    file_root <- get_ds_file_root(ds)
+    if (!is.na(file_root)) return(file.path(file_root, ds$file_info$file_path))
+  }
+  
+  return(ds$file_info$file_path)
 }
 
 # update read options in structure
