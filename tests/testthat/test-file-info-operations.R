@@ -191,7 +191,48 @@ test_that("Test that mutating file info works", {
   expect_equal(
     mutate(iso_files, newest_info = "A") %>% iso_get_file_info(), 
     iso_mutate_file_info(iso_files, newest_info = "A") %>% iso_get_file_info())
+  
+  
+  # file root update =====
+  expect_error(iso_set_file_root(iso_files, root = NULL), "must supply.*file root")
+  expect_error(iso_set_file_root(iso_files, root = c(1:2)), "same length")
+  expect_error(iso_set_file_root(iso_files, root = "root", remove_embedded_root = 1:2), "only.*single value")
+  
+  # just setting file_root itself
+  expect_message(rerooted_files <- iso_set_file_root(iso_files, root = "test"), 
+                 "setting file root for 3 data file.*to.*test")
+  expect_equal(iso_get_file_info(rerooted_files, c(file_root, file_path)),
+               iso_get_file_info(iso_files, c(file_root, file_path)) %>% mutate(file_root = "test"))
+  
+  # with removing embedded root
+  iso_files[[1]]$file_info$file_path <- "A/B/C/a.cf"
+  iso_files[[2]]$file_info$file_path <- "A/B/C/D/b.cf"
+  iso_files[[3]]$file_info$file_path <- "A/B/c.df"
+  
+  expect_warning(rerooted_files <- iso_set_file_root(iso_files, remove_embedded_root = "DNE"), 
+                 "3/3 file paths do not include the embedded root")
+  expect_equal(iso_get_file_info(rerooted_files, c(file_root, file_path)),
+               iso_get_file_info(iso_files, c(file_root, file_path)) %>% mutate(file_root = "."))
+  
+  expect_warning(rerooted_files <- iso_set_file_root(iso_files, root = "test", remove_embedded_root = "A/B/C"), 
+                 "1/3 file paths do not include the embedded root")
+  expect_equal(iso_get_file_info(rerooted_files, c(file_root, file_path)),
+               iso_get_file_info(iso_files, c(file_root, file_path)) %>% 
+                 mutate(file_path = str_replace(file_path, "A/B/C/", ""), file_root = "test"))
+  
+  expect_message(rerooted_files <- iso_set_file_root(iso_files, remove_embedded_root = "A/B"), 
+                 "setting file root for 3 data file.*removing embedded root.*A/B")
+  expect_message(rerooted_files <- iso_set_file_root(iso_files, root = "test", remove_embedded_root = "././A/B"), 
+                 "setting file root for 3 data file.*to.*test.*removing embedded root.*A/B")
+  expect_equal(iso_get_file_info(rerooted_files, c(file_root, file_path)),
+               iso_get_file_info(iso_files, c(file_root, file_path)) %>% 
+                 mutate(file_path = str_replace(file_path, "A/B/", ""), file_root = "test"))
+
+  
+    
 })
+
+
 
 
 # parse info =======
