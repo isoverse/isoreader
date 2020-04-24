@@ -146,7 +146,8 @@ iso_read_dual_inlet <- function(
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
   nu_masses = c(),
-  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multisession, 
+  discard_duplicates = TRUE, 
+  parallel = FALSE, parallel_plan = future::multisession, parallel_cores = future::availableCores(),
   cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
@@ -165,6 +166,7 @@ iso_read_dual_inlet <- function(
     discard_duplicates = discard_duplicates,
     parallel = parallel,
     parallel_plan = parallel_plan,
+    parallel_cores = parallel_cores,
     cache = cache,
     cache_files_with_errors = cache_files_with_errors, 
     read_cache = read_cache,
@@ -182,7 +184,8 @@ iso_read_continuous_flow <- function(
   root = ".",
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), 
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table), 
-  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multisession,
+  discard_duplicates = TRUE, 
+  parallel = FALSE, parallel_plan = future::multisession, parallel_cores = future::availableCores(),
   cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
@@ -201,6 +204,7 @@ iso_read_continuous_flow <- function(
     discard_duplicates = discard_duplicates,
     parallel = parallel,
     parallel_plan = parallel_plan,
+    parallel_cores = parallel_cores,
     cache = cache,
     cache_files_with_errors = cache_files_with_errors,
     read_cache = read_cache,
@@ -217,7 +221,8 @@ iso_read_scan <- function(
   ..., 
   root = ".",
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), read_method_info = default(read_method_info),
-  discard_duplicates = TRUE, parallel = FALSE, parallel_plan = future::multisession,
+  discard_duplicates = TRUE, 
+  parallel = FALSE, parallel_plan = future::multisession, parallel_cores = future::availableCores(),
   cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
   
   # process data
@@ -235,6 +240,7 @@ iso_read_scan <- function(
     discard_duplicates = discard_duplicates,
     parallel = parallel,
     parallel_plan = parallel_plan,
+    parallel_cores = parallel_cores,
     cache = cache,
     cache_files_with_errors = cache_files_with_errors,
     read_cache = read_cache,
@@ -256,6 +262,7 @@ iso_read_scan <- function(
 #' @inheritParams iso_as_file_list
 #' @param parallel whether to process in parallel based on the number of available CPU cores. This may yield performance increases for files that are slow to parse such as continuous flow isodat files but usually provides little benefit for efficient data formats such as reading from R Data Archives.
 #' @param parallel_plan which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multisession} for compatibility with RStudio interactive mode. If supported by the operating system and running in detached mode (not interactively in RStudio) can also use \code{future::multicore}.
+#' @param parallel_cores how many processor cores to use for parallel processing. By default the maximum available number of cores (\link[future]{availableCores}), which will allow maximal processing speed but may slow other programs running on your machine. Choose a smaller number if you want some processing resources to remain available for other processes. Will issue a warning if too many cores are requested and reset to the maximum available.
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}
 #' @param cache whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.
 #' @param cache_files_with_errors whether to cache files that had errors during reading
@@ -265,7 +272,7 @@ iso_read_scan <- function(
 #' @return single iso_file object (if single file) or list of iso_files (iso_file_list)
 iso_read_files <- function(paths, root, supported_extensions, data_structure, 
                            read_options = c(), reader_options = list(), discard_duplicates = TRUE, 
-                           parallel = FALSE, parallel_plan = future::multisession, 
+                           parallel = FALSE, parallel_plan = future::multisession, parallel_cores = future::availableCores(),
                            cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), 
                            quiet = default(quiet)) {
 
@@ -281,7 +288,14 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
   
   # parallel processing
   if (parallel) {
-    cores <- future::availableCores()
+    available_cores <- future::availableCores()
+    if (parallel_cores > available_cores) {
+      glue::glue(
+        "{parallel_cores} cores were requested for parallel processing ",
+        "but only {available_cores} are available"
+      ) %>% warning(immediate. = TRUE, call. = FALSE)
+    }
+    cores <- min(parallel_cores, available_cores)
     oplan <- plan(parallel_plan)
     on.exit(plan(oplan), add = TRUE)
   } 
@@ -316,8 +330,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
   if (!default("quiet")) {
     glue::glue(
       "preparing to read {nrow(filepaths)} data files",
-      if (cache && !cache_files_with_errors) { " (all will be cached unless they have errors)" }
-      else if (cache && cache_files_with_errors) { " (all will be cached)" } else {""},
+      if (cache) { " (all will be cached)" } else {""},
       if (parallel) { ", setting up {min(cores, nrow(filepaths))} parallel processes..." } 
       else {"..."}) %>% 
       log_message()
@@ -489,6 +502,8 @@ create_read_process <- function(process, data_structure, files) {
 #' @export
 read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, write_to_cache, write_to_cache_if_errors, cachepath, ext, reader_fun, reader_options, reader_fun_env) {
   
+  # FIXME: remove write_to_cache_if_errors parameter!
+  
   # prepare iso_file object
   iso_file <- set_ds_file_path(ds, root, path)
   
@@ -513,6 +528,8 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, writ
     iso_file <- load_cached_iso_file(cachepath)
     # FIXME: re-read from original location if cache file is too old rather than dealing with backwards compatibility!!
     # add a warning message about this in the file info stream
+    
+    # FIXME: only do backwards compatibility test for old cached files and set an include in the info message that re-reading files will be faster with more recently cached repos
     iso_file <- ensure_iso_file_backwards_compatibility(iso_file)
   } else {
     # read from original file
