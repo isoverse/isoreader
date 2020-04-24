@@ -150,6 +150,14 @@ iso_read_dual_inlet <- function(
   parallel = FALSE, parallel_plan = future::multisession, parallel_cores = future::availableCores(),
   cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
   
+  # cache files with errors deprecation warning
+  if (!missing(cache_files_with_errors)) {
+    warning(
+      "the 'cache_file_with_errors' parameter is deprecated. Please use iso_reread_files_with_problems() instead to selectively re-read all files in a collection of iso files that had been previously read with errors or warnings.",
+      immediate. = TRUE, call. = FALSE
+    )
+  }
+  
   # process data
   iso_read_files(
     unlist(list(...), use.names = FALSE),
@@ -168,7 +176,6 @@ iso_read_dual_inlet <- function(
     parallel_plan = parallel_plan,
     parallel_cores = parallel_cores,
     cache = cache,
-    cache_files_with_errors = cache_files_with_errors, 
     read_cache = read_cache,
     quiet = quiet
   )
@@ -188,6 +195,14 @@ iso_read_continuous_flow <- function(
   parallel = FALSE, parallel_plan = future::multisession, parallel_cores = future::availableCores(),
   cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
   
+  # cache files with errors deprecation warning
+  if (!missing(cache_files_with_errors)) {
+    warning(
+      "the 'cache_file_with_errors' parameter is deprecated. Please use iso_reread_files_with_problems() instead to selectively re-read all files in a collection of iso files that had been previously read with errors or warnings.",
+      immediate. = TRUE, call. = FALSE
+    )
+  }
+  
   # process data
   iso_read_files(
     unlist(list(...), use.names = FALSE),
@@ -206,7 +221,6 @@ iso_read_continuous_flow <- function(
     parallel_plan = parallel_plan,
     parallel_cores = parallel_cores,
     cache = cache,
-    cache_files_with_errors = cache_files_with_errors,
     read_cache = read_cache,
     quiet = quiet
   )
@@ -225,6 +239,14 @@ iso_read_scan <- function(
   parallel = FALSE, parallel_plan = future::multisession, parallel_cores = future::availableCores(),
   cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
   
+  # cache files with errors deprecation warning
+  if (!missing(cache_files_with_errors)) {
+    warning(
+      "the 'cache_file_with_errors' parameter is deprecated. Please use iso_reread_files_with_problems() instead to selectively re-read all files in a collection of iso files that had been previously read with errors or warnings.",
+      immediate. = TRUE, call. = FALSE
+    )
+  }
+  
   # process data
   iso_read_files(
     unlist(list(...), use.names = FALSE),
@@ -242,7 +264,6 @@ iso_read_scan <- function(
     parallel_plan = parallel_plan,
     parallel_cores = parallel_cores,
     cache = cache,
-    cache_files_with_errors = cache_files_with_errors,
     read_cache = read_cache,
     quiet = quiet
   )
@@ -265,7 +286,7 @@ iso_read_scan <- function(
 #' @param parallel_cores how many processor cores to use for parallel processing. By default the maximum available number of cores (\link[future]{availableCores}), which will allow maximal processing speed but may slow other programs running on your machine. Choose a smaller number if you want some processing resources to remain available for other processes. Will issue a warning if too many cores are requested and reset to the maximum available.
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}
 #' @param cache whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.
-#' @param cache_files_with_errors whether to cache files that had errors during reading
+#' @param cache_files_with_errors deprecated. Please use \link{iso_reread_files_with_problems} instead to selectively re-read all files in a collection of iso files that had been previously read with errors or warnings.
 #' @param read_cache whether to reload from cache if a cached version exists. Note that it will only read from cache if the raw data file has not been modified since and has been read by a compatible (=recent) isoreader version. Files that have been modified on disc (e.g. edited in the vendor software) will always be read anew. 
 #' @param read_options vector of read options to be stored in the data structure (e.g. \code{c(read_vendor_data_table = FALSE)}). The \code{read_} prefix is optional.
 #' @param reader_options list of paramters to be passed on to the reader
@@ -273,7 +294,7 @@ iso_read_scan <- function(
 iso_read_files <- function(paths, root, supported_extensions, data_structure, 
                            read_options = c(), reader_options = list(), discard_duplicates = TRUE, 
                            parallel = FALSE, parallel_plan = future::multisession, parallel_cores = future::availableCores(),
-                           cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), 
+                           cache = default(cache), read_cache = default(cache), 
                            quiet = default(quiet)) {
 
   # global
@@ -351,8 +372,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
     # make cache read/write decisions
     mutate(
       read_from_cache = read_cache & cacheable & file.exists(cachepath),
-      write_to_cache = cache & cacheable,
-      write_to_cache_if_errors = cache_files_with_errors
+      write_to_cache = cache & cacheable
     )
   
   # safety check on reader functions
@@ -440,12 +460,12 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
 create_read_process <- function(process, data_structure, files) {
   
   # global vars
-  root <- path <- file_n <- files_n <- read_from_cache <- write_to_cache <- write_to_cache_if_errors <- cachepath <- extension <- func <- reader_options <- env <- reader_fun_env <- all_opts <- NULL
+  root <- path <- file_n <- files_n <- read_from_cache <- write_to_cache <- cachepath <- extension <- func <- reader_options <- env <- reader_fun_env <- all_opts <- NULL
   
   # specify relevant files columns to match read_iso_file parameters
   files <- files %>% 
     select(
-      root, path, file_n, files_n, read_from_cache, write_to_cache, write_to_cache_if_errors, cachepath, ext = extension, 
+      root, path, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext = extension, 
       reader_fun = func, reader_options = reader_options, reader_fun_env = env
     )
   
@@ -493,16 +513,13 @@ create_read_process <- function(process, data_structure, files) {
 #' @param files_n total number of files for info messages
 #' @param read_from_cache whether to read from cache
 #' @param write_to_cache whether to write to cache
-#' @param write_to_cache_if_errors whether to write to cache even if errors are encountered
 #' @param cachepath path for the cache file
 #' @param ext file extension
 #' @param reader_fun file reader function
 #' @param reader_fun_env where to find the reader function
 #' 
 #' @export
-read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, write_to_cache, write_to_cache_if_errors, cachepath, ext, reader_fun, reader_options, reader_fun_env) {
-  
-  # FIXME: remove write_to_cache_if_errors parameter!
+read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext, reader_fun, reader_options, reader_fun_env) {
   
   # prepare iso_file object
   iso_file <- set_ds_file_path(ds, root, path)
@@ -546,7 +563,7 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, writ
     }
     
     # store in cached file
-    if (write_to_cache && (n_problems(iso_file) == 0 || write_to_cache_if_errors)) 
+    if (write_to_cache) 
       cache_iso_file(iso_file, cachepath)
   }
   
