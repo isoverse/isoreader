@@ -133,20 +133,19 @@ test_that("test that dxf files can be read", {
   expect_equal(nrow(problems(reread_dxf)), 0)
   
   
-  # test multiprocess and multisession
+  # test mparallel processing ======
+  # multisession
   file_paths <-
     file.path(test_folder,
               c("dxf_example_H_01.dxf", "dxf_example_HO_01.dxf", "dxf_example_HO_02.dxf", "dxf_example_CNS_01.dxf", "dxf_example_N2_01.dxf"))
   
-  expect_message(files <- iso_read_continuous_flow(file_paths, parallel = TRUE, parallel_plan = future::multisession),
-                 "preparing to read 5 data files.*setting up.*parallel processes")
+  expect_message(files <- iso_read_continuous_flow(file_paths, parallel = TRUE, parallel_plan = future::multisession, parallel_cores = future::availableCores()),
+                 sprintf("preparing to read 5 data files.*setting up %.0f parallel processes", future::availableCores()))
   expect_equal(nrow(problems(files)), 0)
+  expect_warning(iso_read_continuous_flow(file_paths, parallel = TRUE, parallel_plan = future::multisession, parallel_cores = future::availableCores() + 1),
+                 sprintf("%.0f cores.*requested.*only %.0f.*available", future::availableCores() + 1, future::availableCores()))
   
-  # test multiprocess and multisession
-  file_paths <-
-    file.path(test_folder,
-              c("dxf_example_H_01.dxf", "dxf_example_HO_01.dxf", "dxf_example_HO_02.dxf", "dxf_example_CNS_01.dxf", "dxf_example_N2_01.dxf"))
-  
+  # multiproccess
   expect_message(files <- iso_read_continuous_flow(file_paths, parallel = TRUE, parallel_plan = future::multiprocess),
                  "preparing to read 5 data files.*setting up.*parallel processes")
   expect_equal(nrow(problems(files)), 0)
