@@ -1,6 +1,5 @@
 # Structures ----
 
-
 # basic data structure
 make_iso_file_data_structure <- function(file_id = NA_character_) {
   structure(
@@ -56,6 +55,37 @@ make_scan_data_structure <- function(file_id = NA_character_) {
   class(struct) <- c("scan", class(struct))
   return(struct)
 }
+
+# Versions ----
+
+# get last structure update
+get_last_structure_update_version <- function() {
+  # last version which included any structure updates
+  # determines 
+  # - whether the file version warning will be shown during file read
+  # - whether cached files are re-read (if reread_outdated_cache_files is active)
+  # - backwards compatibility checks are run during collection reading
+  return(as.package_version("1.2.0"))
+}
+
+# get version for all objects
+get_iso_object_versions <- function(iso_obj) {
+  iso_obj %>% iso_as_file_list() %>% 
+    purrr::map(~if (!is.null(.x$version)) { .x$version } else { as.package_version("0.0.0") })
+}
+
+# get outdated boolean vector
+get_iso_object_outdated <- function(iso_obj) {
+  iso_obj %>% 
+    get_iso_object_versions() %>% 
+    purrr::map_lgl(~.x < get_last_structure_update_version())
+}
+
+# test whether an iso object structure is outdated
+is_iso_object_outdated <- function(iso_obj) {
+  iso_obj %>% get_iso_object_outdated() %>% any()
+}
+
 
 # Class testing ====
 
