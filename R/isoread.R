@@ -148,7 +148,8 @@ iso_read_dual_inlet <- function(
   nu_masses = c(),
   discard_duplicates = TRUE, 
   parallel = FALSE, parallel_plan = future::multisession, parallel_cores = future::availableCores(),
-  cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
+  cache = default(cache), read_cache = default(cache), 
+  quiet = default(quiet), cache_files_with_errors = TRUE) {
   
   # cache files with errors deprecation warning
   if (!missing(cache_files_with_errors)) {
@@ -193,7 +194,8 @@ iso_read_continuous_flow <- function(
   read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table), 
   discard_duplicates = TRUE, 
   parallel = FALSE, parallel_plan = future::multisession, parallel_cores = future::availableCores(),
-  cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
+  cache = default(cache), read_cache = default(cache), 
+  quiet = default(quiet), cache_files_with_errors = TRUE) {
   
   # cache files with errors deprecation warning
   if (!missing(cache_files_with_errors)) {
@@ -237,7 +239,8 @@ iso_read_scan <- function(
   read_raw_data = default(read_raw_data), read_file_info = default(read_file_info), read_method_info = default(read_method_info),
   discard_duplicates = TRUE, 
   parallel = FALSE, parallel_plan = future::multisession, parallel_cores = future::availableCores(),
-  cache = default(cache), cache_files_with_errors = TRUE, read_cache = default(cache), quiet = default(quiet)) {
+  cache = default(cache), read_cache = default(cache), 
+  quiet = default(quiet), cache_files_with_errors = TRUE) {
   
   # cache files with errors deprecation warning
   if (!missing(cache_files_with_errors)) {
@@ -364,6 +367,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
       file_n = 1:n(),
       files_n = n(),
       cachepath = generate_cache_filepaths(file.path(root, path), data_structure$read_options),
+      old_cachepath = generate_old_cache_filepaths(file.path(root, path), data_structure$read_options),
       process = if(!parallel) NA_integer_ else ((file_n - 1) %% cores) + 1L,
       reader_options = list(!!reader_options)
     ) %>% 
@@ -372,6 +376,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
     # make cache read/write decisions
     mutate(
       read_from_cache = read_cache & cacheable & file.exists(cachepath),
+      read_from_old_cache = read_cache & cacheable & file.exists(old_cachepath),
       write_to_cache = cache & cacheable
     )
   
@@ -427,6 +432,15 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
     log_message()
   }
 
+  # version update messages
+  all_probs <- iso_get_problems(iso_files)
+  if (any(stringr::str_detect(all_probs$details, fixed("outdated version of the isoreader package")))) {
+    glue::glue(
+      "some files were read from outdated cache or storage (.rds) files. They were checked for compatibility and should work without issues. However, to avoid this warning and improve read spead, please call iso_reread_files_outdated() on your collection of iso files to refresh outdated cache files. To refresh outdated storage files directly, please use iso_reread_storage_outdated()."
+    ) %>% 
+      warning(immediate. = TRUE, call. = FALSE)
+  }
+  
   # turn into iso_file list
   iso_files <- iso_as_file_list(iso_files, discard_duplicates = discard_duplicates) 
 
@@ -435,18 +449,14 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
     tibble(path = purrr::map_chr(iso_files, ~.x$file_info$file_path) %>% unname(), idx = 1:length(path)) %>% 
     dplyr::left_join(files, by = "path") %>% 
     dplyr::arrange(file_n) %>% 
-    dplyr::pull(idx)
+    dplyr::pull(idx) %>% 
+    unique()
   iso_files <- iso_files[indices]
-  
-  # convert file_path_to_rooted for old files
-  # @note: should be possible to deprecate in a future version since all paths will be rooted
-  if (length(root) != 1) root <- "." # if there are multiple, default back to working directory in case of ambiguity
-  iso_files <- convert_file_path_to_rooted(iso_files, root = root)
   
   # report problems
   if (!default("quiet") && iso_has_problems(iso_files)) {
     sprintf("encountered %.0f problems in total", n_problems(iso_files)) %>% log_message()
-    print(problems(iso_files))
+    print(all_probs)
     cat("\n")
   }
   
@@ -459,22 +469,20 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
 # @param process if NA --> set up process in the current session, if integer --> set up parallel process
 create_read_process <- function(process, data_structure, files) {
   
-  # global vars
-  root <- path <- file_n <- files_n <- read_from_cache <- write_to_cache <- cachepath <- extension <- func <- reader_options <- env <- reader_fun_env <- all_opts <- NULL
-  
   # specify relevant files columns to match read_iso_file parameters
   files <- files %>% 
     select(
-      root, path, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext = extension, 
-      reader_fun = func, reader_options = reader_options, reader_fun_env = env
+      .data$root, .data$path, .data$file_n, .data$files_n, 
+      .data$read_from_cache, .data$read_from_old_cache, .data$write_to_cache, .data$cachepath, .data$old_cachepath, 
+      ext = .data$extension, reader_fun = .data$func, reader_options = .data$reader_options, reader_fun_env = .data$env
     )
   
   # parallel
   if (!is.na(process)) {
     # find required global functions and packages from the used readers
-    func_globals <- filter(files, reader_fun_env == "R_GlobalEnv")$reader_fun %>% 
+    func_globals <- filter(files, .data$reader_fun_env == "R_GlobalEnv")$reader_fun %>% 
       unique() %>% { setNames(purrr::map(., ~rlang::eval_tidy(rlang::sym(.x))), .) }
-    packages <- c("isoreader", "purrr", filter(files, reader_fun_env != "R_GlobalEnv")$reader_fun_env) %>% unique()
+    packages <- c("isoreader", "purrr", filter(files, .data$reader_fun_env != "R_GlobalEnv")$reader_fun_env) %>% unique()
     log_file <- get_temp("parallel_log_file")
     progress_file <- get_temp("parallel_progress_file")
     # parallel via futures 
@@ -512,21 +520,26 @@ create_read_process <- function(process, data_structure, files) {
 #' @param file_n numer of processsed file for info messages
 #' @param files_n total number of files for info messages
 #' @param read_from_cache whether to read from cache
+#' @param read_from_old_cache whether to read from old cache files (to be deprecated in isoreader 2.0)
 #' @param write_to_cache whether to write to cache
 #' @param cachepath path for the cache file
+#' @param old_cachepath path for the old cache files
 #' @param ext file extension
 #' @param reader_fun file reader function
 #' @param reader_fun_env where to find the reader function
 #' 
 #' @export
-read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, write_to_cache, cachepath, ext, reader_fun, reader_options, reader_fun_env) {
+read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, read_from_old_cache, write_to_cache, cachepath, old_cachepath, ext, reader_fun, reader_options, reader_fun_env) {
   
   # prepare iso_file object
   iso_file <- set_ds_file_path(ds, root, path)
   
+  # cache
+  has_cache <- read_from_cache || read_from_old_cache
+  
   # progress update
   if (!default("quiet")) {
-    if (read_from_cache) { 
+    if (has_cache) { 
       msg <- glue("reading file '{path}' from cache...")
     } else {
       msg <- glue("reading file '{path}' with '{ext}' reader")
@@ -540,21 +553,86 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, writ
     eval_tidy(get_expr(read_file_event))
   }
   
-  if (read_from_cache) {
-    # read from cache
-    iso_file <- load_cached_iso_file(cachepath)
-    # FIXME: re-read from original location if cache file is too old rather than dealing with backwards compatibility!!
-    # add a warning message about this in the file info stream
-    
-    # FIXME: only do backwards compatibility test for old cached files and set an include in the info message that re-reading files will be faster with more recently cached repos
-    iso_file <- ensure_iso_file_backwards_compatibility(iso_file)
-  } else {
+  # whether to reread raw file
+  reread_file <- FALSE
+  outdated_message <- function(iso_file) { 
+    sprintf(
+      "cache file created by an outdated version of the isoreader package (%s)", 
+      as.character(get_iso_object_versions(iso_file)[[1]])
+    )
+  }
+  
+  # read cache
+  if (has_cache) {
+    iso_file <- 
+      if (read_from_cache) load_cached_iso_file(cachepath)
+      else if (read_from_old_cache) load_cached_iso_file(old_cachepath)
+  
+    # check cached file version
+    if (iso_is_object(iso_file) && is_iso_object_outdated(iso_file)) {
+      # post info message, run compatibility checks and attach a warning
+      log_message(
+        glue("running backwards compatibility checks for outdated cached file ",
+             "created by isoreader version < {as.character(get_last_structure_update_version())}")
+      )
+      # warning and compatibility checks
+      iso_file <- 
+        iso_file %>% 
+        # warning
+        register_warning(
+          details = outdated_message(iso_file),
+          func = "read_iso_file",
+          warn = FALSE
+        ) %>% 
+        # compatibility
+        ensure_iso_file_backwards_compatibility()
+    }
+  }
+  
+  # read isofile
+  if (!has_cache || reread_file) {
     # read from original file
     env <- if (reader_fun_env == "R_GlobalEnv") .GlobalEnv else asNamespace(reader_fun_env)
     iso_file <- set_ds_file_size(iso_file)
     iso_file <- exec_func_with_error_catch(reader_fun, iso_file, options = reader_options, env = env)
-    iso_file <- ensure_iso_file_backwards_compatibility(iso_file)
-  
+
+    # check version
+    if (iso_is_object(iso_file) && is_iso_object_outdated(iso_file)) {
+      
+      outdated_files <- get_iso_object_outdated(iso_file)
+      
+      # post info message
+      log_message(
+        glue("running backwards compatibility checks for outdated collection files ",
+             "({sum(outdated_files)}/{length(outdated_files)}) ",
+             "created by isoreader version < {as.character(get_last_structure_update_version())}")
+      )
+      
+      # run compatibility checks
+      iso_file <- ensure_iso_file_backwards_compatibility(iso_file)
+      
+      # attach warning
+      if (iso_is_file(iso_file)) {
+        # single file
+        iso_file <- 
+          register_warning(
+            iso_file,
+            details = outdated_message(iso_file),
+            func = "read_iso_file", warn = FALSE
+          )
+      } else {
+        # multiple files
+        iso_file[outdated_files] <- map(iso_file[outdated_files], ~{
+          register_warning(
+            .x,
+            details = outdated_message(.x),
+            func = "read_iso_file", warn = FALSE
+          )
+        })
+      }
+      
+    }
+    
     # cleanup any binary and source content depending on debug setting
     if (!default(debug)) {
       iso_file$binary <- NULL # @FIXME: binary should be renamed to source throughout
@@ -581,28 +659,31 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, writ
 
 # ensure backwards compatibility for read isofiles
 # all operations that are needed for backwards compatibility
-ensure_iso_file_backwards_compatibility <- function(iso_file) {
+ensure_iso_file_backwards_compatibility <- function(iso_files) {
   # standard fields
   standard_fields <- names(make_iso_file_data_structure()$file_info)
   
   # convert file info columns to list columns (and ensure it's data frame format)
   # convert data frame units attribute to implicit double with units
-  if (iso_is_file_list(iso_file)) {
-    iso_file <- map(iso_file, ~{
-      .x$file_info <- ensure_data_frame_list_columns(.x$file_info, exclude = standard_fields);
-      .x <- set_ds_file_size(.x)
-      .x <- check_file_datetime(.x)
-      .x$vendor_data_table <- convert_df_units_attr_to_implicit_units(.x$vendor_data_table)
-      .x
-    }) %>% iso_as_file_list()
-  } else {
+  # check for file size paramter
+  # check for proper file datetime column type
+  ensure_compatibility <- function(iso_file) {
     iso_file$file_info <- ensure_data_frame_list_columns(iso_file$file_info, exclude = standard_fields)
+    if (!"file_root" %in% names(iso_file$file_info)) iso_file$file_info$file_root <- "."
     iso_file <- set_ds_file_size(iso_file)
     iso_file <- check_file_datetime(iso_file)
     iso_file$vendor_data_table <- convert_df_units_attr_to_implicit_units(iso_file$vendor_data_table)
+    return(iso_file)
   }
   
-  return(iso_file)
+  # check list vs. single file
+  if (iso_is_file_list(iso_files)) {
+    iso_files <- map(iso_files, ensure_compatibility) %>% iso_as_file_list()
+  } else {
+    iso_files <- ensure_compatibility(iso_files)
+  }
+  
+  return(iso_files)
 }
 
 # check file_datetime (no longer allowed to be a NA_integer_, has to be datetime NA)
@@ -616,18 +697,20 @@ check_file_datetime <- function(iso_file) {
 
 #' Re-read iso_files
 #' 
-#' Sometimes it is useful to reload isotope files from their original data files (e.g. after upgrading to a newer version of the isoreader package that provides new functionality). The functions described below are intended to make this very easy. However, it is only possible for iso_file objects whose file paths still point to the original raw data files. If they have moved, please use \code{\link{iso_set_file_root}} to change the root directory of your iso_files first. If you are re-reading files solely because of a version upgrade and want to make sure only old cache files (and not all cache files) are updated, please set \code{read_cache = TRUE}. If you are re-reading only specific types of files (such as those with problems), please use the \code{rearead_files_with...} parameters or the convenience function \code{reread_files_with_problems()}.
+#' Sometimes it is useful to reload isotope files from their original data files (e.g. after upgrading to a newer version of the isoreader package that provides new functionality). The functions described below are intended to make this very easy. However, it is only possible for iso_file objects whose file paths still point to the original raw data files. If they have moved, please use \code{\link{iso_set_file_root}} to change the root directory of your iso_files first. If you are re-reading files solely because of a version upgrade and want to make sure to only re-read outdated file structures, please set \code{reread_only_outdated_files = TRUE} or use the convenience function \code{iso_reread_files_outdated()}. If you are re-reading only specific types of files (such as those with problems), please use the \code{rearead_files_with...} parameters or the convenience function \code{iso_reread_files_with_problems()}.
 #' 
 #' @details \code{iso_reread_files} will re-read the original data files for the passed in \code{iso_files} object. Returns the reread iso_file objects.
 #' @inheritParams iso_read_files
-#' @param ... additional read parameters that should be used for re-reading the iso_files, see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} and \code{\link{iso_read_scan}} for details
+#' @param ... additional read parameters that should be used for re-reading the iso_files, see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} and \code{\link{iso_read_scan}} for details (except \code{read_cache} which is always set to \code{FALSE} to force re-reads).
 #' @param stop_if_missing whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files adding a warning to them, but also re-read those that do exist)
+#' @param reread_only_outdated_files whether to re-read only files that were read by an outdated version of isoreader (default FALSE, i.e. re-read ALL files)
 #' @param reread_files_without_problems whether to re-read files that had read in without problems the last time (default TRUE)
 #' @param reread_files_with_errors whether to re-read files that had read in with errors the last time (default TRUE)
 #' @param reread_files_with_warnings whether to re-read files that had read in with warnings the last time (default TRUE)
 #' @export
 iso_reread_files <- function(
-  iso_files, ..., read_cache = FALSE, stop_if_missing = FALSE, 
+  iso_files, ..., stop_if_missing = FALSE, 
+  reread_only_outdated_files = FALSE,
   reread_files_without_problems = TRUE,
   reread_files_with_errors = TRUE,
   reread_files_with_warnings = TRUE,
@@ -639,8 +722,9 @@ iso_reread_files <- function(
   iso_files <- iso_as_file_list(iso_files)
   
   # find file ids for reread
-  trouble_files <- problems(iso_files)
   all_files <- names(iso_files)
+  old_files <- all_files[get_iso_object_outdated(iso_files)]
+  trouble_files <- problems(iso_files)
   error_files <- dplyr::filter(trouble_files, type == "error") %>% dplyr::pull(file_id)
   warning_files <- dplyr::filter(trouble_files, type == "warning") %>% dplyr::pull(file_id)
   good_files <- setdiff(all_files, c(error_files, warning_files))
@@ -648,30 +732,32 @@ iso_reread_files <- function(
   if (reread_files_without_problems) reread_file_ids <- c(reread_file_ids, good_files)
   if (reread_files_with_errors) reread_file_ids <- c(reread_file_ids, error_files)
   if (reread_files_with_warnings) reread_file_ids <- c(reread_file_ids, warning_files)
+  if (reread_only_outdated_files) reread_file_ids <- intersect(reread_file_ids, old_files)
   reread_file_ids <- unique(reread_file_ids)
   
   # overview
   if (!default("quiet")) {
+    outdated <- if (reread_only_outdated_files) "outdated " else ""
     if (length(reread_file_ids) == 0) {
-      reread_sum <- "no (%d/%d) data file(s)"
+      reread_sum <- "no data files"
     } else if (reread_files_without_problems && reread_files_with_errors && reread_files_with_warnings) {
-      reread_sum <- "all (%d/%d) data file(s)"
+      reread_sum <- paste0("all ", outdated, "data files")
     } else if (reread_files_without_problems && reread_files_with_errors && !reread_files_with_warnings) {
-      reread_sum <- "%d/%d data file(s) without warnings"
+      reread_sum <- paste0(outdated, "data files without warnings")
     } else if (reread_files_without_problems && !reread_files_with_errors && reread_files_with_warnings) {
-      reread_sum <- "%d/%d data file(s) without errors"
+      reread_sum <- paste0(outdated, "data files without errors")
     } else if (reread_files_without_problems && !reread_files_with_errors && !reread_files_with_warnings) {
-      reread_sum <- "%d/%d data file(s) without warnings or errors"
+      reread_sum <- paste0(outdated, "data files without warnings or errors")
     } else if (!reread_files_without_problems && reread_files_with_errors && reread_files_with_warnings) {
-      reread_sum <- "%d/%d data file(s) with errors or warnings"
+      reread_sum <- paste0(outdated, "data files with errors or warnings")
     } else if (!reread_files_without_problems && reread_files_with_errors && !reread_files_with_warnings) {
-      reread_sum <- "%d/%d data file(s) with errors"
+      reread_sum <- paste0(outdated, "data files with errors")
     } else if (!reread_files_without_problems && !reread_files_with_errors && reread_files_with_warnings) {
-      reread_sum <- "%d/%d data file(s) with warnings"
+      reread_sum <- paste0(outdated, "data files with warnings")
     } else {
-      reread_sum <- "no (%d/%d) data file(s)"
+      reread_sum <- "no data files"
     }
-    sprintf(sprintf("re-reading %s...", reread_sum), length(reread_file_ids), length(all_files)) %>% 
+    sprintf(sprintf("re-reading %s (%d/%d)...", reread_sum, length(reread_file_ids), length(all_files))) %>% 
     log_message()
   }
 
@@ -713,7 +799,7 @@ iso_reread_files <- function(
   if (any(file_paths$file_exists)) {
     # 'unique' paths to account for IARC type multi-file re-reads
     reread_file_paths <- file_paths %>% select(-file_id) %>% filter(file_exists) %>% unique()
-    args <- c(list(paths = reread_file_paths$file_path, root = reread_file_paths$file_root, read_cache = read_cache), list(...))
+    args <- c(list(paths = reread_file_paths$file_path, root = reread_file_paths$file_root, read_cache = FALSE), list(...))
     if (iso_is_continuous_flow(iso_files)) {
       # read continuous flow
       new_iso_files <- iso_as_file_list(do.call(iso_read_continuous_flow, args = args))
@@ -742,13 +828,35 @@ iso_reread_files <- function(
   return(iso_files)
 }
 
+#' @details \code{iso_reread_files_outdated} is a convenience function for re-reading only files that were read with an outdated version of isoreader. 
+#' 
+#' @rdname iso_reread_files
+#' @export
+iso_reread_files_outdated <- function(
+  iso_files, ..., stop_if_missing = FALSE, 
+  quiet = default(quiet)) {
+  
+  iso_reread_files(
+    iso_files, ..., stop_if_missing = stop_if_missing, 
+    reread_only_outdated_files = TRUE,
+    reread_files_without_problems = TRUE,
+    reread_files_with_errors = TRUE,
+    reread_files_with_warnings = TRUE,
+    quiet = quiet
+  )
+}
+
 #' @details \code{iso_reread_files_with_problems} is a convenience function for re-reading only files that have had errors or warnings the last time they were read. 
 #' 
 #' @rdname iso_reread_files
 #' @export
-iso_reread_files_with_problems <- function(iso_files, ..., read_cache = FALSE, stop_if_missing = FALSE, quiet = default(quiet)) {
+iso_reread_files_with_problems <- function(
+  iso_files, ..., stop_if_missing = FALSE, 
+  quiet = default(quiet)) {
+  
   iso_reread_files(
-    iso_files, ..., read_cache = read_cache, stop_if_missing = stop_if_missing, 
+    iso_files, ..., stop_if_missing = stop_if_missing, 
+    reread_only_outdated_files = FALSE,
     reread_files_without_problems = FALSE,
     reread_files_with_errors = TRUE,
     reread_files_with_warnings = TRUE,
@@ -764,7 +872,8 @@ iso_reread_files_with_problems <- function(iso_files, ..., read_cache = FALSE, s
 #' @param rds_filepaths the path(s) to the iso_files R data archive(s) to re-read (can be a single file or vector of files)
 #' @export
 iso_reread_storage <- function(
-  rds_filepaths, ..., read_cache = FALSE, stop_if_missing = FALSE, 
+  rds_filepaths, ..., stop_if_missing = FALSE, 
+  reread_only_outdated_files = FALSE,
   reread_files_without_problems = TRUE,
   reread_files_with_errors = TRUE,
   reread_files_with_warnings = TRUE,
@@ -780,11 +889,11 @@ iso_reread_storage <- function(
   reread_storage <- function(filepath, call) {
     if(!quiet) log_message("loading R Data Storage ", basename(filepath), "...")
     new_filepath <- str_replace(filepath, "\\.rd[sa]$", ".rds")
-    do.call(call, args = list(paths = filepath, quiet=TRUE)) %>% 
+    suppressWarnings(do.call(call, args = list(paths = filepath, quiet=TRUE))) %>% 
       iso_reread_files(
         ..., 
-        read_cache = read_cache, 
         stop_if_missing = stop_if_missing, 
+        reread_only_outdated_files = reread_only_outdated_files,
         reread_files_without_problems = reread_files_without_problems,
         reread_files_with_errors = reread_files_with_errors,
         reread_files_with_warnings = reread_files_with_warnings,
@@ -799,6 +908,24 @@ iso_reread_storage <- function(
   return(invisible(rds_filepaths))
 }
 
+#' @details \code{iso_reread_storage_outdated} is a convenience function for re-reading only the parts of a storage file that were read with an outdated version of isoreader (rest of the storage file stays the same). 
+#' 
+#' @rdname iso_reread_files
+#' @export
+iso_reread_storage_outdated <- function(
+  rds_filepaths, ..., stop_if_missing = FALSE, 
+  quiet = default(quiet)) {
+  
+  iso_reread_storage(
+    rds_filepaths, ..., stop_if_missing = stop_if_missing, 
+    reread_only_outdated_files = TRUE,
+    reread_files_without_problems = TRUE,
+    reread_files_with_errors = TRUE,
+    reread_files_with_warnings = TRUE,
+    quiet = quiet
+  )
+}
+
 #' @details \code{iso_reread_archive} is deprecated in favour of \code{iso_reread_storage}
 #' @rdname iso_reread_files
 #' @export
@@ -807,3 +934,91 @@ iso_reread_archive <- function(...) {
   invisible(iso_reread_storage(...))
 }
 
+
+# caching ====
+
+# generates the cash file paths for iso_files inclulding a hash
+# hash includes the file name, the file size and last modified, as well as the the read options
+# does NOT include: file path, isoreader version, file contents
+generate_cache_filepaths <- function(filepaths, read_options = list()) {
+  
+  # calculate the hash
+  calculate_unf_hash <- function(filename, size, modified) {
+    obj <- c(list(filename, size, modified), read_options)
+    paste(unf(obj)$hash, collapse = "")
+  }
+  
+  # generate cache filepaths
+  file.info(filepaths) %>%
+    tibble::rownames_to_column(var = "filepath") %>%
+    dplyr::mutate(
+      hash = purrr::pmap_chr(list(filename = basename(.data$filepath), size = .data$size, modified = .data$mtime), calculate_unf_hash),
+      cache_file = sprintf("iso_file_%s_%s.rds", basename(.data$filepath), .data$hash),
+      cache_filepath = file.path(default("cache_dir"), .data$cache_file)
+    ) %>% 
+    dplyr::pull(.data$cache_filepath)
+}
+
+# generates old cache file path
+generate_old_cache_filepaths <- function(filepaths, read_options = list()) {
+  
+  calculate_unf_hash <- function(filepath, size, modified) {
+    obj <- c(list(filepath, size, modified), read_options)
+    unf(obj)$hash %>% str_c(collapse = "")
+  }
+  
+  # old cached files versioning
+  iso_v <-
+    packageVersion("isoreader") %>% {
+      if (.$major < 1) paste0(.$major, ".", .$minor)
+      else paste0(.$major, ".0")
+    }
+  
+  file_info <- file.info(filepaths) %>%
+    dplyr::as_tibble() %>%
+    rownames_to_column() %>%
+    select(filepath = .data$rowname, size = .data$size, modified = .data$mtime) %>%
+    mutate(
+      hash = mapply(calculate_unf_hash, .data$filepath, .data$size, .data$modified),
+      cache_file = sprintf("iso_file_v%s_%s_%s.rds", !!iso_v, basename(.data$filepath), .data$hash),
+      cache_filepath = file.path(default("cache_dir"), .data$cache_file)
+    )
+  
+  return(file_info$cache_filepath)
+}
+
+# Cache iso_file
+cache_iso_file <- function(iso_file, cachepath) {
+  if (!file.exists(default("cache_dir"))) dir.create(default("cache_dir"))
+  readr::write_rds(iso_file, path = cachepath)
+}
+
+# Load cached iso_file
+load_cached_iso_file <- function(filepath) {
+  # safety check (should never be a problem)
+  if (!file.exists(filepath)) stop("cached file does not exist: ", filepath, call. = FALSE)
+  
+  # load
+  iso_file <- readr::read_rds(filepath)
+  
+  # make sure object in file was loaded properly
+  if (!(iso_is_object(iso_file))) stop("cached file did not contain iso_file(s)", call. = FALSE)
+  
+  # return
+  return(iso_file)
+}
+
+#' Cleanup cached files
+#'
+#' Removes all cached files. 
+#' @param all deprecated
+#' @export
+iso_cleanup_reader_cache <- function(all = FALSE) {
+  
+  if (!missing(all)) warning("the 'all' parameter is deprecated because this function now always deletes all cached files", call. = FALSE, immediate. = TRUE)
+  
+  files <- list.files(default("cache_dir"), pattern = "^iso_?file_.*\\.rds$", full.names = TRUE)
+  file.remove(files)
+  if (!default("quiet")) message("Info: removed all (", length(files), ") cached isoreader files.")
+  invisible(NULL)
+}

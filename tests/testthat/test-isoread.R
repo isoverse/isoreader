@@ -37,94 +37,142 @@ test_that("test that parameter checks are performed when reading file", {
     "file path\\(s\\) required")
 })
 
-# file checks on old collections =======
 
-test_that("old file checks are run when reading stored collecionts", {
+# read version checks and re-reads =======
 
-  root <- "."
-  expect_message(iso_read_continuous_flow(file.path(root, "test_data", "collection_old.cf.rds"), quiet = TRUE), "version mismatch")
-  expect_message(iso_read_dual_inlet(file.path(root, "test_data", "collection_old.di.rda"), quiet = TRUE), "version mismatch")
-  expect_message(iso_read_dual_inlet(file.path(root, "test_data", "collection_old.di.rda"), quiet = TRUE), "deprecated")
 
-})
-
-# re-reads =======
-
-test_that("test that checks are run when re-reading iso_files", {
+test_that("test that version checking and re-reads are working properly", {
   
+  # test folder
+  test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
+  test_files <- file.path(test_folder, c("scan_hv_01.scn", "scan_hv_02.scn", "scan_hv_03.scn"))
+  
+  # version warnings for files
+  cache_dir <- default("cache_dir")
+  isoreader:::set_default("cache_dir", file.path(test_folder, "cache_files"))
+  expect_message(
+    capture.output(suppressWarnings(iso_read_scan(test_files))), 
+    "running backwards compatibility checks")
+  expect_warning(
+    capture.output(files <- iso_read_scan(test_files)), 
+    "some files.*outdated cache or storage")
+  expect_true(nrow(problems(files)) == 3)
+  expect_true(is_iso_object_outdated(files))
+  isoreader:::set_default("cache_dir", cache_dir)
+  
+  # expected errors
   expect_message(iso_reread_files(make_cf_data_structure("NA")), "not exist at.*referenced location")
   expect_error(iso_reread_files(make_cf_data_structure("NA"), stop_if_missing = TRUE), "not exist at.*referenced location")
   expect_error(iso_reread_storage("test.csv"), "unexpected file extension")
   expect_error(iso_reread_storage("DNE.cf.rds"), "file\\(s\\) do not exist")
- 
-})
-
-test_that("test that re-reads are working properly", {
-  
-  # read fiels
-  test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
-  files <- iso_read_continuous_flow(file.path(test_folder, c("cf_example_H_01.cf", "cf_example_H_02.cf", "cf_example_H_03.cf")))
-  expect_true(iso_is_file_list(files))
-  expect_true(iso_is_file(files[[1]]))
-  files[2] <- register_warning(files[2], warn = FALSE, "warning")
-  files[3] <- register_error(files[3], warn = FALSE, "error")
-  
-  # errors
   expect_error(iso_reread_files(tibble()), "can only re-read iso")
   
+  # read files
+  files <- iso_read_scan(test_files)
+  expect_true(nrow(problems(files)) == 0)
+  expect_false(is_iso_object_outdated(files))
+  expect_true(iso_is_file_list(files))
+  expect_true(iso_is_file(files[[1]]))
+  
+  # set versions, warnings, errors
+  files[[1]]$version <- NULL
+  files[[2]]$version <- as.package_version("0.5.0")
+  files[2] <- register_warning(files[2], warn = FALSE, "warning")
+  files[3] <- register_error(files[3], warn = FALSE, "error")
+  expect_true(is_iso_object_outdated(files))
+  expect_true(nrow(problems(files)) > 0)
+  
   # re-read single file
-  expect_message(re_file <- iso_reread_files(files[[1]], read_cache = TRUE), "re-reading all \\(1/1\\) data file")
+  expect_message(re_file <- iso_reread_files(files[[1]]), "re-reading all data files \\(1/1\\)")
   expect_true(iso_is_file(re_file))
+  expect_true(nrow(problems(re_file)) == 0)
+  expect_false(is_iso_object_outdated(re_file))
   
-  # re-read all files (not from cache)
-  expect_message(re_files <- iso_reread_files(files), "re-reading all \\(3/3\\) data file")
+  # re-read all files
+  expect_message(re_files <- iso_reread_files(files), "re-reading all.*\\(3/3\\)")
   expect_true(iso_is_file_list(re_files))
   expect_equal(names(re_files), names(files))
-  expect_equal(nrow(re_files %>% iso_get_problems()), 0L)
+  expect_true(nrow(problems(re_files)) == 0)
+  expect_false(is_iso_object_outdated(re_files))
   
-  # re-read from cache
-  expect_message(re_files <- iso_reread_files(files, read_cache = TRUE), "from cache")
+  # reread outdated only
+  expect_message(re_files <- iso_reread_files(files, reread_only_outdated_files = TRUE), "re-reading all outdated.* \\(2/3\\)")
+  expect_message(re_files <- iso_reread_files_outdated(files), "re-reading all outdated.* \\(2/3\\)")
   expect_true(iso_is_file_list(re_files))
-  expect_equal(names(re_files), names(files))
-  
+  expect_false(is_iso_object_outdated(re_files))
+  expect_true(nrow(problems(files)) > 0)
+ 
   # re-read only errors + warnings
-  expect_message(re_files <- iso_reread_files(files, read_cache = TRUE, reread_files_without_problems = FALSE), 
-                 "re-reading 2/3 data file.*with errors or warnings")
-  expect_message(re_files <- iso_reread_files_with_problems(files, read_cache = TRUE), 
-                 "re-reading 2/3 data file.*with errors or warnings")
+  expect_message(re_files <- iso_reread_files(files, reread_files_without_problems = FALSE), 
+                 "re-reading.*with errors or warnings.*2/3")
+  expect_message(re_files <- iso_reread_files_with_problems(files), 
+                 "re-reading.*with errors or warnings.*2/3")
   expect_true(iso_is_file_list(re_files))
   expect_equal(names(re_files), names(files))
+  expect_true(nrow(problems(re_files)) == 0)
+  expect_true(is_iso_object_outdated(re_files))
   
   # re-read only good
-  expect_message(re_files <- iso_reread_files(files, read_cache = TRUE, reread_files_with_warnings = FALSE, reread_files_with_errors = FALSE), 
-                 "re-reading 1/3 data file.*without warnings or errors")
+  expect_message(re_files <- iso_reread_files(files, reread_files_with_warnings = FALSE, reread_files_with_errors = FALSE), 
+                 "re-reading.*without warnings or errors.*1/3")
   expect_true(iso_is_file_list(re_files))
   expect_equal(names(re_files), names(files))
+  expect_true(nrow(problems(re_files)) > 0)
+  expect_false(is_iso_object_outdated(re_files[[1]]))
+  expect_true(is_iso_object_outdated(re_files))
   
   # re-read with changed root
   expect_message(files %>% iso_set_file_root(root = "DNE") %>% iso_reread_files(), "Warning.*3 file.*not exist")
   expect_error(files %>% iso_set_file_root(root = "DNE") %>% iso_reread_files(stop_if_missing = TRUE), "3 file.*not exist")
   expect_message(
     files %>% 
-    iso_set_file_root(root = test_folder, remove_embedded_root = test_folder) %>% iso_reread_files(read_cache = TRUE),
-    "re-reading all \\(3/3\\) data file"
+    iso_set_file_root(root = test_folder) %>% iso_reread_files(),
+    "re-reading all.*3/3"
   )
   
-  # re-read old collection (should save as new .rds instead)
-  test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data")
-  collection_path <- file.path(test_folder, "collection_old.di.rda")
-  expect_message(new_path <- iso_reread_storage(collection_path), "R Data Archives .* deprecated")
-  expect_equal(new_path, stringr::str_replace(collection_path, "rda$", "rds"))
-  expect_message(iso_reread_storage(collection_path), "version mismatch")
-  expect_message(iso_reread_storage(collection_path), "Consider re-reading")
-  expect_message(iso_reread_storage(collection_path), "not exist at.* referenced location")
-  # re-read the new collection
-  expect_message(new_path2 <- iso_reread_storage(new_path), "re-reading")
-  expect_equal(new_path, new_path2)
-  if (file.exists(new_path2)) file.remove(new_path2)
+  # re-read outdated RDA collection
+  rda_path <- file.path(tempdir(), "test.di.rda")
+  cat(42, file = rda_path)
+  expect_message(
+    tryCatch(iso_reread_storage(rda_path), error = function(e){}, warning = function(w) {message(w$message)}),
+    "R Data Archives .* deprecated"
+  )
+  unlink(rda_path)
+  
+  # re-read outdated rds storage
+  test_storage <- file.path(test_folder, "scan_storage_old.scan.rds")
+  expect_message(
+    capture.output(suppressWarnings(iso_read_scan(test_storage))), 
+    "running backwards compatibility checks")
+  expect_warning(
+    capture.output(files <- iso_read_scan(test_storage)), 
+    "some files.*outdated cache or storage")
+  expect_true(nrow(problems(files)) == 2)
+  expect_true(is_iso_object_outdated(files))
+  expect_false(is_iso_object_outdated(files[[3]]))
+  
+  temp_storage <- file.path(tempdir(), basename(test_storage))
+  expect_message(
+    files %>% iso_set_file_root(test_folder) %>% iso_save(temp_storage),
+    "exporting data from 3.*files.*into R Data Storage"
+  )
+  expect_message( # first read --> reread 2/3
+    iso_reread_storage_outdated(temp_storage),
+    "re-reading all outdated.*2/3"
+  )
+  expect_message( # 2nd read --> none left to reread
+    iso_reread_storage_outdated(temp_storage),
+    "re-reading no data.*0/3"
+  )
+  expect_message( # re-read all
+    iso_reread_storage(temp_storage),
+    "re-reading all.*3/3"
+  )
+  unlink(temp_storage)
   
 })
 
+# file event expressions =====
 
 test_that("test that file event expressions work", {
   

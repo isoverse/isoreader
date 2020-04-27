@@ -1,36 +1,5 @@
 context("Utility functions")
 
-# package version comparisons =====
-
-test_that("package version comparisons works correctly", {
-  
-  # versions < 1.0
-  expect_true(same_as_isoreader_version(
-    version = package_version(list(major = "0", minor = "9.0")),
-    isoreader_version = package_version(list(major = "0", minor = "9.1"))
-  ))
-  expect_false(same_as_isoreader_version(
-    version = package_version(list(major = "0", minor = "8.0")),
-    isoreader_version = package_version(list(major = "0", minor = "9.0"))
-  ))
-  
-  # versions > 1.0
-  expect_true(same_as_isoreader_version(
-    version = package_version(list(major = "1", minor = "0.0")),
-    isoreader_version = package_version(list(major = "1", minor = "0.1"))
-  ))
-  expect_true(same_as_isoreader_version(
-    version = package_version(list(major = "1", minor = "0.0")),
-    isoreader_version = package_version(list(major = "1", minor = "1.1"))
-  ))
-  expect_false(same_as_isoreader_version(
-    version = package_version(list(major = "1", minor = "0.0")),
-    isoreader_version = package_version(list(major = "2", minor = "0.0"))
-  ))
-  
-  
-})
-
 # example files =====
 
 test_that("retrieving example files works correctly", {

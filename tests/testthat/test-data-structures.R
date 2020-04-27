@@ -68,6 +68,27 @@ test_that("test that continuous data structure is correct", {
   # FIXME: expand
 })
 
+# data structure version work ====
+
+test_that("test that versions work", {
+  
+  A <- make_iso_file_data_structure("A")
+  B <- make_iso_file_data_structure("B")
+  B$version <- as.package_version("0.9.0")
+  C <- make_iso_file_data_structure("C")
+  C$version <- NULL
+  
+  expect_equal(get_iso_object_versions(A), list(A = packageVersion("isoreader")))
+  expect_equal(get_iso_object_versions(c(A, B)), list(A = packageVersion("isoreader"), B = as.package_version("0.9.0")))
+  expect_equal(get_iso_object_versions(C), list(C = as.package_version("0.0.0")))
+  expect_equal(get_iso_object_outdated(A), c(A = FALSE))
+  expect_equal(get_iso_object_outdated(c(A, B)), c(A = FALSE, B = TRUE))
+  expect_false(is_iso_object_outdated(A))
+  expect_true(is_iso_object_outdated(B))
+  expect_true(is_iso_object_outdated(c(A, B)))
+  
+})
+
 # printing of data structure works ====
 test_that("test that data structure can be printed", {
   cf <- make_cf_data_structure("NA")
