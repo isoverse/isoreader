@@ -485,7 +485,7 @@ mutate.iso_file_list <- function(.data, ...) {
 
 #' Set iso file directory root
 #' 
-#' Sets the root directory for a set of iso_files (property \code{file_root} in the file information), which is particularly useful for re-reading files (\link{iso_reread_files}) after they have changed location. Can optionally remove the previous root (\code{remove_embedded_root}) if it is still embedded in the isofiles' \code{file_path} instead of \code{file_root}. Will warn about any paths that cannot be simplified by removing the embedded root.
+#' Sets the root directory for a set of iso_files (property \code{file_root} in the file information), which is particularly useful for re-reading files (\link{reread_iso_files}) after they have changed location. Can optionally remove the previous root (\code{remove_embedded_root}) if it is still embedded in the isofiles' \code{file_path} instead of \code{file_root}. Will warn about any paths that cannot be simplified by removing the embedded root.
 #' 
 #' @inheritParams iso_get_raw_data
 #' @param root new root directory for the isofiles. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). Can be supplied as a vector of same length as the \code{iso_files} if the files have different roots. Use \code{root = "."} to set the root to the current working directory (the default).
