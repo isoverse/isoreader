@@ -81,7 +81,7 @@ By default, isoreader caches files as R objects to make access faster in the fut
 
 ```{r}
 # cleanup reader cache
-iso_cleanup_reader_cache(all = TRUE)
+iso_cleanup_reader_cache()
 
 # read a new file (notice the time elapsed)
 cf_file <- iso_get_reader_example("continuous_flow_example.dxf") %>% 
@@ -174,16 +174,20 @@ iso_files <- iso_files %>% iso_filter_files_with_problems()
 
 # Re-reading files
 
-If a file has changed (e.g. is edited through the vendor software) and the changes should be loaded in isoreader, it is easy to re-read an entire collection of files using the `iso_reread_files()` function. This function will read unchanged files from cache and re-read all changed files anew from their source. It will throw a warning for files that are no longer accessible at their original location. If the location for all files has changed, it can be easily adjusted by modifiny the `file_root` parameter in files.
+If a file has changed (e.g. is edited through the vendor software) and the changes should be loaded in isoreader, it is easy to re-read and update just those files within a file collection by using the `iso_reread_changed_files()` function. If some of the files are no longer accessible at their original location, it will throw a warning. If the location for all files has changed, it can be easily adjusted by modifying the `file_root` file info parameter using `iso_set_file_root()`. 
+
+Similar functions can be used to re-read outdated files from an older isoreader version (`iso_reread_outdated_files()`), attempt to re-read problematic files that had read errors/warnings (`iso_reread_problem_files()`), or simply re-read all files in a colleciton (`iso_reread_all_files()`).
 
 ```{r}
 # re-read the 3 dual inlet files from their original location if any have changed
-di_files %>% iso_reread_files()
+di_files %>%
+  iso_reread_changed_files()
 
 # update the file_root for the files before re-read (in this case to a location
 # that does not hold these files and hence will lead to a warning)
-di_files %>% iso_mutate_file_info(file_root = ".") %>%
-  iso_reread_files()
+di_files %>% 
+  iso_set_file_root(root = ".") %>%
+  iso_reread_all_files()
 ```
 
 # Units
