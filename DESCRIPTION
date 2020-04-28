@@ -9,15 +9,16 @@ Depends:
     R (>= 3.5)
 Imports:
     methods,
+    stats,
     R.utils,
     magrittr,
-    rlang (>= 0.4.4),
-    glue,
+    rlang (>= 0.4.5),
     tidyselect (>= 1.0.0),
-    vctrs,
+    vctrs (>= 0.2.4),
     tibble (>= 3.0.0),
-    dplyr (>= 0.8.4),
+    dplyr (>= 0.8.5),
     tidyr (>= 1.0.0),
+    glue,
     stringr,
     purrr,
     future,
@@ -28,8 +29,7 @@ Imports:
     rhdf5,
     feather,
     UNF,
-    openxlsx,
-    stats
+    openxlsx
 Suggests:
     testthat,
     readxl,
