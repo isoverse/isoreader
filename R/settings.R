@@ -162,9 +162,13 @@ iso_set_default_read_parameters <- function(data = NULL, read_raw_data, read_fil
   if (!missing(data)) return(invisible(data))
 }
 
-#' Turn information messages on/off
+#' Control information messages
 #' 
-#' These functions turn information messages on/off in all subsequent function calls by changing the global settings for the \code{quiet} parameter of most isoreader functions. These functions can be called stand alone or within a pipeline to turn messages on/off at a certain point during the pipeline.
+#' These functions control the global settings for information messages.
+#' 
+#' \code{iso_turn_info_messages_on()} and \code{iso_turn_info_messages_off()} turn information messages on/off in all subsequent function calls by changing the global settings for the \code{quiet} parameter of most isoreader functions. These functions can be called stand alone or within a pipeline to turn messages on/off at a certain point during the pipeline.
+#' 
+#' \code{iso_turn_datetime_warnings_on()} and \code{iso_turn_datetime_warnings_off()} turn datetime warnings that occur on some platforms (mostly linux distributions) on/off for all subsequent isoreader functions. These warnings inform the user that file creation dates are not available from the operating system.
 #' 
 #' @inheritParams iso_turn_reader_caching_on
 #' @name iso_info_messages
@@ -195,6 +199,20 @@ update_quiet <- function(quiet) {
   } else {
     return(function() {})
   }
+}
+
+#' @rdname iso_info_messages
+#' @export
+iso_turn_datetime_warnings_on <- function(data = NULL) {
+  set_default("datetime_warnings", TRUE)
+  if (!missing(data)) return(invisible(data))
+}
+
+#' @rdname iso_info_messages
+#' @export
+iso_turn_datetime_warnings_off <- function(data = NULL) {
+  set_default("datetime_warnings", FALSE)
+  if (!missing(data)) return(invisible(data))
 }
 
 #' Debugging functions

@@ -489,6 +489,7 @@ mutate.iso_file_list <- function(.data, ...) {
 #' 
 #' @inheritParams iso_get_raw_data
 #' @param root new root directory for the isofiles. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). Can be supplied as a vector of same length as the \code{iso_files} if the files have different roots. Use \code{root = "."} to set the root to the current working directory (the default).
+#' @param remove_embedded_root set this parameter to a root path that is embedded in the isofiles' \code{file_path}. Will warn about any paths that cannot be simplified by removing the specified \code{remove_embedded_root}.
 #' @family file_info operations
 #' @export
 iso_set_file_root <- function(iso_files, root = ".", remove_embedded_root = NULL, quiet = default(quiet)) {

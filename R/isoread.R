@@ -298,7 +298,7 @@ iso_read_scan <- function(
 #' @param reader_options list of paramters to be passed on to the reader
 #' @return single iso_file object (if single file) or list of iso_files (iso_file_list)
 iso_read_files <- function(paths, root, supported_extensions, data_structure, 
-                           read_options = c(), reader_options = list(), discard_duplicates = TRUE, 
+                           read_options = c(), reader_options = list(), discard_duplicates = TRUE, cache_files_with_errors = TRUE,
                            parallel = FALSE, parallel_plan = future::multisession, parallel_cores = future::availableCores(),
                            cache = default(cache), read_cache = default(cache), 
                            quiet = default(quiet)) {
@@ -435,11 +435,23 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
     log_message()
   }
 
-  # version update messages
+  # overall problem messages / warnings
   all_probs <- iso_get_problems(iso_files)
-  if (any(stringr::str_detect(all_probs$details, fixed("outdated version of the isoreader package")))) {
+  ## outdated files
+  if (any(stringr::str_detect(
+    all_probs$details, 
+    fixed("outdated version of the isoreader package")))) {
     glue::glue(
       "some files were read from outdated cache or storage (.rds) files. They were checked for compatibility and should work without issues. However, to avoid this warning and improve read spead, please call iso_reread_outdated_files() on your collection of iso files to refresh outdated cache files."
+    ) %>% 
+      warning(immediate. = TRUE, call. = FALSE)
+  }
+  ## unix file creation date
+  if (any(stringr::str_detect(
+    all_probs$details, 
+    fixed("file creation date cannot be accessed on this Linux system")))) {
+    glue::glue(
+      "file creation date could not be accessed for all files because this information is not available on some Linux systems, reporting last modified time for file_datetime instead. To turn these warnings off, call iso_turn_datetime_warnings_off() and reread these files with iso_reread_all_files()."
     ) %>% 
       warning(immediate. = TRUE, call. = FALSE)
   }
@@ -528,6 +540,7 @@ create_read_process <- function(process, data_structure, files) {
 #' @param write_to_cache whether to write to cache
 #' @param cachepath path for the cache file
 #' @param old_cachepath path for the old cache files
+#' @param post_read_check whether to run data integrity checks after a file read
 #' @param ext file extension
 #' @param reader_fun file reader function
 #' @param reader_fun_env where to find the reader function

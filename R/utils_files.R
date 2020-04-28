@@ -18,12 +18,16 @@ extract_os_file_creation_datetime <- function(ds) {
     # m date (meaning BSD stat didn't work)
     get_creation_date <- function(ds) {
       # last modification time the only info that's available
-      ds <- ds %>% register_warning(
-        paste0(
-          "file creation date cannot be accessed on this Linux system, using last modified time for file_datetime instead"
-        ), 
-        warn = FALSE
-      )
+      if (default("datetime_warnings")) {
+        # report warning if requested
+        ds <- ds %>% register_warning(
+          paste0(
+            "file creation date cannot be accessed on this Linux system, using last modified time for file_datetime instead"
+          ), 
+          func = "extract_os_file_creation_datetime",
+          warn = FALSE
+        )
+      }
       ds$file_info$file_datetime <- as_datetime(file.info(path)$mtime, tz = Sys.timezone())
       return(ds)
     }
