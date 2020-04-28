@@ -43,6 +43,8 @@ read_iso_file(
 
 \item{old_cachepath}{path for the old cache files}
 
+\item{post_read_check}{whether to run data integrity checks after a file read}
+
 \item{ext}{file extension}
 
 \item{reader_fun}{file reader function}

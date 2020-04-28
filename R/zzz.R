@@ -2,6 +2,7 @@ initialize_options <- function() {
   # set default package options (always resets options to force deliberate change of settings)
   default_options <- list(
     isoreader.quiet = FALSE,
+    isoreader.datetime_warnings = TRUE,
     isoreader.catch_errors = TRUE,
     isoreader.debug = FALSE,
     isoreader.cache = TRUE,

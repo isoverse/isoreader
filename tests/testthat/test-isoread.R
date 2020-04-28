@@ -91,6 +91,7 @@ test_that("test that version checking and re-reads are working properly", {
   expect_error(reread_iso_files(tibble()), "can only re-read iso")
   
   # read files
+  iso_turn_datetime_warnings_off() # required since these are scan files
   files <- iso_read_scan(test_files, read_cache = FALSE)
   expect_true(nrow(problems(files)) == 0)
   expect_false(is_iso_object_outdated(files))
