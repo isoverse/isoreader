@@ -471,11 +471,13 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   # NOTE: the retention time is only ALMOST repeated each time, if there are significant 
   # chromatographic shifts (as is alwayst he case for H2), these will in fact NOT quite be
   # identical. Isodat seems to report only the major ion (first ion here) so we are doing the same
-  rts_df <- dplyr::bind_rows(rts) %>% 
-    # filter out false matches
-    dplyr::filter(mass > 0)
-  if (nrow(rts_df) == 0) return(ds) # no vendor data table entries found
-
+  rts_df <- dplyr::bind_rows(rts) 
+  if (nrow(rts_df) == 0 || !"mass" %in% names(rts_df) || !any(rts_df$mass > 0)) {
+    return(ds) # no vendor data table entries found
+  }
+  
+  # filter out false matches
+  rts_df <- dplyr::filter(rts_df, mass > 0)
   # retention times
   peak <- start <- rt <- end <- amp <- Ampl <- bg <- BGD <- NULL
   peaks <- rts_df %>% 
