@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.4</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.0</span>
       </span>
     </div>
 
@@ -161,9 +161,11 @@
   <span class='no'>file_n</span>,
   <span class='no'>files_n</span>,
   <span class='no'>read_from_cache</span>,
+  <span class='no'>read_from_old_cache</span>,
   <span class='no'>write_to_cache</span>,
-  <span class='no'>write_to_cache_if_errors</span>,
   <span class='no'>cachepath</span>,
+  <span class='no'>old_cachepath</span>,
+  <span class='no'>post_read_check</span>,
   <span class='no'>ext</span>,
   <span class='no'>reader_fun</span>,
   <span class='no'>reader_options</span>,
@@ -179,7 +181,7 @@
     </tr>
     <tr>
       <th>root</th>
-      <td><p>root for relative paths. Can be relative to the current working directory (e.g. <code>"data"</code>) or an absolute path on the file system (e.g. <code>"/Users/..."</code> or <code>"C:/Data/.."</code>). The default is the current working directory (<code>"."</code>). Can be supplied as a vector of same length as the provided paths if the paths have different roots.</p></td>
+      <td><p>root directory for the isofiles. Can be relative to the current working directory (e.g. <code>"data"</code>) or an absolute path on the file system (e.g. <code>"/Users/..."</code> or <code>"C:/Data/.."</code>). The default is the current working directory (<code>"."</code>). Can be supplied as a vector of same length as the provided paths if the paths have different roots.</p></td>
     </tr>
     <tr>
       <th>path</th>
@@ -198,16 +200,20 @@
       <td><p>whether to read from cache</p></td>
     </tr>
     <tr>
+      <th>read_from_old_cache</th>
+      <td><p>whether to read from old cache files (to be deprecated in isoreader 2.0)</p></td>
+    </tr>
+    <tr>
       <th>write_to_cache</th>
       <td><p>whether to write to cache</p></td>
     </tr>
     <tr>
-      <th>write_to_cache_if_errors</th>
-      <td><p>whether to write to cache even if errors are encountered</p></td>
-    </tr>
-    <tr>
       <th>cachepath</th>
       <td><p>path for the cache file</p></td>
+    </tr>
+    <tr>
+      <th>old_cachepath</th>
+      <td><p>path for the old cache files</p></td>
     </tr>
     <tr>
       <th>ext</th>

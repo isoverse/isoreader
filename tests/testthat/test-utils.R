@@ -1,33 +1,6 @@
 context("Utility functions")
 
-test_that("package version comparisons works correctly", {
-  
-  # versions < 1.0
-  expect_true(same_as_isoreader_version(
-    version = package_version(list(major = "0", minor = "9.0")),
-    isoreader_version = package_version(list(major = "0", minor = "9.1"))
-  ))
-  expect_false(same_as_isoreader_version(
-    version = package_version(list(major = "0", minor = "8.0")),
-    isoreader_version = package_version(list(major = "0", minor = "9.0"))
-  ))
-  
-  # versions > 1.0
-  expect_true(same_as_isoreader_version(
-    version = package_version(list(major = "1", minor = "0.0")),
-    isoreader_version = package_version(list(major = "1", minor = "0.1"))
-  ))
-  expect_true(same_as_isoreader_version(
-    version = package_version(list(major = "1", minor = "0.0")),
-    isoreader_version = package_version(list(major = "1", minor = "1.1"))
-  ))
-  expect_false(same_as_isoreader_version(
-    version = package_version(list(major = "1", minor = "0.0")),
-    isoreader_version = package_version(list(major = "2", minor = "0.0"))
-  ))
-  
-  
-})
+# example files =====
 
 test_that("retrieving example files works correctly", {
   
@@ -37,6 +10,8 @@ test_that("retrieving example files works correctly", {
   expect_true(file.exists(path))
   
 })
+
+# file extensions helpers ======
 
 test_that("test that file extension helpers work correctly", {
   
@@ -350,3 +325,5 @@ test_that("test that info concatenation works", {
   expect_equal(get_info_message_concat(rlang::exprs(a = xyz, b = abc), include_names = TRUE, quotes = FALSE, names_sep = " -> "), "a -> xyz, b -> abc")
   expect_equal(get_info_message_concat(rlang::quos(a = xyz, b = abc), include_names = TRUE, quotes = FALSE, names_sep = " -> "), "a -> xyz, b -> abc")
 })
+
+

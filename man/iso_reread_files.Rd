@@ -2,51 +2,90 @@
 % Please edit documentation in R/isoread.R
 \name{iso_reread_files}
 \alias{iso_reread_files}
+\alias{iso_reread_all_files}
+\alias{iso_reread_changed_files}
+\alias{iso_reread_outdated_files}
+\alias{iso_reread_problem_files}
 \alias{iso_reread_storage}
 \alias{iso_reread_archive}
 \title{Re-read iso_files}
 \usage{
-iso_reread_files(
+iso_reread_files(iso_files, ...)
+
+iso_reread_all_files(
   iso_files,
   ...,
   stop_if_missing = FALSE,
   quiet = default(quiet)
 )
 
-iso_reread_storage(
-  rds_filepaths,
+iso_reread_changed_files(
+  iso_files,
   ...,
   stop_if_missing = FALSE,
   quiet = default(quiet)
 )
 
+iso_reread_outdated_files(
+  iso_files,
+  ...,
+  stop_if_missing = FALSE,
+  quiet = default(quiet)
+)
+
+iso_reread_problem_files(
+  iso_files,
+  ...,
+  stop_if_missing = FALSE,
+  reread_files_with_errors = TRUE,
+  reread_files_with_warnings = FALSE,
+  quiet = default(quiet)
+)
+
+iso_reread_storage(...)
+
 iso_reread_archive(...)
 }
 \arguments{
-\item{iso_files}{collection of iso_file objects}
+\item{iso_files}{collection of iso_files}
 
-\item{...}{additional read parameters that should be used for re-reading the iso_files, see \code{\link{iso_read_dual_inlet}} and \code{\link{iso_read_continuous_flow}} for details}
+\item{...}{additional read parameters that should be used for re-reading the iso_files, see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} and \code{\link{iso_read_scan}} for details (except \code{read_cache} which is always set to \code{FALSE} to force re-reads).}
 
 \item{stop_if_missing}{whether to stop re-reading if any of the original data files are missing (if FALSE, will warn about the missing files adding a warning to them, but also re-read those that do exist)}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 
-\item{rds_filepaths}{the path(s) to the iso_files R data archive(s) to re-read (can be a single file or vector of files)}
+\item{reread_files_with_errors}{whether to re-read files that had read in with errors the last time (default TRUE)}
+
+\item{reread_files_with_warnings}{whether to re-read files that had read in with warnings the last time (default TRUE)}
 }
 \description{
-Sometimes it is useful to reload isotope files from their original data files (e.g. after upgrading to a newer version of the isoreader package). 
-The functions described below are intended to make this very easy. 
-However, it is only possible for iso_file objects whose file paths still point to the original raw data files.
+Sometimes it is useful to reload isotope files from their original data files (e.g. after modifying raw data files in vendor software, or after upgrading to a newer version of the isoreader package that provides new functionality). The functions described below are intended to make this very easy. However, re-reading files from disc is only possible if file paths still point to the original raw data files. If they have moved, please use \code{\link{iso_set_file_root}} first to change the root directory of your \code{iso_files}.
 }
 \details{
-\code{iso_reread_files} will re-read all the original data files for the passed in \code{iso_files} object. Returns the reread iso_file objects.
+To re-read files that have been modified on disc, please use \code{iso_reread_changed_files()}. To re-read files because of an isoreader version upgrade, please use \code{iso_reread_outdated_files()}. To try re-reading files that previously had warnings and/or errors, please use \code{iso_reread_problem_files()}.
 
-\code{iso_reread_storage} is a convenience function for refreshing saved iso_file collections (see \code{\link{iso_save}}). It will load a specific iso_files R Data Storage file (\code{rds_filepath}), re-read all the data from the original data files and save the collection back to the same rds file. The filepaths are returned invisibly.
+\code{iso_reread_all_files} re-reads all files in the collection.
 
-Note that this function will also reread the older .rda Archive files but store them in the newer .rds format after re-reading.
+\code{iso_reread_changed_files} re-reads all files that have been modified (e.g. in the vendor software) since they were last read by isoreader.
 
-\code{iso_reread_archive} is deprecated in favour of \code{iso_reread_storage}
+\code{iso_reread_outdated_files} re-reads all files that were read with an outdated version of isoreader.
+
+\code{iso_reread_problem_files} re-reads all files that have had errors the last time they were read by isoreader (set \code{reread_files_with_warnings = TRUE} to also re-read those that have warninigs).
+
+\code{iso_reread_storage} is deprecated.
+
+\code{iso_reread_archive} is deprecated.
 }
-\note{
-re-reading files with their original read parameters is not yet supported
+\examples{
+\dontrun{
+# example for re-reading a saved isofile collection
+saved_files_path <- "saved_isofile.cf.rds"
+# load collection
+iso_read_continuous_flow(saved_files_path) \%>\%
+ # reread outdated files (alternativally "_all_" or "_changed_")
+ iso_reread_outdated_files() \%>\%
+ # re-save collection to its original location
+ iso_save(saved_files_path)
+}
 }

@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.4</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.0</span>
       </span>
     </div>
 
@@ -164,10 +164,11 @@
   <span class='kw'>discard_duplicates</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>parallel_plan</span> <span class='kw'>=</span> <span class='kw pkg'>future</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/future/man/multisession.html'>multisession</a></span>,
+  <span class='kw'>parallel_cores</span> <span class='kw'>=</span> <span class='kw pkg'>future</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/availableCores.html'>availableCores</a></span>(),
   <span class='kw'>cache</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>cache</span>),
-  <span class='kw'>cache_files_with_errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>read_cache</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>cache</span>),
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>),
+  <span class='kw'>cache_files_with_errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -179,7 +180,7 @@
     </tr>
     <tr>
       <th>root</th>
-      <td><p>root for relative paths. Can be relative to the current working directory (e.g. <code>"data"</code>) or an absolute path on the file system (e.g. <code>"/Users/..."</code> or <code>"C:/Data/.."</code>). The default is the current working directory (<code>"."</code>). Can be supplied as a vector of same length as the provided paths if the paths have different roots.</p></td>
+      <td><p>root directory for the isofiles. Can be relative to the current working directory (e.g. <code>"data"</code>) or an absolute path on the file system (e.g. <code>"/Users/..."</code> or <code>"C:/Data/.."</code>). The default is the current working directory (<code>"."</code>). Can be supplied as a vector of same length as the provided paths if the paths have different roots.</p></td>
     </tr>
     <tr>
       <th>read_raw_data</th>
@@ -210,20 +211,24 @@
       <td><p>which parallel processing strategy to use, see <a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a>, typically <code><a href='https://rdrr.io/pkg/future/man/multisession.html'>future::multisession</a></code> for compatibility with RStudio interactive mode. If supported by the operating system and running in detached mode (not interactively in RStudio) can also use <code><a href='https://rdrr.io/pkg/future/man/multicore.html'>future::multicore</a></code>.</p></td>
     </tr>
     <tr>
+      <th>parallel_cores</th>
+      <td><p>how many processor cores to use for parallel processing. By default the maximum available number of cores (<a href='https://rdrr.io/pkg/future/man/availableCores.html'>availableCores</a>), which will allow maximal processing speed but may slow other programs running on your machine. Choose a smaller number if you want some processing resources to remain available for other processes. Will issue a warning if too many cores are requested and reset to the maximum available.</p></td>
+    </tr>
+    <tr>
       <th>cache</th>
       <td><p>whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.</p></td>
     </tr>
     <tr>
-      <th>cache_files_with_errors</th>
-      <td><p>whether to cache files that had errors during reading</p></td>
-    </tr>
-    <tr>
       <th>read_cache</th>
-      <td><p>whether to reload from cache if a cached version exists. Note that it will only read from cache if the file was previously read with the exact same isoreader version and read options and has not been modified since.</p></td>
+      <td><p>whether to reload from cache if a cached version exists. Note that it will only read from cache if the raw data file has not been modified since and has been read by a compatible (=recent) isoreader version. Files that have been modified on disc (e.g. edited in the vendor software) will always be read anew.</p></td>
     </tr>
     <tr>
       <th>quiet</th>
       <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
+    </tr>
+    <tr>
+      <th>cache_files_with_errors</th>
+      <td><p>deprecated. Please use <a href='iso_reread_files.html'>iso_reread_problem_files</a> instead to selectively re-read all files in a collection of iso files that had been previously read with errors or warnings.</p></td>
     </tr>
     </table>
 

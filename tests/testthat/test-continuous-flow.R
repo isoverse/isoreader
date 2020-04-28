@@ -129,28 +129,23 @@ test_that("test that dxf files can be read", {
   # test re-reading
   # NOTE: ideally this should also include an iarc file
   iso_files <- c(dxf1, dxf2, dxf3)
-  expect_equal(
-    iso_files %>% get_reread_filepaths(),
-    iso_files %>% map_chr(get_ds_file_path) %>% as.character()
-  )
-  expect_true(iso_is_continuous_flow(reread_dxf <- iso_reread_files(iso_files)))
+  expect_true(iso_is_continuous_flow(reread_dxf <- reread_iso_files(iso_files)))
   expect_equal(nrow(problems(reread_dxf)), 0)
   
   
-  # test multiprocess and multisession
+  # test mparallel processing ======
+  # multisession
   file_paths <-
     file.path(test_folder,
               c("dxf_example_H_01.dxf", "dxf_example_HO_01.dxf", "dxf_example_HO_02.dxf", "dxf_example_CNS_01.dxf", "dxf_example_N2_01.dxf"))
   
-  expect_message(files <- iso_read_continuous_flow(file_paths, parallel = TRUE, parallel_plan = future::multisession),
-                 "preparing to read 5 data files.*setting up.*parallel processes")
+  expect_message(files <- iso_read_continuous_flow(file_paths, parallel = TRUE, parallel_plan = future::multisession, parallel_cores = future::availableCores()),
+                 sprintf("preparing to read 5 data files.*setting up %.0f parallel processes", future::availableCores()))
   expect_equal(nrow(problems(files)), 0)
+  expect_warning(iso_read_continuous_flow(file_paths, parallel = TRUE, parallel_plan = future::multisession, parallel_cores = future::availableCores() + 1),
+                 sprintf("%.0f cores.*requested.*only %.0f.*available", future::availableCores() + 1, future::availableCores()))
   
-  # test multiprocess and multisession
-  file_paths <-
-    file.path(test_folder,
-              c("dxf_example_H_01.dxf", "dxf_example_HO_01.dxf", "dxf_example_HO_02.dxf", "dxf_example_CNS_01.dxf", "dxf_example_N2_01.dxf"))
-  
+  # multiproccess
   expect_message(files <- iso_read_continuous_flow(file_paths, parallel = TRUE, parallel_plan = future::multiprocess),
                  "preparing to read 5 data files.*setting up.*parallel processes")
   expect_equal(nrow(problems(files)), 0)

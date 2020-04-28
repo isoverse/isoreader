@@ -31,23 +31,8 @@ iso_read_rds <- function(ds, options = list()) {
   
   # information
   if (!default("quiet")) {
-    sprintf("loaded data for %d data files from R Data Storage - checking loaded files for content consistency...", length(iso_files)) %>% 
+    sprintf("loaded %d data files from R Data Storage", length(iso_files)) %>% 
       log_message()
-  }
-  
-  # check for version warning
-  versions <- map(iso_files, `[[`, "version")
-  ok_version <- map_lgl(versions, same_as_isoreader_version, packageVersion("isoreader"))
-  if (any(!ok_version)) {
-    messages <- sprintf("file created by a different version of the isoreader package (%s)", map_chr(versions[!ok_version], as.character))
-    iso_files[!ok_version] <- map2(iso_files[!ok_version], messages, register_warning, func = "iso_read_rds", warn = FALSE)
-  }
-
-  if (any(!ok_version)) {
-    sprintf("version mismatch - %.0f of the %.0f data files stored in the R Data Structure ('%s') were created by a different version of the isoreader package. This may lead to processing problems.", 
-            sum(!ok_version), length(iso_files), ds$file_info$file_id) %>% 
-    log_warning()
-    log_warning("Consider re-reading the original data files using the 'iso_reread_files()' or 'iso_reread_storage()' function.")
   }
 
   return(iso_files)

@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.4</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.0</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@
     <div class="page-header toc-ignore">
       <h1>Scan Examples</h1>
             
-            <h4 class="date">2020-03-01</h4>
+            <h4 class="date">2020-04-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/scan.Rmd"><code>vignettes/scan.Rmd</code></a></small>
       <div class="hidden name"><code>scan.Rmd</code></div>
@@ -143,11 +143,11 @@
 <a class="sourceLine" id="cb3-7" data-line-number="7">    <span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"time_scan_example.scn"</span>)</a>
 <a class="sourceLine" id="cb3-8" data-line-number="8">  )</a>
 <a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; Info: preparing to read 4 data files (all will be cached)...</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; Info: reading file 'background_scan_example.scn' with '.scn' reader</span></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; Info: reading file 'peak_shape_scan_example.scn' from cache...</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; Info: reading file 'background_scan_example.scn' from cache...</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; Info: reading file 'full_scan_example.scn' from cache...</span></a>
 <a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; Info: reading file 'time_scan_example.scn' from cache...</span></a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; Info: finished reading 4 files in 0.78 secs</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; Info: finished reading 4 files in 0.23 secs</span></a></code></pre></div>
 </div>
 <div id="file-summary" class="section level1">
 <h1 class="hasAnchor">
@@ -187,7 +187,7 @@
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; Info: aggregating file info from 4 data file(s), selecting info columns 'c(-file_root)'</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["file_datetime"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["file_size"],"name":[5],"type":["int"],"align":["right"]},{"label":["type"],"name":[6],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"36411","6":"High Voltage","7":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"62303","6":"High Voltage","7":"NA"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"57551","6":"MagnetCurrent","7":"NA"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"140550","6":"Clock","7":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["file_datetime"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["file_size"],"name":[5],"type":["int"],"align":["right"]},{"label":["type"],"name":[6],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"36411","6":"High Voltage","7":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"62303","6":"High Voltage","7":"NA"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"57551","6":"MagnetCurrent","7":"NA"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"140550","6":"Clock","7":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <div id="selectrename" class="section level2">
@@ -206,7 +206,7 @@
 <a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt; Info: aggregating file info from 4 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["file_size"],"name":[5],"type":["int"],"align":["right"]},{"label":["type"],"name":[6],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"36411","6":"High Voltage","7":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"62303","6":"High Voltage","7":"NA"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"57551","6":"MagnetCurrent","7":"NA"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"140550","6":"Clock","7":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["file_size"],"name":[5],"type":["int"],"align":["right"]},{"label":["type"],"name":[6],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"36411","6":"High Voltage","7":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"62303","6":"High Voltage","7":"NA"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"57551","6":"MagnetCurrent","7":"NA"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"140550","6":"Clock","7":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -223,7 +223,7 @@
 <a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; Info: aggregating file info from 2 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["file_size"],"name":[5],"type":["int"],"align":["right"]},{"label":["type"],"name":[6],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"36411","6":"High Voltage","7":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"62303","6":"High Voltage","7":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["file_size"],"name":[5],"type":["int"],"align":["right"]},{"label":["type"],"name":[6],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"36411","6":"High Voltage","7":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"62303","6":"High Voltage","7":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -244,7 +244,7 @@
 <a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; Info: aggregating file info from 4 data file(s)</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["file_size"],"name":[5],"type":["int"],"align":["right"]},{"label":["type"],"name":[6],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[7],"type":["chr"],"align":["left"]},{"label":["Run in 2019?"],"name":[8],"type":["lgl"],"align":["right"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"36411","6":"High Voltage","7":"test this comment feature","8":"FALSE"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"62303","6":"High Voltage","7":"NA","8":"FALSE"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"57551","6":"MagnetCurrent","7":"NA","8":"FALSE"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2020-03-01 01:02:32","5":"140550","6":"Clock","7":"NA","8":"FALSE"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["S3: POSIXct"],"align":["right"]},{"label":["file_size"],"name":[5],"type":["int"],"align":["right"]},{"label":["type"],"name":[6],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[7],"type":["chr"],"align":["left"]},{"label":["Run in 2019?"],"name":[8],"type":["lgl"],"align":["right"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"36411","6":"High Voltage","7":"test this comment feature","8":"FALSE"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"62303","6":"High Voltage","7":"NA","8":"FALSE"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"57551","6":"MagnetCurrent","7":"NA","8":"FALSE"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2020-04-28 14:07:35","5":"140550","6":"Clock","7":"NA","8":"FALSE"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -277,18 +277,16 @@
 <a class="sourceLine" id="cb13-2" data-line-number="2">scan_files <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span>(</a>
 <a class="sourceLine" id="cb13-4" data-line-number="4">    <span class="co"># select just time and the two ions</span></a>
-<a class="sourceLine" id="cb13-5" data-line-number="5">    <span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(x, units, v44.mV, v45.mV),</a>
+<a class="sourceLine" id="cb13-5" data-line-number="5">    <span class="dt">select =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(x, x_units, v44.mV, v45.mV),</a>
 <a class="sourceLine" id="cb13-6" data-line-number="6">    <span class="co"># include the scan type and rename the column</span></a>
 <a class="sourceLine" id="cb13-7" data-line-number="7">    <span class="dt">include_file_info =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">`</span><span class="dt">Scan Type</span><span class="st">`</span> =<span class="st"> </span>type)</a>
 <a class="sourceLine" id="cb13-8" data-line-number="8">  ) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb13-9" data-line-number="9"><span class="st">  </span><span class="co"># look at first few records only</span></a>
 <a class="sourceLine" id="cb13-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="dt">n=</span><span class="dv">10</span>) <span class="op">%&gt;%</span><span class="st"> </span>rmarkdown<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span>()</a>
-<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">#&gt; Info: aggregating raw data from 4 data file(s), selecting data columns 'c(x, units, v44.mV, v45.mV)', including file info 'c(`Scan Type` = type)'</span></a>
-<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#&gt; Warning: 'select = c(x, units, v44.mV, v45.mV)' refers to unknown column(s) in data frame 'data':</span></a>
-<a class="sourceLine" id="cb13-13" data-line-number="13"><span class="co">#&gt; - no applicable method for 'units' applied to an object of class "character"</span></a></code></pre></div>
+<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">#&gt; Info: aggregating raw data from 4 data file(s), selecting data columns 'c(x, x_units, v44.mV, v45.mV)', including file info 'c(`Scan Type` = type)'</span></a></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Scan Type"],"name":[2],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"High Voltage"},{"1":"peak_shape_scan_example.scn","2":"High Voltage"},{"1":"peak_shape_scan_example.scn","2":"High Voltage"},{"1":"peak_shape_scan_example.scn","2":"High Voltage"},{"1":"peak_shape_scan_example.scn","2":"High Voltage"},{"1":"peak_shape_scan_example.scn","2":"High Voltage"},{"1":"peak_shape_scan_example.scn","2":"High Voltage"},{"1":"peak_shape_scan_example.scn","2":"High Voltage"},{"1":"peak_shape_scan_example.scn","2":"High Voltage"},{"1":"peak_shape_scan_example.scn","2":"High Voltage"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Scan Type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["x"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["x_units"],"name":[4],"type":["chr"],"align":["left"]},{"label":["v44.mV"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["v45.mV"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.399710","4":"KV","5":"-1.650841","6":"0.5759007"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.400167","4":"KV","5":"-1.639444","6":"0.5949929"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.400624","4":"KV","5":"-1.631846","6":"0.6140866"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.401081","4":"KV","5":"-1.612849","6":"0.6293626"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.401538","4":"KV","5":"-1.605250","6":"0.6026302"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.401995","4":"KV","5":"-1.609050","6":"0.6522784"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.402452","4":"KV","5":"-1.586252","6":"0.7158523"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.402909","4":"KV","5":"-1.571052","6":"0.7272921"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.403366","4":"KV","5":"-1.563452","6":"0.7959418"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.403823","4":"KV","5":"-1.555851","6":"0.7730565"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -312,8 +310,8 @@
 <a class="sourceLine" id="cb15-6" data-line-number="6"><span class="kw"><a href="../reference/iso_read_scan.html">iso_read_scan</a></span>(<span class="st">"scan_files_export.scan.rds"</span>) </a>
 <a class="sourceLine" id="cb15-7" data-line-number="7"><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></a>
 <a class="sourceLine" id="cb15-8" data-line-number="8"><span class="co">#&gt; Info: reading file 'scan_files_export.scan.rds' with '.scan.rds' reader</span></a>
-<a class="sourceLine" id="cb15-9" data-line-number="9"><span class="co">#&gt; Info: loaded data for 4 data files from R Data Storage - checking loaded fi...</span></a>
-<a class="sourceLine" id="cb15-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.15 secs</span></a>
+<a class="sourceLine" id="cb15-9" data-line-number="9"><span class="co">#&gt; Info: loaded 4 data files from R Data Storage</span></a>
+<a class="sourceLine" id="cb15-10" data-line-number="10"><span class="co">#&gt; Info: finished reading 1 files in 0.18 secs</span></a>
 <a class="sourceLine" id="cb15-11" data-line-number="11"><span class="co">#&gt; Data from 4 scan iso files: </span></a>
 <a class="sourceLine" id="cb15-12" data-line-number="12"><span class="co">#&gt; # A tibble: 4 x 5</span></a>
 <a class="sourceLine" id="cb15-13" data-line-number="13"><span class="co">#&gt;   file_id         raw_data                file_info method_info file_path       </span></a>

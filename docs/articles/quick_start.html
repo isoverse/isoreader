@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.4</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.0</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@
     <div class="page-header toc-ignore">
       <h1>Quick Start Guide</h1>
             
-            <h4 class="date">2020-03-01</h4>
+            <h4 class="date">2020-04-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/quick_start.Rmd"><code>vignettes/quick_start.Rmd</code></a></small>
       <div class="hidden name"><code>quick_start.Rmd</code></div>
@@ -140,26 +140,20 @@
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># read all available examples</span></a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">di_files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span>(<span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples_folder</a></span>())</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt; Info: preparing to read 4 data files (all will be cached)...</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; Info: reading file 'dual_inlet_example.did' with '.did' reader</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; Info: reading file 'dual_inlet_example2.did' with '.did' reader</span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; Info: reading file 'dual_inlet_nu_example.txt' with '.txt' reader</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; Warning: found 6 channels but 0 masses were specified - the raw data will b...</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; Info: finished reading 4 files in 9.39 secs</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; Info: encountered 1 problems in total</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; # A tibble: 1 x 4</span></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt;   file_id           type   func     details                                     </span></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt;   &lt;chr&gt;             &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;                                       </span></a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; 1 dual_inlet_nu_ex… warni… iso_rea… found 6 channels but 0 masses were specifie…</span></a>
-<a class="sourceLine" id="cb3-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co"># save as r data storage (read back in with iso_read_dual_inlet)</span></a>
-<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="kw"><a href="../reference/iso_save.html">iso_save</a></span>(di_files, <span class="dt">filepath =</span> <span class="st">"di_save"</span>)</a>
-<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; Info: exporting data from 4 iso_files into R Data Storage 'di_save.di.rds'</span></a>
-<a class="sourceLine" id="cb3-19" data-line-number="19"></a>
-<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co"># export to excel</span></a>
-<a class="sourceLine" id="cb3-21" data-line-number="21"><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(di_files, <span class="dt">filepath =</span> <span class="st">"di_export"</span>)</a>
-<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">#&gt; Info: exporting data from 4 iso_files into Excel 'di_export.di.xlsx'</span></a>
-<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="co">#&gt; Info: aggregating all data from 4 data file(s)</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' from cache...</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; Info: reading file 'dual_inlet_example.did' from cache...</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; Info: reading file 'dual_inlet_example2.did' from cache...</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; Info: reading file 'dual_inlet_nu_example.txt' from cache...</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; Info: finished reading 4 files in 0.35 secs</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co"># save as r data storage (read back in with iso_read_dual_inlet)</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="kw"><a href="../reference/iso_save.html">iso_save</a></span>(di_files, <span class="dt">filepath =</span> <span class="st">"di_save"</span>)</a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; Info: exporting data from 4 iso_files into R Data Storage 'di_save.di.rds'</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co"># export to excel</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(di_files, <span class="dt">filepath =</span> <span class="st">"di_export"</span>)</a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; Info: exporting data from 4 iso_files into Excel 'di_export.di.xlsx'</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; Info: aggregating all data from 4 data file(s)</span></a></code></pre></div>
 </div>
 <div id="continuous-flow-files" class="section level1">
 <h1 class="hasAnchor">
@@ -167,30 +161,20 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># read all available examples</span></a>
 <a class="sourceLine" id="cb4-2" data-line-number="2">cf_files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span>(<span class="kw"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples_folder</a></span>())</a>
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; Info: preparing to read 4 data files (all will be cached)...</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; Info: reading file 'continuous_flow_example.cf' with '.cf' reader</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' with '.dxf' reader</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; Info: reading file 'continuous_flow_example.iarc' with '.iarc' reader</span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt;       unpacking isoprime archieve file...</span></a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt;       found 1 processing list(s) in .iarc: 'ProcessingList_1'</span></a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt;       found 2 method(s) in .iarc: 'Method_320', 'Method_77'</span></a>
-<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt;       found 4 sample(s) in .iarc</span></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt;       searching processing list 'ProcessingList_1' for gas configurations...</span></a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt;       found configurations for 'CO', 'SO2', 'CO2', 'H2', 'N2'</span></a>
-<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt;       processing sample '6632_WSL-2 wood' (IRMS data '133.hdf5', '135.hdf5')</span></a>
-<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt;       processing sample '6605_USGS41' (IRMS data '40.hdf5', '43.hdf5')</span></a>
-<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt;       processing sample '6617_IAEA600' (IRMS data '80.hdf5', '82.hdf5')</span></a>
-<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt;       processing sample '6630_GlutamicAcid04' (IRMS data '124.hdf5', '126.h...</span></a>
-<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#&gt; Info: reading file 'linearity_example.dxf' with '.dxf' reader</span></a>
-<a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt; Info: finished reading 4 files in 21.28 secs</span></a>
-<a class="sourceLine" id="cb4-19" data-line-number="19"></a>
-<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="co"># save as r data storage (read back in with iso_read_continuous_flow)</span></a>
-<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="kw"><a href="../reference/iso_save.html">iso_save</a></span>(cf_files, <span class="dt">filepath =</span> <span class="st">"cf_save"</span>)</a>
-<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; Info: exporting data from 7 iso_files into R Data Storage 'cf_save.cf.rds'</span></a>
-<a class="sourceLine" id="cb4-23" data-line-number="23"></a>
-<a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co"># export to excel</span></a>
-<a class="sourceLine" id="cb4-25" data-line-number="25"><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(cf_files, <span class="dt">filepath =</span> <span class="st">"cf_export"</span>)</a>
-<a class="sourceLine" id="cb4-26" data-line-number="26"><span class="co">#&gt; Info: exporting data from 7 iso_files into Excel 'cf_export.cf.xlsx'</span></a>
-<a class="sourceLine" id="cb4-27" data-line-number="27"><span class="co">#&gt; Info: aggregating all data from 7 data file(s)</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; Info: reading file 'continuous_flow_example.cf' from cache...</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' from cache...</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; Info: reading file 'continuous_flow_example.iarc' from cache...</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; Info: reading file 'linearity_example.dxf' from cache...</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; Info: finished reading 4 files in 0.22 secs</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co"># save as r data storage (read back in with iso_read_continuous_flow)</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="kw"><a href="../reference/iso_save.html">iso_save</a></span>(cf_files, <span class="dt">filepath =</span> <span class="st">"cf_save"</span>)</a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; Info: exporting data from 7 iso_files into R Data Storage 'cf_save.cf.rds'</span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co"># export to excel</span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="kw"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span>(cf_files, <span class="dt">filepath =</span> <span class="st">"cf_export"</span>)</a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt; Info: exporting data from 7 iso_files into Excel 'cf_export.cf.xlsx'</span></a>
+<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#&gt; Info: aggregating all data from 7 data file(s)</span></a></code></pre></div>
 </div>
 <div id="scan-files" class="section level1">
 <h1 class="hasAnchor">
@@ -202,7 +186,7 @@
 <a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader</span></a>
 <a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt; Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader</span></a>
 <a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt; Info: reading file 'time_scan_example.scn' with '.scn' reader</span></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; Info: finished reading 4 files in 1.86 secs</span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; Info: finished reading 4 files in 1.34 secs</span></a>
 <a class="sourceLine" id="cb5-9" data-line-number="9"></a>
 <a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co"># save as r data storage (read back in with iso_read_scan)</span></a>
 <a class="sourceLine" id="cb5-11" data-line-number="11"><span class="kw"><a href="../reference/iso_save.html">iso_save</a></span>(scan_files, <span class="dt">filepath =</span> <span class="st">"scan_save"</span>)</a>

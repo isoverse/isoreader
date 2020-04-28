@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Aggregate file info — iso_get_file_info • Isoreader</title>
+<title>Set iso file directory root — iso_set_file_root • Isoreader</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Aggregate file info — iso_get_file_info" />
-<meta property="og:description" content="Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the select parameter to select and/or rename columns. File information beyond file_id, file_root, file_path, file_datetime and file_size (in bytes) is only available if the iso_files were read with parameter read_file_info=TRUE." />
+<meta property="og:title" content="Set iso file directory root — iso_set_file_root" />
+<meta property="og:description" content="Sets the root directory for a set of iso_files (property file_root in the file information), which is particularly useful for re-reading files (reread_iso_files) after they have changed location. Can optionally remove the previous root (remove_embedded_root) if it is still embedded in the isofiles' file_path instead of file_root. Will warn about any paths that cannot be simplified by removing the embedded root." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -145,20 +145,19 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Aggregate file info</h1>
-    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/aggregate_data.R'><code>R/aggregate_data.R</code></a></small>
-    <div class="hidden name"><code>iso_get_file_info.Rd</code></div>
+    <h1>Set iso file directory root</h1>
+    <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/file_info_operations.R'><code>R/file_info_operations.R</code></a></small>
+    <div class="hidden name"><code>iso_set_file_root.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the <code>select</code> parameter to select and/or rename columns. File information beyond <code>file_id</code>, <code>file_root</code>, <code>file_path</code>, <code>file_datetime</code> and <code>file_size</code> (in bytes) is only available if the <code>iso_files</code> were read with parameter <code>read_file_info=TRUE</code>.</p>
+    <p>Sets the root directory for a set of iso_files (property <code>file_root</code> in the file information), which is particularly useful for re-reading files (<a href='reread_iso_files.html'>reread_iso_files</a>) after they have changed location. Can optionally remove the previous root (<code>remove_embedded_root</code>) if it is still embedded in the isofiles' <code>file_path</code> instead of <code>file_root</code>. Will warn about any paths that cannot be simplified by removing the embedded root.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_get_file_info</span>(
+    <pre class="usage"><span class='fu'>iso_set_file_root</span>(
   <span class='no'>iso_files</span>,
-  <span class='kw'>select</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>(),
-  <span class='kw'>file_specific</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>root</span> <span class='kw'>=</span> <span class='st'>"."</span>,
+  <span class='kw'>remove_embedded_root</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
 )</pre>
 
@@ -170,16 +169,8 @@
       <td><p>collection of iso_file objects</p></td>
     </tr>
     <tr>
-      <th>select</th>
-      <td><p>which columns to select - use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. File id is always included and cannot be renamed.</p></td>
-    </tr>
-    <tr>
-      <th>file_specific</th>
-      <td><p>whether to run the select criteria (<code>...</code>) specifically within each individual file rather than on all files jointly. This is a lot slower but makes it possible to  select different columns in different iso_files depending on what exists in each file and is mostly of use when working with data from multiple instruments.</p></td>
-    </tr>
-    <tr>
-      <th>simplify</th>
-      <td><p>if set to TRUE (the default), nested value columns in the file info will be unnested as long as they are compatible across file types. Note that file info entries with multiple values still remain nested multi-value (=list) columns even with <code>simplify=TRUE</code>. These can be unnested using <a href='https://tidyr.tidyverse.org/reference/nest.html'>unnest</a>.</p></td>
+      <th>root</th>
+      <td><p>new root directory for the isofiles. Can be relative to the current working directory (e.g. <code>"data"</code>) or an absolute path on the file system (e.g. <code>"/Users/..."</code> or <code>"C:/Data/.."</code>). Can be supplied as a vector of same length as the <code>iso_files</code> if the files have different roots. Use <code>root = "."</code> to set the root to the current working directory (the default).</p></td>
     </tr>
     <tr>
       <th>quiet</th>
@@ -187,25 +178,21 @@
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
-    <p>this function used to allow selecting/renaming different file_info_columns in different files to the same column. This was a significant speed impediment and only covered very rare use cases. It is still available in the related function <code><a href='iso_select_file_info.html'>iso_select_file_info</a></code> with a special flag but is no longer the default and not incouraged for use in the frequently called <code>iso_get_file_info</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other data retrieval functions: 
-<code><a href='iso_get_all_data.html'>iso_get_all_data</a>()</code>,
-<code><a href='iso_get_bgrd_data.html'>iso_get_bgrd_data</a>()</code>,
-<code><a href='iso_get_raw_data.html'>iso_get_raw_data</a>()</code>,
-<code><a href='iso_get_resistors.html'>iso_get_resistors</a>()</code>,
-<code><a href='iso_get_standards.html'>iso_get_standards</a>()</code>,
-<code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a>()</code></p></div>
+    <div class='dont-index'><p>Other file_info operations: 
+<code><a href='iso_add_file_info.html'>iso_add_file_info.iso_file_list</a>()</code>,
+<code><a href='iso_filter_files.html'>iso_filter_files</a>()</code>,
+<code><a href='iso_mutate_file_info.html'>iso_mutate_file_info</a>()</code>,
+<code><a href='iso_parse_file_info.html'>iso_parse_file_info</a>()</code>,
+<code><a href='iso_rename_file_info.html'>iso_rename_file_info</a>()</code>,
+<code><a href='iso_select_file_info.html'>iso_select_file_info</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#note">Note</a></li>
       <li><a href="#see-also">See also</a></li>
     </ul>
 
