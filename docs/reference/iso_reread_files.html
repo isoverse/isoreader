@@ -36,9 +36,7 @@
 
 
 <meta property="og:title" content="Re-read iso_files — iso_reread_files" />
-<meta property="og:description" content="Sometimes it is useful to reload isotope files from their original data files (e.g. after upgrading to a newer version of the isoreader package). 
-The functions described below are intended to make this very easy. 
-However, it is only possible for iso_file objects whose file paths still point to the original raw data files." />
+<meta property="og:description" content="Sometimes it is useful to reload isotope files from their original data files (e.g. after modifying raw data files in vendor software, or after upgrading to a newer version of the isoreader package that provides new functionality). The functions described below are intended to make this very easy. However, re-reading files from disc is only possible if file paths still point to the original raw data files. If they have moved, please use iso_set_file_root first to change the root directory of your iso_files." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -81,7 +79,7 @@ However, it is only possible for iso_file objects whose file paths still point t
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.1.4</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.0</span>
       </span>
     </div>
 
@@ -153,24 +151,42 @@ However, it is only possible for iso_file objects whose file paths still point t
     </div>
 
     <div class="ref-description">
-    <p>Sometimes it is useful to reload isotope files from their original data files (e.g. after upgrading to a newer version of the isoreader package). 
-The functions described below are intended to make this very easy. 
-However, it is only possible for iso_file objects whose file paths still point to the original raw data files.</p>
+    <p>Sometimes it is useful to reload isotope files from their original data files (e.g. after modifying raw data files in vendor software, or after upgrading to a newer version of the isoreader package that provides new functionality). The functions described below are intended to make this very easy. However, re-reading files from disc is only possible if file paths still point to the original raw data files. If they have moved, please use <code><a href='iso_set_file_root.html'>iso_set_file_root</a></code> first to change the root directory of your <code>iso_files</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_reread_files</span>(
+    <pre class="usage"><span class='fu'>iso_reread_files</span>(<span class='no'>iso_files</span>, <span class='no'>...</span>)
+
+<span class='fu'>iso_reread_all_files</span>(
   <span class='no'>iso_files</span>,
   <span class='no'>...</span>,
   <span class='kw'>stop_if_missing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
 )
 
-<span class='fu'>iso_reread_storage</span>(
-  <span class='no'>rds_filepaths</span>,
+<span class='fu'>iso_reread_changed_files</span>(
+  <span class='no'>iso_files</span>,
   <span class='no'>...</span>,
   <span class='kw'>stop_if_missing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
 )
+
+<span class='fu'>iso_reread_outdated_files</span>(
+  <span class='no'>iso_files</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>stop_if_missing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
+)
+
+<span class='fu'>iso_reread_problem_files</span>(
+  <span class='no'>iso_files</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>stop_if_missing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>reread_files_with_errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>reread_files_with_warnings</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fu'>default</span>(<span class='no'>quiet</span>)
+)
+
+<span class='fu'>iso_reread_storage</span>(<span class='no'>...</span>)
 
 <span class='fu'>iso_reread_archive</span>(<span class='no'>...</span>)</pre>
 
@@ -179,11 +195,11 @@ However, it is only possible for iso_file objects whose file paths still point t
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>iso_files</th>
-      <td><p>collection of iso_file objects</p></td>
+      <td><p>collection of iso_files</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional read parameters that should be used for re-reading the iso_files, see <code><a href='iso_read_dual_inlet.html'>iso_read_dual_inlet</a></code> and <code><a href='iso_read_continuous_flow.html'>iso_read_continuous_flow</a></code> for details</p></td>
+      <td><p>additional read parameters that should be used for re-reading the iso_files, see <code><a href='iso_read_dual_inlet.html'>iso_read_dual_inlet</a></code>, <code><a href='iso_read_continuous_flow.html'>iso_read_continuous_flow</a></code> and <code><a href='iso_read_scan.html'>iso_read_scan</a></code> for details (except <code>read_cache</code> which is always set to <code>FALSE</code> to force re-reads).</p></td>
     </tr>
     <tr>
       <th>stop_if_missing</th>
@@ -194,28 +210,43 @@ However, it is only possible for iso_file objects whose file paths still point t
       <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
     </tr>
     <tr>
-      <th>rds_filepaths</th>
-      <td><p>the path(s) to the iso_files R data archive(s) to re-read (can be a single file or vector of files)</p></td>
+      <th>reread_files_with_errors</th>
+      <td><p>whether to re-read files that had read in with errors the last time (default TRUE)</p></td>
+    </tr>
+    <tr>
+      <th>reread_files_with_warnings</th>
+      <td><p>whether to re-read files that had read in with warnings the last time (default TRUE)</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>iso_reread_files</code> will re-read all the original data files for the passed in <code>iso_files</code> object. Returns the reread iso_file objects.</p>
-<p><code>iso_reread_storage</code> is a convenience function for refreshing saved iso_file collections (see <code><a href='iso_save.html'>iso_save</a></code>). It will load a specific iso_files R Data Storage file (<code>rds_filepath</code>), re-read all the data from the original data files and save the collection back to the same rds file. The filepaths are returned invisibly.</p>
-<p>Note that this function will also reread the older .rda Archive files but store them in the newer .rds format after re-reading.</p>
-<p><code>iso_reread_archive</code> is deprecated in favour of <code>iso_reread_storage</code></p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+    <p>To re-read files that have been modified on disc, please use <code>iso_reread_changed_files()</code>. To re-read files because of an isoreader version upgrade, please use <code>iso_reread_outdated_files()</code>. To try re-reading files that previously had warnings and/or errors, please use <code>iso_reread_problem_files()</code>.</p>
+<p><code>iso_reread_all_files</code> re-reads all files in the collection.</p>
+<p><code>iso_reread_changed_files</code> re-reads all files that have been modified (e.g. in the vendor software) since they were last read by isoreader.</p>
+<p><code>iso_reread_outdated_files</code> re-reads all files that were read with an outdated version of isoreader.</p>
+<p><code>iso_reread_problem_files</code> re-reads all files that have had errors the last time they were read by isoreader (set <code>reread_files_with_warnings = TRUE</code> to also re-read those that have warninigs).</p>
+<p><code>iso_reread_storage</code> is deprecated.</p>
+<p><code>iso_reread_archive</code> is deprecated.</p>
 
-    <p>re-reading files with their original read parameters is not yet supported</p>
-
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'># example for re-reading a saved isofile collection</span>
+<span class='no'>saved_files_path</span> <span class='kw'>&lt;-</span> <span class='st'>"saved_isofile.cf.rds"</span>
+<span class='co'># load collection</span>
+<span class='fu'><a href='iso_read_continuous_flow.html'>iso_read_continuous_flow</a></span>(<span class='no'>saved_files_path</span>) <span class='kw'>%&gt;%</span>
+ <span class='co'># reread outdated files (alternativally "_all_" or "_changed_")</span>
+ <span class='fu'>iso_reread_outdated_files</span>() <span class='kw'>%&gt;%</span>
+ <span class='co'># re-save collection to its original location</span>
+ <span class='fu'><a href='iso_save.html'>iso_save</a></span>(<span class='no'>saved_files_path</span>)
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#details">Details</a></li>
-      <li><a href="#note">Note</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>

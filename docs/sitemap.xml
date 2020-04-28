@@ -184,6 +184,9 @@
     <loc>http://isoreader.isoverse.org//reference/iso_set_default_read_parameters.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org//reference/iso_set_file_root.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org//reference/iso_shorten_relative_paths.html</loc>
   </url>
   <url>
@@ -212,6 +215,9 @@
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/reexports.html</loc>
+  </url>
+  <url>
+    <loc>http://isoreader.isoverse.org//reference/reread_iso_files.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org//reference/set_temp.html</loc>
