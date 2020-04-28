@@ -12,6 +12,7 @@ iso_register_dual_inlet_file_reader(
   description = NA_character_,
   software = NA_character_,
   cacheable = TRUE,
+  post_read_check = TRUE,
   overwrite = FALSE,
   env = find_func(func)
 )
@@ -22,6 +23,7 @@ iso_register_continuous_flow_file_reader(
   description = NA_character_,
   software = NA_character_,
   cacheable = TRUE,
+  post_read_check = TRUE,
   overwrite = FALSE,
   env = find_func(func)
 )
@@ -32,6 +34,7 @@ iso_register_scan_file_reader(
   description = NA_character_,
   software = NA_character_,
   cacheable = TRUE,
+  post_read_check = TRUE,
   overwrite = FALSE,
   env = find_func(func)
 )
@@ -46,6 +49,8 @@ iso_register_scan_file_reader(
 \item{software}{what is the software program that creates this filetype?}
 
 \item{cacheable}{whether this file type is cacheable. If \code{TRUE} (the default), user requests to cache the file will be honored. If \code{FALSE}, this file type will never be cached no matter what the user requests.}
+
+\item{post_read_check}{whether isoreader should conduct a data integrity check after reading the file. Should always be \code{TRUE} unless there is independent data integrity checking already taking place inside the reader.}
 
 \item{overwrite}{whether to overwrite an existing file reader for the same extension}
 

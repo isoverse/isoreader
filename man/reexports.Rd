@@ -8,6 +8,8 @@
 \alias{parse_integer}
 \alias{parse_double}
 \alias{parse_datetime}
+\alias{!!}
+\alias{!!!}
 \alias{\%>\%}
 \alias{everything}
 \alias{starts_with}
@@ -29,6 +31,8 @@ below to see their documentation.
   \item{magrittr}{\code{\link[magrittr]{\%>\%}}}
 
   \item{readr}{\code{\link[readr]{parse_datetime}}, \code{\link[readr]{parse_double}}, \code{\link[readr]{parse_integer}}, \code{\link[readr]{parse_logical}}, \code{\link[readr]{parse_number}}, \code{\link[readr]{problems}}, \code{\link[readr]{stop_for_problems}}}
+
+  \item{rlang}{\code{\link[rlang]{!!}}, \code{\link[rlang]{!!!}}}
 
   \item{tibble}{\code{\link[tibble]{tibble}}}
 

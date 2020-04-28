@@ -29,6 +29,7 @@ Other file_info operations:
 \code{\link{iso_filter_files}()},
 \code{\link{iso_mutate_file_info}()},
 \code{\link{iso_parse_file_info}()},
-\code{\link{iso_rename_file_info}()}
+\code{\link{iso_rename_file_info}()},
+\code{\link{iso_set_file_root}()}
 }
 \concept{file_info operations}
