@@ -122,11 +122,11 @@ test_that("test that units class works properly", {
   expect_equal( vctrs::vec_rbind(tibble(x = x), tibble(y = y))$y, vctrs::vec_c(rep(NA, length(x)), y))
   expect_equal(
     tibble(a = c("a", "b"), x = purrr::map(a, ~x)) %>% tidyr::unnest(x),
-    tibble(a = rep(c("a", "b"), length(data)), x = iso_double_with_units(c(data, data), "permil"))
+    tibble(a = rep(c("a", "b"), each = length(data)), x = iso_double_with_units(c(data, data), "permil"))
   )
   expect_equal(
     tibble(a = c("a", "b"), x = purrr::map(a, ~tibble(x=x, y=y))) %>% tidyr::unnest(x),
-    tibble(a = rep(c("a", "b"), length(data)), x = iso_double_with_units(c(data, data), "permil"), y = iso_double_with_units(c(data, data), "not permil"))
+    tibble(a = rep(c("a", "b"), each = length(data)), x = iso_double_with_units(c(data, data), "permil"), y = iso_double_with_units(c(data, data), "not permil"))
   )
   
   # arithmetic

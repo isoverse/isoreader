@@ -253,7 +253,7 @@ iso_get_all_data <- function(
   file_class <- 
     tibble(
       file_id = names(iso_files),
-      file_type = map_chr(iso_files, ~class(.x)[1])
+      file_type = map_chr(iso_files, ~class(.x)[1]) %>% unname()
     )
   
   # all file data
@@ -846,6 +846,7 @@ ensure_data_frame_list_columns <- function(x, exclude = names(make_iso_file_data
 # note: this would be nice to do with the new tidyr::unnest() but it does not handle some of the
 # the contingencies the right way (multiple values, NAs, etc.) so staying with the original appraoch
 # which is still decently fast
+# NOTE: consider implementing with vctrs::vec_ptype_common if it's faster that way
 unnest_aggregated_data_frame <- function(df) {
 
   # global vars

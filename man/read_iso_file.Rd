@@ -11,9 +11,11 @@ read_iso_file(
   file_n,
   files_n,
   read_from_cache,
+  read_from_old_cache,
   write_to_cache,
-  write_to_cache_if_errors,
   cachepath,
+  old_cachepath,
+  post_read_check,
   ext,
   reader_fun,
   reader_options,
@@ -23,7 +25,7 @@ read_iso_file(
 \arguments{
 \item{ds}{the basic data structure for the type of iso_file}
 
-\item{root}{root for relative paths. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). The default is the current working directory (\code{"."}). Can be supplied as a vector of same length as the provided paths if the paths have different roots.}
+\item{root}{root directory for the isofiles. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). The default is the current working directory (\code{"."}). Can be supplied as a vector of same length as the provided paths if the paths have different roots.}
 
 \item{path}{file path}
 
@@ -33,11 +35,15 @@ read_iso_file(
 
 \item{read_from_cache}{whether to read from cache}
 
+\item{read_from_old_cache}{whether to read from old cache files (to be deprecated in isoreader 2.0)}
+
 \item{write_to_cache}{whether to write to cache}
 
-\item{write_to_cache_if_errors}{whether to write to cache even if errors are encountered}
-
 \item{cachepath}{path for the cache file}
+
+\item{old_cachepath}{path for the old cache files}
+
+\item{post_read_check}{whether to run data integrity checks after a file read}
 
 \item{ext}{file extension}
 

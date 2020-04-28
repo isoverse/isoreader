@@ -81,7 +81,7 @@ By default, isoreader caches files as R objects to make access faster in the fut
 
 ```{r}
 # cleanup reader cache
-iso_cleanup_reader_cache(all = TRUE)
+iso_cleanup_reader_cache()
 
 # read a new file (notice the time elapsed)
 cf_file <- iso_get_reader_example("continuous_flow_example.dxf") %>% 
@@ -104,7 +104,9 @@ iso_turn_reader_caching_on()
 
 # Parallel processing
 
-Isoreader supports parallel processing of data files based on the number of processors available in a computer simply by setting the `parallel = TRUE` flag in any file read operation. This makes it possible to read large quantities of data files much more quickly on a multi-core system (i.e. most modern laptops). However, whether parallel processing yields signifcant improvemens in read speeds depends on the number of available processors, file types and operating system. In theory, parallel processing always reduces computation time but in practice this is offset by various factors including the size of the data that needs to be sent back and forth between the processors, file system read/write speed, and the spin-up time for new processes. Generally speaking, parallel processing can provide significant improvements in speed with larger number of files (~10+) and more complex read operations (e.g. continuous flow > dual inlet > scan file). Reading from cache is so efficient that there are rarely gains from parallel processing and it is usually faster NOT to read in parallel once a set of files is already cached.
+Isoreader supports parallel processing of data files based on the number of processors available in a computer simply by setting the `parallel = TRUE` flag in any file read operation. This makes it possible to read large quantities of data files much more quickly on a multi-core system (i.e. most modern laptops). 
+
+However, whether parallel processing yields signifcant improvemens in read speeds depends on the number of available processors, file types and operating system. In theory, parallel processing always reduces computation time but in practice this is offset by various factors including the size of the data that needs to be sent back and forth between the processors, file system read/write speed, and the spin-up time for new processes. Generally speaking, parallel processing can provide significant improvements in speed with larger number of files (~10+) and more complex read operations (e.g. continuous flow > dual inlet > scan file). Reading from cache is so efficient that there are rarely gains from parallel processing and it is usually faster NOT to read in parallel once a set of files is already cached.
 
 ```{r}
 # read 3 files in parallel (note that this is usually not a large enough file number to be worth it)
@@ -174,16 +176,20 @@ iso_files <- iso_files %>% iso_filter_files_with_problems()
 
 # Re-reading files
 
-If a file has changed (e.g. is edited through the vendor software) and the changes should be loaded in isoreader, it is easy to re-read an entire collection of files using the `iso_reread_files()` function. This function will read unchanged files from cache and re-read all changed files anew from their source. It will throw a warning for files that are no longer accessible at their original location. If the location for all files has changed, it can be easily adjusted by modifiny the `file_root` parameter in files.
+If a file has changed (e.g. is edited through the vendor software) and the changes should be loaded in isoreader, it is easy to re-read and update just those files within a file collection by using the `iso_reread_changed_files()` function. If some of the files are no longer accessible at their original location, it will throw a warning. If the location for all files has changed, it can be easily adjusted by modifying the `file_root` file info parameter using `iso_set_file_root()`. 
+
+Similar functions can be used to re-read outdated files from an older isoreader version (`iso_reread_outdated_files()`), attempt to re-read problematic files that had read errors/warnings (`iso_reread_problem_files()`), or simply re-read all files in a colleciton (`iso_reread_all_files()`).
 
 ```{r}
 # re-read the 3 dual inlet files from their original location if any have changed
-di_files %>% iso_reread_files()
+di_files %>%
+  iso_reread_changed_files()
 
 # update the file_root for the files before re-read (in this case to a location
 # that does not hold these files and hence will lead to a warning)
-di_files %>% iso_mutate_file_info(file_root = ".") %>%
-  iso_reread_files()
+di_files %>% 
+  iso_set_file_root(root = ".") %>%
+  iso_reread_all_files()
 ```
 
 # Units

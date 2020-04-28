@@ -481,6 +481,83 @@ mutate.iso_file_list <- function(.data, ...) {
   iso_mutate_file_info(.data, ..., quiet = TRUE)
 }
 
+# file root =====
+
+#' Set iso file directory root
+#' 
+#' Sets the root directory for a set of iso_files (property \code{file_root} in the file information), which is particularly useful for re-reading files (\link{reread_iso_files}) after they have changed location. Can optionally remove the previous root (\code{remove_embedded_root}) if it is still embedded in the isofiles' \code{file_path} instead of \code{file_root}. Will warn about any paths that cannot be simplified by removing the embedded root.
+#' 
+#' @inheritParams iso_get_raw_data
+#' @param root new root directory for the isofiles. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). Can be supplied as a vector of same length as the \code{iso_files} if the files have different roots. Use \code{root = "."} to set the root to the current working directory (the default).
+#' @param remove_embedded_root set this parameter to a root path that is embedded in the isofiles' \code{file_path}. Will warn about any paths that cannot be simplified by removing the specified \code{remove_embedded_root}.
+#' @family file_info operations
+#' @export
+iso_set_file_root <- function(iso_files, root = ".", remove_embedded_root = NULL, quiet = default(quiet)) {
+  
+  # safety check
+  if (is.null(root) || is.na(root) || !length(root) %in% c(1L, length(iso_files))) {
+    stop("must supply a value for the file root, either single value or a vector with the same length as iso_files", call. = FALSE)
+  }
+  if (!is.null(remove_embedded_root) && length(remove_embedded_root) != 1) {
+    stop("only a single value can be provided to remove an embedded root. If you want to remove different embedded roots, split your iso_files using iso_filter_files() and then remove the embedded root in the subsets.", call. = FALSE)
+  }
+  
+  # single vs. multiple iso files
+  single_file <- iso_is_file(iso_files) # to make sure return is the same as supplied
+  iso_files <- iso_as_file_list(iso_files)
+  
+  # information
+  if (!quiet) {
+    glue::glue(
+      "Info: setting file root for {length(iso_files)} data file(s)",
+      if(length(root) == 1) {" to '{root}'"} else {""},
+      if(!is.null(remove_embedded_root)) {" and removing embedded root '{remove_embedded_root}'"} else {""}) %>% 
+      message()
+  }
+  
+  # remove embedded root
+  if (!is.null(remove_embedded_root)) {
+    embedded_root_simplified <- iso_shorten_relative_paths(remove_embedded_root)$path
+    original_paths <- map_chr(iso_files, ~.x$file_info$file_path)
+    paths <- 
+      original_paths %>% 
+      iso_root_paths(root = embedded_root_simplified, check_existence = FALSE) %>% 
+      mutate(original_path = !!original_paths)
+    
+    no_match_paths <- filter(paths, root != !!embedded_root_simplified)
+    if (nrow(no_match_paths) > 0) {
+      sprintf(
+        "%d/%d file paths do not include the embedded root. The following paths could NOT be simplified:\n - %s", 
+        nrow(no_match_paths), nrow(paths), 
+        paste(no_match_paths$original_path, collapse = "\n - ")
+      ) %>% warning(immediate. = TRUE, call. = FALSE)
+    }
+    
+    # file info updates
+    paths <- paths %>% mutate(
+      path = ifelse(root == !!embedded_root_simplified, path, original_path),
+      root = !!root
+    )
+    file_info_update <- with(paths, map2(root, path, ~list(file_info = list(file_root = .x, file_path = .y))))
+    names(file_info_update) <- names(iso_files)
+    
+  } else {
+    # just the root update
+    file_info_update <- map(names(iso_files), ~list(file_info = list(file_root = root)))
+    names(file_info_update) <- names(iso_files)
+  }
+
+  # update
+  iso_files <- as.list(iso_files) %>% 
+    modifyList(file_info_update) %>% 
+    iso_as_file_list()
+  
+  # return single (if passed in as single) 
+  if (single_file && length(iso_files) == 1) return (iso_files[[1]])
+  return(iso_files)
+}
+
+
 # parse ======
 
 #' Parse file info

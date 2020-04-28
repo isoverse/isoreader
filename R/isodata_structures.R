@@ -56,6 +56,37 @@ make_scan_data_structure <- function(file_id = NA_character_) {
   return(struct)
 }
 
+# Versions ----
+
+# get last structure update
+get_last_structure_update_version <- function() {
+  # last version which included any structure updates
+  # determines 
+  # - whether the file version warning will be shown during file read
+  # - whether cached files are re-read (if reread_outdated_cache_files is active)
+  # - backwards compatibility checks are run during collection reading
+  return(as.package_version("1.2.0"))
+}
+
+# get version for all objects
+get_iso_object_versions <- function(iso_obj) {
+  iso_obj %>% iso_as_file_list() %>% 
+    purrr::map(~if (!is.null(.x$version)) { .x$version } else { as.package_version("0.0.0") })
+}
+
+# get outdated boolean vector
+get_iso_object_outdated <- function(iso_obj) {
+  iso_obj %>% 
+    get_iso_object_versions() %>% 
+    purrr::map_lgl(~.x < get_last_structure_update_version())
+}
+
+# test whether an iso object structure is outdated
+is_iso_object_outdated <- function(iso_obj) {
+  iso_obj %>% get_iso_object_outdated() %>% any()
+}
+
+
 # Class testing ====
 
 
@@ -277,7 +308,7 @@ print.scan <- function(x, ..., show_problems = TRUE) {
 }
 
 
-# Update structures =====
+# Set structures fields =====
 
 # set data structure file path
 set_ds_file_path <- function(ds, file_root, file_path, file_id = basename(file_path), file_subpath = NA_character_) {
@@ -291,13 +322,22 @@ set_ds_file_path <- function(ds, file_root, file_path, file_id = basename(file_p
   return(ds)
 }
 
-get_ds_file_path <- function(ds) {
-  if (!col_in_df(ds$file_info, "file_path"))
-    stop("file_path column does not exist in file info (lost during rename?), cannot proceed", call. = FALSE)
+get_ds_file_root <- function(ds) {
   if (!col_in_df(ds$file_info, "file_root"))
     stop("file_root column does not exist in file info (lost during rename?), cannot proceed", call. = FALSE)
-  if (is.na(ds$file_info$file_root)) return(ds$file_info$file_path)
-  else return(file.path(ds$file_info$file_root, ds$file_info$file_path))
+  return(ds$file_info$file_root)
+}
+
+get_ds_file_path <- function(ds, include_root = TRUE) {
+  if (!col_in_df(ds$file_info, "file_path"))
+    stop("file_path column does not exist in file info (lost during rename?), cannot proceed", call. = FALSE)
+  
+  if (include_root) {
+    file_root <- get_ds_file_root(ds)
+    if (!is.na(file_root)) return(file.path(file_root, ds$file_info$file_path))
+  }
+  
+  return(ds$file_info$file_path)
 }
 
 # update read options in structure

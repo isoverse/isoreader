@@ -59,6 +59,7 @@ reference:
   - iso_select_file_info
   - iso_mutate_file_info
   - iso_parse_file_info
+  - iso_set_file_root
   - iso_filter_files
   - extract_data
   - extract_substring
