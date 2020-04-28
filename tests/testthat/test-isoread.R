@@ -79,7 +79,7 @@ test_that("test that version checking and re-reads are working properly", {
   isoreader:::set_default("cache_dir", file.path(test_folder, "cache_files"))
   expect_message(
     capture.output(cached_files <- suppressWarnings(iso_read_scan(test_files))), 
-    "running backwards compatibility checks")
+    "running compatibility checks")
   expect_warning(
     capture.output(cached_files <- iso_read_scan(test_files)), 
     "some files.*outdated cache or storage")
@@ -161,7 +161,7 @@ test_that("test that version checking and re-reads are working properly", {
   # re-read outdated rds storage
   expect_message(
     capture.output(suppressWarnings(iso_read_scan(test_storage))), 
-    "running backwards compatibility checks")
+    "running compatibility checks")
   expect_warning(
     capture.output(files <- iso_read_scan(test_storage)), 
     "some files.*outdated cache or storage")
