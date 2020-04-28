@@ -58,7 +58,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
   gas_config_name_re <- re_combine(re_block("fef-x"), re_block("alpha"), re_block("fef-0"), re_block("fef-x"))
   config_positions <- ds$binary %>% find_next_patterns(gas_config_name_re)
   config_caps <- c(config_positions[-1], ds$binary$max_pos)
-  if (length(config_positions) == 0) return(list())
+  if (length(config_positions) == 0) return(ds)
   
   for(i in 1:length(config_positions)) {
     # find name of gas configuration
