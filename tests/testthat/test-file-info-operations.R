@@ -195,7 +195,6 @@ test_that("Test that mutating file info works", {
   
   # file root update =====
   expect_error(iso_set_file_root(iso_files, root = NULL), "must supply.*file root")
-  expect_error(iso_set_file_root(iso_files, root = c(1:2)), "same length")
   expect_error(iso_set_file_root(iso_files, root = "root", remove_embedded_root = 1:2), "only.*single value")
   
   # just setting file_root itself
