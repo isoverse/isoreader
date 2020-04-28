@@ -12,13 +12,14 @@
 #' @param description what is this file type about?
 #' @param software what is the software program that creates this filetype?
 #' @param cacheable whether this file type is cacheable. If \code{TRUE} (the default), user requests to cache the file will be honored. If \code{FALSE}, this file type will never be cached no matter what the user requests.
+#' @param post_read_check whether isoreader should conduct a data integrity check after reading the file. Should always be \code{TRUE} unless there is independent data integrity checking already taking place inside the reader.
 #' @param overwrite whether to overwrite an existing file reader for the same extension
 #' @param env the environment where to find the function, by default this will be determined automatically and will throw an error if there is any ambiguity (e.g. the same function name in multiple packages) in which case it should be set manually
 #' @family file_types
 #' @export
 iso_register_dual_inlet_file_reader <- function(
-  extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
-  register_file_reader("dual inlet", "iso_read_dual_inlet", extension, func, description, software, cacheable, overwrite, env)
+  extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, post_read_check = TRUE, overwrite = FALSE, env = find_func(func)) {
+  register_file_reader("dual inlet", "iso_read_dual_inlet", extension, func, description, software, cacheable, post_read_check, overwrite, env)
 }
 
 #' @details \code{iso_register_continuous_flow_file_reader}: use this function to register file readers for continuous flow files.
@@ -26,8 +27,8 @@ iso_register_dual_inlet_file_reader <- function(
 #' @family file_types
 #' @export
 iso_register_continuous_flow_file_reader <- function(
-  extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
-  register_file_reader("continuous flow", "iso_read_continuous_flow", extension, func, description, software, cacheable, overwrite, env)
+  extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, post_read_check = TRUE, overwrite = FALSE, env = find_func(func)) {
+  register_file_reader("continuous flow", "iso_read_continuous_flow", extension, func, description, software, cacheable, post_read_check, overwrite, env)
 }
 
 #' @details \code{iso_register_scan_file_reader}: use this function to register file readers for scan files.
@@ -35,11 +36,11 @@ iso_register_continuous_flow_file_reader <- function(
 #' @family file_types
 #' @export
 iso_register_scan_file_reader <- function(
-  extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, overwrite = FALSE, env = find_func(func)) {
-  register_file_reader("scan", "iso_read_scan", extension, func, description, software, cacheable, overwrite, env)
+  extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, post_read_check = TRUE, overwrite = FALSE, env = find_func(func)) {
+  register_file_reader("scan", "iso_read_scan", extension, func, description, software, cacheable, post_read_check, overwrite, env)
 }
 
-register_file_reader <- function(type, call, extension, func, description, software, cacheable, overwrite, env) {
+register_file_reader <- function(type, call, extension, func, description, software, cacheable, post_read_check, overwrite, env) {
 
   if (!is.character(func))
     stop("please provide the function name rather than the function itself to register it",
@@ -60,7 +61,9 @@ register_file_reader <- function(type, call, extension, func, description, softw
   new_fr <-
     tibble::tibble(
       type = type, call = call, extension = extension,
-      func = func, cacheable = cacheable, description = description,
+      func = func, cacheable = cacheable, 
+      post_read_check = post_read_check,
+      description = description,
       software = software, env = env
     )
   
@@ -474,7 +477,8 @@ create_read_process <- function(process, data_structure, files) {
     select(
       .data$root, .data$path, .data$file_n, .data$files_n, 
       .data$read_from_cache, .data$read_from_old_cache, .data$write_to_cache, .data$cachepath, .data$old_cachepath, 
-      ext = .data$extension, reader_fun = .data$func, reader_options = .data$reader_options, reader_fun_env = .data$env
+      .data$post_read_check, ext = .data$extension, 
+      reader_fun = .data$func, reader_options = .data$reader_options, reader_fun_env = .data$env
     )
   
   # parallel
@@ -529,7 +533,10 @@ create_read_process <- function(process, data_structure, files) {
 #' @param reader_fun_env where to find the reader function
 #' 
 #' @export
-read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, read_from_old_cache, write_to_cache, cachepath, old_cachepath, ext, reader_fun, reader_options, reader_fun_env) {
+read_iso_file <- function(
+  ds, root, path, file_n, files_n, 
+  read_from_cache, read_from_old_cache, write_to_cache, cachepath, old_cachepath, 
+  post_read_check, ext, reader_fun, reader_options, reader_fun_env) {
   
   # prepare iso_file object
   iso_file <- set_ds_file_path(ds, root, path)
@@ -568,8 +575,9 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, read
       if (read_from_cache) load_cached_iso_file(cachepath)
       else if (read_from_old_cache) load_cached_iso_file(old_cachepath)
   
-    # check if reader options match or require re-read
-    # FIXME
+    # check if reader options match, if not: re-read
+    # FIXME: implement this
+    # pseudocode
     # if (!has_same_reader_options(iso_file, reader_options)) {
     #    reread_file <- TRUE
     # }
@@ -579,7 +587,7 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, read
       # post info message, run compatibility checks and attach a warning
       # NOTE: does not lead to automatic re-read, better to let user do this explicitly with iso_reread_outdated_files
       log_message(
-        glue("running backwards compatibility checks for outdated cached file ",
+        glue("running compatibility checks for outdated cached file ",
              "created by isoreader version < {as.character(get_last_structure_update_version())}")
       )
       # warning and compatibility checks
@@ -603,6 +611,11 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, read
     iso_file <- set_ds_file_size(iso_file)
     iso_file <- exec_func_with_error_catch(reader_fun, iso_file, options = reader_options, env = env)
 
+    # post read checks
+    if (post_read_check) {
+      iso_file <- run_post_read_check(iso_file)
+    }
+    
     # check version
     if (iso_is_object(iso_file) && is_iso_object_outdated(iso_file)) {
       
@@ -610,7 +623,7 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, read
       
       # post info message
       log_message(
-        glue("running backwards compatibility checks for outdated collection files ",
+        glue("running compatibility checks for outdated files ",
              "({sum(outdated_files)}/{length(outdated_files)}) ",
              "created by isoreader version < {as.character(get_last_structure_update_version())}")
       )
@@ -664,25 +677,53 @@ read_iso_file <- function(ds, root, path, file_n, files_n, read_from_cache, read
   return(iso_file)
 }
 
-# ensure backwards compatibility for read isofiles
-# all operations that are needed for backwards compatibility
-ensure_iso_file_backwards_compatibility <- function(iso_files) {
+# run post read data integrity checks
+run_post_read_check <- function(iso_files) {
+  # file info column check
+  iso_files <- ensure_file_info_list_columns(iso_files)
+  
+  # what else should go in here for data integrity checks?
+  return(iso_files)
+}
+
+# ensure file info list columns
+# convert file info columns to list columns (and ensure it's data frame format)
+ensure_file_info_list_columns <- function(iso_files) {
+
   # standard fields
   standard_fields <- names(make_iso_file_data_structure()$file_info)
   
-  # convert file info columns to list columns (and ensure it's data frame format)
+  # check list vs. single file
+  if (iso_is_file_list(iso_files)) {
+    iso_files <- map(iso_files, ~{
+      .x$file_info <- ensure_data_frame_list_columns(.x$file_info, exclude = standard_fields)
+      .x
+    }) %>% iso_as_file_list()
+  } else {
+    iso_files$file_info <- ensure_data_frame_list_columns(iso_files$file_info, exclude = standard_fields)
+  }
+  
+  return(iso_files)
+}
+
+# ensure backwards compatibility for read isofiles
+# all operations that are needed for backwards compatibility
+ensure_iso_file_backwards_compatibility <- function(iso_files) {
+
+  # file info column check
+  iso_files <- ensure_file_info_list_columns(iso_files)
+
   # convert data frame units attribute to implicit double with units
   # check for file size paramter
   # check for proper file datetime column type
   ensure_compatibility <- function(iso_file) {
-    iso_file$file_info <- ensure_data_frame_list_columns(iso_file$file_info, exclude = standard_fields)
     if (!"file_root" %in% names(iso_file$file_info)) iso_file$file_info$file_root <- "."
     iso_file <- set_ds_file_size(iso_file)
     iso_file <- check_file_datetime(iso_file)
     iso_file$vendor_data_table <- convert_df_units_attr_to_implicit_units(iso_file$vendor_data_table)
     return(iso_file)
   }
-  
+    
   # check list vs. single file
   if (iso_is_file_list(iso_files)) {
     iso_files <- map(iso_files, ensure_compatibility) %>% iso_as_file_list()
