@@ -192,7 +192,8 @@ test_that("test that aggregeting raw data works", {
   expect_silent(iso_get_raw_data(c(iso_file1, iso_file2), quiet = TRUE))
   expect_equal(iso_get_raw_data(c(iso_file1, iso_file2)), 
                data <- bind_rows(mutate(iso_file1$raw_data, file_id="a"), 
-                                 mutate(iso_file2$raw_data, file_id = "b")))
+                                 mutate(iso_file2$raw_data, file_id = "b")) %>% 
+                 select(file_id, everything()))
   
   expect_equal(iso_get_raw_data(c(iso_file1, iso_file2), gather = TRUE), 
                data %>% tidyr::pivot_longer(matches("^[virdx]"), names_to = "column", values_to = "value", values_drop_na = TRUE) %>% 
@@ -201,7 +202,9 @@ test_that("test that aggregeting raw data works", {
                    category = c("mass", "mass", "mass", "channel", "ratio", "delta", "other", "mass"),
                    data = c("44", "46", "47", "1", "46/44", "d46/44", "x45", "45"),
                    units = c("mV", "mV", "mA", "mV", NA_character_, "permil", "mA", "mV")
-                 ), by = "column") %>% select(-column))
+                 ), by = "column") %>% 
+                 select(file_id, tp, time.s, data, units, value, category)
+  )
   
   # include file info
   iso_file1 <- modifyList(iso_file1, list(file_info = list(test_info = "x")))
@@ -260,7 +263,8 @@ test_that("test that aggregating of methods standards works", {
   # select_specific columns
   expect_equal(iso_get_standards(c(iso_file1, iso_file2), select = file_id:reference), 
                data <- bind_rows(mutate(iso_file1$method_info$standards, file_id="a"), 
-                                 mutate(iso_file2$method_info$standards, file_id="b")))
+                                 mutate(iso_file2$method_info$standards, file_id="b")) %>% 
+                 select(file_id, everything()))
   expect_equal(iso_get_standards(c(iso_file1, iso_file2)), 
                left_join(data, ref_ratios, by = "reference"))
   expect_equal(iso_get_standards(c(iso_file1, iso_file2), select = c(file_id)), select(data, file_id))
@@ -305,7 +309,8 @@ test_that("test that aggregating of resistors works", {
   expect_silent(iso_get_resistors (c(iso_file1, iso_file2), quiet = TRUE))
   expect_equal(iso_get_resistors (c(iso_file1, iso_file2)), 
                data <- bind_rows(mutate(iso_file1$method_info$resistors, file_id="a"), 
-                                 mutate(iso_file2$method_info$resistors, file_id="b")))
+                                 mutate(iso_file2$method_info$resistors, file_id="b")) %>% 
+                 select(file_id, everything()))
   
   # select specific columns
   expect_equal(iso_get_resistors(c(iso_file1, iso_file2), select = c(-cup)), select(data, -cup))
@@ -368,10 +373,12 @@ test_that("test that aggregating of vendor data table works", {
   expect_equal(agg, 
                vctrs::vec_rbind(mutate(iso_file1$vendor_data_table, file_id="a"),
                               mutate(iso_file2$vendor_data_table, file_id="b")) %>% 
-                 iso_make_units_explicit())
+                 iso_make_units_explicit() %>% 
+                 select(file_id, everything()))
   expect_equal(iso_get_vendor_data_table(c(iso_file1, iso_file2), with_explicit_units = FALSE), 
                vctrs::vec_rbind(mutate(iso_file1$vendor_data_table, file_id="a"),
-                         mutate(iso_file2$vendor_data_table, file_id="b")))
+                         mutate(iso_file2$vendor_data_table, file_id="b")) %>% 
+                 select(file_id, everything()))
   
   # selecting/renaming specific columns
   isofiles <- c(iso_file1, iso_file2)
