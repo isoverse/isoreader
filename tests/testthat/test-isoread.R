@@ -52,6 +52,8 @@ test_that("test that cached file path hashes work okay", {
   
   cache_paths <- generate_cache_filepaths(file_paths)
   
+  print(cache_paths)#FIXME
+  
   # exact same file in different locations
   expect_true(identical(cache_paths[1], cache_paths[2]))
   
@@ -77,6 +79,7 @@ test_that("test that version checking and re-reads are working properly", {
   
   # version warnings for files
   isoreader:::set_default("cache_dir", file.path(test_folder, "cache_files"))
+  print(generate_cache_filepaths(test_files))#FIXME
   expect_message(
     capture.output(cached_files <- suppressWarnings(iso_read_scan(test_files))), 
     "running compatibility checks")
