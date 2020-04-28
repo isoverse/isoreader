@@ -9,7 +9,7 @@ iso_shorten_relative_paths(path, root = ".")
 \arguments{
 \item{path}{vector of file/folder paths, mixed relative and absolute paths are allowed.}
 
-\item{root}{root for relative paths. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). The default is the current working directory (\code{"."}). Can be supplied as a vector of same length as the provided paths if the paths have different roots.}
+\item{root}{root directory for the isofiles. Can be relative to the current working directory (e.g. \code{"data"}) or an absolute path on the file system (e.g. \code{"/Users/..."} or \code{"C:/Data/.."}). The default is the current working directory (\code{"."}). Can be supplied as a vector of same length as the provided paths if the paths have different roots.}
 }
 \value{
 a data frame with the root directories and paths relative to the root - order of input paths is preserved
