@@ -42,27 +42,36 @@ test_that("test that parameter checks are performed when reading file", {
 test_that("test that cached file path hashes work okay", {
   
   test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
-  
-  file_paths <- file.path(test_folder, c(
-    "cache_test.did",
-    file.path("cache_test1", "cache_test.did"),
-    file.path("cache_test2", "cache_test.did"),
-    file.path("cache_test3", "cache_test.did")
-  ))
-  
-  cache_paths <- generate_cache_filepaths(file_paths)
-  
-  print(cache_paths)#FIXME
+  origin_file <- file.path(test_folder, "cache_test.did")
   
   # exact same file in different locations
+  temp_file <- file.path(tempdir(), "cache_test.did")
+  expect_true(file.copy(origin_file, to = temp_file, overwrite = TRUE, copy.date = TRUE))
+  cache_paths <- generate_cache_filepaths(c(origin_file, temp_file))
   expect_true(identical(cache_paths[1], cache_paths[2]))
+  unlink(temp_file)
   
-  # same names but different file sizes
-  expect_false(identical(cache_paths[1], cache_paths[3]))
+  # exact same file but different names
+  temp_file <- file.path(tempdir(), "cache_test2.did")
+  expect_true(file.copy(origin_file, to = temp_file, overwrite = TRUE, copy.date = TRUE))
+  cache_paths <- generate_cache_filepaths(c(origin_file, temp_file))
+  expect_false(identical(cache_paths[1], cache_paths[2]))
+  unlink(temp_file)
   
-  # same names but different modified different dates
-  expect_false(identical(cache_paths[1], cache_paths[4]))
+  # exact same file but copy date updated
+  temp_file <- file.path(tempdir(), "cache_test.did")
+  expect_true(file.copy(origin_file, to = temp_file, overwrite = TRUE, copy.date = FALSE))
+  cache_paths <- generate_cache_filepaths(c(origin_file, temp_file))
+  expect_false(identical(cache_paths[1], cache_paths[2]))
+  unlink(temp_file)
   
+  # exact same file and name but differnet sizes
+  temp_file <- file.path(tempdir(), "cache_test.did")
+  expect_true(file.copy(origin_file, to = temp_file, overwrite = TRUE, copy.date = TRUE))
+  cat("42", file = temp_file, append = TRUE)
+  cache_paths <- generate_cache_filepaths(c(origin_file, temp_file))
+  expect_false(identical(cache_paths[1], cache_paths[2]))
+  unlink(temp_file)
   
 })
 
@@ -75,21 +84,7 @@ test_that("test that version checking and re-reads are working properly", {
   # test folder
   test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
   test_files <- file.path(test_folder, c("scan_hv_01.scn", "scan_hv_02.scn", "scan_hv_03.scn"))
-  test_storage <- file.path(test_folder, "scan_storage_old.scan.rds")
   
-  # version warnings for files
-  isoreader:::set_default("cache_dir", file.path(test_folder, "cache_files"))
-  print(generate_cache_filepaths(test_files))#FIXME
-  expect_message(
-    capture.output(cached_files <- suppressWarnings(iso_read_scan(test_files))), 
-    "running compatibility checks")
-  expect_warning(
-    capture.output(cached_files <- iso_read_scan(test_files)), 
-    "some files.*outdated cache or storage")
-  expect_true(nrow(problems(cached_files)) == 4)
-  expect_true(is_iso_object_outdated(cached_files))
-  isoreader:::set_default("cache_dir", "cache")
-
   # expected errors
   expect_message(reread_iso_files(make_cf_data_structure("NA")), "not exist at.*referenced location")
   expect_error(reread_iso_files(make_cf_data_structure("NA"), stop_if_missing = TRUE), "not exist at.*referenced location")
@@ -110,12 +105,28 @@ test_that("test that version checking and re-reads are working properly", {
   expect_true(is_iso_object_outdated(files))
   expect_true(nrow(problems(files)) == 2)
   
-  # # save "old" cached files and rds file (for version warning tests)
-  # save_files <- files %>% iso_set_file_root(remove_embedded_root = test_folder)
-  # readr::write_rds(save_files[[1]], path = file.path(test_folder, "cache_files", basename(generate_cache_filepaths(test_files)[1])))
-  # readr::write_rds(save_files[[2]], path = file.path(test_folder, "cache_files", basename(generate_cache_filepaths(test_files)[2])))
-  # readr::write_rds(save_files[[3]], path = file.path(test_folder, "cache_files", basename(generate_cache_filepaths(test_files)[3])))
-  # iso_save(save_files, filepath = test_storage)
+  # save "old" cached files and rds file (for version warning tests)
+  temp_cache <- file.path(tempdir(), "cache_files")
+  temp_storage <- file.path(tempdir(), "scan_storage_old.scan.rds")
+  dir.create(temp_cache, showWarnings = FALSE)
+  save_files <- files %>% iso_set_file_root(remove_embedded_root = test_folder)
+  readr::write_rds(save_files[[1]], path = file.path(temp_cache, basename(generate_cache_filepaths(test_files)[1])))
+  readr::write_rds(save_files[[2]], path = file.path(temp_cache, basename(generate_cache_filepaths(test_files)[2])))
+  readr::write_rds(save_files[[3]], path = file.path(temp_cache, basename(generate_cache_filepaths(test_files)[3])))
+  iso_save(save_files, filepath = temp_storage)
+  
+  # version warnings for files
+  isoreader:::set_default("cache_dir", temp_cache)
+  expect_message(
+    capture.output(cached_files <- suppressWarnings(iso_read_scan(test_files))), 
+    "running compatibility checks")
+  expect_warning(
+    capture.output(cached_files <- iso_read_scan(test_files)), 
+    "some files.*outdated cache or storage")
+  expect_true(nrow(problems(cached_files)) == 4)
+  expect_true(is_iso_object_outdated(cached_files))
+  isoreader:::set_default("cache_dir", "cache")
+  unlink(temp_cache, recursive = TRUE)
   
   # re-read single file
   expect_message(re_file <- iso_reread_all_files(files[[1]]), "found 1.*re-reading 1/1")
@@ -163,10 +174,10 @@ test_that("test that version checking and re-reads are working properly", {
   
   # re-read outdated rds storage
   expect_message(
-    capture.output(suppressWarnings(iso_read_scan(test_storage))), 
+    capture.output(suppressWarnings(iso_read_scan(temp_storage))), 
     "running compatibility checks")
   expect_warning(
-    capture.output(files <- iso_read_scan(test_storage)), 
+    capture.output(files <- iso_read_scan(temp_storage)), 
     "some files.*outdated cache or storage")
   expect_true(nrow(problems(files)) == 4)
   expect_true(is_iso_object_outdated(files))
@@ -185,6 +196,7 @@ test_that("test that version checking and re-reads are working properly", {
                  "found 3.*with warnings or errors.*re-reading 3/3")
   expect_false(is_iso_object_outdated(re_files))
   expect_true(nrow(problems(re_files)) == 0)
+  unlink(temp_storage)
   
 })
 
