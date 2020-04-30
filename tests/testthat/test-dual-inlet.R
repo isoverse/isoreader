@@ -72,7 +72,7 @@ test_that("test that did files can be read", {
   expect_true(file.exists(file <- iso_get_reader_example("dual_inlet_example.caf")))
   expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
-  expect_true(length(did$vendor_data_table %>% iso_get_units() %>% na.omit()) == 0)
+  expect_true(length(did$vendor_data_table %>% iso_get_units() %>% na.omit()) == 8)
   
   expect_true(file.exists(file <- file.path("test_data", "caf_example_CO2_01.caf")))
   expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
