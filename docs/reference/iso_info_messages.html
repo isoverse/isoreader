@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Turn information messages on/off — iso_info_messages • Isoreader</title>
+<title>Control information messages — iso_info_messages • Isoreader</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Turn information messages on/off — iso_info_messages" />
-<meta property="og:description" content="These functions turn information messages on/off in all subsequent function calls by changing the global settings for the quiet parameter of most isoreader functions. These functions can be called stand alone or within a pipeline to turn messages on/off at a certain point during the pipeline." />
+<meta property="og:title" content="Control information messages — iso_info_messages" />
+<meta property="og:description" content="These functions control the global settings for information messages." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.0</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.1</span>
       </span>
     </div>
 
@@ -145,18 +145,22 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Turn information messages on/off</h1>
+    <h1>Control information messages</h1>
     <small class="dont-index">Source: <a href='https://github.com/isoverse/isoreader/blob/master/R/settings.R'><code>R/settings.R</code></a></small>
     <div class="hidden name"><code>iso_info_messages.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>These functions turn information messages on/off in all subsequent function calls by changing the global settings for the <code>quiet</code> parameter of most isoreader functions. These functions can be called stand alone or within a pipeline to turn messages on/off at a certain point during the pipeline.</p>
+    <p>These functions control the global settings for information messages.</p>
     </div>
 
     <pre class="usage"><span class='fu'>iso_turn_info_messages_on</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
-<span class='fu'>iso_turn_info_messages_off</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'>iso_turn_info_messages_off</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>iso_turn_datetime_warnings_on</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>iso_turn_datetime_warnings_off</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -167,6 +171,10 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p><code>iso_turn_info_messages_on()</code> and <code>iso_turn_info_messages_off()</code> turn information messages on/off in all subsequent function calls by changing the global settings for the <code>quiet</code> parameter of most isoreader functions. These functions can be called stand alone or within a pipeline to turn messages on/off at a certain point during the pipeline.</p>
+<p><code>iso_turn_datetime_warnings_on()</code> and <code>iso_turn_datetime_warnings_off()</code> turn datetime warnings that occur on some platforms (mostly linux distributions) on/off for all subsequent isoreader functions. These warnings inform the user that file creation dates are not available from the operating system.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other settings functions: 
@@ -180,6 +188,7 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#details">Details</a></li>
       <li><a href="#see-also">See also</a></li>
     </ul>
 

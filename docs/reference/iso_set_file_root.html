@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.0</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.1</span>
       </span>
     </div>
 
@@ -171,6 +171,10 @@
     <tr>
       <th>root</th>
       <td><p>new root directory for the isofiles. Can be relative to the current working directory (e.g. <code>"data"</code>) or an absolute path on the file system (e.g. <code>"/Users/..."</code> or <code>"C:/Data/.."</code>). Can be supplied as a vector of same length as the <code>iso_files</code> if the files have different roots. Use <code>root = "."</code> to set the root to the current working directory (the default).</p></td>
+    </tr>
+    <tr>
+      <th>remove_embedded_root</th>
+      <td><p>set this parameter to a root path that is embedded in the isofiles' <code>file_path</code>. Will warn about any paths that cannot be simplified by removing the specified <code>remove_embedded_root</code>.</p></td>
     </tr>
     <tr>
       <th>quiet</th>

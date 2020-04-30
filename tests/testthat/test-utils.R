@@ -242,7 +242,12 @@ test_that("test that root folder finding works correctly", {
 
 test_that("test that retrieving file paths works correctly", {
   
+  expect_error(unlist_paths(list(42)), "must be character")
+  expect_error(unlist_paths(list(list())), "must be character")
+  expect_error(unlist_paths(list(tibble())), "must be character")
+  expect_equal(unlist_paths(list(letters[1:5], letters[6:10])), letters[1:10])
   expect_error(iso_expand_paths())
+  expect_error(iso_expand_paths(list()), "character vectors.*not.*list")
   expect_error(iso_expand_paths("DNE"), "do not exist")
   expect_error(iso_expand_paths(file.path(getwd(), "DNE")), "do not exist")
   expect_error(iso_expand_paths(".", root = "DNE"), "do not exist")

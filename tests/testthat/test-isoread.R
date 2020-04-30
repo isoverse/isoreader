@@ -142,6 +142,18 @@ test_that("test that version checking and re-reads are working properly", {
   expect_true(nrow(problems(re_files)) == 0)
   expect_false(is_iso_object_outdated(re_files))
   
+  # re-read outdated files
+  isoreader:::cache_iso_file(files[[1]], generate_cache_filepaths(test_files)[1])
+  isoreader:::cache_iso_file(files[[2]], generate_cache_filepaths(test_files)[2])
+  expect_message(re_files <- iso_reread_outdated_files(files, cache = FALSE), "cached file is outdated.*scan_hv_01")
+  expect_message(re_files <- iso_reread_outdated_files(files, cache = FALSE), "cached file is outdated.*scan_hv_02")
+  expect_equal(names(re_files), names(files))
+  expect_true(nrow(problems(re_files)) == 1)
+  expect_true(nrow(problems(re_files[1:2])) == 0)
+  expect_false(is_iso_object_outdated(re_files))
+  expect_message(iso_reread_outdated_files(files), "found 2 outdated.*re-reading 2/3") # updates cache
+  expect_false(is_iso_object_outdated(iso_read_scan(test_files))) # check updated cache
+  
   # re-read changed files (i.e. no appropriate cache file exists)
   expect_message(re_files <- iso_reread_changed_files(files), "found 0 changed.*re-reading 0/3")
   unlink(generate_cache_filepaths(test_files)[2])

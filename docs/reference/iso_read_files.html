@@ -81,7 +81,7 @@ It is made available outside the package because it can be very useful for testi
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.0</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.1</span>
       </span>
     </div>
 
@@ -166,6 +166,7 @@ It is made available outside the package because it can be very useful for testi
   <span class='kw'>read_options</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(),
   <span class='kw'>reader_options</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
   <span class='kw'>discard_duplicates</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>cache_files_with_errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>parallel_plan</span> <span class='kw'>=</span> <span class='kw pkg'>future</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/future/man/multisession.html'>multisession</a></span>,
   <span class='kw'>parallel_cores</span> <span class='kw'>=</span> <span class='kw pkg'>future</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/availableCores.html'>availableCores</a></span>(),
@@ -206,6 +207,10 @@ It is made available outside the package because it can be very useful for testi
       <td><p>whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If <code>TRUE</code> (the default), only the first files are kept and any files with the same file ID are discarded. If <code>FALSE</code>, all duplicate files are kept but their file IDs are appended with suffix <code>#1</code>, <code>#2</code>, etc.</p></td>
     </tr>
     <tr>
+      <th>cache_files_with_errors</th>
+      <td><p>deprecated. Please use <a href='iso_reread_files.html'>iso_reread_problem_files</a> instead to selectively re-read all files in a collection of iso files that had been previously read with errors or warnings.</p></td>
+    </tr>
+    <tr>
       <th>parallel</th>
       <td><p>whether to process in parallel based on the number of available CPU cores. This may yield performance increases for files that are slow to parse such as continuous flow isodat files but usually provides little benefit for efficient data formats such as reading from R Data Archives.</p></td>
     </tr>
@@ -228,10 +233,6 @@ It is made available outside the package because it can be very useful for testi
     <tr>
       <th>quiet</th>
       <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
-    </tr>
-    <tr>
-      <th>cache_files_with_errors</th>
-      <td><p>deprecated. Please use <a href='iso_reread_files.html'>iso_reread_problem_files</a> instead to selectively re-read all files in a collection of iso files that had been previously read with errors or warnings.</p></td>
     </tr>
     </table>
 
