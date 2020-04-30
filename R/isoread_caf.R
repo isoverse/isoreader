@@ -193,5 +193,9 @@ extract_caf_vendor_data_table <- function(ds) {
       tibble(column = c("cycle"), units = ""),
       filter(extracted_dt$columns, column %in% names(ds$vendor_data_table))[c("column", "units")]
     )
+  
+  # FIXME: do this directly
+  ds$vendor_data_table <- convert_df_units_attr_to_implicit_units(ds$vendor_data_table)
+  
   return(ds)
 }

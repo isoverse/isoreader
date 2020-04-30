@@ -521,6 +521,9 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
     ) %>% 
     mutate(units = ifelse(units == " ", "", units))
   
+  # FIXME: do this directly
+  ds$vendor_data_table <- convert_df_units_attr_to_implicit_units(ds$vendor_data_table)
+  
   return(ds)
 }
 
