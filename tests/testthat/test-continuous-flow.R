@@ -32,9 +32,11 @@ test_that("test that dxf files can be read", {
   expect_true(file.exists(file <- iso_get_reader_example("linearity_example.dxf")))
   expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
   expect_equal(nrow(problems(dxf)), 0)
+  expect_true(length(dxf$vendor_data_table %>% iso_get_units() %>% na.omit()) == 26)
 
   expect_true(file.exists(file <- iso_get_reader_example("continuous_flow_example.cf")))
   expect_is(cf <- iso_read_continuous_flow(file), "continuous_flow")
+  expect_true(length(cf$vendor_data_table %>% iso_get_units() %>% na.omit()) == 17)
   expect_equal(nrow(problems(cf)), 0)
   expect_equal(nrow(iso_get_file_info(cf)), 1)
   expect_equal(ncol(iso_get_file_info(cf)), 21)

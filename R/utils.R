@@ -371,6 +371,15 @@ get_path_segments <- function(path) {
   return(segments[segments != "."])
 }
 
+# unlist paths
+unlist_paths <- function(path_list) {
+  if (!all(ok <- purrr::map_lgl(path_list, is.character))) {
+    not_ok <- path_list[!ok] %>% purrr::map_chr(~class(.x)[1])
+    stop("paths must be character vectors, encountered: ", paste(not_ok, collapse = ", "), call. = FALSE)
+  }
+  unlist(path_list, use.names = FALSE)
+}
+
 #' Expand file paths
 #'
 #' Helper function to expand the provided paths to find data files in folders and subfolders that match any of the specified extensions. Filepaths will be kept as is, only folders will be expanded. Note that this function is rarely called directly. It is used automatically by \code{\link{iso_read_dual_inlet}} and \code{\link{iso_read_continuous_flow}} to identify fiels of interest based on the file paths provided.
@@ -387,6 +396,9 @@ iso_expand_paths <- function(path, extensions = c(), root = ".") {
   full_path <- is_dir <- i <- NULL
 
   # file paths
+  if (!is.character(path)) {
+    stop("file paths need to be character vectors, not class ", class(path)[1], call. = FALSE)
+  }
   paths <- get_paths_data_frame(path, root, check_existence = TRUE)
 
   # extensions check
