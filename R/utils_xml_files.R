@@ -255,7 +255,7 @@ process_iarc_processing_xml <- function(processing_list_id, filepath) {
       config <- list(channels = xml_find_channel_masses(node))
       if (!is.null(H3_factor <- xml_find_H3_factor(node))) config$H3_factor <- H3_factor
       
-      config %>% list() %>% setNames(species)
+      config %>% list() %>% rlang::set_names(species)
     })
   
   # info

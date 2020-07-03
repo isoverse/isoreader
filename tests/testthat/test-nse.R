@@ -38,8 +38,8 @@ test_that("Getting column names (with # and type requirement checks) works", {
   expect_error(get_column_names(df, a = quo(mpg), n_reqs = list(a = "wrong")), "unknown number requirement")
   expect_error(get_column_names(df, a = quo(NULL)), "not .* the correct number of columns")
   expect_error(get_column_names(df, a = quo(NULL), n_reqs = list(a = "+")), "not .* the correct number of columns")
-  expect_equal(get_column_names(df, a = quo(NULL), n_reqs = list(a = "*")), list(a = setNames(character(0), character(0))))
-  expect_equal(get_column_names(df, a = quo(NULL), n_reqs = list(a = "?")), list(a = setNames(character(0), character(0))))
+  expect_equal(get_column_names(df, a = quo(NULL), n_reqs = list(a = "*")), list(a = rlang::set_names(character(0), character(0))))
+  expect_equal(get_column_names(df, a = quo(NULL), n_reqs = list(a = "?")), list(a = rlang::set_names(character(0), character(0))))
   expect_equal(get_column_names(df, a = quo(mpg), n_reqs = list(a = "?")), list(a = c(mpg = "mpg")))
   expect_error(get_column_names(df, a = quo(NULL), b = quo(NULL), n_reqs = list(a = "+")), "not .* the correct number of columns")
   

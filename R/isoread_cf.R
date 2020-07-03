@@ -115,7 +115,7 @@ extract_cf_raw_voltage_data <- function(ds) {
     ds$binary<- ds$binary %>% 
       move_to_pos(data_start) %>% 
       capture_n_data("voltages", c("float", rep("double", length(masses))), n_data_points)
-    voltages <- bind_rows(ds$binary$data$voltages %>% dplyr::as_tibble() %>% setNames(c("time.s", masses_columns)))
+    voltages <- bind_rows(ds$binary$data$voltages %>% dplyr::as_tibble() %>% rlang::set_names(c("time.s", masses_columns)))
     
     # check for data
     if (nrow(voltages) == 0) 
