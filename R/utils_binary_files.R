@@ -787,7 +787,7 @@ map_binary_structure <- function(bfile, length = 100, start = bfile$pos, ctrl_bl
     block <- list(
       start = start, end = start + length - 1, type = type, 
       rep_text = rep_text, raw = bfile$raw[start:(start + length - 1)])
-    setNames(list(block), start)
+    rlang::set_names(list(block), start)
   }
   
   # loop variables

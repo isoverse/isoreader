@@ -214,7 +214,7 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
     iso_file$file_info$H3_factor <- config$H3_factor
   
   # rename channels
-  rename_dots <- config_channels %>% { setNames(.$channel, str_c("i", .$mass, ".", data_units)) }
+  rename_dots <- config_channels %>% { rlang::set_names(.$channel, str_c("i", .$mass, ".", data_units)) }
   irms_data <- irms_data %>% dplyr::rename(!!!rename_dots)
   
   # scale currents

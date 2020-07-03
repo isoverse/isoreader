@@ -424,7 +424,7 @@ convert_df_units_attr_to_implicit_units <- function(df) {
     with(units, 
          purrr::map2(column, units, 
                      ~quo(iso_double_with_units(!!sym(.x), units = !!.y))) %>% 
-           setNames(column))
+           rlang::set_names(column))
   
   # convert the units
   df <- dplyr::mutate(df, !!!unit_quos)
