@@ -197,11 +197,10 @@ extract_dxf_raw_voltage_data <- function(ds) {
   if (nrow(voltages) == 0) stop("could not find raw voltage data", call. = FALSE)
 
   # add time point column
-  tp <- time.s <- NULL # global vars
   ds$raw_data <-
-    voltages %>% arrange(time.s) %>%
+    voltages %>% arrange(.data$time.s) %>%
     mutate(tp = 1:n()) %>%
-    select(tp, time.s, everything())
+    select(.data$tp, .data$time.s, everything())
  
   return(ds) 
 }

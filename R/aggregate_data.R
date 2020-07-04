@@ -71,7 +71,7 @@ get_raw_data_info <- function(iso_files) {
       all_ions = map(iso_files, ~names(.x$raw_data) %>% str_subset("^[iIvV]C?(\\d+)\\.")),
       n_ions = map_int(.data$all_ions, length),
       full_ions = map2_chr(.data$all_ions, .data$n_ions, ~if(.y > 0) { collapse(.x, sep = ", ") } else {""}),
-      ions = full_ions %>% str_replace_all("[^0-9,]", "")
+      ions = .data$full_ions %>% str_replace_all("[^0-9,]", "")
     )
   
   if (iso_is_continuous_flow(iso_files)) {
@@ -79,7 +79,7 @@ get_raw_data_info <- function(iso_files) {
       mutate(
         n_tps = map_int(iso_files, ~nrow(.x$raw_data)),
         label = case_when(
-          read_raw_data & stringr::str_detect(full_ions, "[iIvV]C") ~ glue("{n_tps} time points, {n_ions} channels ({ions})"),
+          read_raw_data & stringr::str_detect(.data$full_ions, "[iIvV]C") ~ glue("{n_tps} time points, {n_ions} channels ({ions})"),
           read_raw_data ~ glue("{n_tps} time points, {n_ions} ions ({ions})"), 
           TRUE ~ "raw data not read"
         )
@@ -129,7 +129,7 @@ get_file_info_info <- function(iso_files) {
     tibble(
       file_id = names(iso_files),
       read_file_info = map_lgl(iso_files, ~.x$read_options$file_info),
-      file_info = ifelse(!read_file_info, "file info not read", paste(map_int(iso_files, ~length(.x$file_info)), "entries"))
+      file_info = ifelse(!.data$read_file_info, "file info not read", paste(map_int(iso_files, ~length(.x$file_info)), "entries"))
     ) %>% select(.data$file_id, .data$file_info)
   }
 }
@@ -262,9 +262,9 @@ iso_get_all_data <- function(
   
   # data merge function
   merge_with_file_class <- function(new_df, col_name) {
-    nested_df <- nest(new_df[c(),], !!col_name := c(-file_id))
+    nested_df <- nest(new_df[c(),], !!col_name := c(-.data$file_id))
     if (ncol(new_df) > 1)
-      nested_df <- nest(new_df, !!col_name := c(-file_id))
+      nested_df <- nest(new_df, !!col_name := c(-.data$file_id))
     nested_df <- bind_rows(nested_df, tibble(file_id = setdiff(file_class$file_id, nested_df$file_id), !!col_name := list(tibble())))
     left_join(file_class, nested_df, by = "file_id")
   }
@@ -407,7 +407,7 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
     unnest(raw_data)
   
   # check for rows
-  if (nrow(data) == 0) return(dplyr::select(data, file_id))
+  if (nrow(data) == 0) return(dplyr::select(data, .data$file_id))
   
   # selecting columns
   select_cols <- get_column_names(data, select = select_exp, n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
@@ -583,15 +583,15 @@ iso_get_standards <- function(iso_files, select = everything(), include_file_inf
     ) 
   
   # check for rows
-  if (nrow(data) == 0) return(dplyr::select(data, file_id))
+  if (nrow(data) == 0) return(dplyr::select(data, .data$file_id))
   
   # merge info
   standards <- data %>% 
-    dplyr::select(file_id, standards) %>% 
-    dplyr::filter(!map_lgl(standards, is.null)) %>% unnest(standards) 
-  ref_ratios <- data %>% dplyr::select(file_id, ref_ratios) %>% 
-      dplyr::filter(!map_lgl(ref_ratios, is.null)) %>% 
-      tidyr::unnest(ref_ratios) 
+    dplyr::select(.data$file_id, standards) %>% 
+    dplyr::filter(!map_lgl(.data$standards, is.null)) %>% unnest(.data$standards) 
+  ref_ratios <- data %>% dplyr::select(.data$file_id, .data$ref_ratios) %>% 
+      dplyr::filter(!map_lgl(.data$ref_ratios, is.null)) %>% 
+      tidyr::unnest(.data$ref_ratios) 
   if ("reference" %in% names(ref_ratios))
     data <- dplyr::left_join(standards, ref_ratios, by = c("file_id", "reference"))
   else
@@ -665,7 +665,7 @@ iso_get_resistors  <- function(iso_files, select = everything(), include_file_in
     tidyr::unnest(resistors)
 
   # check for rows
-  if (nrow(data) == 0) return(dplyr::select(data, file_id))
+  if (nrow(data) == 0) return(dplyr::select(data, .data$file_id))
   
   # select columns
   select_cols <- get_column_names(data, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
@@ -743,7 +743,7 @@ iso_get_vendor_data_table <- function(
     filter(map_lgl(dt, ~!is.null(.x) & nrow(.x) > 0))
   
   # check for any rows
-  if (nrow(vendor_data_table) == 0) return(dplyr::select(vendor_data_table, file_id))
+  if (nrow(vendor_data_table) == 0) return(dplyr::select(vendor_data_table, .data$file_id))
   
   # make units explicit if wanted
   if (with_explicit_units) {

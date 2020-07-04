@@ -101,11 +101,10 @@ fetch_C_block <- function(bfile, C_block, min_pos = 1, occurence = NULL, regexp_
   if (missing(C_block) || !is.character(C_block)) stop("C_block name not provided", call. = FALSE)
   
   # find C_blocks
-  block <- start <- NULL # global vars
   if (regexp_match)
-    C_blocks <- filter(bfile$C_blocks, str_detect(block, C_block), start >= min_pos)
+    C_blocks <- filter(bfile$C_blocks, str_detect(.data$block, C_block), .data$start >= min_pos)
   else
-    C_blocks <- filter(bfile$C_blocks, block == C_block, start >= min_pos)
+    C_blocks <- filter(bfile$C_blocks, .data$block == C_block, .data$start >= min_pos)
   if (nrow(C_blocks) == 0) {
     op_error(bfile, sprintf("block '%s' not found after position %.0f", C_block, min_pos))
   }
@@ -479,7 +478,6 @@ find_C_blocks <- function(raw) {
   re_matches <- grepRaw(regexp, raw, all = TRUE, value = TRUE) 
   
   # values
-  block <- start <- NULL # global vars
   lapply(re_matches, function(x) {
     list(
       id1 = as.character(readBin(x[3], "raw")),
@@ -490,7 +488,7 @@ find_C_blocks <- function(raw) {
     # byte positions
     mutate(
       start = re_positions,
-      end = start + nchar(block) + 6 - 1
+      end = .data$start + nchar(.data$block) + 6 - 1
     )
 }
 
@@ -901,9 +899,6 @@ map_binary_structure <- function(bfile, length = 100, start = bfile$pos, ctrl_bl
 # @FIXME: testing
 generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, line_break_blocks = c(), pos_info = FALSE) {
   
-  # global vars
-  trailing_zeros <- start <- data_type <- type <- text_level <- rep_text <- rep_value <- nl <- indent <- block_text <- NULL
-  
   # indentation function
   nl_indent <- function(nls, lvl, byte_start) {
     mapply(function(nl, n, bs) {
@@ -946,12 +941,13 @@ generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, lin
     if (nrow(data_overview) > 0) {
       data_overview <- data_overview %>% 
         # trailing zeros block
-        mutate(trailing00_block = ifelse(trailing_zeros > 0,  str_c("<", trailing_zeros, "x00>"), "")) %>% 
-        group_by(start) %>% 
+        mutate(trailing00_block = 
+                 ifelse(.data$trailing_zeros > 0,  str_c("<", .data$trailing_zeros, "x00>"), "")) %>% 
+        group_by(.data$start) %>% 
         do({
           # figure out what to do in case of text supplied together with other data types
           data <- .
-          text_value <- if ("text" %in% data$data_type) filter(data, data_type == "text") else NULL
+          text_value <- if ("text" %in% data$data_type) filter(data, .data$data_type == "text") else NULL
           if (!is.null(text_value) && nrow(data > 1) && nchar(text_value$rep_value) >= 4) {
             # more than 4 chars in the text, chances are likely this is actually  text
             data <- text_value
@@ -975,20 +971,20 @@ generate_binary_structure_map_printout <- function(bsm, data_as_raw = FALSE, lin
   else 
     all_blocks <- all_blocks %>% 
     mutate(
-      nl = start == min(start) | type %in% line_break_blocks | c("", type[1:(n()-1)]) %in% line_break_blocks,
-      text_level = c(NA, (head(cumsum(type == "stx"), -1) - tail(cumsum(type == "etx"), -1))))
+      nl = .data$start == min(.data$start) | .data$type %in% line_break_blocks | c("", .data$type[1:(n()-1)]) %in% line_break_blocks,
+      text_level = c(NA, (head(cumsum(.data$type == "stx"), -1) - tail(cumsum(.data$type == "etx"), -1))))
   
   # calculate indentation level
   all_blocks <- all_blocks %>% 
-    mutate(indent = text_level - min(text_level, na.rm = TRUE))
+    mutate(indent = .data$text_level - min(.data$text_level, na.rm = TRUE))
   
   # text blocks
   all_blocks %>% 
     mutate(
-      rep_text = ifelse(is.na(rep_text), str_c("<", raw, ">"), str_c("<", rep_text, ">")),
-      rep_value = ifelse(is.na(rep_value), str_c("{", raw, "}"), rep_value),
-      block_text = ifelse(type == "data", rep_value, rep_text), 
-      indent_text = str_c(nl_indent(nl, indent, start), block_text)
+      rep_text = ifelse(is.na(.data$rep_text), str_c("<", .data$raw, ">"), str_c("<", .data$rep_text, ">")),
+      rep_value = ifelse(is.na(.data$rep_value), str_c("{", .data$raw, "}"), .data$rep_value),
+      block_text = ifelse(.data$type == "data", .data$rep_value, .data$rep_text), 
+      indent_text = str_c(nl_indent(.data$nl, .data$indent, .data$start), .data$block_text)
     ) %>% 
     # combine text
     { str_c(.$indent_text, collapse = "") }

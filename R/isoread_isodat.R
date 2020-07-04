@@ -77,9 +77,6 @@ extract_isodat_resistors <- function(ds) {
 # extract the reference deltas and ratios for isodat files
 extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   
-  #global vars
-  data <- start_pos <- pos <- NULL
-    
   # get secondar standard values
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot recover references") %>% 
@@ -128,8 +125,8 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   }
   refs <- tibble(
     start_pos = start_pos,
-    data = map(start_pos, capture_ref_names)
-  ) %>% unnest(data)
+    data = map(.data$start_pos, capture_ref_names)
+  ) %>% unnest(.data$data)
   
   ### deltas
   # get reference delta values
@@ -168,10 +165,10 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   # run delta capture
   deltas <- tibble(
     pos = positions + delta_re$size,
-    data = map(pos, capture_delta_values)
-  ) %>% unnest(data) %>% 
+    data = map(.data$pos, capture_delta_values)
+  ) %>% unnest(.data$data) %>% 
     # delta_code is very isodat specific and not stored in final, delta_format does not really hold additional information
-    select(!!!c("standard", "gas", "delta_name", "delta_value", "reference"))
+    select(.data$standard, .data$gas, .data$delta_name, .data$delta_value, .data$reference)
   
   
   ### ratios
@@ -207,10 +204,10 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   if (length(positions) > 0) {
     ratios <- tibble(
       pos = positions + ratio_re$size,
-      data = map(pos, capture_ratio_values)
+      data = map(.data$pos, capture_ratio_values)
     ) %>% 
-      unnest(data) %>% 
-      select(!!!c("reference", "element", "ratio_name", "ratio_value"))
+      unnest(.data$data) %>% 
+      select(.data$reference, .data$element, .data$ratio_name, .data$ratio_value)
   } else {
     # no ratios defined
     ratios <- tibble(reference = character(0), element = character(0), 
@@ -477,8 +474,8 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   rts_df <- dplyr::filter(rts_df, .data$mass > 0)
   # retention times
   peaks <- rts_df %>% 
-    select(peak, Start = .data$start, Rt = .data$rt, End = .data$end) %>% 
-    distinct(peak, .keep_all = TRUE) %>% 
+    select(.data$peak, Start = .data$start, Rt = .data$rt, End = .data$end) %>% 
+    distinct(.data$peak, .keep_all = TRUE) %>% 
     # add in amplitudes
     left_join(
       rts_df %>% 
@@ -697,7 +694,7 @@ process_isodat_units <- function(raw_units) {
       filter(
         !.data$idx %in% (.data$idx[.data$is_permil] + 1L)
       ) %>% 
-      dplyr::pull(pos1) %>% 
+      dplyr::pull(.data$pos1) %>% 
       unlist()
   }
   
@@ -739,9 +736,6 @@ extract_isodat_main_vendor_data_table2 <- function(ds, C_block, cap_at_fun = NUL
 # @note part of extract_isodat_main_vendor_data_table2
 # @note too slow (slower than the loop in this case)
 extract_isodat_main_vendor_data_table_cells <- function(ds) {
-  
-  # global vars
-  data <- column <- column_format <- NULL
   
   # find columns and row data for the whole data table
   pre_column_re <- re_combine(
@@ -793,16 +787,20 @@ extract_isodat_main_vendor_data_table_cells <- function(ds) {
     lapply(positions + pre_column_re$size, capture_table_cell, bin = ds$binary) %>% 
     bind_rows() %>% 
     # row numbers
-    mutate(row = cumsum(column == column[1])) %>%
+    mutate(row = cumsum(.data$column == .data$column[1])) %>%
     # nest by column and expand column details
-    nest(-column) %>%
+    nest(data = c(-.data$column)) %>%
     mutate(
-      n_formats = map_int(data, ~length(unique(.x$format))),
-      column_format = map_chr(data, ~.x$format[1]),
-      units = map_chr(data, ~capture_table_cell_units(min(.x$continue_pos), bin = ds$binary)),
-      type = ifelse (column_format == "%s", "text",
-                     ifelse(column_format %in% c("%u", "%d"), "integer",
-                            ifelse(str_detect(column_format, "\\%[0-9.]+f"), "double", NA_character_)))
+      n_formats = map_int(.data$data, ~length(unique(.x$format))),
+      column_format = map_chr(.data$data, ~.x$format[1]),
+      units = map_chr(.data$data, ~capture_table_cell_units(min(.x$continue_pos), bin = ds$binary)),
+      type = 
+        dplyr::case_when(
+          .data$column_format == "%s" ~ "text",
+          .data$column_format %in% c("%u", "%d") ~ "integer",
+          str_detect(.data$column_format, "\\%[0-9.]+f") ~ "double", 
+          TRUE ~ NA_character_
+        )
     ) 
 
   # safety check: to make sure all columns have the same format specification

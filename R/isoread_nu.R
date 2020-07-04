@@ -460,7 +460,7 @@ calculate_intensities <- function(df_channels, grouping, masses = c()) {
   } else {
     # don't have the right number
     df_intensities <- df_intensities %>% 
-      mutate(channel = sprintf("iC%d.A", channel))
+      mutate(channel = sprintf("iC%d.A", .data$channel))
   }
   
   return(df_intensities)
