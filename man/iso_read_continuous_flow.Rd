@@ -17,6 +17,7 @@ iso_read_continuous_flow(
   parallel_cores = future::availableCores(),
   cache = default(cache),
   read_cache = default(cache),
+  reread_outdated_cache = FALSE,
   quiet = default(quiet),
   cache_files_with_errors = TRUE
 )
@@ -44,7 +45,9 @@ iso_read_continuous_flow(
 
 \item{cache}{whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
 
-\item{read_cache}{whether to reload from cache if a cached version exists. Note that it will only read from cache if the raw data file has not been modified since and has been read by a compatible (=recent) isoreader version. Files that have been modified on disc (e.g. edited in the vendor software) will always be read anew.}
+\item{read_cache}{whether to reload from cache if a cached version exists. Note that it will only read from cache if the raw data file has not been modified since. Files that have been modified on disc (e.g. edited in the vendor software) will always be read anew. To automatically reread cached files that were cached by an outdated version of the isoreader package, set the \code{reread_outdated_cache} flag.}
+
+\item{reread_outdated_cache}{whether to re-read outdated cache files whenever they are encountered.}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 
