@@ -21,3 +21,4 @@
 ^Meta$
 ^.*\.xlsx$
 ^.*\.rds$
+^\.github$
