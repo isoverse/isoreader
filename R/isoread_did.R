@@ -172,7 +172,7 @@ extract_did_vendor_data_table <- function(ds) {
       list(
         cycle = as.integer(ds$binary$data$values[c(TRUE, FALSE)] + 1L),
         value = ds$binary$data$values[c(FALSE, TRUE)]
-      )) %>% setNames(str_replace(ds$binary$data$column, "\\s*$", "")) # remove trailing white spaces in column names
+      )) %>% rlang::set_names(str_replace(ds$binary$data$column, "\\s*$", "")) # remove trailing white spaces in column names
     vendor_dt <- c(vendor_dt, table_column)
   }
   

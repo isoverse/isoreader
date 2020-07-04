@@ -22,7 +22,7 @@ get_column_names <- function(df, ..., df_name = rlang::as_label(rlang::enexpr(df
     # convert quos to expressions (to ensure evaluation inside the df data frame to avoid name conflicts)
     map(~{if (rlang::is_quosure(.x)) rlang::quo_get_expr(.x) else .x}) %>% 
     # naming
-    { if(is.null(names(.))) setNames(., rep("", length(.))) else . }
+    { if(is.null(names(.))) rlang::set_names(., rep("", length(.))) else . }
   
   # find column positions
   pos_results <- map(cols_exps, safe_local_eval_select, data = df)
@@ -66,7 +66,7 @@ get_column_names <- function(df, ..., df_name = rlang::as_label(rlang::enexpr(df
     stop(call. = FALSE)
   
   ## reqs labels
-  all_n_reqs <- rep(1, length(cols)) %>% as.list() %>% setNames(names(cols)) %>% modifyList(n_reqs) %>% { .[names(cols)] }
+  all_n_reqs <- rep(1, length(cols)) %>% as.list() %>% rlang::set_names(names(cols)) %>% modifyList(n_reqs) %>% { .[names(cols)] }
   n_req_types <- c("*" = "any number", "+" = "at least one", "?" = "none or one", "integer" = "the specified number")
   all_n_req_types <- map_chr(all_n_reqs, function(req) {
     if (is_integerish(req)) return("integer")
@@ -116,7 +116,7 @@ get_column_names <- function(df, ..., df_name = rlang::as_label(rlang::enexpr(df
     }
     
     # find type requirement problems
-    all_type_reqs <- rep(NA_character_, length(cols)) %>% as.list() %>% setNames(names(cols)) %>% modifyList(type_reqs) %>% { .[names(cols)] }
+    all_type_reqs <- rep(NA_character_, length(cols)) %>% as.list() %>% rlang::set_names(names(cols)) %>% modifyList(type_reqs) %>% { .[names(cols)] }
     all_df_types <- map_chr(df, ~class(.x)[1])
     col_meets_type_reqs <- map2_lgl(cols, all_type_reqs, function(col, req) {
       if (is.na(req)) return(TRUE)

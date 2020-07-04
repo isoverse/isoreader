@@ -54,7 +54,7 @@ extract_caf_raw_voltage_data <- function(ds) {
     tibble(
       pos = find_next_patterns(ds$binary, masses_re) + masses_re$size,
       # capture cup and mass
-      data = map(pos, function(pos) {
+      data = map(.data$pos, function(pos) {
         ds$binary %>%
           move_to_pos(pos) %>%  
           capture_data("cup", "text", re_block("fef-x"), data_bytes_max = 8, move_past_dots = TRUE) %>%
@@ -131,7 +131,7 @@ extract_caf_raw_voltage_data <- function(ds) {
   
   # safety check
   if (any(notok <- is.na(voltages$column))) {
-    op_error(bin, glue("inconsistent cup designations: {collapse(voltages$cup[notok], ', ')}"))
+    op_error(ds$binary, glue("inconsistent cup designations: {collapse(voltages$cup[notok], ', ')}"))
   }
   
   # voltages data frame
@@ -146,9 +146,6 @@ extract_caf_raw_voltage_data <- function(ds) {
 
 # extract data table
 extract_caf_vendor_data_table <- function(ds) {
-  
-  # global vars
-  column <- NULL
   
   # reset navigation
   ds$binary <- reset_binary_file_navigation(ds$binary)
@@ -191,7 +188,7 @@ extract_caf_vendor_data_table <- function(ds) {
   attr(ds$vendor_data_table, "units") <- 
     bind_rows(
       tibble(column = c("cycle"), units = ""),
-      filter(extracted_dt$columns, column %in% names(ds$vendor_data_table))[c("column", "units")]
+      filter(extracted_dt$columns, .data$column %in% names(ds$vendor_data_table))[c("column", "units")]
     )
   
   # FIXME: do this directly

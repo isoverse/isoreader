@@ -107,12 +107,12 @@ extract_scn_mass_cup_info <- function(ds){
     cup = parse_number(cups) %>% as.integer(),
     mass = parse_number(masses) %>% as.character(),
     mass_column = ifelse(
-      !is.na(mass),
-      sprintf("v%s.mV", mass),
+      !is.na(.data$mass),
+      sprintf("v%s.mV", .data$mass),
       # Note: okay to designate cups in this way?
-      sprintf("vC%s.mV", cup)
+      sprintf("vC%s.mV", .data$cup)
     )
-  ) %>% filter(!is.na(cup))
+  ) %>% filter(!is.na(.data$cup))
   
   return(ds)
 }
@@ -183,7 +183,7 @@ extract_scn_raw_voltage_data <- function(ds) {
   }
   
   # set column names
-  voltages <- setNames(voltages, c("step", ds$binary$data$config$mass_column))
+  voltages <- rlang::set_names(voltages, c("step", ds$binary$data$config$mass_column))
   
   # calculate x values from step
   convert_step_to_x <- function(step) {
@@ -207,11 +207,11 @@ extract_scn_raw_voltage_data <- function(ds) {
   ds$raw_data <- voltages %>% 
     dplyr::mutate(
       # calculate x values
-      x = convert_step_to_x(step),
+      x = convert_step_to_x(.data$step),
       # set x units
       x_units = ds$binary$data$units
     ) %>% 
-    dplyr::select(step, x, x_units, everything())
+    dplyr::select(.data$step, .data$x, .data$x_units, everything())
   
   return(ds)
   
@@ -247,7 +247,7 @@ extract_scn_resistors <- function(ds) {
       R.Ohm = ohms
     ) %>%
     dplyr::right_join(
-      select(ds$binary$data$config, cup, mass),
+      select(ds$binary$data$config, .data$cup, .data$mass),
       by = "cup"
     )
   

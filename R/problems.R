@@ -95,8 +95,8 @@ iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE, inclu
   # finalize data frame
   probs <- probs %>%
     mutate(
-      warning = ifelse(!is.na(warning), .data$warning, 0L),
-      error = ifelse(!is.na(error), .data$error, 0L)
+      warning = ifelse(!is.na(.data$warning), .data$warning, 0L),
+      error = ifelse(!is.na(.data$error), .data$error, 0L)
     ) 
   
   # if file info
@@ -127,8 +127,6 @@ iso_omit_files_with_problems <- function(...) {
 #' @family problem functions
 #' @export
 iso_filter_files_with_problems <- function(iso_files, remove_files_with_errors = TRUE, remove_files_with_warnings = FALSE, quiet = default(quiet)) {
-  # global vars
-  type <- NULL
   
   if (missing(iso_files) || !iso_is_object(iso_files)) stop("please provide a list of iso_files", call. = FALSE)
   types <- c()
@@ -139,7 +137,7 @@ iso_filter_files_with_problems <- function(iso_files, remove_files_with_errors =
   
   # find trouble file ids
   trouble_files <- problems(iso_files) %>% 
-    filter(type %in% types) %>% 
+    filter(.data$type %in% types) %>% 
     { unique(.$file_id) }
   
   # exclude

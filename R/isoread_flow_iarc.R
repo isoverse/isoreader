@@ -7,9 +7,6 @@ iso_read_flow_iarc <- function(ds, options = list()) {
   if(!iso_is_file(ds) || !is(ds, "continuous_flow")) 
     stop("data structure must be a 'continuous_flow' iso_file", call. = FALSE)
   
-  # global variables for NSE
-  samples <- NULL
-  
   # unzipping iarc archieve ====
   folder_name <- ds$file_info$file_path %>% basename() %>% { str_replace(., fixed(get_file_ext(.)), "") }
   folder_path <- file.path(tempdir(), folder_name)
@@ -46,21 +43,21 @@ iso_read_flow_iarc <- function(ds, options = list()) {
   # processing lists / gas configuration ====
   all_processing_lists <- 
     tasks %>% map("info") %>% bind_rows() %>% 
-    group_by(!!sym("ProcessingListTypeIdentifier")) %>% 
-    summarize(samples=n()) %>% 
+    group_by(.data$ProcessingListTypeIdentifier) %>% 
+    summarize(samples = n()) %>% 
     ungroup() %>% 
     full_join(processing_lists, by = c("ProcessingListTypeIdentifier" = "DefinitionUniqueIdentifier"))
   
   # safety check on processing lists (make sure all processing lists defined in tasks have a ProcessingListId)
   if (any(is.na(all_processing_lists$ProcessingListId))) {
     sprintf("mismatch between processing lists in tasks ('%s') and in iarc info ('%s')",
-            with(all_processing_lists, ProcessingListTypeIdentifier[is.na(samples)]) %>% str_c(collapse = "', '"),
-            with(all_processing_lists, ProcessingListTypeIdentifier[is.na(ProcessingListId)]) %>% str_c(collapse = "', '")) %>% 
-      stop(call. = FALSE)
+            all_processing_lists$ProcessingListTypeIdentifier[is.na(all_processing_lists$samples)] %>% str_c(collapse = "', '"),
+            all_processing_lists$ProcessingListTypeIdentifier[is.na(all_processing_lists$ProcessingListId)] %>% str_c(collapse = "', '")
+    ) %>% stop(call. = FALSE)
   }
   
   # get gas configurations
-  used_processing_lists <- filter(all_processing_lists, !is.na(samples))
+  used_processing_lists <- filter(all_processing_lists, !is.na(.data$samples))
   gas_configs <- mapply(
     process_iarc_processing_xml, 
     used_processing_lists$ProcessingListTypeIdentifier, 
@@ -176,9 +173,6 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
   if (!"DataSet" %in% h5ls(filepath)$name)
     stop("expected DataSet attribute not present in HDF5 data file", call. = FALSE)
   
-  # global variables to allow NSE
-  channel <- masses <- Scan <- tp <- time.s <- n <- NULL
-  
   # attributes (NOTE: not sure what to do with the $Tuning information (usually not filled))
   dataset_attributes <- h5readAttributes(filepath, "DataSet")
   if (!dataset_attributes$Species %in% names(gas_config$species))
@@ -193,7 +187,7 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
     stop("Scan column missing from data file ", basename(filepath), call. = FALSE)
   
   data_channels <- irms_data %>% names() %>% str_subset("^Beam")
-  config_channels <- config$channels %>% filter(channel %in% data_channels)
+  config_channels <- config$channels %>% filter(.data$channel %in% data_channels)
   
   # safety check for channels (if no channels defined in the config at all, we've got problems)
   if ( nrow(config_channels) == 0)
@@ -202,10 +196,10 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
   # proceed only with the channels that are config defined
   irms_data <- irms_data[c("Scan", config_channels$channel)]
   
-  multiple <- config_channels %>% group_by(channel) %>% summarize(n = n(), masses = str_c(mass, collapse = ", "))
+  multiple <- config_channels %>% group_by(.data$channel) %>% summarize(n = n(), masses = str_c(.data$mass, collapse = ", "))
   if (any(multiple$n > 1)) {
     stop("cannot process beam channels, some channels assigned to more than one mass: ",
-         multiple %>% filter(n > 1) %>% mutate(label = str_c(channel, ": ", masses)) %>%
+         multiple %>% filter(n > 1) %>% mutate(label = paste0(.data$channel, ": ", .data$masses)) %>%
          { .$label } %>% str_c(collapse = "; "), call. = FALSE)
   }
   
@@ -214,7 +208,7 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
     iso_file$file_info$H3_factor <- config$H3_factor
   
   # rename channels
-  rename_dots <- config_channels %>% { setNames(.$channel, str_c("i", .$mass, ".", data_units)) }
+  rename_dots <- config_channels %>% { rlang::set_names(.$channel, str_c("i", .$mass, ".", data_units)) }
   irms_data <- irms_data %>% dplyr::rename(!!!rename_dots)
   
   # scale currents
@@ -224,9 +218,9 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
   # scale time
   dt <- run_time.s / nrow(irms_data)
   irms_data <- irms_data %>% 
-    rename(tp = Scan) %>% 
-    mutate(tp = as.integer(tp), time.s = dt * tp) %>% 
-    select(tp, time.s, everything())
+    rename(tp = .data$Scan) %>% 
+    mutate(tp = as.integer(.data$tp), time.s = dt * .data$tp) %>% 
+    select(.data$tp, .data$time.s, everything())
   
   # store mass data
   if (nrow(iso_file$raw_data) > 0) {

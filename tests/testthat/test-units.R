@@ -1,5 +1,17 @@
 context("Units")
 
+# isodat units processing ====
+
+test_that("test that raw isodat units are processed correctly", {
+  no_permil <- as.raw(c(0x5b, 0x00, 0x25, 0x00, 0x5d, 0x00))
+  w_permil <- as.raw(c(0x5b, 0x00, 0x30, 0x20, 0x5d, 0x00))
+  per_mil <- as.raw(c(0x70, 0x00, 0x65, 0x00, 0x72, 0x00, 0x20, 0x00, 0x6d, 0x00, 0x69, 0x00, 0x6c, 0x00))
+  expect_equal(process_isodat_units(no_permil), "[%]")
+  expect_equal(process_isodat_units(w_permil), "[permil]")
+  expect_equal(process_isodat_units(per_mil), "permil")
+  expect_equal(process_isodat_units(c(w_permil, no_permil, w_permil, per_mil)), "[permil][%][permil]permil")
+})
+
 # iso_with_units ====
 
 test_that("test that units class works properly", {

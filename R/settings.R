@@ -31,7 +31,7 @@ resolve_defaults <- function(q) {
 # set package setting, internal function, not exported
 set_default <- function(name, value, overwrite = TRUE) {
   if (overwrite || !str_c("isoreader.", name) %in% names(options()))
-    options(list(value) %>% setNames(str_c("isoreader.", name)))
+    options(list(value) %>% rlang::set_names(str_c("isoreader.", name)))
   return(invisible(value))
 }
 
@@ -50,7 +50,7 @@ get_temp <- function(name, allow_null = TRUE) {
 #' @param value value of the temporary option
 #' @export
 set_temp <- function(name, value) {
-  options(list(value) %>% setNames(str_c("isoreader_temp.", name)))
+  options(list(value) %>% rlang::set_names(str_c("isoreader_temp.", name)))
   return(invisible(value))
 }
 

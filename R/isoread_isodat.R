@@ -77,9 +77,6 @@ extract_isodat_resistors <- function(ds) {
 # extract the reference deltas and ratios for isodat files
 extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   
-  #global vars
-  data <- start_pos <- pos <- NULL
-    
   # get secondar standard values
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot recover references") %>% 
@@ -128,8 +125,8 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   }
   refs <- tibble(
     start_pos = start_pos,
-    data = map(start_pos, capture_ref_names)
-  ) %>% unnest(data)
+    data = map(.data$start_pos, capture_ref_names)
+  ) %>% unnest(.data$data)
   
   ### deltas
   # get reference delta values
@@ -168,10 +165,10 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   # run delta capture
   deltas <- tibble(
     pos = positions + delta_re$size,
-    data = map(pos, capture_delta_values)
-  ) %>% unnest(data) %>% 
+    data = map(.data$pos, capture_delta_values)
+  ) %>% unnest(.data$data) %>% 
     # delta_code is very isodat specific and not stored in final, delta_format does not really hold additional information
-    select(!!!c("standard", "gas", "delta_name", "delta_value", "reference"))
+    select(.data$standard, .data$gas, .data$delta_name, .data$delta_value, .data$reference)
   
   
   ### ratios
@@ -207,10 +204,10 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   if (length(positions) > 0) {
     ratios <- tibble(
       pos = positions + ratio_re$size,
-      data = map(pos, capture_ratio_values)
+      data = map(.data$pos, capture_ratio_values)
     ) %>% 
-      unnest(data) %>% 
-      select(!!!c("reference", "element", "ratio_name", "ratio_value"))
+      unnest(.data$data) %>% 
+      select(.data$reference, .data$element, .data$ratio_name, .data$ratio_value)
   } else {
     # no ratios defined
     ratios <- tibble(reference = character(0), element = character(0), 
@@ -428,9 +425,6 @@ extract_MS_integration_time_info <- function(ds) {
 # extract vendor computed data table for continuous flow files
 extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NULL) {
   
-  # global vars
-  column <- NULL
-  
   # find vendor data table
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot process vendor identified peaks") %>% 
@@ -477,27 +471,26 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   }
   
   # filter out false matches
-  rts_df <- dplyr::filter(rts_df, mass > 0)
+  rts_df <- dplyr::filter(rts_df, .data$mass > 0)
   # retention times
-  peak <- start <- rt <- end <- amp <- Ampl <- bg <- BGD <- NULL
   peaks <- rts_df %>% 
-    select(peak, Start = start, Rt = rt, End = end) %>% 
-    distinct(peak, .keep_all = TRUE) %>% 
+    select(.data$peak, Start = .data$start, Rt = .data$rt, End = .data$end) %>% 
+    distinct(.data$peak, .keep_all = TRUE) %>% 
     # add in amplitudes
     left_join(
       rts_df %>% 
-        select(peak, Ampl = mass, amp) %>% 
-        spread(Ampl, amp, sep = " "),
+        select(.data$peak, Ampl = .data$mass, .data$amp) %>% 
+        spread(.data$Ampl, .data$amp, sep = " "),
       by = "peak"
     ) %>% 
     # add in backgrounds
     left_join (
       rts_df %>% 
-        select(peak, BGD = mass, bg) %>% 
-        spread(BGD, bg, sep = " "),
+        select(.data$peak, BGD = .data$mass, .data$bg) %>% 
+        spread(.data$BGD, .data$bg, sep = " "),
       by = "peak"
     ) %>% 
-    rename(`Nr.` = peak)
+    rename(`Nr.` = .data$peak)
   
   ### rest of data table
   extracted_dt <- extract_isodat_main_vendor_data_table(ds, C_block = "CGCPeakList", cap_at_fun = cap_at_fun)
@@ -515,7 +508,7 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   # safe information on the column units
   attr(ds$vendor_data_table, "units") <- 
     bind_rows(
-      dplyr::select(extracted_dt$columns, column, units),
+      dplyr::select(extracted_dt$columns, .data$column, .data$units),
       tibble::tibble(column = c("Start", "Rt", "End"), units = "[s]"),
       tibble::tibble(column = peaks %>% select(starts_with("Ampl"), starts_with("BGD")) %>% names(), units = "[mV]")
     ) %>% 
@@ -611,18 +604,8 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
         move_to_next_pattern(re_block("text0"), re_block("fef-x"), re_block("text0"), re_block("fef-x")) %>% 
         capture_data("units", "raw", re_block("fef-x"), move_past_dots = TRUE, ignore_trailing_zeros = FALSE) # retrieve units
       
-      # check for permil symbol (which is non-ASCII)
-      permil <- as.raw(c(48, 32))
-      units <- ds$binary$data$units
-      if (length(units) >= length(permil) && any(apply(embed(units,length(units)-length(permil)+1),2,identical,permil))) {
-        ds$binary$data$units <- "[permil]"
-      } else {
-        ds$binary$data$units <- parse_raw_data(ds$binary$data$units, "text")
-      }
-      
-      # standardize the units
-      if (ds$binary$data$units == "[per mil]")
-        ds$binary$data$units <- "[permil]"
+      # process isodat units
+      ds$binary$data$units <- process_isodat_units(ds$binary$data$units)
       
       # data format
       type <- 
@@ -682,6 +665,48 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
   return(list(columns = cols, cell_values = cells))
 }
 
+# utils ========
+
+# process isodat raw units into text units
+# replaces permil symbol with "permil" for ASCII compatibility
+# standardizes "per mil" to "permil"
+process_isodat_units <- function(raw_units) {
+  
+  # raw vectors
+  raw_permil <- as.raw(c(0x30, 0x20))
+  text_permil <- as.raw(c(0x70, 0x00, 0x65, 0x00, 0x72, 0x00, 0x6d, 0x00, 0x69, 0x00, 0x6c, 0x00))
+  
+  if (length(raw_units) > 1) {
+    # replace permil symbol (which is non-ASCII)
+    raw_units <-
+      tibble(
+        pos1 = raw_units,
+        pos2 = c(raw_units[-1], as.raw(0x00)),
+        idx = 1:length(.data$pos1)
+      ) %>% 
+      mutate(
+        is_permil = purrr::map2_lgl(.data$pos1, .data$pos2, ~ identical(c(.x, .y), raw_permil)),
+        pos1 = purrr::map2(.data$pos1, .data$is_permil, ~ {
+          if(.y) text_permil
+          else .x
+        })
+      ) %>% 
+      filter(
+        !.data$idx %in% (.data$idx[.data$is_permil] + 1L)
+      ) %>% 
+      dplyr::pull(.data$pos1) %>% 
+      unlist()
+  }
+  
+  # convert to text units
+  text_units <- parse_raw_data(raw_units, "text")
+  
+  # standardize the units
+  text_units <- stringr::str_replace_all(text_units, "per mil", "permil")
+  
+  return(text_units)
+}
+
 # ALTERNATIVE - too slow! ========
 
 # alternative implementation
@@ -711,9 +736,6 @@ extract_isodat_main_vendor_data_table2 <- function(ds, C_block, cap_at_fun = NUL
 # @note part of extract_isodat_main_vendor_data_table2
 # @note too slow (slower than the loop in this case)
 extract_isodat_main_vendor_data_table_cells <- function(ds) {
-  
-  # global vars
-  data <- column <- column_format <- NULL
   
   # find columns and row data for the whole data table
   pre_column_re <- re_combine(
@@ -754,17 +776,8 @@ extract_isodat_main_vendor_data_table_cells <- function(ds) {
       move_to_next_pattern(re_block("text0"), re_block("fef-x"), re_block("text0"), re_block("fef-x")) %>% 
       capture_data("units", "raw", re_block("fef-x"), move_past_dots = TRUE, ignore_trailing_zeros = FALSE) # retrieve units
     
-    # check for permil symbol (which is non-ASCII)
-    permil <- as.raw(c(48, 32))
-    units <- bin$data$units
-    if (length(units) >= length(permil) && any(apply(embed(units,length(units)-length(permil)+1),2,identical,permil))) {
-      units <- "[permil]"
-    } else {
-      units <- parse_raw_data(units, "text")
-    }
-    
-    # standardize the units
-    if (units == "[per mil]") units <- "[permil]"
+    # process isodat units
+    units <- process_isodat_units(bin$data$units)
     return(units)
   }
   
@@ -774,16 +787,20 @@ extract_isodat_main_vendor_data_table_cells <- function(ds) {
     lapply(positions + pre_column_re$size, capture_table_cell, bin = ds$binary) %>% 
     bind_rows() %>% 
     # row numbers
-    mutate(row = cumsum(column == column[1])) %>%
+    mutate(row = cumsum(.data$column == .data$column[1])) %>%
     # nest by column and expand column details
-    nest(-column) %>%
+    nest(data = c(-.data$column)) %>%
     mutate(
-      n_formats = map_int(data, ~length(unique(.x$format))),
-      column_format = map_chr(data, ~.x$format[1]),
-      units = map_chr(data, ~capture_table_cell_units(min(.x$continue_pos), bin = ds$binary)),
-      type = ifelse (column_format == "%s", "text",
-                     ifelse(column_format %in% c("%u", "%d"), "integer",
-                            ifelse(str_detect(column_format, "\\%[0-9.]+f"), "double", NA_character_)))
+      n_formats = map_int(.data$data, ~length(unique(.x$format))),
+      column_format = map_chr(.data$data, ~.x$format[1]),
+      units = map_chr(.data$data, ~capture_table_cell_units(min(.x$continue_pos), bin = ds$binary)),
+      type = 
+        dplyr::case_when(
+          .data$column_format == "%s" ~ "text",
+          .data$column_format %in% c("%u", "%d") ~ "integer",
+          str_detect(.data$column_format, "\\%[0-9.]+f") ~ "double", 
+          TRUE ~ NA_character_
+        )
     ) 
 
   # safety check: to make sure all columns have the same format specification

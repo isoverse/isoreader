@@ -190,18 +190,17 @@ extract_dxf_raw_voltage_data <- function(ds) {
       capture_data("voltages", c("float", rep("double", length(masses))), data_end_re)
     voltages <- bind_rows(voltages,
                           ds$binary$data$voltages %>%
-                            dplyr::as_tibble() %>% setNames(c("time.s", masses_columns)))
+                            dplyr::as_tibble() %>% rlang::set_names(c("time.s", masses_columns)))
   }
 
   # check for data
   if (nrow(voltages) == 0) stop("could not find raw voltage data", call. = FALSE)
 
   # add time point column
-  tp <- time.s <- NULL # global vars
   ds$raw_data <-
-    voltages %>% arrange(time.s) %>%
+    voltages %>% arrange(.data$time.s) %>%
     mutate(tp = 1:n()) %>%
-    select(tp, time.s, everything())
+    select(.data$tp, .data$time.s, everything())
  
   return(ds) 
 }

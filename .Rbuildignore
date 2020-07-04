@@ -19,3 +19,6 @@
 ^vignettes/fig_output$
 ^doc$
 ^Meta$
+^.*\.xlsx$
+^.*\.rds$
+^\.github$

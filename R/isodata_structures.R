@@ -163,7 +163,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
   if (length(iso_objs) == 0) {
     # empty list
     iso_list <- list()
-    all_problems <- get_problems_structure() %>% mutate(file_id = character()) %>% select(file_id, everything())
+    all_problems <- get_problems_structure() %>% mutate(file_id = character()) %>% select(.data$file_id, everything())
   } else {
     # check if everything is an iso object
     if(!all(is_iso <- map_lgl(iso_objs, iso_is_object))) {
@@ -197,7 +197,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
         idx = 1:length(iso_list),
         file_id = names(iso_list)
       ) %>% 
-      group_by(file_id) %>% 
+      group_by(.data$file_id) %>% 
       mutate(n = 1:n(), has_duplicates = any(n > 1)) %>% 
       ungroup() %>% 
       filter(has_duplicates)
@@ -230,7 +230,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     
     # propagate problems
     all_problems <- map(iso_list, ~get_problems(.x) %>% mutate(file_id = .x$file_info$file_id)) %>% 
-      bind_rows() %>% dplyr::select(file_id, everything())
+      bind_rows() %>% dplyr::select(.data$file_id, everything())
   }
   
   # problems

@@ -28,14 +28,14 @@ below to see their documentation.
 \describe{
   \item{dplyr}{\code{\link[dplyr]{filter}}}
 
-  \item{magrittr}{\code{\link[magrittr]{\%>\%}}}
+  \item{magrittr}{\code{\link[magrittr:pipe]{\%>\%}}}
 
-  \item{readr}{\code{\link[readr]{parse_datetime}}, \code{\link[readr]{parse_double}}, \code{\link[readr]{parse_integer}}, \code{\link[readr]{parse_logical}}, \code{\link[readr]{parse_number}}, \code{\link[readr]{problems}}, \code{\link[readr]{stop_for_problems}}}
+  \item{readr}{\code{\link[readr]{parse_datetime}}, \code{\link[readr:parse_atomic]{parse_double}}, \code{\link[readr:parse_atomic]{parse_integer}}, \code{\link[readr:parse_atomic]{parse_logical}}, \code{\link[readr]{parse_number}}, \code{\link[readr]{problems}}, \code{\link[readr:problems]{stop_for_problems}}}
 
-  \item{rlang}{\code{\link[rlang]{!!}}, \code{\link[rlang]{!!!}}}
+  \item{rlang}{\code{\link[rlang:nse-force]{!!}}, \code{\link[rlang:nse-force]{!!!}}}
 
   \item{tibble}{\code{\link[tibble]{tibble}}}
 
-  \item{tidyselect}{\code{\link[tidyselect]{ends_with}}, \code{\link[tidyselect]{everything}}, \code{\link[tidyselect]{matches}}, \code{\link[tidyselect]{starts_with}}}
+  \item{tidyselect}{\code{\link[tidyselect:starts_with]{ends_with}}, \code{\link[tidyselect]{everything}}, \code{\link[tidyselect:starts_with]{matches}}, \code{\link[tidyselect]{starts_with}}}
 }}
 
