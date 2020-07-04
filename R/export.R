@@ -92,7 +92,7 @@ iso_export_to_excel <- function(
   
   # standards
   if ("standards" %in% names(all_data)) {
-    standards <- all_data %>% select(file_id, standards) %>% unnest(standards)
+    standards <- all_data %>% select(.data$file_id, standards) %>% unnest(standards)
     add_excel_sheet(wb, "standards", standards)
   } 
   

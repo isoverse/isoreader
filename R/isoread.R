@@ -307,9 +307,6 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
                            cache = default(cache), read_cache = default(cache), reread_outdated_cache = FALSE,
                            quiet = default(quiet)) {
 
-  # global
-  path <- file_n <- cacheable <- cachepath <- process <- data <- idx <- NULL
-  
   # start timer
   start_time <- Sys.time()
   
@@ -375,19 +372,19 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
     mutate(
       file_n = 1:n(),
       files_n = n(),
-      cachepath = generate_cache_filepaths(file.path(root, path)),
-      old_cachepath = generate_old_cache_filepaths(file.path(root, path), data_structure$read_options),
-      process = if(!parallel) NA_integer_ else ((file_n - 1) %% cores) + 1L,
+      cachepath = generate_cache_filepaths(file.path(.data$root, .data$path)),
+      old_cachepath = generate_old_cache_filepaths(file.path(.data$root, .data$path), data_structure$read_options),
+      process = if(!parallel) NA_integer_ else ((.data$file_n - 1) %% cores) + 1L,
       reader_options = list(!!reader_options)
     ) %>% 
     # merge in supported extensions with reader and cacheable info
     match_to_supported_file_types(supported_extensions) %>% 
     # make cache read/write decisions
     mutate(
-      read_from_cache = read_cache & cacheable & file.exists(cachepath),
-      read_from_old_cache = read_cache & cacheable & file.exists(old_cachepath),
+      read_from_cache = read_cache & .data$cacheable & file.exists(.data$cachepath),
+      read_from_old_cache = read_cache & .data$cacheable & file.exists(.data$old_cachepath),
       reread_outdated_cache = !!reread_outdated_cache,
-      write_to_cache = cache & cacheable
+      write_to_cache = cache & .data$cacheable
     )
   
   # safety check on reader functions
@@ -406,11 +403,11 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
   set_temp("parallel_process", NA_integer_) # mark the main process
   processes <- 
     files %>% 
-    nest(data = c(-process)) %>% 
+    nest(data = c(-.data$process)) %>% 
     mutate(
       result = purrr::map2(
-        process,
-        data,
+        .data$process,
+        .data$data,
         ~ create_read_process(
           process = .x, data_structure = data_structure, files = .y
         )
@@ -468,10 +465,10 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
 
   # bring files into the correct order after potential parallel processing jumble
   indices <- 
-    tibble(path = purrr::map_chr(iso_files, ~.x$file_info$file_path) %>% unname(), idx = 1:length(path)) %>% 
+    tibble(path = purrr::map_chr(iso_files, ~.x$file_info$file_path) %>% unname(), idx = 1:length(.data$path)) %>% 
     dplyr::left_join(files, by = "path") %>% 
-    dplyr::arrange(file_n) %>% 
-    dplyr::pull(idx) %>% 
+    dplyr::arrange(.data$file_n) %>% 
+    dplyr::pull(.data$idx) %>% 
     unique()
   iso_files <- iso_files[indices]
   
@@ -503,9 +500,11 @@ create_read_process <- function(process, data_structure, files) {
   
   # parallel
   if (!is.na(process)) {
+    # session options
+    all_opts <- get_all_options()
     # find required global functions and packages from the used readers
     func_globals <- filter(files, .data$reader_fun_env == "R_GlobalEnv")$reader_fun %>% 
-      unique() %>% { setNames(purrr::map(., ~rlang::eval_tidy(rlang::sym(.x))), .) }
+      unique() %>% { rlang::set_names(purrr::map(., ~rlang::eval_tidy(rlang::sym(.x))), .) }
     packages <- c("isoreader", "purrr", filter(files, .data$reader_fun_env != "R_GlobalEnv")$reader_fun_env) %>% unique()
     log_file <- get_temp("parallel_log_file")
     progress_file <- get_temp("parallel_progress_file")
@@ -514,7 +513,7 @@ create_read_process <- function(process, data_structure, files) {
       future::future(
         globals = c(func_globals, list(
           process = process, data_structure = data_structure, files = files, 
-          log_file = log_file, progress_file = progress_file, all_opts = get_all_options())),
+          log_file = log_file, progress_file = progress_file, all_opts = all_opts)),
         packages = packages,
         expr = {
           # require namespace if running in a separate session during parallel processing
@@ -803,8 +802,8 @@ reread_iso_files <- function(
   all_files <- names(iso_files)
   old_files <- all_files[get_iso_object_outdated(iso_files)]
   trouble_files <- problems(iso_files)
-  error_files <- dplyr::filter(trouble_files, type == "error") %>% dplyr::pull(file_id)
-  warning_files <- dplyr::filter(trouble_files, type == "warning") %>% dplyr::pull(file_id)
+  error_files <- dplyr::filter(trouble_files, .data$type == "error") %>% dplyr::pull(.data$file_id)
+  warning_files <- dplyr::filter(trouble_files, .data$type == "warning") %>% dplyr::pull(.data$file_id)
   good_files <- setdiff(all_files, c(error_files, warning_files))
   reread_file_ids <- c()
   if (reread_files_without_problems) reread_file_ids <- c(reread_file_ids, good_files)
@@ -819,26 +818,26 @@ reread_iso_files <- function(
       file_id = reread_file_ids,
       file_root = iso_files[reread_file_ids] %>% map_chr(get_ds_file_root) %>% as.character(),
       file_path = iso_files[reread_file_ids] %>% map_chr(get_ds_file_path, include_root = FALSE) %>% as.character(),
-      file_exists = file.path(file_root, file_path) %>% map_lgl(file.exists)
+      file_exists = file.path(.data$file_root, .data$file_path) %>% map_lgl(file.exists)
     )
   
   # safety check for non existent data files
   if (!all(file_paths$file_exists)) {
     msg <- 
       # 'unique' paths to account for IARC type multi-file re-reads
-      file_paths %>% select(-file_id) %>% filter(!file_exists) %>% unique() %>% 
-      with(
+      file_paths %>% select(-.data$file_id) %>% filter(!.data$file_exists) %>% unique() %>% 
+      {
         sprintf(
           "%d file(s) do not exist at their referenced location and can not be re-read. Consider setting a new root directory with iso_set_file_root() first:\n - %s\n",
-          length(file_exists), paste(sprintf("'%s' in root '%s'", file_path, file_root), collapse = "\n - "))
-      )
+          length(.$file_exists), paste(sprintf("'%s' in root '%s'", .$file_path, .$file_root), collapse = "\n - "))
+      }
     if (stop_if_missing) {
       stop(msg, call. = FALSE)
     } else {
       log_warning(msg)
-      iso_files[filter(file_paths, !file_exists)$file_id] <-
+      iso_files[filter(file_paths, !.data$file_exists)$file_id] <-
         map(
-          iso_files[filter(file_paths, !file_exists)$file_id], 
+          iso_files[filter(file_paths, !.data$file_exists)$file_id], 
           register_warning, 
           func = "reread_iso_files", 
           details = "file does not exist at its referenced location and can not be re-read",
@@ -851,16 +850,16 @@ reread_iso_files <- function(
   file_paths <- 
     file_paths %>% 
     # don't re-read non-existent
-    filter(file_exists) %>% 
+    filter(.data$file_exists) %>% 
     # check if has cache
     mutate(
-      cachepath = generate_cache_filepaths(file.path(file_root, file_path)),
-      has_cache = file.exists(cachepath)
+      cachepath = generate_cache_filepaths(file.path(.data$file_root, .data$file_path)),
+      has_cache = file.exists(.data$cachepath)
     )
   
   # check if only rereading changed files
   if (reread_only_changed_files) {
-    file_paths <- filter(file_paths, !has_cache)
+    file_paths <- filter(file_paths, !.data$has_cache)
   }
 
   # info message
@@ -890,7 +889,7 @@ reread_iso_files <- function(
   # reread files
   if (nrow(file_paths) > 0) {
     # 'unique' paths to account for IARC type multi-file re-reads
-    reread_file_paths <- file_paths %>% select(-file_id) %>% unique()
+    reread_file_paths <- file_paths %>% select(-.data$file_id) %>% unique()
     args <- c(list(
       paths = reread_file_paths$file_path, root = reread_file_paths$file_root, 
       read_cache = reread_only_outdated_files,
