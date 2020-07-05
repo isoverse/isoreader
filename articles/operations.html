@@ -105,7 +105,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Operations</h1>
             
-            <h4 class="date">2020-07-04</h4>
+            <h4 class="date">2020-07-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/operations.Rmd"><code>vignettes/operations.Rmd</code></a></small>
       <div class="hidden name"><code>operations.Rmd</code></div>
@@ -228,7 +228,7 @@
   <span class="kw">knitr</span>::<span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()
 <span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span>
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.did' from cache...</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.52 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.56 secs</span>
 <span class="co">#&gt; Info: selecting/renaming the following file info across 1 data file(s): 'file_datetime', 'Identifier 1'</span>
 <span class="co">#&gt; Info: aggregating file info from 1 data file(s)</span>
 </pre></div>
@@ -310,14 +310,14 @@
   <span class="fu"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span>()
 <span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span>
 <span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' from cache...</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.23 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.25 secs</span>
 
 <span class="co"># re-read the same file much faster (it will be read from cache)</span>
 <span class="kw">cf_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span>(<span class="st">"continuous_flow_example.dxf"</span>) <span class="op">%&gt;%</span> 
     <span class="fu"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span>()
 <span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span>
 <span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' from cache...</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.23 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.25 secs</span>
 
 <span class="co"># turn reader caching off</span>
 <span class="fu"><a href="../reference/iso_caching.html">iso_turn_reader_caching_off</a></span>()
@@ -328,7 +328,7 @@
   <span class="fu"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span>()
 <span class="co">#&gt; Info: preparing to read 1 data files...</span>
 <span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' with '.dxf' reader...</span>
-<span class="co">#&gt; Info: finished reading 1 files in 3.05 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 3.29 secs</span>
 
 <span class="co"># turn reader caching back on</span>
 <span class="fu"><a href="../reference/iso_caching.html">iso_turn_reader_caching_on</a></span>()
@@ -353,7 +353,7 @@
 <span class="co">#&gt; Info (process 1): reading file 'dual_inlet_example.did' from cache...</span>
 <span class="co">#&gt; Info (process 2): reading file 'dual_inlet_example2.did' from cache...</span>
 <span class="co">#&gt; Info (process 3): reading file 'dual_inlet_example.caf' from cache...</span>
-<span class="co">#&gt; Info: finished reading 3 files in 4.09 secs</span>
+<span class="co">#&gt; Info: finished reading 3 files in 4.49 secs</span>
 </pre></div>
 </div>
 <div id="combining-subsetting-isofiles" class="section level1">
@@ -437,7 +437,7 @@
 <span class="co">#&gt; Info: reading file 'extdata/continuous_flow_example.dxf' from cache...</span>
 <span class="co">#&gt; Info: reading file 'errdata/cf_without_data.dxf' with '.dxf' reader...</span>
 <span class="co">#&gt; Warning: caught error - cannot identify measured masses - block 'CEvalDataI...</span>
-<span class="co">#&gt; Info: finished reading 2 files in 0.79 secs</span>
+<span class="co">#&gt; Info: finished reading 2 files in 0.86 secs</span>
 <span class="co">#&gt; Info: encountered 1 problems in total</span>
 <span class="co">#&gt; # A tibble: 1 x 4</span>
 <span class="co">#&gt;   file_id       type  func             details                                  </span>
