@@ -13,9 +13,9 @@ output:
 editor_options:
   chunk_output_type: console
 vignette: >
-  %\VignetteIndexEntry{Development}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Development features of isoreader}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r setup, include = FALSE}
