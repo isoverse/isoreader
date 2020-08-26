@@ -517,7 +517,7 @@ create_read_process <- function(process, data_structure, files) {
         packages = packages,
         expr = {
           # require namespace if running in a separate session during parallel processing
-          base::requireNamespace("isoprocessor", quietly = TRUE)
+          base::requireNamespace("isoreader", quietly = TRUE)
           # reload isoreader options
           options(all_opts)
           # set isoreader temp options for parallel processing
