@@ -427,8 +427,10 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
       # extract unit information
       extract(.data$column, into = c("prefix", "data", "extra_parens", "units"), regex = data_cols_re) %>% 
       dplyr::select(-.data$extra_parens) %>% 
-      # assign category
       mutate(
+        # units cleanup
+        units = ifelse(is.na(units) | nchar(units) == 0, NA_character_, units),
+        # assign category
         category = case_when(
           .data$prefix %in% c("i", "v") ~ "mass",
           .data$prefix %in% c("iC", "vC") ~ "channel",
