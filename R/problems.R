@@ -9,7 +9,7 @@
 #' 
 #' \item \code{\link{iso_has_problems}}
 #' 
-#' \item \code{\link[readr]{stop_for_problems}}
+#' \item \code{\link[readr:problems]{stop_for_problems}}
 #' 
 #' \item \code{\link{iso_filter_files_with_problems}}
 #' }

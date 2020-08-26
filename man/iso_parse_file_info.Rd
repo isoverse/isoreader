@@ -18,15 +18,15 @@ iso_parse_file_info(
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
-\item{number}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a number using \link[readr]{parse_number}. Use \code{c(...)} to select multiple columns.}
+\item{number}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a number using \link[readr:parse_atomic]{parse_number}. Use \code{c(...)} to select multiple columns.}
 
-\item{double}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a double using \link[readr]{parse_double}. Use \code{c(...)} to select multiple columns.}
+\item{double}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a double using \link[readr:parse_atomic]{parse_double}. Use \code{c(...)} to select multiple columns.}
 
-\item{integer}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to an integer using \link[readr]{parse_integer}. Use \code{c(...)} to select multiple columns.}
+\item{integer}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to an integer using \link[readr:parse_atomic]{parse_integer}. Use \code{c(...)} to select multiple columns.}
 
-\item{logical}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a boolean (TRUE/FALSE) using \link[readr]{parse_logical}. Use \code{c(...)} to select multiple columns.}
+\item{logical}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a boolean (TRUE/FALSE) using \link[readr:parse_atomic]{parse_logical}. Use \code{c(...)} to select multiple columns.}
 
-\item{datetime}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a date-time using \link[readr]{parse_datetime}. Use \code{c(...)} to select multiple columns.}
+\item{datetime}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to a date-time using \link[readr:parse_atomic]{parse_datetime}. Use \code{c(...)} to select multiple columns.}
 
 \item{text}{dplyr-style \link[dplyr]{select} condition to choose columns that should be converted to text using \link[base]{as.character}. Use \code{c(...)} to select multiple columns.}
 
