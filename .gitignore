@@ -11,6 +11,7 @@
 *.rds
 *.rda
 *.feather
+*.txt
 *-Ex.R
 # Output files from R CMD build
 /*.tar.gz
