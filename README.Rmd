@@ -20,8 +20,6 @@ version <- as.character(packageVersion("isoreader"))
 [![Git_Hub_Version](https://img.shields.io/badge/GitHub-`r version`-orange.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](http://isoreader.isoverse.org/)
 [![R build status](https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg)](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check)
-[![Build Status](https://travis-ci.org/isoverse/isoreader.svg?branch=master)](https://travis-ci.org/isoverse/isoreader)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/isoverse/isoreader?branch=master&svg=true)](https://ci.appveyor.com/project/KopfLab/isoreader)
 [![Binder](https://img.shields.io/badge/launch-RStudio-blue.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=rstudio)
 [![Binder](https://img.shields.io/badge/launch-Jupyter-orange.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=lab)
 
