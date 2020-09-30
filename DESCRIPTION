@@ -18,6 +18,7 @@ Imports:
     tibble (>= 3.0.0),
     dplyr (>= 0.8.5),
     tidyr (>= 1.0.0),
+    lifecycle,
     glue,
     stringr,
     purrr,

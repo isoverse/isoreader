@@ -2,8 +2,6 @@
 # @TODO: remove deprecated functions
 
 # Read binary file
-# @note this does not work for very large files probably because of the 2^31-1 limit on vector size! think about ways to fix this...
-# --> might have to acually read directly from the conection instead of the raw data buffer!
 read_binary_file <- function(filepath) {
   
   if (!file.exists(filepath) || file.info(filepath)$isdir == TRUE)
@@ -14,12 +12,13 @@ read_binary_file <- function(filepath) {
       list(
         raw = raw(),
         C_blocks = tibble(),
+        text = tibble(),
         data = list(),
         pos = 1L, # current position within the file
         max_pos = NULL, # max position to consider during operations
         error_prefix = "" # what prefix to append to errors
       ),
-      class = "binary_file"
+      class = "binary_file" # FIXME: should be changed to binary_isodat_file
     )
   
   # read
@@ -29,8 +28,9 @@ read_binary_file <- function(filepath) {
   bfile$max_pos <- length(bfile$raw)
   close(con)
   
-  # find C_blocks
-  bfile$C_blocks <- find_C_blocks(bfile$raw)
+  # find structure blocks
+  bfile$C_blocks <- find_C_blocks(bfile$raw) # FIXME: should be deprecated
+  bfile$blocks <- find_isodat_structure_blocks(bfile$raw)
   
   return(bfile)
 }
@@ -472,26 +472,45 @@ capture_n_data <- function(bfile, id, type, n, sensible = NULL) {
 # Keys ======
 
 # find all isodat C_blocks in the binary (marked by the below regexp pattern followed by a string of ascii characters)
+# @note: microbenchmarked to optimum
 find_C_blocks <- function(raw) {
-  regexp <- paste0("\xff\xff(\\x00|[\x01-\x0f])\\x00.\\x00\x43[\x20-\x7e]+")
+  regexp <- "\xff\xff(\\x00|[\x01-\x0f])\\x00.\\x00\x43[\x20-\x7e]"
   re_positions <- grepRaw(regexp, raw, all = TRUE, value = FALSE) 
-  re_matches <- grepRaw(regexp, raw, all = TRUE, value = TRUE) 
   
-  # values
-  lapply(re_matches, function(x) {
-    list(
-      id1 = as.character(readBin(x[3], "raw")),
-      id2 = as.character(readBin(x[5], "raw")),
-      block = str_c(readBin(x[7:length(x)], "character", n = length(x) - 7), collapse = "")
-    )
-  }) %>% bind_rows() %>% 
-    # byte positions
-    mutate(
-      start = re_positions,
-      end = .data$start + nchar(.data$block) + 6 - 1
-    )
+  # blocks
+  tibble(
+    # 2 maps are faster than one + bind_rows!
+    id = map_chr(re_positions, function(x) {
+      as.character(raw[x+2], "raw")
+    }),
+    block = map_chr(re_positions, function(x) {
+      len <- readBin(raw[x+c(4,5)], "int", size = 2)
+      intToUtf8(raw[x+5+c(1:len)])
+    }),
+    start = re_positions,
+    end = start + 5L + nchar(block)
+  )
 }
 
+
+# Text ====
+
+# find all isodat text in the binary (marked by the below regexp pattern followed by a string of unicode characters)
+# @note: microbenchmarked to optimum
+find_text <- function(raw) {
+  regexp <- "\xff\xfe\xff"
+  re_positions <- grepRaw(regexp, raw, all = TRUE, value = FALSE)
+  
+  # text values
+  tibble(
+    text = map_chr(re_positions, function(x) {
+      len <- readBin(raw[x + 3], "int", size = 1)
+      text = intToUtf8(readBin(raw[x + 3 + c(1:(2*len))], "int", n = len, size = 2))
+    }),
+    start = re_positions + 4L,
+    end = start + nchar(text) * 2L
+  )
+}
 
 # Parse data =====
 
@@ -518,11 +537,11 @@ get_ctrl_blocks_config <- function() {
     `54-fc` = list(size = 4L, auto = TRUE, regexp = "\x54\xfc\\x00\\x00"), #another type of data start indicator
     
     # FFF and EEE and combination blocks
-    nl      = list(size = 4L, auto = TRUE, regexp = "\xff\xfe\xff\x0a"), # FF FE FF 0A new line
-    `fef-0` = list(size = 4L, auto = TRUE, regexp = "\xff\xfe\xff\\x00"), # meaning = ?
-    `fef-x` = list(size = 4L, auto = TRUE, regexp = "\xff\xfe\xff.", # meaning = ?
+    nl      = list(size = 4L, auto = TRUE, regexp = "\xff\xfe\xff\x0a"), # FF FE FF 0A new line (SK update: pretty sure this is incorrect, it's just a set text with 10 characters)
+    `fef-0` = list(size = 4L, auto = TRUE, regexp = "\xff\xfe\xff\\x00"), # meaning: empty string follows
+    `fef-x` = list(size = 4L, auto = TRUE, regexp = "\xff\xfe\xff.", # meaning: x = number of unicode characters that follow! (I think)
                    replace = function(b) str_c("fef-", readBin(b[4], "raw"))),
-    `eee-0` = list(size = 4L, auto = TRUE, regexp = "\xef\xef\xef\\x00."),
+    `eee-0` = list(size = 4L, auto = TRUE, regexp = "\xef\xef\xef\\x00."), # SK: not sure where this was!
     ffff    = list(size = 4L, auto = TRUE, regexp = "\xff{4}"), # meaning = ?
     
     # x000 blocks
@@ -534,6 +553,9 @@ get_ctrl_blocks_config <- function() {
     
     # c block (not auto processed because Cblocks are found separately)
     `C-block`  = list(size = 20L, auto = FALSE, regexp = "\xff\xff(\\x00|[\x01-\x0f])\\x00.\\x00\x43[\x20-\x7e]+"),
+    
+    # specific text blocks
+    `/` = list(size = 2L, auto = TRUE, regexp = "\x2f\\x00", replace = "/"),
     
     # text block (not auto processed) - note that this does NOT include non standard characters
     latin   = list(size = 20L, auto = FALSE, regexp = "([\x41-\x5a\x61-\x7a]\\x00)+"), #a-zA-Z
@@ -776,6 +798,8 @@ map_C_block_structure <- function(bfile, C_block, occurence = 1, length = 100, c
 #' @param ctrl_blocks named list of block patterns with size, regexp and [optional] replace function
 map_binary_structure <- function(bfile, length = 100, start = bfile$pos, ctrl_blocks = get_ctrl_blocks_config()) {
   
+  lifecycle::deprecate_warn("1.3.0", "map_binary_structure()", "iso_print_source_file_structure()")
+  
   if(!is(bfile, "binary_file")) 
     stop("can only generate map for binary file object, passed in: ", 
          str_c(class(bfile), collapse = ", "), call. = FALSE)
@@ -800,7 +824,7 @@ map_binary_structure <- function(bfile, length = 100, start = bfile$pos, ctrl_bl
         blocks <- c(blocks, new_block(start = last_block_end, length = pos - last_block_end, type = "data"))
       }
       blocks <- c(blocks, new_block(start = pos, length = 0, type = "cblock", rep_text = 
-                                      with(cblock, sprintf("C-%s-%s %s", id1, id2, block))))
+                                      with(cblock, sprintf("C-%s %s", id, block))))
       pos <- last_block_end <- cblock$end + 1
       next
     }
@@ -1001,3 +1025,260 @@ print.binary_structure_map <- function(x, ..., data_as_raw = FALSE, line_break_b
   cat("# Binary data structure: ", generate_binary_structure_map_printout(x, data_as_raw, line_break_blocks, pos_info))
 }
 
+# Structure Blocks =======
+
+# @TODO: write tests
+#' find regular expression pattern and turn into a block tibble
+#' @param raw binary vector
+#' @param regular expression to match
+#' @param start_expr expression to calculate starting point (relative to the regexp match var 'pos')
+#' @param block_expr expression to construct the block text (based on 'start' and 'raw')
+#' @param len_expr expression to calculate the length of the block (based on 'start' and/or 'block')
+find_pattern_blocks <- function(raw, regex, start_expr, block_expr, len_expr) {
+  # safety checks
+  stopifnot(rlang::is_expression(start_expr))
+  stopifnot(rlang::is_expression(block_expr))
+  stopifnot(rlang::is_expression(len_expr))
+  
+  # find positions
+  re_positions <- grepRaw(regex, raw, all = TRUE, value = FALSE) 
+  
+  # blocks
+  tibble(
+    pos = re_positions,
+    start = rlang::eval_tidy(start_expr),
+    block = rlang::eval_tidy(block_expr),
+    len = rlang::eval_tidy(len_expr),
+    end = start + len - 1L
+  )
+}
+
+# @TODO: write tests
+#' find unkown patterns and turn into a block tibble
+#' @param raw binary vector
+#' @param blocks tibble with identified blocks, must have columns start & end
+#' @param block_n_chars the number of chars to preview as 'block' text in the resulting tibble
+find_unknown_blocks <- function(raw, blocks, block_n_chars = 8L) {
+  # identified block indices
+  found_blocks <- 
+    blocks %>% 
+    dplyr::mutate(idx = purrr::map2(start, end, ~.x:.y)) %>% 
+    dplyr::pull(idx) %>% 
+    unlist()
+  
+  # mark unknown blocks
+  raw_map <- rep(FALSE, length(raw))
+  if (length(found_blocks) > 0)
+    raw_map[found_blocks] <- TRUE
+  
+  # construct unknown blocks
+  tibble(
+    type = "unknown", 
+    start = which(diff(c(TRUE, raw_map)) == -1),
+    end = which(diff(c(raw_map, TRUE)) == 1),
+    len = end - start + 1L,
+    priority = max(blocks$priority) + 1L,
+    block = purrr::map2_chr(start, end, ~{
+      if (.y + 1L > .x + block_n_chars)
+        paste(c(as.character(raw[.x + 1:block_n_chars]), "..."), collapse = " ")
+      else
+        paste(as.character(raw[.x:.y]), collapse = " ")
+    })
+  )
+}
+
+
+
+# Isodat File Structure ======
+
+# @TODO: write tests
+#' returns a tibble with control blacks for isodat files
+#' @return tibble with control blocks for isodat
+get_isodat_control_blocks_config <- function() {
+  bind_rows(
+    # C blocks
+    list(
+      type = "C block", 
+      regex = "\xff\xff(\\x00|[\x01-\x0f])\\x00.\\x00\x43[\x20-\x7e]",
+      start_expr = rlang::exprs(pos),
+      block_expr = rlang::exprs(purrr::map_chr(start, function(x) {
+        len <- readBin(raw[x+c(4,5)], "int", size = 2)
+        intToUtf8(raw[x+5+c(1:len)])
+      })),
+      len_expr = rlang::exprs(6L + nchar(block))
+    ),
+    # text blocks
+    list(
+      type = "text", 
+      regex = "\xff\xfe\xff",
+      start_expr = rlang::exprs(pos),
+      block_expr = rlang::exprs(purrr::map_chr(start, function(x) {
+        len <- readBin(raw[x + 3], "int", size = 1)
+        intToUtf8(readBin(raw[x + 3 + c(1:(2*len))], "int", n = len, size = 2))
+      })),
+      len_expr = rlang::exprs(4L + nchar(block) * 2L)
+    ),
+    # x-000 blocks
+    list(
+      type = "x-000", 
+      regex = "[\x01-\x1f]\\x00{3}",
+      start_expr = rlang::exprs(pos),
+      block_expr = rlang::exprs(purrr::map_chr(start, function(x) {
+        sprintf("%s-000", raw[x])
+      })), 
+      len_expr = rlang::exprs(4L)
+    ),
+    # 0000+ blocks (zeros in multiples of 2, at least 4 at a time ending in a non-zero)
+    list(
+      type = "0000+", 
+      regex = "(\\x00\\x00){2,}[\x01-\xff]", 
+      start_expr = rlang::exprs(pos),
+      block_expr = rlang::exprs(purrr::map_chr(start, function(x){
+        sprintf("%dx00", grepRaw("[\x01-\xff]", raw, all = FALSE, value = FALSE, offset = x) - x)
+      })),
+      len_expr = rlang::exprs(parse_number(block) %>% as.integer())
+    )
+  ) 
+}
+
+# @TODO: write tests
+#' find all isodat structure blocks
+#' @param raw binary vector from an isodat file
+#' @param unknown_block_n_chars the number of chars to preview as 'block' text in the resulting tibble
+find_isodat_structure_blocks <- function(raw, unknown_block_n_chars = 8L) {
+  ctrl_blocks <- 
+    get_isodat_control_blocks_config() %>% 
+    mutate(
+      priority = dplyr::row_number(),
+      blocks = purrr::pmap(
+        list(regex = regex, start_expr = start_expr, block_expr = block_expr, len_expr = len_expr),
+        find_pattern_blocks, 
+        raw = raw
+      )
+    ) %>%
+    dplyr::select(-start_expr, -block_expr, -len_expr) %>% 
+    tidyr::unnest(blocks) 
+  unknown_blocks <- find_unknown_blocks(
+    raw = raw, blocks = ctrl_blocks,
+    block_n_chars = unknown_block_n_chars
+  )
+  all_blocks <- 
+    dplyr::bind_rows(
+      ctrl_blocks,
+      unknown_blocks
+    ) %>% 
+    dplyr::select(start, end, len, type, priority, block) %>% 
+    dplyr::arrange(start)
+  return(all_blocks)
+}
+
+# @TODO: write tests
+#' format isodat structure blocks for printout
+#' @param blocks the structure blocks generated by \code{find_isodat_structure_blocks}
+#' @param new_line_blocks expression when to create a new line
+#' @param indent_blocks expression when to indent a line (only if also matched by new_line_blocks)
+#' @param data_blocks expression to mark data blocks
+#' @param data_highlight expression to insert a 'HIGHLIGHT' marker in the text, example `len > 1000` to highlight large data blocks
+#' @param pos_info whether to include position information for each line  (highly recommended)
+format_isodat_structure_blocks <- function(
+  blocks, 
+  new_line_blocks = type %in% c("C block", "x-000"),
+  indent_blocks = type == "x-000",
+  data_blocks = type %in% c("text", "unknown"),
+  data_highlight = FALSE,
+  pos_info = TRUE) {
+  
+  # expressions
+  new_line_blocks_expr <- rlang::enexpr(new_line_blocks)
+  indent_blocks_expr <- rlang::enexpr(indent_blocks)
+  data_blocks_expr <- rlang::enexpr(data_blocks)
+  data_highlight_expr <- rlang::enexpr(data_highlight)
+  data_highlight_text <- rlang::as_label(data_highlight_expr)
+  
+  # generate printout
+  indent_width <- 2
+  blocks_formatted <- blocks %>% 
+    mutate(
+      # new lines
+      nl_block = !!new_line_blocks_expr, 
+      nl_text = ifelse(c(FALSE, nl_block[-1]), "\n", ""),
+      # indents
+      indent_block = !!indent_blocks_expr,
+      indent_text = ifelse(nl_block & indent_block, sprintf("%%%ds", indent_width) %>% sprintf(""), ""),
+      # position markers
+      pos_text = ifelse(!!pos_info & nl_block, sprintf("%07d: ", start),  ""),
+      # block text
+      data_block = !!data_blocks_expr,
+      data_highlight = !!data_highlight_expr,
+      block_text = case_when(
+        data_block & data_highlight ~ sprintf("{HIGHLIGHT: '%s'; %d: '%s'}", data_highlight_text, len, block),
+        data_block ~ sprintf("{%d: '%s'}", len, block),
+        TRUE ~ sprintf("<%s>", block)
+      ),
+      # everything
+      block_formatted = sprintf("%s%s%s%s", nl_text, pos_text, indent_text, block_text)
+    ) %>% 
+    dplyr::pull(block_formatted)
+  
+  return(structure(blocks_formatted, class = "formatted_isodat_structure"))
+}
+
+#' Print formatted isodat structure
+#' @param x object to show
+#' @param ... additional parameters (not used)
+#' @export
+print.formatted_isodat_structure <- function(x, ...) {
+  cat("# Textual representation of the structure of the isodat file:\n")
+  cat(x, sep = "")
+}
+
+# Print Source File Structure ======
+
+#' Print source file structure
+#' 
+#' Debugging function to print a representation of the structure of the source file underlying an isofile (if there is one).
+#' 
+#' @param object the object for which to print the source file structure.
+#' @param ... additional parameters depending on source file types
+#' @param save_to_file whether to save the source file structure to a text file (provide file path, will overwrite anything already in the file!)
+#' @return the source file structure (invisibly if it is also saved to a file via \code{save_to_file})
+#' @export 
+iso_print_source_file_structure <- function(object, ..., save_to_file = NULL) {
+  UseMethod("iso_print_source_file_structure")
+} 
+
+#' @export
+iso_print_source_file_structure.default <- function(object, ..., save_to_file = NULL) {
+  stop("this function is not defined for objects of type '", 
+       class(object)[1], "'", call. = FALSE)
+}
+
+#' @export
+iso_print_source_file_structure.iso_file <- function(object, ..., save_to_file = NULL) {
+  # FIXME: should be $source instead of $binary!!
+  if (is.null(object$binary))
+    stop("the source file is no longer stored in this iso_file, make sure to run iso_turn_debug_on() before reading a file to have access to the source", call. = TRUE)
+  
+  iso_print_source_file_structure(object$binary, ..., save_to_file = save_to_file)
+}
+
+#' @rdname iso_print_source_file_structure
+#' @param start starting position in the binary file to print from
+#' @param length length in the binary file to print to (by default \code{NULL}, which means print everything)
+#' @param end until which point in the binary file to print to. If provided, overrides whatever is specified in \code{length}
+#' @export
+iso_print_source_file_structure.binary_file <- function(object, start = 1, length = NULL, end = start + length, ..., save_to_file = NULL) {
+  if(rlang::is_empty(end)) end <- max(object$blocks$end)
+  if(end <= start) stop("'end' cannot be smaller than 'start'", call. = FALSE)
+  file_structure <- 
+    object$blocks %>% 
+    filter(start >= !!start, start <= !!end) %>% 
+    format_isodat_structure_blocks(...)
+  
+  # save to file
+  if (!is.null(save_to_file)) {
+    cat(file_structure, sep = "", file = save_to_file)
+    return(invisible(file_structure))
+  }
+  return(file_structure)
+}
