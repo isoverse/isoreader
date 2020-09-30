@@ -66,8 +66,10 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
-      - name: Install New Package
+      - name: Install package
+        if: runner.os == 'Windows'
         run: |
+          # install isoreader before check so parallel processing examples work
           remotes::install_cran("devtools")
           devtools::install_github("isoverse/isoreader")
         shell: Rscript {0}
