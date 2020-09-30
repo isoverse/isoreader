@@ -29,7 +29,7 @@ character vector of same length as \code{string} with the extracted substrings
 }
 \description{
 This is a convenience function to capture substrings from textual data. 
-Uses \code{\link[stringr]{str_match_all}} internally but instead of returning everything, always returns only one single part of the match, depending on parameters \code{capture_n} and \code{capture_group}.
+Uses \code{\link[stringr:str_match]{str_match_all}} internally but instead of returning everything, always returns only one single part of the match, depending on parameters \code{capture_n} and \code{capture_group}.
 }
 \seealso{
 Other data extraction functions: 

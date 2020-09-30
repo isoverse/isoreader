@@ -12,7 +12,7 @@ iso_get_data_summary(iso_files, quiet = default(quiet))
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
 \value{
-a \code{\link[tibble]{data_frame}} that summarizes the data in the \code{iso_files}
+a \code{\link[tibble]{tibble}} that summarizes the data in the \code{iso_files}
 }
 \description{
 Summarize the data information from one or multiple iso files.

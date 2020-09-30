@@ -29,17 +29,17 @@ readr::parse_datetime
 #'
 #' \item \code{\link{extract_word}} is a more specific convenience function to extract the 1st/2nd/3rd word from textual data. 
 #' 
-#' \item \code{\link[readr]{parse_number}} is a convenience function to extract a number even if it is surrouded by text (re-exported from the \link{readr} package).
+#' \item \code{\link[readr:parse_atomic]{parse_number}} is a convenience function to extract a number even if it is surrouded by text (re-exported from the \link{readr} package).
 #' 
-#' \item \code{\link[readr]{parse_double}} parses text that holds double (decimal) numerical values without any extraneous text around - 
-#' use \code{\link[readr]{parse_number}} instead if this is not the case (re-exported from the \link{readr} package)
+#' \item \code{\link[readr:parse_atomic]{parse_double}} parses text that holds double (decimal) numerical values without any extraneous text around - 
+#' use \code{\link[readr:parse_atomic]{parse_number}} instead if this is not the case (re-exported from the \link{readr} package)
 #' 
-#' \item \code{\link[readr]{parse_integer}} parses text that holds integer (whole number) numerical values without any extraneous text around - 
-#' use \code{\link[readr]{parse_number}} instead if this is not the case (re-exported from the \link{readr} package)
+#' \item \code{\link[readr:parse_atomic]{parse_integer}} parses text that holds integer (whole number) numerical values without any extraneous text around - 
+#' use \code{\link[readr:parse_atomic]{parse_number}} instead if this is not the case (re-exported from the \link{readr} package)
 #' 
-#' \item \code{\link[readr]{parse_logical}} parses text that holds logical (boolean, i.e. TRUE/FALSE) values (re-exported from the \link{readr} package)
+#' \item \code{\link[readr:parse_atomic]{parse_logical}} parses text that holds logical (boolean, i.e. TRUE/FALSE) values (re-exported from the \link{readr} package)
 #' 
-#' \item \code{\link[readr]{parse_datetime}} parses text that holds date and time information (re-exported from the \link{readr} package)
+#' \item \code{\link[readr:parse_atomic]{parse_datetime}} parses text that holds date and time information (re-exported from the \link{readr} package)
 #' 
 #' }
 #' @name extract_data
@@ -50,7 +50,7 @@ NULL
 #' Extract a substring from text
 #' 
 #' This is a convenience function to capture substrings from textual data. 
-#' Uses \code{\link[stringr]{str_match_all}} internally but instead of returning everything, always returns only one single part of the match, depending on parameters \code{capture_n} and \code{capture_group}.
+#' Uses \code{\link[stringr:str_match]{str_match_all}} internally but instead of returning everything, always returns only one single part of the match, depending on parameters \code{capture_n} and \code{capture_group}.
 #' 
 #' @param string string to extract
 #' @param pattern regular expression pattern to search for

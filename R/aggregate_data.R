@@ -13,7 +13,7 @@ check_iso_file_param <- function(iso_file) {
 #' Summarize the data information from one or multiple iso files. 
 #' @inheritParams iso_read_files
 #' @param iso_files single iso file or collection of iso_file objects
-#' @return a \code{\link[tibble]{data_frame}} that summarizes the data in the \code{iso_files}
+#' @return a \code{\link[tibble]{tibble}} that summarizes the data in the \code{iso_files}
 #' @export
 iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
   
@@ -201,7 +201,7 @@ iso_get_data <- function(...) {
 
 #' Aggregate all isofiles data
 #' 
-#' This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data \code{\link{iso_get_raw_data}}, \code{\link{iso_get_file_info}}, \code{\link{iso_get_vendor_data_table}}, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To \code{\link[tidyr]{unnest}} any of the specific data types (e.g. \code{raw_data}), make sure to filter first for the files that have this data type available (e.g. \code{filter(has_raw_data)}). Exclude specific types of information by setting its \code{include...} parameter to \code{NULL} (Note: for historical reasons, setting it to \code{FALSE} will also include the information).
+#' This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data \code{\link{iso_get_raw_data}}, \code{\link{iso_get_file_info}}, \code{\link{iso_get_vendor_data_table}}, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To \code{\link[tidyr:nest]{unnest}} any of the specific data types (e.g. \code{raw_data}), make sure to filter first for the files that have this data type available (e.g. \code{filter(has_raw_data)}). Exclude specific types of information by setting its \code{include...} parameter to \code{NULL} (Note: for historical reasons, setting it to \code{FALSE} will also include the information).
 #' 
 #' @inheritParams iso_get_raw_data
 #' @inheritParams iso_get_standards
@@ -318,7 +318,7 @@ iso_get_all_data <- function(
 #' @inheritParams iso_get_raw_data
 #' @inheritParams iso_select_file_info
 #' @param select which columns to select - use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns. File id is always included and cannot be renamed. 
-#' @param simplify if set to TRUE (the default), nested value columns in the file info will be unnested as long as they are compatible across file types. Note that file info entries with multiple values still remain nested multi-value (=list) columns even with \code{simplify=TRUE}. These can be unnested using \link[tidyr]{unnest}.
+#' @param simplify if set to TRUE (the default), nested value columns in the file info will be unnested as long as they are compatible across file types. Note that file info entries with multiple values still remain nested multi-value (=list) columns even with \code{simplify=TRUE}. These can be unnested using \link[tidyr:nest]{unnest}.
 #' @family data retrieval functions
 #' @note this function used to allow selecting/renaming different file_info_columns in different files to the same column. This was a significant speed impediment and only covered very rare use cases. It is still available in the related function \code{\link{iso_select_file_info}} with a special flag but is no longer the default and not incouraged for use in the frequently called \code{iso_get_file_info}.
 #' @export
@@ -427,8 +427,10 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
       # extract unit information
       extract(.data$column, into = c("prefix", "data", "extra_parens", "units"), regex = data_cols_re) %>% 
       dplyr::select(-.data$extra_parens) %>% 
-      # assign category
       mutate(
+        # units cleanup
+        units = ifelse(is.na(units) | nchar(units) == 0, NA_character_, units),
+        # assign category
         category = case_when(
           .data$prefix %in% c("i", "v") ~ "mass",
           .data$prefix %in% c("iC", "vC") ~ "channel",

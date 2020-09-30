@@ -16,17 +16,17 @@ Can be used in combination with the parsing functions to turn extracted substrin
 
 \item \code{\link{extract_word}} is a more specific convenience function to extract the 1st/2nd/3rd word from textual data. 
 
-\item \code{\link[readr]{parse_number}} is a convenience function to extract a number even if it is surrouded by text (re-exported from the \link{readr} package).
+\item \code{\link[readr:parse_atomic]{parse_number}} is a convenience function to extract a number even if it is surrouded by text (re-exported from the \link{readr} package).
 
-\item \code{\link[readr]{parse_double}} parses text that holds double (decimal) numerical values without any extraneous text around - 
-use \code{\link[readr]{parse_number}} instead if this is not the case (re-exported from the \link{readr} package)
+\item \code{\link[readr:parse_atomic]{parse_double}} parses text that holds double (decimal) numerical values without any extraneous text around - 
+use \code{\link[readr:parse_atomic]{parse_number}} instead if this is not the case (re-exported from the \link{readr} package)
 
-\item \code{\link[readr]{parse_integer}} parses text that holds integer (whole number) numerical values without any extraneous text around - 
-use \code{\link[readr]{parse_number}} instead if this is not the case (re-exported from the \link{readr} package)
+\item \code{\link[readr:parse_atomic]{parse_integer}} parses text that holds integer (whole number) numerical values without any extraneous text around - 
+use \code{\link[readr:parse_atomic]{parse_number}} instead if this is not the case (re-exported from the \link{readr} package)
 
-\item \code{\link[readr]{parse_logical}} parses text that holds logical (boolean, i.e. TRUE/FALSE) values (re-exported from the \link{readr} package)
+\item \code{\link[readr:parse_atomic]{parse_logical}} parses text that holds logical (boolean, i.e. TRUE/FALSE) values (re-exported from the \link{readr} package)
 
-\item \code{\link[readr]{parse_datetime}} parses text that holds date and time information (re-exported from the \link{readr} package)
+\item \code{\link[readr:parse_atomic]{parse_datetime}} parses text that holds date and time information (re-exported from the \link{readr} package)
 
 }
 }

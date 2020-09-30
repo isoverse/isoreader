@@ -4,14 +4,10 @@
 # isoreader <a href='http://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
-[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.2.1-orange.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
+[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.2.2-orange.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](http://isoreader.isoverse.org/)
 [![R build
 status](https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg)](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check)
-[![Build
-Status](https://travis-ci.org/isoverse/isoreader.svg?branch=master)](https://travis-ci.org/isoverse/isoreader)
-[![AppVeyor Build
-Status](https://ci.appveyor.com/api/projects/status/github/isoverse/isoreader?branch=master&svg=true)](https://ci.appveyor.com/project/KopfLab/isoreader)
 [![Binder](https://img.shields.io/badge/launch-RStudio-blue.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=rstudio)
 [![Binder](https://img.shields.io/badge/launch-Jupyter-orange.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=lab)
 
@@ -69,8 +65,7 @@ some dependencies (e.g. the `digest` package tends to cause trouble:
 
 ## Functionality
 
-Currently supported file
-types:
+Currently supported file types:
 
 | extension | software  | description                         | type            |
 | :-------- | :-------- | :---------------------------------- | :-------------- |
@@ -132,8 +127,7 @@ session).
 
 [isoreader](http://isoreader.isoverse.org/) is and will always be fully
 open-source (i.e. free as in ‘freedom’ and free as in ‘free beer’) and
-is provided as is. The source code is released under
-GPL-2.
+is provided as is. The source code is released under GPL-2.
 
 ## isoverse <a href='http://www.isoverse.org'><img src='man/figures/isoverse_logo_thumb.png' align="right" height="138.5"/></a>
 
@@ -141,5 +135,5 @@ This package is part of the isoverse suite of data tools for stable
 isotopes. If you like the functionality that isoverse packages provide
 to the geochemical community, please help us spread the word and include
 an isoverse or individual package logo on one of your posters or slides.
-All logos are posted in high resolution in the main [isoverse
-repository](https://github.com/isoverse/isoverse/tree/master/man/figures).
+All logos are posted in high resolution in [this
+repository](https://github.com/isoverse/logos).
