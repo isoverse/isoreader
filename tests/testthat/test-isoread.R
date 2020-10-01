@@ -217,8 +217,13 @@ test_that("test that version checking and re-reads are working properly", {
 
 test_that("test that file event expressions work", {
   
-  minimal_files <- file.path("test_data", "minimal_files") %>% 
-    list.files(pattern = "\\.did", full.names = TRUE)
+  test_folder <- file.path("test_data")
+  minimal_files <- c(
+    download_isoreader_test_file("minimal_01.did", local_folder = test_folder),
+    download_isoreader_test_file("minimal_02.did", local_folder = test_folder),
+    download_isoreader_test_file("minimal_03.did", local_folder = test_folder),
+    download_isoreader_test_file("minimal_04.did", local_folder = test_folder)
+  )
   
   set_read_file_event_expr({ print(file_n*-1) })
   expect_output(iso_read_dual_inlet(minimal_files[1:3], quiet = TRUE), "-1.*-2.*-3")

@@ -10,7 +10,6 @@ test_that("test that supported scan files are correct", {
 
 test_that("test that parameter checks are performed", {
   
-  # flow iarc
   expect_error(iso_read_scn (make_di_data_structure("NA")), 
                "data structure must be a \\'scan\\' iso_file")
   
@@ -45,19 +44,22 @@ test_that("test that scn files can be read", {
   expect_is(scan <- iso_read_scan(file), "scan")
   expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
   
-  test_folder <- file.path("test_data") 
+  # additional test files (require download, thus not on CRAN) =====
+  skip_on_cran()
+  test_folder <- file.path("test_data") # test_folder <- file.path("tests", "testthat", "test_data") # direct
   
-  expect_true(file.exists(file <- file.path(test_folder, "scan_hv_01.scn")))
-  expect_is(scan <- iso_read_scan(file), "scan")
-  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
-
-  expect_true(file.exists(file <- file.path(test_folder, "scan_hv_02.scn")))
-  expect_is(scan <- iso_read_scan(file), "scan")
-  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
+  # testing wrapper
+  check_scan_test_file <- function(file) {
+    file_path <- download_isoreader_test_file(file, local_folder = test_folder)
+    expect_true(file.exists(file_path))
+    expect_is(scn <- iso_read_scan(file_path), "scan")
+    expect_equal(nrow(filter(problems(scn), type != "warning")), 0)
+    return(invisible(scn))
+  }
   
-  expect_true(file.exists(file <- file.path(test_folder, "scan_hv_03.scn")))
-  expect_is(scan <- iso_read_scan(file), "scan")
-  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
+  check_scan_test_file("scan_hv_01.scn")
+  check_scan_test_file("scan_hv_02.scn")
+  check_scan_test_file("scan_hv_03.scn")
   
 })
 

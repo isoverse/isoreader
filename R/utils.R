@@ -762,3 +762,22 @@ show_isoprocessor_migration_message <- function(func) {
              "-->  library(isoprocessor) # load") %>%
     stop(call. = FALSE)
 }
+
+# testing utilities ====
+
+download_isoreader_test_file <- function(file, local_folder, remote_branch = "dev") {
+  
+  # check if file exists, otherwise download it
+  local_path <- file.path(local_folder, file)
+  if (!file.exists(local_path)) {
+    sprintf("Info: downloading '%s' for testing purposes", file) %>% message()
+    utils::download.file(
+      sprintf(
+        "https://github.com/isoverse/isoreader/raw/%s/tests/testthat/test_data/%s", 
+        remote_branch, file),
+      destfile = local_path,
+      quiet = TRUE
+    )
+  }
+  return(local_path)
+}
