@@ -42,7 +42,7 @@ test_that("test that parameter checks are performed when reading file", {
 test_that("test that cached file path hashes work okay", {
   
   test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
-  origin_file <- file.path(test_folder, "cache_test.did")
+  origin_file <- download_isoreader_test_file("cache_test.did", test_folder)
   
   # exact same file in different locations
   temp_file <- file.path(tempdir(), "cache_test.did")
