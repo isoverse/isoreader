@@ -40,8 +40,8 @@
 
 
 <meta property="og:title" content="Overview of text data extraction functions — extract_data" />
-<meta property="og:description" content="The following functions are intened to make it easy to extract relevant information from textual data. 
-These functions are primarily intended for use in iso_mutate_file_info and inside the filtering conditions passed to iso_filter_files. However, they can of course also be used stand-alone and in regular mutate or filter calls on the data frames returned by the data retrievel functions (iso_get_raw_data, iso_get_file_info, iso_get_vendor_data_table, etc.). Not that all the parse_ functions are used in iso_parse_file_info for easy type conversions." />
+<meta property="og:description" content="The following functions are intended to make it easy to extract relevant information from textual data.
+These functions are primarily intended for use in iso_mutate_file_info and inside the filtering conditions passed to iso_filter_files. However, they can of course also be used stand-alone and in regular mutate or filter calls on the data frames returned by the data retrieval functions (iso_get_raw_data, iso_get_file_info, iso_get_vendor_data_table, etc.). Not that all the parse_ functions are used in iso_parse_file_info for easy type conversions." />
 
 
 
@@ -83,7 +83,7 @@ These functions are primarily intended for use in iso_mutate_file_info and insid
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -155,8 +155,8 @@ These functions are primarily intended for use in iso_mutate_file_info and insid
     </div>
 
     <div class="ref-description">
-    <p>The following functions are intened to make it easy to extract relevant information from textual data. 
-These functions are primarily intended for use in <code>iso_mutate_file_info</code> and inside the filtering conditions passed to <code>iso_filter_files</code>. However, they can of course also be used stand-alone and in regular <code><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></code> or <code><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></code> calls on the data frames returned by the data retrievel functions (<code>iso_get_raw_data</code>, <code>iso_get_file_info</code>, <code>iso_get_vendor_data_table</code>, etc.). Not that all the <code>parse_</code> functions are used in <code>iso_parse_file_info</code> for easy type conversions.</p>
+    <p>The following functions are intended to make it easy to extract relevant information from textual data.
+These functions are primarily intended for use in <code><a href='iso_mutate_file_info.html'>iso_mutate_file_info</a></code> and inside the filtering conditions passed to <code><a href='iso_filter_files.html'>iso_filter_files</a></code>. However, they can of course also be used stand-alone and in regular <code><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></code> or <code><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></code> calls on the data frames returned by the data retrieval functions (<code><a href='iso_get_raw_data.html'>iso_get_raw_data</a></code>, <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>, <code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a></code>, etc.). Not that all the <code>parse_</code> functions are used in <code><a href='iso_parse_file_info.html'>iso_parse_file_info</a></code> for easy type conversions.</p>
     </div>
 
 
@@ -165,23 +165,23 @@ These functions are primarily intended for use in <code>iso_mutate_file_info</co
 
     <p>For simultaneous extraction of pure text data into multiple columns, please see the <code><a href='https://tidyr.tidyverse.org/reference/extract.html'>extract</a></code> function from the tidyr package.</p>
 <ul>
-<li><p><code>extract_substring</code> is a generic convience function to extract parts of textual data (based on regular expression matches). 
+<li><p><code><a href='extract_substring.html'>extract_substring</a></code> is a generic convenience function to extract parts of textual data (based on regular expression matches).
 Can be used in combination with the parsing functions to turn extracted substrings into numerical or logical data.</p></li>
-<li><p><code>extract_word</code> is a more specific convenience function to extract the 1st/2nd/3rd word from textual data.</p></li>
-<li><p><code><a href='https://readr.tidyverse.org/reference/parse_number.html'>parse_number</a></code> is a convenience function to extract a number even if it is surrouded by text (re-exported from the readr package).</p></li>
-<li><p><code><a href='https://readr.tidyverse.org/reference/parse_atomic.html'>parse_double</a></code> parses text that holds double (decimal) numerical values without any extraneous text around - 
-use <code><a href='https://readr.tidyverse.org/reference/parse_number.html'>parse_number</a></code> instead if this is not the case (re-exported from the readr package)</p></li>
-<li><p><code><a href='https://readr.tidyverse.org/reference/parse_atomic.html'>parse_integer</a></code> parses text that holds integer (whole number) numerical values without any extraneous text around - 
-use <code><a href='https://readr.tidyverse.org/reference/parse_number.html'>parse_number</a></code> instead if this is not the case (re-exported from the readr package)</p></li>
-<li><p><code><a href='https://readr.tidyverse.org/reference/parse_atomic.html'>parse_logical</a></code> parses text that holds logical (boolean, i.e. TRUE/FALSE) values (re-exported from the readr package)</p></li>
-<li><p><code><a href='https://readr.tidyverse.org/reference/parse_datetime.html'>parse_datetime</a></code> parses text that holds date and time information (re-exported from the readr package)</p></li>
+<li><p><code><a href='extract_word.html'>extract_word</a></code> is a more specific convenience function to extract the 1st/2nd/3rd word from textual data.</p></li>
+<li><p><code>parse_number</code> is a convenience function to extract a number even if it is surrounded by text (re-exported from the readr package).</p></li>
+<li><p><code>parse_double</code> parses text that holds double (decimal) numerical values without any extraneous text around -
+use <code>parse_number</code> instead if this is not the case (re-exported from the readr package)</p></li>
+<li><p><code>parse_integer</code> parses text that holds integer (whole number) numerical values without any extraneous text around -
+use <code>parse_number</code> instead if this is not the case (re-exported from the readr package)</p></li>
+<li><p><code>parse_logical</code> parses text that holds logical (boolean, i.e. TRUE/FALSE) values (re-exported from the readr package)</p></li>
+<li><p><code>parse_datetime</code> parses text that holds date and time information (re-exported from the readr package)</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other data extraction functions: 
-<code>extract_substring()</code>,
-<code>extract_word()</code></p></div>
+<code><a href='extract_substring.html'>extract_substring</a>()</code>,
+<code><a href='extract_word.html'>extract_word</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -198,7 +198,7 @@ use <code><a href='https://readr.tidyverse.org/reference/parse_number.html'>pars
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

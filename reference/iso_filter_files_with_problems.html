@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -154,15 +154,15 @@
     </div>
 
     <div class="ref-description">
-    <p>Use this function to filter out files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the iso_problem_functions.</p>
+    <p>Use this function to filter out files that have encountered problems, either errors, warnings or both and returns the remaining iso_files. For additional functions available to check for and deal with problems, see the <a href='iso_problem_functions.html'>iso_problem_functions</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_filter_files_with_problems</span>(
-  <span class='kw'>iso_files</span>,
-  remove_files_with_errors = <span class='fl'>TRUE</span>,
-  remove_files_with_warnings = <span class='fl'>FALSE</span>,
-  quiet = <span class='fu'>default</span>(<span class='kw'>quiet</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>iso_filter_files_with_problems</span><span class='op'>(</span>
+  <span class='va'>iso_files</span>,
+  remove_files_with_errors <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  remove_files_with_warnings <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  quiet <span class='op'>=</span> <span class='fu'>default</span><span class='op'>(</span><span class='va'>quiet</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -181,17 +181,17 @@
     </tr>
     <tr>
       <th>quiet</th>
-      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to iso_turn_info_message_on and iso_turn_info_message_off</p></td>
+      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other problem functions: 
-<code>iso_get_problems_summary()</code>,
-<code>iso_get_problems()</code>,
-<code>iso_has_problems()</code>,
-<code>iso_problem_functions</code></p></div>
+<code><a href='iso_get_problems_summary.html'>iso_get_problems_summary</a>()</code>,
+<code><a href='iso_get_problems.html'>iso_get_problems</a>()</code>,
+<code><a href='iso_has_problems.html'>iso_has_problems</a>()</code>,
+<code><a href='iso_problem_functions.html'>iso_problem_functions</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -208,7 +208,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

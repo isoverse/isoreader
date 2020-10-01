@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Find roots for absolute paths — iso_find_absolute_path_roots" />
-<meta property="og:description" content="Helper function to find the roots of absolute paths. Tries to put absolute paths into the context of the relative root. For those that this is not possible (because they are not in fact a sub-path of the relative roots), identifies the greatest common denominator for absolute paths as their root. Does not change relative paths but does check wheter they do exist if check_existence = TRUE (the default). To modify relative paths, use iso_shorten_relative_paths prior to calling this function." />
+<meta property="og:description" content="Helper function to find the roots of absolute paths. Tries to put absolute paths into the context of the relative root. For those that this is not possible (because they are not in fact a sub-path of the relative roots), identifies the greatest common denominator for absolute paths as their root. Does not change relative paths but does check whether they do exist if check_existence = TRUE (the default). To modify relative paths, use iso_shorten_relative_paths prior to calling this function." />
 
 
 
@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -154,10 +154,10 @@
     </div>
 
     <div class="ref-description">
-    <p>Helper function to find the roots of absolute paths. Tries to put absolute paths into the context of the relative root. For those that this is not possible (because they are not in fact a sub-path of the relative roots), identifies the greatest common denominator for absolute paths as their root. Does not change relative paths but does check wheter they do exist if <code>check_existence = TRUE</code> (the default). To modify relative paths, use iso_shorten_relative_paths prior to calling this function.</p>
+    <p>Helper function to find the roots of absolute paths. Tries to put absolute paths into the context of the relative root. For those that this is not possible (because they are not in fact a sub-path of the relative roots), identifies the greatest common denominator for absolute paths as their root. Does not change relative paths but does check whether they do exist if <code>check_existence = TRUE</code> (the default). To modify relative paths, use <a href='iso_shorten_relative_paths.html'>iso_shorten_relative_paths</a> prior to calling this function.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_find_absolute_path_roots</span>(<span class='kw'>path</span>, root = <span class='st'>"."</span>, check_existence = <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>iso_find_absolute_path_roots</span><span class='op'>(</span><span class='va'>path</span>, root <span class='op'>=</span> <span class='st'>"."</span>, check_existence <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -182,9 +182,9 @@
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other file system functions: 
-<code>iso_expand_paths()</code>,
-<code>iso_root_paths()</code>,
-<code>iso_shorten_relative_paths()</code></p></div>
+<code><a href='iso_expand_paths.html'>iso_expand_paths</a>()</code>,
+<code><a href='iso_root_paths.html'>iso_root_paths</a>()</code>,
+<code><a href='iso_shorten_relative_paths.html'>iso_shorten_relative_paths</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -201,7 +201,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -154,10 +154,10 @@
     </div>
 
     <div class="ref-description">
-    <p>Mutate the file info (<code>iso_get_file_info</code>) within isofile objects by changing existing columns or introducing new ones. Works just like dplyr's <a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a>. You can also use <a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a> directly but it will not provide summary information on the operation. Note that this will create missing columns that exist in some but not all of the passed in isofile objects in all isofile objects (filling them with NAs) the same way that <code>iso_get_file_info</code> does.</p>
+    <p>Mutate the file info (<code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>) within isofile objects by changing existing columns or introducing new ones. Works just like dplyr's <a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a>. You can also use <a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a> directly but it will not provide summary information on the operation. Note that this will create missing columns that exist in some but not all of the passed in isofile objects in all isofile objects (filling them with NAs) the same way that <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code> does.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_mutate_file_info</span>(<span class='kw'>iso_files</span>, <span class='kw'>...</span>, quiet = <span class='fu'>default</span>(<span class='kw'>quiet</span>))</pre>
+    <pre class="usage"><span class='fu'>iso_mutate_file_info</span><span class='op'>(</span><span class='va'>iso_files</span>, <span class='va'>...</span>, quiet <span class='op'>=</span> <span class='fu'>default</span><span class='op'>(</span><span class='va'>quiet</span><span class='op'>)</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -168,23 +168,23 @@
     </tr>
     <tr>
       <th>...</th>
-      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a> conditions applied to the combined file info (see <code>iso_get_file_info</code>)</p></td>
+      <td><p>dplyr-style <a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a> conditions applied to the combined file info (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>)</p></td>
     </tr>
     <tr>
       <th>quiet</th>
-      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to iso_turn_info_message_on and iso_turn_info_message_off</p></td>
+      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other file_info operations: 
-<code>iso_add_file_info.iso_file_list()</code>,
-<code>iso_filter_files()</code>,
-<code>iso_parse_file_info()</code>,
-<code>iso_rename_file_info()</code>,
-<code>iso_select_file_info()</code>,
-<code>iso_set_file_root()</code></p></div>
+<code><a href='iso_add_file_info.iso_file_list.html'>iso_add_file_info.iso_file_list</a>()</code>,
+<code><a href='iso_filter_files.html'>iso_filter_files</a>()</code>,
+<code><a href='iso_parse_file_info.html'>iso_parse_file_info</a>()</code>,
+<code><a href='iso_rename_file_info.html'>iso_rename_file_info</a>()</code>,
+<code><a href='iso_select_file_info.html'>iso_select_file_info</a>()</code>,
+<code><a href='iso_set_file_root.html'>iso_set_file_root</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -201,7 +201,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

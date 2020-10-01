@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -154,12 +154,12 @@
     </div>
 
     <div class="ref-description">
-    <p>These functions generate values with units that work well within data frames and tibbles and implement safety checks on operations that combine values with different units. To retrieve the value without units, use <code>iso_strip_units</code> (works for single variables and data frames/tibbles). To retrieve the unit use <code>iso_get_units</code>. Note that to correctly combine data frames / tibbles that have values with units in them, use <a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind</a> instead of <a href='https://rdrr.io/r/base/cbind.html'>rbind</a> or <a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a>. <a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind</a> will combine columns that have values with units if they have the same unit and otherwise convert back to plain values without units with a warning. The other functions will either fail or reduce the unit values to plain values with a cryptic warning message about not preserving attributes.</p>
+    <p>These functions generate values with units that work well within data frames and tibbles and implement safety checks on operations that combine values with different units. To retrieve the value without units, use <code><a href='iso_strip_units.html'>iso_strip_units</a></code> (works for single variables and data frames/tibbles). To retrieve the unit use <code><a href='iso_get_units.html'>iso_get_units</a></code>. Note that to correctly combine data frames / tibbles that have values with units in them, use <a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind</a> instead of <a href='https://rdrr.io/r/base/cbind.html'>rbind</a> or <a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a>. <a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind</a> will combine columns that have values with units if they have the same unit and otherwise convert back to plain values without units with a warning. The other functions will either fail or reduce the unit values to plain values with a cryptic warning message about not preserving attributes.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_with_units</span>(<span class='kw'>x</span>, units = <span class='st'>"undefined units"</span>)
+    <pre class="usage"><span class='fu'>iso_with_units</span><span class='op'>(</span><span class='va'>x</span>, units <span class='op'>=</span> <span class='st'>"undefined units"</span><span class='op'>)</span>
 
-<span class='fu'>iso_double_with_units</span>(x = <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(), units = <span class='st'>"undefined units"</span>)</pre>
+<span class='fu'>iso_double_with_units</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span><span class='op'>(</span><span class='op'>)</span>, units <span class='op'>=</span> <span class='st'>"undefined units"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -180,17 +180,17 @@
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other functions for values with units: 
-<code>iso_get_units()</code>,
-<code>iso_is_double_with_units()</code>,
-<code>iso_make_units_explicit()</code>,
-<code>iso_make_units_implicit()</code>,
-<code>iso_strip_units()</code></p>
+<code><a href='iso_get_units.html'>iso_get_units</a>()</code>,
+<code><a href='iso_is_double_with_units.html'>iso_is_double_with_units</a>()</code>,
+<code><a href='iso_make_units_explicit.html'>iso_make_units_explicit</a>()</code>,
+<code><a href='iso_make_units_implicit.html'>iso_make_units_implicit</a>()</code>,
+<code><a href='iso_strip_units.html'>iso_strip_units</a>()</code></p>
 <p>Other functions for values with units: 
-<code>iso_get_units()</code>,
-<code>iso_is_double_with_units()</code>,
-<code>iso_make_units_explicit()</code>,
-<code>iso_make_units_implicit()</code>,
-<code>iso_strip_units()</code></p></div>
+<code><a href='iso_get_units.html'>iso_get_units</a>()</code>,
+<code><a href='iso_is_double_with_units.html'>iso_is_double_with_units</a>()</code>,
+<code><a href='iso_make_units_explicit.html'>iso_make_units_explicit</a>()</code>,
+<code><a href='iso_make_units_implicit.html'>iso_make_units_implicit</a>()</code>,
+<code><a href='iso_strip_units.html'>iso_strip_units</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -207,7 +207,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

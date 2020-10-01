@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -154,22 +154,22 @@
     </div>
 
     <div class="ref-description">
-    <p>This function exports the passed in iso_files to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided <code>filepath_prefix</code> as prefix. All are only exported if the corresponding <code>include_</code> parameter is set to <code>TRUE</code> and only for data types for which this type of data is available and was read (see <code>iso_read_dual_inlet</code>, <code>iso_read_continuous_flow</code> for details on read parameters). Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in feather output.</p>
+    <p>This function exports the passed in iso_files to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided <code>filepath_prefix</code> as prefix. All are only exported if the corresponding <code>include_</code> parameter is set to <code>TRUE</code> and only for data types for which this type of data is available and was read (see <code><a href='iso_read_dual_inlet.html'>iso_read_dual_inlet</a></code>, <code><a href='iso_read_continuous_flow.html'>iso_read_continuous_flow</a></code> for details on read parameters). Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in feather output.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_export_to_feather</span>(
-  <span class='kw'>iso_files</span>,
-  <span class='kw'>filepath_prefix</span>,
-  include_file_info = <span class='fu'>everything</span>(),
-  include_raw_data = <span class='fu'>everything</span>(),
-  include_standards = <span class='op'>!</span><span class='op'>!</span><span class='fu'>enexpr</span>(<span class='kw'>include_method_info</span>),
-  include_resistors = <span class='op'>!</span><span class='op'>!</span><span class='fu'>enquo</span>(<span class='kw'>include_method_info</span>),
-  include_vendor_data_table = <span class='fu'>everything</span>(),
-  include_problems = <span class='fu'>everything</span>(),
-  with_explicit_units = <span class='fl'>FALSE</span>,
-  include_method_info = <span class='fu'>everything</span>(),
-  quiet = <span class='fu'>default</span>(<span class='kw'>quiet</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>iso_export_to_feather</span><span class='op'>(</span>
+  <span class='va'>iso_files</span>,
+  <span class='va'>filepath_prefix</span>,
+  include_file_info <span class='op'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/everything.html'>everything</a></span><span class='op'>(</span><span class='op'>)</span>,
+  include_raw_data <span class='op'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/everything.html'>everything</a></span><span class='op'>(</span><span class='op'>)</span>,
+  include_standards <span class='op'>=</span> <span class='op'>!</span><span class='op'>!</span><span class='fu'>enexpr</span><span class='op'>(</span><span class='va'>include_method_info</span><span class='op'>)</span>,
+  include_resistors <span class='op'>=</span> <span class='op'>!</span><span class='op'>!</span><span class='fu'>enquo</span><span class='op'>(</span><span class='va'>include_method_info</span><span class='op'>)</span>,
+  include_vendor_data_table <span class='op'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/everything.html'>everything</a></span><span class='op'>(</span><span class='op'>)</span>,
+  include_problems <span class='op'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/everything.html'>everything</a></span><span class='op'>(</span><span class='op'>)</span>,
+  with_explicit_units <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  include_method_info <span class='op'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/everything.html'>everything</a></span><span class='op'>(</span><span class='op'>)</span>,
+  quiet <span class='op'>=</span> <span class='fu'>default</span><span class='op'>(</span><span class='va'>quiet</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -184,7 +184,7 @@
     </tr>
     <tr>
       <th>include_file_info</th>
-      <td><p>which file information to include (see <code>iso_get_file_info</code>). Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns.</p></td>
+      <td><p>which file information to include (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>). Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns.</p></td>
     </tr>
     <tr>
       <th>include_raw_data</th>
@@ -208,7 +208,7 @@
     </tr>
     <tr>
       <th>with_explicit_units</th>
-      <td><p>whether to include units in the column headers of the returned data frame instead of the column data types (see <code>iso_double_with_units</code>). Note that any <code>select</code> conditions have to refer to the column names including the full units.</p></td>
+      <td><p>whether to include units in the column headers of the returned data frame instead of the column data types (see <code><a href='iso_with_units.html'>iso_double_with_units</a></code>). Note that any <code>select</code> conditions have to refer to the column names including the full units.</p></td>
     </tr>
     <tr>
       <th>include_method_info</th>
@@ -216,7 +216,7 @@
     </tr>
     <tr>
       <th>quiet</th>
-      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to iso_turn_info_message_on and iso_turn_info_message_off</p></td>
+      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
     </tr>
     </table>
 
@@ -226,9 +226,9 @@
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other export functions: 
-<code>iso_export_to_excel()</code>,
-<code>iso_export_to_rda()</code>,
-<code>iso_save()</code></p></div>
+<code><a href='iso_export_to_excel.html'>iso_export_to_excel</a>()</code>,
+<code><a href='iso_export_to_rda.html'>iso_export_to_rda</a>()</code>,
+<code><a href='iso_save.html'>iso_save</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -245,7 +245,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

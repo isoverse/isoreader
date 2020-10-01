@@ -1,252 +1,252 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://isoreader.isoverse.org//index.html</loc>
+    <loc>https://isoreader.isoverse.org//index.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/extract_data.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/extract_data.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/extract_substring.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/extract_substring.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/extract_word.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/extract_word.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/file_readers.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/file_readers.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_add_file_info.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_add_file_info.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_caching.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_caching.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_calculate_ratios.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_calculate_ratios.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_cleanup_reader_cache.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_cleanup_reader_cache.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_convert_signals.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_convert_signals.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_convert_time.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_convert_time.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_data_structure.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_data_structure.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_debug_mode.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_debug_mode.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_expand_paths.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_expand_paths.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_export_to_excel.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_export_to_excel.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_export_to_feather.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_export_to_feather.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_export_to_rda.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_export_to_rda.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_filter_files.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_filter_files.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_filter_files_with_problems.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_filter_files_with_problems.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_find_absolute_path_roots.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_find_absolute_path_roots.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_format.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_format.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_all_data.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_all_data.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_bgrd_data.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_bgrd_data.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_data.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_data.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_data_summary.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_data_summary.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_default_reader_parameters.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_default_reader_parameters.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_file_info.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_file_info.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_problems.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_problems.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_problems_summary.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_problems_summary.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_raw_data.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_raw_data.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_reader_example.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_reader_example.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_resistors.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_resistors.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_resistors_info.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_resistors_info.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_standards.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_standards.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_standards_info.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_standards_info.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_supported_file_types.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_supported_file_types.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_units.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_units.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_get_vendor_data_table.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_get_vendor_data_table.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_has_problems.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_has_problems.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_info_messages.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_info_messages.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_is_double_with_units.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_is_double_with_units.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_make_units_explicit.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_make_units_explicit.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_make_units_implicit.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_make_units_implicit.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_mutate_file_info.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_mutate_file_info.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_omit_files_with_problems.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_omit_files_with_problems.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_parse_file_info.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_parse_file_info.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_plot_continuous_flow_data.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_plot_continuous_flow_data.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_plot_dual_inlet_data.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_plot_dual_inlet_data.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_plot_raw_data.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_plot_raw_data.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_printing.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_printing.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_problem_functions.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_problem_functions.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_read_continuous_flow.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_read_continuous_flow.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_read_dual_inlet.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_read_dual_inlet.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_read_files.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_read_files.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_read_scan.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_read_scan.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_rename_file_info.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_rename_file_info.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_reread_files.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_reread_files.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_root_paths.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_root_paths.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_save.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_save.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_select_file_info.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_select_file_info.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_set_default_read_parameters.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_set_default_read_parameters.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_set_file_root.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_set_file_root.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_shorten_relative_paths.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_shorten_relative_paths.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_show_default_reader_parameters.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_show_default_reader_parameters.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_strip_units.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_strip_units.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/iso_with_units.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/iso_with_units.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/isoread.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/isoread.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/isoreader-package.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/isoreader-package.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/map_binary_structure.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/map_binary_structure.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/print.binary_structure_map.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/print.binary_structure_map.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/read_iso_file.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/read_iso_file.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/reexports.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/reexports.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/reread_iso_files.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/reread_iso_files.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/set_temp.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/set_temp.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/vec_arith.iso_double_with_units.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/vec_arith.iso_double_with_units.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/vec_cast.iso_double_with_units.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/vec_cast.iso_double_with_units.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//reference/vec_ptype2.iso_double_with_units.html</loc>
+    <loc>https://isoreader.isoverse.org//reference/vec_ptype2.iso_double_with_units.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//articles/continuous_flow.html</loc>
+    <loc>https://isoreader.isoverse.org//articles/continuous_flow.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//articles/development.html</loc>
+    <loc>https://isoreader.isoverse.org//articles/development.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//articles/dual_inlet.html</loc>
+    <loc>https://isoreader.isoverse.org//articles/dual_inlet.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//articles/operations.html</loc>
+    <loc>https://isoreader.isoverse.org//articles/operations.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//articles/quick_start.html</loc>
+    <loc>https://isoreader.isoverse.org//articles/quick_start.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org//articles/scan.html</loc>
+    <loc>https://isoreader.isoverse.org//articles/scan.html</loc>
   </url>
 </urlset>

@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -154,44 +154,44 @@
     </div>
 
     <div class="ref-description">
-    <p>Sometimes it is useful to reload isotope files from their original data files (e.g. after modifying raw data files in vendor software, or after upgrading to a newer version of the isoreader package that provides new functionality). The functions described below are intended to make this very easy. However, re-reading files from disc is only possible if file paths still point to the original raw data files. If they have moved, please use <code>iso_set_file_root</code> first to change the root directory of your <code>iso_files</code>.</p>
+    <p>Sometimes it is useful to reload isotope files from their original data files (e.g. after modifying raw data files in vendor software, or after upgrading to a newer version of the isoreader package that provides new functionality). The functions described below are intended to make this very easy. However, re-reading files from disc is only possible if file paths still point to the original raw data files. If they have moved, please use <code><a href='iso_set_file_root.html'>iso_set_file_root</a></code> first to change the root directory of your <code>iso_files</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_reread_files</span>(<span class='kw'>iso_files</span>, <span class='kw'>...</span>)
+    <pre class="usage"><span class='fu'>iso_reread_files</span><span class='op'>(</span><span class='va'>iso_files</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>iso_reread_all_files</span>(
-  <span class='kw'>iso_files</span>,
-  <span class='kw'>...</span>,
-  stop_if_missing = <span class='fl'>FALSE</span>,
-  quiet = <span class='fu'>default</span>(<span class='kw'>quiet</span>)
-)
+<span class='fu'>iso_reread_all_files</span><span class='op'>(</span>
+  <span class='va'>iso_files</span>,
+  <span class='va'>...</span>,
+  stop_if_missing <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  quiet <span class='op'>=</span> <span class='fu'>default</span><span class='op'>(</span><span class='va'>quiet</span><span class='op'>)</span>
+<span class='op'>)</span>
 
-<span class='fu'>iso_reread_changed_files</span>(
-  <span class='kw'>iso_files</span>,
-  <span class='kw'>...</span>,
-  stop_if_missing = <span class='fl'>FALSE</span>,
-  quiet = <span class='fu'>default</span>(<span class='kw'>quiet</span>)
-)
+<span class='fu'>iso_reread_changed_files</span><span class='op'>(</span>
+  <span class='va'>iso_files</span>,
+  <span class='va'>...</span>,
+  stop_if_missing <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  quiet <span class='op'>=</span> <span class='fu'>default</span><span class='op'>(</span><span class='va'>quiet</span><span class='op'>)</span>
+<span class='op'>)</span>
 
-<span class='fu'>iso_reread_outdated_files</span>(
-  <span class='kw'>iso_files</span>,
-  <span class='kw'>...</span>,
-  stop_if_missing = <span class='fl'>FALSE</span>,
-  quiet = <span class='fu'>default</span>(<span class='kw'>quiet</span>)
-)
+<span class='fu'>iso_reread_outdated_files</span><span class='op'>(</span>
+  <span class='va'>iso_files</span>,
+  <span class='va'>...</span>,
+  stop_if_missing <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  quiet <span class='op'>=</span> <span class='fu'>default</span><span class='op'>(</span><span class='va'>quiet</span><span class='op'>)</span>
+<span class='op'>)</span>
 
-<span class='fu'>iso_reread_problem_files</span>(
-  <span class='kw'>iso_files</span>,
-  <span class='kw'>...</span>,
-  stop_if_missing = <span class='fl'>FALSE</span>,
-  reread_files_with_errors = <span class='fl'>TRUE</span>,
-  reread_files_with_warnings = <span class='fl'>FALSE</span>,
-  quiet = <span class='fu'>default</span>(<span class='kw'>quiet</span>)
-)
+<span class='fu'>iso_reread_problem_files</span><span class='op'>(</span>
+  <span class='va'>iso_files</span>,
+  <span class='va'>...</span>,
+  stop_if_missing <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  reread_files_with_errors <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  reread_files_with_warnings <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  quiet <span class='op'>=</span> <span class='fu'>default</span><span class='op'>(</span><span class='va'>quiet</span><span class='op'>)</span>
+<span class='op'>)</span>
 
-<span class='fu'>iso_reread_storage</span>(<span class='kw'>...</span>)
+<span class='fu'>iso_reread_storage</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>iso_reread_archive</span>(<span class='kw'>...</span>)</pre>
+<span class='fu'>iso_reread_archive</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -202,7 +202,7 @@
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional read parameters that should be used for re-reading the iso_files, see <code>iso_read_dual_inlet</code>, <code>iso_read_continuous_flow</code> and <code>iso_read_scan</code> for details (except <code>read_cache</code> which is always set to <code>FALSE</code> to force re-reads).</p></td>
+      <td><p>additional read parameters that should be used for re-reading the iso_files, see <code><a href='iso_read_dual_inlet.html'>iso_read_dual_inlet</a></code>, <code><a href='iso_read_continuous_flow.html'>iso_read_continuous_flow</a></code> and <code><a href='iso_read_scan.html'>iso_read_scan</a></code> for details (except <code>read_cache</code> which is always set to <code>FALSE</code> to force re-reads).</p></td>
     </tr>
     <tr>
       <th>stop_if_missing</th>
@@ -210,7 +210,7 @@
     </tr>
     <tr>
       <th>quiet</th>
-      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to iso_turn_info_message_on and iso_turn_info_message_off</p></td>
+      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
     </tr>
     <tr>
       <th>reread_files_with_errors</th>
@@ -228,21 +228,22 @@
 <p><code>iso_reread_all_files</code> re-reads all files in the collection.</p>
 <p><code>iso_reread_changed_files</code> re-reads all files that have been modified (e.g. in the vendor software) since they were last read by isoreader.</p>
 <p><code>iso_reread_outdated_files</code> re-reads all files that were read with an outdated version of isoreader.</p>
-<p><code>iso_reread_problem_files</code> re-reads all files that have had errors the last time they were read by isoreader (set <code>reread_files_with_warnings = TRUE</code> to also re-read those that have warninigs).</p>
+<p><code>iso_reread_problem_files</code> re-reads all files that have had errors the last time they were read by isoreader (set <code>reread_files_with_warnings = TRUE</code> to also re-read those that have warnings).</p>
 <p><code>iso_reread_storage</code> is deprecated.</p>
 <p><code>iso_reread_archive</code> is deprecated.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># example for re-reading a saved isofile collection</span>
-<span class='kw'>saved_files_path</span> <span class='op'>&lt;-</span> <span class='st'>"saved_isofile.cf.rds"</span>
+<span class='va'>saved_files_path</span> <span class='op'>&lt;-</span> <span class='st'>"saved_isofile.cf.rds"</span>
 <span class='co'># load collection</span>
-<span class='fu'>iso_read_continuous_flow</span>(<span class='kw'>saved_files_path</span>) <span class='op'>%&gt;%</span>
+<span class='fu'><a href='iso_read_continuous_flow.html'>iso_read_continuous_flow</a></span><span class='op'>(</span><span class='va'>saved_files_path</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
  <span class='co'># reread outdated files (alternativally "_all_" or "_changed_")</span>
- <span class='fu'>iso_reread_outdated_files</span>() <span class='op'>%&gt;%</span>
+ <span class='fu'>iso_reread_outdated_files</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
  <span class='co'># re-save collection to its original location</span>
- <span class='fu'>iso_save</span>(<span class='kw'>saved_files_path</span>)
-}</div></pre>
+ <span class='fu'><a href='iso_save.html'>iso_save</a></span><span class='op'>(</span><span class='va'>saved_files_path</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -258,7 +259,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

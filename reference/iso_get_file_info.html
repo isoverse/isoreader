@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -157,13 +157,13 @@
     <p>Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the <code>select</code> parameter to select and/or rename columns. File information beyond <code>file_id</code>, <code>file_root</code>, <code>file_path</code>, <code>file_datetime</code> and <code>file_size</code> (in bytes) is only available if the <code>iso_files</code> were read with parameter <code>read_file_info=TRUE</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_get_file_info</span>(
-  <span class='kw'>iso_files</span>,
-  select = <span class='fu'>everything</span>(),
-  file_specific = <span class='fl'>FALSE</span>,
-  simplify = <span class='fl'>TRUE</span>,
-  quiet = <span class='fu'>default</span>(<span class='kw'>quiet</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>iso_get_file_info</span><span class='op'>(</span>
+  <span class='va'>iso_files</span>,
+  select <span class='op'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/everything.html'>everything</a></span><span class='op'>(</span><span class='op'>)</span>,
+  file_specific <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  simplify <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  quiet <span class='op'>=</span> <span class='fu'>default</span><span class='op'>(</span><span class='va'>quiet</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -186,22 +186,22 @@
     </tr>
     <tr>
       <th>quiet</th>
-      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to iso_turn_info_message_on and iso_turn_info_message_off</p></td>
+      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>this function used to allow selecting/renaming different file_info_columns in different files to the same column. This was a significant speed impediment and only covered very rare use cases. It is still available in the related function <code>iso_select_file_info</code> with a special flag but is no longer the default and not incouraged for use in the frequently called <code>iso_get_file_info</code>.</p>
+    <p>this function used to allow selecting/renaming different file_info_columns in different files to the same column. This was a significant speed impediment and only covered very rare use cases. It is still available in the related function <code><a href='iso_select_file_info.html'>iso_select_file_info</a></code> with a special flag but is no longer the default and not encouraged for use in the frequently called <code>iso_get_file_info</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other data retrieval functions: 
-<code>iso_get_all_data()</code>,
-<code>iso_get_bgrd_data()</code>,
-<code>iso_get_raw_data()</code>,
-<code>iso_get_resistors()</code>,
-<code>iso_get_standards()</code>,
-<code>iso_get_vendor_data_table()</code></p></div>
+<code><a href='iso_get_all_data.html'>iso_get_all_data</a>()</code>,
+<code><a href='iso_get_bgrd_data.html'>iso_get_bgrd_data</a>()</code>,
+<code><a href='iso_get_raw_data.html'>iso_get_raw_data</a>()</code>,
+<code><a href='iso_get_resistors.html'>iso_get_resistors</a>()</code>,
+<code><a href='iso_get_standards.html'>iso_get_standards</a>()</code>,
+<code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -218,7 +218,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

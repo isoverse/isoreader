@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -157,38 +157,38 @@
     <p>Register file extensions and reader functions for different data files. Isoreader automatically registers all built-in file readers so this function is usually only needed when registering additional readers provided for testing purposes from outside of the isoreader package. Note that file extensions are case-insensitive, i.e. a reader for <code>.ext</code> will also recognize <code>.Ext</code> and <code>.EXT</code></p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_register_dual_inlet_file_reader</span>(
-  <span class='kw'>extension</span>,
-  <span class='kw'>func</span>,
-  description = <span class='fl'>NA_character_</span>,
-  software = <span class='fl'>NA_character_</span>,
-  cacheable = <span class='fl'>TRUE</span>,
-  post_read_check = <span class='fl'>TRUE</span>,
-  overwrite = <span class='fl'>FALSE</span>,
-  env = <span class='fu'>find_func</span>(<span class='kw'>func</span>)
-)
+    <pre class="usage"><span class='fu'>iso_register_dual_inlet_file_reader</span><span class='op'>(</span>
+  <span class='va'>extension</span>,
+  <span class='va'>func</span>,
+  description <span class='op'>=</span> <span class='cn'>NA_character_</span>,
+  software <span class='op'>=</span> <span class='cn'>NA_character_</span>,
+  cacheable <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  post_read_check <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  overwrite <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  env <span class='op'>=</span> <span class='fu'>find_func</span><span class='op'>(</span><span class='va'>func</span><span class='op'>)</span>
+<span class='op'>)</span>
 
-<span class='fu'>iso_register_continuous_flow_file_reader</span>(
-  <span class='kw'>extension</span>,
-  <span class='kw'>func</span>,
-  description = <span class='fl'>NA_character_</span>,
-  software = <span class='fl'>NA_character_</span>,
-  cacheable = <span class='fl'>TRUE</span>,
-  post_read_check = <span class='fl'>TRUE</span>,
-  overwrite = <span class='fl'>FALSE</span>,
-  env = <span class='fu'>find_func</span>(<span class='kw'>func</span>)
-)
+<span class='fu'>iso_register_continuous_flow_file_reader</span><span class='op'>(</span>
+  <span class='va'>extension</span>,
+  <span class='va'>func</span>,
+  description <span class='op'>=</span> <span class='cn'>NA_character_</span>,
+  software <span class='op'>=</span> <span class='cn'>NA_character_</span>,
+  cacheable <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  post_read_check <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  overwrite <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  env <span class='op'>=</span> <span class='fu'>find_func</span><span class='op'>(</span><span class='va'>func</span><span class='op'>)</span>
+<span class='op'>)</span>
 
-<span class='fu'>iso_register_scan_file_reader</span>(
-  <span class='kw'>extension</span>,
-  <span class='kw'>func</span>,
-  description = <span class='fl'>NA_character_</span>,
-  software = <span class='fl'>NA_character_</span>,
-  cacheable = <span class='fl'>TRUE</span>,
-  post_read_check = <span class='fl'>TRUE</span>,
-  overwrite = <span class='fl'>FALSE</span>,
-  env = <span class='fu'>find_func</span>(<span class='kw'>func</span>)
-)</pre>
+<span class='fu'>iso_register_scan_file_reader</span><span class='op'>(</span>
+  <span class='va'>extension</span>,
+  <span class='va'>func</span>,
+  description <span class='op'>=</span> <span class='cn'>NA_character_</span>,
+  software <span class='op'>=</span> <span class='cn'>NA_character_</span>,
+  cacheable <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  post_read_check <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  overwrite <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  env <span class='op'>=</span> <span class='fu'>find_func</span><span class='op'>(</span><span class='va'>func</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -207,7 +207,7 @@
     </tr>
     <tr>
       <th>software</th>
-      <td><p>what is the software program that creates this filetype?</p></td>
+      <td><p>what is the software program that creates this file type?</p></td>
     </tr>
     <tr>
       <th>cacheable</th>
@@ -235,11 +235,11 @@
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other file_types: 
-<code>iso_get_supported_file_types()</code></p>
+<code><a href='iso_get_supported_file_types.html'>iso_get_supported_file_types</a>()</code></p>
 <p>Other file_types: 
-<code>iso_get_supported_file_types()</code></p>
+<code><a href='iso_get_supported_file_types.html'>iso_get_supported_file_types</a>()</code></p>
 <p>Other file_types: 
-<code>iso_get_supported_file_types()</code></p></div>
+<code><a href='iso_get_supported_file_types.html'>iso_get_supported_file_types</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -256,7 +256,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

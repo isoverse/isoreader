@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -157,11 +157,11 @@
     <p>The isoreader package comes with a few example files to make it easy to illustrate the functionality.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_get_reader_example</span>(<span class='kw'>filename</span>)
+    <pre class="usage"><span class='fu'>iso_get_reader_example</span><span class='op'>(</span><span class='va'>filename</span><span class='op'>)</span>
 
-<span class='fu'>iso_get_reader_examples</span>()
+<span class='fu'>iso_get_reader_examples</span><span class='op'>(</span><span class='op'>)</span>
 
-<span class='fu'>iso_get_reader_examples_folder</span>()</pre>
+<span class='fu'>iso_get_reader_examples_folder</span><span class='op'>(</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -179,13 +179,14 @@
 <p><code>iso_get_reader_examples_folder</code>: path to the location of the reader examples</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>iso_get_reader_examples</span>()</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 12 x 4</span><span>
+    <pre class="examples"><div class='input'><span class='fu'>iso_get_reader_examples</span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 12 x 4</span><span>
 #&gt;    filename                 type          software description                  
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                        
 #&gt; </span><span style='color: #555555;'> 1</span><span> continuous_flow_example… continuous f… Isodat   Continuous Flow file format …
 #&gt; </span><span style='color: #555555;'> 2</span><span> continuous_flow_example… continuous f… Isodat   Continuous Flow file format …
 #&gt; </span><span style='color: #555555;'> 3</span><span> linearity_example.dxf    continuous f… Isodat   Continuous Flow file format …
-#&gt; </span><span style='color: #555555;'> 4</span><span> continuous_flow_example… continuous f… ionOS    Continous Flow data archieve 
+#&gt; </span><span style='color: #555555;'> 4</span><span> continuous_flow_example… continuous f… ionOS    Continuous Flow data archive 
 #&gt; </span><span style='color: #555555;'> 5</span><span> dual_inlet_example.caf   dual inlet    Isodat   Dual Inlet file format (olde…
 #&gt; </span><span style='color: #555555;'> 6</span><span> dual_inlet_example.did   dual inlet    Isodat   Dual Inlet file format (newe…
 #&gt; </span><span style='color: #555555;'> 7</span><span> dual_inlet_example2.did  dual inlet    Isodat   Dual Inlet file format (newe…
@@ -193,7 +194,8 @@
 #&gt; </span><span style='color: #555555;'> 9</span><span> background_scan_example… scan          Isodat   Scan file format             
 #&gt; </span><span style='color: #555555;'>10</span><span> full_scan_example.scn    scan          Isodat   Scan file format             
 #&gt; </span><span style='color: #555555;'>11</span><span> peak_shape_scan_example… scan          Isodat   Scan file format             
-#&gt; </span><span style='color: #555555;'>12</span><span> time_scan_example.scn    scan          Isodat   Scan file format             </div><div class='input'><span class='fu'>iso_get_reader_examples_folder</span>()</div><div class='output co'>#&gt; [1] "/Users/runner/runners/2.169.1/work/_temp/Library/isoreader/extdata"</div></span></pre>
+#&gt; </span><span style='color: #555555;'>12</span><span> time_scan_example.scn    scan          Isodat   Scan file format             </div><div class='input'><span class='fu'>iso_get_reader_examples_folder</span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "/Users/runner/work/_temp/Library/isoreader/extdata"</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -209,7 +211,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

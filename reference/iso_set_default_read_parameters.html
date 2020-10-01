@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -157,14 +157,14 @@
     <p>Set default read options</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_set_default_read_parameters</span>(
-  data = <span class='kw'>NULL</span>,
-  <span class='kw'>read_raw_data</span>,
-  <span class='kw'>read_file_info</span>,
-  <span class='kw'>read_method_info</span>,
-  <span class='kw'>read_vendor_data_table</span>,
-  quiet = <span class='fu'>default</span>(<span class='kw'>quiet</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>iso_set_default_read_parameters</span><span class='op'>(</span>
+  data <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>read_raw_data</span>,
+  <span class='va'>read_file_info</span>,
+  <span class='va'>read_method_info</span>,
+  <span class='va'>read_vendor_data_table</span>,
+  quiet <span class='op'>=</span> <span class='fu'>default</span><span class='op'>(</span><span class='va'>quiet</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -187,21 +187,21 @@
     </tr>
     <tr>
       <th>read_vendor_data_table</th>
-      <td><p>if provided, set as the default for `read_vendor_data_tabl` parameters</p></td>
+      <td><p>if provided, set as the default for `read_vendor_data_table` parameters</p></td>
     </tr>
     <tr>
       <th>quiet</th>
-      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to iso_turn_info_message_on and iso_turn_info_message_off</p></td>
+      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other settings functions: 
-<code>iso_caching</code>,
-<code>iso_get_default_reader_parameters()</code>,
-<code>iso_info_messages</code>,
-<code>iso_show_default_reader_parameters()</code></p></div>
+<code><a href='iso_caching.html'>iso_caching</a></code>,
+<code><a href='iso_get_default_reader_parameters.html'>iso_get_default_reader_parameters</a>()</code>,
+<code><a href='iso_info_messages.html'>iso_info_messages</a></code>,
+<code><a href='iso_show_default_reader_parameters.html'>iso_show_default_reader_parameters</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -218,7 +218,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

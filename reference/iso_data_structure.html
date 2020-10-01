@@ -88,7 +88,7 @@ iso_as_file_list concatenates iso_file and iso_file list object(s) into one comb
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -169,19 +169,19 @@ iso_as_file_list concatenates iso_file and iso_file list object(s) into one comb
 <p><code>iso_as_file_list</code> concatenates iso_file and iso_file list object(s) into one combined iso_file list (equivalent to calling <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code>), flattens all passed lists into one list structure, all individual objects and objects within iso_file lists have to be the same type of iso_file, issues warnings if there are duplicate file ids and summarizes all problems in the iso_file list. If duplicates are allowed (<code>discard_duplicates = FALSE</code>), their file IDs will append a #1, #2, #3, etc. to preserve unique file IDs (important for many data aggregation operations).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>iso_is_file</span>(<span class='kw'>x</span>)
+    <pre class="usage"><span class='fu'>iso_is_file</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
-<span class='fu'>iso_is_file_list</span>(<span class='kw'>x</span>)
+<span class='fu'>iso_is_file_list</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
-<span class='fu'>iso_is_object</span>(<span class='kw'>x</span>)
+<span class='fu'>iso_is_object</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
-<span class='fu'>iso_is_dual_inlet</span>(<span class='kw'>x</span>)
+<span class='fu'>iso_is_dual_inlet</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
-<span class='fu'>iso_is_continuous_flow</span>(<span class='kw'>x</span>)
+<span class='fu'>iso_is_continuous_flow</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
-<span class='fu'>iso_is_scan</span>(<span class='kw'>x</span>)
+<span class='fu'>iso_is_scan</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
-<span class='fu'>iso_as_file_list</span>(<span class='kw'>...</span>, discard_duplicates = <span class='fl'>TRUE</span>)</pre>
+<span class='fu'>iso_as_file_list</span><span class='op'>(</span><span class='va'>...</span>, discard_duplicates <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -216,7 +216,7 @@ iso_as_file_list concatenates iso_file and iso_file list object(s) into one comb
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

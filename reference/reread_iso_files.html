@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -154,20 +154,20 @@
     </div>
 
     <div class="ref-description">
-    <p>Actual multi-purpose file-reread function (not exported) that powers iso_reread_files.</p>
+    <p>Actual multi-purpose file-reread function (not exported) that powers <a href='iso_reread_files.html'>iso_reread_files</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>reread_iso_files</span>(
-  <span class='kw'>iso_files</span>,
-  <span class='kw'>...</span>,
-  stop_if_missing = <span class='fl'>FALSE</span>,
-  reread_only_changed_files = <span class='fl'>FALSE</span>,
-  reread_only_outdated_files = <span class='fl'>FALSE</span>,
-  reread_files_without_problems = <span class='fl'>TRUE</span>,
-  reread_files_with_errors = <span class='fl'>TRUE</span>,
-  reread_files_with_warnings = <span class='fl'>TRUE</span>,
-  quiet = <span class='fu'>default</span>(<span class='kw'>quiet</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>reread_iso_files</span><span class='op'>(</span>
+  <span class='va'>iso_files</span>,
+  <span class='va'>...</span>,
+  stop_if_missing <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  reread_only_changed_files <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  reread_only_outdated_files <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  reread_files_without_problems <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  reread_files_with_errors <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  reread_files_with_warnings <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  quiet <span class='op'>=</span> <span class='fu'>default</span><span class='op'>(</span><span class='va'>quiet</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -178,7 +178,7 @@
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional read parameters that should be used for re-reading the iso_files, see <code>iso_read_dual_inlet</code>, <code>iso_read_continuous_flow</code> and <code>iso_read_scan</code> for details (except <code>read_cache</code> which is always set to <code>FALSE</code> to force re-reads).</p></td>
+      <td><p>additional read parameters that should be used for re-reading the iso_files, see <code><a href='iso_read_dual_inlet.html'>iso_read_dual_inlet</a></code>, <code><a href='iso_read_continuous_flow.html'>iso_read_continuous_flow</a></code> and <code><a href='iso_read_scan.html'>iso_read_scan</a></code> for details (except <code>read_cache</code> which is always set to <code>FALSE</code> to force re-reads).</p></td>
     </tr>
     <tr>
       <th>stop_if_missing</th>
@@ -206,7 +206,7 @@
     </tr>
     <tr>
       <th>quiet</th>
-      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to iso_turn_info_message_on and iso_turn_info_message_off</p></td>
+      <td><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href='iso_info_messages.html'>iso_turn_info_message_on</a> and <a href='iso_info_messages.html'>iso_turn_info_message_off</a></p></td>
     </tr>
     </table>
 
@@ -226,7 +226,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

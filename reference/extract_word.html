@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Extract words from text — extract_word" />
-<meta property="og:description" content="This extracts words from text, by default looks for continuous sequences of numbers and/or letters. 
+<meta property="og:description" content="This extracts words from text, by default looks for continuous sequences of numbers and/or letters.
 Can adjust whether characters such as &quot;_&quot;, &quot;-&quot;, &quot; &quot;, and &quot;.&quot; should be counted as part of a word or separate them and whether numbers should be included." />
 
 
@@ -83,7 +83,7 @@ Can adjust whether characters such as &quot;_&quot;, &quot;-&quot;, &quot; &quot
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -155,20 +155,20 @@ Can adjust whether characters such as &quot;_&quot;, &quot;-&quot;, &quot; &quot
     </div>
 
     <div class="ref-description">
-    <p>This extracts words from text, by default looks for continuous sequences of numbers and/or letters. 
+    <p>This extracts words from text, by default looks for continuous sequences of numbers and/or letters.
 Can adjust whether characters such as "_", "-", " ", and "." should be counted as part of a word or separate them and whether numbers should be included.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>extract_word</span>(
-  <span class='kw'>string</span>,
-  capture_n = <span class='fl'>1</span>,
-  include_numbers = <span class='fl'>TRUE</span>,
-  include_underscore = <span class='fl'>FALSE</span>,
-  include_dash = <span class='fl'>FALSE</span>,
-  include_space = <span class='fl'>FALSE</span>,
-  include_colon = <span class='fl'>FALSE</span>,
-  missing = <span class='fl'>NA_character_</span>
-)</pre>
+    <pre class="usage"><span class='fu'>extract_word</span><span class='op'>(</span>
+  <span class='va'>string</span>,
+  capture_n <span class='op'>=</span> <span class='fl'>1</span>,
+  include_numbers <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  include_underscore <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  include_dash <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  include_space <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  include_colon <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  missing <span class='op'>=</span> <span class='cn'>NA_character_</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -210,15 +210,16 @@ Can adjust whether characters such as "_", "-", " ", and "." should be counted a
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other data extraction functions: 
-<code>extract_data</code>,
-<code>extract_substring()</code></p></div>
+<code><a href='extract_data.html'>extract_data</a></code>,
+<code><a href='extract_substring.html'>extract_substring</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>x_text</span> <span class='op'>&lt;-</span> <span class='fu'>extract_word</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"sample number16.2"</span>, <span class='st'>"sample number7b"</span>), 
-                       capture_n = <span class='fl'>2</span>, include_colon = <span class='fl'>TRUE</span>)
+    <pre class="examples"><div class='input'><span class='va'>x_text</span> <span class='op'>&lt;-</span> <span class='fu'>extract_word</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"sample number16.2"</span>, <span class='st'>"sample number7b"</span><span class='op'>)</span>,
+                       capture_n <span class='op'>=</span> <span class='fl'>2</span>, include_colon <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='co'># "number16.2" "number7b"</span>
-<span class='kw'>x_num</span> <span class='op'>&lt;-</span> <span class='fu'>parse_number</span>(<span class='kw'>x_text</span>)
-<span class='co'># 16.2 7.0</span></div></pre>
+<span class='va'>x_num</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/parse_number.html'>parse_number</a></span><span class='op'>(</span><span class='va'>x_text</span><span class='op'>)</span>
+<span class='co'># 16.2 7.0</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -234,7 +235,7 @@ Can adjust whether characters such as "_", "-", " ", and "." should be counted a
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

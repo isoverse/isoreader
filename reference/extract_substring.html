@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Extract a substring from text — extract_substring" />
-<meta property="og:description" content="This is a convenience function to capture substrings from textual data. 
+<meta property="og:description" content="This is a convenience function to capture substrings from textual data.
 Uses str_match_all internally but instead of returning everything, always returns only one single part of the match, depending on parameters capture_n and capture_group." />
 
 
@@ -83,7 +83,7 @@ Uses str_match_all internally but instead of returning everything, always return
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.3</span>
       </span>
     </div>
 
@@ -155,17 +155,17 @@ Uses str_match_all internally but instead of returning everything, always return
     </div>
 
     <div class="ref-description">
-    <p>This is a convenience function to capture substrings from textual data. 
+    <p>This is a convenience function to capture substrings from textual data.
 Uses <code><a href='https://stringr.tidyverse.org/reference/str_match.html'>str_match_all</a></code> internally but instead of returning everything, always returns only one single part of the match, depending on parameters <code>capture_n</code> and <code>capture_group</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>extract_substring</span>(
-  <span class='kw'>string</span>,
-  <span class='kw'>pattern</span>,
-  capture_n = <span class='fl'>1</span>,
-  capture_bracket = <span class='fl'>0</span>,
-  missing = <span class='fl'>NA_character_</span>
-)</pre>
+    <pre class="usage"><span class='fu'>extract_substring</span><span class='op'>(</span>
+  <span class='va'>string</span>,
+  <span class='va'>pattern</span>,
+  capture_n <span class='op'>=</span> <span class='fl'>1</span>,
+  capture_bracket <span class='op'>=</span> <span class='fl'>0</span>,
+  missing <span class='op'>=</span> <span class='cn'>NA_character_</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -184,7 +184,7 @@ Uses <code><a href='https://stringr.tidyverse.org/reference/str_match.html'>str_
     </tr>
     <tr>
       <th>capture_bracket</th>
-      <td><p>for the captured match, which capture group should be extracted? i.e. which parentheses-enclosed segment of the <code>pattern</code>? 
+      <td><p>for the captured match, which capture group should be extracted? i.e. which parentheses-enclosed segment of the <code>pattern</code>?
 by default captures the whole pattern (<code>capture_bracket = 0</code>).</p></td>
     </tr>
     <tr>
@@ -199,8 +199,8 @@ by default captures the whole pattern (<code>capture_bracket = 0</code>).</p></t
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other data extraction functions: 
-<code>extract_data</code>,
-<code>extract_word()</code></p></div>
+<code><a href='extract_data.html'>extract_data</a></code>,
+<code><a href='extract_word.html'>extract_word</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -217,7 +217,7 @@ by default captures the whole pattern (<code>capture_bracket = 0</code>).</p></t
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

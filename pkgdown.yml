@@ -1,9 +1,15 @@
 pandoc: 2.7.3
-pkgdown: 1.5.1.9000
-pkgdown_sha: caf7cc74e008e8d0d6e53eeda93cd3cad3545bf2
-articles: []
-last_built: 2020-07-05T01:55Z
+pkgdown: 1.6.1.9000
+pkgdown_sha: e1e46f2e13c7efdb17bc4eae40bc3779c2b0b517
+articles:
+  continuous_flow: continuous_flow.html
+  development: development.html
+  dual_inlet: dual_inlet.html
+  operations: operations.html
+  quick_start: quick_start.html
+  scan: scan.html
+last_built: 2020-10-01T03:57Z
 urls:
-  reference: http://isoreader.isoverse.org//reference
-  article: http://isoreader.isoverse.org//articles
+  reference: https://isoreader.isoverse.org//reference
+  article: https://isoreader.isoverse.org//articles
 
