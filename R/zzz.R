@@ -16,7 +16,7 @@ initialize_options <- function() {
     isoreader.file_readers = NULL
   )
   options(default_options)
-  
+
   # set temporary options used during file processing
   temp_options <- list(
     isoreader_temp.parallel_process = NA_integer_,
@@ -25,7 +25,7 @@ initialize_options <- function() {
     isoreader_temp.progress_bar = NULL
   )
   options(temp_options)
-  
+
   # register file readers
   iso_register_dual_inlet_file_reader(".did", "iso_read_did", "Dual Inlet file format (newer)", "Isodat", env = "isoreader")
   iso_register_dual_inlet_file_reader(".caf", "iso_read_caf", "Dual Inlet file format (older)", "Isodat", env = "isoreader")
@@ -34,7 +34,7 @@ initialize_options <- function() {
   iso_register_dual_inlet_file_reader(".di.rds", "iso_read_rds", "R Data Storage", "isoreader", cacheable = FALSE, post_read_check = FALSE, env = "isoreader")
   iso_register_continuous_flow_file_reader(".cf", "iso_read_cf", "Continuous Flow file format (older)", "Isodat", env = "isoreader")
   iso_register_continuous_flow_file_reader(".dxf", "iso_read_dxf", "Continuous Flow file format (newer)", "Isodat", env = "isoreader")
-  iso_register_continuous_flow_file_reader(".iarc", "iso_read_flow_iarc", "Continous Flow data archieve", "ionOS", env = "isoreader")
+  iso_register_continuous_flow_file_reader(".iarc", "iso_read_flow_iarc", "Continuous Flow data archive", "ionOS", env = "isoreader")
   iso_register_continuous_flow_file_reader(".cf.rda", "iso_read_rda", "R Data Archive (deprecated)", "isoreader", cacheable = FALSE, env = "isoreader")
   iso_register_continuous_flow_file_reader(".cf.rds", "iso_read_rds", "R Data Storage", "isoreader", cacheable = FALSE, post_read_check = FALSE, env = "isoreader")
   iso_register_scan_file_reader(".scn", "iso_read_scn", "Scan file format", "Isodat", env = "isoreader")
