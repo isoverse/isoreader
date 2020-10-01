@@ -30,7 +30,7 @@ read_iso_file(
 
 \item{path}{file path}
 
-\item{file_n}{numer of processsed file for info messages}
+\item{file_n}{number of processed file for info messages}
 
 \item{files_n}{total number of files for info messages}
 
@@ -52,7 +52,7 @@ read_iso_file(
 
 \item{reader_fun}{file reader function}
 
-\item{reader_options}{list of paramters to be passed on to the reader}
+\item{reader_options}{list of parameters to be passed on to the reader}
 
 \item{reader_fun_env}{where to find the reader function}
 }

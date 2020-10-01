@@ -14,7 +14,7 @@ iso_select_file_info(
 \arguments{
 \item{iso_files}{collection of iso_file objects}
 
-\item{...}{dplyr-style \link[dplyr]{select} conditions applied based on each file's file_info (see \code{\link{iso_get_file_info}}). Note that the \code{file_id} column will always be kept, no matter the selection criteria, and cannot be renamed to protect from unexpected behaviour.}
+\item{...}{dplyr-style \link[dplyr]{select} conditions applied based on each file's file_info (see \code{\link{iso_get_file_info}}). Note that the \code{file_id} column will always be kept, no matter the selection criteria, and cannot be renamed to protect from unexpected behavior.}
 
 \item{file_specific}{whether to run the select criteria (\code{...}) specifically within each individual file rather than on all files jointly. This is a lot slower but makes it possible to  select different columns in different iso_files depending on what exists in each file and is mostly of use when working with data from multiple instruments.}
 

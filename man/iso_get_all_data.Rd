@@ -40,7 +40,7 @@ iso_get_all_data(
 
 \item{with_units}{this parameter has been DEPRECATED with the introduction of unit-data types (see \code{\link{iso_double_with_units}}) and will be removed in future versions of isoreader. Please use \code{with_explicit_units} instead if you really want columns to have units explicitly in the column name. Alternatively, consider working with the new implicit unit system and convert vendor data tables as needed with \code{\link{iso_make_units_explicit}} and \code{\link{iso_make_units_implicit}}.}
 
-\item{with_ratios}{deprecated, please use the \code{select} paramter to explicitly include or exclude ratio columns}
+\item{with_ratios}{deprecated, please use the \code{select} parameter to explicitly include or exclude ratio columns}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }

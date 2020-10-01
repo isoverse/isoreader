@@ -33,7 +33,7 @@ iso_read_files(
 
 \item{read_options}{vector of read options to be stored in the data structure (e.g. \code{c(read_vendor_data_table = FALSE)}). The \code{read_} prefix is optional.}
 
-\item{reader_options}{list of paramters to be passed on to the reader}
+\item{reader_options}{list of parameters to be passed on to the reader}
 
 \item{discard_duplicates}{whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If \code{TRUE} (the default), only the first files are kept and any files with the same file ID are discarded. If \code{FALSE}, all duplicate files are kept but their file IDs are appended with suffix \code{#1}, \code{#2}, etc.}
 
@@ -57,7 +57,7 @@ iso_read_files(
 single iso_file object (if single file) or list of iso_files (iso_file_list)
 }
 \description{
-This function takes care of extracting basic information about iso_files, dealing with problems and making sure only valid fire formats are processed. 
-This function is not typicaly called directly but indirectly by calling \link{iso_read_dual_inlet}, \link{iso_read_continuous_flow} and \link{iso_read_scan}. 
+This function takes care of extracting basic information about iso_files, dealing with problems and making sure only valid fire formats are processed.
+This function is not typically called directly but indirectly by calling \link{iso_read_dual_inlet}, \link{iso_read_continuous_flow} and \link{iso_read_scan}.
 It is made available outside the package because it can be very useful for testing new file readers.
 }
