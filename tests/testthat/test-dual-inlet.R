@@ -40,10 +40,24 @@ test_that("test that did files can be read", {
   # test specific files
   iso_turn_reader_caching_off()
   
+  # .did
   expect_true(file.exists(file <- iso_get_reader_example("dual_inlet_example.did")))
   expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
   expect_true(length(did$vendor_data_table %>% iso_get_units() %>% na.omit()) == 0)
+  
+  # .caf
+  expect_true(file.exists(file <- iso_get_reader_example("dual_inlet_example.caf")))
+  expect_is(did <- iso_read_dual_inlet(file), "dual_inlet")
+  expect_equal(nrow(problems(did)), 0)
+  expect_true(length(did$vendor_data_table %>% iso_get_units() %>% na.omit()) == 8)
+  
+  # .txt (nu)
+  expect_true(file.exists(file <- iso_get_reader_example("dual_inlet_nu_example.txt")))
+  expect_is(did <- iso_read_dual_inlet(file, nu_masses = 49:44, read_cache = FALSE), "dual_inlet")
+  expect_equal(nrow(problems(did)), 0)
+  expect_message(capture.output(did <- iso_read_dual_inlet(file, read_cache = FALSE)), "6 channels but 0 masses")
+  expect_equal(nrow(problems(did)), 1)
   
   # additional test files (require download, thus not on CRAN) =====
   skip_on_cran()
@@ -63,6 +77,7 @@ test_that("test that did files can be read", {
   check_dual_inlet_test_file("did_example_many_cycles.did")
   check_dual_inlet_test_file("did_example_unicode.did")
   check_dual_inlet_test_file("did_ultra_example.did")
+  check_dual_inlet_test_file("caf_example_CO2_01.caf")
   
   # minimal files
   did1 <- check_dual_inlet_test_file("minimal_01.did")
@@ -73,15 +88,5 @@ test_that("test that did files can be read", {
   expect_true(dids %>% iso_get_file_info(select = c(Comment, starts_with("MS"))) %>% 
                 mutate(MSIT_correct = Comment == paste(MS_integration_time.s, "sec")) %>% 
                 { all(.$MSIT_correct) })
-  
-  # .caf files
-  caf1 <- check_dual_inlet_test_file("dual_inlet_example.caf")
-  expect_true(length(did$vendor_data_table %>% iso_get_units() %>% na.omit()) == 8)
-  check_dual_inlet_test_file("caf_example_CO2_01.caf")
-
-  # nu files
-  nu1 <- check_dual_inlet_test_file("dual_inlet_nu_example.txt", nu_masses = 49:44)
-  expect_message(capture.output(nu2 <- iso_reread_dual_inlet(nu1)), "6 channels but 0 masses")
-  expect_equal(nrow(problems(nu2)), 1)
   
 })

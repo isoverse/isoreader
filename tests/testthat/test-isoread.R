@@ -83,7 +83,11 @@ test_that("test that version checking and re-reads are working properly", {
   
   # test folder
   test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
-  test_files <- file.path(test_folder, c("scan_hv_01.scn", "scan_hv_02.scn", "scan_hv_03.scn"))
+  test_files <- c(
+    download_isoreader_test_file("scan_hv_01.scn", local_folder = test_folder),
+    download_isoreader_test_file("scan_hv_02.scn", local_folder = test_folder),
+    download_isoreader_test_file("scan_hv_03.scn", local_folder = test_folder)
+  )
   
   # expected errors
   expect_message(reread_iso_files(make_cf_data_structure("NA")), "not exist at.*referenced location")
