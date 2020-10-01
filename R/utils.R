@@ -770,13 +770,13 @@ download_isoreader_test_file <- function(file, local_folder, remote_branch = "de
   # check if file exists, otherwise download it
   local_path <- file.path(local_folder, file)
   if (!file.exists(local_path)) {
-    sprintf("Info: downloading '%s' for testing purposes", file) %>% message()
+    sprintf("Info: downloading '%s' for testing purposes", file) %>% cat()
     utils::download.file(
       sprintf(
         "https://github.com/isoverse/isoreader/raw/%s/tests/testthat/test_data/%s", 
         remote_branch, file),
       destfile = local_path,
-      quiet = TRUE
+      quiet = FALSE
     )
   }
   return(local_path)
