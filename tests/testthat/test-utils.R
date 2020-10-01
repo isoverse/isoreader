@@ -169,7 +169,7 @@ test_that("test that root folder finding works correctly", {
   
   # general checks on relative paths (should remain unchanged)
   test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
-  example_file_path <- download_isoreader_test_file("cf_example_H_01.cf", local_folder = test_folder)
+  example_file_path <- get_isoreader_test_file("cf_example_H_01.cf", local_folder = test_folder)
   expect_equal(iso_find_absolute_path_roots(test_folder), tibble(root = ".", path = test_folder))
   expect_equal(iso_find_absolute_path_roots(".", root = test_folder), tibble(root = test_folder, path = "."))
   expect_equal(iso_find_absolute_path_roots(c(test_folder, ".")), tibble(root = ".", path = c(test_folder, ".")))

@@ -67,13 +67,12 @@ test_that("test that dxf files can be read", {
   expect_is(iarc <- iso_read_continuous_flow(file), "iso_file_list")
   expect_equal(nrow(problems(iarc)), 0)
   
-  # additional test files (require download, thus not on CRAN) =====
-  skip_on_cran()
+  # additional test files =====
   test_folder <- file.path("test_data") # test_folder <- file.path("tests", "testthat", "test_data") # direct
   
   # testing wrapper
   check_continuous_flow_test_file <- function(file) {
-    file_path <- download_isoreader_test_file(file, local_folder = test_folder)
+    file_path <- get_isoreader_test_file(file, local_folder = test_folder)
     expect_true(file.exists(file_path))
     expect_is(dxf <- iso_read_continuous_flow(file_path), "continuous_flow")
     expect_equal(nrow(problems(dxf)), 0)

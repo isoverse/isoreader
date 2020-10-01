@@ -42,7 +42,7 @@ test_that("test that parameter checks are performed when reading file", {
 test_that("test that cached file path hashes work okay", {
   
   test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
-  origin_file <- download_isoreader_test_file("cache_test.did", test_folder)
+  origin_file <- get_isoreader_test_file("cache_test.did", test_folder)
   
   # exact same file in different locations
   temp_file <- file.path(tempdir(), "cache_test.did")
@@ -84,9 +84,9 @@ test_that("test that version checking and re-reads are working properly", {
   # test folder
   test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
   test_files <- c(
-    download_isoreader_test_file("scan_hv_01.scn", local_folder = test_folder),
-    download_isoreader_test_file("scan_hv_02.scn", local_folder = test_folder),
-    download_isoreader_test_file("scan_hv_03.scn", local_folder = test_folder)
+    get_isoreader_test_file("scan_hv_01.scn", local_folder = test_folder),
+    get_isoreader_test_file("scan_hv_02.scn", local_folder = test_folder),
+    get_isoreader_test_file("scan_hv_03.scn", local_folder = test_folder)
   )
   
   # expected errors
@@ -223,10 +223,10 @@ test_that("test that file event expressions work", {
   
   test_folder <- file.path("test_data")
   minimal_files <- c(
-    download_isoreader_test_file("minimal_01.did", local_folder = test_folder),
-    download_isoreader_test_file("minimal_02.did", local_folder = test_folder),
-    download_isoreader_test_file("minimal_03.did", local_folder = test_folder),
-    download_isoreader_test_file("minimal_04.did", local_folder = test_folder)
+    get_isoreader_test_file("minimal_01.did", local_folder = test_folder),
+    get_isoreader_test_file("minimal_02.did", local_folder = test_folder),
+    get_isoreader_test_file("minimal_03.did", local_folder = test_folder),
+    get_isoreader_test_file("minimal_04.did", local_folder = test_folder)
   )
   
   set_read_file_event_expr({ print(file_n*-1) })

@@ -59,13 +59,12 @@ test_that("test that did files can be read", {
   expect_message(capture.output(did <- iso_read_dual_inlet(file, read_cache = FALSE)), "6 channels but 0 masses")
   expect_equal(nrow(problems(did)), 1)
   
-  # additional test files (require download, thus not on CRAN) =====
-  skip_on_cran()
+  # additional test files =====
   test_folder <- file.path("test_data") # test_folder <- file.path("tests", "testthat", "test_data") # direct
   
   # testing wrapper
   check_dual_inlet_test_file <- function(file, ...) {
-    file_path <- download_isoreader_test_file(file, local_folder = test_folder)
+    file_path <- get_isoreader_test_file(file, local_folder = test_folder)
     expect_true(file.exists(file_path))
     expect_is(did <- iso_read_dual_inlet(file_path, ...), "dual_inlet")
     expect_equal(nrow(problems(did)), 0)
