@@ -1,7 +1,7 @@
 ---
 title: "Operations"
 date: "`r Sys.Date()`"
-output: 
+output:
   rmarkdown::html_vignette:
   html_document:
     code_folding: show
@@ -39,8 +39,8 @@ library(isoreader)
 
 ```{r}
 # list all suported file types
-iso_get_supported_file_types() %>% 
-  dplyr::select(extension, software, description, type) %>% 
+iso_get_supported_file_types() %>%
+  dplyr::select(extension, software, description, type) %>%
   knitr::kable()
 ```
 
@@ -50,25 +50,25 @@ By default, isoreader is quite verbose to let the user know what is happening. H
 
 ```{r}
 # read a file in the default verbose mode
-iso_get_reader_example("dual_inlet_example.did") %>% 
-  iso_read_dual_inlet() %>% 
-  iso_select_file_info(file_datetime, `Identifier 1`) %>% 
-  iso_get_file_info() %>% 
+iso_get_reader_example("dual_inlet_example.did") %>%
+  iso_read_dual_inlet() %>%
+  iso_select_file_info(file_datetime, `Identifier 1`) %>%
+  iso_get_file_info() %>%
   knitr::kable()
 
 # read the same file but make the read process quiet
-iso_get_reader_example("dual_inlet_example.did") %>% 
-  iso_read_dual_inlet(quiet = TRUE) %>% 
-  iso_select_file_info(file_datetime, `Identifier 1`) %>% 
-  iso_get_file_info() %>% 
+iso_get_reader_example("dual_inlet_example.did") %>%
+  iso_read_dual_inlet(quiet = TRUE) %>%
+  iso_select_file_info(file_datetime, `Identifier 1`) %>%
+  iso_get_file_info() %>%
   knitr::kable()
 
 # read the same file but turn all isoreader messages off
 iso_turn_info_messages_off()
-iso_get_reader_example("dual_inlet_example.did") %>% 
-  iso_read_dual_inlet(quiet = TRUE) %>% 
-  iso_select_file_info(file_datetime, `Identifier 1`) %>% 
-  iso_get_file_info() %>% 
+iso_get_reader_example("dual_inlet_example.did") %>%
+  iso_read_dual_inlet(quiet = TRUE) %>%
+  iso_select_file_info(file_datetime, `Identifier 1`) %>%
+  iso_get_file_info() %>%
   knitr::kable()
 
 # turn message back on
@@ -84,18 +84,18 @@ By default, isoreader caches files as R objects to make access faster in the fut
 iso_cleanup_reader_cache()
 
 # read a new file (notice the time elapsed)
-cf_file <- iso_get_reader_example("continuous_flow_example.dxf") %>% 
+cf_file <- iso_get_reader_example("continuous_flow_example.dxf") %>%
   iso_read_continuous_flow()
 
 # re-read the same file much faster (it will be read from cache)
-cf_file <- iso_get_reader_example("continuous_flow_example.dxf") %>% 
+cf_file <- iso_get_reader_example("continuous_flow_example.dxf") %>%
     iso_read_continuous_flow()
 
 # turn reader caching off
 iso_turn_reader_caching_off()
 
 # re-read the same file (it will NOT be read from cache)
-cf_file <- iso_get_reader_example("continuous_flow_example.dxf") %>% 
+cf_file <- iso_get_reader_example("continuous_flow_example.dxf") %>%
   iso_read_continuous_flow()
 
 # turn reader caching back on
@@ -104,13 +104,13 @@ iso_turn_reader_caching_on()
 
 # Parallel processing
 
-Isoreader supports parallel processing of data files based on the number of processors available in a computer simply by setting the `parallel = TRUE` flag in any file read operation. This makes it possible to read large quantities of data files much more quickly on a multi-core system (i.e. most modern laptops). 
+Isoreader supports parallel processing of data files based on the number of processors available in a computer simply by setting the `parallel = TRUE` flag in any file read operation. This makes it possible to read large quantities of data files much more quickly on a multi-core system (i.e. most modern laptops).
 
-However, whether parallel processing yields signifcant improvemens in read speeds depends on the number of available processors, file types and operating system. In theory, parallel processing always reduces computation time but in practice this is offset by various factors including the size of the data that needs to be sent back and forth between the processors, file system read/write speed, and the spin-up time for new processes. Generally speaking, parallel processing can provide significant improvements in speed with larger number of files (~10+) and more complex read operations (e.g. continuous flow > dual inlet > scan file). Reading from cache is so efficient that there are rarely gains from parallel processing and it is usually faster NOT to read in parallel once a set of files is already cached.
+However, whether parallel processing yields significant improvements in read speeds depends on the number of available processors, file types and operating system. In theory, parallel processing always reduces computation time but in practice this is offset by various factors including the size of the data that needs to be sent back and forth between the processors, file system read/write speed, and the spin-up time for new processes. Generally speaking, parallel processing can provide significant improvements in speed with larger number of files (~10+) and more complex read operations (e.g. continuous flow > dual inlet > scan file). Reading from cache is so efficient that there are rarely gains from parallel processing and it is usually faster NOT to read in parallel once a set of files is already cached.
 
 ```{r}
 # read 3 files in parallel (note that this is usually not a large enough file number to be worth it)
-di_files <- 
+di_files <-
   iso_read_dual_inlet(
     iso_get_reader_example("dual_inlet_example.did"),
     iso_get_reader_example("dual_inlet_example2.did"),
@@ -122,7 +122,7 @@ di_files <-
 
 # Combining / subsetting isofiles
 
-All isoreader objects are lists that can be combined or subset to work with only specific files or create a larger collection. 
+All isoreader objects are lists that can be combined or subset to work with only specific files or create a larger collection.
 
 ```{r}
 # all 3 di_files read above
@@ -158,7 +158,7 @@ Isoreader is designed to catch problems during file reading without crashing the
 
 ```{r}
 # read two files, one of which is erroneous
-iso_files <- 
+iso_files <-
   iso_read_continuous_flow(
     iso_get_reader_example("continuous_flow_example.dxf"),
     system.file("errdata", "cf_without_data.dxf", package = "isoreader")
@@ -176,9 +176,9 @@ iso_files <- iso_files %>% iso_filter_files_with_problems()
 
 # Re-reading files
 
-If a file has changed (e.g. is edited through the vendor software) and the changes should be loaded in isoreader, it is easy to re-read and update just those files within a file collection by using the `iso_reread_changed_files()` function. If some of the files are no longer accessible at their original location, it will throw a warning. If the location for all files has changed, it can be easily adjusted by modifying the `file_root` file info parameter using `iso_set_file_root()`. 
+If a file has changed (e.g. is edited through the vendor software) and the changes should be loaded in isoreader, it is easy to re-read and update just those files within a file collection by using the `iso_reread_changed_files()` function. If some of the files are no longer accessible at their original location, it will throw a warning. If the location for all files has changed, it can be easily adjusted by modifying the `file_root` file info parameter using `iso_set_file_root()`.
 
-Similar functions can be used to re-read outdated files from an older isoreader version (`iso_reread_outdated_files()`), attempt to re-read problematic files that had read errors/warnings (`iso_reread_problem_files()`), or simply re-read all files in a colleciton (`iso_reread_all_files()`).
+Similar functions can be used to re-read outdated files from an older isoreader version (`iso_reread_outdated_files()`), attempt to re-read problematic files that had read errors/warnings (`iso_reread_problem_files()`), or simply re-read all files in a collection (`iso_reread_all_files()`).
 
 ```{r}
 # re-read the 3 dual inlet files from their original location if any have changed
@@ -187,36 +187,36 @@ di_files %>%
 
 # update the file_root for the files before re-read (in this case to a location
 # that does not hold these files and hence will lead to a warning)
-di_files %>% 
+di_files %>%
   iso_set_file_root(root = ".") %>%
   iso_reread_all_files()
 ```
 
 # Units
 
-Isoreader provides a built in data type with units (`iso_with_units`) that can be used to easily keep track of units inside data frame. These units can be made explicit (=included in the column header), stripped altogher, or turned back to be implicit.
+Isoreader provides a built in data type with units (`iso_with_units`) that can be used to easily keep track of units inside data frame. These units can be made explicit (=included in the column header), stripped altogether, or turned back to be implicit.
 
 ```{r}
 # strip all units
-cf_file %>% 
-  iso_get_vendor_data_table(select = c(`Ampl 28`, `rIntensity 28`, `d 15N/14N`)) %>% 
+cf_file %>%
+  iso_get_vendor_data_table(select = c(`Ampl 28`, `rIntensity 28`, `d 15N/14N`)) %>%
   iso_strip_units() %>% head(3)
 
 # make units explicit
-cf_file %>% 
-  iso_get_vendor_data_table(select = c(`Ampl 28`, `rIntensity 28`, `d 15N/14N`)) %>% 
+cf_file %>%
+  iso_get_vendor_data_table(select = c(`Ampl 28`, `rIntensity 28`, `d 15N/14N`)) %>%
   iso_make_units_explicit() %>% head(3)
 
 # introduce new unit columns e.g. in the file info
-cf_file %>% 
-  iso_mutate_file_info(weight = iso_with_units(0.42, "mg")) %>% 
+cf_file %>%
+  iso_mutate_file_info(weight = iso_with_units(0.42, "mg")) %>%
   iso_get_vendor_data_table(select = c(`Ampl 28`, `rIntensity 28`, `d 15N/14N`),
                             include_file_info = weight) %>%
   iso_make_units_explicit() %>% head(3)
 
 # or turn a column e.g. with custom format units in the header into implicit units
-cf_file %>% 
-  iso_mutate_file_info(weight.mg = 0.42) %>% 
+cf_file %>%
+  iso_mutate_file_info(weight.mg = 0.42) %>%
   iso_get_vendor_data_table(select = c(`Ampl 28`, `rIntensity 28`, `d 15N/14N`),
                             include_file_info = weight.mg) %>%
   iso_make_units_implicit(prefix = ".", suffix = "") %>% head(3)
@@ -229,36 +229,34 @@ Formatting data into text is easily achieved with the built in R function `sprin
 ```{r}
 # concatenation example with single values
 iso_format(
-   pi = 3.14159, 
-   x = iso_with_units(42, "mg"), 
-   ID = "ABC", 
-   signif = 4, 
+   pi = 3.14159,
+   x = iso_with_units(42, "mg"),
+   ID = "ABC",
+   signif = 4,
    sep = " | "
 )
 
 # example inside a data frame
-cf_file %>% 
-  iso_get_vendor_data_table(select = c(`Nr.`, `Ampl 28`, `d 15N/14N`)) %>% 
-  dplyr::select(-file_id) %>% 
+cf_file %>%
+  iso_get_vendor_data_table(select = c(`Nr.`, `Ampl 28`, `d 15N/14N`)) %>%
+  dplyr::select(-file_id) %>%
   head(3) %>%
   # introduce new label columns using iso_format
   dplyr::mutate(
     # default concatenation of values
     label_default = iso_format(
-      `Nr.`, `Ampl 28`, `d 15N/14N`, 
+      `Nr.`, `Ampl 28`, `d 15N/14N`,
       sep = ", "
     ),
     # concatenate with custom names for each value
     label_named = iso_format(
-      `#` = `Nr.`, A = `Ampl 28`, d15 = `d 15N/14N`, 
+      `#` = `Nr.`, A = `Ampl 28`, d15 = `d 15N/14N`,
       sep = ", "
     ),
     # concatenate just the values and increase significant digits
     label_value = iso_format(
-      `Nr.`, `Ampl 28`, `d 15N/14N`, 
+      `Nr.`, `Ampl 28`, `d 15N/14N`,
       sep = ", ", format_names = NULL, signif = 6
     )
   )
 ```
-
-

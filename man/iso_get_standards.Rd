@@ -19,12 +19,12 @@ iso_get_standards(
 
 \item{include_file_info}{which file information to include (see \code{\link{iso_get_file_info}}). Use \code{c(...)} to select multiple, supports all \link[dplyr]{select} syntax including renaming columns.}
 
-\item{with_ratios}{deprecated, please use the \code{select} paramter to explicitly include or exclude ratio columns}
+\item{with_ratios}{deprecated, please use the \code{select} parameter to explicitly include or exclude ratio columns}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }
 \description{
-Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use paramter \code{select} to exclude/include the ratios. All standards info is only available if the iso_files were read with parameter \code{read_method_info=TRUE}.
+Aggregates the isotopic standard information recovered from the provided iso_files. Can aggregate just the standards' delta values or combine the delta values with the recovered ratios (if any). Use parameter \code{select} to exclude/include the ratios. All standards info is only available if the iso_files were read with parameter \code{read_method_info=TRUE}.
 }
 \seealso{
 Other data retrieval functions: 

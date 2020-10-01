@@ -17,7 +17,7 @@ iso_find_absolute_path_roots(path, root = ".", check_existence = TRUE)
 a data frame with the root directories and paths relative to the root - order of input paths is preserved
 }
 \description{
-Helper function to find the roots of absolute paths. Tries to put absolute paths into the context of the relative root. For those that this is not possible (because they are not in fact a sub-path of the relative roots), identifies the greatest common denominator for absolute paths as their root. Does not change relative paths but does check wheter they do exist if \code{check_existence = TRUE} (the default). To modify relative paths, use \link{iso_shorten_relative_paths} prior to calling this function.
+Helper function to find the roots of absolute paths. Tries to put absolute paths into the context of the relative root. For those that this is not possible (because they are not in fact a sub-path of the relative roots), identifies the greatest common denominator for absolute paths as their root. Does not change relative paths but does check whether they do exist if \code{check_existence = TRUE} (the default). To modify relative paths, use \link{iso_shorten_relative_paths} prior to calling this function.
 }
 \seealso{
 Other file system functions: 

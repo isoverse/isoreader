@@ -8,13 +8,13 @@ make_iso_file_data_structure <- function(file_id = NA_character_) {
       read_options = list( # records read options+defaults
         file_info = FALSE, # whether file info was read
         method_info = FALSE, # whether method info was read
-        raw_data = FALSE # whether mass data was read 
-      ), 
+        raw_data = FALSE # whether mass data was read
+      ),
       file_info = tibble::tibble(
         file_id = file_id, # unique identifer
         file_root = NA_character_, # root directory for file path
         file_path = NA_character_, # path to file (file extension is key for processing)
-        file_subpath = NA_character_, # sub path in case file is an archieve
+        file_subpath = NA_character_, # sub path in case file is an archive
         file_datetime = lubridate::as_datetime(NA), # the run date and time of the file
         file_size = NA_integer_ # the size of the file in bytes
       ),
@@ -22,7 +22,7 @@ make_iso_file_data_structure <- function(file_id = NA_character_) {
       raw_data = tibble::tibble() # all mass data
     ),
     class = c("iso_file")
-  ) %>% 
+  ) %>%
     initialize_problems_attribute()
 }
 
@@ -61,7 +61,7 @@ make_scan_data_structure <- function(file_id = NA_character_) {
 # get last structure update
 get_last_structure_update_version <- function() {
   # last version which included any structure updates
-  # determines 
+  # determines
   # - whether the file version warning will be shown during file read
   # - whether cached files are re-read (if reread_outdated_cache_files is active)
   # - backwards compatibility checks are run during collection reading
@@ -70,14 +70,14 @@ get_last_structure_update_version <- function() {
 
 # get version for all objects
 get_iso_object_versions <- function(iso_obj) {
-  iso_obj %>% iso_as_file_list() %>% 
+  iso_obj %>% iso_as_file_list() %>%
     purrr::map(~if (!is.null(.x$version)) { .x$version } else { as.package_version("0.0.0") })
 }
 
 # get outdated boolean vector
 get_iso_object_outdated <- function(iso_obj) {
-  iso_obj %>% 
-    get_iso_object_versions() %>% 
+  iso_obj %>%
+    get_iso_object_versions() %>%
     purrr::map_lgl(~.x < get_last_structure_update_version())
 }
 
@@ -91,8 +91,8 @@ is_iso_object_outdated <- function(iso_obj) {
 
 
 #' Isoreader data structure functions
-#' 
-#' @description \code{iso_is_file} tests if the object is an iso_file 
+#'
+#' @description \code{iso_is_file} tests if the object is an iso_file
 #'
 #' @param x an object to test whether it has the specific class
 #' @rdname iso_data_structure
@@ -138,28 +138,28 @@ iso_is_scan <- function(x) {
 
 # Iso file list ----
 
-#' @description \code{iso_as_file_list} concatenates iso_file and iso_file list object(s) into one combined iso_file list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within iso_file lists have to be the same type of iso_file, issues warnings if there are duplicate file ids and summarizes all problems in the iso_file list. If duplicates are allowed (\code{discard_duplicates = FALSE}), their file IDs will append a #1, #2, #3, etc. to preserve unique file IDs (important for many data aggregation operations). 
+#' @description \code{iso_as_file_list} concatenates iso_file and iso_file list object(s) into one combined iso_file list (equivalent to calling \code{c(...)}), flattens all passed lists into one list structure, all individual objects and objects within iso_file lists have to be the same type of iso_file, issues warnings if there are duplicate file ids and summarizes all problems in the iso_file list. If duplicates are allowed (\code{discard_duplicates = FALSE}), their file IDs will append a #1, #2, #3, etc. to preserve unique file IDs (important for many data aggregation operations).
 #' @param ... iso_file and iso_file_list objects to concatenate
-#' @param discard_duplicates whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If \code{TRUE} (the default), only the first files are kept and any files with the same file ID are discarded. If \code{FALSE}, all duplicate files are kept but their file IDs are appended with suffix \code{#1}, \code{#2}, etc. 
+#' @param discard_duplicates whether to automatically discard files with duplicate file IDs (i.e. duplicate file names). If \code{TRUE} (the default), only the first files are kept and any files with the same file ID are discarded. If \code{FALSE}, all duplicate files are kept but their file IDs are appended with suffix \code{#1}, \code{#2}, etc.
 #' @rdname iso_data_structure
 #' @export
 iso_as_file_list <- function(..., discard_duplicates = TRUE) {
 
   # global vars
   has_duplicates <- NULL
-  
+
   # dots passed in
   iso_objs <- list(...)
-  
+
   # return iso file list right away if it's the only thing passed in
   if (length(iso_objs) == 1 && iso_is_file_list(..1)) return (..1)
-  
+
   # allow simple list to be passed in
   if (length(iso_objs) == 1 && !iso_is_object(..1) && is.list(..1)) iso_objs <- ..1
-  
+
   # list classes
   list_classes <- "iso_file_list"
-  
+
   if (length(iso_objs) == 0) {
     # empty list
     iso_list <- list()
@@ -168,44 +168,44 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     # check if everything is an iso object
     if(!all(is_iso <- map_lgl(iso_objs, iso_is_object))) {
       stop("can only process iso_file and iso_file_list objects, encountered incompatible data type(s): ",
-           unlist(lapply(iso_objs[!is_iso], class)) %>% unique() %>% str_c(collapse = ", "), 
+           unlist(lapply(iso_objs[!is_iso], class)) %>% unique() %>% str_c(collapse = ", "),
            call. = FALSE)
     }
 
     # flatten isofiles and isofile lists to make one big isofile list
     iso_list <- map(iso_objs, ~if(iso_is_file_list(.x)) { .x } else { list(.x) }) %>% unlist(recursive = FALSE)
-    
+
     # reset file ids
     file_ids <- map_chr(iso_list, ~.x$file_info$file_id)
     if (any(is.na(file_ids)))
-      stop("encountered undefined (NA) file ID(s). This is prohibited because it can lead to unexpected behaviour in iso files collections.",
+      stop("encountered undefined (NA) file ID(s). This is prohibited because it can lead to unexpected behavior in iso files collections.",
            call. = FALSE)
     names(iso_list) <- file_ids
-    
+
     # check if al elements are the same data type
-    classes <- map_chr(iso_list, ~class(.x)[1]) 
+    classes <- map_chr(iso_list, ~class(.x)[1])
     if (!all(classes == classes[1])) {
       wrong_dt <- classes[classes != classes[1]] %>% unique %>% collapse(", ")
-      glue("can only process iso_file objects with the same data type (first: {classes[1]}), encountered: {wrong_dt}") %>% 
+      glue("can only process iso_file objects with the same data type (first: {classes[1]}), encountered: {wrong_dt}") %>%
         stop(call. = FALSE)
     }
     list_classes <- c(paste0(classes[1], "_list"), list_classes)
-    
+
     # check for file_id duplicates
-    dups <- 
+    dups <-
       tibble(
         idx = 1:length(iso_list),
         file_id = names(iso_list)
-      ) %>% 
-      group_by(.data$file_id) %>% 
-      mutate(n = 1:n(), has_duplicates = any(n > 1)) %>% 
-      ungroup() %>% 
+      ) %>%
+      group_by(.data$file_id) %>%
+      mutate(n = 1:n(), has_duplicates = any(n > 1)) %>%
+      ungroup() %>%
       filter(has_duplicates)
-    
+
     # process duplicates
     if (nrow(dups) > 0) {
       msg <- if(discard_duplicates) "duplicate files encountered, only first kept" else "duplicate files kept but with recoded file IDs"
-      
+
       # work on duplicates
       for (i in 1:nrow(dups)) {
         # register warnings
@@ -220,25 +220,25 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
           names(iso_list)[idx] <- recode_id
         }
       }
-      
-      # finalize duplicates 
+
+      # finalize duplicates
       if (discard_duplicates) {
         # discard all but first duplicate
         iso_list[filter(dups, n > 1)$idx] <- NULL
-      } 
+      }
     }
-    
+
     # propagate problems
-    all_problems <- map(iso_list, ~get_problems(.x) %>% mutate(file_id = .x$file_info$file_id)) %>% 
+    all_problems <- map(iso_list, ~get_problems(.x) %>% mutate(file_id = .x$file_info$file_id)) %>%
       bind_rows() %>% dplyr::select(.data$file_id, everything())
   }
-  
+
   # problems
   if (nrow(all_problems) > 0) {
     # remove duplicate entries
     all_problems <- unique(all_problems)
   }
-  
+
   # generate structure
   structure(
     iso_list,
@@ -250,22 +250,22 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
 # Printing ----
 
 #' Isofile printing
-#' 
+#'
 #' Print summary of individual iso_files (dual inlet or continuous flow) or collection of iso_files.
 #' @param x Object to show.
 #' @param ... additional parameters passed to print.default
 #' @rdname iso_printing
 #' @export
 print.iso_file_list <- function(x, ...) {
-  
+
   # what type of iso files
   if (length(x) == 0) data_type <- "unknown"
   else data_type <- class(x[[1]]) %>% { .[.!="iso_file"][1] } %>% str_replace("_", " ")
-  
+
   # print summary
   glue("Data from {length(x)} {data_type} iso files:") %>% cat("\n")
   print(iso_get_data_summary(x, quiet = TRUE))
-  
+
   if (n_problems(x) > 0) {
     cat("\nProblem summary:\n", sep = "")
     print(iso_get_problems_summary(x), ...)
@@ -317,7 +317,7 @@ set_ds_file_path <- function(ds, file_root, file_path, file_id = basename(file_p
   ds$file_info$file_path <- file_path
   ds$file_info$file_id <- file_id
   ds$file_info$file_subpath <- file_subpath
-  if (!file.exists(get_ds_file_path(ds))) 
+  if (!file.exists(get_ds_file_path(ds)))
     stop("file/folder does not exist: ", file_path, call. = FALSE)
   return(ds)
 }
@@ -331,12 +331,12 @@ get_ds_file_root <- function(ds) {
 get_ds_file_path <- function(ds, include_root = TRUE) {
   if (!col_in_df(ds$file_info, "file_path"))
     stop("file_path column does not exist in file info (lost during rename?), cannot proceed", call. = FALSE)
-  
+
   if (include_root) {
     file_root <- get_ds_file_root(ds)
     if (!is.na(file_root)) return(file.path(file_root, ds$file_info$file_path))
   }
-  
+
   return(ds$file_info$file_path)
 }
 
@@ -344,7 +344,7 @@ get_ds_file_path <- function(ds, include_root = TRUE) {
 update_read_options <- function(ds, read_options) {
   # remove read_ prefix in function parameters
   if(!is.list(read_options)) read_options <- as.list(read_options)
-  names(read_options) <- names(read_options) %>% str_replace("^read_", "") 
+  names(read_options) <- names(read_options) %>% str_replace("^read_", "")
   update <- read_options[names(read_options) %in% names(ds$read_options)]
   # update all that exist in the read options
   ds$read_options <- modifyList(ds$read_options, update)
@@ -358,23 +358,23 @@ set_ds_file_size <- function(ds) {
     # legacy file that doesnt have file root info yet
     return(ds)
   }
-  
+
   col_exists <- col_in_df(ds$file_info, "file_size")
   if (col_exists && !is.na(ds$file_info$file_size)) {
     # already set
     return(ds)
   }
-  
-  # setting file size    
+
+  # setting file size
   file_path <- get_ds_file_path(ds)
-  if (file.exists(file_path)) 
+  if (file.exists(file_path))
     file_size <- as.integer(round(file.size(file_path)))
   else
     file_size <- NA_integer_
-  
+
   # update file size
   ds$file_info <- dplyr::mutate(ds$file_info, file_size = !!file_size)
-  
+
   # make sure file size is at the proper position if it is introduced for the first time
   if (!col_exists) {
     ds$file_info <- dplyr::select(ds$file_info, starts_with("file_"), everything())

@@ -17,7 +17,7 @@ iso_expand_paths(path, extensions = c(), root = ".")
 data frame with columns \code{root} (\code{root} as provided) and \code{path} of all the found files.
 }
 \description{
-Helper function to expand the provided paths to find data files in folders and subfolders that match any of the specified extensions. Filepaths will be kept as is, only folders will be expanded. Note that this function is rarely called directly. It is used automatically by \code{\link{iso_read_dual_inlet}} and \code{\link{iso_read_continuous_flow}} to identify fiels of interest based on the file paths provided.
+Helper function to expand the provided paths to find data files in folders and subfolders that match any of the specified extensions. Filepaths will be kept as is, only folders will be expanded. Note that this function is rarely called directly. It is used automatically by \code{\link{iso_read_dual_inlet}} and \code{\link{iso_read_continuous_flow}} to identify files of interest based on the file paths provided.
 }
 \seealso{
 Other file system functions: 

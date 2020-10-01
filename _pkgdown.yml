@@ -1,5 +1,5 @@
 title: Isoreader
-url: http://isoreader.isoverse.org/
+url: https://isoreader.isoverse.org/
 template:
   params:
     bootswatch: simplex
@@ -115,6 +115,7 @@ reference:
   desc: >
     
   contents:
+  - iso_problem_functions
   - iso_has_problems
   - iso_get_problems_summary
   - iso_get_problems
@@ -140,13 +141,23 @@ reference:
   - iso_is_continuous_flow
   - iso_is_dual_inlet
   - iso_debug_mode
+  - read_iso_file
+  - reread_iso_files
+  - set_temp
   - map_binary_structure
   - print.binary_structure_map
   - print.iso_file_list
   - print.iso_file
+  - vec_arith.iso_double_with_units
+  - vec_cast.iso_double_with_units
+  - vec_ptype2.iso_double_with_units 
 
 - title: Moved to isoprocessor or deprecated
   contents:
+  - iso_get_data
+  - iso_get_resistors_info
+  - iso_get_standards_info
+  - iso_omit_files_with_problems
   - iso_calculate_ratios
   - iso_convert_signals
   - iso_convert_time

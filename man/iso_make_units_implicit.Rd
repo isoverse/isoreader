@@ -7,7 +7,7 @@
 iso_make_units_implicit(df, prefix = " [", suffix = "]")
 }
 \arguments{
-\item{df}{the data frame in which to make the units implicit/eplicit}
+\item{df}{the data frame in which to make the units implicit/explicit}
 
 \item{prefix}{the prefix for the units}
 
@@ -19,14 +19,14 @@ This function is intended for data frames /tibbles only and tries to figure out 
 \examples{
 # generate implicit units
 df <- tibble(peak = 1:5, `height [V]` = 1:5)
-iso_make_units_implicit(df) 
+iso_make_units_implicit(df)
 
 # convert back and forth
-iso_make_units_implicit(df) \%>\% iso_make_units_explicit() 
+iso_make_units_implicit(df) \%>\% iso_make_units_explicit()
 
 # implicit units from custom prefix & suffix
 df <- tibble(peak = 1:5, height.V = 1:5)
-iso_make_units_implicit(df, prefix = ".", suffix = "") 
+iso_make_units_implicit(df, prefix = ".", suffix = "")
 }
 \seealso{
 Other functions for values with units: 

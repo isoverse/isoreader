@@ -33,11 +33,11 @@ extract_word(
 \item{missing}{what to replace missing values with? Note that values can be missing because there are not enough captured matches or because the actual capture_bracket is empty.}
 }
 \description{
-This extracts words from text, by default looks for continuous sequences of numbers and/or letters. 
+This extracts words from text, by default looks for continuous sequences of numbers and/or letters.
 Can adjust whether characters such as "_", "-", " ", and "." should be counted as part of a word or separate them and whether numbers should be included.
 }
 \examples{
-x_text <- extract_word(c("sample number16.2", "sample number7b"), 
+x_text <- extract_word(c("sample number16.2", "sample number7b"),
                        capture_n = 2, include_colon = TRUE)
 # "number16.2" "number7b"
 x_num <- parse_number(x_text)

@@ -15,7 +15,7 @@ iso_shorten_relative_paths(path, root = ".")
 a data frame with the root directories and paths relative to the root - order of input paths is preserved
 }
 \description{
-Convenience function to shorten relative paths based on overlap with the provided root(s). Also simplifies current directory repeats (e.g. "././." becomes ".") for better legiblity. Does not check whether the original or resulting paths point to valid files or folders. Relative paths that do not start with the supplied \code{root} default back to the current working directory (\code{.}). Absolute paths are allowed but are returned as is without attempts at shortening. See \code{iso_find_absolute_path_roots} for rooting absolute paths.
+Convenience function to shorten relative paths based on overlap with the provided root(s). Also simplifies current directory repeats (e.g. "././." becomes ".") for better legibility. Does not check whether the original or resulting paths point to valid files or folders. Relative paths that do not start with the supplied \code{root} default back to the current working directory (\code{.}). Absolute paths are allowed but are returned as is without attempts at shortening. See \code{iso_find_absolute_path_roots} for rooting absolute paths.
 }
 \examples{
 iso_shorten_relative_paths(file.path("A", "B", "C"), "A") # root = "A", path = B/C

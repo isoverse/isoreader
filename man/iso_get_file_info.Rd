@@ -27,7 +27,7 @@ iso_get_file_info(
 Combine file information from multiple iso_files. By default all information is included but specific columns can be targeted using the \code{select} parameter to select and/or rename columns. File information beyond \code{file_id}, \code{file_root}, \code{file_path}, \code{file_datetime} and \code{file_size} (in bytes) is only available if the \code{iso_files} were read with parameter \code{read_file_info=TRUE}.
 }
 \note{
-this function used to allow selecting/renaming different file_info_columns in different files to the same column. This was a significant speed impediment and only covered very rare use cases. It is still available in the related function \code{\link{iso_select_file_info}} with a special flag but is no longer the default and not incouraged for use in the frequently called \code{iso_get_file_info}.
+this function used to allow selecting/renaming different file_info_columns in different files to the same column. This was a significant speed impediment and only covered very rare use cases. It is still available in the related function \code{\link{iso_select_file_info}} with a special flag but is no longer the default and not encouraged for use in the frequently called \code{iso_get_file_info}.
 }
 \seealso{
 Other data retrieval functions: 

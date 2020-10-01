@@ -132,7 +132,7 @@ iso_turn_reader_caching_off <- function(data = NULL) {
 #' @param read_raw_data if provided, set as the default for `read_raw_data` parameters
 #' @param read_file_info if provided, set as the default for `read_file_info` parameters
 #' @param read_method_info if provided, set as the default for `read_method_info` parameters
-#' @param read_vendor_data_table if provided, set as the default for `read_vendor_data_tabl` parameters
+#' @param read_vendor_data_table if provided, set as the default for `read_vendor_data_table` parameters
 #' @export
 #' @family settings functions
 iso_set_default_read_parameters <- function(data = NULL, read_raw_data, read_file_info, read_method_info, read_vendor_data_table, quiet = default(quiet)) {
