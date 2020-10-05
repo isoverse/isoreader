@@ -42,7 +42,7 @@ test_that("test that parameter checks are performed when reading file", {
 test_that("test that cached file path hashes work okay", {
   
   test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
-  origin_file <- file.path(test_folder, "cache_test.did")
+  origin_file <- get_isoreader_test_file("cache_test.did", test_folder)
   
   # exact same file in different locations
   temp_file <- file.path(tempdir(), "cache_test.did")
@@ -83,7 +83,11 @@ test_that("test that version checking and re-reads are working properly", {
   
   # test folder
   test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
-  test_files <- file.path(test_folder, c("scan_hv_01.scn", "scan_hv_02.scn", "scan_hv_03.scn"))
+  test_files <- c(
+    get_isoreader_test_file("scan_hv_01.scn", local_folder = test_folder),
+    get_isoreader_test_file("scan_hv_02.scn", local_folder = test_folder),
+    get_isoreader_test_file("scan_hv_03.scn", local_folder = test_folder)
+  )
   
   # expected errors
   expect_message(reread_iso_files(make_cf_data_structure("NA")), "not exist at.*referenced location")
@@ -217,8 +221,13 @@ test_that("test that version checking and re-reads are working properly", {
 
 test_that("test that file event expressions work", {
   
-  minimal_files <- file.path("test_data", "minimal_files") %>% 
-    list.files(pattern = "\\.did", full.names = TRUE)
+  test_folder <- file.path("test_data")
+  minimal_files <- c(
+    get_isoreader_test_file("minimal_01.did", local_folder = test_folder),
+    get_isoreader_test_file("minimal_02.did", local_folder = test_folder),
+    get_isoreader_test_file("minimal_03.did", local_folder = test_folder),
+    get_isoreader_test_file("minimal_04.did", local_folder = test_folder)
+  )
   
   set_read_file_event_expr({ print(file_n*-1) })
   expect_output(iso_read_dual_inlet(minimal_files[1:3], quiet = TRUE), "-1.*-2.*-3")

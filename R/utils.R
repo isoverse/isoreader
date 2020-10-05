@@ -762,3 +762,11 @@ show_isoprocessor_migration_message <- function(func) {
              "-->  library(isoprocessor) # load") %>%
     stop(call. = FALSE)
 }
+
+# testing utilities ====
+
+# utility function to get a test file path
+# could be used to download remote test file for larger test files
+get_isoreader_test_file <- function(file, local_folder) {
+  return(file.path(local_folder, file))
+}
