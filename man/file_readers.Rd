@@ -46,7 +46,7 @@ iso_register_scan_file_reader(
 
 \item{description}{what is this file type about?}
 
-\item{software}{what is the software program that creates this filetype?}
+\item{software}{what is the software program that creates this file type?}
 
 \item{cacheable}{whether this file type is cacheable. If \code{TRUE} (the default), user requests to cache the file will be honored. If \code{FALSE}, this file type will never be cached no matter what the user requests.}
 

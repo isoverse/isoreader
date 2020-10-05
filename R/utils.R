@@ -382,7 +382,7 @@ unlist_paths <- function(path_list) {
 
 #' Expand file paths
 #'
-#' Helper function to expand the provided paths to find data files in folders and subfolders that match any of the specified extensions. Filepaths will be kept as is, only folders will be expanded. Note that this function is rarely called directly. It is used automatically by \code{\link{iso_read_dual_inlet}} and \code{\link{iso_read_continuous_flow}} to identify fiels of interest based on the file paths provided.
+#' Helper function to expand the provided paths to find data files in folders and subfolders that match any of the specified extensions. Filepaths will be kept as is, only folders will be expanded. Note that this function is rarely called directly. It is used automatically by \code{\link{iso_read_dual_inlet}} and \code{\link{iso_read_continuous_flow}} to identify files of interest based on the file paths provided.
 #'
 #' @param path vector of file/folder paths, mixed relative and absolute paths are allowed.
 #' @param extensions which extensions to look for? (with or without leading .) - this is typically one or more of the extensions listed by \code{\link{iso_get_supported_file_types}}
@@ -465,7 +465,7 @@ iso_root_paths <- function(path, root = ".", check_existence = TRUE) {
 
 #' Shorten relative paths
 #'
-#' Convenience function to shorten relative paths based on overlap with the provided root(s). Also simplifies current directory repeats (e.g. "././." becomes ".") for better legiblity. Does not check whether the original or resulting paths point to valid files or folders. Relative paths that do not start with the supplied \code{root} default back to the current working directory (\code{.}). Absolute paths are allowed but are returned as is without attempts at shortening. See \code{iso_find_absolute_path_roots} for rooting absolute paths.
+#' Convenience function to shorten relative paths based on overlap with the provided root(s). Also simplifies current directory repeats (e.g. "././." becomes ".") for better legibility. Does not check whether the original or resulting paths point to valid files or folders. Relative paths that do not start with the supplied \code{root} default back to the current working directory (\code{.}). Absolute paths are allowed but are returned as is without attempts at shortening. See \code{iso_find_absolute_path_roots} for rooting absolute paths.
 #'
 #' @inheritParams iso_expand_paths
 #' @return a data frame with the root directories and paths relative to the root - order of input paths is preserved
@@ -535,7 +535,7 @@ iso_shorten_relative_paths <- function(path, root = ".") {
 
 #' Find roots for absolute paths
 #'
-#' Helper function to find the roots of absolute paths. Tries to put absolute paths into the context of the relative root. For those that this is not possible (because they are not in fact a sub-path of the relative roots), identifies the greatest common denominator for absolute paths as their root. Does not change relative paths but does check wheter they do exist if \code{check_existence = TRUE} (the default). To modify relative paths, use \link{iso_shorten_relative_paths} prior to calling this function.
+#' Helper function to find the roots of absolute paths. Tries to put absolute paths into the context of the relative root. For those that this is not possible (because they are not in fact a sub-path of the relative roots), identifies the greatest common denominator for absolute paths as their root. Does not change relative paths but does check whether they do exist if \code{check_existence = TRUE} (the default). To modify relative paths, use \link{iso_shorten_relative_paths} prior to calling this function.
 #' @inheritParams iso_expand_paths
 #' @param check_existence whether to check for the existence of the paths
 #' @return a data frame with the root directories and paths relative to the root - order of input paths is preserved
@@ -761,4 +761,12 @@ show_isoprocessor_migration_message <- function(func) {
              "-->  devtools::install_github(\"isoverse/isoprocessor\") # install\n",
              "-->  library(isoprocessor) # load") %>%
     stop(call. = FALSE)
+}
+
+# testing utilities ====
+
+# utility function to get a test file path
+# could be used to download remote test file for larger test files
+get_isoreader_test_file <- function(file, local_folder) {
+  return(file.path(local_folder, file))
 }

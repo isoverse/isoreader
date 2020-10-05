@@ -1,7 +1,7 @@
 ---
 title: "Scan Examples"
 date: "`r Sys.Date()`"
-output: 
+output:
   rmarkdown::html_vignette:
   html_document:
     code_folding: show
@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-Isoreader supports several dual inlet IRMS data formats. This vignette shows some of the functionality for scan data files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the [operations vignette](http://isoreader.isoverse.org/articles/operations.html). For details on downstream data processing and visualization, see the [isoprocessor package](https://isoprocessor.isoverse.org).
+Isoreader supports several dual inlet IRMS data formats. This vignette shows some of the functionality for scan data files. For additional information on operations more generally (caching, combining read files, data export, etc.), please consult the [operations vignette](https://isoreader.isoverse.org/articles/operations.html). For details on downstream data processing and visualization, see the [isoprocessor package](https://isoprocessor.isoverse.org).
 
 Note: this vignette is still a work in progress.
 
@@ -50,7 +50,7 @@ iso_get_reader_examples() %>% rmarkdown::paged_table()
 
 ```{r}
 # read scan examples
-scan_files <- 
+scan_files <-
   iso_read_scan(
     iso_get_reader_example("peak_shape_scan_example.scn"),
     iso_get_reader_example("background_scan_example.scn"),
@@ -78,7 +78,7 @@ scan_files %>% iso_get_problems() %>% rmarkdown::paged_table()
 
 # File Information
 
-Detailed file information can be aggregated for all isofiles using the `iso_get_file_info()` function which supports the full [select syntax](https://dplyr.tidyverse.org/reference/select.html) of the [dplyr](https://dplyr.tidyverse.org/) package to specify which columns are of interest (by default, all file information is retrieved). 
+Detailed file information can be aggregated for all isofiles using the `iso_get_file_info()` function which supports the full [select syntax](https://dplyr.tidyverse.org/reference/select.html) of the [dplyr](https://dplyr.tidyverse.org/) package to specify which columns are of interest (by default, all file information is retrieved).
 
 ```{r}
 # all file information
@@ -91,8 +91,8 @@ File information can also be modified across an entire collection of isofiles us
 
 ```{r}
 # select + rename specific file info columns
-scan_files2 <- scan_files %>% 
-  iso_select_file_info(-file_root) %>% 
+scan_files2 <- scan_files %>%
+  iso_select_file_info(-file_root) %>%
   iso_rename_file_info(`Date & Time` = file_datetime)
 
 # fetch all file info
@@ -102,29 +102,29 @@ scan_files2 %>% iso_get_file_info() %>% rmarkdown::paged_table()
 
 ## Filter
 
-Any collection of isofiles can also be filtered based on the available file information using the function `iso_filter_files`. This function can operate on any column available in the file information and supports full [dplyr](https://dplyr.tidyverse.org/reference/filter.html) syntax. 
+Any collection of isofiles can also be filtered based on the available file information using the function `iso_filter_files`. This function can operate on any column available in the file information and supports full [dplyr](https://dplyr.tidyverse.org/reference/filter.html) syntax.
 
 ```{r}
 # find files that have 'CIT' in the new ID field
-scan_files2 %>% 
-  iso_filter_files(type == "High Voltage") %>% 
-  iso_get_file_info() %>% 
+scan_files2 %>%
+  iso_filter_files(type == "High Voltage") %>%
+  iso_get_file_info() %>%
   rmarkdown::paged_table()
 ```
 
 ## Mutate
 
-The file information in any collection of isofiles can also be mutated using the function `iso_mutate_file_info`. This function can introduce new columns and operate on any existing columns available in the file information (even if it does not exist in all files) and supports full [dplyr](https://dplyr.tidyverse.org/reference/mutate.html) syntax. 
+The file information in any collection of isofiles can also be mutated using the function `iso_mutate_file_info`. This function can introduce new columns and operate on any existing columns available in the file information (even if it does not exist in all files) and supports full [dplyr](https://dplyr.tidyverse.org/reference/mutate.html) syntax.
 
 ```{r}
-scan_files3 <- scan_files2 %>% 
+scan_files3 <- scan_files2 %>%
   iso_mutate_file_info(
     # introduce new column
     `Run in 2019?` = `Date & Time` > "2019-01-01" & `Date & Time` < "2020-01-01"
-  ) 
+  )
 
-scan_files3 %>% 
-  iso_get_file_info() %>% 
+scan_files3 %>%
+  iso_get_file_info() %>%
   rmarkdown::paged_table()
 ```
 
@@ -144,18 +144,18 @@ The raw data read from the scan files can be retrieved similarly using the `iso_
 # get raw data with default selections (all raw data, no additional file info)
 scan_files %>% iso_get_raw_data() %>% head(n=10) %>% rmarkdown::paged_table()
 # get specific raw data and add some file information
-scan_files %>% 
+scan_files %>%
   iso_get_raw_data(
     # select just time and the two ions
     select = c(x, x_units, v44.mV, v45.mV),
     # include the scan type and rename the column
     include_file_info = c(`Scan Type` = type)
-  ) %>% 
+  ) %>%
   # look at first few records only
   head(n=10) %>% rmarkdown::paged_table()
 ```
 
-# For expert users: retrieving all data 
+# For expert users: retrieving all data
 
 For users familiar with the nested data frames from the [tidyverse](https://www.tidyverse.org/) (particularly [tidyr](https://tidyr.tidyverse.org/)'s `nest` and `unnest`), there is an easy way to retrieve all data from the iso file objects in a single nested data frame:
 
@@ -167,14 +167,14 @@ all_data <- scan_files %>% iso_get_all_data()
 
 # Saving collections
 
-Saving entire collections of isofiles for retrieval at a later point is easily done using the `iso_save` function which stores collections or individual isoreader file objects in the efficient R data storage format `.rds` (if not specified, the extension `.scan.rds` will be automatically appended). These saved collections can be convientiently read back using the same `iso_read_scan` command used for raw data files.
+Saving entire collections of isofiles for retrieval at a later point is easily done using the `iso_save` function which stores collections or individual isoreader file objects in the efficient R data storage format `.rds` (if not specified, the extension `.scan.rds` will be automatically appended). These saved collections can be conveniently read back using the same `iso_read_scan` command used for raw data files.
 
 ```{r}
 # export to R data archive
 scan_files %>% iso_save("scan_files_export.scan.rds")
 
 # read back the exported R data storage
-iso_read_scan("scan_files_export.scan.rds") 
+iso_read_scan("scan_files_export.scan.rds")
 ```
 
 # Data Export
@@ -196,5 +196,3 @@ scan_files %>% iso_export_to_feather("scan_files_export")
 # exported feather files
 list.files(pattern = ".scan.feather")
 ```
-
-

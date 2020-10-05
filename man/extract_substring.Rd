@@ -19,7 +19,7 @@ extract_substring(
 
 \item{capture_n}{within each string, which match of the \code{pattern} should be extracted? e.g. if the pattern searches for words, should the first, second or third word be captured?}
 
-\item{capture_bracket}{for the captured match, which capture group should be extracted? i.e. which parentheses-enclosed segment of the \code{pattern}? 
+\item{capture_bracket}{for the captured match, which capture group should be extracted? i.e. which parentheses-enclosed segment of the \code{pattern}?
 by default captures the whole pattern (\code{capture_bracket = 0}).}
 
 \item{missing}{what to replace missing values with? Note that values can be missing because there are not enough captured matches or because the actual capture_bracket is empty.}
@@ -28,7 +28,7 @@ by default captures the whole pattern (\code{capture_bracket = 0}).}
 character vector of same length as \code{string} with the extracted substrings
 }
 \description{
-This is a convenience function to capture substrings from textual data. 
+This is a convenience function to capture substrings from textual data.
 Uses \code{\link[stringr:str_match]{str_match_all}} internally but instead of returning everything, always returns only one single part of the match, depending on parameters \code{capture_n} and \code{capture_group}.
 }
 \seealso{

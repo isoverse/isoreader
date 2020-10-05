@@ -19,13 +19,13 @@ This function is intended for data frames / tibbles only and makes the units of 
 \examples{
 # a data frame with implicit units
 df <- tibble(peak = 1:5, height = iso_double_with_units(1:5, "V"))
-df 
+df
 
 # show with explicit units
-iso_make_units_explicit(df) 
+iso_make_units_explicit(df)
 
 # show with explicit units (custom prefix & suffix)
-iso_make_units_explicit(df, prefix = ".", suffix = "") 
+iso_make_units_explicit(df, prefix = ".", suffix = "")
 }
 \seealso{
 Other functions for values with units: 

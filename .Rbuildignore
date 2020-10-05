@@ -18,7 +18,7 @@
 ^vignettes/cache$
 ^vignettes/fig_output$
 ^doc$
-^Meta$
 ^.*\.xlsx$
-^.*\.rds$
+^[^/]*\.rds$
 ^\.github$
+^cran-comments.md$

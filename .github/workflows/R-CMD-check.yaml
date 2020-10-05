@@ -5,6 +5,8 @@ on:
   pull_request:
     branches:
       - master
+  schedule:
+    - cron: "0 0 * * FRI"
 
 name: R-CMD-check
 
@@ -64,6 +66,14 @@ jobs:
         run: |
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
+        shell: Rscript {0}
+
+      - name: Install package
+        if: runner.os == 'Windows'
+        run: |
+          # install isoreader before check so parallel processing examples work
+          remotes::install_cran("devtools")
+          devtools::install_github("isoverse/isoreader")
         shell: Rscript {0}
 
       - name: Check

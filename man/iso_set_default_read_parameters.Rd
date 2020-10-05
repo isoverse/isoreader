@@ -22,7 +22,7 @@ iso_set_default_read_parameters(
 
 \item{read_method_info}{if provided, set as the default for `read_method_info` parameters}
 
-\item{read_vendor_data_table}{if provided, set as the default for `read_vendor_data_tabl` parameters}
+\item{read_vendor_data_table}{if provided, set as the default for `read_vendor_data_table` parameters}
 
 \item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
 }

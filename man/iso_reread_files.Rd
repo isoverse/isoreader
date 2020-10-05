@@ -71,7 +71,7 @@ To re-read files that have been modified on disc, please use \code{iso_reread_ch
 
 \code{iso_reread_outdated_files} re-reads all files that were read with an outdated version of isoreader.
 
-\code{iso_reread_problem_files} re-reads all files that have had errors the last time they were read by isoreader (set \code{reread_files_with_warnings = TRUE} to also re-read those that have warninigs).
+\code{iso_reread_problem_files} re-reads all files that have had errors the last time they were read by isoreader (set \code{reread_files_with_warnings = TRUE} to also re-read those that have warnings).
 
 \code{iso_reread_storage} is deprecated.
 

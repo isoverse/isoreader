@@ -1,4 +1,4 @@
-# read ionos .iarc archieves for their continuous flow data
+# read ionos .iarc archives for their continuous flow data
 # @param ds the iso_file data structure to fill
 # @param custom reader options - none needed
 iso_read_flow_iarc <- function(ds, options = list()) {
@@ -7,11 +7,11 @@ iso_read_flow_iarc <- function(ds, options = list()) {
   if(!iso_is_file(ds) || !is(ds, "continuous_flow")) 
     stop("data structure must be a 'continuous_flow' iso_file", call. = FALSE)
   
-  # unzipping iarc archieve ====
+  # unzipping iarc archive ====
   folder_name <- ds$file_info$file_path %>% basename() %>% { str_replace(., fixed(get_file_ext(.)), "") }
   folder_path <- file.path(tempdir(), folder_name)
   if (!file.exists(folder_path)) {
-    if (!default("quiet")) log_message("unpacking isoprime archieve file...", prefix = "      ")
+    if (!default("quiet")) log_message("unpacking isoprime archive file...", prefix = "      ")
     unzip(get_ds_file_path(ds), exdir = folder_path)
   }
   
