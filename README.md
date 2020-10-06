@@ -3,7 +3,7 @@
 
 # isoreader <a href='https://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
 [![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.2.3-orange.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://isoreader.isoverse.org/)
 [![R build
@@ -114,7 +114,7 @@ Please fork the repository and branch off from the [dev
 branch](https://github.com/isoverse/isoreader/tree/dev) since it
 contains the most up-to-date development version of
 [isoreader](https://isoreader.isoverse.org/). Make sure to write
-[`testthat` tests](http://r-pkgs.had.co.nz/tests.html) for your work
+[`testthat` tests](https://r-pkgs.had.co.nz/tests.html) for your work
 (stored in the tests/testthat directory). All tests can be run
 automatically and continuously during development to make it easier to
 spot any code problems on the go. The easiest way to run them is by
