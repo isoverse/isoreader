@@ -94,6 +94,12 @@ get_raw_data_info <- function(iso_files) {
           TRUE ~ "raw data not read"
         )
       )
+  } else if (iso_is_orbitrap(iso_files)) {
+    raw_data_sum <- raw_data_sum %>%
+      mutate(
+        n_tps = 0L,
+        label = "no raw data"
+      )
   } else if (iso_is_scan(iso_files)) {
     raw_data_sum <- raw_data_sum %>%
       mutate(

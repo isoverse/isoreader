@@ -31,6 +31,15 @@ iso_register_continuous_flow_file_reader <- function(
   register_file_reader("continuous flow", "iso_read_continuous_flow", extension, func, description, software, cacheable, post_read_check, overwrite, env)
 }
 
+#' @details \code{iso_register_orbitrap_file_reader}: use this function to register file readers for orbitrap files.
+#' @rdname file_readers
+#' @family file_types
+#' @export
+iso_register_orbitrap_reader <- function(
+  extension, func, description = NA_character_, software = NA_character_, cacheable = TRUE, post_read_check = TRUE, overwrite = FALSE, env = find_func(func)) {
+  register_file_reader("orbitrap", "iso_read_orbitrap", extension, func, description, software, cacheable, post_read_check, overwrite, env)
+}
+
 #' @details \code{iso_register_scan_file_reader}: use this function to register file readers for scan files.
 #' @rdname file_readers
 #' @family file_types
@@ -112,6 +121,10 @@ get_supported_di_files <- function() {
 
 get_supported_cf_files <- function() {
   dplyr::filter(default("file_readers"), !!sym("type") == "continuous flow")
+}
+
+get_supported_ot_files <- function() {
+  dplyr::filter(default("file_readers"), !!sym("type") == "orbitrap")
 }
 
 get_supported_scan_files <- function() {
@@ -215,6 +228,45 @@ iso_read_continuous_flow <- function(
     root = root,
     supported_extensions = get_supported_cf_files(),
     data_structure = make_cf_data_structure(),
+    read_options = c(
+      read_raw_data = read_raw_data,
+      read_file_info = read_file_info,
+      read_method_info = read_method_info,
+      read_vendor_data_table = read_vendor_data_table
+    ),
+    reader_options = list(),
+    discard_duplicates = discard_duplicates,
+    parallel = parallel,
+    parallel_plan = parallel_plan,
+    parallel_cores = parallel_cores,
+    cache = cache,
+    read_cache = read_cache,
+    reread_outdated_cache = reread_outdated_cache,
+    quiet = quiet
+  )
+}
+
+#' Load orbitrap data
+#'
+#' @inheritParams iso_read_dual_inlet
+#' @family isoread functions for different types of IRMS data
+#' @export
+iso_read_orbitrap <- function(
+  ...,
+  root = ".",
+  read_raw_data = default(read_raw_data), read_file_info = default(read_file_info),
+  read_method_info = default(read_method_info), read_vendor_data_table = default(read_vendor_data_table),
+  discard_duplicates = TRUE,
+  parallel = FALSE, parallel_plan = future::multisession, parallel_cores = future::availableCores(),
+  cache = default(cache), read_cache = default(cache), reread_outdated_cache = FALSE,
+  quiet = default(quiet)) {
+  
+  # process data
+  iso_read_files(
+    unlist_paths(list(...)),
+    root = root,
+    supported_extensions = get_supported_ot_files(),
+    data_structure = make_ot_data_structure(),
     read_options = c(
       read_raw_data = read_raw_data,
       read_file_info = read_file_info,

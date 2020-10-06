@@ -49,6 +49,16 @@ make_cf_data_structure <- function(file_id = NA_character_) {
   return(struct)
 }
 
+# basic orbitrap data structure
+make_ot_data_structure <- function(file_id = NA_character_) {
+  struct <- make_iso_file_data_structure(file_id = file_id)
+  # vendor data table
+  struct$read_options$vendor_data_table <- FALSE
+  struct$vendor_data_table <- tibble::tibble()
+  class(struct) <- c("orbitrap", class(struct))
+  return(struct)
+}
+
 # basic scan data structure
 make_scan_data_structure <- function(file_id = NA_character_) {
   struct <- make_iso_file_data_structure(file_id = file_id)
@@ -128,6 +138,14 @@ iso_is_dual_inlet <- function(x) {
 iso_is_continuous_flow <- function(x) {
   methods::is(x, "continuous_flow") || methods::is(x, "continuous_flow_list")
 }
+
+#' @description \code{iso_is_orbitrap} tests if an iso_file or iso_file list consists exclusively of orbitrap file objects
+#' @rdname iso_data_structure
+#' @export
+iso_is_orbitrap <- function(x) {
+  methods::is(x, "orbitrap") || methods::is(x, "orbitrap_list")
+}
+
 
 #' @description \code{iso_is_scan} tests if an iso_file or iso_file list consists exclusively of scan file objects
 #' @rdname iso_data_structure
@@ -298,6 +316,12 @@ print.dual_inlet <- function(x, ..., show_problems = TRUE) {
 #' @rdname iso_printing
 #' @export
 print.continuous_flow <- function(x, ..., show_problems = TRUE) {
+  NextMethod("print", x, ..., show_problems = show_problems)
+}
+
+#' @rdname iso_printing
+#' @export
+print.orbitrap <- function(x, ..., show_problems = TRUE) {
   NextMethod("print", x, ..., show_problems = show_problems)
 }
 
