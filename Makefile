@@ -1,15 +1,14 @@
 # tools for active package development
 
-all: vignettes docu check
+.PHONY: check auto_test auto_test_all
+
+all: docu check
 
 docu:
 	Rscript -e "devtools::document(roclets=c('rd', 'collate', 'namespace'))"
 
-vignettes:
-	Rscript -e "devtools::build_vignettes()"
-
 check:
-	Rscript -e "devtools::check()"
+	R -q -e "devtools::check(env_vars = c())"
 
 # test package functionality without all example files
 auto_test:

@@ -6,7 +6,7 @@ test_that("retrieving example files works correctly", {
   
   expect_true(is.data.frame(iso_get_reader_examples()))
   expect_error(iso_get_reader_example("DNE"), "does not exist")
-  expect_equal(system.file(package = "isoreader", "extdata", "linearity_example.dxf"), path <- iso_get_reader_example("linearity_example.dxf"))
+  expect_equal(system.file(package = "isoreader", "extdata", "continuous_flow_example.dxf"), path <- iso_get_reader_example("continuous_flow_example.dxf"))
   expect_true(file.exists(path))
   
 })
@@ -168,39 +168,39 @@ test_that("test that root folder finding works correctly", {
   expect_equal(iso_find_absolute_path_roots(c()), tibble(root = character(0), path = character(0)))
   
   # general checks on relative paths (should remain unchanged)
-  test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
-  example_file_path <- get_isoreader_test_file("cf_example_H_01.cf", local_folder = test_folder)
-  expect_equal(iso_find_absolute_path_roots(test_folder), tibble(root = ".", path = test_folder))
-  expect_equal(iso_find_absolute_path_roots(".", root = test_folder), tibble(root = test_folder, path = "."))
-  expect_equal(iso_find_absolute_path_roots(c(test_folder, ".")), tibble(root = ".", path = c(test_folder, ".")))
-  expect_equal(iso_find_absolute_path_roots(c(test_folder, "."), "."), tibble(root = ".", path = c(test_folder, ".")))
-  expect_equal(iso_find_absolute_path_roots(c(test_folder, "."), c(".", ".")), tibble(root = ".", path = c(test_folder, ".")))
-  expect_equal(iso_find_absolute_path_roots(c(test_folder, "."), c(".", getwd())), tibble(root = c(".", getwd()), path = c(test_folder, ".")))
-  expect_equal(iso_find_absolute_path_roots(c(".", test_folder)), tibble(root = ".", path = c(".", test_folder)))
-  expect_equal(iso_find_absolute_path_roots("cf_example_H_01.cf", test_folder), tibble(root = test_folder, path = "cf_example_H_01.cf"))
+  data_folder <- "minimal_data" # data_folder <- file.path("tests", "testthat", "minimal_data") # for direct testing
+  example_file_path <- get_isoreader_test_file("minimal_01.did", local_folder = data_folder)
+  expect_equal(iso_find_absolute_path_roots(data_folder), tibble(root = ".", path = data_folder))
+  expect_equal(iso_find_absolute_path_roots(".", root = data_folder), tibble(root = data_folder, path = "."))
+  expect_equal(iso_find_absolute_path_roots(c(data_folder, ".")), tibble(root = ".", path = c(data_folder, ".")))
+  expect_equal(iso_find_absolute_path_roots(c(data_folder, "."), "."), tibble(root = ".", path = c(data_folder, ".")))
+  expect_equal(iso_find_absolute_path_roots(c(data_folder, "."), c(".", ".")), tibble(root = ".", path = c(data_folder, ".")))
+  expect_equal(iso_find_absolute_path_roots(c(data_folder, "."), c(".", getwd())), tibble(root = c(".", getwd()), path = c(data_folder, ".")))
+  expect_equal(iso_find_absolute_path_roots(c(".", data_folder)), tibble(root = ".", path = c(".", data_folder)))
+  expect_equal(iso_find_absolute_path_roots("minimal_01.did", data_folder), tibble(root = data_folder, path = "minimal_01.did"))
   expect_equal(
-    iso_find_absolute_path_roots(c(test_folder, file.path(test_folder, "cf_example_H_01.cf"))), 
-    tibble(root = ".", path = c(test_folder, file.path(test_folder, "cf_example_H_01.cf"))))
+    iso_find_absolute_path_roots(c(data_folder, file.path(data_folder, "minimal_01.did"))), 
+    tibble(root = ".", path = c(data_folder, file.path(data_folder, "minimal_01.did"))))
   
   # absolute paths that fit the relative path
   expect_equal(iso_find_absolute_path_roots(getwd()), tibble(root = ".", path = "."))
-  expect_equal(iso_find_absolute_path_roots(file.path(getwd(), test_folder)), tibble(root = ".", path = test_folder))
-  expect_equal(iso_find_absolute_path_roots(c(file.path(getwd(), test_folder), test_folder)), tibble(root = ".", path = c(test_folder, test_folder)))
+  expect_equal(iso_find_absolute_path_roots(file.path(getwd(), data_folder)), tibble(root = ".", path = data_folder))
+  expect_equal(iso_find_absolute_path_roots(c(file.path(getwd(), data_folder), data_folder)), tibble(root = ".", path = c(data_folder, data_folder)))
   expect_equal(
-    iso_find_absolute_path_roots(c(file.path(getwd(), test_folder), test_folder), c(test_folder, ".")), 
-    tibble(root = c(test_folder, "."), path = c(".", test_folder)))
+    iso_find_absolute_path_roots(c(file.path(getwd(), data_folder), data_folder), c(data_folder, ".")), 
+    tibble(root = c(data_folder, "."), path = c(".", data_folder)))
   expect_equal(
-    iso_find_absolute_path_roots(c(file.path(getwd(), test_folder), file.path(getwd(), test_folder, "cf_example_H_01.cf")), test_folder),
-    tibble(root = test_folder, path = c(".", "cf_example_H_01.cf")))
+    iso_find_absolute_path_roots(c(file.path(getwd(), data_folder), file.path(getwd(), data_folder, "minimal_01.did")), data_folder),
+    tibble(root = data_folder, path = c(".", "minimal_01.did")))
   expect_equal(
-    iso_find_absolute_path_roots(c(file.path(getwd(), test_folder), file.path(getwd(), test_folder, "cf_example_H_01.cf")), c(".", test_folder)),
-    tibble(root = c(".", test_folder), path = c(test_folder, "cf_example_H_01.cf")))
+    iso_find_absolute_path_roots(c(file.path(getwd(), data_folder), file.path(getwd(), data_folder, "minimal_01.did")), c(".", data_folder)),
+    tibble(root = c(".", data_folder), path = c(data_folder, "minimal_01.did")))
   
   # add absolute paths that don't fit the relative path (this don't work interactively if package installed in current path with devtools)
   td <- system.file(package = "isoreader")
   expect_equal(
-    iso_find_absolute_path_roots(c(td, file.path(getwd(), test_folder), file.path(test_folder, "cf_example_H_01.cf"))), 
-    tibble(root = c(td, ".", "."), path = c(".", test_folder, file.path(test_folder, "cf_example_H_01.cf")))
+    iso_find_absolute_path_roots(c(td, file.path(getwd(), data_folder), file.path(data_folder, "minimal_01.did"))), 
+    tibble(root = c(td, ".", "."), path = c(".", data_folder, file.path(data_folder, "minimal_01.did")))
   )
   expect_equal(
     iso_find_absolute_path_roots(

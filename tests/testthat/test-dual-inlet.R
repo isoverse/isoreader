@@ -59,12 +59,12 @@ test_that("test that did files can be read", {
   expect_message(capture.output(did <- iso_read_dual_inlet(file, read_cache = FALSE)), "6 channels but 0 masses")
   expect_equal(nrow(problems(did)), 1)
   
-  # additional test files =====
-  test_folder <- file.path("test_data") # test_folder <- file.path("tests", "testthat", "test_data") # direct
+  # additional test files (skip on CRAN because test files not includes due to tarball size limits) =====
+  skip_on_cran()
   
   # testing wrapper
   check_dual_inlet_test_file <- function(file, ...) {
-    file_path <- get_isoreader_test_file(file, local_folder = test_folder)
+    file_path <- get_isoreader_test_file(file, local_folder = test_data)
     expect_true(file.exists(file_path))
     expect_is(did <- iso_read_dual_inlet(file_path, ...), "dual_inlet")
     expect_equal(nrow(problems(did)), 0)
@@ -72,6 +72,8 @@ test_that("test that did files can be read", {
   }
   
   # .did files
+  test_data <- file.path("test_data") # test_data <- file.path("tests", "testthat", "test_data") # direct
+  check_dual_inlet_test_file("did_example_air.did")
   check_dual_inlet_test_file("did_example_CO2_clumped_01.did")
   check_dual_inlet_test_file("did_example_many_cycles.did")
   check_dual_inlet_test_file("did_example_unicode.did")
@@ -79,6 +81,7 @@ test_that("test that did files can be read", {
   check_dual_inlet_test_file("caf_example_CO2_01.caf")
   
   # minimal files
+  test_data <- file.path("minimal_data") # test_data <- file.path("tests", "testthat", "minimal_data") # direct
   did1 <- check_dual_inlet_test_file("minimal_01.did")
   did2 <- check_dual_inlet_test_file("minimal_02.did")
   did3 <- check_dual_inlet_test_file("minimal_03.did")

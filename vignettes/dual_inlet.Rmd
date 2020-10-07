@@ -51,7 +51,6 @@ iso_get_reader_examples() %>% rmarkdown::paged_table()
 di_files <-
   iso_read_dual_inlet(
     iso_get_reader_example("dual_inlet_example.did"),
-    iso_get_reader_example("dual_inlet_example2.did"),
     iso_get_reader_example("dual_inlet_example.caf"),
     iso_get_reader_example("dual_inlet_nu_example.txt"),
     nu_masses = 49:44
@@ -253,7 +252,7 @@ di_files %>% iso_get_raw_data() %>% head(n=10) %>% rmarkdown::paged_table()
 di_files %>%
   iso_get_raw_data(
     # select just time and the two ions
-    select = c(type, cycle, v28.mV, v29.mV),
+    select = c(type, cycle, v44.mV, v45.mV),
     # include the Analysis number fron the file info and rename it to 'run'
     include_file_info = c(run = Analysis)
   ) %>%

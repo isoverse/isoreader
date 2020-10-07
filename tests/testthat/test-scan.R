@@ -44,12 +44,13 @@ test_that("test that scn files can be read", {
   expect_is(scan <- iso_read_scan(file), "scan")
   expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
   
-  # additional test files =====
-  test_folder <- file.path("test_data") # test_folder <- file.path("tests", "testthat", "test_data") # direct
+  # additional test files (skip on CRAN because test files not includes due to tarball size limits) =====
+  skip_on_cran()
+  data_folder <- file.path("minimal_data") # data_folder <- file.path("tests", "testthat", "minimal_data") # direct
   
   # testing wrapper
   check_scan_test_file <- function(file) {
-    file_path <- get_isoreader_test_file(file, local_folder = test_folder)
+    file_path <- get_isoreader_test_file(file, local_folder = data_folder)
     expect_true(file.exists(file_path))
     expect_is(scn <- iso_read_scan(file_path), "scan")
     expect_equal(nrow(filter(problems(scn), type != "warning")), 0)

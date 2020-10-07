@@ -49,8 +49,7 @@ cf_files <-
   iso_read_continuous_flow(
     iso_get_reader_example("continuous_flow_example.cf"),
     iso_get_reader_example("continuous_flow_example.iarc"),
-    iso_get_reader_example("continuous_flow_example.dxf"),
-    iso_get_reader_example("linearity_example.dxf")
+    iso_get_reader_example("continuous_flow_example.dxf")
   )
 ```
 
@@ -118,8 +117,8 @@ cf_files2 %>% iso_get_file_info() %>% rmarkdown::paged_table()
 Any collection of isofiles can also be filtered based on the available file information using the function `iso_filter_files`. This function can operate on any column available in the file information and supports full [dplyr](https://dplyr.tidyverse.org/reference/filter.html) syntax.
 
 ```{r}
-# find files that have 'linearity' in the new ID field
-cf_files2 %>% iso_filter_files(grepl("linearity", ID)) %>%
+# find files that have 'acetanilide' in the new ID field
+cf_files2 %>% iso_filter_files(grepl("acetanilide", ID)) %>%
   iso_get_file_info() %>%
   rmarkdown::paged_table()
 
