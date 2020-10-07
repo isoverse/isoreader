@@ -28,11 +28,6 @@ test_that("test that dxf files can be read", {
   
   # test specific files
   iso_turn_reader_caching_off()
-  
-  expect_true(file.exists(file <- iso_get_reader_example("linearity_example.dxf")))
-  expect_is(dxf <- iso_read_continuous_flow(file), "continuous_flow")
-  expect_equal(nrow(problems(dxf)), 0)
-  expect_true(length(dxf$vendor_data_table %>% iso_get_units() %>% na.omit()) == 26)
 
   expect_true(file.exists(file <- iso_get_reader_example("continuous_flow_example.cf")))
   expect_is(cf <- iso_read_continuous_flow(file), "continuous_flow")
@@ -83,6 +78,7 @@ test_that("test that dxf files can be read", {
   dxf1 <- check_continuous_flow_test_file("dxf_example_H_01.dxf")
   check_continuous_flow_test_file("dxf_example_HO_01.dxf")
   check_continuous_flow_test_file("dxf_example_HO_02.dxf")
+  check_continuous_flow_test_file("dxf_example_C_01.dxf")
   check_continuous_flow_test_file("dxf_example_CN_01.dxf")
   check_continuous_flow_test_file("dxf_example_CNS_01.dxf")
   dxf2 <- check_continuous_flow_test_file("dxf_example_N2_01.dxf")

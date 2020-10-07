@@ -73,6 +73,7 @@ test_that("test that did files can be read", {
   
   # .did files
   test_data <- file.path("test_data") # test_data <- file.path("tests", "testthat", "test_data") # direct
+  check_dual_inlet_test_file("did_example_air.did")
   check_dual_inlet_test_file("did_example_CO2_clumped_01.did")
   check_dual_inlet_test_file("did_example_many_cycles.did")
   check_dual_inlet_test_file("did_example_unicode.did")
