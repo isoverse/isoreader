@@ -64,7 +64,7 @@ If you run into a file format that is not currently supported or any issues with
 
 ## Development
 
-If you are interested in helping with development, that's fantastic! Please fork the repository and branch off from the [dev branch](https://github.com/isoverse/isoreader/tree/dev) since it contains the most up-to-date development version of [isoreader](https://isoreader.isoverse.org/). Make sure to write [```testthat``` tests](https://r-pkgs.had.co.nz/tests.html) for your work (stored in the tests/testthat directory). All tests can be run automatically and continuously during development to make it easier to spot any code problems on the go. The easiest way to run them is by running ```make auto_test``` in the [isoreader](https://isoreader.isoverse.org/) directory from command line (it will test everything automatically in a completely separate R session).
+If you are interested in helping with development, that's fantastic! Please fork the repository and branch off from the [dev branch](https://github.com/isoverse/isoreader/tree/dev) since it contains the most up-to-date development version of [isoreader](https://isoreader.isoverse.org/). Make sure to write [```testthat``` tests](https://r-pkgs.org/tests.html) for your work (stored in the tests/testthat directory). All tests can be run automatically and continuously during development to make it easier to spot any code problems on the go. The easiest way to run them is by running ```make auto_test``` in the [isoreader](https://isoreader.isoverse.org/) directory from command line (it will test everything automatically in a completely separate R session).
 
 ## Open Source
 
