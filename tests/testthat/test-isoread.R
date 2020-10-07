@@ -41,32 +41,32 @@ test_that("test that parameter checks are performed when reading file", {
 
 test_that("test that cached file path hashes work okay", {
   
-  test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
-  origin_file <- get_isoreader_test_file("cache_test.did", test_folder)
+  data_folder <- "minimal_data" # data_folder <- file.path("tests", "testthat", "minimal_data") # for direct testing
+  origin_file <- get_isoreader_test_file("minimal_01.did", data_folder)
   
   # exact same file in different locations
-  temp_file <- file.path(tempdir(), "cache_test.did")
+  temp_file <- file.path(tempdir(), "minimal_01.did")
   expect_true(file.copy(origin_file, to = temp_file, overwrite = TRUE, copy.date = TRUE))
   cache_paths <- generate_cache_filepaths(c(origin_file, temp_file))
   expect_true(identical(cache_paths[1], cache_paths[2]))
   unlink(temp_file)
   
   # exact same file but different names
-  temp_file <- file.path(tempdir(), "cache_test2.did")
+  temp_file <- file.path(tempdir(), "minimal_01-2.did")
   expect_true(file.copy(origin_file, to = temp_file, overwrite = TRUE, copy.date = TRUE))
   cache_paths <- generate_cache_filepaths(c(origin_file, temp_file))
   expect_false(identical(cache_paths[1], cache_paths[2]))
   unlink(temp_file)
   
   # exact same file but copy date updated
-  temp_file <- file.path(tempdir(), "cache_test.did")
+  temp_file <- file.path(tempdir(), "minimal_01.did")
   expect_true(file.copy(origin_file, to = temp_file, overwrite = TRUE, copy.date = FALSE))
   cache_paths <- generate_cache_filepaths(c(origin_file, temp_file))
   expect_false(identical(cache_paths[1], cache_paths[2]))
   unlink(temp_file)
   
   # exact same file and name but differnet sizes
-  temp_file <- file.path(tempdir(), "cache_test.did")
+  temp_file <- file.path(tempdir(), "minimal_01.did")
   expect_true(file.copy(origin_file, to = temp_file, overwrite = TRUE, copy.date = TRUE))
   cat("42", file = temp_file, append = TRUE)
   cache_paths <- generate_cache_filepaths(c(origin_file, temp_file))
@@ -82,11 +82,11 @@ test_that("test that cached file path hashes work okay", {
 test_that("test that version checking and re-reads are working properly", {
   
   # test folder
-  test_folder <- "test_data" # test_folder <- file.path("tests", "testthat", "test_data") # for direct testing
+  data_folder <- "minimal_data" # data_folder <- file.path("tests", "testthat", "minimal_data") # for direct testing
   test_files <- c(
-    get_isoreader_test_file("scan_hv_01.scn", local_folder = test_folder),
-    get_isoreader_test_file("scan_hv_02.scn", local_folder = test_folder),
-    get_isoreader_test_file("scan_hv_03.scn", local_folder = test_folder)
+    get_isoreader_test_file("scan_hv_01.scn", local_folder = data_folder),
+    get_isoreader_test_file("scan_hv_02.scn", local_folder = data_folder),
+    get_isoreader_test_file("scan_hv_03.scn", local_folder = data_folder)
   )
   
   # expected errors
@@ -114,7 +114,7 @@ test_that("test that version checking and re-reads are working properly", {
   temp_cache <- file.path(tempdir(), "cache_files")
   temp_storage <- file.path(tempdir(), "scan_storage_old.scan.rds")
   dir.create(temp_cache, showWarnings = FALSE)
-  save_files <- files %>% iso_set_file_root(remove_embedded_root = test_folder)
+  save_files <- files %>% iso_set_file_root(remove_embedded_root = data_folder)
   readr::write_rds(save_files[[1]], path = file.path(temp_cache, basename(generate_cache_filepaths(test_files)[1])))
   readr::write_rds(save_files[[2]], path = file.path(temp_cache, basename(generate_cache_filepaths(test_files)[2])))
   readr::write_rds(save_files[[3]], path = file.path(temp_cache, basename(generate_cache_filepaths(test_files)[3])))
@@ -185,7 +185,7 @@ test_that("test that version checking and re-reads are working properly", {
   expect_error(files %>% iso_set_file_root(root = "DNE") %>% reread_iso_files(stop_if_missing = TRUE), "3 file.*not exist")
   expect_message(
     files %>% 
-    iso_set_file_root(root = test_folder, remove_embedded_root = test_folder) %>% iso_reread_all_files(),
+    iso_set_file_root(root = data_folder, remove_embedded_root = data_folder) %>% iso_reread_all_files(),
     "found 3.*re-reading 3/3"
   )
   
@@ -199,17 +199,17 @@ test_that("test that version checking and re-reads are working properly", {
   expect_true(nrow(problems(files)) == 4)
   expect_true(is_iso_object_outdated(files))
   expect_false(is_iso_object_outdated(files[[3]]))
-  expect_message(re_files <- files %>% iso_set_file_root(test_folder) %>% iso_reread_outdated_files(),
+  expect_message(re_files <- files %>% iso_set_file_root(data_folder) %>% iso_reread_outdated_files(),
                  "found 2 outdated.*re-reading 2/3")
   expect_false(is_iso_object_outdated(re_files))
   expect_true(nrow(problems(re_files)) == 1)
-  expect_message(re_files <- files %>% iso_set_file_root(test_folder) %>% iso_reread_changed_files(),
+  expect_message(re_files <- files %>% iso_set_file_root(data_folder) %>% iso_reread_changed_files(),
                  "found 0 changed.*re-reading 0/3")
-  expect_message(re_files <- files %>% iso_set_file_root(test_folder) %>% iso_reread_problem_files(),
+  expect_message(re_files <- files %>% iso_set_file_root(data_folder) %>% iso_reread_problem_files(),
                  "found 1.*with errors.*re-reading 1/3")
   expect_true(is_iso_object_outdated(re_files))
   expect_true(nrow(problems(re_files)) == 3)
-  expect_message(re_files <- files %>% iso_set_file_root(test_folder) %>% iso_reread_problem_files(reread_files_with_warnings = TRUE),
+  expect_message(re_files <- files %>% iso_set_file_root(data_folder) %>% iso_reread_problem_files(reread_files_with_warnings = TRUE),
                  "found 3.*with warnings or errors.*re-reading 3/3")
   expect_false(is_iso_object_outdated(re_files))
   expect_true(nrow(problems(re_files)) == 0)
@@ -221,12 +221,12 @@ test_that("test that version checking and re-reads are working properly", {
 
 test_that("test that file event expressions work", {
   
-  test_folder <- file.path("test_data")
+  data_folder <- file.path("minimal_data")
   minimal_files <- c(
-    get_isoreader_test_file("minimal_01.did", local_folder = test_folder),
-    get_isoreader_test_file("minimal_02.did", local_folder = test_folder),
-    get_isoreader_test_file("minimal_03.did", local_folder = test_folder),
-    get_isoreader_test_file("minimal_04.did", local_folder = test_folder)
+    get_isoreader_test_file("minimal_01.did", local_folder = data_folder),
+    get_isoreader_test_file("minimal_02.did", local_folder = data_folder),
+    get_isoreader_test_file("minimal_03.did", local_folder = data_folder),
+    get_isoreader_test_file("minimal_04.did", local_folder = data_folder)
   )
   
   set_read_file_event_expr({ print(file_n*-1) })

@@ -67,7 +67,8 @@ test_that("test that dxf files can be read", {
   expect_is(iarc <- iso_read_continuous_flow(file), "iso_file_list")
   expect_equal(nrow(problems(iarc)), 0)
   
-  # additional test files =====
+  # additional test files (skip on CRAN because test files not includes due to tarball size limits) =====
+  skip_on_cran()
   test_folder <- file.path("test_data") # test_folder <- file.path("tests", "testthat", "test_data") # direct
   
   # testing wrapper
