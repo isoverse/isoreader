@@ -285,6 +285,32 @@ iso_read_orbitrap <- function(
   )
 }
 
+#' Load orbitrap sequence
+#'
+#' Load orbitrap data from a sequence file.
+#'
+#' @param seq_file_path the path to the sequence file
+#' @param data_files_path the path to the folder with the data (default is the same folder as the sequence file)
+#' @param ... additional parameters are passed to \code{\link{iso_read_orbitrap}}
+#' @family isoread functions for different types of IRMS data
+#' @export
+iso_read_orbitrap_sequence <- function(seq_file_path, data_files_path = dirname(seq_file_path), ...) {
+  file_info <- read_obitrap_seq_info_file(seq_file_path)
+  files <- file.path(data_files_path, paste0(unique(file_info$file_id), ".isox"))
+  if (any(missing <- !file.exists(files))) {
+    sprintf("sequence data files are missing and will be ignored:\n - %s",
+            paste(files[missing], collapse = "\n - ")) %>% 
+      warning(immediate. = TRUE, call. = FALSE)
+    files <- files[!missing]
+  }
+  if (length(files) == 0)  {
+    sprintf("none of the data files exist in '%s', make sure all paths are correct", data_files_path) %>% 
+      stop(call. = FALSE)
+  }
+  iso_read_orbitrap(files, ...) %>% 
+    iso_add_file_info(file_info, by = "file_id", quiet = TRUE)
+}
+
 #' Load scan data
 #'
 #' @inheritParams iso_read_dual_inlet

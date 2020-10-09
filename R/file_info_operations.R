@@ -929,3 +929,43 @@ iso_add_file_info.default <- function(x, ...) {
 iso_add_file_info.iso_file <- function(iso_files, ...) {
   iso_add_file_info(iso_as_file_list(iso_files), ...)[[1]]
 }
+
+
+# specific file information ======
+
+# function to read orbitrap sequence info file
+read_obitrap_seq_info_file <- function(seq_file_path) {
+  if (missing(seq_file_path))
+    stop("no path to the obitrap sequence file provided", call. = FALSE)
+  if (!file.exists(seq_file_path))
+    sprintf("'%s' does not exist", seq_file_path) %>% stop(call. = FALSE)
+  
+  # sequence file columns
+  columns <- readr::cols(
+    `File Name` = readr::col_character(),
+    `Sample Type` = readr::col_character(),
+    `Sample ID` = readr::col_character(),
+    `Sample Name` = readr::col_character(),
+    Path = readr::col_character(),
+    `Instrument Method` = readr::col_character(),
+    `Process Method` = readr::col_character(),
+    `Calibration File` = readr::col_character(),
+    Position = readr::col_character(),
+    `Inj Vol` = readr::col_double(),
+    Level = readr::col_character(),
+    `Sample Wt` = readr::col_double(),
+    `Sample Vol` = readr::col_double(),
+    `ISTD Amt` = readr::col_double(),
+    `Dil Factor` = readr::col_double(),
+    `L1 Variable1` = readr::col_character(),
+    `L2 Variable2` = readr::col_character(),
+    `L3 Variable3` = readr::col_character(),
+    `L4 Variable4` = readr::col_character(),
+    `L5 run no` = readr::col_double(),
+    Comment = readr::col_character()
+  )
+  
+  sequence_info <- readr::read_csv(seq_file_path, skip = 1, col_types = columns)
+  cols <- intersect(names(columns$cols), names(sequence_info))
+  return(rename(sequence_info[cols], file_id = `File Name`))
+}
