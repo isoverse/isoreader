@@ -68,6 +68,25 @@ test_that("test that continuous data structure is correct", {
   # FIXME: expand
 })
 
+# orbitrap data structure is correct ====
+test_that("test that orbitrap data structure is correct", {
+  expect_is(ot <- make_ot_data_structure("NA"), "iso_file")
+  expect_equal(names(ot), c("version", "read_options", "file_info", "method_info", "raw_data", "vendor_data_table"))
+  expect_equal(names(ot$read_options), c("file_info", "method_info", "raw_data", "vendor_data_table"))
+  expect_is(ot, "continuous_flow")
+  expect_is(ot, "orbitrap")
+  expect_false(iso_is_orbitrap(42))
+  expect_false(iso_is_dual_inlet(ot))
+  expect_true(iso_is_continuous_flow(ot))
+  expect_true(iso_is_orbitrap(ot))
+  ot1 <- ot2 <- ot
+  ot1$file_info$file_id <- "A"
+  ot2$file_info$file_id <- "B"
+  expect_true(iso_is_continuous_flow(c(ot1, ot2)))
+  expect_true(iso_is_orbitrap(c(ot1, ot2)))
+  # FIXME: expand
+})
+
 # data structure version work ====
 
 test_that("test that versions work", {

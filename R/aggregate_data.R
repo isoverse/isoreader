@@ -74,7 +74,13 @@ get_raw_data_info <- function(iso_files) {
       ions = .data$full_ions %>% str_replace_all("[^0-9,]", "")
     )
 
-  if (iso_is_continuous_flow(iso_files)) {
+  if (iso_is_orbitrap(iso_files)) {
+    raw_data_sum <- raw_data_sum %>%
+      mutate(
+        n_tps = 0L,
+        label = "no raw data"
+      )
+  } else if (iso_is_continuous_flow(iso_files)) {
     raw_data_sum <- raw_data_sum %>%
       mutate(
         n_tps = map_int(iso_files, ~nrow(.x$raw_data)),
@@ -93,12 +99,6 @@ get_raw_data_info <- function(iso_files) {
           read_raw_data ~ glue("{n_cycles} cycles, {n_ions} ions ({ions})"),
           TRUE ~ "raw data not read"
         )
-      )
-  } else if (iso_is_orbitrap(iso_files)) {
-    raw_data_sum <- raw_data_sum %>%
-      mutate(
-        n_tps = 0L,
-        label = "no raw data"
       )
   } else if (iso_is_scan(iso_files)) {
     raw_data_sum <- raw_data_sum %>%

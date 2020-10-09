@@ -51,10 +51,7 @@ make_cf_data_structure <- function(file_id = NA_character_) {
 
 # basic orbitrap data structure
 make_ot_data_structure <- function(file_id = NA_character_) {
-  struct <- make_iso_file_data_structure(file_id = file_id)
-  # vendor data table
-  struct$read_options$vendor_data_table <- FALSE
-  struct$vendor_data_table <- tibble::tibble()
+  struct <- make_cf_data_structure()
   class(struct) <- c("orbitrap", class(struct))
   return(struct)
 }
@@ -139,7 +136,7 @@ iso_is_continuous_flow <- function(x) {
   methods::is(x, "continuous_flow") || methods::is(x, "continuous_flow_list")
 }
 
-#' @description \code{iso_is_orbitrap} tests if an iso_file or iso_file list consists exclusively of orbitrap file objects
+#' @description \code{iso_is_orbitrap} tests if an iso_file or iso_file list consists exclusively of orbitrap file objects (note that all orbitrap files are a subclass of continuous flow files and thus will also test true for \code{iso_is_continuous_flow})
 #' @rdname iso_data_structure
 #' @export
 iso_is_orbitrap <- function(x) {
@@ -201,13 +198,15 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     names(iso_list) <- file_ids
 
     # check if al elements are the same data type
-    classes <- map_chr(iso_list, ~class(.x)[1])
-    if (!all(classes == classes[1])) {
-      wrong_dt <- classes[classes != classes[1]] %>% unique %>% collapse(", ")
-      glue("can only process iso_file objects with the same data type (first: {classes[1]}), encountered: {wrong_dt}") %>%
+    classes <- purrr::map(iso_list, ~class(.x))
+    classes_identical <- purrr::map_lgl(classes, identical, classes[[1]])
+    if (!all(classes_identical)) {
+      classes_text <- purrr::map_chr(classes, ~paste(rev(.x), collapse = "->"))
+      wrong_dt <- classes_text[!classes_identical] %>% unique %>% collapse(", ")
+      glue("can only process iso_file objects with the same data type (first: {classes_text[1]}), encountered: {wrong_dt}") %>%
         stop(call. = FALSE)
     }
-    list_classes <- c(paste0(classes[1], "_list"), list_classes)
+    list_classes <- c(paste0(classes[[1]], "_list"), list_classes)
 
     # check for file_id duplicates
     dups <-
