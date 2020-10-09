@@ -62,6 +62,8 @@ Load dual inlet data
 \seealso{
 Other isoread functions for different types of IRMS data: 
 \code{\link{iso_read_continuous_flow}()},
+\code{\link{iso_read_orbitrap_sequence}()},
+\code{\link{iso_read_orbitrap}()},
 \code{\link{iso_read_scan}()}
 }
 \concept{isoread functions for different types of IRMS data}

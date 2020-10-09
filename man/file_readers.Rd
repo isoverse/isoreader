@@ -3,6 +3,7 @@
 \name{iso_register_dual_inlet_file_reader}
 \alias{iso_register_dual_inlet_file_reader}
 \alias{iso_register_continuous_flow_file_reader}
+\alias{iso_register_orbitrap_reader}
 \alias{iso_register_scan_file_reader}
 \title{Register file readers}
 \usage{
@@ -18,6 +19,17 @@ iso_register_dual_inlet_file_reader(
 )
 
 iso_register_continuous_flow_file_reader(
+  extension,
+  func,
+  description = NA_character_,
+  software = NA_character_,
+  cacheable = TRUE,
+  post_read_check = TRUE,
+  overwrite = FALSE,
+  env = find_func(func)
+)
+
+iso_register_orbitrap_reader(
   extension,
   func,
   description = NA_character_,
@@ -64,9 +76,14 @@ Register file extensions and reader functions for different data files. Isoreade
 
 \code{iso_register_continuous_flow_file_reader}: use this function to register file readers for continuous flow files.
 
+\code{iso_register_orbitrap_file_reader}: use this function to register file readers for orbitrap files.
+
 \code{iso_register_scan_file_reader}: use this function to register file readers for scan files.
 }
 \seealso{
+Other file_types: 
+\code{\link{iso_get_supported_file_types}()}
+
 Other file_types: 
 \code{\link{iso_get_supported_file_types}()}
 

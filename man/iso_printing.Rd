@@ -5,6 +5,7 @@
 \alias{print.iso_file}
 \alias{print.dual_inlet}
 \alias{print.continuous_flow}
+\alias{print.orbitrap}
 \alias{print.scan}
 \title{Isofile printing}
 \usage{
@@ -15,6 +16,8 @@
 \method{print}{dual_inlet}(x, ..., show_problems = TRUE)
 
 \method{print}{continuous_flow}(x, ..., show_problems = TRUE)
+
+\method{print}{orbitrap}(x, ..., show_problems = TRUE)
 
 \method{print}{scan}(x, ..., show_problems = TRUE)
 }

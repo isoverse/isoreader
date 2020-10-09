@@ -6,6 +6,7 @@
 \alias{iso_is_object}
 \alias{iso_is_dual_inlet}
 \alias{iso_is_continuous_flow}
+\alias{iso_is_orbitrap}
 \alias{iso_is_scan}
 \alias{iso_as_file_list}
 \title{Isoreader data structure functions}
@@ -19,6 +20,8 @@ iso_is_object(x)
 iso_is_dual_inlet(x)
 
 iso_is_continuous_flow(x)
+
+iso_is_orbitrap(x)
 
 iso_is_scan(x)
 
@@ -41,6 +44,8 @@ iso_as_file_list(..., discard_duplicates = TRUE)
 \code{iso_is_dual_inlet} tests if an iso_file or iso_file list consists exclusively of dual inlet file objects
 
 \code{iso_is_continuous_flow} tests if an iso_file or iso_file list consists exclusively of continuous flow file objects
+
+\code{iso_is_orbitrap} tests if an iso_file or iso_file list consists exclusively of orbitrap file objects (note that all orbitrap files are a subclass of continuous flow files and thus will also test true for \code{iso_is_continuous_flow})
 
 \code{iso_is_scan} tests if an iso_file or iso_file list consists exclusively of scan file objects
 
