@@ -31,7 +31,6 @@ These functions control the global settings for information messages.
 Other settings functions: 
 \code{\link{iso_caching}},
 \code{\link{iso_get_default_reader_parameters}()},
-\code{\link{iso_set_default_read_parameters}()},
-\code{\link{iso_show_default_reader_parameters}()}
+\code{\link{iso_set_default_read_parameters}()}
 }
 \concept{settings functions}

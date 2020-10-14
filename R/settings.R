@@ -68,7 +68,6 @@ get_all_options <- function(with_temp = FALSE) {
 #' Retrieve a table with all default function parameters for this package. 
 #' To set read parameters, see \code{\link{iso_set_default_read_parameters}}. 
 #' To set messaging and caching parameters see \code{\link{iso_info_messages}} and see \code{\link{iso_caching}}.
-#' For a piping compatible version of this function, see \link{iso_show_default_reader_parameters}.
 #' @family settings functions
 #' @export
 iso_get_default_reader_parameters <- function() {
@@ -78,27 +77,6 @@ iso_get_default_reader_parameters <- function() {
       tibble(parameter = names(.),
                  value = as.character(unlist(.)))
     }
-}
-
-#' Show the current default parameters
-#' 
-#' Shows a table with the default function parameters for this package.
-#' @inheritParams iso_turn_reader_caching_on
-#' @param func function to use for formatting the reader parameters table, e.g. \code{\link[knitr]{kable}}. 
-#' Note that if the output is in RMarkdown chunks, the chunk option must have \code{results="asis"} for the table to be correctly formatted.
-#' @param ... additional parameters to forward to the \code{func} function
-#' @family settings functions
-#' @export
-iso_show_default_reader_parameters <- function(data = NULL, func = NULL, ...) {
-  if (!default("quiet")) message("Info: isoreader package current default parameters")
-  
-  if (!is.null(func))
-    print(do.call(func, args = c(list(x = iso_get_default_reader_parameters()), list(...))))
-  else
-    print(iso_get_default_reader_parameters())
-    
-  # for pipeline
-  return(invisible(data))
 }
 
 #' Turn caching on/off
