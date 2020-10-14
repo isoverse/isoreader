@@ -27,39 +27,28 @@ test_that("test that scn files can be read", {
   
   # test specific files
   iso_turn_reader_caching_off()
-  
-  expect_true(file.exists(file <- iso_get_reader_example("peak_shape_scan_example.scn")))
-  expect_is(scan <- iso_read_scan(file), "scan")
-  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
-  
-  expect_true(file.exists(file <- iso_get_reader_example("background_scan_example.scn")))
-  expect_is(scan <- iso_read_scan(file), "scan")
-  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
-  
-  expect_true(file.exists(file <- iso_get_reader_example("full_scan_example.scn")))
-  expect_is(scan <- iso_read_scan(file), "scan")
-  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
-  
-  expect_true(file.exists(file <- iso_get_reader_example("time_scan_example.scn")))
-  expect_is(scan <- iso_read_scan(file), "scan")
-  expect_equal(nrow(filter(problems(scan), type != "warning")), 0)
-  
-  # additional test files (skip on CRAN because test files not includes due to tarball size limits) =====
-  skip_on_cran()
-  data_folder <- file.path("minimal_data") # data_folder <- file.path("tests", "testthat", "minimal_data") # direct
+  iso_turn_datetime_warnings_off()
   
   # testing wrapper
-  check_scan_test_file <- function(file) {
-    file_path <- get_isoreader_test_file(file, local_folder = data_folder)
+  check_scan_test_file <- function(file_path) {
     expect_true(file.exists(file_path))
     expect_is(scn <- iso_read_scan(file_path), "scan")
-    expect_equal(nrow(filter(problems(scn), type != "warning")), 0)
+    expect_equal(nrow(problems(scn)), 0)
     return(invisible(scn))
   }
   
-  check_scan_test_file("scan_hv_01.scn")
-  check_scan_test_file("scan_hv_02.scn")
-  check_scan_test_file("scan_hv_03.scn")
+  # example files bundled with the package
+  check_scan_test_file(iso_get_reader_example("peak_shape_scan_example.scn"))
+  check_scan_test_file(iso_get_reader_example("background_scan_example.scn"))
+  check_scan_test_file(iso_get_reader_example("full_scan_example.scn"))
+  check_scan_test_file(iso_get_reader_example("time_scan_example.scn"))
+  
+  # additional test files (skip on CRAN because test files not includes due to tarball size limits) =====
+  skip_on_cran()
+  test_data <- "minimal_data" # test_data <- file.path("tests", "testthat", "minimal_data") # direct
+  check_scan_test_file(file.path(test_data, "scan_hv_01.scn"))
+  check_scan_test_file(file.path(test_data, "scan_hv_02.scn"))
+  check_scan_test_file(file.path(test_data, "scan_hv_03.scn"))
   
 })
 

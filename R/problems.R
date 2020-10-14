@@ -107,7 +107,52 @@ iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE, inclu
   
   return(probs)
 }
- 
+
+# readr style function for warning about problems
+warn_problems <- function(x, cutoff = 5L, width = getOption("width")) {
+  stopifnot(cutoff > 1L)
+  n <- n_problems(x)
+  if (n == 0) return(invisible(x))
+  has_many_problems <- n > cutoff
+  probs <- iso_get_problems(x) %>%
+    dplyr::mutate(i = as.character(dplyr::row_number())) %>% 
+    dplyr::select(c("i", "file_id", "type", "func", "details"))
+  probs_list <-
+    base::rbind(
+      c("#", "FILE", "PROBLEM", "OCCURRED IN", "DETAILS"), 
+      if (has_many_problems) utils::head(probs, cutoff - 1L) else probs
+    ) %>% as.list()
+    
+  # add .... entries at end if there are too many problems
+  if (has_many_problems) {
+    widths <- purrr::map_int(probs_list, ~max(nchar(.x), 1L))
+    dots <- purrr::map(widths, ~paste(rep(".", .x), collapse = ""))
+    probs_list <- purrr::map2(probs_list, dots, c)
+    probs_list$i[cutoff + 1L] <- sprintf("%d-%d", cutoff, n)
+  }
+  
+  # format problems
+  probs_f <- purrr::map(probs_list, format, justify = "left")
+  
+  # format lines to account for max display width
+  probs_lines <- do.call(paste, c(probs_f, list(sep = " | "))) %>% 
+    stringr::str_trim(side = "right")
+  line_widths <- purrr::map_int(probs_lines, nchar)
+  probs_lines[line_widths > width] <-
+    purrr::map_chr(
+      probs_lines[line_widths > width],
+      ~paste0(stringr::str_sub(.x, 1L, width - 3L), "...")
+    )
+  # output warning
+  warning(
+    "encountered ", n, " problem", if (n > 1) "s", ".\n", 
+    paste(probs_lines, collapse = "\n"), 
+    "\nUse iso_get_problems(...) for more details.", 
+    call. = FALSE, immediate. = TRUE, noBreaks. = TRUE
+  )
+  return(invisible(x))
+}
+
 #' Renamed to iso_filter_files_with_problems
 #' 
 #' This function has been renamed to \link{iso_filter_files_with_problems} for naming consistency.

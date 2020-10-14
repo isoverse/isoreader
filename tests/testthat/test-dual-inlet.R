@@ -56,7 +56,8 @@ test_that("test that did files can be read", {
   expect_true(file.exists(file <- iso_get_reader_example("dual_inlet_nu_example.txt")))
   expect_is(did <- iso_read_dual_inlet(file, nu_masses = 49:44, read_cache = FALSE), "dual_inlet")
   expect_equal(nrow(problems(did)), 0)
-  expect_message(capture.output(did <- iso_read_dual_inlet(file, read_cache = FALSE)), "6 channels but 0 masses")
+  expect_warning(did <- iso_read_dual_inlet(file, read_cache = FALSE), "encountered 1 problem\\.")
+  expect_true(stringr::str_detect(iso_get_problems(did)$details, fixed("found 6 channels but 0 masses were specified")))
   expect_equal(nrow(problems(did)), 1)
   
   # additional test files (skip on CRAN because test files not includes due to tarball size limits) =====

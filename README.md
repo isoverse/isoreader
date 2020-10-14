@@ -4,7 +4,7 @@
 # isoreader <a href='https://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
-[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.2.4-orange.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
+[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.2.5-orange.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://isoreader.isoverse.org/)
 [![R build
 status](https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg)](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check)
@@ -52,8 +52,6 @@ You can install isoreader from github with the devtools package (version
 ``` r
 # installs the development tools package if not yet installed
 if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
-
-# install.packages("devtools") # only needed once
 devtools::install_github("isoverse/isoreader")
 ```
 
@@ -125,8 +123,8 @@ separate R session).
 ## Open Source
 
 [isoreader](https://isoreader.isoverse.org/) is and will always be fully
-open-source (i.e. free as in *freedom* and free as in *free beer*) and
-is provided as is. The source code is released under GPL-2.
+open-source (i.e. free as in **freedom** and free as in **free beer**)
+and is provided as is. The source code is released under GPL-2.
 
 ## isoverse <a href='https://www.isoverse.org'><img src='man/figures/isoverse_logo_thumb.png' align="right" height="138.5"/></a>
 

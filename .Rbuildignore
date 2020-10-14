@@ -8,14 +8,14 @@
 ^Makefile$
 ^NEWS$
 ^docs$
-^cache$
-^tests/testthat/cache$
+^cache/.*
+^tests/testthat/cache/.*
 ^inst/other$
 ^tmp.*$
 ^README-.*\.png$
 ^README\.Rmd$
 ^logo\.png$
-^vignettes/cache$
+^vignettes/cache/.*
 ^vignettes/fig_output$
 ^doc$
 ^.*\.xlsx$

@@ -6,7 +6,7 @@
 \alias{isoreader-package}
 \title{isoreader: Read Stable Isotope Data Files}
 \description{
-R interface to the raw data file formats commonly encountered in scientific disciplines that make use of stable isotopes.
+Interface to the raw data file formats commonly encountered in scientific disciplines that make use of stable isotopes.
 }
 \seealso{
 Useful links:

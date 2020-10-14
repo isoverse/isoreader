@@ -206,21 +206,25 @@ test_that("test that isofils objects can be combined and subset", {
   expect_equal(c(iso_filesAB, iso_fileC), c(iso_fileA, iso_fileB, iso_fileC))
   
   ## problems combining identical files (without discarding duplicates!)
-  expect_message(iso_filesABA <- iso_as_file_list(iso_fileA, iso_fileB, iso_fileA, discard_duplicates = FALSE), 
+  expect_message(iso_filesABABC <- iso_as_file_list(iso_fileA, iso_fileB, iso_fileA, iso_fileB, iso_fileC, discard_duplicates = FALSE), 
                  "duplicate files kept")
-  expect_is(iso_filesABA, "iso_file_list")
-  expect_equal(names(iso_filesABA), c("A#1", "B", "A#2"))
-  expect_equal(problems(iso_filesABA) %>% select(file_id, type), tibble(file_id = c("A#1", "A#2"), type = "warning"))
-  expect_equal(problems(iso_filesABA[[1]]) %>% select(type), tibble(type = "warning"))
-  expect_equal(problems(iso_filesABA[[2]]) %>% select(type), tibble(type = character(0)))
-  expect_equal(problems(iso_filesABA[[3]]) %>% select(type), tibble(type = "warning"))
-  expect_equal(problems(c(iso_fileA, iso_fileA)), problems(c(iso_fileA, iso_fileA, iso_fileA)))
+  expect_is(iso_filesABABC, "iso_file_list")
+  expect_equal(names(iso_filesABABC), c("A#1", "B#1", "A#2", "B#2", "C"))
+  expect_equal(problems(iso_filesABABC) %>% select(file_id, type), tibble(file_id = c("A#1", "B#1", "A#2", "B#2"), type = "warning"))
+  expect_equal(problems(iso_filesABABC[[1]]) %>% select(type), tibble(type = "warning"))
+  expect_equal(problems(iso_filesABABC[[2]]) %>% select(type), tibble(type = "warning"))
+  expect_equal(problems(iso_filesABABC[[5]]) %>% select(type), tibble(type = character(0)))
+  expect_warning(warn_problems(iso_filesABABC), "encountered 4 problems")
+  expect_warning(warn_problems(iso_filesABABC), "4 \\|")
+  expect_warning(warn_problems(iso_filesABABC, cutoff = 3), "3-4")
   
   ## combining identical files (with discarding duplicates, i.e. default behavior)
   expect_message(iso_filesABA <- c(iso_fileA, iso_fileB, iso_fileA), 
                  "duplicate files encountered, only first kept")
   expect_equal(problems(iso_filesABA) %>% select(file_id, type), tibble(file_id = "A", type = "warning"))
   expect_equal(names(iso_filesABA), c("A", "B"))
+  expect_warning(warn_problems(iso_filesABA), "encountered 1 problem\\.")
+  expect_equal(problems(c(iso_fileA, iso_fileA)), problems(c(iso_fileA, iso_fileA, iso_fileA)))
   
   ## propagating problems
   expect_is(
