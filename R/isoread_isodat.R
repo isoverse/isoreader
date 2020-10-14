@@ -340,9 +340,9 @@ extract_isodat_old_sequence_line_info <- function(ds) {
   }
   
   if (length(values) != length(labels)) {
-    if(default(debug)) {
-      print(bind_rows(labels))
-      print(bind_rows(values))
+    if(default("debug")) {
+      log_message("labels:\n", bind_rows(labels), prefix = "DEBUG: ")
+      log_message("values:\n", bind_rows(values), prefix = "DEBUG: ")
     }
     stop(sprintf("unequal number of file info labels (%d) and file info values (%d)", 
                  length(labels), length(values)), call. = FALSE)

@@ -266,9 +266,8 @@ process_iarc_processing_xml <- function(processing_list_id, filepath) {
   }
   
   # debug
-  if (default(debug)) {
-    log_message("species configurations: ", prefix = "DEBUG: ")
-    print(species_config)
+  if (default("debug")) {
+    log_message("species configurations:\n", species_config, prefix = "DEBUG: ")
   }
   
   list(list(species = species_config))

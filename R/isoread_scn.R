@@ -173,8 +173,8 @@ extract_scn_raw_voltage_data <- function(ds) {
   # safety check
   if (ncol(voltages) - 1L != nrow(ds$binary$data$config)) {
     if (default("debug")) {
-      print(voltages)
-      print(ds$binary$data$config)
+      log_message("voltages:\n", voltages, prefix = "DEBUG: ")
+      log_message("config:\n", ds$binary$data$config, prefix = "DEBUG: ")
     }
     glue::glue(
       "inconsistent number of data traces ({ncol(voltages) - 1L}) ",
