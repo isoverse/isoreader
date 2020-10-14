@@ -1,7 +1,7 @@
 Package: isoreader
 Title: Read Stable Isotope Data Files
-Description: R interface to the raw data file formats commonly encountered in scientific disciplines that make use of stable isotopes.
-Version: 1.2.4
+Description: Interface to the raw data file formats commonly encountered in scientific disciplines that make use of stable isotopes.
+Version: 1.2.5
 Authors@R: person("Sebastian", "Kopf", email = "sebastian.kopf@colorado.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-2044-0201"))
 URL: https://github.com/isoverse/isoreader
 BugReports: https://github.com/isoverse/isoreader/issues

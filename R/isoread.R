@@ -473,11 +473,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
   iso_files <- iso_files[indices]
 
   # report problems
-  if (!default("quiet") && iso_has_problems(iso_files)) {
-    sprintf("encountered %.0f problems in total", n_problems(iso_files)) %>% log_message()
-    print(all_probs)
-    cat("\n")
-  }
+  warn_problems(iso_files)
 
   # return single or file or list
   if (length(iso_files) == 1) return (iso_files[[1]])
@@ -945,16 +941,24 @@ iso_reread_files <- function(iso_files, ...) {
 #'
 #' @rdname iso_reread_files
 #'@examples
-#'\dontrun{
 #'# example for re-reading a saved isofile collection
-#'saved_files_path <- "saved_isofile.cf.rds"
+#'iso_turn_reader_caching_off()
+#'saved_files_path <- "saved_isofile.scan.rds"
+#'
+#'# create saved collection
+#'iso_get_reader_examples_folder() %>% 
+#'  iso_read_scan() %>%
+#'  iso_save(saved_files_path)
+#'  
 #'# load collection
-#'iso_read_continuous_flow(saved_files_path) %>%
-#'  # reread outdated files (alternativally "_all_" or "_changed_")
+#'iso_read_scan(saved_files_path) %>%
+#'  # reread outdated files (alternatively "_all_" or "_changed_")
 #'  iso_reread_outdated_files() %>%
 #'  # re-save collection to its original location
 #'  iso_save(saved_files_path)
-#'}
+#'
+#'# cleanup
+#'unlink(saved_files_path)
 #' @export
 iso_reread_all_files <- function(
   iso_files, ..., stop_if_missing = FALSE,

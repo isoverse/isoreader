@@ -109,7 +109,6 @@ reference:
   - iso_info_messages
   - iso_set_default_read_parameters
   - iso_get_default_reader_parameters
-  - iso_show_default_reader_parameters
 
 - title: Dealing with read problems
   desc: >

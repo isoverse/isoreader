@@ -2,7 +2,7 @@ context("Export functions")
 
 di_example <- iso_read_dual_inlet(iso_get_reader_example("dual_inlet_example.did"))
 cf_example <- iso_read_continuous_flow(iso_get_reader_example("continuous_flow_example.cf"))
-capture.output(cf_err_example <- suppressMessages(iso_read_continuous_flow(system.file("errdata", "cf_without_data.dxf", package = "isoreader"))))
+cf_err_example <- suppressWarnings(iso_read_continuous_flow(system.file("errdata", "cf_without_data.dxf", package = "isoreader")))
 scan_example <- iso_read_scan(iso_get_reader_example("peak_shape_scan_example.scn"))
 
 # iso_save =====
@@ -66,7 +66,7 @@ test_that("test that export to rda works properly", {
   # export real data files - continuous flow
   expect_message(iso_save(c(cf_example, cf_err_example), filepath, quiet = FALSE), "exporting data .* into R Data Storage")
   expect_true(file.exists(str_c(filepath, ".cf.rds")))
-  expect_message(capture.output(cf_examples_back <- iso_read_continuous_flow(str_c(filepath, ".cf.rds"), quiet = FALSE)), "reading file")
+  expect_message(cf_examples_back <- suppressWarnings(iso_read_continuous_flow(str_c(filepath, ".cf.rds"), quiet = FALSE)), "reading 1 file")
   expect_equal(cf_example$raw_data, cf_examples_back[[1]]$raw_data)  
   expect_equal(cf_example$file_info %>% unnest_aggregated_data_frame(), 
                cf_examples_back[[1]]$file_info %>% unnest_aggregated_data_frame())

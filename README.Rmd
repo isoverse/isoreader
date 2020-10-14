@@ -36,8 +36,6 @@ You can install isoreader from github with the devtools package (version > 1.13.
 ```{r gh-installation, eval = FALSE}
 # installs the development tools package if not yet installed
 if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
-
-# install.packages("devtools") # only needed once
 devtools::install_github("isoverse/isoreader")
 ```
 
@@ -68,7 +66,7 @@ If you are interested in helping with development, that's fantastic! Please fork
 
 ## Open Source
 
-[isoreader](https://isoreader.isoverse.org/) is and will always be fully open-source (i.e. free as in *freedom* and free as in *free beer*) and is provided as is. The source code is released under GPL-2.
+[isoreader](https://isoreader.isoverse.org/) is and will always be fully open-source (i.e. free as in **freedom** and free as in **free beer**) and is provided as is. The source code is released under GPL-2.
 
 ## isoverse <a href='https://www.isoverse.org'><img src='man/figures/isoverse_logo_thumb.png' align="right" height="138.5"/></a>
 

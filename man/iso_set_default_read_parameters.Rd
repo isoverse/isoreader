@@ -33,7 +33,6 @@ Set default read options
 Other settings functions: 
 \code{\link{iso_caching}},
 \code{\link{iso_get_default_reader_parameters}()},
-\code{\link{iso_info_messages}},
-\code{\link{iso_show_default_reader_parameters}()}
+\code{\link{iso_info_messages}}
 }
 \concept{settings functions}

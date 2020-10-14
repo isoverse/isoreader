@@ -30,6 +30,7 @@ col_check <- function(cols, data, fun = sys.call(-1), msg = "You may have to cha
 # helper function for showing a message via progress bar or logging it in log file (parallel)
 log_message <- function(..., type = "info", prefix = "Info: ", quiet = default(quiet)) {
   if (!quiet) {
+    msg <- purrr::map_chr(list(...), ~paste(format(.x), collapse = "\n")) %>% paste(collapse = "")
     pb <- get_temp("progress_bar", allow_null = TRUE)
     process <- get_temp("parallel_process", allow_null = FALSE)
     if (!is.na(process)) {
@@ -37,15 +38,15 @@ log_message <- function(..., type = "info", prefix = "Info: ", quiet = default(q
       log_file <- get_temp("parallel_log_file")
       if (!is.null(log_file)) {
         sprintf("\"%s\",%d,\"%s\"\n", type, process,
-                str_replace_all(.makeMessage(...), fixed("\""), "\\\"")) %>%
+                str_replace_all(msg, fixed("\""), "\\\"")) %>%
           cat(file = log_file, append = TRUE)
       }
     } else if (!is.null(pb) && !pb$finished) {
       # progress bar
-      pb$message(.makeMessage(prefix, ...))
+      pb$message(paste0(prefix, msg))
     } else {
       # regular message
-      message(.makeMessage(prefix, ...))
+      message(paste0(prefix, msg))
     }
   }
 }

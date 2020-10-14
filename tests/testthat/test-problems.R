@@ -112,3 +112,22 @@ test_that("Test that removing files with errors works properly", {
   expect_warning(iso_omit_files_with_problems(iso_files), "renamed.*will be removed")
   
 })
+
+test_that("actual problem file works", {
+  expect_warning(
+    err <- iso_read_continuous_flow(system.file("errdata", "cf_without_data.dxf", package = "isoreader")),
+    "encountered 1 problem\\.")
+  expect_warning( # warnings cannot be quieted with quiet
+    err <- iso_read_continuous_flow(system.file("errdata", "cf_without_data.dxf", package = "isoreader"), quiet = TRUE),
+    "encountered 1 problem\\.")
+  expect_warning(warn_problems(err), "encountered 1 problem\\.")
+  expect_equal(
+    iso_get_problems(err),
+    tibble(
+      file_id = "cf_without_data.dxf",
+      type = "error",
+      func = "extract_dxf_raw_voltage_data",
+      details = "cannot identify measured masses - block 'CEvalDataIntTransferPart' not found after position 1 (pos 65327)"
+    ) 
+  )
+})
