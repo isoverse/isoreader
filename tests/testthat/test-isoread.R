@@ -41,6 +41,9 @@ test_that("test that parameter checks are performed when reading file", {
 
 test_that("test that cached file path hashes work okay", {
   
+  # skip on CRAN to reduce checktime to below 10 minutes
+  skip_on_cran()
+  
   data_folder <- "minimal_data" # data_folder <- file.path("tests", "testthat", "minimal_data") # for direct testing
   origin_file <- get_isoreader_test_file("minimal_01.did", data_folder)
   
@@ -80,6 +83,9 @@ test_that("test that cached file path hashes work okay", {
 
 
 test_that("test that version checking and re-reads are working properly", {
+  
+  # skip on CRAN to reduce checktime to below 10 minutes
+  skip_on_cran()
   
   # test folder
   data_folder <- "minimal_data" # data_folder <- file.path("tests", "testthat", "minimal_data") # for direct testing
@@ -220,6 +226,9 @@ test_that("test that version checking and re-reads are working properly", {
 # file event expressions =====
 
 test_that("test that file event expressions work", {
+  
+  # skip on CRAN to reduce checktime to below 10 minutes
+  skip_on_cran()
   
   data_folder <- file.path("minimal_data")
   minimal_files <- c(

@@ -1,5 +1,8 @@
 context("Export functions")
 
+# skip on CRAN to reduce checktime to below 10 minutes
+skip_on_cran()
+
 di_example <- iso_read_dual_inlet(iso_get_reader_example("dual_inlet_example.did"))
 cf_example <- iso_read_continuous_flow(iso_get_reader_example("continuous_flow_example.cf"))
 cf_err_example <- suppressWarnings(iso_read_continuous_flow(system.file("errdata", "cf_without_data.dxf", package = "isoreader")))

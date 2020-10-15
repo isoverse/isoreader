@@ -30,6 +30,8 @@ test_that("test that nu file processor works properly", {
 
 test_that("test that did files can be read", {
   
+  # skip on CRAN to reduce checktime to below 10 minutes
+  skip_on_cran()
   
   # check if tests are enabled
   run_file_tests <- getOption("isoreader.run_file_tests")
