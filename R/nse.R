@@ -155,24 +155,12 @@ eval_select_pos_to_cols <- function(pos, data) {
   return(cols)
 }
 
-# note: uses tidyselect:eval_select because vars_select is in questioning stage
-# note: force local scope to avoid conflicts with variables in the global environment
-# force local evaluation of tidyselect::eval_select
-local_eval_select <- local(function(expr, data, ...) {
-  tidyselect::eval_select(expr, data = data, ...)
-}, as.environment(2))
-
-# force local evaluation of tidyselect::eval_rename
-local_eval_rename <- local(function(expr, data, ...) {
-  tidyselect::eval_rename(expr, data = data, ...)
-}, as.environment(2))
-
 # safe local evaluation of tidyselect::eval_select
 # note: don't use purrr::safely as it invalidates the local scope!
 # @return list(return = value, error = NULL) if successful or list(return = NULL, error = character) if failed
 safe_local_eval_select <- function(expr, data, ...) {
   # try catch find positions
-  pos <- tryCatch(local_eval_select(expr, data, ...), error = conditionMessage)
+  pos <- tryCatch(tidyselect::eval_select(expr, data, env = as.environment(2), ...), error = conditionMessage)
   if (is.integer(pos)) 
     return(list(result = pos, error = NULL))
   else
