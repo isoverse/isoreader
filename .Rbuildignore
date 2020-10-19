@@ -23,3 +23,5 @@
 ^\.github$
 ^cran-comments.md$
 ^tests/testthat/test_data/.*
+^CRAN-RELEASE$
+^Meta$
