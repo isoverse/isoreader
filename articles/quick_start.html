@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.6</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.7</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Quick Start Guide</h1>
             
-            <h4 class="date">2020-10-20</h4>
+            <h4 class="date">2020-11-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/quick_start.Rmd"><code>vignettes/quick_start.Rmd</code></a></small>
       <div class="hidden name"><code>quick_start.Rmd</code></div>
@@ -119,17 +119,17 @@
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
 <p>Isoreader supports various dual inlet, continuous flow, and scan file formats. This vignette shows how to get started reading these raw IRMS data files and exporting the information to Excel. For more details on isoreader functionality and each file type, please read the <strong>Full Examples</strong> vignettes. For more information on downstream processing with isoverse, check out the <a href="https://isoprocessor.isoverse.org">isoprocessor</a> package.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="co"># load isoreader package</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/isoverse/isoreader">isoreader</a></span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># load isoreader package</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/isoverse/isoreader">isoreader</a></span><span class="op">)</span></code></pre></div>
 </div>
 <div id="data-files" class="section level1">
 <h1 class="hasAnchor">
 <a href="#data-files" class="anchor"></a>Data files</h1>
 <p>For demonstration purposes, this vignette simply reads all supported dual inlet, continuous flow, and scan files that are bundled with the isoreader package.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="co"># all available examples</span>
-<span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># all available examples</span>
+<span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["filename"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["software"],"name":[3],"type":["chr"],"align":["left"]},{"label":["description"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"continuous flow","3":"Isodat","4":"Continuous Flow file format (older)"},{"1":"continuous_flow_example.dxf","2":"continuous flow","3":"Isodat","4":"Continuous Flow file format (newer)"},{"1":"continuous_flow_example.iarc","2":"continuous flow","3":"ionOS","4":"Continuous Flow data archive"},{"1":"dual_inlet_example.caf","2":"dual inlet","3":"Isodat","4":"Dual Inlet file format (older)"},{"1":"dual_inlet_example.did","2":"dual inlet","3":"Isodat","4":"Dual Inlet file format (newer)"},{"1":"dual_inlet_nu_example.txt","2":"dual inlet","3":"Nu","4":"Dual Inlet file format"},{"1":"background_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"full_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"peak_shape_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"time_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -139,14 +139,14 @@
 <div id="dual-inlet-files" class="section level1">
 <h1 class="hasAnchor">
 <a href="#dual-inlet-files" class="anchor"></a>Dual Inlet Files</h1>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="co"># read all available examples</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># read all available examples</span>
 <span class="va">di_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples_folder</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Info: preparing to read 3 data files (all will be cached)...</span>
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' from cache...</span>
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.did' from cache...</span>
 <span class="co">#&gt; Info: reading file 'dual_inlet_nu_example.txt' from cache...</span>
-<span class="co">#&gt; Info: finished reading 3 files in 0.27 secs</span>
+<span class="co">#&gt; Info: finished reading 3 files in 0.29 secs</span>
 
 <span class="co"># save as r data storage (read back in with iso_read_dual_inlet)</span>
 <span class="fu"><a href="../reference/iso_save.html">iso_save</a></span><span class="op">(</span><span class="va">di_files</span>, filepath <span class="op">=</span> <span class="st">"di_save"</span><span class="op">)</span>
@@ -155,13 +155,13 @@
 <span class="co"># export to excel</span>
 <span class="fu"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span><span class="op">(</span><span class="va">di_files</span>, filepath <span class="op">=</span> <span class="st">"di_export"</span><span class="op">)</span>
 <span class="co">#&gt; Info: exporting data from 3 iso_files into Excel 'di_export.di.xlsx'</span>
-<span class="co">#&gt; Info: aggregating all data from 3 data file(s)</span></pre></div>
+<span class="co">#&gt; Info: aggregating all data from 3 data file(s)</span></code></pre></div>
 </div>
 <div id="continuous-flow-files" class="section level1">
 <h1 class="hasAnchor">
 <a href="#continuous-flow-files" class="anchor"></a>Continuous Flow Files</h1>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="co"># read all available examples</span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># read all available examples</span>
 <span class="va">cf_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span><span class="op">(</span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples_folder</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Info: preparing to read 3 data files (all will be cached)...</span>
 <span class="co">#&gt; Info: reading file 'continuous_flow_example.cf' from cache...</span>
@@ -176,13 +176,13 @@
 <span class="co"># export to excel</span>
 <span class="fu"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span><span class="op">(</span><span class="va">cf_files</span>, filepath <span class="op">=</span> <span class="st">"cf_export"</span><span class="op">)</span>
 <span class="co">#&gt; Info: exporting data from 6 iso_files into Excel 'cf_export.cf.xlsx'</span>
-<span class="co">#&gt; Info: aggregating all data from 6 data file(s)</span></pre></div>
+<span class="co">#&gt; Info: aggregating all data from 6 data file(s)</span></code></pre></div>
 </div>
 <div id="scan-files" class="section level1">
 <h1 class="hasAnchor">
 <a href="#scan-files" class="anchor"></a>Scan Files</h1>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="co"># read all available examples</span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># read all available examples</span>
 <span class="va">scan_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_read_scan.html">iso_read_scan</a></span><span class="op">(</span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples_folder</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Info: preparing to read 4 data files (all will be cached)...</span>
 <span class="co">#&gt; Info: reading file 'background_scan_example.scn' with '.scn' reader...</span>
@@ -208,7 +208,7 @@
 <span class="co"># export to excel</span>
 <span class="fu"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span><span class="op">(</span><span class="va">scan_files</span>, filepath <span class="op">=</span> <span class="st">"scan_export"</span><span class="op">)</span>
 <span class="co">#&gt; Info: exporting data from 4 iso_files into Excel 'scan_export.scan.xlsx'</span>
-<span class="co">#&gt; Info: aggregating all data from 4 data file(s)</span></pre></div>
+<span class="co">#&gt; Info: aggregating all data from 4 data file(s)</span></code></pre></div>
 </div>
   </div>
 

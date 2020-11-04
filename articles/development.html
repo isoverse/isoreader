@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.6</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.7</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Development features of isoreader</h1>
             
-            <h4 class="date">2020-10-20</h4>
+            <h4 class="date">2020-11-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/development.Rmd"><code>vignettes/development.Rmd</code></a></small>
       <div class="hidden name"><code>development.Rmd</code></div>
@@ -120,8 +120,8 @@
 <h1 class="hasAnchor">
 <a href="#adding-new-file-format-readers" class="anchor"></a>Adding new file format readers</h1>
 <p>Testing out new file format readers is easiest by registering a new reader function for a specific file extension using <code>iso_register_dual_inlet_file_reader</code> and <code>iso_register_continuous_flow_file_reader</code>, respectively. Both require an extension (e.g. <code>".ext"</code>), name of the new reader function (<code>"new_reader"</code>), and optionally a description. Both functions automatically return a data frame with a list of all registered reader. Overwriting of existing readers with a different function requires an explicit <code>overwrite = TRUE</code> flag. All reader functions must accept an isoreader data structure object (<code>ds</code>) as the first argument, a list of reader specific options as the second argument (<code>options</code>), and should return the structure with data filled in for downstream isoreader operations to work smoothly. The following minimal example illustrates how to do this with the <code>new_reader</code> function simply printing out the layout of the provided data structure skeleton <code>ds</code>.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="va">new_reader</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">ds</span>, <span class="va">options</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">new_reader</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">ds</span>, <span class="va">options</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">log_message</span><span class="op">(</span><span class="st">"this is the new reader!"</span><span class="op">)</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span>
   <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span>
@@ -129,14 +129,14 @@
 
 <span class="co"># register new reader</span>
 <span class="va">readers</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_register_dual_inlet_file_reader.html">iso_register_dual_inlet_file_reader</a></span><span class="op">(</span><span class="st">".new.did"</span>, <span class="st">"new_reader"</span><span class="op">)</span>
-<span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="va">readers</span><span class="op">)</span></pre></div>
+<span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="va">readers</span><span class="op">)</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["type"],"name":[1],"type":["chr"],"align":["left"]},{"label":["call"],"name":[2],"type":["chr"],"align":["left"]},{"label":["extension"],"name":[3],"type":["chr"],"align":["left"]},{"label":["func"],"name":[4],"type":["chr"],"align":["left"]},{"label":["cacheable"],"name":[5],"type":["lgl"],"align":["right"]},{"label":["post_read_check"],"name":[6],"type":["lgl"],"align":["right"]},{"label":["description"],"name":[7],"type":["chr"],"align":["left"]},{"label":["software"],"name":[8],"type":["chr"],"align":["left"]},{"label":["env"],"name":[9],"type":["chr"],"align":["left"]}],"data":[{"1":"dual inlet","2":"iso_read_dual_inlet","3":".did","4":"iso_read_did","5":"TRUE","6":"TRUE","7":"Dual Inlet file format (newer)","8":"Isodat","9":"isoreader"},{"1":"dual inlet","2":"iso_read_dual_inlet","3":".caf","4":"iso_read_caf","5":"TRUE","6":"TRUE","7":"Dual Inlet file format (older)","8":"Isodat","9":"isoreader"},{"1":"dual inlet","2":"iso_read_dual_inlet","3":".txt","4":"iso_read_nu","5":"TRUE","6":"TRUE","7":"Dual Inlet file format","8":"Nu","9":"isoreader"},{"1":"dual inlet","2":"iso_read_dual_inlet","3":".di.rda","4":"iso_read_rda","5":"FALSE","6":"TRUE","7":"R Data Archive (deprecated)","8":"isoreader","9":"isoreader"},{"1":"dual inlet","2":"iso_read_dual_inlet","3":".di.rds","4":"iso_read_rds","5":"FALSE","6":"FALSE","7":"R Data Storage","8":"isoreader","9":"isoreader"},{"1":"continuous flow","2":"iso_read_continuous_flow","3":".cf","4":"iso_read_cf","5":"TRUE","6":"TRUE","7":"Continuous Flow file format (older)","8":"Isodat","9":"isoreader"},{"1":"continuous flow","2":"iso_read_continuous_flow","3":".dxf","4":"iso_read_dxf","5":"TRUE","6":"TRUE","7":"Continuous Flow file format (newer)","8":"Isodat","9":"isoreader"},{"1":"continuous flow","2":"iso_read_continuous_flow","3":".iarc","4":"iso_read_flow_iarc","5":"TRUE","6":"TRUE","7":"Continuous Flow data archive","8":"ionOS","9":"isoreader"},{"1":"continuous flow","2":"iso_read_continuous_flow","3":".cf.rda","4":"iso_read_rda","5":"FALSE","6":"TRUE","7":"R Data Archive (deprecated)","8":"isoreader","9":"isoreader"},{"1":"continuous flow","2":"iso_read_continuous_flow","3":".cf.rds","4":"iso_read_rds","5":"FALSE","6":"FALSE","7":"R Data Storage","8":"isoreader","9":"isoreader"},{"1":"scan","2":"iso_read_scan","3":".scn","4":"iso_read_scn","5":"TRUE","6":"TRUE","7":"Scan file format","8":"Isodat","9":"isoreader"},{"1":"scan","2":"iso_read_scan","3":".scan.rds","4":"iso_read_rds","5":"FALSE","6":"FALSE","7":"R Data Storage","8":"isoreader","9":"isoreader"},{"1":"dual inlet","2":"iso_read_dual_inlet","3":".new.did","4":"new_reader","5":"TRUE","6":"TRUE","7":"NA","8":"NA","9":"R_GlobalEnv"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
 <span class="co"># copy an example file from the package with the new extension</span>
 <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.copy</a></span><span class="op">(</span>to <span class="op">=</span> <span class="st">"example.new.did"</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span>
@@ -148,7 +148,7 @@
 <span class="co">#&gt; Info: this is the new reader!</span>
 <span class="co">#&gt; List of 7</span>
 <span class="co">#&gt;  $ version          :Classes 'package_version', 'numeric_version'  hidden list of 1</span>
-<span class="co">#&gt;   ..$ : int [1:3] 1 2 6</span>
+<span class="co">#&gt;   ..$ : int [1:3] 1 2 7</span>
 <span class="co">#&gt;  $ read_options     :List of 4</span>
 <span class="co">#&gt;   ..$ file_info        : logi TRUE</span>
 <span class="co">#&gt;   ..$ method_info      : logi TRUE</span>
@@ -183,10 +183,10 @@
 <span class="co">#&gt; Please use the `file` argument instead.</span>
 <span class="co">#&gt; This warning is displayed once every 8 hours.</span>
 <span class="co">#&gt; Call `lifecycle::last_warnings()` to see where this warning was generated.</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.51 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.49 secs</span>
 <span class="co">#&gt; Dual inlet iso file 'example.new.did': 0 cycles, 0 ions ()</span>
 <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.remove</a></span><span class="op">(</span><span class="st">"example.new.did"</span><span class="op">)</span>
-<span class="co">#&gt; [1] TRUE</span></pre></div>
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
 <p>Note that for parallel processing to work during the read process (<code>parallel = TRUE</code>), isoreader needs to know where to find the new reader function. It will figure this out automatically as long as the function name is unique but if this fails (or to be on the safe side), please specify e.g. <code>env = "R_GlobalEnv"</code> or <code>env = "newpackage"</code> during the reader registration. Also note that isoreader will not automatically know where to find all functions called from within the new reader function if they are not part of base R and it is recommended to make all outside calls explicit (e.g. <code><a href="https://dplyr.tidyverse.org/reference/filter.html">dplyr::filter(...)</a></code>) to preempt this potential problem. For info messages and warnings to work with the progress bar and in parallel reads, make sure to use <code>isoreader:::log_message(...)</code> and <code>isoreader:::log_warning(...)</code> instead of base R’s <code><a href="https://rdrr.io/r/base/message.html">message(...)</a></code> and <code><a href="https://rdrr.io/r/base/warning.html">warning(...)</a></code>.</p>
 <p>If you have designed and tested a new reader, please consider contributing it to the <code>isoreader</code> github repository via pull request.</p>
 </div>
@@ -194,8 +194,8 @@
 <h1 class="hasAnchor">
 <a href="#processing-hooks" class="anchor"></a>Processing hooks</h1>
 <p>Isoreader defines two processing hooks at the beginning and end of reading an individual file. This is useful for integration into pipelines that require additional output (such as GUIs) but is also sometimes useful for debugging purposes. The expressions are evaluated in the context of the <code>isoreader:::read_iso_file</code> function and have access to all parameters passed to this function, such as e.g. <code>file_n</code> and <code>path</code>. Same as for new readers: for info messages and warnings to work with the progress bar and in parallel reads, make sure to use <code>isoreader:::log_message(...)</code> and <code>isoreader:::log_warning(...)</code> instead of base R’s <code><a href="https://rdrr.io/r/base/message.html">message(...)</a></code> and <code><a href="https://rdrr.io/r/base/warning.html">warning(...)</a></code>. The main difference between the two is that <code>log_message()</code> will honor the <code>quiet = TRUE</code> flag passed to the main <code>iso_read...()</code> call whereas <code>log_warning()</code> will always show its message no matter the <code>quiet</code> setting.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/iso_debug_mode.html">set_read_file_event_expr</a></span><span class="op">(</span><span class="op">{</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/iso_debug_mode.html">set_read_file_event_expr</a></span><span class="op">(</span><span class="op">{</span>
   <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">log_message</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"starting file #%.d, named '%s'"</span>, <span class="va">file_n</span>, <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/iso_debug_mode.html">set_finish_file_event_expr</a></span><span class="op">(</span><span class="op">{</span>
@@ -213,7 +213,7 @@
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader...</span>
 <span class="co">#&gt; Info: starting file #2, named 'dual_inlet_example.caf'</span>
 <span class="co">#&gt; Info: finished file #2</span>
-<span class="co">#&gt; Info: finished reading 2 files in 4.78 secs</span>
+<span class="co">#&gt; Info: finished reading 2 files in 5.13 secs</span>
 <span class="co">#&gt; Data from 2 dual inlet iso files: </span>
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   file_id    raw_data       file_info  method_info  vendor_data_tab… file_path  </span>
@@ -221,7 +221,7 @@
 <span class="co">#&gt; 1 dual_inle… 7 cycles, 6 i… 16 entries standards, … 7 rows, 8 colum… dual_inlet…</span>
 <span class="co">#&gt; 2 dual_inle… 8 cycles, 6 i… 22 entries standards, … 8 rows, 9 colum… dual_inlet…</span>
 
-<span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">initialize_options</span><span class="op">(</span><span class="op">)</span> <span class="co"># reset all isoreader options</span></pre></div>
+<span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">initialize_options</span><span class="op">(</span><span class="op">)</span> <span class="co"># reset all isoreader options</span></code></pre></div>
 </div>
 <div id="debugging-isoreader" class="section level1">
 <h1 class="hasAnchor">
@@ -231,8 +231,8 @@
 <h2 class="hasAnchor">
 <a href="#debugging-binary-file-reads-isodat" class="anchor"></a>Debugging binary file reads (Isodat)</h2>
 <p>Errors during the binary file reads usually indicate the approximate position in the file where the error was encountered. The easiest way to get started on figuring out what the file looks like at that position is to use a binary file editor and jump to the position. For a sense of the interpreted structure around that position, one can use the internal function <code>map_binary_structure</code> which tries to apply all frequently occurring binary patterns recognized by isoreader. The binary representation of the source file is only available if in debug mode but if debug mode is ON, it can be accessed as follows:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="co"># turn on debug mode</span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># turn on debug mode</span>
 <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/iso_debug_mode.html">iso_turn_debug_on</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: debug mode turned on, error catching turned on, caching turned off</span>
 <span class="co"># read example file</span>
@@ -249,29 +249,29 @@
 <span class="co">#&gt; 0001351:   &lt;etx&gt;</span>
 <span class="co">#&gt; 0001355:   {/}&lt;fef-0&gt;&lt;fef-12&gt;{Peak Center foun..}&lt;4x00&gt;&lt;1-000&gt;&lt;fef-1c&gt;{Peak Center found at [61032]}&lt;fef-09&gt;{CUserInfo}&lt;ffff&gt;{00 00 00 00 1b 80}</span>
 <span class="co">#&gt; 0001501: &lt;etx&gt;</span>
-<span class="co">#&gt; 0001505: {/}&lt;fef-0&gt;&lt;fef-12&gt;</span></pre></div>
+<span class="co">#&gt; 0001505: {/}&lt;fef-0&gt;&lt;fef-12&gt;</span></code></pre></div>
 <p>This structure representation shows recognized control elements in <code>&lt;...&gt;</code> and data elements in <code>{...}</code> which are converted to text or numeric representation if the interpretation is unambiguous, or plain hexadecimal characters if the nature of the data cannot be determined with certainty. Because this function tries all possible control elements and data interpretations, it is quite slow and may take a while if run for large stretches of binary code (i.e. if the <code>length</code> parameter is very long).</p>
 <p>For an overview of all the control elements that are currently consider, use the internal <code>get_ctrl_blocks_config_df()</code> function.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">get_ctrl_blocks_config_df</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">get_ctrl_blocks_config_df</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["block"],"name":[1],"type":["chr"],"align":["left"]},{"label":["regexp"],"name":[2],"type":["chr"],"align":["left"]},{"label":["hexadecimal"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"del-nl","2":"\\177\\x85","3":"7f 85","_row":"del-nl"},{"1":"eop-nl","2":"܅","3":"dc 85","_row":"eop-nl"},{"1":"0b-80","2":"\\v\\x80","3":"0b 80","_row":"0b-80"},{"1":"e0-81","2":"\\xe0\\x81","3":"e0 81","_row":"e0-81"},{"1":"ce-80","2":"\\u0380","3":"ce 80","_row":"ce-80"},{"1":"ce-8a","2":"Ί","3":"ce 8a","_row":"ce-8a"},{"1":"ee-85","2":"\\xee\\x85","3":"ee 85","_row":"ee-85"},{"1":"75-84","2":"u\\x84","3":"75 84","_row":"75-84"},{"1":"ff-80","2":"\\\\x00\\xff\\x80\\\\x00","3":"5c 78 30 30 ff 80 5c 78 30 30","_row":"ff-80"},{"1":"07-80-id","2":"\\005\\x80.\\xff(\\\\x00|\\x80|\\xff){2}","3":"05 80 2e ff 28 5c 78 30 30 7c 80 7c ff 29 7b 32 7d","_row":"07-80-id"},{"1":"54-fc","2":"T\\xfc\\\\x00\\\\x00","3":"54 fc 5c 78 30 30 5c 78 30 30","_row":"54-fc"},{"1":"nl","2":"\\xff\\xfe\\xff\\n","3":"ff fe ff 0a","_row":"nl"},{"1":"fef-0","2":"\\xff\\xfe\\xff\\\\x00","3":"ff fe ff 5c 78 30 30","_row":"fef-0"},{"1":"fef-x","2":"\\xff\\xfe\\xff.","3":"ff fe ff 2e","_row":"fef-x"},{"1":"eee-0","2":"\\xef\\xef\\xef\\\\x00.","3":"ef ef ef 5c 78 30 30 2e","_row":"eee-0"},{"1":"ffff","2":"\\xff{4}","3":"ff 7b 34 7d","_row":"ffff"},{"1":"stx","2":"\\002\\\\x00{3}","3":"02 5c 78 30 30 7b 33 7d","_row":"stx"},{"1":"etx","2":"\\003\\\\x00{3}","3":"03 5c 78 30 30 7b 33 7d","_row":"etx"},{"1":"x-000","2":"[\\001-\\037]\\\\x00{3}","3":"5b 01 2d 1f 5d 5c 78 30 30 7b 33 7d","_row":"x-000"},{"1":"f-000","2":"\\xff\\\\x00{3}","3":"ff 5c 78 30 30 7b 33 7d","_row":"f-000"},{"1":"C-block","2":"\\xff\\xff(\\\\x00|[\\001-\\017])\\\\x00.\\\\x00C[ -~]+","3":"ff ff 28 5c 78 30 30 7c 5b 01 2d 0f 5d 29 5c 78 30 30 2e 5c 78 30 30 43 5b 20 2d 7e 5d 2b","_row":"C-block"},{"1":"latin","2":"([A-Za-z]\\\\x00)+","3":"28 5b 41 2d 5a 61 2d 7a 5d 5c 78 30 30 29 2b","_row":"latin"},{"1":"alpha","2":"([A-Za-z0-9]\\\\x00)+","3":"28 5b 41 2d 5a 61 2d 7a 30 2d 39 5d 5c 78 30 30 29 2b","_row":"alpha"},{"1":"text","2":"([ -~]\\\\x00)+","3":"28 5b 20 2d 7e 5d 5c 78 30 30 29 2b","_row":"text"},{"1":"text0","2":"([ -~]\\\\x00)*","3":"28 5b 20 2d 7e 5d 5c 78 30 30 29 2a","_row":"text0"},{"1":"permil","2":"0","3":"30 20","_row":"permil"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <p>Additional information can be gleaned from the so-called control blocks, which are larger structural elements of Isodat binary files and are kept in a data frame within the binary object (again only available in debug mode).</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="va">bin</span><span class="op">$</span><span class="va">C_blocks</span> <span class="op">%&gt;%</span>
-  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">bin</span><span class="op">$</span><span class="va">C_blocks</span> <span class="op">%&gt;%</span>
+  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["id1"],"name":[1],"type":["chr"],"align":["left"]},{"label":["id2"],"name":[2],"type":["chr"],"align":["left"]},{"label":["block"],"name":[3],"type":["chr"],"align":["left"]},{"label":["start"],"name":[4],"type":["int"],"align":["right"]},{"label":["end"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"06","2":"0b","3":"CFileHeader","4":"1","5":"17"},{"1":"01","2":"0b","3":"CTimeObject","4":"182","5":"198"},{"1":"02","2":"04","3":"CStr","4":"241","5":"250"},{"1":"01","2":"0a","3":"CDataIndex","4":"471","5":"486"},{"1":"01","2":"11","3":"CSeqLineIndexData","4":"513","5":"535"},{"1":"03","2":"05","3":"CData","4":"588","5":"598"},{"1":"01","2":"13","3":"CDualInletBlockData","4":"1133","5":"1157"},{"1":"01","2":"10","3":"CMeasurmentInfos","4":"1240","5":"1261"},{"1":"01","2":"15","3":"CISLScriptMessageData","4":"1324","5":"1350"},{"1":"01","2":"11","3":"CMeasurmentErrors","4":"1945","5":"1967"},{"1":"01","2":"11","3":"CDualInletRawData","4":"2038","5":"2060"},{"1":"02","2":"0a","3":"CBlockData","4":"2099","5":"2114"},{"1":"02","2":"1c","3":"CIntegrationUnitTransferPart","4":"2269","5":"2302"},{"1":"06","2":"0e","3":"CIntensityData","4":"2361","5":"2380"},{"1":"01","2":"0f","3":"CDualInletShout","4":"5299","5":"5319"},{"1":"01","2":"14","3":"CTwoDoublesArrayData","4":"5460","5":"5485"},{"1":"01","2":"10","3":"CStatusArrayData","4":"6412","5":"6433"},{"1":"01","2":"0c","3":"COutlierData","4":"6747","5":"6764"},{"1":"01","2":"15","3":"CResultDataSimpleList","4":"40876","5":"40902"},{"1":"02","2":"11","3":"CResultDataSimple","4":"40951","5":"40973"},{"1":"01","2":"1e","3":"CDualInletEvaluatedDataCollect","4":"73720","5":"73755"},{"1":"02","2":"17","3":"CDualInletEvaluatedData","4":"73790","5":"73818"},{"1":"01","2":"17","3":"CParsedEvaluationString","4":"75944","5":"75972"},{"1":"02","2":"07","3":"CBinary","4":"76883","5":"76895"},{"1":"02","2":"09","3":"CPlotInfo","4":"77216","5":"77230"},{"1":"01","2":"0a","3":"CTraceInfo","4":"77305","5":"77320"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"77326","5":"77346"},{"1":"01","2":"0a","3":"CPlotRange","4":"77574","5":"77589"},{"1":"02","2":"09","3":"CPlotInfo","4":"77680","5":"77694"},{"1":"01","2":"0a","3":"CTraceInfo","4":"77769","5":"77784"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"77790","5":"77810"},{"1":"01","2":"0a","3":"CPlotRange","4":"78038","5":"78053"},{"1":"02","2":"09","3":"CPlotInfo","4":"78144","5":"78158"},{"1":"01","2":"0a","3":"CTraceInfo","4":"78233","5":"78248"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"78254","5":"78274"},{"1":"01","2":"0a","3":"CPlotRange","4":"78502","5":"78517"},{"1":"02","2":"09","3":"CPlotInfo","4":"78608","5":"78622"},{"1":"01","2":"0a","3":"CTraceInfo","4":"78697","5":"78712"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"78718","5":"78738"},{"1":"01","2":"0a","3":"CPlotRange","4":"78922","5":"78937"},{"1":"02","2":"09","3":"CPlotInfo","4":"79028","5":"79042"},{"1":"01","2":"0a","3":"CTraceInfo","4":"79117","5":"79132"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"79138","5":"79158"},{"1":"01","2":"0a","3":"CPlotRange","4":"79342","5":"79357"},{"1":"02","2":"09","3":"CPlotInfo","4":"79448","5":"79462"},{"1":"01","2":"0a","3":"CTraceInfo","4":"79537","5":"79552"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"79558","5":"79578"},{"1":"01","2":"0a","3":"CPlotRange","4":"79762","5":"79777"},{"1":"02","2":"09","3":"CPlotInfo","4":"79868","5":"79882"},{"1":"01","2":"0a","3":"CTraceInfo","4":"79957","5":"79972"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"79978","5":"79998"},{"1":"01","2":"0a","3":"CPlotRange","4":"80182","5":"80197"},{"1":"08","2":"07","3":"CMethod","4":"80256","5":"80268"},{"1":"01","2":"09","3":"CMolecule","4":"80307","5":"80321"},{"1":"00","2":"0b","3":"CPartMirror","4":"80406","5":"80422"},{"1":"02","2":"13","3":"CMethodPrintoutDesc","4":"80423","5":"80447"},{"1":"01","2":"1f","3":"CEvalIntegrationUnitHWInfoStore","4":"80828","5":"80864"},{"1":"01","2":"1e","3":"CEvalIntegrationUnitHWInfoList","4":"80891","5":"80926"},{"1":"01","2":"1a","3":"CEvalIntegrationUnitHWInfo","4":"80953","5":"80984"},{"1":"03","2":"11","3":"CGasConfiguration","4":"81279","5":"81301"},{"1":"04","2":"0a","3":"CBasicScan","4":"81336","5":"81351"},{"1":"02","2":"10","3":"CScaleHvScanPart","4":"81418","5":"81439"},{"1":"03","2":"14","3":"CScaleHvHardwarePart","4":"81556","5":"81581"},{"1":"06","2":"12","3":"CFinniganInterface","4":"81664","5":"81687"},{"1":"08","2":"12","3":"CVisualisationData","4":"81768","5":"81791"},{"1":"03","2":"18","3":"CIntegrationUnitScanPart","4":"82156","5":"82185"},{"1":"03","2":"1c","3":"CIntegrationUnitHardwarePart","4":"82208","5":"82241"},{"1":"03","2":"0e","3":"CGpibInterface","4":"82350","5":"82369"},{"1":"02","2":"1b","3":"CIntegrationUnitGasConfPart","4":"82399","5":"82431"},{"1":"03","2":"13","3":"CChannelGasConfPart","4":"82539","5":"82563"},{"1":"05","2":"10","3":"CCupHardwarePart","4":"83062","5":"83083"},{"1":"02","2":"0f","3":"CBasicInterface","4":"83126","5":"83146"},{"1":"02","2":"14","3":"CChannelHardwarePart","4":"85574","5":"85599"},{"1":"02","2":"10","3":"CDioTransferPart","4":"86970","5":"86991"},{"1":"03","2":"1a","3":"CMagnetCurrentTransferPart","4":"88172","5":"88203"},{"1":"05","2":"0c","3":"CCalibration","4":"88320","5":"88337"},{"1":"03","2":"11","3":"CCalibrationPoint","4":"88408","5":"88430"},{"1":"01","2":"11","3":"CPeakCenterOffset","4":"95493","5":"95515"},{"1":"01","2":"1b","3":"CCalculatingDacTransferPart","4":"95564","5":"95596"},{"1":"02","2":"14","3":"CScaleHvTransferPart","4":"96923","5":"96948"},{"1":"07","2":"0e","3":"CConfiguration","4":"97071","5":"97090"},{"1":"02","2":"09","3":"CMsDevice","4":"97181","5":"97195"},{"1":"02","2":"0b","3":"CActivePort","4":"97256","5":"97272"},{"1":"01","2":"10","3":"CDualInletDevice","4":"97323","5":"97344"},{"1":"01","2":"12","3":"CChangeOver2Device","4":"97523","5":"97546"},{"1":"02","2":"05","3":"CPort","4":"98251","5":"98261"},{"1":"01","2":"22","3":"CVisualisationDialogNamesBlockData","4":"98368","5":"98407"},{"1":"03","2":"13","3":"CMsDeviceMethodPart","4":"98820","5":"98844"},{"1":"01","2":"11","3":"CActionPeakCenter","4":"98932","5":"98954"},{"1":"05","2":"1a","3":"CDualInletDeviceMethodPart","4":"99007","5":"99038"},{"1":"03","2":"12","3":"CActionPressAdjust","4":"99127","5":"99150"},{"1":"03","2":"11","3":"CActionBackground","4":"99226","5":"99248"},{"1":"01","2":"17","3":"CActiveDeviceMethodPart","4":"99356","5":"99384"},{"1":"02","2":"17","3":"CMsDeviceEvaluationPart","4":"99467","5":"99495"},{"1":"02","2":"16","3":"COutlierTestMethodPart","4":"99554","5":"99581"},{"1":"01","2":"11","3":"COutlierTestSigma","4":"99660","5":"99682"},{"1":"01","2":"0c","3":"COutlierTest","4":"99695","5":"99712"},{"1":"05","2":"0e","3":"CExtEvaluation","4":"99729","5":"99748"},{"1":"0c","2":"14","3":"CICA_BasicMethodPart","4":"99867","5":"99892"},{"1":"01","2":"1d","3":"CEvalDataItemListTransferPart","4":"99993","5":"100027"},{"1":"02","2":"1a","3":"CPrimaryStandardMethodPart","4":"115425","5":"115456"},{"1":"01","2":"1b","3":"CEvalDataDoubleTransferPart","4":"115559","5":"115591"},{"1":"01","2":"1c","3":"CParsedEvaluationStringArray","4":"116676","5":"116709"},{"1":"0b","2":"23","3":"CDualInletStandardizationMethodPart","4":"116952","5":"116992"},{"1":"03","2":"1c","3":"CSecondaryStandardMethodPart","4":"117093","5":"117126"},{"1":"02","2":"1b","3":"CEvalDataSecStdTransferPart","4":"117275","5":"117307"},{"1":"01","2":"1e","3":"CDualInletDeviceEvaluationPart","4":"134301","5":"134336"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <p>Same as for specific byte positions, one can use the control blocks to navigate the file and <code>map_binary_structure</code>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="va">bin</span> <span class="op">%&gt;%</span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">bin</span> <span class="op">%&gt;%</span>
   <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">move_to_C_block</span><span class="op">(</span><span class="st">"CMethod"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/map_binary_structure.html">map_binary_structure</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fl">200</span><span class="op">)</span>
 <span class="co">#&gt; # Binary data structure:  </span>
@@ -286,7 +286,7 @@
 <span class="co">#&gt; 0080423:   &lt;C-02-13 CMethodPrintoutDesc&gt;</span>
 <span class="co">#&gt; 0080448: &lt;etx&gt;</span>
 <span class="co">#&gt; 0080452: {-}&lt;fef-0&gt;&lt;fef-0&gt;&lt;4x00&gt;</span>
-<span class="co">#&gt; 0080466: &lt;stx&gt;</span></pre></div>
+<span class="co">#&gt; 0080466: &lt;stx&gt;</span></code></pre></div>
 </div>
 </div>
   </div>

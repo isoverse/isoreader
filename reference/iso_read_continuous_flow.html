@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.6</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.2.7</span>
       </span>
     </div>
 
@@ -167,7 +167,7 @@
   discard_duplicates <span class='op'>=</span> <span class='cn'>TRUE</span>,
   parallel <span class='op'>=</span> <span class='cn'>FALSE</span>,
   parallel_plan <span class='op'>=</span> <span class='fu'>future</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/future/man/multisession.html'>multisession</a></span>,
-  parallel_cores <span class='op'>=</span> <span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/availableCores.html'>availableCores</a></span><span class='op'>(</span><span class='op'>)</span>,
+  parallel_cores <span class='op'>=</span> <span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/re-exports.html'>availableCores</a></span><span class='op'>(</span><span class='op'>)</span>,
   cache <span class='op'>=</span> <span class='fu'>default</span><span class='op'>(</span><span class='va'>cache</span><span class='op'>)</span>,
   read_cache <span class='op'>=</span> <span class='fu'>default</span><span class='op'>(</span><span class='va'>cache</span><span class='op'>)</span>,
   reread_outdated_cache <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -216,7 +216,7 @@
     </tr>
     <tr>
       <th>parallel_cores</th>
-      <td><p>how many processor cores to use for parallel processing. By default the maximum available number of cores (<a href='https://rdrr.io/pkg/future/man/availableCores.html'>availableCores</a>), which will allow maximal processing speed but may slow other programs running on your machine. Choose a smaller number if you want some processing resources to remain available for other processes. Will issue a warning if too many cores are requested and reset to the maximum available.</p></td>
+      <td><p>how many processor cores to use for parallel processing. By default the maximum available number of cores (<a href='https://rdrr.io/pkg/future/man/re-exports.html'>availableCores</a>), which will allow maximal processing speed but may slow other programs running on your machine. Choose a smaller number if you want some processing resources to remain available for other processes. Will issue a warning if too many cores are requested and reset to the maximum available.</p></td>
     </tr>
     <tr>
       <th>cache</th>

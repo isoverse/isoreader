@@ -1,6 +1,6 @@
 pandoc: 2.7.3
 pkgdown: 1.6.1.9000
-pkgdown_sha: e1e46f2e13c7efdb17bc4eae40bc3779c2b0b517
+pkgdown_sha: e5847476d79f08b4cdca0ed5cc55bf55fc18a161
 articles:
   continuous_flow: continuous_flow.html
   development: development.html
@@ -8,7 +8,7 @@ articles:
   operations: operations.html
   quick_start: quick_start.html
   scan: scan.html
-last_built: 2020-10-20T01:44Z
+last_built: 2020-11-04T17:04Z
 urls:
   reference: https://isoreader.isoverse.org//reference
   article: https://isoreader.isoverse.org//articles
