@@ -46,8 +46,15 @@ with [tidyverse](https://www.tidyverse.org/) packages such as
 
 ## Installation
 
-You can install isoreader from github with the devtools package (version
-\> 1.13.2 required for bioconductor support).
+You can install the latest release of isoreader from
+[CRAN](https://cran.r-project.org/package=isoreader):
+
+``` r
+install.packages("isoreader")
+```
+
+To install the current development version directly from GitHub, please
+use the devtools package:
 
 ``` r
 # installs the development tools package if not yet installed
