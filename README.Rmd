@@ -31,7 +31,13 @@ This package is intended as a unified one-stop command line interface to all com
 
 ## Installation
 
-You can install isoreader from github with the devtools package (version > 1.13.2 required for bioconductor support).
+You can install the latest release of isoreader from [CRAN](https://cran.r-project.org/package=isoreader):
+
+```{r cran-installation, eval = FALSE}
+install.packages("isoreader")
+```
+
+To install the current development version directly from GitHub, please use the devtools package:
 
 ```{r gh-installation, eval = FALSE}
 # installs the development tools package if not yet installed
