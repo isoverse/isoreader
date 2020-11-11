@@ -1,3 +1,7 @@
+# Bioconductor packages not available on MRAN
+install.packages("BiocManager")
+BiocManager::install("rhdf5")
+
 # Package itself
 install.packages("isoreader")
 
