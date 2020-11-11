@@ -29,10 +29,10 @@ Imports:
     rhdf5,
     feather,
     UNF,
-    openxlsx,
-    readxl
+    openxlsx
 Suggests:
     testthat,
+    readxl,
     knitr,
     rmarkdown,
     covr
