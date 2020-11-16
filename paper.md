@@ -11,6 +11,9 @@ authors:
   - name: Sebastian Kopf^[corresponding author]
     orcid: 0000-0002-2044-0201
     affiliation: 1
+  - name: Brett Davidheiser-Kroll
+    orcid: 0000-0002-6153-7851
+    affiliation: 1
   - name: Ilja Kocken
     orcid: 0000-0003-2196-8718
     affiliation: 2
