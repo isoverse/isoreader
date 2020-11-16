@@ -11,16 +11,21 @@ authors:
   - name: Sebastian Kopf^[corresponding author]
     orcid: 0000-0002-2044-0201
     affiliation: 1
+  - name: Ilja Kocken
+    orcid: 0000-0003-2196-8718
+    affiliation: 2
 affiliations:
  - name: Department of Geological Sciences, University of Colorado Boulder
    index: 1
+ - name: Department of Earth Sciences, Utrecht University, the Netherlands
+   index: 2
 date: 11 November 2020
 bibliography: paper.bib
 ---
 
 # Summary
 
-The measurement and interpretation of the stable isotope composition of any material or molecule has widespread application in disciplines ranging from the earth sciences to ecology, anthropology, and forensics. The naturally occurring differences in the abundance of the stable isotopes of carbon, nitrogen, oxygen, and many other elements provide valuable insight into sources, fluxes and mechanisms of material transfer. Because isotopic variations in nature are very small, the measurement itself requires cutting edge analytical instrumentation using isotope ratio mass spectrometry (IRMS), as well as rigorous data reduction procedures for calibration and quality control. The `isoreader` package implements an easily extendable interface for IRMS data from common instrument vendor file formats and thus enables the reading and processing of stable isotope data directly from the source. This provides a foundational tool for platform-independent, efficient and reproducible data reduction.
+The measurement and interpretation of the stable isotope composition of any material or molecule has widespread application in disciplines ranging from the earth sciences to ecology, anthropology, and forensics. The naturally occurring differences in the abundance of the stable isotopes of carbon, nitrogen, oxygen, and many other elements provide valuable insight into environmental conditions and sources, fluxes, and mechanisms of material transfer. Because isotopic variations in nature are very small, the measurement itself requires cutting edge analytical instrumentation using isotope ratio mass spectrometry (IRMS) as well as rigorous data reduction procedures for calibration and quality control. The `isoreader` package implements an easily extendable interface for IRMS data from common instrument vendor file formats and thus enables the reading and processing of stable isotope data directly from the source. This provides a foundational tool for platform-independent, efficient and reproducible data reduction.
 
 # Statement of need
 
