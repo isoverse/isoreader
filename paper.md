@@ -18,7 +18,7 @@ authors:
     orcid: 0000-0003-2196-8718
     affiliation: 2
 affiliations:
- - name: Department of Geological Sciences, University of Colorado Boulder
+ - name: Department of Geological Sciences, University of Colorado Boulder, Colorado, USA
    index: 1
  - name: Department of Earth Sciences, Utrecht University, the Netherlands
    index: 2
