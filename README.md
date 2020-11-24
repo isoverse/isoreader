@@ -95,6 +95,8 @@ Currently supported file types:
   - for an example of how to work with dual inlet data files, see the
     vignette on **[Dual
     Inlet](https://isoreader.isoverse.org/articles/dual_inlet.html)**
+  - for an example of how to work with scan data files, see the vignette
+    on **[Scans](https://isoreader.isoverse.org/articles/scan.html)**
 
 ## Troubleshooting
 
@@ -103,14 +105,14 @@ issues with supported formats, please file a request/bug report in the
 [issue tracker](https://github.com/isoverse/isoreader/issues). Likewise
 if you run into any unexpected behavior or uncaught errors. Most
 isoreader functionality is continuously tested on Unix and Windows
-systems using [Travis](https://travis-ci.org/) and
-[AppVeyor](https://ci.appveyor.com/), respectively. This makes it
-possible to ensure proper functionality and catch issues quickly,
-however, sometimes something slips through or is not yet automatically
-tested. We try to make sure to fix such errors as soon as possible but
-ask for patience due to the small development team. If you have the
-skills and are willing to fix problems yourself, that’s great, please
-take a look at the development section below.
+systems using [GitHub
+Actions](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check).
+This makes it possible to ensure proper functionality and catch issues
+quickly, however, sometimes something slips through or is not yet
+automatically tested. We try to make sure to fix such errors as soon as
+possible but ask for patience due to the small development team. If you
+have the skills and are willing to fix problems yourself, that’s great,
+please take a look at the development section below.
 
 ## Development
 
