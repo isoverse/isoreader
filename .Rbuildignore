@@ -26,3 +26,5 @@
 ^CRAN-RELEASE$
 ^Meta$
 ^LICENSE$
+^paper.bib$
+^paper.md$
