@@ -69,7 +69,6 @@ jobs:
         shell: Rscript {0}
 
       - name: Install package
-        if: runner.os == 'Windows'
         run: |
           # install isoreader before check so parallel processing examples work
           remotes::install_cran("devtools")

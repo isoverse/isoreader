@@ -121,9 +121,9 @@ test_that("test that version checking and re-reads are working properly", {
   temp_storage <- file.path(tempdir(), "scan_storage_old.scan.rds")
   dir.create(temp_cache, showWarnings = FALSE)
   save_files <- files %>% iso_set_file_root(remove_embedded_root = data_folder)
-  readr::write_rds(save_files[[1]], path = file.path(temp_cache, basename(generate_cache_filepaths(test_files)[1])))
-  readr::write_rds(save_files[[2]], path = file.path(temp_cache, basename(generate_cache_filepaths(test_files)[2])))
-  readr::write_rds(save_files[[3]], path = file.path(temp_cache, basename(generate_cache_filepaths(test_files)[3])))
+  readr::write_rds(save_files[[1]], file.path(temp_cache, basename(generate_cache_filepaths(test_files)[1])))
+  readr::write_rds(save_files[[2]], file.path(temp_cache, basename(generate_cache_filepaths(test_files)[2])))
+  readr::write_rds(save_files[[3]], file.path(temp_cache, basename(generate_cache_filepaths(test_files)[3])))
   iso_save(save_files, filepath = temp_storage)
   
   # version warnings for files

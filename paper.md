@@ -18,7 +18,7 @@ authors:
     orcid: 0000-0003-2196-8718
     affiliation: 2
 affiliations:
- - name: Department of Geological Sciences, University of Colorado Boulder
+ - name: Department of Geological Sciences, University of Colorado Boulder, Colorado, USA
    index: 1
  - name: Department of Earth Sciences, Utrecht University, the Netherlands
    index: 2
@@ -38,6 +38,6 @@ The `isoreader` package enables efficient and reproducible reading and processin
 
 # Acknowledgements
 
-We thank Max Lloyd for his valuable contributions to parsing dual inlet file formats. We thank Seth Newsome and the executive committee of the IsoBank initiative for organizing a workshop that helped improve this software. We also thank all the laboratories that shared test files including the Bender, Bergmann, Bradley, Eiler, Kim, Ono, Pearson, Sessions, Sigman, Snell, and Ziegler labs, as well as the Stable Isotope Facilities at the University of California Davis, University of Colorado, University of New Brunswick, University of New Mexico, University of Ottawa, University of Utah, University of Washington, University of Wyoming, and the United States Geological Survey. Lastly, we thank the members of the stable isotope community on the ISOGEOCHEM listserv for their contributions and bug reports that improved this software. This project was supported, in part, by grants to SHK from the National Science Foundation (EAR 1928303) and the University of Colorado Boulder.
+We thank Max Lloyd for his valuable contributions to parsing dual inlet file formats. We thank Seth Newsome and the executive committee of the IsoBank initiative for organizing a workshop that helped improve this software. We also thank all the laboratories that shared test files including the Bender, Bergmann, Bradley, Eiler, Kim, Ono, Pearson, Sessions, Sigman, and Snell Labs (all in the USA), and the Ziegler Lab (in the Netherlands), as well as the Stable Isotope Facilities at the University of California Davis (USA), University of Colorado (USA), University of New Brunswick (Canada), University of New Mexico (USA), University of Ottawa (Canada), University of Utah (USA), University of Washington (USA), University of Wyoming (USA), and the United States Geological Survey (USA). Lastly, we thank the members of the stable isotope community on the ISOGEOCHEM listserv for their contributions and bug reports that improved this software. This project was supported, in part, by grants to SHK from the U.S. National Science Foundation (EAR 1928303) and the University of Colorado Boulder.
 
 # References

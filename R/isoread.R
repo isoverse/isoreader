@@ -1097,7 +1097,7 @@ generate_old_cache_filepaths <- function(filepaths, read_options = list()) {
 # Cache iso_file
 cache_iso_file <- function(iso_file, cachepath) {
   if (!file.exists(default("cache_dir"))) dir.create(default("cache_dir"))
-  readr::write_rds(iso_file, path = cachepath)
+  readr::write_rds(iso_file, cachepath)
 }
 
 # Load cached iso_file

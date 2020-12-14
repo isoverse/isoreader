@@ -4,12 +4,12 @@
 # isoreader <a href='https://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
-[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.2.7-orange.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
+[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.2.7-purple.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://isoreader.isoverse.org/)
 [![R build
 status](https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg)](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check)
-[![Binder](https://img.shields.io/badge/launch-RStudio-blue.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=rstudio)
-[![Binder](https://img.shields.io/badge/launch-Jupyter-orange.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=lab)
+[![Binder](https://img.shields.io/badge/explore%20online-in%20RStudio-blue.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=rstudio)
+[![Binder](https://img.shields.io/badge/explore%20online-in%20Jupyter-orange.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=lab)
 
 ## About
 
@@ -95,6 +95,8 @@ Currently supported file types:
   - for an example of how to work with dual inlet data files, see the
     vignette on **[Dual
     Inlet](https://isoreader.isoverse.org/articles/dual_inlet.html)**
+  - for an example of how to work with scan data files, see the vignette
+    on **[Scans](https://isoreader.isoverse.org/articles/scan.html)**
 
 ## Troubleshooting
 
@@ -103,14 +105,14 @@ issues with supported formats, please file a request/bug report in the
 [issue tracker](https://github.com/isoverse/isoreader/issues). Likewise
 if you run into any unexpected behavior or uncaught errors. Most
 isoreader functionality is continuously tested on Unix and Windows
-systems using [Travis](https://travis-ci.org/) and
-[AppVeyor](https://ci.appveyor.com/), respectively. This makes it
-possible to ensure proper functionality and catch issues quickly,
-however, sometimes something slips through or is not yet automatically
-tested. We try to make sure to fix such errors as soon as possible but
-ask for patience due to the small development team. If you have the
-skills and are willing to fix problems yourself, that’s great, please
-take a look at the development section below.
+systems using [GitHub
+Actions](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check).
+This makes it possible to ensure proper functionality and catch issues
+quickly, however, sometimes something slips through or is not yet
+automatically tested. We try to make sure to fix such errors as soon as
+possible but ask for patience due to the small development team. If you
+have the skills and are willing to fix problems yourself, that’s great,
+please take a look at the development section below.
 
 ## Development
 
