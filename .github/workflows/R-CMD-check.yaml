@@ -38,6 +38,12 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
+      - name: Init
+        run: |
+          # don't load .Rprofile (i.e. don't use renv, use latest packages)
+          unlink(".Rprofile")
+        shell: Rscript {0}
+
       - name: Query dependencies
         run: |
           install.packages('remotes')
@@ -75,18 +81,12 @@ jobs:
           devtools::install_github("isoverse/isoreader")
         shell: Rscript {0}
 
-      - name: Prepare Check
-        run: |
-          # don't load .Rprofile (i.e. don't use renv, use latest packages)
-          unlink(".Rprofile")
-          # include test_data by removing it from .Rbuildignore
-          cat(stringr::str_subset(readr::read_lines(".Rbuildignore"), "test_data", negate = TRUE), file = ".Rbuildignore", sep = "\n")
-        shell: Rscript {0}
-
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
         run: |
+          # include test_data by removing it from .Rbuildignore
+          cat(stringr::str_subset(readr::read_lines(".Rbuildignore"), "test_data", negate = TRUE), file = ".Rbuildignore", sep = "\n")
           # run RMD check 
           rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}

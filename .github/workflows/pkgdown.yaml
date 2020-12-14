@@ -16,6 +16,12 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
+      - name: Init
+        run: |
+          # don't load .Rprofile (i.e. don't use renv, use latest packages)
+          unlink(".Rprofile")
+        shell: Rscript {0}
+
       - name: Query dependencies
         run: |
           install.packages('remotes')
