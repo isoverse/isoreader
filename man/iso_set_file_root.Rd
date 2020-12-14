@@ -18,7 +18,7 @@ iso_set_file_root(
 
 \item{remove_embedded_root}{set this parameter to a root path that is embedded in the isofiles' \code{file_path}. Will warn about any paths that cannot be simplified by removing the specified \code{remove_embedded_root}.}
 
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_messages_on} and \link[=iso_info_messages]{iso_turn_info_messages_off}}
 }
 \description{
 Sets the root directory for a set of iso_files (property \code{file_root} in the file information), which is particularly useful for re-reading files (\link{reread_iso_files}) after they have changed location. Can optionally remove the previous root (\code{remove_embedded_root}) if it is still embedded in the isofiles' \code{file_path} instead of \code{file_root}. Will warn about any paths that cannot be simplified by removing the embedded root.
