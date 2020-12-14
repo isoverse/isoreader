@@ -25,3 +25,4 @@
 ^tests/testthat/test_data/.*
 ^CRAN-RELEASE$
 ^Meta$
+^LICENSE$
