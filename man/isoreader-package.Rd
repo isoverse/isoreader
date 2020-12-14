@@ -19,5 +19,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Sebastian Kopf \email{sebastian.kopf@colorado.edu} (\href{https://orcid.org/0000-0002-2044-0201}{ORCID})
 
+Authors:
+\itemize{
+  \item Brett Davidheiser-Kroll \email{brett.davidheiserkroll@colorado.edu} (\href{https://orcid.org/0000-0002-6153-7851}{ORCID})
+  \item Ilja Kocken \email{i.j.kocken@uu.nl} (\href{https://orcid.org/0000-0003-2196-8718}{ORCID})
+}
+
 }
 \keyword{internal}
