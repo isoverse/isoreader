@@ -17,7 +17,7 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@master
 
       - name: Remove .Rprofile
-        run: rm -f .Rprofile
+        run: rm .Rprofile
 
       - name: Query dependencies
         run: |
