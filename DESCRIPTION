@@ -47,6 +47,7 @@ Imports:
     UNF (>= 2.0.6),
     openxlsx (>= 4.1.5)
 Suggests:
+    devtools,
     testthat,
     readxl,
     knitr,
