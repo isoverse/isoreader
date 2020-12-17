@@ -22,7 +22,7 @@ Authors@R:
 URL: https://github.com/isoverse/isoreader
 BugReports: https://github.com/isoverse/isoreader/issues
 Depends:
-    R (>= 3.6.0),
+    R (>= 4.0.0),
     stats
 Imports:
     methods,
