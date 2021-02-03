@@ -86,7 +86,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/isoverse/isoreader">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -105,7 +105,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Operations</h1>
             
-            <h4 class="date">2020-11-24</h4>
+            <h4 class="date">2021-02-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/operations.Rmd"><code>vignettes/operations.Rmd</code></a></small>
       <div class="hidden name"><code>operations.Rmd</code></div>
@@ -216,7 +216,7 @@
 <div id="messages" class="section level1">
 <h1 class="hasAnchor">
 <a href="#messages" class="anchor"></a>Messages</h1>
-<p>By default, isoreader is quite verbose to let the user know what is happening. However, most functions can be silenced by adding the parameter <code>quiet = TRUE</code> to the function call. This can also be done globally using <code>iso_turn_info_message_off()</code></p>
+<p>By default, isoreader is quite verbose to let the user know what is happening. However, most functions can be silenced by adding the parameter <code>quiet = TRUE</code> to the function call. This can also be done globally using <code><a href="../reference/iso_info_messages.html">iso_turn_info_messages_off()</a></code></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># read a file in the default verbose mode</span>
 <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -226,7 +226,7 @@
   <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span>
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.did' from cache...</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.42 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.40 secs</span>
 <span class="co">#&gt; Info: selecting/renaming the following file info across 1 data file(s): 'file_datetime', 'Identifier 1'</span>
 <span class="co">#&gt; Info: aggregating file info from 1 data file(s)</span></code></pre></div>
 <table class="table">
@@ -311,7 +311,7 @@
     <span class="fu"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span>
 <span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' from cache...</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.18 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.16 secs</span>
 
 <span class="co"># turn reader caching off</span>
 <span class="fu"><a href="../reference/iso_caching.html">iso_turn_reader_caching_off</a></span><span class="op">(</span><span class="op">)</span>
@@ -322,7 +322,7 @@
   <span class="fu"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: preparing to read 1 data files...</span>
 <span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' with '.dxf' reader...</span>
-<span class="co">#&gt; Info: finished reading 1 files in 2.01 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 1.91 secs</span>
 
 <span class="co"># turn reader caching back on</span>
 <span class="fu"><a href="../reference/iso_caching.html">iso_turn_reader_caching_on</a></span><span class="op">(</span><span class="op">)</span>
@@ -347,7 +347,7 @@
 <span class="co">#&gt; Info (process 1): reading file 'dual_inlet_example.did' from cache...</span>
 <span class="co">#&gt; Info (process 2): reading file 'dual_inlet_example.caf' from cache...</span>
 <span class="co">#&gt; Info (process 3): reading file 'dual_inlet_nu_example.txt' from cache...</span>
-<span class="co">#&gt; Info: finished reading 3 files in 3.32 secs</span></code></pre></div>
+<span class="co">#&gt; Info: finished reading 3 files in 3.18 secs</span></code></pre></div>
 </div>
 <div id="combining-subsetting-isofiles" class="section level1">
 <h1 class="hasAnchor">
@@ -429,7 +429,7 @@
 <span class="co">#&gt; Info: reading file 'extdata/continuous_flow_example.dxf' from cache...</span>
 <span class="co">#&gt; Info: reading file 'errdata/cf_without_data.dxf' with '.dxf' reader...</span>
 <span class="co">#&gt; Warning: caught error - cannot identify measured masses - block 'CEvalDataI...</span>
-<span class="co">#&gt; Info: finished reading 2 files in 0.46 secs</span>
+<span class="co">#&gt; Info: finished reading 2 files in 0.42 secs</span>
 <span class="co">#&gt; Warning: encountered 1 problem.</span>
 <span class="co">#&gt; # | FILE                | PROBLEM | OCCURRED IN                  | DETAILS</span>
 <span class="co">#&gt; 1 | cf_without_data.dxf | error   | extract_dxf_raw_voltage_data | cannot ide...</span>
@@ -642,7 +642,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Sebastian Kopf.</p>
+  <p>Developed by Sebastian Kopf, Brett Davidheiser-Kroll, Ilja Kocken.</p>
 </div>
 
 <div class="pkgdown">

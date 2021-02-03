@@ -86,7 +86,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/isoverse/isoreader">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -121,12 +121,37 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># installs the development tools package if not yet installed</span>
 <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"isoverse/isoreader"</span><span class="op">)</span></code></pre></div>
-<p>Troubleshooting note: depending on your workspace and operating system, you may have to re-start your R session, delete previous versions of these packages (<code><a href="https://rdrr.io/r/utils/remove.packages.html">remove.packages("isoreader")</a></code>), and/or manually install some dependencies (e.g. the <code>digest</code> package tends to cause trouble: <code><a href="https://rdrr.io/r/utils/remove.packages.html">remove.packages("digest"); install.packages("digest")</a></code>).</p>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"isoverse/isoreader"</span><span class="op">)</span></code></pre></div>
+<p>Troubleshooting note: depending on your workspace and operating system, you may have to re-start your R session or manually install some dependencies. For example, the <a href="https://www.bioconductor.org/">Bioconductor</a> package manager may need manual installation: <code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("BiocManager")</a></code>; also, the <code>digest</code> package sometimes causes trouble - re-install with <code><a href="https://rdrr.io/r/utils/remove.packages.html">remove.packages("digest"); install.packages("digest")</a></code>.</p>
 </div>
-<div id="functionality" class="section level2">
+<div id="show-me-some-code" class="section level2">
 <h2 class="hasAnchor">
-<a href="#functionality" class="anchor"></a>Functionality</h2>
+<a href="#show-me-some-code" class="anchor"></a>Show me some code</h2>
+<p>You can, for example, automatically read the data from <strong>all</strong> supported scan files in a directory (and all its subdirectories) simply by providing the path to the folder. The following code demonstrates this with the example data files bundled with the <code>isoreader</code> package. For a more detailed example including continuous flow and dual inlet file reads, check out our <a href="https://isoreader.isoverse.org/articles/quick_start.html"><strong>Quick Start Vignette</strong></a>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/isoverse/isoreader">isoreader</a></span><span class="op">)</span>
+<span class="va">data_folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/iso_get_reader_example.html">iso_get_reader_examples_folder</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">iso_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/iso_read_scan.html">iso_read_scan</a></span><span class="op">(</span><span class="va">data_folder</span><span class="op">)</span>
+<span class="co">#&gt; Info: preparing to read 4 data files...</span>
+<span class="co">#&gt; Info: reading file 'background_scan_example.scn' with '.scn' reader...</span>
+<span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader...</span>
+<span class="co">#&gt; Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...</span>
+<span class="co">#&gt; Info: reading file 'time_scan_example.scn' with '.scn' reader...</span>
+<span class="co">#&gt; Info: finished reading 4 files in 0.82 secs</span>
+
+<span class="va">iso_files</span>
+<span class="co">#&gt; Data from 4 scan iso files: </span>
+<span class="co">#&gt; # A tibble: 4 x 5</span>
+<span class="co">#&gt;   file_id         raw_data                file_info method_info file_path       </span>
+<span class="co">#&gt;   &lt;chr&gt;           &lt;glue&gt;                  &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;           </span>
+<span class="co">#&gt; 1 background_sca… 525 measurements, 7 io… 8 entries resistors   background_scan…</span>
+<span class="co">#&gt; 2 full_scan_exam… 799 measurements, 3 ch… 8 entries resistors   full_scan_examp…</span>
+<span class="co">#&gt; 3 peak_shape_sca… 220 measurements, 3 io… 8 entries resistors   peak_shape_scan…</span>
+<span class="co">#&gt; 4 time_scan_exam… 5532 measurements, 2 i… 8 entries resistors   time_scan_examp…</span></code></pre></div>
+</div>
+<div id="supported-file-types" class="section level2">
+<h2 class="hasAnchor">
+<a href="#supported-file-types" class="anchor"></a>Supported File Types</h2>
 <p>Currently supported file types:</p>
 <table class="table">
 <thead><tr class="header">
@@ -210,14 +235,21 @@
 </tr>
 </tbody>
 </table>
+</div>
+<div id="documentation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#documentation" class="anchor"></a>Documentation</h2>
 <ul>
+<li>for a quick introduction, check out the aforementioned <a href="https://isoreader.isoverse.org/articles/quick_start.html"><strong>Quick Start Vignette</strong></a>
+</li>
 <li>for a full reference of all available functions, see the <strong><a href="https://isoreader.isoverse.org/reference/">Function Reference</a></strong>
 </li>
-<li>for an example of how to work with continuous flow data files, see the vignette on <strong><a href="https://isoreader.isoverse.org/articles/continuous_flow.html">Continuous Flow</a></strong>
+<li>for function help within RStudio, simply start typing <code>?iso_</code> in the console and a list of available function will appear (all functions share the <code>iso_</code> prefix)</li>
+<li>for a detailed example of how to work with continuous flow data files, see the vignette on <strong><a href="https://isoreader.isoverse.org/articles/continuous_flow.html">Continuous Flow</a></strong>
 </li>
-<li>for an example of how to work with dual inlet data files, see the vignette on <strong><a href="https://isoreader.isoverse.org/articles/dual_inlet.html">Dual Inlet</a></strong>
+<li>for a detailed example of how to work with dual inlet data files, see the vignette on <strong><a href="https://isoreader.isoverse.org/articles/dual_inlet.html">Dual Inlet</a></strong>
 </li>
-<li>for an example of how to work with scan data files, see the vignette on <strong><a href="https://isoreader.isoverse.org/articles/scan.html">Scans</a></strong>
+<li>for a detailed example of how to work with scan data files, see the vignette on <strong><a href="https://isoreader.isoverse.org/articles/scan.html">Scans</a></strong>
 </li>
 </ul>
 </div>
@@ -267,6 +299,8 @@
 <h2>Developers</h2>
 <ul class="list-unstyled">
 <li>Sebastian Kopf <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-2044-0201" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Brett Davidheiser-Kroll <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-6153-7851" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Ilja Kocken <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-2196-8718" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
@@ -286,7 +320,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Sebastian Kopf.</p>
+  <p>Developed by Sebastian Kopf, Brett Davidheiser-Kroll, Ilja Kocken.</p>
 </div>
 
 <div class="pkgdown">
