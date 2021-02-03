@@ -63,12 +63,46 @@ devtools::install_github("isoverse/isoreader")
 ```
 
 Troubleshooting note: depending on your workspace and operating system,
-you may have to re-start your R session, delete previous versions of
-these packages (`remove.packages("isoreader")`), and/or manually install
-some dependencies (e.g. the `digest` package tends to cause trouble:
-`remove.packages("digest"); install.packages("digest")`).
+you may have to re-start your R session or manually install some
+dependencies. For example, the
+[Bioconductor](https://www.bioconductor.org/) package manager may need
+manual installation: `install.packages("BiocManager")`; also, the
+`digest` package sometimes causes trouble - re-install with
+`remove.packages("digest"); install.packages("digest")`.
 
-## Functionality
+## Show me some code
+
+You can, for example, automatically read the data from **all** supported
+scan files in a directory (and all its subdirectories) simply by
+providing the path to the folder. The following code demonstrates this
+with the example data files bundled with the `isoreader` package. For a
+more detailed example including continuous flow and dual inlet file
+reads, check out our [**Quick Start
+Vignette**](https://isoreader.isoverse.org/articles/quick_start.html).
+
+``` r
+library(isoreader)
+data_folder <- iso_get_reader_examples_folder()
+iso_files <- iso_read_scan(data_folder)
+#> Info: preparing to read 4 data files...
+#> Info: reading file 'background_scan_example.scn' with '.scn' reader...
+#> Info: reading file 'full_scan_example.scn' with '.scn' reader...
+#> Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...
+#> Info: reading file 'time_scan_example.scn' with '.scn' reader...
+#> Info: finished reading 4 files in 0.82 secs
+
+iso_files
+#> Data from 4 scan iso files: 
+#> # A tibble: 4 x 5
+#>   file_id         raw_data                file_info method_info file_path       
+#>   <chr>           <glue>                  <chr>     <chr>       <chr>           
+#> 1 background_sca… 525 measurements, 7 io… 8 entries resistors   background_scan…
+#> 2 full_scan_exam… 799 measurements, 3 ch… 8 entries resistors   full_scan_examp…
+#> 3 peak_shape_sca… 220 measurements, 3 io… 8 entries resistors   peak_shape_scan…
+#> 4 time_scan_exam… 5532 measurements, 2 i… 8 entries resistors   time_scan_examp…
+```
+
+## Supported File Types
 
 Currently supported file types:
 
@@ -87,16 +121,25 @@ Currently supported file types:
 | .scn      | Isodat    | Scan file format                    | scan            |
 | .scan.rds | isoreader | R Data Storage                      | scan            |
 
+## Documentation
+
+  - for a quick introduction, check out the aforementioned [**Quick
+    Start
+    Vignette**](https://isoreader.isoverse.org/articles/quick_start.html)
   - for a full reference of all available functions, see the **[Function
     Reference](https://isoreader.isoverse.org/reference/)**
-  - for an example of how to work with continuous flow data files, see
-    the vignette on **[Continuous
+  - for function help within RStudio, simply start typing `?iso_` in the
+    console and a list of available function will appear (all functions
+    share the `iso_` prefix)
+  - for a detailed example of how to work with continuous flow data
+    files, see the vignette on **[Continuous
     Flow](https://isoreader.isoverse.org/articles/continuous_flow.html)**
-  - for an example of how to work with dual inlet data files, see the
-    vignette on **[Dual
+  - for a detailed example of how to work with dual inlet data files,
+    see the vignette on **[Dual
     Inlet](https://isoreader.isoverse.org/articles/dual_inlet.html)**
-  - for an example of how to work with scan data files, see the vignette
-    on **[Scans](https://isoreader.isoverse.org/articles/scan.html)**
+  - for a detailed example of how to work with scan data files, see the
+    vignette on
+    **[Scans](https://isoreader.isoverse.org/articles/scan.html)**
 
 ## Troubleshooting
 

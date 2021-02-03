@@ -123,8 +123,8 @@ test_that("relative path shortening works correctly", {
                tibble(root = file.path("A", "B", "C"), path = "."))
   
   # path and root absolute - stay the same
-  expect_equal(iso_shorten_relative_paths(getwd(), system.file(package = "base")),
-               tibble(root = system.file(package = "base"), path = getwd()))
+  expect_equal(iso_shorten_relative_paths(getwd(), dirname(getwd())),
+               tibble(root = dirname(getwd()), path = getwd()))
   
   # root gets shortened to wd if a subpath
   expect_equal(iso_shorten_relative_paths(file.path("A", "B"), getwd()),

@@ -16,6 +16,7 @@ test_that("test that file reader registration works", {
   expect_error(iso_register_continuous_flow_file_reader(".new2", "iso_is_file"), "exists in more than one environment")
   expect_equal(iso_register_continuous_flow_file_reader(".new2", "iso_is_file", env = "isoreader") %>% 
                  dplyr::filter(extension == ".new") %>% nrow(), 1)
+  rm("iso_is_file", envir = .GlobalEnv)
 })
 
 # parameter checks ======

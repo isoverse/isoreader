@@ -33,7 +33,7 @@ reread_iso_files(
 
 \item{reread_files_with_warnings}{whether to re-read files that had read in with warnings the last time (default TRUE)}
 
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_messages_on} and \link[=iso_info_messages]{iso_turn_info_messages_off}}
 }
 \description{
 Actual multi-purpose file-reread function (not exported) that powers \link{iso_reread_files}.

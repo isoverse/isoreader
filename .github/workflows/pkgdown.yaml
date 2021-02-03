@@ -16,6 +16,9 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
+      - name: Remove .Rprofile
+        run: rm .Rprofile
+
       - name: Query dependencies
         run: |
           install.packages('remotes')

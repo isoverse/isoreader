@@ -2,11 +2,27 @@ Package: isoreader
 Title: Read Stable Isotope Data Files
 Description: Interface to the raw data file formats commonly encountered in scientific disciplines that make use of stable isotopes.
 Version: 1.2.7
-Authors@R: person("Sebastian", "Kopf", email = "sebastian.kopf@colorado.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-2044-0201"))
+Authors@R: 
+    c(person(
+        given = "Sebastian", family = "Kopf", 
+        email = "sebastian.kopf@colorado.edu", 
+        role = c("aut", "cre"), 
+        comment = c(ORCID = "0000-0002-2044-0201")),
+    person(
+        given = "Brett", family = "Davidheiser-Kroll", 
+        email = "brett.davidheiserkroll@colorado.edu", 
+        role = c("aut"), 
+        comment = c(ORCID = "0000-0002-6153-7851")),
+    person(
+        given = "Ilja", family = "Kocken", 
+        email = "i.j.kocken@uu.nl", 
+        role = c("aut"), 
+        comment = c(ORCID = "0000-0003-2196-8718"))
+    )
 URL: https://github.com/isoverse/isoreader
 BugReports: https://github.com/isoverse/isoreader/issues
 Depends:
-    R (>= 3.5),
+    R (>= 4.0.0),
     stats
 Imports:
     methods,
@@ -14,23 +30,24 @@ Imports:
     magrittr,
     rlang (>= 0.4.5),
     tidyselect (>= 1.0.0),
-    vctrs (>= 0.2.4),
+    vctrs (>= 0.3.4),
     tibble (>= 3.0.0),
-    dplyr (>= 0.8.5),
+    dplyr (>= 1.0.0),
     tidyr (>= 1.0.0),
-    glue,
-    stringr,
-    purrr,
-    future,
-    lubridate,
-    readr,
-    progress,
+    glue (>= 1.4.0),
+    stringr (>= 1.4.0),
+    purrr (>= 0.3.4),
+    future (>= 1.18.0),
+    lubridate (>= 1.7.9.2),
+    readr (>= 1.4.0),
+    progress (>= 1.2.2),
     xml2 (>= 1.3.1),
-    rhdf5,
-    feather,
-    UNF,
-    openxlsx
+    rhdf5 (>= 2.34.0),
+    feather (>= 0.3.5),
+    UNF (>= 2.0.6),
+    openxlsx (>= 4.1.5)
 Suggests:
+    devtools,
     testthat,
     readxl,
     knitr,
