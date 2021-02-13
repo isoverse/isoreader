@@ -45,7 +45,7 @@ Reading scan files is as simple as passing one or multiple file or folder paths 
 
 ```{r, message=FALSE}
 # all available examples
-iso_get_reader_examples() %>% rmarkdown::paged_table()
+iso_get_reader_examples() %>% knitr::kable()
 ```
 
 ```{r}
@@ -64,7 +64,7 @@ scan_files <-
 The `scan_files` variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the `iso_get_data_summary()` function.
 
 ```{r}
-scan_files %>% iso_get_data_summary() %>% rmarkdown::paged_table()
+scan_files %>% iso_get_data_summary() %>% knitr::kable()
 ```
 
 ## Problems
@@ -72,8 +72,8 @@ scan_files %>% iso_get_data_summary() %>% rmarkdown::paged_table()
 In case there was any trouble with reading any of the files, the following functions provide an overview summary as well as details of all errors and warnings, respectively. The examples here contain no errors but if you run into any unexpected file read problems, please file a bug report in the [isoreader issue tracker](https://github.com/isoverse/isoreader/issues).
 
 ```{r}
-scan_files %>% iso_get_problems_summary() %>% rmarkdown::paged_table()
-scan_files %>% iso_get_problems() %>% rmarkdown::paged_table()
+scan_files %>% iso_get_problems_summary() %>% knitr::kable()
+scan_files %>% iso_get_problems() %>% knitr::kable()
 ```
 
 # File Information
@@ -82,7 +82,7 @@ Detailed file information can be aggregated for all isofiles using the `iso_get_
 
 ```{r}
 # all file information
-scan_files %>% iso_get_file_info(select = c(-file_root)) %>% rmarkdown::paged_table()
+scan_files %>% iso_get_file_info(select = c(-file_root)) %>% knitr::kable()
 ```
 
 ## Select/Rename
@@ -96,7 +96,7 @@ scan_files2 <- scan_files %>%
   iso_rename_file_info(`Date & Time` = file_datetime)
 
 # fetch all file info
-scan_files2 %>% iso_get_file_info() %>% rmarkdown::paged_table()
+scan_files2 %>% iso_get_file_info() %>% knitr::kable()
 ```
 
 
@@ -109,7 +109,7 @@ Any collection of isofiles can also be filtered based on the available file info
 scan_files2 %>%
   iso_filter_files(type == "High Voltage") %>%
   iso_get_file_info() %>%
-  rmarkdown::paged_table()
+  knitr::kable()
 ```
 
 ## Mutate
@@ -125,7 +125,7 @@ scan_files3 <- scan_files2 %>%
 
 scan_files3 %>%
   iso_get_file_info() %>%
-  rmarkdown::paged_table()
+  knitr::kable()
 ```
 
 # Resistors
@@ -133,7 +133,7 @@ scan_files3 %>%
 Additionally, some IRMS data files contain resistor information that are useful for downstream calculations (see e.g. section on signal conversion later in this vignette):
 
 ```{r}
-scan_files %>% iso_get_resistors() %>% rmarkdown::paged_table()
+scan_files %>% iso_get_resistors() %>% knitr::kable()
 ```
 
 # Raw Data
@@ -142,7 +142,7 @@ The raw data read from the scan files can be retrieved similarly using the `iso_
 
 ```{r}
 # get raw data with default selections (all raw data, no additional file info)
-scan_files %>% iso_get_raw_data() %>% head(n=10) %>% rmarkdown::paged_table()
+scan_files %>% iso_get_raw_data() %>% head(n=10) %>% knitr::kable()
 # get specific raw data and add some file information
 scan_files %>%
   iso_get_raw_data(
@@ -152,7 +152,7 @@ scan_files %>%
     include_file_info = c(`Scan Type` = type)
   ) %>%
   # look at first few records only
-  head(n=10) %>% rmarkdown::paged_table()
+  head(n=10) %>% knitr::kable()
 ```
 
 # For expert users: retrieving all data
