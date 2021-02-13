@@ -104,14 +104,14 @@ For an overview of all the control elements that are currently consider, use the
 
 ```{r}
 isoreader:::get_ctrl_blocks_config_df() %>%
-  rmarkdown::paged_table()
+  knitr::kable()
 ```
 
 Additional information can be gleaned from the so-called control blocks, which are larger structural elements of Isodat binary files and are kept in a data frame within the binary object (again only available in debug mode).
 
 ```{r}
 bin$C_blocks %>%
-  rmarkdown::paged_table()
+  knitr::kable()
 ```
 
 Same as for specific byte positions, one can use the control blocks to navigate the file and `map_binary_structure`.

@@ -43,7 +43,7 @@ Reading dual inlet files is as simple as passing one or multiple file or folder 
 
 ```{r, message=FALSE}
 # all available examples
-iso_get_reader_examples() %>% rmarkdown::paged_table()
+iso_get_reader_examples() %>% knitr::kable()
 ```
 
 ```{r}
@@ -62,7 +62,7 @@ di_files <-
 The `di_files` variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the `iso_get_data_summary()` function.
 
 ```{r}
-di_files %>% iso_get_data_summary() %>% rmarkdown::paged_table()
+di_files %>% iso_get_data_summary() %>% knitr::kable()
 ```
 
 ## Problems
@@ -70,8 +70,8 @@ di_files %>% iso_get_data_summary() %>% rmarkdown::paged_table()
 In case there was any trouble with reading any of the files, the following functions provide an overview summary as well as details of all errors and warnings, respectively. The examples here contain no errors but if you run into any unexpected file read problems, please file a bug report in the [isoreader issue tracker](https://github.com/isoverse/isoreader/issues).
 
 ```{r}
-di_files %>% iso_get_problems_summary() %>% rmarkdown::paged_table()
-di_files %>% iso_get_problems() %>% rmarkdown::paged_table()
+di_files %>% iso_get_problems_summary() %>% knitr::kable()
+di_files %>% iso_get_problems() %>% knitr::kable()
 ```
 
 # File Information
@@ -80,7 +80,7 @@ Detailed file information can be aggregated for all isofiles using the `iso_get_
 
 ```{r}
 # all file information
-di_files %>% iso_get_file_info(select = c(-file_root)) %>% rmarkdown::paged_table()
+di_files %>% iso_get_file_info(select = c(-file_root)) %>% knitr::kable()
 # select file information
 di_files %>%
   iso_get_file_info(
@@ -96,7 +96,7 @@ di_files %>%
     ),
     # explicitly allow for file specific rename (for the new ID column)
     file_specific = TRUE
-  ) %>% rmarkdown::paged_table()
+  ) %>% knitr::kable()
 ```
 
 ## Select/Rename
@@ -114,7 +114,7 @@ di_files2 <- di_files %>%
   )
 
 # fetch all file info
-di_files2 %>% iso_get_file_info() %>% rmarkdown::paged_table()
+di_files2 %>% iso_get_file_info() %>% knitr::kable()
 ```
 
 ## Filter
@@ -125,13 +125,13 @@ Any collection of isofiles can also be filtered based on the available file info
 # find files that have 'CIT' in the new ID field
 di_files2 %>% iso_filter_files(grepl("CIT", ID)) %>%
   iso_get_file_info() %>%
-  rmarkdown::paged_table()
+  knitr::kable()
 
 # find files that were run in 2017
 di_files2 %>%
   iso_filter_files(`Date & Time` > "2017-01-01" & `Date & Time` < "2018-01-01") %>%
   iso_get_file_info() %>%
-  rmarkdown::paged_table()
+  knitr::kable()
 ```
 
 ## Mutate
@@ -152,7 +152,7 @@ di_files3 <- di_files2 %>%
 di_files3 %>%
   iso_get_file_info() %>%
   iso_make_units_explicit() %>%
-  rmarkdown::paged_table()
+  knitr::kable()
 ```
 
 ## Add
@@ -175,13 +175,13 @@ new_info <-
        "16068",   "no",      "did not inject properly"
     )
   )
-new_info %>% rmarkdown::paged_table()
+new_info %>% knitr::kable()
 
 # adding it to the isofiles
 di_files3 %>%
   iso_add_file_info(new_info, by1 = "Run in 2017?", by2 = "Analysis") %>%
   iso_get_file_info(select = !!names(new_info)) %>%
-  rmarkdown::paged_table()
+  knitr::kable()
 ```
 
 
@@ -203,13 +203,13 @@ di_files2 %>%
     extension = extract_substring(file_id, "\\.(\\w+)$", capture_bracket = 1)
   ) %>%
   iso_get_file_info(select = c(extension, `Peak Center`, matches("Method"))) %>%
-  rmarkdown::paged_table()
+  knitr::kable()
 
 # use parsing in iso_filter_file_info
 di_files2 %>%
   iso_filter_files(parse_integer(Analysis) > 1500) %>%
   iso_get_file_info() %>%
-  rmarkdown::paged_table()
+  knitr::kable()
 
 # use iso_parse_file_info for simplified parsing of column data types
 di_files2 %>%
@@ -219,7 +219,7 @@ di_files2 %>%
     logical = `Peak Center`
   ) %>%
   iso_get_file_info() %>%
-  rmarkdown::paged_table()
+  knitr::kable()
 ```
 
 # Resistors
@@ -227,7 +227,7 @@ di_files2 %>%
 Additionally, some IRMS data files contain resistor information that are useful for downstream calculations (see e.g. section on signal conversion later in this vignette):
 
 ```{r}
-di_files %>% iso_get_resistors() %>% rmarkdown::paged_table()
+di_files %>% iso_get_resistors() %>% knitr::kable()
 ```
 
 # Reference values
@@ -236,9 +236,9 @@ As well as isotopic reference values for the different gases:
 
 ```{r}
 # reference delta values without ratio values
-di_files %>% iso_get_standards(file_id:reference) %>% rmarkdown::paged_table()
+di_files %>% iso_get_standards(file_id:reference) %>% knitr::kable()
 # reference values with ratios
-di_files %>% iso_get_standards() %>% rmarkdown::paged_table()
+di_files %>% iso_get_standards() %>% knitr::kable()
 ```
 
 # Raw Data
@@ -247,7 +247,7 @@ The raw data read from the IRMS files can be retrieved similarly using the `iso_
 
 ```{r}
 # get raw data with default selections (all raw data, no additional file info)
-di_files %>% iso_get_raw_data() %>% head(n=10) %>% rmarkdown::paged_table()
+di_files %>% iso_get_raw_data() %>% head(n=10) %>% knitr::kable()
 # get specific raw data and add some file information
 di_files %>%
   iso_get_raw_data(
@@ -257,7 +257,7 @@ di_files %>%
     include_file_info = c(run = Analysis)
   ) %>%
   # look at first few records only
-  head(n=10) %>% rmarkdown::paged_table()
+  head(n=10) %>% knitr::kable()
 ```
 
 
@@ -273,7 +273,7 @@ As with most data retrieval functions, the `iso_get_vendor_data_table()` functio
 
 ```{r}
 # entire vendor data table
-di_files %>% iso_get_vendor_data_table() %>% rmarkdown::paged_table()
+di_files %>% iso_get_vendor_data_table() %>% knitr::kable()
 # get specific parts and add some file information
 di_files %>%
   iso_get_vendor_data_table(
@@ -281,7 +281,7 @@ di_files %>%
     select = c(cycle, matches("C")),
     # include the Identifier 1 fron the file info and rename it to 'id'
     include_file_info = c(id = `Identifier 1`)
-  ) %>% rmarkdown::paged_table()
+  ) %>% knitr::kable()
 ```
 
 # For expert users: retrieving all data

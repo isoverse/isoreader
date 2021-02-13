@@ -51,7 +51,7 @@ For demonstration purposes, this vignette simply reads all supported dual inlet,
 
 ```{r}
 # all available examples
-iso_get_reader_examples() %>% rmarkdown::paged_table()
+iso_get_reader_examples() %>% knitr::kable()
 ```
 
 # Dual Inlet Files
