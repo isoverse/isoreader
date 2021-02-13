@@ -102,8 +102,7 @@
 
       
 
-      </header><script src="quick_start_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="quick_start_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
-<script src="quick_start_files/pagedtable-1.1/js/pagedtable.js"></script><div class="row">
+      </header><script src="quick_start_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Quick Start Guide</h1>
@@ -136,12 +135,83 @@
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># all available examples</span>
-<span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["filename"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["software"],"name":[3],"type":["chr"],"align":["left"]},{"label":["description"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"continuous flow","3":"Isodat","4":"Continuous Flow file format (older)"},{"1":"continuous_flow_example.dxf","2":"continuous flow","3":"Isodat","4":"Continuous Flow file format (newer)"},{"1":"continuous_flow_example.iarc","2":"continuous flow","3":"ionOS","4":"Continuous Flow data archive"},{"1":"dual_inlet_example.caf","2":"dual inlet","3":"Isodat","4":"Dual Inlet file format (older)"},{"1":"dual_inlet_example.did","2":"dual inlet","3":"Isodat","4":"Dual Inlet file format (newer)"},{"1":"dual_inlet_nu_example.txt","2":"dual inlet","3":"Nu","4":"Dual Inlet file format"},{"1":"background_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"full_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"peak_shape_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"time_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="32%">
+<col width="17%">
+<col width="10%">
+<col width="40%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">filename</th>
+<th align="left">type</th>
+<th align="left">software</th>
+<th align="left">description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">continuous_flow_example.cf</td>
+<td align="left">continuous flow</td>
+<td align="left">Isodat</td>
+<td align="left">Continuous Flow file format (older)</td>
+</tr>
+<tr class="even">
+<td align="left">continuous_flow_example.dxf</td>
+<td align="left">continuous flow</td>
+<td align="left">Isodat</td>
+<td align="left">Continuous Flow file format (newer)</td>
+</tr>
+<tr class="odd">
+<td align="left">continuous_flow_example.iarc</td>
+<td align="left">continuous flow</td>
+<td align="left">ionOS</td>
+<td align="left">Continuous Flow data archive</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">dual inlet</td>
+<td align="left">Isodat</td>
+<td align="left">Dual Inlet file format (older)</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">dual inlet</td>
+<td align="left">Isodat</td>
+<td align="left">Dual Inlet file format (newer)</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_nu_example.txt</td>
+<td align="left">dual inlet</td>
+<td align="left">Nu</td>
+<td align="left">Dual Inlet file format</td>
+</tr>
+<tr class="odd">
+<td align="left">background_scan_example.scn</td>
+<td align="left">scan</td>
+<td align="left">Isodat</td>
+<td align="left">Scan file format</td>
+</tr>
+<tr class="even">
+<td align="left">full_scan_example.scn</td>
+<td align="left">scan</td>
+<td align="left">Isodat</td>
+<td align="left">Scan file format</td>
+</tr>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">scan</td>
+<td align="left">Isodat</td>
+<td align="left">Scan file format</td>
+</tr>
+<tr class="even">
+<td align="left">time_scan_example.scn</td>
+<td align="left">scan</td>
+<td align="left">Isodat</td>
+<td align="left">Scan file format</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="dual-inlet-files" class="section level1">
 <h1 class="hasAnchor">
@@ -154,7 +224,7 @@
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.did' with '.did' reader...</span>
 <span class="co">#&gt; Info: reading file 'dual_inlet_nu_example.txt' with '.txt' reader...</span>
 <span class="co">#&gt; Warning: found 6 channels but 0 masses were specified - the raw data will b...</span>
-<span class="co">#&gt; Info: finished reading 3 files in 4.26 secs</span>
+<span class="co">#&gt; Info: finished reading 3 files in 4.31 secs</span>
 <span class="co">#&gt; Warning: encountered 1 problem.</span>
 <span class="co">#&gt; # | FILE                      | PROBLEM | OCCURRED IN | DETAILS</span>
 <span class="co">#&gt; 1 | dual_inlet_nu_example.txt | warning | iso_read_nu | found 6 channels but ...</span>
@@ -189,7 +259,7 @@
 <span class="co">#&gt;       processing sample '6605_USGS41' (IRMS data '40.hdf5', '43.hdf5')</span>
 <span class="co">#&gt;       processing sample '6617_IAEA600' (IRMS data '80.hdf5', '82.hdf5')</span>
 <span class="co">#&gt;       processing sample '6630_GlutamicAcid04' (IRMS data '124.hdf5', '126.h...</span>
-<span class="co">#&gt; Info: finished reading 3 files in 5.99 secs</span>
+<span class="co">#&gt; Info: finished reading 3 files in 6.37 secs</span>
 
 <span class="co"># save as r data storage (read back in with iso_read_continuous_flow)</span>
 <span class="fu"><a href="../reference/iso_save.html">iso_save</a></span><span class="op">(</span><span class="va">cf_files</span>, filepath <span class="op">=</span> <span class="st">"cf_save"</span><span class="op">)</span>
@@ -211,7 +281,7 @@
 <span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader...</span>
 <span class="co">#&gt; Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...</span>
 <span class="co">#&gt; Info: reading file 'time_scan_example.scn' with '.scn' reader...</span>
-<span class="co">#&gt; Info: finished reading 4 files in 0.79 secs</span>
+<span class="co">#&gt; Info: finished reading 4 files in 0.84 secs</span>
 
 <span class="co"># save as r data storage (read back in with iso_read_scan)</span>
 <span class="fu"><a href="../reference/iso_save.html">iso_save</a></span><span class="op">(</span><span class="va">scan_files</span>, filepath <span class="op">=</span> <span class="st">"scan_save"</span><span class="op">)</span>

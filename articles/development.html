@@ -102,8 +102,7 @@
 
       
 
-      </header><script src="development_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="development_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
-<script src="development_files/pagedtable-1.1/js/pagedtable.js"></script><div class="row">
+      </header><script src="development_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Development features of isoreader</h1>
@@ -131,12 +130,176 @@
 
 <span class="co"># register new reader</span>
 <span class="va">readers</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_register_dual_inlet_file_reader.html">iso_register_dual_inlet_file_reader</a></span><span class="op">(</span><span class="st">".new.did"</span>, <span class="st">"new_reader"</span><span class="op">)</span>
-<span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="va">readers</span><span class="op">)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["type"],"name":[1],"type":["chr"],"align":["left"]},{"label":["call"],"name":[2],"type":["chr"],"align":["left"]},{"label":["extension"],"name":[3],"type":["chr"],"align":["left"]},{"label":["func"],"name":[4],"type":["chr"],"align":["left"]},{"label":["cacheable"],"name":[5],"type":["lgl"],"align":["right"]},{"label":["post_read_check"],"name":[6],"type":["lgl"],"align":["right"]},{"label":["description"],"name":[7],"type":["chr"],"align":["left"]},{"label":["software"],"name":[8],"type":["chr"],"align":["left"]},{"label":["env"],"name":[9],"type":["chr"],"align":["left"]}],"data":[{"1":"dual inlet","2":"iso_read_dual_inlet","3":".did","4":"iso_read_did","5":"TRUE","6":"TRUE","7":"Dual Inlet file format (newer)","8":"Isodat","9":"isoreader"},{"1":"dual inlet","2":"iso_read_dual_inlet","3":".caf","4":"iso_read_caf","5":"TRUE","6":"TRUE","7":"Dual Inlet file format (older)","8":"Isodat","9":"isoreader"},{"1":"dual inlet","2":"iso_read_dual_inlet","3":".txt","4":"iso_read_nu","5":"TRUE","6":"TRUE","7":"Dual Inlet file format","8":"Nu","9":"isoreader"},{"1":"dual inlet","2":"iso_read_dual_inlet","3":".di.rda","4":"iso_read_rda","5":"FALSE","6":"TRUE","7":"R Data Archive (deprecated)","8":"isoreader","9":"isoreader"},{"1":"dual inlet","2":"iso_read_dual_inlet","3":".di.rds","4":"iso_read_rds","5":"FALSE","6":"FALSE","7":"R Data Storage","8":"isoreader","9":"isoreader"},{"1":"continuous flow","2":"iso_read_continuous_flow","3":".cf","4":"iso_read_cf","5":"TRUE","6":"TRUE","7":"Continuous Flow file format (older)","8":"Isodat","9":"isoreader"},{"1":"continuous flow","2":"iso_read_continuous_flow","3":".dxf","4":"iso_read_dxf","5":"TRUE","6":"TRUE","7":"Continuous Flow file format (newer)","8":"Isodat","9":"isoreader"},{"1":"continuous flow","2":"iso_read_continuous_flow","3":".iarc","4":"iso_read_flow_iarc","5":"TRUE","6":"TRUE","7":"Continuous Flow data archive","8":"ionOS","9":"isoreader"},{"1":"continuous flow","2":"iso_read_continuous_flow","3":".cf.rda","4":"iso_read_rda","5":"FALSE","6":"TRUE","7":"R Data Archive (deprecated)","8":"isoreader","9":"isoreader"},{"1":"continuous flow","2":"iso_read_continuous_flow","3":".cf.rds","4":"iso_read_rds","5":"FALSE","6":"FALSE","7":"R Data Storage","8":"isoreader","9":"isoreader"},{"1":"scan","2":"iso_read_scan","3":".scn","4":"iso_read_scn","5":"TRUE","6":"TRUE","7":"Scan file format","8":"Isodat","9":"isoreader"},{"1":"scan","2":"iso_read_scan","3":".scan.rds","4":"iso_read_rds","5":"FALSE","6":"FALSE","7":"R Data Storage","8":"isoreader","9":"isoreader"},{"1":"dual inlet","2":"iso_read_dual_inlet","3":".new.did","4":"new_reader","5":"TRUE","6":"TRUE","7":"NA","8":"NA","9":"R_GlobalEnv"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">readers</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="10%">
+<col width="16%">
+<col width="6%">
+<col width="12%">
+<col width="6%">
+<col width="10%">
+<col width="23%">
+<col width="6%">
+<col width="7%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">type</th>
+<th align="left">call</th>
+<th align="left">extension</th>
+<th align="left">func</th>
+<th align="left">cacheable</th>
+<th align="left">post_read_check</th>
+<th align="left">description</th>
+<th align="left">software</th>
+<th align="left">env</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual inlet</td>
+<td align="left">iso_read_dual_inlet</td>
+<td align="left">.did</td>
+<td align="left">iso_read_did</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">Dual Inlet file format (newer)</td>
+<td align="left">Isodat</td>
+<td align="left">isoreader</td>
+</tr>
+<tr class="even">
+<td align="left">dual inlet</td>
+<td align="left">iso_read_dual_inlet</td>
+<td align="left">.caf</td>
+<td align="left">iso_read_caf</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">Dual Inlet file format (older)</td>
+<td align="left">Isodat</td>
+<td align="left">isoreader</td>
+</tr>
+<tr class="odd">
+<td align="left">dual inlet</td>
+<td align="left">iso_read_dual_inlet</td>
+<td align="left">.txt</td>
+<td align="left">iso_read_nu</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">Dual Inlet file format</td>
+<td align="left">Nu</td>
+<td align="left">isoreader</td>
+</tr>
+<tr class="even">
+<td align="left">dual inlet</td>
+<td align="left">iso_read_dual_inlet</td>
+<td align="left">.di.rda</td>
+<td align="left">iso_read_rda</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="left">R Data Archive (deprecated)</td>
+<td align="left">isoreader</td>
+<td align="left">isoreader</td>
+</tr>
+<tr class="odd">
+<td align="left">dual inlet</td>
+<td align="left">iso_read_dual_inlet</td>
+<td align="left">.di.rds</td>
+<td align="left">iso_read_rds</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">R Data Storage</td>
+<td align="left">isoreader</td>
+<td align="left">isoreader</td>
+</tr>
+<tr class="even">
+<td align="left">continuous flow</td>
+<td align="left">iso_read_continuous_flow</td>
+<td align="left">.cf</td>
+<td align="left">iso_read_cf</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">Continuous Flow file format (older)</td>
+<td align="left">Isodat</td>
+<td align="left">isoreader</td>
+</tr>
+<tr class="odd">
+<td align="left">continuous flow</td>
+<td align="left">iso_read_continuous_flow</td>
+<td align="left">.dxf</td>
+<td align="left">iso_read_dxf</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">Continuous Flow file format (newer)</td>
+<td align="left">Isodat</td>
+<td align="left">isoreader</td>
+</tr>
+<tr class="even">
+<td align="left">continuous flow</td>
+<td align="left">iso_read_continuous_flow</td>
+<td align="left">.iarc</td>
+<td align="left">iso_read_flow_iarc</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">Continuous Flow data archive</td>
+<td align="left">ionOS</td>
+<td align="left">isoreader</td>
+</tr>
+<tr class="odd">
+<td align="left">continuous flow</td>
+<td align="left">iso_read_continuous_flow</td>
+<td align="left">.cf.rda</td>
+<td align="left">iso_read_rda</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="left">R Data Archive (deprecated)</td>
+<td align="left">isoreader</td>
+<td align="left">isoreader</td>
+</tr>
+<tr class="even">
+<td align="left">continuous flow</td>
+<td align="left">iso_read_continuous_flow</td>
+<td align="left">.cf.rds</td>
+<td align="left">iso_read_rds</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">R Data Storage</td>
+<td align="left">isoreader</td>
+<td align="left">isoreader</td>
+</tr>
+<tr class="odd">
+<td align="left">scan</td>
+<td align="left">iso_read_scan</td>
+<td align="left">.scn</td>
+<td align="left">iso_read_scn</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">Scan file format</td>
+<td align="left">Isodat</td>
+<td align="left">isoreader</td>
+</tr>
+<tr class="even">
+<td align="left">scan</td>
+<td align="left">iso_read_scan</td>
+<td align="left">.scan.rds</td>
+<td align="left">iso_read_rds</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">R Data Storage</td>
+<td align="left">isoreader</td>
+<td align="left">isoreader</td>
+</tr>
+<tr class="odd">
+<td align="left">dual inlet</td>
+<td align="left">iso_read_dual_inlet</td>
+<td align="left">.new.did</td>
+<td align="left">new_reader</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">R_GlobalEnv</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="co"># copy an example file from the package with the new extension</span>
@@ -175,7 +338,7 @@
 <span class="co">#&gt;   ..$ type   : chr(0) </span>
 <span class="co">#&gt;   ..$ func   : chr(0) </span>
 <span class="co">#&gt;   ..$ details: chr(0)</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.46 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.50 secs</span>
 <span class="co">#&gt; Dual inlet iso file 'example.new.did': 0 cycles, 0 ions ()</span>
 <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.remove</a></span><span class="op">(</span><span class="st">"example.new.did"</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
@@ -205,7 +368,7 @@
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader...</span>
 <span class="co">#&gt; Info: starting file #2, named 'dual_inlet_example.caf'</span>
 <span class="co">#&gt; Info: finished file #2</span>
-<span class="co">#&gt; Info: finished reading 2 files in 3.88 secs</span>
+<span class="co">#&gt; Info: finished reading 2 files in 3.92 secs</span>
 <span class="co">#&gt; Data from 2 dual inlet iso files: </span>
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   file_id    raw_data       file_info  method_info  vendor_data_tab… file_path  </span>
@@ -245,22 +408,38 @@
 <p>This structure representation shows recognized control elements in <code>&lt;...&gt;</code> and data elements in <code>{...}</code> which are converted to text or numeric representation if the interpretation is unambiguous, or plain hexadecimal characters if the nature of the data cannot be determined with certainty. Because this function tries all possible control elements and data interpretations, it is quite slow and may take a while if run for large stretches of binary code (i.e. if the <code>length</code> parameter is very long).</p>
 <p>For an overview of all the control elements that are currently consider, use the internal <code>get_ctrl_blocks_config_df()</code> function.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">get_ctrl_blocks_config_df</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["block"],"name":[1],"type":["chr"],"align":["left"]},{"label":["regexp"],"name":[2],"type":["chr"],"align":["left"]},{"label":["hexadecimal"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"del-nl","2":"\\177\\x85","3":"7f 85","_row":"del-nl"},{"1":"eop-nl","2":"܅","3":"dc 85","_row":"eop-nl"},{"1":"0b-80","2":"\\v\\x80","3":"0b 80","_row":"0b-80"},{"1":"e0-81","2":"\\xe0\\x81","3":"e0 81","_row":"e0-81"},{"1":"ce-80","2":"\\u0380","3":"ce 80","_row":"ce-80"},{"1":"ce-8a","2":"Ί","3":"ce 8a","_row":"ce-8a"},{"1":"ee-85","2":"\\xee\\x85","3":"ee 85","_row":"ee-85"},{"1":"75-84","2":"u\\x84","3":"75 84","_row":"75-84"},{"1":"ff-80","2":"\\\\x00\\xff\\x80\\\\x00","3":"5c 78 30 30 ff 80 5c 78 30 30","_row":"ff-80"},{"1":"07-80-id","2":"\\005\\x80.\\xff(\\\\x00|\\x80|\\xff){2}","3":"05 80 2e ff 28 5c 78 30 30 7c 80 7c ff 29 7b 32 7d","_row":"07-80-id"},{"1":"54-fc","2":"T\\xfc\\\\x00\\\\x00","3":"54 fc 5c 78 30 30 5c 78 30 30","_row":"54-fc"},{"1":"nl","2":"\\xff\\xfe\\xff\\n","3":"ff fe ff 0a","_row":"nl"},{"1":"fef-0","2":"\\xff\\xfe\\xff\\\\x00","3":"ff fe ff 5c 78 30 30","_row":"fef-0"},{"1":"fef-x","2":"\\xff\\xfe\\xff.","3":"ff fe ff 2e","_row":"fef-x"},{"1":"eee-0","2":"\\xef\\xef\\xef\\\\x00.","3":"ef ef ef 5c 78 30 30 2e","_row":"eee-0"},{"1":"ffff","2":"\\xff{4}","3":"ff 7b 34 7d","_row":"ffff"},{"1":"stx","2":"\\002\\\\x00{3}","3":"02 5c 78 30 30 7b 33 7d","_row":"stx"},{"1":"etx","2":"\\003\\\\x00{3}","3":"03 5c 78 30 30 7b 33 7d","_row":"etx"},{"1":"x-000","2":"[\\001-\\037]\\\\x00{3}","3":"5b 01 2d 1f 5d 5c 78 30 30 7b 33 7d","_row":"x-000"},{"1":"f-000","2":"\\xff\\\\x00{3}","3":"ff 5c 78 30 30 7b 33 7d","_row":"f-000"},{"1":"C-block","2":"\\xff\\xff(\\\\x00|[\\001-\\017])\\\\x00.\\\\x00C[ -~]+","3":"ff ff 28 5c 78 30 30 7c 5b 01 2d 0f 5d 29 5c 78 30 30 2e 5c 78 30 30 43 5b 20 2d 7e 5d 2b","_row":"C-block"},{"1":"latin","2":"([A-Za-z]\\\\x00)+","3":"28 5b 41 2d 5a 61 2d 7a 5d 5c 78 30 30 29 2b","_row":"latin"},{"1":"alpha","2":"([A-Za-z0-9]\\\\x00)+","3":"28 5b 41 2d 5a 61 2d 7a 30 2d 39 5d 5c 78 30 30 29 2b","_row":"alpha"},{"1":"text","2":"([ -~]\\\\x00)+","3":"28 5b 20 2d 7e 5d 5c 78 30 30 29 2b","_row":"text"},{"1":"text0","2":"([ -~]\\\\x00)*","3":"28 5b 20 2d 7e 5d 5c 78 30 30 29 2a","_row":"text0"},{"1":"permil","2":"0","3":"30 20","_row":"permil"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<code class="sourceCode R"><span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">get_ctrl_blocks_config_df</span><span class="op">(</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 26 x 3</span>
+<span class="co">#&gt;    block    regexp                      hexadecimal                             </span>
+<span class="co">#&gt;    &lt;chr&gt;    &lt;chr&gt;                       &lt;chr&gt;                                   </span>
+<span class="co">#&gt;  1 del-nl   "\x7f\x85"                  7f 85                                   </span>
+<span class="co">#&gt;  2 eop-nl   "܅"                         dc 85                                   </span>
+<span class="co">#&gt;  3 0b-80    "\v\x80"                    0b 80                                   </span>
+<span class="co">#&gt;  4 e0-81    "\xe0\x81"                  e0 81                                   </span>
+<span class="co">#&gt;  5 ce-80    "\u0380"                    ce 80                                   </span>
+<span class="co">#&gt;  6 ce-8a    "Ί"                         ce 8a                                   </span>
+<span class="co">#&gt;  7 ee-85    "\xee\x85"                  ee 85                                   </span>
+<span class="co">#&gt;  8 75-84    "u\x84"                     75 84                                   </span>
+<span class="co">#&gt;  9 ff-80    "\\x00\xff\x80\\x00"        5c 78 30 30 ff 80 5c 78 30 30           </span>
+<span class="co">#&gt; 10 07-80-id "\x05\x80.\xff(\\x00|\x80|… 05 80 2e ff 28 5c 78 30 30 7c 80 7c ff …</span>
+<span class="co">#&gt; # … with 16 more rows</span></code></pre></div>
 <p>Additional information can be gleaned from the so-called control blocks, which are larger structural elements of Isodat binary files and are kept in a data frame within the binary object (again only available in debug mode).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">bin</span><span class="op">$</span><span class="va">C_blocks</span> <span class="op">%&gt;%</span>
-  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["id1"],"name":[1],"type":["chr"],"align":["left"]},{"label":["id2"],"name":[2],"type":["chr"],"align":["left"]},{"label":["block"],"name":[3],"type":["chr"],"align":["left"]},{"label":["start"],"name":[4],"type":["int"],"align":["right"]},{"label":["end"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"06","2":"0b","3":"CFileHeader","4":"1","5":"17"},{"1":"01","2":"0b","3":"CTimeObject","4":"182","5":"198"},{"1":"02","2":"04","3":"CStr","4":"241","5":"250"},{"1":"01","2":"0a","3":"CDataIndex","4":"471","5":"486"},{"1":"01","2":"11","3":"CSeqLineIndexData","4":"513","5":"535"},{"1":"03","2":"05","3":"CData","4":"588","5":"598"},{"1":"01","2":"13","3":"CDualInletBlockData","4":"1133","5":"1157"},{"1":"01","2":"10","3":"CMeasurmentInfos","4":"1240","5":"1261"},{"1":"01","2":"15","3":"CISLScriptMessageData","4":"1324","5":"1350"},{"1":"01","2":"11","3":"CMeasurmentErrors","4":"1945","5":"1967"},{"1":"01","2":"11","3":"CDualInletRawData","4":"2038","5":"2060"},{"1":"02","2":"0a","3":"CBlockData","4":"2099","5":"2114"},{"1":"02","2":"1c","3":"CIntegrationUnitTransferPart","4":"2269","5":"2302"},{"1":"06","2":"0e","3":"CIntensityData","4":"2361","5":"2380"},{"1":"01","2":"0f","3":"CDualInletShout","4":"5299","5":"5319"},{"1":"01","2":"14","3":"CTwoDoublesArrayData","4":"5460","5":"5485"},{"1":"01","2":"10","3":"CStatusArrayData","4":"6412","5":"6433"},{"1":"01","2":"0c","3":"COutlierData","4":"6747","5":"6764"},{"1":"01","2":"15","3":"CResultDataSimpleList","4":"40876","5":"40902"},{"1":"02","2":"11","3":"CResultDataSimple","4":"40951","5":"40973"},{"1":"01","2":"1e","3":"CDualInletEvaluatedDataCollect","4":"73720","5":"73755"},{"1":"02","2":"17","3":"CDualInletEvaluatedData","4":"73790","5":"73818"},{"1":"01","2":"17","3":"CParsedEvaluationString","4":"75944","5":"75972"},{"1":"02","2":"07","3":"CBinary","4":"76883","5":"76895"},{"1":"02","2":"09","3":"CPlotInfo","4":"77216","5":"77230"},{"1":"01","2":"0a","3":"CTraceInfo","4":"77305","5":"77320"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"77326","5":"77346"},{"1":"01","2":"0a","3":"CPlotRange","4":"77574","5":"77589"},{"1":"02","2":"09","3":"CPlotInfo","4":"77680","5":"77694"},{"1":"01","2":"0a","3":"CTraceInfo","4":"77769","5":"77784"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"77790","5":"77810"},{"1":"01","2":"0a","3":"CPlotRange","4":"78038","5":"78053"},{"1":"02","2":"09","3":"CPlotInfo","4":"78144","5":"78158"},{"1":"01","2":"0a","3":"CTraceInfo","4":"78233","5":"78248"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"78254","5":"78274"},{"1":"01","2":"0a","3":"CPlotRange","4":"78502","5":"78517"},{"1":"02","2":"09","3":"CPlotInfo","4":"78608","5":"78622"},{"1":"01","2":"0a","3":"CTraceInfo","4":"78697","5":"78712"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"78718","5":"78738"},{"1":"01","2":"0a","3":"CPlotRange","4":"78922","5":"78937"},{"1":"02","2":"09","3":"CPlotInfo","4":"79028","5":"79042"},{"1":"01","2":"0a","3":"CTraceInfo","4":"79117","5":"79132"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"79138","5":"79158"},{"1":"01","2":"0a","3":"CPlotRange","4":"79342","5":"79357"},{"1":"02","2":"09","3":"CPlotInfo","4":"79448","5":"79462"},{"1":"01","2":"0a","3":"CTraceInfo","4":"79537","5":"79552"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"79558","5":"79578"},{"1":"01","2":"0a","3":"CPlotRange","4":"79762","5":"79777"},{"1":"02","2":"09","3":"CPlotInfo","4":"79868","5":"79882"},{"1":"01","2":"0a","3":"CTraceInfo","4":"79957","5":"79972"},{"1":"01","2":"0f","3":"CTraceInfoEntry","4":"79978","5":"79998"},{"1":"01","2":"0a","3":"CPlotRange","4":"80182","5":"80197"},{"1":"08","2":"07","3":"CMethod","4":"80256","5":"80268"},{"1":"01","2":"09","3":"CMolecule","4":"80307","5":"80321"},{"1":"00","2":"0b","3":"CPartMirror","4":"80406","5":"80422"},{"1":"02","2":"13","3":"CMethodPrintoutDesc","4":"80423","5":"80447"},{"1":"01","2":"1f","3":"CEvalIntegrationUnitHWInfoStore","4":"80828","5":"80864"},{"1":"01","2":"1e","3":"CEvalIntegrationUnitHWInfoList","4":"80891","5":"80926"},{"1":"01","2":"1a","3":"CEvalIntegrationUnitHWInfo","4":"80953","5":"80984"},{"1":"03","2":"11","3":"CGasConfiguration","4":"81279","5":"81301"},{"1":"04","2":"0a","3":"CBasicScan","4":"81336","5":"81351"},{"1":"02","2":"10","3":"CScaleHvScanPart","4":"81418","5":"81439"},{"1":"03","2":"14","3":"CScaleHvHardwarePart","4":"81556","5":"81581"},{"1":"06","2":"12","3":"CFinniganInterface","4":"81664","5":"81687"},{"1":"08","2":"12","3":"CVisualisationData","4":"81768","5":"81791"},{"1":"03","2":"18","3":"CIntegrationUnitScanPart","4":"82156","5":"82185"},{"1":"03","2":"1c","3":"CIntegrationUnitHardwarePart","4":"82208","5":"82241"},{"1":"03","2":"0e","3":"CGpibInterface","4":"82350","5":"82369"},{"1":"02","2":"1b","3":"CIntegrationUnitGasConfPart","4":"82399","5":"82431"},{"1":"03","2":"13","3":"CChannelGasConfPart","4":"82539","5":"82563"},{"1":"05","2":"10","3":"CCupHardwarePart","4":"83062","5":"83083"},{"1":"02","2":"0f","3":"CBasicInterface","4":"83126","5":"83146"},{"1":"02","2":"14","3":"CChannelHardwarePart","4":"85574","5":"85599"},{"1":"02","2":"10","3":"CDioTransferPart","4":"86970","5":"86991"},{"1":"03","2":"1a","3":"CMagnetCurrentTransferPart","4":"88172","5":"88203"},{"1":"05","2":"0c","3":"CCalibration","4":"88320","5":"88337"},{"1":"03","2":"11","3":"CCalibrationPoint","4":"88408","5":"88430"},{"1":"01","2":"11","3":"CPeakCenterOffset","4":"95493","5":"95515"},{"1":"01","2":"1b","3":"CCalculatingDacTransferPart","4":"95564","5":"95596"},{"1":"02","2":"14","3":"CScaleHvTransferPart","4":"96923","5":"96948"},{"1":"07","2":"0e","3":"CConfiguration","4":"97071","5":"97090"},{"1":"02","2":"09","3":"CMsDevice","4":"97181","5":"97195"},{"1":"02","2":"0b","3":"CActivePort","4":"97256","5":"97272"},{"1":"01","2":"10","3":"CDualInletDevice","4":"97323","5":"97344"},{"1":"01","2":"12","3":"CChangeOver2Device","4":"97523","5":"97546"},{"1":"02","2":"05","3":"CPort","4":"98251","5":"98261"},{"1":"01","2":"22","3":"CVisualisationDialogNamesBlockData","4":"98368","5":"98407"},{"1":"03","2":"13","3":"CMsDeviceMethodPart","4":"98820","5":"98844"},{"1":"01","2":"11","3":"CActionPeakCenter","4":"98932","5":"98954"},{"1":"05","2":"1a","3":"CDualInletDeviceMethodPart","4":"99007","5":"99038"},{"1":"03","2":"12","3":"CActionPressAdjust","4":"99127","5":"99150"},{"1":"03","2":"11","3":"CActionBackground","4":"99226","5":"99248"},{"1":"01","2":"17","3":"CActiveDeviceMethodPart","4":"99356","5":"99384"},{"1":"02","2":"17","3":"CMsDeviceEvaluationPart","4":"99467","5":"99495"},{"1":"02","2":"16","3":"COutlierTestMethodPart","4":"99554","5":"99581"},{"1":"01","2":"11","3":"COutlierTestSigma","4":"99660","5":"99682"},{"1":"01","2":"0c","3":"COutlierTest","4":"99695","5":"99712"},{"1":"05","2":"0e","3":"CExtEvaluation","4":"99729","5":"99748"},{"1":"0c","2":"14","3":"CICA_BasicMethodPart","4":"99867","5":"99892"},{"1":"01","2":"1d","3":"CEvalDataItemListTransferPart","4":"99993","5":"100027"},{"1":"02","2":"1a","3":"CPrimaryStandardMethodPart","4":"115425","5":"115456"},{"1":"01","2":"1b","3":"CEvalDataDoubleTransferPart","4":"115559","5":"115591"},{"1":"01","2":"1c","3":"CParsedEvaluationStringArray","4":"116676","5":"116709"},{"1":"0b","2":"23","3":"CDualInletStandardizationMethodPart","4":"116952","5":"116992"},{"1":"03","2":"1c","3":"CSecondaryStandardMethodPart","4":"117093","5":"117126"},{"1":"02","2":"1b","3":"CEvalDataSecStdTransferPart","4":"117275","5":"117307"},{"1":"01","2":"1e","3":"CDualInletDeviceEvaluationPart","4":"134301","5":"134336"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<code class="sourceCode R"><span class="va">bin</span><span class="op">$</span><span class="va">C_blocks</span>
+<span class="co">#&gt; # A tibble: 107 x 5</span>
+<span class="co">#&gt;    id1   id2   block                 start   end</span>
+<span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;                 &lt;int&gt; &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 06    0b    CFileHeader               1    17</span>
+<span class="co">#&gt;  2 01    0b    CTimeObject             182   198</span>
+<span class="co">#&gt;  3 02    04    CStr                    241   250</span>
+<span class="co">#&gt;  4 01    0a    CDataIndex              471   486</span>
+<span class="co">#&gt;  5 01    11    CSeqLineIndexData       513   535</span>
+<span class="co">#&gt;  6 03    05    CData                   588   598</span>
+<span class="co">#&gt;  7 01    13    CDualInletBlockData    1133  1157</span>
+<span class="co">#&gt;  8 01    10    CMeasurmentInfos       1240  1261</span>
+<span class="co">#&gt;  9 01    15    CISLScriptMessageData  1324  1350</span>
+<span class="co">#&gt; 10 01    11    CMeasurmentErrors      1945  1967</span>
+<span class="co">#&gt; # … with 97 more rows</span></code></pre></div>
 <p>Same as for specific byte positions, one can use the control blocks to navigate the file and <code>map_binary_structure</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">bin</span> <span class="op">%&gt;%</span>

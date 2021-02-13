@@ -102,8 +102,7 @@
 
       
 
-      </header><script src="dual_inlet_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="dual_inlet_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
-<script src="dual_inlet_files/pagedtable-1.1/js/pagedtable.js"></script><div class="row">
+      </header><script src="dual_inlet_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Dual Inlet Examples</h1>
@@ -131,12 +130,83 @@
 <p>Reading dual inlet files is as simple as passing one or multiple file or folder paths to the <code><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet()</a></code> function. If folders are provided, any files that have a recognized continuous flow file extensions within those folders will be processed (e.g. all <code>.did</code> and <code>.caf</code>). Here we read several files that are bundled with the package as examples (and whose paths can be retrieved using the <code><a href="../reference/iso_get_reader_example.html">iso_get_reader_example()</a></code> function).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># all available examples</span>
-<span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["filename"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["software"],"name":[3],"type":["chr"],"align":["left"]},{"label":["description"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"continuous flow","3":"Isodat","4":"Continuous Flow file format (older)"},{"1":"continuous_flow_example.dxf","2":"continuous flow","3":"Isodat","4":"Continuous Flow file format (newer)"},{"1":"continuous_flow_example.iarc","2":"continuous flow","3":"ionOS","4":"Continuous Flow data archive"},{"1":"dual_inlet_example.caf","2":"dual inlet","3":"Isodat","4":"Dual Inlet file format (older)"},{"1":"dual_inlet_example.did","2":"dual inlet","3":"Isodat","4":"Dual Inlet file format (newer)"},{"1":"dual_inlet_nu_example.txt","2":"dual inlet","3":"Nu","4":"Dual Inlet file format"},{"1":"background_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"full_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"peak_shape_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"time_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="32%">
+<col width="17%">
+<col width="10%">
+<col width="40%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">filename</th>
+<th align="left">type</th>
+<th align="left">software</th>
+<th align="left">description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">continuous_flow_example.cf</td>
+<td align="left">continuous flow</td>
+<td align="left">Isodat</td>
+<td align="left">Continuous Flow file format (older)</td>
+</tr>
+<tr class="even">
+<td align="left">continuous_flow_example.dxf</td>
+<td align="left">continuous flow</td>
+<td align="left">Isodat</td>
+<td align="left">Continuous Flow file format (newer)</td>
+</tr>
+<tr class="odd">
+<td align="left">continuous_flow_example.iarc</td>
+<td align="left">continuous flow</td>
+<td align="left">ionOS</td>
+<td align="left">Continuous Flow data archive</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">dual inlet</td>
+<td align="left">Isodat</td>
+<td align="left">Dual Inlet file format (older)</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">dual inlet</td>
+<td align="left">Isodat</td>
+<td align="left">Dual Inlet file format (newer)</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_nu_example.txt</td>
+<td align="left">dual inlet</td>
+<td align="left">Nu</td>
+<td align="left">Dual Inlet file format</td>
+</tr>
+<tr class="odd">
+<td align="left">background_scan_example.scn</td>
+<td align="left">scan</td>
+<td align="left">Isodat</td>
+<td align="left">Scan file format</td>
+</tr>
+<tr class="even">
+<td align="left">full_scan_example.scn</td>
+<td align="left">scan</td>
+<td align="left">Isodat</td>
+<td align="left">Scan file format</td>
+</tr>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">scan</td>
+<td align="left">Isodat</td>
+<td align="left">Scan file format</td>
+</tr>
+<tr class="even">
+<td align="left">time_scan_example.scn</td>
+<td align="left">scan</td>
+<td align="left">Isodat</td>
+<td align="left">Scan file format</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># read dual inlet examples</span>
 <span class="va">di_files</span> <span class="op">&lt;-</span>
@@ -150,38 +220,84 @@
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.did' from cache...</span>
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' from cache...</span>
 <span class="co">#&gt; Info: reading file 'dual_inlet_nu_example.txt' with '.txt' reader...</span>
-<span class="co">#&gt; Info: finished reading 3 files in 0.79 secs</span></code></pre></div>
+<span class="co">#&gt; Info: finished reading 3 files in 0.82 secs</span></code></pre></div>
 </div>
 <div id="file-summary" class="section level1">
 <h1 class="hasAnchor">
 <a href="#file-summary" class="anchor"></a>File summary</h1>
 <p>The <code>di_files</code> variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the <code><a href="../reference/iso_get_data_summary.html">iso_get_data_summary()</a></code> function.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating data summary from 3 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_data"],"name":[2],"type":["glue"],"align":["right"]},{"label":["file_info"],"name":[3],"type":["chr"],"align":["left"]},{"label":["method_info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["vendor_data_table"],"name":[5],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.did","2":"7 cycles, 6 ions (44,45,46,47,48,49)","3":"16 entries","4":"standards, resistors","5":"7 rows, 8 columns","6":"dual_inlet_example.did","_row":"dual_inlet_example.did"},{"1":"dual_inlet_example.caf","2":"8 cycles, 6 ions (44,45,46,47,48,49)","3":"22 entries","4":"standards, resistors","5":"8 rows, 9 columns","6":"dual_inlet_example.caf","_row":"dual_inlet_example.caf"},{"1":"dual_inlet_nu_example.txt","2":"82 cycles, 6 ions (44,45,46,47,48,49)","3":"9 entries","4":"no method info","5":"no vendor data table","6":"dual_inlet_nu_example.txt","_row":"dual_inlet_nu_example.txt"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="18%">
+<col width="26%">
+<col width="7%">
+<col width="14%">
+<col width="14%">
+<col width="18%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">raw_data</th>
+<th align="left">file_info</th>
+<th align="left">method_info</th>
+<th align="left">vendor_data_table</th>
+<th align="left">file_path</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">7 cycles, 6 ions (44,45,46,47,48,49)</td>
+<td align="left">16 entries</td>
+<td align="left">standards, resistors</td>
+<td align="left">7 rows, 8 columns</td>
+<td align="left">dual_inlet_example.did</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">8 cycles, 6 ions (44,45,46,47,48,49)</td>
+<td align="left">22 entries</td>
+<td align="left">standards, resistors</td>
+<td align="left">8 rows, 9 columns</td>
+<td align="left">dual_inlet_example.caf</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_nu_example.txt</td>
+<td align="left">82 cycles, 6 ions (44,45,46,47,48,49)</td>
+<td align="left">9 entries</td>
+<td align="left">no method info</td>
+<td align="left">no vendor data table</td>
+<td align="left">dual_inlet_nu_example.txt</td>
+</tr>
+</tbody>
+</table>
 <div id="problems" class="section level2">
 <h2 class="hasAnchor">
 <a href="#problems" class="anchor"></a>Problems</h2>
 <p>In case there was any trouble with reading any of the files, the following functions provide an overview summary as well as details of all errors and warnings, respectively. The examples here contain no errors but if you run into any unexpected file read problems, please file a bug report in the <a href="https://github.com/isoverse/isoreader/issues">isoreader issue tracker</a>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["error"],"name":[2],"type":["lgl"],"align":["right"]},{"label":["warning"],"name":[3],"type":["lgl"],"align":["right"]}],"data":[],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<code class="sourceCode R"><span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">error</th>
+<th align="left">warning</th>
+</tr></thead>
+<tbody></tbody>
+</table>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_problems.html">iso_get_problems</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["func"],"name":[3],"type":["chr"],"align":["left"]},{"label":["details"],"name":[4],"type":["chr"],"align":["left"]}],"data":[],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<code class="sourceCode R"><span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_problems.html">iso_get_problems</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">type</th>
+<th align="left">func</th>
+<th align="left">details</th>
+</tr></thead>
+<tbody></tbody>
+</table>
 </div>
 </div>
 <div id="file-information" class="section level1">
@@ -190,13 +306,147 @@
 <p>Detailed file information can be aggregated for all isofiles using the <code><a href="../reference/iso_get_file_info.html">iso_get_file_info()</a></code> function which supports the full <a href="https://dplyr.tidyverse.org/reference/select.html">select syntax</a> of the <a href="https://dplyr.tidyverse.org/">dplyr</a> package to specify which columns are of interest (by default, all file information is retrieved). Additionally, file information from different file formats can be renamed to the same column name for easy of downstream processing. The following provides a few examples for how this can be used (the names of the interesting info columns may vary between different file formats):</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># all file information</span>
-<span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">file_root</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">file_root</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating file info from 3 data file(s), selecting info columns 'c(-file_root)'</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["file_datetime"],"name":[4],"type":["dttm"],"align":["right"]},{"label":["file_size"],"name":[5],"type":["int"],"align":["right"]},{"label":["Line"],"name":[6],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[7],"type":["chr"],"align":["left"]},{"label":["Pressadjust"],"name":[8],"type":["chr"],"align":["left"]},{"label":["Background"],"name":[9],"type":["chr"],"align":["left"]},{"label":["Identifier 1"],"name":[10],"type":["chr"],"align":["left"]},{"label":["Identifier 2"],"name":[11],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[12],"type":["chr"],"align":["left"]},{"label":["Method"],"name":[13],"type":["chr"],"align":["left"]},{"label":["measurement_info"],"name":[14],"type":["list"],"align":["right"]},{"label":["MS_integration_time.s"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["Reference Refill"],"name":[16],"type":["chr"],"align":["left"]},{"label":["Weight [mg]"],"name":[17],"type":["chr"],"align":["left"]},{"label":["Sample"],"name":[18],"type":["chr"],"align":["left"]},{"label":["Comment"],"name":[19],"type":["chr"],"align":["left"]},{"label":["Preparation"],"name":[20],"type":["chr"],"align":["left"]},{"label":["Pre Script"],"name":[21],"type":["chr"],"align":["left"]},{"label":["Post Script"],"name":[22],"type":["chr"],"align":["left"]},{"label":["Sample Name"],"name":[23],"type":["chr"],"align":["left"]},{"label":["Sample Weight"],"name":[24],"type":["chr"],"align":["left"]},{"label":["Method File Name"],"name":[25],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.did","2":"dual_inlet_example.did","3":"NA","4":"2014-10-27 11:23:54","5":"134446","6":"158","7":"1","8":"1","9":"1","10":"CIT Carrara","11":"13","12":"49077","13":"CO2_multiply_16V.met","14":"<chr [3]>","15":"26","16":"NA","17":"NA","18":"NA","19":"NA","20":"NA","21":"NA","22":"NA","23":"NA","24":"NA","25":"NA"},{"1":"dual_inlet_example.caf","2":"dual_inlet_example.caf","3":"NA","4":"2017-07-03 22:57:57","5":"651704","6":"1","7":"NA","8":"NA","9":"NA","10":"2H6","11":"CARBO IIIUvU_Clump.met","12":"16068","13":"CARBO IIIUvU_Clump.met","14":"<chr [1]>","15":"26","16":"NA","17":"113","18":"9","19":"NA","20":"NA","21":"NA","22":"NA","23":"NA","24":"NA","25":"NA"},{"1":"dual_inlet_nu_example.txt","2":"dual_inlet_nu_example.txt","3":"NA","4":"2017-02-21 17:46:17","5":"309491","6":"NA","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"<chr [1]>","15":"NA","16":"NA","17":"NA","18":"NA","19":"NA","20":"NA","21":"NA","22":"NA","23":"ETH-01","24":"3480","25":"C:\\\\Nu Stable\\\\Analyses\\\\DI\\\\CO2 4-20-8-20.rdf"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="4%">
+<col width="4%">
+<col width="2%">
+<col width="3%">
+<col width="1%">
+<col width="0%">
+<col width="2%">
+<col width="2%">
+<col width="1%">
+<col width="2%">
+<col width="4%">
+<col width="1%">
+<col width="4%">
+<col width="35%">
+<col width="3%">
+<col width="2%">
+<col width="2%">
+<col width="1%">
+<col width="1%">
+<col width="2%">
+<col width="1%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="7%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">file_path</th>
+<th align="left">file_subpath</th>
+<th align="left">file_datetime</th>
+<th align="right">file_size</th>
+<th align="left">Line</th>
+<th align="left">Peak Center</th>
+<th align="left">Pressadjust</th>
+<th align="left">Background</th>
+<th align="left">Identifier 1</th>
+<th align="left">Identifier 2</th>
+<th align="left">Analysis</th>
+<th align="left">Method</th>
+<th align="left">measurement_info</th>
+<th align="right">MS_integration_time.s</th>
+<th align="left">Reference Refill</th>
+<th align="left">Weight [mg]</th>
+<th align="left">Sample</th>
+<th align="left">Comment</th>
+<th align="left">Preparation</th>
+<th align="left">Pre Script</th>
+<th align="left">Post Script</th>
+<th align="left">Sample Name</th>
+<th align="left">Sample Weight</th>
+<th align="left">Method File Name</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">dual_inlet_example.did</td>
+<td align="left">NA</td>
+<td align="left">2014-10-27 11:23:54</td>
+<td align="right">134446</td>
+<td align="left">158</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">CIT Carrara</td>
+<td align="left">13</td>
+<td align="left">49077</td>
+<td align="left">CO2_multiply_16V.met</td>
+<td align="left">Peak Center found at [61032] , Background: 8.87 mV,11.31 mV,12.98 mV,6.40 mV,1.90 mV,5.88 mV (old253), PressAdjust: L: 15972.5 R: 15971.6 ( Manual Adjustment )</td>
+<td align="right">26</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">NA</td>
+<td align="left">2017-07-03 22:57:57</td>
+<td align="right">651704</td>
+<td align="left">1</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">2H6</td>
+<td align="left">CARBO IIIUvU_Clump.met</td>
+<td align="left">16068</td>
+<td align="left">CARBO IIIUvU_Clump.met</td>
+<td align="left">NA</td>
+<td align="right">26</td>
+<td align="left">NA</td>
+<td align="left">113</td>
+<td align="left">9</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_nu_example.txt</td>
+<td align="left">dual_inlet_nu_example.txt</td>
+<td align="left">NA</td>
+<td align="left">2017-02-21 17:46:17</td>
+<td align="right">309491</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">ETH-01</td>
+<td align="left">3480</td>
+<td align="left">C:Stable2 4-20-8-20.rdf</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># select file information</span>
 <span class="va">di_files</span> <span class="op">%&gt;%</span>
@@ -213,13 +463,57 @@
     <span class="op">)</span>,
     <span class="co"># explicitly allow for file specific rename (for the new ID column)</span>
     file_specific <span class="op">=</span> <span class="cn">TRUE</span>
-  <span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating file info from 3 data file(s), selecting info columns 'c(ID = `Identifier 1`, ID = `Sample Name`, Analysis, Method, `Peak Center`, `Date &amp; Time` = file_datetime, `Sample Weight`, `Sample Weight` = `Weight [mg]`)'</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ID"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Method"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[6],"type":["dttm"],"align":["right"]},{"label":["Sample Weight"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.did","2":"CIT Carrara","3":"49077","4":"CO2_multiply_16V.met","5":"1","6":"2014-10-27 11:23:54","7":"NA"},{"1":"dual_inlet_example.caf","2":"2H6","3":"16068","4":"CARBO IIIUvU_Clump.met","5":"NA","6":"2017-07-03 22:57:57","7":"113"},{"1":"dual_inlet_nu_example.txt","2":"ETH-01","3":"NA","4":"NA","5":"NA","6":"2017-02-21 17:46:17","7":"3480"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="22%">
+<col width="10%">
+<col width="7%">
+<col width="19%">
+<col width="10%">
+<col width="17%">
+<col width="12%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">ID</th>
+<th align="left">Analysis</th>
+<th align="left">Method</th>
+<th align="left">Peak Center</th>
+<th align="left">Date &amp; Time</th>
+<th align="left">Sample Weight</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">CIT Carrara</td>
+<td align="left">49077</td>
+<td align="left">CO2_multiply_16V.met</td>
+<td align="left">1</td>
+<td align="left">2014-10-27 11:23:54</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">2H6</td>
+<td align="left">16068</td>
+<td align="left">CARBO IIIUvU_Clump.met</td>
+<td align="left">NA</td>
+<td align="left">2017-07-03 22:57:57</td>
+<td align="left">113</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_nu_example.txt</td>
+<td align="left">ETH-01</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">2017-02-21 17:46:17</td>
+<td align="left">3480</td>
+</tr>
+</tbody>
+</table>
 <div id="selectrename" class="section level2">
 <h2 class="hasAnchor">
 <a href="#selectrename" class="anchor"></a>Select/Rename</h2>
@@ -239,13 +533,57 @@
 <span class="co">#&gt;  - for 1 file(s): 'file_id', 'Sample Name'-&gt;'ID', 'file_datetime'-&gt;'Date &amp; Time', 'Sample Weight'</span>
 
 <span class="co"># fetch all file info</span>
-<span class="va">di_files2</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">di_files2</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating file info from 3 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ID"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Method"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[6],"type":["dttm"],"align":["right"]},{"label":["Sample Weight"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.did","2":"CIT Carrara","3":"49077","4":"CO2_multiply_16V.met","5":"1","6":"2014-10-27 11:23:54","7":"NA"},{"1":"dual_inlet_example.caf","2":"2H6","3":"16068","4":"CARBO IIIUvU_Clump.met","5":"NA","6":"2017-07-03 22:57:57","7":"113"},{"1":"dual_inlet_nu_example.txt","2":"ETH-01","3":"NA","4":"NA","5":"NA","6":"2017-02-21 17:46:17","7":"3480"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="22%">
+<col width="10%">
+<col width="7%">
+<col width="19%">
+<col width="10%">
+<col width="17%">
+<col width="12%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">ID</th>
+<th align="left">Analysis</th>
+<th align="left">Method</th>
+<th align="left">Peak Center</th>
+<th align="left">Date &amp; Time</th>
+<th align="left">Sample Weight</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">CIT Carrara</td>
+<td align="left">49077</td>
+<td align="left">CO2_multiply_16V.met</td>
+<td align="left">1</td>
+<td align="left">2014-10-27 11:23:54</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">2H6</td>
+<td align="left">16068</td>
+<td align="left">CARBO IIIUvU_Clump.met</td>
+<td align="left">NA</td>
+<td align="left">2017-07-03 22:57:57</td>
+<td align="left">113</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_nu_example.txt</td>
+<td align="left">ETH-01</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">2017-02-21 17:46:17</td>
+<td align="left">3480</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="filter" class="section level2">
 <h2 class="hasAnchor">
@@ -255,28 +593,84 @@
 <code class="sourceCode R"><span class="co"># find files that have 'CIT' in the new ID field</span>
 <span class="va">di_files2</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="st">"CIT"</span>, <span class="va">ID</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: applying file filter, keeping 1 of 3 files</span>
 <span class="co">#&gt; Info: aggregating file info from 1 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ID"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Method"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[6],"type":["dttm"],"align":["right"]}],"data":[{"1":"dual_inlet_example.did","2":"CIT Carrara","3":"49077","4":"CO2_multiply_16V.met","5":"1","6":"2014-10-27 11:23:54"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="23%">
+<col width="12%">
+<col width="9%">
+<col width="21%">
+<col width="12%">
+<col width="20%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">ID</th>
+<th align="left">Analysis</th>
+<th align="left">Method</th>
+<th align="left">Peak Center</th>
+<th align="left">Date &amp; Time</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">CIT Carrara</td>
+<td align="left">49077</td>
+<td align="left">CO2_multiply_16V.met</td>
+<td align="left">1</td>
+<td align="left">2014-10-27 11:23:54</td>
+</tr></tbody>
+</table>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="co"># find files that were run in 2017</span>
 <span class="va">di_files2</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span><span class="va">`Date &amp; Time`</span> <span class="op">&gt;</span> <span class="st">"2017-01-01"</span> <span class="op">&amp;</span> <span class="va">`Date &amp; Time`</span> <span class="op">&lt;</span> <span class="st">"2018-01-01"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: applying file filter, keeping 2 of 3 files</span>
 <span class="co">#&gt; Info: aggregating file info from 2 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ID"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Method"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[6],"type":["dttm"],"align":["right"]},{"label":["Sample Weight"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.caf","2":"2H6","3":"16068","4":"CARBO IIIUvU_Clump.met","5":"NA","6":"2017-07-03 22:57:57","7":"113"},{"1":"dual_inlet_nu_example.txt","2":"ETH-01","3":"NA","4":"NA","5":"NA","6":"2017-02-21 17:46:17","7":"3480"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="23%">
+<col width="6%">
+<col width="8%">
+<col width="20%">
+<col width="10%">
+<col width="18%">
+<col width="12%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">ID</th>
+<th align="left">Analysis</th>
+<th align="left">Method</th>
+<th align="left">Peak Center</th>
+<th align="left">Date &amp; Time</th>
+<th align="left">Sample Weight</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">2H6</td>
+<td align="left">16068</td>
+<td align="left">CARBO IIIUvU_Clump.met</td>
+<td align="left">NA</td>
+<td align="left">2017-07-03 22:57:57</td>
+<td align="left">113</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_nu_example.txt</td>
+<td align="left">ETH-01</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">2017-02-21 17:46:17</td>
+<td align="left">3480</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="mutate" class="section level2">
 <h2 class="hasAnchor">
@@ -297,13 +691,62 @@
 <span class="va">di_files3</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_make_units_explicit.html">iso_make_units_explicit</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating file info from 3 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ID"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Method"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[6],"type":["dttm"],"align":["right"]},{"label":["Sample Weight [mg]"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["Run in 2017?"],"name":[8],"type":["lgl"],"align":["right"]}],"data":[{"1":"dual_inlet_example.did","2":"ID: CIT Carrara","3":"49077","4":"CO2_multiply_16V.met","5":"1","6":"2014-10-27 11:23:54","7":"NA","8":"FALSE"},{"1":"dual_inlet_example.caf","2":"ID: 2H6","3":"16068","4":"CARBO IIIUvU_Clump.met","5":"NA","6":"2017-07-03 22:57:57","7":"113","8":"TRUE"},{"1":"dual_inlet_nu_example.txt","2":"ID: ETH-01","3":"NA","4":"NA","5":"NA","6":"2017-02-21 17:46:17","7":"3480","8":"TRUE"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="18%">
+<col width="11%">
+<col width="6%">
+<col width="16%">
+<col width="8%">
+<col width="14%">
+<col width="13%">
+<col width="9%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">ID</th>
+<th align="left">Analysis</th>
+<th align="left">Method</th>
+<th align="left">Peak Center</th>
+<th align="left">Date &amp; Time</th>
+<th align="right">Sample Weight [mg]</th>
+<th align="left">Run in 2017?</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">ID: CIT Carrara</td>
+<td align="left">49077</td>
+<td align="left">CO2_multiply_16V.met</td>
+<td align="left">1</td>
+<td align="left">2014-10-27 11:23:54</td>
+<td align="right">NA</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">ID: 2H6</td>
+<td align="left">16068</td>
+<td align="left">CARBO IIIUvU_Clump.met</td>
+<td align="left">NA</td>
+<td align="left">2017-07-03 22:57:57</td>
+<td align="right">113</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_nu_example.txt</td>
+<td align="left">ID: ETH-01</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">2017-02-21 17:46:17</td>
+<td align="right">3480</td>
+<td align="left">TRUE</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="add" class="section level2">
 <h2 class="hasAnchor">
@@ -325,28 +768,86 @@
        <span class="st">"16068"</span>,   <span class="st">"no"</span>,      <span class="st">"did not inject properly"</span>
     <span class="op">)</span>
   <span class="op">)</span>
-<span class="va">new_info</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["Analysis"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Run in 2017?"],"name":[2],"type":["lgl"],"align":["right"]},{"label":["process"],"name":[3],"type":["chr"],"align":["left"]},{"label":["info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["note"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"NA","2":"TRUE","3":"yes","4":"2017 runs","5":"NA"},{"1":"NA","2":"FALSE","3":"yes","4":"other runs","5":"NA"},{"1":"16068","2":"NA","3":"no","4":"NA","5":"did not inject properly"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<span class="va">new_info</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Analysis</th>
+<th align="left">Run in 2017?</th>
+<th align="left">process</th>
+<th align="left">info</th>
+<th align="left">note</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">NA</td>
+<td align="left">TRUE</td>
+<td align="left">yes</td>
+<td align="left">2017 runs</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">yes</td>
+<td align="left">other runs</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">16068</td>
+<td align="left">NA</td>
+<td align="left">no</td>
+<td align="left">NA</td>
+<td align="left">did not inject properly</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="co"># adding it to the isofiles</span>
 <span class="va">di_files3</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_add_file_info.iso_file_list.html">iso_add_file_info</a></span><span class="op">(</span><span class="va">new_info</span>, by1 <span class="op">=</span> <span class="st">"Run in 2017?"</span>, by2 <span class="op">=</span> <span class="st">"Analysis"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="op">!</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">new_info</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: adding new file information ('process', 'info', 'note') to 3 data file(s), joining by 'Run in 2017?' then 'Analysis'...</span>
 <span class="co">#&gt;  - 'Run in 2017?' join: 2/2 new info rows matched 3/3 data files - 1 of these was/were also matched by subsequent joins which took precedence</span>
 <span class="co">#&gt;  - 'Analysis' join: 1/1 new info rows matched 1/3 data files</span>
 <span class="co">#&gt; Info: aggregating file info from 3 data file(s), selecting info columns 'Analysis', 'Run in 2017?', 'process', 'info', 'note'</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Run in 2017?"],"name":[3],"type":["lgl"],"align":["right"]},{"label":["process"],"name":[4],"type":["chr"],"align":["left"]},{"label":["info"],"name":[5],"type":["chr"],"align":["left"]},{"label":["note"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.did","2":"49077","3":"FALSE","4":"yes","5":"other runs","6":"NA"},{"1":"dual_inlet_example.caf","2":"16068","3":"TRUE","4":"no","5":"NA","6":"did not inject properly"},{"1":"dual_inlet_nu_example.txt","2":"NA","3":"TRUE","4":"yes","5":"2017 runs","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">Analysis</th>
+<th align="left">Run in 2017?</th>
+<th align="left">process</th>
+<th align="left">info</th>
+<th align="left">note</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">49077</td>
+<td align="left">FALSE</td>
+<td align="left">yes</td>
+<td align="left">other runs</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">16068</td>
+<td align="left">TRUE</td>
+<td align="left">no</td>
+<td align="left">NA</td>
+<td align="left">did not inject properly</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_nu_example.txt</td>
+<td align="left">NA</td>
+<td align="left">TRUE</td>
+<td align="left">yes</td>
+<td align="left">2017 runs</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="parse" class="section level2">
 <h2 class="hasAnchor">
@@ -366,28 +867,94 @@
     extension <span class="op">=</span> <span class="fu"><a href="../reference/extract_substring.html">extract_substring</a></span><span class="op">(</span><span class="va">file_id</span>, <span class="st">"\\.(\\w+)$"</span>, capture_bracket <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">extension</span>, <span class="va">`Peak Center`</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">matches</a></span><span class="op">(</span><span class="st">"Method"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: mutating file info for 3 data file(s)</span>
 <span class="co">#&gt; Info: aggregating file info from 3 data file(s), selecting info columns 'c(extension, `Peak Center`, matches("Method"))'</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["extension"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[3],"type":["lgl"],"align":["right"]},{"label":["Method"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Method_1st"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Method_2nd"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.did","2":"did","3":"TRUE","4":"CO2_multiply_16V.met","5":"CO2","6":"multiply"},{"1":"dual_inlet_example.caf","2":"caf","3":"NA","4":"CARBO IIIUvU_Clump.met","5":"CARBO","6":"IIIUvU"},{"1":"dual_inlet_nu_example.txt","2":"txt","3":"NA","4":"NA","5":"NA","6":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">extension</th>
+<th align="left">Peak Center</th>
+<th align="left">Method</th>
+<th align="left">Method_1st</th>
+<th align="left">Method_2nd</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">did</td>
+<td align="left">TRUE</td>
+<td align="left">CO2_multiply_16V.met</td>
+<td align="left">CO2</td>
+<td align="left">multiply</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">caf</td>
+<td align="left">NA</td>
+<td align="left">CARBO IIIUvU_Clump.met</td>
+<td align="left">CARBO</td>
+<td align="left">IIIUvU</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_nu_example.txt</td>
+<td align="left">txt</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="co"># use parsing in iso_filter_file_info</span>
 <span class="va">di_files2</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span><span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">parse_integer</a></span><span class="op">(</span><span class="va">Analysis</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1500</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: applying file filter, keeping 2 of 3 files</span>
 <span class="co">#&gt; Info: aggregating file info from 2 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ID"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Method"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[6],"type":["dttm"],"align":["right"]},{"label":["Sample Weight"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.did","2":"CIT Carrara","3":"49077","4":"CO2_multiply_16V.met","5":"1","6":"2014-10-27 11:23:54","7":"NA"},{"1":"dual_inlet_example.caf","2":"2H6","3":"16068","4":"CARBO IIIUvU_Clump.met","5":"NA","6":"2017-07-03 22:57:57","7":"113"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="20%">
+<col width="10%">
+<col width="7%">
+<col width="20%">
+<col width="10%">
+<col width="17%">
+<col width="12%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">ID</th>
+<th align="left">Analysis</th>
+<th align="left">Method</th>
+<th align="left">Peak Center</th>
+<th align="left">Date &amp; Time</th>
+<th align="left">Sample Weight</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">CIT Carrara</td>
+<td align="left">49077</td>
+<td align="left">CO2_multiply_16V.met</td>
+<td align="left">1</td>
+<td align="left">2014-10-27 11:23:54</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">2H6</td>
+<td align="left">16068</td>
+<td align="left">CARBO IIIUvU_Clump.met</td>
+<td align="left">NA</td>
+<td align="left">2017-07-03 22:57:57</td>
+<td align="left">113</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="co"># use iso_parse_file_info for simplified parsing of column data types</span>
@@ -398,17 +965,61 @@
     logical <span class="op">=</span> <span class="va">`Peak Center`</span>
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: parsing 3 file info columns for 3 data file(s):</span>
 <span class="co">#&gt;  - to integer: 'Analysis'</span>
 <span class="co">#&gt;  - to logical: 'Peak Center'</span>
 <span class="co">#&gt;  - to number: 'Sample Weight'</span>
 <span class="co">#&gt; Info: aggregating file info from 3 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ID"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Analysis"],"name":[3],"type":["int"],"align":["right"]},{"label":["Method"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Peak Center"],"name":[5],"type":["lgl"],"align":["right"]},{"label":["Date & Time"],"name":[6],"type":["dttm"],"align":["right"]},{"label":["Sample Weight"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"dual_inlet_example.did","2":"CIT Carrara","3":"49077","4":"CO2_multiply_16V.met","5":"TRUE","6":"2014-10-27 11:23:54","7":"NA"},{"1":"dual_inlet_example.caf","2":"2H6","3":"16068","4":"CARBO IIIUvU_Clump.met","5":"NA","6":"2017-07-03 22:57:57","7":"113"},{"1":"dual_inlet_nu_example.txt","2":"ETH-01","3":"NA","4":"NA","5":"NA","6":"2017-02-21 17:46:17","7":"3480"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="22%">
+<col width="10%">
+<col width="7%">
+<col width="19%">
+<col width="10%">
+<col width="17%">
+<col width="12%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">ID</th>
+<th align="right">Analysis</th>
+<th align="left">Method</th>
+<th align="left">Peak Center</th>
+<th align="left">Date &amp; Time</th>
+<th align="right">Sample Weight</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">CIT Carrara</td>
+<td align="right">49077</td>
+<td align="left">CO2_multiply_16V.met</td>
+<td align="left">TRUE</td>
+<td align="left">2014-10-27 11:23:54</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">2H6</td>
+<td align="right">16068</td>
+<td align="left">CARBO IIIUvU_Clump.met</td>
+<td align="left">NA</td>
+<td align="left">2017-07-03 22:57:57</td>
+<td align="right">113</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_nu_example.txt</td>
+<td align="left">ETH-01</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">2017-02-21 17:46:17</td>
+<td align="right">3480</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="resistors" class="section level1">
@@ -416,13 +1027,90 @@
 <a href="#resistors" class="anchor"></a>Resistors</h1>
 <p>Additionally, some IRMS data files contain resistor information that are useful for downstream calculations (see e.g. section on signal conversion later in this vignette):</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_resistors.html">iso_get_resistors</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_resistors.html">iso_get_resistors</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating resistors info from 3 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["cup"],"name":[2],"type":["int"],"align":["right"]},{"label":["R.Ohm"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["mass"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.did","2":"1","3":"3.000000e+08","4":"44"},{"1":"dual_inlet_example.did","2":"2","3":"3.000000e+10","4":"45"},{"1":"dual_inlet_example.did","2":"3","3":"1.000000e+11","4":"46"},{"1":"dual_inlet_example.did","2":"4","3":"1.000000e+12","4":"47"},{"1":"dual_inlet_example.did","2":"5","3":"5.000000e+11","4":"48"},{"1":"dual_inlet_example.did","2":"6","3":"1.000000e+12","4":"49"},{"1":"dual_inlet_example.caf","2":"1","3":"2.970297e+08","4":"44"},{"1":"dual_inlet_example.caf","2":"2","3":"1.500000e+10","4":"45"},{"1":"dual_inlet_example.caf","2":"3","3":"5.000000e+10","4":"46"},{"1":"dual_inlet_example.caf","2":"4","3":"5.000000e+11","4":"47"},{"1":"dual_inlet_example.caf","2":"5","3":"9.900990e+09","4":"48"},{"1":"dual_inlet_example.caf","2":"6","3":"5.000000e+11","4":"49"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="right">cup</th>
+<th align="right">R.Ohm</th>
+<th align="left">mass</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="right">1</td>
+<td align="right">3.000000e+08</td>
+<td align="left">44</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="right">2</td>
+<td align="right">3.000000e+10</td>
+<td align="left">45</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="right">3</td>
+<td align="right">1.000000e+11</td>
+<td align="left">46</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="right">4</td>
+<td align="right">1.000000e+12</td>
+<td align="left">47</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="right">5</td>
+<td align="right">5.000000e+11</td>
+<td align="left">48</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="right">6</td>
+<td align="right">1.000000e+12</td>
+<td align="left">49</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">1</td>
+<td align="right">2.970297e+08</td>
+<td align="left">44</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">2</td>
+<td align="right">1.500000e+10</td>
+<td align="left">45</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">3</td>
+<td align="right">5.000000e+10</td>
+<td align="left">46</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">4</td>
+<td align="right">5.000000e+11</td>
+<td align="left">47</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">5</td>
+<td align="right">9.900990e+09</td>
+<td align="left">48</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">6</td>
+<td align="right">5.000000e+11</td>
+<td align="left">49</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="reference-values" class="section level1">
 <h1 class="hasAnchor">
@@ -430,22 +1118,271 @@
 <p>As well as isotopic reference values for the different gases:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># reference delta values without ratio values</span>
-<span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_standards.html">iso_get_standards</a></span><span class="op">(</span><span class="va">file_id</span><span class="op">:</span><span class="va">reference</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_standards.html">iso_get_standards</a></span><span class="op">(</span><span class="va">file_id</span><span class="op">:</span><span class="va">reference</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating standards info from 3 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["standard"],"name":[2],"type":["chr"],"align":["left"]},{"label":["gas"],"name":[3],"type":["chr"],"align":["left"]},{"label":["delta_name"],"name":[4],"type":["chr"],"align":["left"]},{"label":["delta_value"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["reference"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"dual_inlet_example.did","2":"Caltech-1960C","3":"CO2","4":"d 13C/12C","5":"-3.56","6":"VPDB"},{"1":"dual_inlet_example.did","2":"Caltech-1960C","3":"CO2","4":"d 18O/16O","5":"25.01","6":"VSMOW"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 13C/12C","5":"-2.82","6":"VPDB"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 18O/16O","5":"-4.67","6":"VPDB"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 47CO2/44CO2","5":"0.00","6":"None"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 48CO2/44CO2","5":"0.00","6":"None"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 49CO2/44CO2","5":"0.00","6":"None"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">standard</th>
+<th align="left">gas</th>
+<th align="left">delta_name</th>
+<th align="right">delta_value</th>
+<th align="left">reference</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">Caltech-1960C</td>
+<td align="left">CO2</td>
+<td align="left">d 13C/12C</td>
+<td align="right">-3.56</td>
+<td align="left">VPDB</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">Caltech-1960C</td>
+<td align="left">CO2</td>
+<td align="left">d 18O/16O</td>
+<td align="right">25.01</td>
+<td align="left">VSMOW</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 13C/12C</td>
+<td align="right">-2.82</td>
+<td align="left">VPDB</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 18O/16O</td>
+<td align="right">-4.67</td>
+<td align="left">VPDB</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 47CO2/44CO2</td>
+<td align="right">0.00</td>
+<td align="left">None</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 48CO2/44CO2</td>
+<td align="right">0.00</td>
+<td align="left">None</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 49CO2/44CO2</td>
+<td align="right">0.00</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># reference values with ratios</span>
-<span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_standards.html">iso_get_standards</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_standards.html">iso_get_standards</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating standards info from 3 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["standard"],"name":[2],"type":["chr"],"align":["left"]},{"label":["gas"],"name":[3],"type":["chr"],"align":["left"]},{"label":["delta_name"],"name":[4],"type":["chr"],"align":["left"]},{"label":["delta_value"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["reference"],"name":[6],"type":["chr"],"align":["left"]},{"label":["element"],"name":[7],"type":["chr"],"align":["left"]},{"label":["ratio_name"],"name":[8],"type":["chr"],"align":["left"]},{"label":["ratio_value"],"name":[9],"type":["dbl"],"align":["right"]}],"data":[{"1":"dual_inlet_example.did","2":"Caltech-1960C","3":"CO2","4":"d 13C/12C","5":"-3.56","6":"VPDB","7":"C","8":"R 13C/12C","9":"0.01118020"},{"1":"dual_inlet_example.did","2":"Caltech-1960C","3":"CO2","4":"d 13C/12C","5":"-3.56","6":"VPDB","7":"O","8":"R 18O/16O","9":"0.00206720"},{"1":"dual_inlet_example.did","2":"Caltech-1960C","3":"CO2","4":"d 13C/12C","5":"-3.56","6":"VPDB","7":"O","8":"R 17O/16O","9":"0.00038600"},{"1":"dual_inlet_example.did","2":"Caltech-1960C","3":"CO2","4":"d 18O/16O","5":"25.01","6":"VSMOW","7":"H","8":"R 2H/1H","9":"0.00015575"},{"1":"dual_inlet_example.did","2":"Caltech-1960C","3":"CO2","4":"d 18O/16O","5":"25.01","6":"VSMOW","7":"O","8":"R 17O/16O","9":"0.00037990"},{"1":"dual_inlet_example.did","2":"Caltech-1960C","3":"CO2","4":"d 18O/16O","5":"25.01","6":"VSMOW","7":"O","8":"R 18O/16O","9":"0.00200520"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 13C/12C","5":"-2.82","6":"VPDB","7":"C","8":"R 13C/12C","9":"0.01118020"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 13C/12C","5":"-2.82","6":"VPDB","7":"O","8":"R 18O/16O","9":"0.00206720"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 13C/12C","5":"-2.82","6":"VPDB","7":"O","8":"R 17O/16O","9":"0.00038600"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 18O/16O","5":"-4.67","6":"VPDB","7":"C","8":"R 13C/12C","9":"0.01118020"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 18O/16O","5":"-4.67","6":"VPDB","7":"O","8":"R 18O/16O","9":"0.00206720"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 18O/16O","5":"-4.67","6":"VPDB","7":"O","8":"R 17O/16O","9":"0.00038600"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 47CO2/44CO2","5":"0.00","6":"None","7":"NA","8":"NA","9":"NA"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 48CO2/44CO2","5":"0.00","6":"None","7":"NA","8":"NA","9":"NA"},{"1":"dual_inlet_example.caf","2":"CO2clump tank","3":"CO2","4":"d 49CO2/44CO2","5":"0.00","6":"None","7":"NA","8":"NA","9":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="21%">
+<col width="12%">
+<col width="3%">
+<col width="12%">
+<col width="11%">
+<col width="9%">
+<col width="7%">
+<col width="10%">
+<col width="11%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">standard</th>
+<th align="left">gas</th>
+<th align="left">delta_name</th>
+<th align="right">delta_value</th>
+<th align="left">reference</th>
+<th align="left">element</th>
+<th align="left">ratio_name</th>
+<th align="right">ratio_value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">Caltech-1960C</td>
+<td align="left">CO2</td>
+<td align="left">d 13C/12C</td>
+<td align="right">-3.56</td>
+<td align="left">VPDB</td>
+<td align="left">C</td>
+<td align="left">R 13C/12C</td>
+<td align="right">0.0111802</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">Caltech-1960C</td>
+<td align="left">CO2</td>
+<td align="left">d 13C/12C</td>
+<td align="right">-3.56</td>
+<td align="left">VPDB</td>
+<td align="left">O</td>
+<td align="left">R 18O/16O</td>
+<td align="right">0.0020672</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">Caltech-1960C</td>
+<td align="left">CO2</td>
+<td align="left">d 13C/12C</td>
+<td align="right">-3.56</td>
+<td align="left">VPDB</td>
+<td align="left">O</td>
+<td align="left">R 17O/16O</td>
+<td align="right">0.0003860</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">Caltech-1960C</td>
+<td align="left">CO2</td>
+<td align="left">d 18O/16O</td>
+<td align="right">25.01</td>
+<td align="left">VSMOW</td>
+<td align="left">H</td>
+<td align="left">R 2H/1H</td>
+<td align="right">0.0001558</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">Caltech-1960C</td>
+<td align="left">CO2</td>
+<td align="left">d 18O/16O</td>
+<td align="right">25.01</td>
+<td align="left">VSMOW</td>
+<td align="left">O</td>
+<td align="left">R 17O/16O</td>
+<td align="right">0.0003799</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">Caltech-1960C</td>
+<td align="left">CO2</td>
+<td align="left">d 18O/16O</td>
+<td align="right">25.01</td>
+<td align="left">VSMOW</td>
+<td align="left">O</td>
+<td align="left">R 18O/16O</td>
+<td align="right">0.0020052</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 13C/12C</td>
+<td align="right">-2.82</td>
+<td align="left">VPDB</td>
+<td align="left">C</td>
+<td align="left">R 13C/12C</td>
+<td align="right">0.0111802</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 13C/12C</td>
+<td align="right">-2.82</td>
+<td align="left">VPDB</td>
+<td align="left">O</td>
+<td align="left">R 18O/16O</td>
+<td align="right">0.0020672</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 13C/12C</td>
+<td align="right">-2.82</td>
+<td align="left">VPDB</td>
+<td align="left">O</td>
+<td align="left">R 17O/16O</td>
+<td align="right">0.0003860</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 18O/16O</td>
+<td align="right">-4.67</td>
+<td align="left">VPDB</td>
+<td align="left">C</td>
+<td align="left">R 13C/12C</td>
+<td align="right">0.0111802</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 18O/16O</td>
+<td align="right">-4.67</td>
+<td align="left">VPDB</td>
+<td align="left">O</td>
+<td align="left">R 18O/16O</td>
+<td align="right">0.0020672</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 18O/16O</td>
+<td align="right">-4.67</td>
+<td align="left">VPDB</td>
+<td align="left">O</td>
+<td align="left">R 17O/16O</td>
+<td align="right">0.0003860</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 47CO2/44CO2</td>
+<td align="right">0.00</td>
+<td align="left">None</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 48CO2/44CO2</td>
+<td align="right">0.00</td>
+<td align="left">None</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">CO2clump tank</td>
+<td align="left">CO2</td>
+<td align="left">d 49CO2/44CO2</td>
+<td align="right">0.00</td>
+<td align="left">None</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="raw-data" class="section level1">
 <h1 class="hasAnchor">
@@ -453,13 +1390,228 @@
 <p>The raw data read from the IRMS files can be retrieved similarly using the <code><a href="../reference/iso_get_raw_data.html">iso_get_raw_data()</a></code> function. Most data aggregation functions also allow for inclusion of file information using the <code>include_file_info</code> parameter, which functions identically to the <code>select</code> parameter of the <code>iso_get_file_info</code> function discussed earlier.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># get raw data with default selections (all raw data, no additional file info)</span>
-<span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating raw data from 3 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["cycle"],"name":[3],"type":["int"],"align":["right"]},{"label":["v44.mV"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["v45.mV"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["v46.mV"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["v47.mV"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["v48.mV"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["v49.mV"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["block"],"name":[10],"type":["int"],"align":["right"]},{"label":["i44.A"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["i45.A"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["i46.A"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["i47.A"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["i48.A"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["i49.A"],"name":[16],"type":["dbl"],"align":["right"]}],"data":[{"1":"dual_inlet_example.did","2":"standard","3":"0","4":"15946.42","5":"19001.94","6":"21960.62","7":"2513.280","8":"29.78742","9":"-181.2712","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"dual_inlet_example.did","2":"standard","3":"1","4":"15941.14","5":"18995.66","6":"21954.19","7":"2512.345","8":"29.80048","9":"-180.9752","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"dual_inlet_example.did","2":"standard","3":"2","4":"15933.54","5":"18986.64","6":"21943.58","7":"2511.280","8":"29.81818","9":"-180.7748","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"dual_inlet_example.did","2":"standard","3":"3","4":"15916.58","5":"18966.34","6":"21919.97","7":"2508.497","8":"29.78074","9":"-180.4583","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"dual_inlet_example.did","2":"standard","3":"4","4":"15901.62","5":"18948.60","6":"21899.17","7":"2506.104","8":"29.76304","9":"-180.2311","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"dual_inlet_example.did","2":"standard","3":"5","4":"15896.00","5":"18941.97","6":"21891.49","7":"2505.600","8":"29.75818","9":"-180.3095","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"dual_inlet_example.did","2":"standard","3":"6","4":"15884.63","5":"18928.51","6":"21876.19","7":"2503.555","8":"29.72923","9":"-180.2013","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"dual_inlet_example.did","2":"standard","3":"7","4":"15875.89","5":"18918.12","6":"21863.96","7":"2502.444","8":"29.69513","9":"-180.0340","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"dual_inlet_example.did","2":"sample","3":"1","4":"15955.18","5":"19122.71","6":"22237.99","7":"2559.245","8":"31.09436","9":"-181.2460","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"dual_inlet_example.did","2":"sample","3":"2","4":"15945.64","5":"19111.16","6":"22224.65","7":"2557.857","8":"31.09153","9":"-180.9976","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="17%">
+<col width="6%">
+<col width="4%">
+<col width="6%">
+<col width="6%">
+<col width="6%">
+<col width="6%">
+<col width="6%">
+<col width="7%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">type</th>
+<th align="right">cycle</th>
+<th align="right">v44.mV</th>
+<th align="right">v45.mV</th>
+<th align="right">v46.mV</th>
+<th align="right">v47.mV</th>
+<th align="right">v48.mV</th>
+<th align="right">v49.mV</th>
+<th align="right">block</th>
+<th align="right">i44.A</th>
+<th align="right">i45.A</th>
+<th align="right">i46.A</th>
+<th align="right">i47.A</th>
+<th align="right">i48.A</th>
+<th align="right">i49.A</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">standard</td>
+<td align="right">0</td>
+<td align="right">15946.42</td>
+<td align="right">19001.94</td>
+<td align="right">21960.62</td>
+<td align="right">2513.280</td>
+<td align="right">29.78742</td>
+<td align="right">-181.2712</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">standard</td>
+<td align="right">1</td>
+<td align="right">15941.14</td>
+<td align="right">18995.66</td>
+<td align="right">21954.19</td>
+<td align="right">2512.345</td>
+<td align="right">29.80048</td>
+<td align="right">-180.9752</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">standard</td>
+<td align="right">2</td>
+<td align="right">15933.54</td>
+<td align="right">18986.64</td>
+<td align="right">21943.58</td>
+<td align="right">2511.280</td>
+<td align="right">29.81818</td>
+<td align="right">-180.7748</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">standard</td>
+<td align="right">3</td>
+<td align="right">15916.58</td>
+<td align="right">18966.34</td>
+<td align="right">21919.97</td>
+<td align="right">2508.497</td>
+<td align="right">29.78074</td>
+<td align="right">-180.4583</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">standard</td>
+<td align="right">4</td>
+<td align="right">15901.62</td>
+<td align="right">18948.60</td>
+<td align="right">21899.17</td>
+<td align="right">2506.104</td>
+<td align="right">29.76304</td>
+<td align="right">-180.2311</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">standard</td>
+<td align="right">5</td>
+<td align="right">15896.00</td>
+<td align="right">18941.97</td>
+<td align="right">21891.49</td>
+<td align="right">2505.600</td>
+<td align="right">29.75818</td>
+<td align="right">-180.3095</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">standard</td>
+<td align="right">6</td>
+<td align="right">15884.63</td>
+<td align="right">18928.51</td>
+<td align="right">21876.19</td>
+<td align="right">2503.555</td>
+<td align="right">29.72923</td>
+<td align="right">-180.2013</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">standard</td>
+<td align="right">7</td>
+<td align="right">15875.89</td>
+<td align="right">18918.12</td>
+<td align="right">21863.96</td>
+<td align="right">2502.444</td>
+<td align="right">29.69513</td>
+<td align="right">-180.0340</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">sample</td>
+<td align="right">1</td>
+<td align="right">15955.18</td>
+<td align="right">19122.71</td>
+<td align="right">22237.99</td>
+<td align="right">2559.245</td>
+<td align="right">31.09436</td>
+<td align="right">-181.2460</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">sample</td>
+<td align="right">2</td>
+<td align="right">15945.64</td>
+<td align="right">19111.16</td>
+<td align="right">22224.65</td>
+<td align="right">2557.857</td>
+<td align="right">31.09153</td>
+<td align="right">-180.9976</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># get specific raw data and add some file information</span>
 <span class="va">di_files</span> <span class="op">%&gt;%</span>
@@ -470,13 +1622,100 @@
     include_file_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>run <span class="op">=</span> <span class="va">Analysis</span><span class="op">)</span>
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="co"># look at first few records only</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating raw data from 3 data file(s), selecting data columns 'c(type, cycle, v44.mV, v45.mV)', including file info 'c(run = Analysis)'</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["run"],"name":[2],"type":["chr"],"align":["left"]},{"label":["type"],"name":[3],"type":["chr"],"align":["left"]},{"label":["cycle"],"name":[4],"type":["int"],"align":["right"]},{"label":["v44.mV"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["v45.mV"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"dual_inlet_example.did","2":"49077","3":"standard","4":"0","5":"15946.42","6":"19001.94"},{"1":"dual_inlet_example.did","2":"49077","3":"standard","4":"1","5":"15941.14","6":"18995.66"},{"1":"dual_inlet_example.did","2":"49077","3":"standard","4":"2","5":"15933.54","6":"18986.64"},{"1":"dual_inlet_example.did","2":"49077","3":"standard","4":"3","5":"15916.58","6":"18966.34"},{"1":"dual_inlet_example.did","2":"49077","3":"standard","4":"4","5":"15901.62","6":"18948.60"},{"1":"dual_inlet_example.did","2":"49077","3":"standard","4":"5","5":"15896.00","6":"18941.97"},{"1":"dual_inlet_example.did","2":"49077","3":"standard","4":"6","5":"15884.63","6":"18928.51"},{"1":"dual_inlet_example.did","2":"49077","3":"standard","4":"7","5":"15875.89","6":"18918.12"},{"1":"dual_inlet_example.did","2":"49077","3":"sample","4":"1","5":"15955.18","6":"19122.71"},{"1":"dual_inlet_example.did","2":"49077","3":"sample","4":"2","5":"15945.64","6":"19111.16"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">run</th>
+<th align="left">type</th>
+<th align="right">cycle</th>
+<th align="right">v44.mV</th>
+<th align="right">v45.mV</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">49077</td>
+<td align="left">standard</td>
+<td align="right">0</td>
+<td align="right">15946.42</td>
+<td align="right">19001.94</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">49077</td>
+<td align="left">standard</td>
+<td align="right">1</td>
+<td align="right">15941.14</td>
+<td align="right">18995.66</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">49077</td>
+<td align="left">standard</td>
+<td align="right">2</td>
+<td align="right">15933.54</td>
+<td align="right">18986.64</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">49077</td>
+<td align="left">standard</td>
+<td align="right">3</td>
+<td align="right">15916.58</td>
+<td align="right">18966.34</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">49077</td>
+<td align="left">standard</td>
+<td align="right">4</td>
+<td align="right">15901.62</td>
+<td align="right">18948.60</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">49077</td>
+<td align="left">standard</td>
+<td align="right">5</td>
+<td align="right">15896.00</td>
+<td align="right">18941.97</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">49077</td>
+<td align="left">standard</td>
+<td align="right">6</td>
+<td align="right">15884.63</td>
+<td align="right">18928.51</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">49077</td>
+<td align="left">standard</td>
+<td align="right">7</td>
+<td align="right">15875.89</td>
+<td align="right">18918.12</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">49077</td>
+<td align="left">sample</td>
+<td align="right">1</td>
+<td align="right">15955.18</td>
+<td align="right">19122.71</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">49077</td>
+<td align="left">sample</td>
+<td align="right">2</td>
+<td align="right">15945.64</td>
+<td align="right">19111.16</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="data-processing" class="section level1">
 <h1 class="hasAnchor">
@@ -489,13 +1728,250 @@
 <p>As with most data retrieval functions, the <code><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table()</a></code> function also allows specific column selection (by default, all columns are selected) and easy addition of file information via the <code>include_file_info</code> parameter (by default, none is included).</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># entire vendor data table</span>
-<span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating vendor data table from 3 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["cycle"],"name":[2],"type":["int"],"align":["right"]},{"label":["d 45CO2/44CO2"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["d 46CO2/44CO2"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["d 13C/12C"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["d 18O/16O"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["d 17O/16O"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["AT% 13C/12C"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["AT% 18O/16O"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["d 47CO2/44CO2"],"name":[10],"type":["dbl[permil]"],"align":["right"]},{"label":["d 48CO2/44CO2"],"name":[11],"type":["dbl[permil]"],"align":["right"]},{"label":["d 49CO2/44CO2"],"name":[12],"type":["dbl[permil]"],"align":["right"]}],"data":[{"1":"dual_inlet_example.did","2":"1","3":"3.3287770","4":"37.330647","5":"2.1929917","6":"37.366456","7":"6.202321","8":"1.108056","9":"0.2075809","10":"NA","11":"NA","12":"NA"},{"1":"dual_inlet_example.did","2":"2","3":"3.3209553","4":"37.311799","5":"2.1852948","6":"37.347605","7":"6.192886","8":"1.108048","9":"0.2075772","10":"NA","11":"NA","12":"NA"},{"1":"dual_inlet_example.did","2":"3","3":"3.3263384","4":"37.317514","5":"2.1908570","6":"37.353314","7":"6.195743","8":"1.108054","9":"0.2075783","10":"NA","11":"NA","12":"NA"},{"1":"dual_inlet_example.did","2":"4","3":"3.3200304","4":"37.317207","5":"2.1841057","6":"37.353021","7":"6.195597","8":"1.108047","9":"0.2075782","10":"NA","11":"NA","12":"NA"},{"1":"dual_inlet_example.did","2":"5","3":"3.3187408","4":"37.329768","5":"2.1822644","6":"37.365600","7":"6.201893","8":"1.108045","9":"0.2075808","10":"NA","11":"NA","12":"NA"},{"1":"dual_inlet_example.did","2":"6","3":"3.3177548","4":"37.322849","5":"2.1814601","6":"37.358675","7":"6.198427","8":"1.108044","9":"0.2075794","10":"NA","11":"NA","12":"NA"},{"1":"dual_inlet_example.did","2":"7","3":"3.3217518","4":"37.318368","5":"2.1859087","6":"37.354180","7":"6.196177","8":"1.108049","9":"0.2075785","10":"NA","11":"NA","12":"NA"},{"1":"dual_inlet_example.caf","2":"1","3":"0.7000753","4":"7.543205","5":"0.4669423","6":"7.550236","7":"6.316518","8":"NA","9":"NA","10":"15.65910","11":"22.50135","12":"-58.12863"},{"1":"dual_inlet_example.caf","2":"2","3":"0.6846506","4":"7.518991","5":"0.4512997","6":"7.526031","7":"6.304043","8":"NA","9":"NA","10":"15.62094","11":"22.59733","12":"-54.25812"},{"1":"dual_inlet_example.caf","2":"3","3":"0.6827013","4":"7.503826","5":"0.4497784","6":"7.510853","7":"6.296221","8":"NA","9":"NA","10":"15.56356","11":"22.81077","12":"-52.21288"},{"1":"dual_inlet_example.caf","2":"4","3":"0.6940694","4":"7.513421","5":"0.4616176","6":"7.520432","7":"6.301158","8":"NA","9":"NA","10":"15.64200","11":"23.18259","12":"-66.43734"},{"1":"dual_inlet_example.caf","2":"5","3":"0.6748151","4":"7.499821","5":"0.4414657","6":"7.506862","7":"6.294164","8":"NA","9":"NA","10":"15.56706","11":"22.81533","12":"-67.80591"},{"1":"dual_inlet_example.caf","2":"6","3":"0.6836593","4":"7.492892","5":"0.4512181","6":"7.499905","7":"6.290578","8":"NA","9":"NA","10":"15.65654","11":"23.33585","12":"-66.66771"},{"1":"dual_inlet_example.caf","2":"7","3":"0.6960376","4":"7.491672","5":"0.4645483","6":"7.498654","7":"6.289934","8":"NA","9":"NA","10":"15.56031","11":"23.89354","12":"-42.32076"},{"1":"dual_inlet_example.caf","2":"8","3":"0.6929899","4":"7.499328","5":"0.4609894","6":"7.506326","7":"6.293888","8":"NA","9":"NA","10":"15.45959","11":"24.43994","12":"-48.39355"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="15%">
+<col width="3%">
+<col width="9%">
+<col width="9%">
+<col width="6%">
+<col width="6%">
+<col width="6%">
+<col width="7%">
+<col width="7%">
+<col width="9%">
+<col width="9%">
+<col width="9%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="right">cycle</th>
+<th align="right">d 45CO2/44CO2</th>
+<th align="right">d 46CO2/44CO2</th>
+<th align="right">d 13C/12C</th>
+<th align="right">d 18O/16O</th>
+<th align="right">d 17O/16O</th>
+<th align="right">AT% 13C/12C</th>
+<th align="right">AT% 18O/16O</th>
+<th align="right">d 47CO2/44CO2</th>
+<th align="right">d 48CO2/44CO2</th>
+<th align="right">d 49CO2/44CO2</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="right">1</td>
+<td align="right">3.3287770</td>
+<td align="right">37.330647</td>
+<td align="right">2.1929917</td>
+<td align="right">37.366456</td>
+<td align="right">6.202321</td>
+<td align="right">1.108056</td>
+<td align="right">0.2075809</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="right">2</td>
+<td align="right">3.3209553</td>
+<td align="right">37.311799</td>
+<td align="right">2.1852948</td>
+<td align="right">37.347605</td>
+<td align="right">6.192886</td>
+<td align="right">1.108048</td>
+<td align="right">0.2075772</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="right">3</td>
+<td align="right">3.3263384</td>
+<td align="right">37.317514</td>
+<td align="right">2.1908570</td>
+<td align="right">37.353314</td>
+<td align="right">6.195743</td>
+<td align="right">1.108054</td>
+<td align="right">0.2075783</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="right">4</td>
+<td align="right">3.3200304</td>
+<td align="right">37.317207</td>
+<td align="right">2.1841057</td>
+<td align="right">37.353021</td>
+<td align="right">6.195597</td>
+<td align="right">1.108047</td>
+<td align="right">0.2075782</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="right">5</td>
+<td align="right">3.3187408</td>
+<td align="right">37.329768</td>
+<td align="right">2.1822644</td>
+<td align="right">37.365600</td>
+<td align="right">6.201893</td>
+<td align="right">1.108045</td>
+<td align="right">0.2075808</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="right">6</td>
+<td align="right">3.3177548</td>
+<td align="right">37.322849</td>
+<td align="right">2.1814601</td>
+<td align="right">37.358675</td>
+<td align="right">6.198427</td>
+<td align="right">1.108044</td>
+<td align="right">0.2075794</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="right">7</td>
+<td align="right">3.3217518</td>
+<td align="right">37.318368</td>
+<td align="right">2.1859087</td>
+<td align="right">37.354180</td>
+<td align="right">6.196176</td>
+<td align="right">1.108049</td>
+<td align="right">0.2075785</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">1</td>
+<td align="right">0.7000753</td>
+<td align="right">7.543204</td>
+<td align="right">0.4669423</td>
+<td align="right">7.550236</td>
+<td align="right">6.316518</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">15.65910</td>
+<td align="right">22.50135</td>
+<td align="right">-58.12863</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">2</td>
+<td align="right">0.6846506</td>
+<td align="right">7.518991</td>
+<td align="right">0.4512997</td>
+<td align="right">7.526031</td>
+<td align="right">6.304043</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">15.62094</td>
+<td align="right">22.59733</td>
+<td align="right">-54.25812</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">3</td>
+<td align="right">0.6827013</td>
+<td align="right">7.503826</td>
+<td align="right">0.4497784</td>
+<td align="right">7.510853</td>
+<td align="right">6.296221</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">15.56356</td>
+<td align="right">22.81077</td>
+<td align="right">-52.21288</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">4</td>
+<td align="right">0.6940694</td>
+<td align="right">7.513421</td>
+<td align="right">0.4616176</td>
+<td align="right">7.520432</td>
+<td align="right">6.301158</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">15.64200</td>
+<td align="right">23.18259</td>
+<td align="right">-66.43734</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">5</td>
+<td align="right">0.6748151</td>
+<td align="right">7.499821</td>
+<td align="right">0.4414657</td>
+<td align="right">7.506862</td>
+<td align="right">6.294164</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">15.56706</td>
+<td align="right">22.81533</td>
+<td align="right">-67.80591</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">6</td>
+<td align="right">0.6836593</td>
+<td align="right">7.492892</td>
+<td align="right">0.4512181</td>
+<td align="right">7.499905</td>
+<td align="right">6.290578</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">15.65654</td>
+<td align="right">23.33585</td>
+<td align="right">-66.66771</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">7</td>
+<td align="right">0.6960376</td>
+<td align="right">7.491672</td>
+<td align="right">0.4645483</td>
+<td align="right">7.498654</td>
+<td align="right">6.289934</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">15.56031</td>
+<td align="right">23.89354</td>
+<td align="right">-42.32076</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="right">8</td>
+<td align="right">0.6929899</td>
+<td align="right">7.499328</td>
+<td align="right">0.4609894</td>
+<td align="right">7.506326</td>
+<td align="right">6.293888</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">15.45959</td>
+<td align="right">24.43994</td>
+<td align="right">-48.39355</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># get specific parts and add some file information</span>
 <span class="va">di_files</span> <span class="op">%&gt;%</span>
@@ -504,13 +1980,216 @@
     select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">cycle</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">matches</a></span><span class="op">(</span><span class="st">"C"</span><span class="op">)</span><span class="op">)</span>,
     <span class="co"># include the Identifier 1 fron the file info and rename it to 'id'</span>
     include_file_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>id <span class="op">=</span> <span class="va">`Identifier 1`</span><span class="op">)</span>
-  <span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating vendor data table from 3 data file(s), including file info 'c(id = `Identifier 1`)'</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["id"],"name":[2],"type":["chr"],"align":["left"]},{"label":["cycle"],"name":[3],"type":["int"],"align":["right"]},{"label":["d 45CO2/44CO2"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["d 46CO2/44CO2"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["d 13C/12C"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["AT% 13C/12C"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["d 47CO2/44CO2"],"name":[8],"type":["dbl[permil]"],"align":["right"]},{"label":["d 48CO2/44CO2"],"name":[9],"type":["dbl[permil]"],"align":["right"]},{"label":["d 49CO2/44CO2"],"name":[10],"type":["dbl[permil]"],"align":["right"]}],"data":[{"1":"dual_inlet_example.did","2":"CIT Carrara","3":"1","4":"3.3287770","5":"37.330647","6":"2.1929917","7":"1.108056","8":"NA","9":"NA","10":"NA"},{"1":"dual_inlet_example.did","2":"CIT Carrara","3":"2","4":"3.3209553","5":"37.311799","6":"2.1852948","7":"1.108048","8":"NA","9":"NA","10":"NA"},{"1":"dual_inlet_example.did","2":"CIT Carrara","3":"3","4":"3.3263384","5":"37.317514","6":"2.1908570","7":"1.108054","8":"NA","9":"NA","10":"NA"},{"1":"dual_inlet_example.did","2":"CIT Carrara","3":"4","4":"3.3200304","5":"37.317207","6":"2.1841057","7":"1.108047","8":"NA","9":"NA","10":"NA"},{"1":"dual_inlet_example.did","2":"CIT Carrara","3":"5","4":"3.3187408","5":"37.329768","6":"2.1822644","7":"1.108045","8":"NA","9":"NA","10":"NA"},{"1":"dual_inlet_example.did","2":"CIT Carrara","3":"6","4":"3.3177548","5":"37.322849","6":"2.1814601","7":"1.108044","8":"NA","9":"NA","10":"NA"},{"1":"dual_inlet_example.did","2":"CIT Carrara","3":"7","4":"3.3217518","5":"37.318368","6":"2.1859087","7":"1.108049","8":"NA","9":"NA","10":"NA"},{"1":"dual_inlet_example.caf","2":"2H6","3":"1","4":"0.7000753","5":"7.543205","6":"0.4669423","7":"NA","8":"15.65910","9":"22.50135","10":"-58.12863"},{"1":"dual_inlet_example.caf","2":"2H6","3":"2","4":"0.6846506","5":"7.518991","6":"0.4512997","7":"NA","8":"15.62094","9":"22.59733","10":"-54.25812"},{"1":"dual_inlet_example.caf","2":"2H6","3":"3","4":"0.6827013","5":"7.503826","6":"0.4497784","7":"NA","8":"15.56356","9":"22.81077","10":"-52.21288"},{"1":"dual_inlet_example.caf","2":"2H6","3":"4","4":"0.6940694","5":"7.513421","6":"0.4616176","7":"NA","8":"15.64200","9":"23.18259","10":"-66.43734"},{"1":"dual_inlet_example.caf","2":"2H6","3":"5","4":"0.6748151","5":"7.499821","6":"0.4414657","7":"NA","8":"15.56706","9":"22.81533","10":"-67.80591"},{"1":"dual_inlet_example.caf","2":"2H6","3":"6","4":"0.6836593","5":"7.492892","6":"0.4512181","7":"NA","8":"15.65654","9":"23.33585","10":"-66.66771"},{"1":"dual_inlet_example.caf","2":"2H6","3":"7","4":"0.6960376","5":"7.491672","6":"0.4645483","7":"NA","8":"15.56031","9":"23.89354","10":"-42.32076"},{"1":"dual_inlet_example.caf","2":"2H6","3":"8","4":"0.6929899","5":"7.499328","6":"0.4609894","7":"NA","8":"15.45959","9":"24.43994","10":"-48.39355"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="17%">
+<col width="9%">
+<col width="4%">
+<col width="10%">
+<col width="10%">
+<col width="7%">
+<col width="9%">
+<col width="10%">
+<col width="10%">
+<col width="10%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">id</th>
+<th align="right">cycle</th>
+<th align="right">d 45CO2/44CO2</th>
+<th align="right">d 46CO2/44CO2</th>
+<th align="right">d 13C/12C</th>
+<th align="right">AT% 13C/12C</th>
+<th align="right">d 47CO2/44CO2</th>
+<th align="right">d 48CO2/44CO2</th>
+<th align="right">d 49CO2/44CO2</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">CIT Carrara</td>
+<td align="right">1</td>
+<td align="right">3.3287770</td>
+<td align="right">37.330647</td>
+<td align="right">2.1929917</td>
+<td align="right">1.108056</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">CIT Carrara</td>
+<td align="right">2</td>
+<td align="right">3.3209553</td>
+<td align="right">37.311799</td>
+<td align="right">2.1852948</td>
+<td align="right">1.108048</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">CIT Carrara</td>
+<td align="right">3</td>
+<td align="right">3.3263384</td>
+<td align="right">37.317514</td>
+<td align="right">2.1908570</td>
+<td align="right">1.108054</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">CIT Carrara</td>
+<td align="right">4</td>
+<td align="right">3.3200304</td>
+<td align="right">37.317207</td>
+<td align="right">2.1841057</td>
+<td align="right">1.108047</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">CIT Carrara</td>
+<td align="right">5</td>
+<td align="right">3.3187408</td>
+<td align="right">37.329768</td>
+<td align="right">2.1822644</td>
+<td align="right">1.108045</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">CIT Carrara</td>
+<td align="right">6</td>
+<td align="right">3.3177548</td>
+<td align="right">37.322849</td>
+<td align="right">2.1814601</td>
+<td align="right">1.108044</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">CIT Carrara</td>
+<td align="right">7</td>
+<td align="right">3.3217518</td>
+<td align="right">37.318368</td>
+<td align="right">2.1859087</td>
+<td align="right">1.108049</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">2H6</td>
+<td align="right">1</td>
+<td align="right">0.7000753</td>
+<td align="right">7.543204</td>
+<td align="right">0.4669423</td>
+<td align="right">NA</td>
+<td align="right">15.65910</td>
+<td align="right">22.50135</td>
+<td align="right">-58.12863</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">2H6</td>
+<td align="right">2</td>
+<td align="right">0.6846506</td>
+<td align="right">7.518991</td>
+<td align="right">0.4512997</td>
+<td align="right">NA</td>
+<td align="right">15.62094</td>
+<td align="right">22.59733</td>
+<td align="right">-54.25812</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">2H6</td>
+<td align="right">3</td>
+<td align="right">0.6827013</td>
+<td align="right">7.503826</td>
+<td align="right">0.4497784</td>
+<td align="right">NA</td>
+<td align="right">15.56356</td>
+<td align="right">22.81077</td>
+<td align="right">-52.21288</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">2H6</td>
+<td align="right">4</td>
+<td align="right">0.6940694</td>
+<td align="right">7.513421</td>
+<td align="right">0.4616176</td>
+<td align="right">NA</td>
+<td align="right">15.64200</td>
+<td align="right">23.18259</td>
+<td align="right">-66.43734</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">2H6</td>
+<td align="right">5</td>
+<td align="right">0.6748151</td>
+<td align="right">7.499821</td>
+<td align="right">0.4414657</td>
+<td align="right">NA</td>
+<td align="right">15.56706</td>
+<td align="right">22.81533</td>
+<td align="right">-67.80591</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">2H6</td>
+<td align="right">6</td>
+<td align="right">0.6836593</td>
+<td align="right">7.492892</td>
+<td align="right">0.4512181</td>
+<td align="right">NA</td>
+<td align="right">15.65654</td>
+<td align="right">23.33585</td>
+<td align="right">-66.66771</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">2H6</td>
+<td align="right">7</td>
+<td align="right">0.6960376</td>
+<td align="right">7.491672</td>
+<td align="right">0.4645483</td>
+<td align="right">NA</td>
+<td align="right">15.56031</td>
+<td align="right">23.89354</td>
+<td align="right">-42.32076</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">2H6</td>
+<td align="right">8</td>
+<td align="right">0.6929899</td>
+<td align="right">7.499328</td>
+<td align="right">0.4609894</td>
+<td align="right">NA</td>
+<td align="right">15.45959</td>
+<td align="right">24.43994</td>
+<td align="right">-48.39355</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="for-expert-users-retrieving-all-data" class="section level1">
@@ -536,7 +2215,7 @@
 <span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span>
 <span class="co">#&gt; Info: reading file 'di_files_export.di.rds' with '.di.rds' reader...</span>
 <span class="co">#&gt; Info: loaded 3 data files from R Data Storage</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.10 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.11 secs</span>
 <span class="co">#&gt; Data from 3 dual inlet iso files: </span>
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   file_id     raw_data      file_info  method_info  vendor_data_tab… file_path  </span>
