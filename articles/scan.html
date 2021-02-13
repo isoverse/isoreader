@@ -25,6 +25,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -100,13 +102,12 @@
 
       
 
-      </header><script src="scan_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="scan_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
-<script src="scan_files/pagedtable-1.1/js/pagedtable.js"></script><div class="row">
+      </header><script src="scan_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Scan Examples</h1>
             
-            <h4 class="date">2021-02-03</h4>
+            <h4 class="date">2021-02-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/scan.Rmd"><code>vignettes/scan.Rmd</code></a></small>
       <div class="hidden name"><code>scan.Rmd</code></div>
@@ -130,12 +131,83 @@
 <p>Reading scan files is as simple as passing one or multiple file or folder paths to the <code><a href="../reference/iso_read_scan.html">iso_read_scan()</a></code> function. If folders are provided, any files that have a recognized scan file extensions within those folders will be processed (e.g. all <code>.scn</code>). Here we read several files that are bundled with the package as examples (and whose paths can be retrieved using the <code><a href="../reference/iso_get_reader_example.html">iso_get_reader_example()</a></code> function).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># all available examples</span>
-<span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["filename"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["software"],"name":[3],"type":["chr"],"align":["left"]},{"label":["description"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"continuous_flow_example.cf","2":"continuous flow","3":"Isodat","4":"Continuous Flow file format (older)"},{"1":"continuous_flow_example.dxf","2":"continuous flow","3":"Isodat","4":"Continuous Flow file format (newer)"},{"1":"continuous_flow_example.iarc","2":"continuous flow","3":"ionOS","4":"Continuous Flow data archive"},{"1":"dual_inlet_example.caf","2":"dual inlet","3":"Isodat","4":"Dual Inlet file format (older)"},{"1":"dual_inlet_example.did","2":"dual inlet","3":"Isodat","4":"Dual Inlet file format (newer)"},{"1":"dual_inlet_nu_example.txt","2":"dual inlet","3":"Nu","4":"Dual Inlet file format"},{"1":"background_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"full_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"peak_shape_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"},{"1":"time_scan_example.scn","2":"scan","3":"Isodat","4":"Scan file format"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="32%">
+<col width="17%">
+<col width="10%">
+<col width="40%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">filename</th>
+<th align="left">type</th>
+<th align="left">software</th>
+<th align="left">description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">continuous_flow_example.cf</td>
+<td align="left">continuous flow</td>
+<td align="left">Isodat</td>
+<td align="left">Continuous Flow file format (older)</td>
+</tr>
+<tr class="even">
+<td align="left">continuous_flow_example.dxf</td>
+<td align="left">continuous flow</td>
+<td align="left">Isodat</td>
+<td align="left">Continuous Flow file format (newer)</td>
+</tr>
+<tr class="odd">
+<td align="left">continuous_flow_example.iarc</td>
+<td align="left">continuous flow</td>
+<td align="left">ionOS</td>
+<td align="left">Continuous Flow data archive</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_example.caf</td>
+<td align="left">dual inlet</td>
+<td align="left">Isodat</td>
+<td align="left">Dual Inlet file format (older)</td>
+</tr>
+<tr class="odd">
+<td align="left">dual_inlet_example.did</td>
+<td align="left">dual inlet</td>
+<td align="left">Isodat</td>
+<td align="left">Dual Inlet file format (newer)</td>
+</tr>
+<tr class="even">
+<td align="left">dual_inlet_nu_example.txt</td>
+<td align="left">dual inlet</td>
+<td align="left">Nu</td>
+<td align="left">Dual Inlet file format</td>
+</tr>
+<tr class="odd">
+<td align="left">background_scan_example.scn</td>
+<td align="left">scan</td>
+<td align="left">Isodat</td>
+<td align="left">Scan file format</td>
+</tr>
+<tr class="even">
+<td align="left">full_scan_example.scn</td>
+<td align="left">scan</td>
+<td align="left">Isodat</td>
+<td align="left">Scan file format</td>
+</tr>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">scan</td>
+<td align="left">Isodat</td>
+<td align="left">Scan file format</td>
+</tr>
+<tr class="even">
+<td align="left">time_scan_example.scn</td>
+<td align="left">scan</td>
+<td align="left">Isodat</td>
+<td align="left">Scan file format</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># read scan examples</span>
 <span class="va">scan_files</span> <span class="op">&lt;-</span>
@@ -150,38 +222,86 @@
 <span class="co">#&gt; Info: reading file 'background_scan_example.scn' with '.scn' reader...</span>
 <span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader...</span>
 <span class="co">#&gt; Info: reading file 'time_scan_example.scn' with '.scn' reader...</span>
-<span class="co">#&gt; Info: finished reading 4 files in 1.06 secs</span></code></pre></div>
+<span class="co">#&gt; Info: finished reading 4 files in 0.79 secs</span></code></pre></div>
 </div>
 <div id="file-summary" class="section level1">
 <h1 class="hasAnchor">
 <a href="#file-summary" class="anchor"></a>File summary</h1>
 <p>The <code>scan_files</code> variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the <code><a href="../reference/iso_get_data_summary.html">iso_get_data_summary()</a></code> function.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scan_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">scan_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating data summary from 4 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["raw_data"],"name":[2],"type":["glue"],"align":["right"]},{"label":["file_info"],"name":[3],"type":["chr"],"align":["left"]},{"label":["method_info"],"name":[4],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"220 measurements, 3 ions (44,45,46)","3":"8 entries","4":"resistors","5":"peak_shape_scan_example.scn","_row":"peak_shape_scan_example.scn"},{"1":"background_scan_example.scn","2":"525 measurements, 7 ions (44,45,46,47,54,48,49)","3":"8 entries","4":"resistors","5":"background_scan_example.scn","_row":"background_scan_example.scn"},{"1":"full_scan_example.scn","2":"799 measurements, 3 channels (2,4,6)","3":"8 entries","4":"resistors","5":"full_scan_example.scn","_row":"full_scan_example.scn"},{"1":"time_scan_example.scn","2":"5532 measurements, 2 ions (38,40)","3":"8 entries","4":"resistors","5":"time_scan_example.scn","_row":"time_scan_example.scn"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="22%">
+<col width="38%">
+<col width="7%">
+<col width="9%">
+<col width="22%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">raw_data</th>
+<th align="left">file_info</th>
+<th align="left">method_info</th>
+<th align="left">file_path</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">220 measurements, 3 ions (44,45,46)</td>
+<td align="left">8 entries</td>
+<td align="left">resistors</td>
+<td align="left">peak_shape_scan_example.scn</td>
+</tr>
+<tr class="even">
+<td align="left">background_scan_example.scn</td>
+<td align="left">525 measurements, 7 ions (44,45,46,47,54,48,49)</td>
+<td align="left">8 entries</td>
+<td align="left">resistors</td>
+<td align="left">background_scan_example.scn</td>
+</tr>
+<tr class="odd">
+<td align="left">full_scan_example.scn</td>
+<td align="left">799 measurements, 3 channels (2,4,6)</td>
+<td align="left">8 entries</td>
+<td align="left">resistors</td>
+<td align="left">full_scan_example.scn</td>
+</tr>
+<tr class="even">
+<td align="left">time_scan_example.scn</td>
+<td align="left">5532 measurements, 2 ions (38,40)</td>
+<td align="left">8 entries</td>
+<td align="left">resistors</td>
+<td align="left">time_scan_example.scn</td>
+</tr>
+</tbody>
+</table>
 <div id="problems" class="section level2">
 <h2 class="hasAnchor">
 <a href="#problems" class="anchor"></a>Problems</h2>
 <p>In case there was any trouble with reading any of the files, the following functions provide an overview summary as well as details of all errors and warnings, respectively. The examples here contain no errors but if you run into any unexpected file read problems, please file a bug report in the <a href="https://github.com/isoverse/isoreader/issues">isoreader issue tracker</a>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scan_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["error"],"name":[2],"type":["lgl"],"align":["right"]},{"label":["warning"],"name":[3],"type":["lgl"],"align":["right"]}],"data":[],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<code class="sourceCode R"><span class="va">scan_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">error</th>
+<th align="left">warning</th>
+</tr></thead>
+<tbody></tbody>
+</table>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scan_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_problems.html">iso_get_problems</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["func"],"name":[3],"type":["chr"],"align":["left"]},{"label":["details"],"name":[4],"type":["chr"],"align":["left"]}],"data":[],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<code class="sourceCode R"><span class="va">scan_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_problems.html">iso_get_problems</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">type</th>
+<th align="left">func</th>
+<th align="left">details</th>
+</tr></thead>
+<tbody></tbody>
+</table>
 </div>
 </div>
 <div id="file-information" class="section level1">
@@ -190,13 +310,66 @@
 <p>Detailed file information can be aggregated for all isofiles using the <code><a href="../reference/iso_get_file_info.html">iso_get_file_info()</a></code> function which supports the full <a href="https://dplyr.tidyverse.org/reference/select.html">select syntax</a> of the <a href="https://dplyr.tidyverse.org/">dplyr</a> package to specify which columns are of interest (by default, all file information is retrieved).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># all file information</span>
-<span class="va">scan_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">file_root</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">scan_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">file_root</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating file info from 4 data file(s), selecting info columns 'c(-file_root)'</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["file_datetime"],"name":[4],"type":["dttm"],"align":["right"]},{"label":["file_size"],"name":[5],"type":["int"],"align":["right"]},{"label":["type"],"name":[6],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"36411","6":"High Voltage","7":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"62303","6":"High Voltage","7":"NA"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"57551","6":"MagnetCurrent","7":"NA"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"140550","6":"Clock","7":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="20%">
+<col width="20%">
+<col width="9%">
+<col width="14%">
+<col width="7%">
+<col width="10%">
+<col width="18%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">file_path</th>
+<th align="left">file_subpath</th>
+<th align="left">file_datetime</th>
+<th align="right">file_size</th>
+<th align="left">type</th>
+<th align="left">comment</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">36411</td>
+<td align="left">High Voltage</td>
+<td align="left">test this comment feature</td>
+</tr>
+<tr class="even">
+<td align="left">background_scan_example.scn</td>
+<td align="left">background_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">62303</td>
+<td align="left">High Voltage</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">full_scan_example.scn</td>
+<td align="left">full_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">57551</td>
+<td align="left">MagnetCurrent</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">time_scan_example.scn</td>
+<td align="left">time_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">140550</td>
+<td align="left">Clock</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
 <div id="selectrename" class="section level2">
 <h2 class="hasAnchor">
 <a href="#selectrename" class="anchor"></a>Select/Rename</h2>
@@ -210,13 +383,66 @@
 <span class="co">#&gt; Info: renaming the following file info across 4 data file(s): 'file_datetime'-&gt;'Date &amp; Time'</span>
 
 <span class="co"># fetch all file info</span>
-<span class="va">scan_files2</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">scan_files2</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating file info from 4 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["dttm"],"align":["right"]},{"label":["file_size"],"name":[5],"type":["int"],"align":["right"]},{"label":["type"],"name":[6],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"36411","6":"High Voltage","7":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"62303","6":"High Voltage","7":"NA"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"57551","6":"MagnetCurrent","7":"NA"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"140550","6":"Clock","7":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="20%">
+<col width="20%">
+<col width="9%">
+<col width="14%">
+<col width="7%">
+<col width="10%">
+<col width="18%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">file_path</th>
+<th align="left">file_subpath</th>
+<th align="left">Date &amp; Time</th>
+<th align="right">file_size</th>
+<th align="left">type</th>
+<th align="left">comment</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">36411</td>
+<td align="left">High Voltage</td>
+<td align="left">test this comment feature</td>
+</tr>
+<tr class="even">
+<td align="left">background_scan_example.scn</td>
+<td align="left">background_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">62303</td>
+<td align="left">High Voltage</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">full_scan_example.scn</td>
+<td align="left">full_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">57551</td>
+<td align="left">MagnetCurrent</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">time_scan_example.scn</td>
+<td align="left">time_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">140550</td>
+<td align="left">Clock</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="filter" class="section level2">
 <h2 class="hasAnchor">
@@ -227,14 +453,49 @@
 <span class="va">scan_files2</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"High Voltage"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: applying file filter, keeping 2 of 4 files</span>
 <span class="co">#&gt; Info: aggregating file info from 2 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["dttm"],"align":["right"]},{"label":["file_size"],"name":[5],"type":["int"],"align":["right"]},{"label":["type"],"name":[6],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"36411","6":"High Voltage","7":"test this comment feature"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"62303","6":"High Voltage","7":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="20%">
+<col width="20%">
+<col width="9%">
+<col width="14%">
+<col width="7%">
+<col width="9%">
+<col width="18%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">file_path</th>
+<th align="left">file_subpath</th>
+<th align="left">Date &amp; Time</th>
+<th align="right">file_size</th>
+<th align="left">type</th>
+<th align="left">comment</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">36411</td>
+<td align="left">High Voltage</td>
+<td align="left">test this comment feature</td>
+</tr>
+<tr class="even">
+<td align="left">background_scan_example.scn</td>
+<td align="left">background_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">62303</td>
+<td align="left">High Voltage</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="mutate" class="section level2">
 <h2 class="hasAnchor">
@@ -250,13 +511,72 @@
 
 <span class="va">scan_files3</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating file info from 4 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["file_path"],"name":[2],"type":["chr"],"align":["left"]},{"label":["file_subpath"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Date & Time"],"name":[4],"type":["dttm"],"align":["right"]},{"label":["file_size"],"name":[5],"type":["int"],"align":["right"]},{"label":["type"],"name":[6],"type":["chr"],"align":["left"]},{"label":["comment"],"name":[7],"type":["chr"],"align":["left"]},{"label":["Run in 2019?"],"name":[8],"type":["lgl"],"align":["right"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"peak_shape_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"36411","6":"High Voltage","7":"test this comment feature","8":"FALSE"},{"1":"background_scan_example.scn","2":"background_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"62303","6":"High Voltage","7":"NA","8":"FALSE"},{"1":"full_scan_example.scn","2":"full_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"57551","6":"MagnetCurrent","7":"NA","8":"FALSE"},{"1":"time_scan_example.scn","2":"time_scan_example.scn","3":"NA","4":"2021-02-03 03:19:13","5":"140550","6":"Clock","7":"NA","8":"FALSE"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="18%">
+<col width="18%">
+<col width="8%">
+<col width="13%">
+<col width="6%">
+<col width="9%">
+<col width="17%">
+<col width="8%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">file_path</th>
+<th align="left">file_subpath</th>
+<th align="left">Date &amp; Time</th>
+<th align="right">file_size</th>
+<th align="left">type</th>
+<th align="left">comment</th>
+<th align="left">Run in 2019?</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">36411</td>
+<td align="left">High Voltage</td>
+<td align="left">test this comment feature</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">background_scan_example.scn</td>
+<td align="left">background_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">62303</td>
+<td align="left">High Voltage</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">full_scan_example.scn</td>
+<td align="left">full_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">57551</td>
+<td align="left">MagnetCurrent</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">time_scan_example.scn</td>
+<td align="left">time_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">2021-02-13 03:38:23</td>
+<td align="right">140550</td>
+<td align="left">Clock</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="resistors" class="section level1">
@@ -264,13 +584,108 @@
 <a href="#resistors" class="anchor"></a>Resistors</h1>
 <p>Additionally, some IRMS data files contain resistor information that are useful for downstream calculations (see e.g. section on signal conversion later in this vignette):</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scan_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_resistors.html">iso_get_resistors</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">scan_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_resistors.html">iso_get_resistors</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating resistors info from 4 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["cup"],"name":[2],"type":["int"],"align":["right"]},{"label":["R.Ohm"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["mass"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"3","3":"3e+08","4":"44"},{"1":"peak_shape_scan_example.scn","2":"4","3":"3e+10","4":"45"},{"1":"peak_shape_scan_example.scn","2":"6","3":"1e+11","4":"46"},{"1":"background_scan_example.scn","2":"1","3":"3e+08","4":"44"},{"1":"background_scan_example.scn","2":"2","3":"3e+10","4":"45"},{"1":"background_scan_example.scn","2":"3","3":"1e+11","4":"46"},{"1":"background_scan_example.scn","2":"4","3":"1e+13","4":"47"},{"1":"background_scan_example.scn","2":"6","3":"1e+13","4":"54"},{"1":"background_scan_example.scn","2":"7","3":"1e+13","4":"48"},{"1":"background_scan_example.scn","2":"8","3":"1e+13","4":"49"},{"1":"full_scan_example.scn","2":"2","3":"3e+08","4":"NA"},{"1":"full_scan_example.scn","2":"4","3":"3e+10","4":"NA"},{"1":"full_scan_example.scn","2":"6","3":"1e+11","4":"NA"},{"1":"time_scan_example.scn","2":"2","3":"3e+08","4":"38"},{"1":"time_scan_example.scn","2":"4","3":"3e+10","4":"40"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="right">cup</th>
+<th align="right">R.Ohm</th>
+<th align="left">mass</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="right">3</td>
+<td align="right">3e+08</td>
+<td align="left">44</td>
+</tr>
+<tr class="even">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="right">4</td>
+<td align="right">3e+10</td>
+<td align="left">45</td>
+</tr>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="right">6</td>
+<td align="right">1e+11</td>
+<td align="left">46</td>
+</tr>
+<tr class="even">
+<td align="left">background_scan_example.scn</td>
+<td align="right">1</td>
+<td align="right">3e+08</td>
+<td align="left">44</td>
+</tr>
+<tr class="odd">
+<td align="left">background_scan_example.scn</td>
+<td align="right">2</td>
+<td align="right">3e+10</td>
+<td align="left">45</td>
+</tr>
+<tr class="even">
+<td align="left">background_scan_example.scn</td>
+<td align="right">3</td>
+<td align="right">1e+11</td>
+<td align="left">46</td>
+</tr>
+<tr class="odd">
+<td align="left">background_scan_example.scn</td>
+<td align="right">4</td>
+<td align="right">1e+13</td>
+<td align="left">47</td>
+</tr>
+<tr class="even">
+<td align="left">background_scan_example.scn</td>
+<td align="right">6</td>
+<td align="right">1e+13</td>
+<td align="left">54</td>
+</tr>
+<tr class="odd">
+<td align="left">background_scan_example.scn</td>
+<td align="right">7</td>
+<td align="right">1e+13</td>
+<td align="left">48</td>
+</tr>
+<tr class="even">
+<td align="left">background_scan_example.scn</td>
+<td align="right">8</td>
+<td align="right">1e+13</td>
+<td align="left">49</td>
+</tr>
+<tr class="odd">
+<td align="left">full_scan_example.scn</td>
+<td align="right">2</td>
+<td align="right">3e+08</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">full_scan_example.scn</td>
+<td align="right">4</td>
+<td align="right">3e+10</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">full_scan_example.scn</td>
+<td align="right">6</td>
+<td align="right">1e+11</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">time_scan_example.scn</td>
+<td align="right">2</td>
+<td align="right">3e+08</td>
+<td align="left">38</td>
+</tr>
+<tr class="odd">
+<td align="left">time_scan_example.scn</td>
+<td align="right">4</td>
+<td align="right">3e+10</td>
+<td align="left">40</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="raw-data" class="section level1">
 <h1 class="hasAnchor">
@@ -278,13 +693,228 @@
 <p>The raw data read from the scan files can be retrieved similarly using the <code><a href="../reference/iso_get_raw_data.html">iso_get_raw_data()</a></code> function. Most data aggregation functions also allow for inclusion of file information using the <code>include_file_info</code> parameter, which functions identically to the <code>select</code> parameter of the <code>iso_get_file_info</code> function discussed earlier.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># get raw data with default selections (all raw data, no additional file info)</span>
-<span class="va">scan_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">scan_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating raw data from 4 data file(s)</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["step"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["x"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["x_units"],"name":[4],"type":["chr"],"align":["left"]},{"label":["v44.mV"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["v45.mV"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["v46.mV"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["v47.mV"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["v54.mV"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["v48.mV"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["v49.mV"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["vC2.mV"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["vC4.mV"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["vC6.mV"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["v38.mV"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["v40.mV"],"name":[16],"type":["dbl"],"align":["right"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"61600","3":"9.399710","4":"KV","5":"-1.650841","6":"0.5759007","7":"0.2701459","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"peak_shape_scan_example.scn","2":"61603","3":"9.400167","4":"KV","5":"-1.639444","6":"0.5949929","7":"0.3998433","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"peak_shape_scan_example.scn","2":"61606","3":"9.400624","4":"KV","5":"-1.631846","6":"0.6140866","7":"0.3197281","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"peak_shape_scan_example.scn","2":"61609","3":"9.401081","4":"KV","5":"-1.612849","6":"0.6293626","7":"0.3006569","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"peak_shape_scan_example.scn","2":"61612","3":"9.401538","4":"KV","5":"-1.605250","6":"0.6026302","7":"0.3120995","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"peak_shape_scan_example.scn","2":"61615","3":"9.401995","4":"KV","5":"-1.609050","6":"0.6522784","7":"0.3616900","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"peak_shape_scan_example.scn","2":"61618","3":"9.402452","4":"KV","5":"-1.586252","6":"0.7158523","7":"0.3578750","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"peak_shape_scan_example.scn","2":"61621","3":"9.402909","4":"KV","5":"-1.571052","6":"0.7272921","7":"0.2587052","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"peak_shape_scan_example.scn","2":"61624","3":"9.403366","4":"KV","5":"-1.563452","6":"0.7959418","7":"0.3197281","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"},{"1":"peak_shape_scan_example.scn","2":"61627","3":"9.403823","4":"KV","5":"-1.555851","6":"0.7730565","7":"0.3197281","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"NA","14":"NA","15":"NA","16":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<colgroup>
+<col width="19%">
+<col width="4%">
+<col width="6%">
+<col width="5%">
+<col width="6%">
+<col width="6%">
+<col width="6%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="right">step</th>
+<th align="right">x</th>
+<th align="left">x_units</th>
+<th align="right">v44.mV</th>
+<th align="right">v45.mV</th>
+<th align="right">v46.mV</th>
+<th align="right">v47.mV</th>
+<th align="right">v54.mV</th>
+<th align="right">v48.mV</th>
+<th align="right">v49.mV</th>
+<th align="right">vC2.mV</th>
+<th align="right">vC4.mV</th>
+<th align="right">vC6.mV</th>
+<th align="right">v38.mV</th>
+<th align="right">v40.mV</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="right">61600</td>
+<td align="right">9.399710</td>
+<td align="left">KV</td>
+<td align="right">-1.650841</td>
+<td align="right">0.5759007</td>
+<td align="right">0.2701459</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="right">61603</td>
+<td align="right">9.400167</td>
+<td align="left">KV</td>
+<td align="right">-1.639444</td>
+<td align="right">0.5949929</td>
+<td align="right">0.3998433</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="right">61606</td>
+<td align="right">9.400624</td>
+<td align="left">KV</td>
+<td align="right">-1.631846</td>
+<td align="right">0.6140866</td>
+<td align="right">0.3197281</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="right">61609</td>
+<td align="right">9.401081</td>
+<td align="left">KV</td>
+<td align="right">-1.612849</td>
+<td align="right">0.6293626</td>
+<td align="right">0.3006569</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="right">61612</td>
+<td align="right">9.401538</td>
+<td align="left">KV</td>
+<td align="right">-1.605250</td>
+<td align="right">0.6026302</td>
+<td align="right">0.3120995</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="right">61615</td>
+<td align="right">9.401995</td>
+<td align="left">KV</td>
+<td align="right">-1.609050</td>
+<td align="right">0.6522784</td>
+<td align="right">0.3616900</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="right">61618</td>
+<td align="right">9.402452</td>
+<td align="left">KV</td>
+<td align="right">-1.586252</td>
+<td align="right">0.7158523</td>
+<td align="right">0.3578750</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="right">61621</td>
+<td align="right">9.402909</td>
+<td align="left">KV</td>
+<td align="right">-1.571052</td>
+<td align="right">0.7272921</td>
+<td align="right">0.2587052</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="right">61624</td>
+<td align="right">9.403366</td>
+<td align="left">KV</td>
+<td align="right">-1.563451</td>
+<td align="right">0.7959418</td>
+<td align="right">0.3197281</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="right">61627</td>
+<td align="right">9.403823</td>
+<td align="left">KV</td>
+<td align="right">-1.555851</td>
+<td align="right">0.7730565</td>
+<td align="right">0.3197281</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># get specific raw data and add some file information</span>
 <span class="va">scan_files</span> <span class="op">%&gt;%</span>
@@ -295,13 +925,100 @@
     include_file_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>`Scan Type` <span class="op">=</span> <span class="va">type</span><span class="op">)</span>
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="co"># look at first few records only</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/paged_table.html">paged_table</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating raw data from 4 data file(s), selecting data columns 'c(x, x_units, v44.mV, v45.mV)', including file info 'c(`Scan Type` = type)'</span></code></pre></div>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["file_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Scan Type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["x"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["x_units"],"name":[4],"type":["chr"],"align":["left"]},{"label":["v44.mV"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["v45.mV"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.399710","4":"KV","5":"-1.650841","6":"0.5759007"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.400167","4":"KV","5":"-1.639444","6":"0.5949929"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.400624","4":"KV","5":"-1.631846","6":"0.6140866"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.401081","4":"KV","5":"-1.612849","6":"0.6293626"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.401538","4":"KV","5":"-1.605250","6":"0.6026302"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.401995","4":"KV","5":"-1.609050","6":"0.6522784"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.402452","4":"KV","5":"-1.586252","6":"0.7158523"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.402909","4":"KV","5":"-1.571052","6":"0.7272921"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.403366","4":"KV","5":"-1.563452","6":"0.7959418"},{"1":"peak_shape_scan_example.scn","2":"High Voltage","3":"9.403823","4":"KV","5":"-1.555851","6":"0.7730565"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">file_id</th>
+<th align="left">Scan Type</th>
+<th align="right">x</th>
+<th align="left">x_units</th>
+<th align="right">v44.mV</th>
+<th align="right">v45.mV</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">High Voltage</td>
+<td align="right">9.399710</td>
+<td align="left">KV</td>
+<td align="right">-1.650841</td>
+<td align="right">0.5759007</td>
+</tr>
+<tr class="even">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">High Voltage</td>
+<td align="right">9.400167</td>
+<td align="left">KV</td>
+<td align="right">-1.639444</td>
+<td align="right">0.5949929</td>
+</tr>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">High Voltage</td>
+<td align="right">9.400624</td>
+<td align="left">KV</td>
+<td align="right">-1.631846</td>
+<td align="right">0.6140866</td>
+</tr>
+<tr class="even">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">High Voltage</td>
+<td align="right">9.401081</td>
+<td align="left">KV</td>
+<td align="right">-1.612849</td>
+<td align="right">0.6293626</td>
+</tr>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">High Voltage</td>
+<td align="right">9.401538</td>
+<td align="left">KV</td>
+<td align="right">-1.605250</td>
+<td align="right">0.6026302</td>
+</tr>
+<tr class="even">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">High Voltage</td>
+<td align="right">9.401995</td>
+<td align="left">KV</td>
+<td align="right">-1.609050</td>
+<td align="right">0.6522784</td>
+</tr>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">High Voltage</td>
+<td align="right">9.402452</td>
+<td align="left">KV</td>
+<td align="right">-1.586252</td>
+<td align="right">0.7158523</td>
+</tr>
+<tr class="even">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">High Voltage</td>
+<td align="right">9.402909</td>
+<td align="left">KV</td>
+<td align="right">-1.571052</td>
+<td align="right">0.7272921</td>
+</tr>
+<tr class="odd">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">High Voltage</td>
+<td align="right">9.403366</td>
+<td align="left">KV</td>
+<td align="right">-1.563451</td>
+<td align="right">0.7959418</td>
+</tr>
+<tr class="even">
+<td align="left">peak_shape_scan_example.scn</td>
+<td align="left">High Voltage</td>
+<td align="right">9.403823</td>
+<td align="left">KV</td>
+<td align="right">-1.555851</td>
+<td align="right">0.7730565</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="for-expert-users-retrieving-all-data" class="section level1">
 <h1 class="hasAnchor">
@@ -326,7 +1043,7 @@
 <span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span>
 <span class="co">#&gt; Info: reading file 'scan_files_export.scan.rds' with '.scan.rds' reader...</span>
 <span class="co">#&gt; Info: loaded 4 data files from R Data Storage</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.11 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.10 secs</span>
 <span class="co">#&gt; Data from 4 scan iso files: </span>
 <span class="co">#&gt; # A tibble: 4 x 5</span>
 <span class="co">#&gt;   file_id         raw_data                file_info method_info file_path       </span>
@@ -387,6 +1104,8 @@
 
   
 
+
+  
 
   </body>
 </html>
