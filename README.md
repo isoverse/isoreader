@@ -89,7 +89,7 @@ iso_files <- iso_read_scan(data_folder)
 #> Info: reading file 'full_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'time_scan_example.scn' with '.scn' reader...
-#> Info: finished reading 4 files in 1.21 secs
+#> Info: finished reading 4 files in 0.94 secs
 
 iso_files
 #> Data from 4 scan iso files: 
@@ -106,18 +106,18 @@ iso_files
 
 Currently supported file types:
 
-| extension | software  | description                         | type            |
-| :-------- | :-------- | :---------------------------------- | :-------------- |
-| .cf       | Isodat    | Continuous Flow file format (older) | continuous flow |
-| .cf.rds   | isoreader | R Data Storage                      | continuous flow |
-| .dxf      | Isodat    | Continuous Flow file format (newer) | continuous flow |
-| .iarc     | ionOS     | Continuous Flow data archive        | continuous flow |
-| .caf      | Isodat    | Dual Inlet file format (older)      | dual inlet      |
-| .di.rds   | isoreader | R Data Storage                      | dual inlet      |
-| .did      | Isodat    | Dual Inlet file format (newer)      | dual inlet      |
-| .txt      | Nu        | Dual Inlet file format              | dual inlet      |
-| .scan.rds | isoreader | R Data Storage                      | scan            |
-| .scn      | Isodat    | Scan file format                    | scan            |
+| type            | extension | software  | description                         |
+| :-------------- | :-------- | :-------- | :---------------------------------- |
+| continuous flow | .cf       | Isodat    | Continuous Flow file format (older) |
+| continuous flow | .cf.rds   | isoreader | R Data Storage                      |
+| continuous flow | .dxf      | Isodat    | Continuous Flow file format (newer) |
+| continuous flow | .iarc     | ionOS     | Continuous Flow data archive        |
+| dual inlet      | .caf      | Isodat    | Dual Inlet file format (older)      |
+| dual inlet      | .di.rds   | isoreader | R Data Storage                      |
+| dual inlet      | .did      | Isodat    | Dual Inlet file format (newer)      |
+| dual inlet      | .txt      | Nu        | Dual Inlet file format              |
+| scan            | .scan.rds | isoreader | R Data Storage                      |
+| scan            | .scn      | Isodat    | Scan file format                    |
 
 ## Documentation
 
