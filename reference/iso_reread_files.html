@@ -45,8 +45,6 @@
 
 
 
-
-
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -68,15 +66,9 @@
 </script>
 
 
-  
-
-  
-
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -249,14 +241,14 @@
 <span class='fu'><a href='iso_get_reader_example.html'>iso_get_reader_examples_folder</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
  <span class='fu'><a href='iso_read_scan.html'>iso_read_scan</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
  <span class='fu'><a href='iso_save.html'>iso_save</a></span><span class='op'>(</span><span class='va'>saved_files_path</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Info: preparing to read 4 data files...</span></div><div class='output co'>#&gt; <span class='message'>Info: reading file 'background_scan_example.scn' with '.scn' reader...</span></div><div class='output co'>#&gt; <span class='message'>Info: reading file 'full_scan_example.scn' with '.scn' reader...</span></div><div class='output co'>#&gt; <span class='message'>Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...</span></div><div class='output co'>#&gt; <span class='message'>Info: reading file 'time_scan_example.scn' with '.scn' reader...</span></div><div class='output co'>#&gt; <span class='message'>Info: finished reading 4 files in 1.00 secs</span></div><div class='output co'>#&gt; <span class='message'>Info: exporting data from 4 iso_files into R Data Storage 'saved_isofile.scan.rds'</span></div><div class='input'> 
+</div><div class='output co'>#&gt; <span class='message'>Info: preparing to read 4 data files...</span></div><div class='output co'>#&gt; <span class='message'>Info: reading file 'background_scan_example.scn' with '.scn' reader...</span></div><div class='output co'>#&gt; <span class='message'>Info: reading file 'full_scan_example.scn' with '.scn' reader...</span></div><div class='output co'>#&gt; <span class='message'>Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...</span></div><div class='output co'>#&gt; <span class='message'>Info: reading file 'time_scan_example.scn' with '.scn' reader...</span></div><div class='output co'>#&gt; <span class='message'>Info: finished reading 4 files in 0.73 secs</span></div><div class='output co'>#&gt; <span class='message'>Info: exporting data from 4 iso_files into R Data Storage 'saved_isofile.scan.rds'</span></div><div class='input'> 
 <span class='co'># load collection</span>
 <span class='fu'><a href='iso_read_scan.html'>iso_read_scan</a></span><span class='op'>(</span><span class='va'>saved_files_path</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
  <span class='co'># reread outdated files (alternatively "_all_" or "_changed_")</span>
  <span class='fu'>iso_reread_outdated_files</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
  <span class='co'># re-save collection to its original location</span>
  <span class='fu'><a href='iso_save.html'>iso_save</a></span><span class='op'>(</span><span class='va'>saved_files_path</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Info: preparing to read 1 data files...</span></div><div class='output co'>#&gt; <span class='message'>Info: reading file 'saved_isofile.scan.rds' with '.scan.rds' reader...</span></div><div class='output co'>#&gt; <span class='message'>Info: loaded 4 data files from R Data Storage</span></div><div class='output co'>#&gt; <span class='message'>Info: finished reading 1 files in 0.14 secs</span></div><div class='output co'>#&gt; <span class='message'>Info: found 0 outdated data file(s), re-reading 0/4.</span></div><div class='output co'>#&gt; <span class='message'>Info: exporting data from 4 iso_files into R Data Storage 'saved_isofile.scan.rds'</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Info: preparing to read 1 data files...</span></div><div class='output co'>#&gt; <span class='message'>Info: reading file 'saved_isofile.scan.rds' with '.scan.rds' reader...</span></div><div class='output co'>#&gt; <span class='message'>Info: loaded 4 data files from R Data Storage</span></div><div class='output co'>#&gt; <span class='message'>Info: finished reading 1 files in 0.10 secs</span></div><div class='output co'>#&gt; <span class='message'>Info: found 0 outdated data file(s), re-reading 0/4.</span></div><div class='output co'>#&gt; <span class='message'>Info: exporting data from 4 iso_files into R Data Storage 'saved_isofile.scan.rds'</span></div><div class='input'>
 <span class='co'># cleanup</span>
 <span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span><span class='op'>(</span><span class='va'>saved_files_path</span><span class='op'>)</span>
 </div></pre>
@@ -275,7 +267,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
@@ -283,8 +275,6 @@
 
   
 
-
-  
 
   </body>
 </html>

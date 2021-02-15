@@ -25,8 +25,6 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -107,7 +105,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Development features of isoreader</h1>
             
-            <h4 class="date">2021-02-13</h4>
+            <h4 class="date">2021-02-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/development.Rmd"><code>vignettes/development.Rmd</code></a></small>
       <div class="hidden name"><code>development.Rmd</code></div>
@@ -158,22 +156,22 @@
 <tr class="odd">
 <td align="left">dual inlet</td>
 <td align="left">iso_read_dual_inlet</td>
-<td align="left">.did</td>
-<td align="left">iso_read_did</td>
+<td align="left">.caf</td>
+<td align="left">iso_read_caf</td>
 <td align="left">TRUE</td>
 <td align="left">TRUE</td>
-<td align="left">Dual Inlet file format (newer)</td>
+<td align="left">Dual Inlet file format (older)</td>
 <td align="left">Isodat</td>
 <td align="left">isoreader</td>
 </tr>
 <tr class="even">
 <td align="left">dual inlet</td>
 <td align="left">iso_read_dual_inlet</td>
-<td align="left">.caf</td>
-<td align="left">iso_read_caf</td>
+<td align="left">.did</td>
+<td align="left">iso_read_did</td>
 <td align="left">TRUE</td>
 <td align="left">TRUE</td>
-<td align="left">Dual Inlet file format (older)</td>
+<td align="left">Dual Inlet file format (newer)</td>
 <td align="left">Isodat</td>
 <td align="left">isoreader</td>
 </tr>
@@ -186,28 +184,6 @@
 <td align="left">TRUE</td>
 <td align="left">Dual Inlet file format</td>
 <td align="left">Nu</td>
-<td align="left">isoreader</td>
-</tr>
-<tr class="even">
-<td align="left">dual inlet</td>
-<td align="left">iso_read_dual_inlet</td>
-<td align="left">.di.rda</td>
-<td align="left">iso_read_rda</td>
-<td align="left">FALSE</td>
-<td align="left">TRUE</td>
-<td align="left">R Data Archive (deprecated)</td>
-<td align="left">isoreader</td>
-<td align="left">isoreader</td>
-</tr>
-<tr class="odd">
-<td align="left">dual inlet</td>
-<td align="left">iso_read_dual_inlet</td>
-<td align="left">.di.rds</td>
-<td align="left">iso_read_rds</td>
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="left">R Data Storage</td>
-<td align="left">isoreader</td>
 <td align="left">isoreader</td>
 </tr>
 <tr class="even">
@@ -244,14 +220,14 @@
 <td align="left">isoreader</td>
 </tr>
 <tr class="odd">
-<td align="left">continuous flow</td>
-<td align="left">iso_read_continuous_flow</td>
-<td align="left">.cf.rda</td>
-<td align="left">iso_read_rda</td>
-<td align="left">FALSE</td>
+<td align="left">scan</td>
+<td align="left">iso_read_scan</td>
+<td align="left">.scn</td>
+<td align="left">iso_read_scn</td>
 <td align="left">TRUE</td>
-<td align="left">R Data Archive (deprecated)</td>
-<td align="left">isoreader</td>
+<td align="left">TRUE</td>
+<td align="left">Scan file format</td>
+<td align="left">Isodat</td>
 <td align="left">isoreader</td>
 </tr>
 <tr class="even">
@@ -266,14 +242,14 @@
 <td align="left">isoreader</td>
 </tr>
 <tr class="odd">
-<td align="left">scan</td>
-<td align="left">iso_read_scan</td>
-<td align="left">.scn</td>
-<td align="left">iso_read_scn</td>
-<td align="left">TRUE</td>
-<td align="left">TRUE</td>
-<td align="left">Scan file format</td>
-<td align="left">Isodat</td>
+<td align="left">dual inlet</td>
+<td align="left">iso_read_dual_inlet</td>
+<td align="left">.di.rds</td>
+<td align="left">iso_read_rds</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">R Data Storage</td>
+<td align="left">isoreader</td>
 <td align="left">isoreader</td>
 </tr>
 <tr class="even">
@@ -338,7 +314,7 @@
 <span class="co">#&gt;   ..$ type   : chr(0) </span>
 <span class="co">#&gt;   ..$ func   : chr(0) </span>
 <span class="co">#&gt;   ..$ details: chr(0)</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.50 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.44 secs</span>
 <span class="co">#&gt; Dual inlet iso file 'example.new.did': 0 cycles, 0 ions ()</span>
 <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.remove</a></span><span class="op">(</span><span class="st">"example.new.did"</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
@@ -368,7 +344,7 @@
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader...</span>
 <span class="co">#&gt; Info: starting file #2, named 'dual_inlet_example.caf'</span>
 <span class="co">#&gt; Info: finished file #2</span>
-<span class="co">#&gt; Info: finished reading 2 files in 3.92 secs</span>
+<span class="co">#&gt; Info: finished reading 2 files in 3.50 secs</span>
 <span class="co">#&gt; Data from 2 dual inlet iso files: </span>
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   file_id    raw_data       file_info  method_info  vendor_data_tab… file_path  </span>
@@ -477,7 +453,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
@@ -485,8 +461,6 @@
 
   
 
-
-  
 
   </body>
 </html>
