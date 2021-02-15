@@ -163,7 +163,6 @@ reference:
   - iso_plot_continuous_flow_data
   - iso_plot_dual_inlet_data
   - iso_plot_raw_data
-  - iso_export_to_rda
   - isoread
   
 

@@ -2,14 +2,6 @@ context("Deprecated functions")
 
 test_that("test that deprecated functions give the appropriate error", {
   expect_error(isoread(), "Deprecated")
-  
-  # reading rda files
-  expect_message(tryCatch(iso_read_rda(make_cf_data_structure("NA")), error = function(e) {}, warning = function(w){}), "deprecated")
-  
-  # re-read rda and rds collections directly (deprecated)
-  expect_error(iso_reread_storage(), "deprecated")
-  expect_error(iso_reread_archive(), "deprecated")
-  
 })
 
 

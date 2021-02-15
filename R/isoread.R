@@ -103,19 +103,24 @@ find_func <- function(func) {
 #' @family file_types
 #' @export
 iso_get_supported_file_types <- function() {
-  dplyr::select(default("file_readers"), "extension", "software", "description", "type", "call")
+  default("file_readers") %>% 
+    dplyr::select(.data$type, .data$extension, .data$software, .data$description, .data$call) %>% 
+    dplyr::arrange(.data$type, .data$extension)
 }
 
 get_supported_di_files <- function() {
-  dplyr::filter(default("file_readers"), !!sym("type") == "dual inlet")
+  dplyr::filter(default("file_readers"), .data$type == "dual inlet") %>%
+    dplyr::arrange(.data$extension)
 }
 
 get_supported_cf_files <- function() {
-  dplyr::filter(default("file_readers"), !!sym("type") == "continuous flow")
+  dplyr::filter(default("file_readers"), .data$type == "continuous flow") %>%
+    dplyr::arrange(.data$extension)
 }
 
 get_supported_scan_files <- function() {
-  dplyr::filter(default("file_readers"), !!sym("type") == "scan")
+  dplyr::filter(default("file_readers"), .data$type == "scan") %>%
+    dplyr::arrange(.data$extension)
 }
 
 # file reading ===========
@@ -294,7 +299,7 @@ iso_read_scan <- function(
 #' @param parallel_plan which parallel processing strategy to use, see \link[future]{plan}, typically \code{future::multisession} for compatibility with RStudio interactive mode. If supported by the operating system and running in detached mode (not interactively in RStudio) can also use \code{future::multicore}.
 #' @param parallel_cores how many processor cores to use for parallel processing. By default the maximum available number of cores (\link[future]{availableCores}), which will allow maximal processing speed but may slow other programs running on your machine. Choose a smaller number if you want some processing resources to remain available for other processes. Will issue a warning if too many cores are requested and reset to the maximum available.
 #' @param quiet whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_messages_on} and \link[=iso_info_messages]{iso_turn_info_messages_off}
-#' @param cache whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.
+#' @param cache whether to cache iso_files. Note that R Data Storage files (.rds, see \link{iso_save}) are never cached since they are already essentially in cached form.
 #' @param cache_files_with_errors deprecated. Please use \link{iso_reread_problem_files} instead to selectively re-read all files in a collection of iso files that had been previously read with errors or warnings.
 #' @param read_cache whether to reload from cache if a cached version exists. Note that it will only read from cache if the raw data file has not been modified since. Files that have been modified on disc (e.g. edited in the vendor software) will always be read anew. To automatically reread cached files that were cached by an outdated version of the isoreader package, set the \code{reread_outdated_cache} flag.
 #' @param reread_outdated_cache whether to re-read outdated cache files whenever they are encountered.
@@ -446,7 +451,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
     all_probs$details,
     fixed("outdated version of the isoreader package")))) {
     glue::glue(
-      "some files were read from outdated cache or storage (.rds) files. They were checked for compatibility and should work without issues. However, to avoid this warning and improve read spead, please call iso_reread_outdated_files() on your collection of iso files to refresh outdated cache files."
+      "some files were read from outdated cache files. They were checked for compatibility and should work without issues. However, to avoid this warning and improve read spead, please call iso_reread_outdated_files() on your collection of iso files to refresh outdated cache files."
     ) %>%
       warning(immediate. = TRUE, call. = FALSE)
   }

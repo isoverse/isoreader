@@ -1,22 +1,5 @@
 ## Export functions =======
 
-#' Export data to R Data Archive (.rda) (deprecated)
-#'
-#' This function is deprecated. Please use \code{\link{iso_save}} instead to save collections of isofiles.
-#'
-#' @inheritParams iso_get_raw_data
-#' @param filepath the path (folder and filename) to the export file. The correct file extension is automatically added if not already in the filename, i.e. filename can be provided with or without extension.
-#' @family export functions
-#' @return returns the iso_files object invisibly for use in pipelines
-#' @export
-iso_export_to_rda <- function(iso_files, filepath, quiet = default(quiet)) {
-  # throw deprecation warning
-  log_warning("'iso_export_to_rda' is deprecated and will call 'iso_save()'. Please call 'iso_save()' directly to avoid this warning.")
-
-  # call iso_save
-  iso_save(iso_files, filepath, quiet)
-}
-
 #' Export data to Excel
 #'
 #' This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file. Use the various \code{include_...} parameters to specify what information to include. Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export.
