@@ -6,13 +6,7 @@ name: pkgdown
 
 jobs:
   pkgdown:
-    runs-on: ${{ matrix.config.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {os: macOS-latest, r: 'release'}
+    runs-on: macOS-latest
     
     steps:
       - uses: actions/checkout@v2
@@ -40,6 +34,10 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
+      - name: Install macOS system dependencies
+        if: runner.os == 'macOS'
+        run: brew install libgit2
+
       - name: Install system dependencies
         if: runner.os == 'Linux'
         env:
@@ -56,10 +54,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Install package
-        run: |
-          remotes::install_cran("devtools")
-          devtools::install_github("isoverse/isoreader")
-        shell: Rscript {0}
+        run: R CMD INSTALL .
 
       - name: Deploy package
         run: pkgdown::deploy_to_branch(new_process = FALSE)
