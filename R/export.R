@@ -1,25 +1,8 @@
 ## Export functions =======
 
-#' Export data to R Data Archive (.rda) (deprecated)
-#'
-#' This function is deprecated. Please use \code{\link{iso_save}} instead to save collections of isofiles.
-#'
-#' @inheritParams iso_get_raw_data
-#' @param filepath the path (folder and filename) to the export file. The correct file extension is automatically added if not already in the filename, i.e. filename can be provided with or without extension.
-#' @family export functions
-#' @return returns the iso_files object invisibly for use in pipelines
-#' @export
-iso_export_to_rda <- function(iso_files, filepath, quiet = default(quiet)) {
-  # throw deprecation warning
-  log_warning("'iso_export_to_rda' is deprecated and will call 'iso_save()'. Please call 'iso_save()' directly to avoid this warning.")
-
-  # call iso_save
-  iso_save(iso_files, filepath, quiet)
-}
-
 #' Export data to Excel
 #'
-#' This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file. Use the various \code{include_...} parameters to specify what information to include. Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export.
+#' This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file. Use the various \code{include_...} parameters to specify what information to include. Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export. Note that the openxlsx package required for this export is not installed automatically as part of isoreader. Please install it manually if missing using \code{install.packages("openxlsx")}.
 #'
 #' @inheritParams iso_save
 #' @inheritParams iso_get_all_data
@@ -37,6 +20,15 @@ iso_export_to_excel <- function(
   with_ratios = NULL,
   quiet = default(quiet)) {
 
+  # check for availability
+  if (!requireNamespace("openxlsx", quietly = TRUE)) {
+    warning(
+      "The 'openxlsx' package is required to export to this file format, please install it using the following command: install.packages(\"openxlsx\")",
+      immediate. = TRUE, call. = FALSE
+    )
+    return(invisible(iso_files))
+  }
+  
   # safety checks
   if(!iso_is_object(iso_files)) stop("can only export iso files or lists of iso files", call. = FALSE)
   export_iso_files <- iso_as_file_list(iso_files)
@@ -72,7 +64,7 @@ iso_export_to_excel <- function(
   )
 
   # make excel workbook
-  wb <- createWorkbook()
+  wb <- openxlsx::createWorkbook()
 
   # file info
   if ("file_info" %in% names(all_data)) {
@@ -114,7 +106,7 @@ iso_export_to_excel <- function(
     problems <- all_data %>% select(.data$file_id, .data$problems) %>% unnest(.data$problems)
     add_excel_sheet(wb, "problems", problems)
   }
-  saveWorkbook(wb, filepath, overwrite = TRUE)
+  openxlsx::saveWorkbook(wb, filepath, overwrite = TRUE)
 
   return(invisible(iso_files))
 }
@@ -126,15 +118,15 @@ iso_export_to_excel <- function(
 add_excel_sheet <- function(wb, sheet_name, ..., dbl_digits = 2, col_max_width = 75) {
 
   # sheet
-  addWorksheet(wb, sheet_name)
-  hs <- createStyle(textDecoration = "bold") # header style
+  openxlsx::addWorksheet(wb, sheet_name)
+  hs <- openxlsx::createStyle(textDecoration = "bold") # header style
 
   # data
   sheet_data_sets <- list(...)
   start_row <- 1L
   for (sheet_data in sheet_data_sets) {
     if (ncol(sheet_data) > 0) {
-      writeData(wb, sheet_name, sheet_data, startRow = start_row, headerStyle = hs)
+      openxlsx::writeData(wb, sheet_name, sheet_data, startRow = start_row, headerStyle = hs)
       int_cols <- which(purrr::map_lgl(sheet_data, is.integer))
       dbl_cols <- setdiff(which(purrr::map_lgl(sheet_data, is.numeric)), int_cols)
       if (dbl_digits < 1) {
@@ -144,7 +136,7 @@ add_excel_sheet <- function(wb, sheet_name, ..., dbl_digits = 2, col_max_width =
       # integer column formatting
       if (length(int_cols) > 0) {
         openxlsx::addStyle(
-          wb, sheet_name, style = createStyle(numFmt = "0"),
+          wb, sheet_name, style = openxlsx::createStyle(numFmt = "0"),
           rows = (start_row + 1L):(start_row + 1L + nrow(sheet_data)),
           cols = int_cols, gridExpand = TRUE)
       }
@@ -152,7 +144,7 @@ add_excel_sheet <- function(wb, sheet_name, ..., dbl_digits = 2, col_max_width =
       if (length(dbl_cols) > 0) {
         dbl_format <- paste0("0.", paste(rep("0", dbl_digits), collapse = ""))
         openxlsx::addStyle(
-          wb, sheet_name, style = createStyle(numFmt = dbl_format),
+          wb, sheet_name, style = openxlsx::createStyle(numFmt = dbl_format),
           rows = (start_row + 1L):(start_row + 1L + nrow(sheet_data)),
           cols = dbl_cols, gridExpand = TRUE)
       }
@@ -195,7 +187,7 @@ add_excel_sheet <- function(wb, sheet_name, ..., dbl_digits = 2, col_max_width =
 
 #' Export to feather
 #'
-#' This function exports the passed in iso_files to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided \code{filepath_prefix} as prefix. All are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters). Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in feather output.
+#' This function exports the passed in iso_files to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided \code{filepath_prefix} as prefix. All are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters). Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in feather output. Note that the feather package required for this export is not installed automatically as part of isoreader. Please install it manually if missing using \code{install.packages("feather")}.
 #'
 #' @inheritParams iso_save
 #' @inheritParams iso_export_to_excel
@@ -212,6 +204,15 @@ iso_export_to_feather <- function(
   include_method_info = everything(),
   quiet = default(quiet)) {
 
+  # check for availability
+  if (!requireNamespace("feather", quietly = TRUE)) {
+    warning(
+      "The 'feather' package is required to export to this file format, please install it using the following command: install.packages(\"feather\")",
+      immediate. = TRUE, call. = FALSE
+    )
+    return(invisible(iso_files))
+  }
+  
   # safety checks
   if(!iso_is_object(iso_files)) stop("can only export iso files or lists of iso files", call. = FALSE)
   export_iso_files <- iso_as_file_list(iso_files)
@@ -248,38 +249,38 @@ iso_export_to_feather <- function(
     all_data %>% select(.data$file_id, .data$file_info) %>%
       unnest(.data$file_info) %>%
       collapse_list_columns() %>%
-      write_feather(filepaths[['file_info']])
+      feather::write_feather(filepaths[['file_info']])
   }
 
   # raw data
   if ("raw_data" %in% names(all_data)) {
     all_data %>% select(.data$file_id, .data$raw_data) %>% unnest(.data$raw_data) %>%
-      write_feather(filepaths[['raw_data']])
+      feather::write_feather(filepaths[['raw_data']])
   }
 
   # standards
   if ("standards" %in% names(all_data)) {
    all_data %>% select(.data$file_id, .data$standards) %>% unnest(.data$standards) %>%
-      write_feather(filepaths[['method_info_standards']])
+      feather::write_feather(filepaths[['method_info_standards']])
   }
 
   # resistors
   if ("resistors" %in% names(all_data)) {
     all_data %>% select(.data$file_id, .data$resistors) %>% unnest(.data$resistors) %>%
-      write_feather(filepaths[['method_info_resistors']])
+      feather::write_feather(filepaths[['method_info_resistors']])
   }
 
   # vendor data table
   if ("vendor_data_table" %in% names(all_data)) {
     all_data %>% select(.data$file_id, .data$vendor_data_table) %>%
       unnest(.data$vendor_data_table) %>% iso_strip_units() %>%
-      write_feather(filepaths[['vendor_data_table']])
+      feather::write_feather(filepaths[['vendor_data_table']])
   }
 
   # problems
   if ("problems" %in% names(all_data)) {
    all_data %>% select(.data$file_id, .data$problems) %>% unnest(.data$problems) %>%
-      write_feather(filepaths[['problems']])
+      feather::write_feather(filepaths[['problems']])
   }
 
   return(invisible(iso_files))

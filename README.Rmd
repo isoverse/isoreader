@@ -45,26 +45,45 @@ if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
 devtools::install_github("isoverse/isoreader")
 ```
 
-Troubleshooting note: depending on your workspace and operating system, you may have to re-start your R session, delete previous versions of these packages (`remove.packages("isoreader")`), and/or manually install some dependencies (e.g. the `digest` package tends to cause trouble: `remove.packages("digest"); install.packages("digest")`).
+Troubleshooting note: depending on your workspace and operating system, you may have to re-start your R session or manually install some dependencies. For example, the [Bioconductor](https://www.bioconductor.org/) package manager may need manual installation: `install.packages("BiocManager")`; also, the `digest` package sometimes causes trouble - re-install with `remove.packages("digest"); install.packages("digest")`.
 
-## Functionality
+## Show me some code
+
+You can, for example, automatically read the data from **all** supported scan files in a directory (and all its subdirectories) simply by providing the path to the folder. The following code demonstrates this with the example data files bundled with the `isoreader` package. For a more detailed example including continuous flow and dual inlet file reads, check out our [**Quick Start Vignette**](https://isoreader.isoverse.org/articles/quick_start.html).
+
+```{r, message = -c(1:3), echo = -c(2:3)}
+library(isoreader)
+iso_turn_reader_caching_off() # make sure reading fresh
+setwd(tempdir()) # make sure no wd artifacts
+data_folder <- iso_get_reader_examples_folder()
+iso_files <- iso_read_scan(data_folder)
+
+iso_files
+```
+
+## Supported File Types
 
 Currently supported file types:
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(isoreader)
-iso_get_supported_file_types() %>%
-  dplyr::select(extension, software, description, type) %>%
+iso_get_supported_file_types() %>% 
+  dplyr::select(-call) %>%
   knitr::kable()
 ```
 
+## Documentation
+
+ - for a quick introduction, check out the aforementioned [**Quick Start Vignette**](https://isoreader.isoverse.org/articles/quick_start.html)
  - for a full reference of all available functions, see the **[Function Reference](https://isoreader.isoverse.org/reference/)**
- - for an example of how to work with continuous flow data files, see the vignette on **[Continuous Flow](https://isoreader.isoverse.org/articles/continuous_flow.html)**
- - for an example of how to work with dual inlet data files, see the vignette on **[Dual Inlet](https://isoreader.isoverse.org/articles/dual_inlet.html)**
+ - for function help within RStudio, simply start typing `?iso_` in the console and a list of available function will appear (all functions share the `iso_` prefix)
+ - for a detailed example of how to work with continuous flow data files, see the vignette on **[Continuous Flow](https://isoreader.isoverse.org/articles/continuous_flow.html)**
+ - for a detailed example of how to work with dual inlet data files, see the vignette on **[Dual Inlet](https://isoreader.isoverse.org/articles/dual_inlet.html)**
+ - for a detailed example of how to work with scan data files, see the vignette on **[Scans](https://isoreader.isoverse.org/articles/scan.html)**
 
 ## Troubleshooting
 
-If you run into a file format that is not currently supported or any issues with supported formats, please file a request/bug report in the [issue tracker](https://github.com/isoverse/isoreader/issues). Likewise if you run into any unexpected behavior or uncaught errors. Most isoreader functionality is continuously tested on Unix and Windows systems using [Travis](https://travis-ci.org/) and [AppVeyor](https://ci.appveyor.com/), respectively. This makes it possible to ensure proper functionality and catch issues quickly, however, sometimes something slips through or is not yet automatically tested. We try to make sure to fix such errors as soon as possible but ask for patience due to the small development team. If you have the skills and are willing to fix problems yourself, that's great, please take a look at the development section below.
+If you run into a file format that is not currently supported or any issues with supported formats, please file a request/bug report in the [issue tracker](https://github.com/isoverse/isoreader/issues). Likewise if you run into any unexpected behavior or uncaught errors. Most isoreader functionality is continuously tested on Unix and Windows systems using [GitHub Actions](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check). This makes it possible to ensure proper functionality and catch issues quickly, however, sometimes something slips through or is not yet automatically tested. We try to make sure to fix such errors as soon as possible but ask for patience due to the small development team. If you have the skills and are willing to fix problems yourself, that's great, please take a look at the development section below.
 
 ## Development
 

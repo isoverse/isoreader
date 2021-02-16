@@ -19,7 +19,7 @@ iso_add_file_info(...)
 
 \item{...}{each parameter specifies a set of \code{join_by} column(s) to add the \code{new_file_info} to the existing file information. The provided parameters are applied sequentially. At least one must be specified.}
 
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_messages_on} and \link[=iso_info_messages]{iso_turn_info_messages_off}}
 
 \item{df}{a data frame of iso files data retrieved by any of the data retrieval functions (e.g. \code{\link{iso_get_file_info}}, \code{\link{iso_get_raw_data}, etc.}}
 }

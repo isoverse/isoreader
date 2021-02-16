@@ -46,7 +46,7 @@ iso_get_supported_file_types() %>%
 
 # Messages
 
-By default, isoreader is quite verbose to let the user know what is happening. However, most functions can be silenced by adding the parameter `quiet = TRUE` to the function call. This can also be done globally using `iso_turn_info_message_off()`
+By default, isoreader is quite verbose to let the user know what is happening. However, most functions can be silenced by adding the parameter `quiet = TRUE` to the function call. This can also be done globally using `iso_turn_info_messages_off()`
 
 ```{r}
 # read a file in the default verbose mode

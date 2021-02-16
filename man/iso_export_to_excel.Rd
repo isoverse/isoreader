@@ -42,18 +42,17 @@ iso_export_to_excel(
 
 \item{with_ratios}{deprecated, please use the \code{select} parameter to explicitly include or exclude ratio columns}
 
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_messages_on} and \link[=iso_info_messages]{iso_turn_info_messages_off}}
 }
 \value{
 returns the iso_files object invisibly for use in pipelines
 }
 \description{
-This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file. Use the various \code{include_...} parameters to specify what information to include. Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export.
+This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file. Use the various \code{include_...} parameters to specify what information to include. Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export. Note that the openxlsx package required for this export is not installed automatically as part of isoreader. Please install it manually if missing using \code{install.packages("openxlsx")}.
 }
 \seealso{
 Other export functions: 
 \code{\link{iso_export_to_feather}()},
-\code{\link{iso_export_to_rda}()},
 \code{\link{iso_save}()}
 }
 \concept{export functions}

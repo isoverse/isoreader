@@ -7,6 +7,7 @@ name: pkgdown
 jobs:
   pkgdown:
     runs-on: macOS-latest
+    
     steps:
       - uses: actions/checkout@v2
 
@@ -16,6 +17,9 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
+      - name: Remove .Rprofile
+        run: rm .Rprofile
+
       - name: Query dependencies
         run: |
           install.packages('remotes')
@@ -23,18 +27,30 @@ jobs:
         shell: Rscript {0}
 
       - name: Cache R packages
+        if: runner.os != 'Windows'
         uses: actions/cache@v1
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: macOS-r-4.0-2-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: macOS-r-4.0-2-
+          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+
+      - name: Install macOS system dependencies
+        if: runner.os == 'macOS'
+        run: brew install libgit2
+
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
+        env:
+          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
+        run: |
+          Rscript -e "remotes::install_github('r-hub/sysreqs')"
+          sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
+          sudo -s eval "$sysreqs"
 
       - name: Install dependencies
         run: |
-          install.packages("remotes")
           remotes::install_deps(dependencies = TRUE)
-          remotes::install_dev("pkgdown")
-          remotes::install_github("tidyverse/tidytemplate")
+          remotes::install_cran("pkgdown")
         shell: Rscript {0}
 
       - name: Install package

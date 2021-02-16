@@ -35,13 +35,23 @@ Isoreader supports various dual inlet, continuous flow, and scan file formats. T
 library(isoreader)
 ```
 
+```{r, include=FALSE, message=FALSE}
+iso_turn_reader_caching_off()
+```
+
+
 # Data files
 
-For demonstration purposes, this vignette simply reads all supported dual inlet, continuous flow, and scan files that are bundled with the isoreader package.
+For demonstration purposes, this vignette simply reads all supported dual inlet, continuous flow, and scan files that are bundled with the isoreader package. For a more detailed introduction to each file type, check out the specific vignettes for each:
+
+ - [Continuous Flow](https://isoreader.isoverse.org/articles/continuous_flow.html)
+ - [Dual Inlet](https://isoreader.isoverse.org/articles/dual_inlet.html)
+ - [Scans](https://isoreader.isoverse.org/articles/scan.html)
+
 
 ```{r}
 # all available examples
-iso_get_reader_examples() %>% rmarkdown::paged_table()
+iso_get_reader_examples() %>% knitr::kable()
 ```
 
 # Dual Inlet Files

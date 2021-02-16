@@ -45,13 +45,13 @@ iso_read_files(
 
 \item{parallel_cores}{how many processor cores to use for parallel processing. By default the maximum available number of cores (\link[future]{availableCores}), which will allow maximal processing speed but may slow other programs running on your machine. Choose a smaller number if you want some processing resources to remain available for other processes. Will issue a warning if too many cores are requested and reset to the maximum available.}
 
-\item{cache}{whether to cache iso_files. Note that previously exported R Data Archives (di.rda, cf.rda) are never cached since they are already essentially in cached form.}
+\item{cache}{whether to cache iso_files. Note that R Data Storage files (.rds, see \link{iso_save}) are never cached since they are already essentially in cached form.}
 
 \item{read_cache}{whether to reload from cache if a cached version exists. Note that it will only read from cache if the raw data file has not been modified since. Files that have been modified on disc (e.g. edited in the vendor software) will always be read anew. To automatically reread cached files that were cached by an outdated version of the isoreader package, set the \code{reread_outdated_cache} flag.}
 
 \item{reread_outdated_cache}{whether to re-read outdated cache files whenever they are encountered.}
 
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_messages_on} and \link[=iso_info_messages]{iso_turn_info_messages_off}}
 }
 \value{
 single iso_file object (if single file) or list of iso_files (iso_file_list)

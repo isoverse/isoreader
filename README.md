@@ -4,7 +4,7 @@
 # isoreader <a href='https://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
-[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.2.7-purple.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
+[![Git\_Hub\_Version](https://img.shields.io/badge/GitHub-1.2.8-purple.svg?style=flat-square)](https://github.com/isoverse/isoreader/commits)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://isoreader.isoverse.org/)
 [![R build
 status](https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg)](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check)
@@ -63,38 +63,81 @@ devtools::install_github("isoverse/isoreader")
 ```
 
 Troubleshooting note: depending on your workspace and operating system,
-you may have to re-start your R session, delete previous versions of
-these packages (`remove.packages("isoreader")`), and/or manually install
-some dependencies (e.g. the `digest` package tends to cause trouble:
-`remove.packages("digest"); install.packages("digest")`).
+you may have to re-start your R session or manually install some
+dependencies. For example, the
+[Bioconductor](https://www.bioconductor.org/) package manager may need
+manual installation: `install.packages("BiocManager")`; also, the
+`digest` package sometimes causes trouble - re-install with
+`remove.packages("digest"); install.packages("digest")`.
 
-## Functionality
+## Show me some code
+
+You can, for example, automatically read the data from **all** supported
+scan files in a directory (and all its subdirectories) simply by
+providing the path to the folder. The following code demonstrates this
+with the example data files bundled with the `isoreader` package. For a
+more detailed example including continuous flow and dual inlet file
+reads, check out our [**Quick Start
+Vignette**](https://isoreader.isoverse.org/articles/quick_start.html).
+
+``` r
+library(isoreader)
+data_folder <- iso_get_reader_examples_folder()
+iso_files <- iso_read_scan(data_folder)
+#> Info: preparing to read 4 data files...
+#> Info: reading file 'background_scan_example.scn' with '.scn' reader...
+#> Info: reading file 'full_scan_example.scn' with '.scn' reader...
+#> Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...
+#> Info: reading file 'time_scan_example.scn' with '.scn' reader...
+#> Info: finished reading 4 files in 0.94 secs
+
+iso_files
+#> Data from 4 scan iso files: 
+#> # A tibble: 4 x 5
+#>   file_id         raw_data                file_info method_info file_path       
+#>   <chr>           <glue>                  <chr>     <chr>       <chr>           
+#> 1 background_sca… 525 measurements, 7 io… 8 entries resistors   background_scan…
+#> 2 full_scan_exam… 799 measurements, 3 ch… 8 entries resistors   full_scan_examp…
+#> 3 peak_shape_sca… 220 measurements, 3 io… 8 entries resistors   peak_shape_scan…
+#> 4 time_scan_exam… 5532 measurements, 2 i… 8 entries resistors   time_scan_examp…
+```
+
+## Supported File Types
 
 Currently supported file types:
 
-| extension | software  | description                         | type            |
-| :-------- | :-------- | :---------------------------------- | :-------------- |
-| .did      | Isodat    | Dual Inlet file format (newer)      | dual inlet      |
-| .caf      | Isodat    | Dual Inlet file format (older)      | dual inlet      |
-| .txt      | Nu        | Dual Inlet file format              | dual inlet      |
-| .di.rda   | isoreader | R Data Archive (deprecated)         | dual inlet      |
-| .di.rds   | isoreader | R Data Storage                      | dual inlet      |
-| .cf       | Isodat    | Continuous Flow file format (older) | continuous flow |
-| .dxf      | Isodat    | Continuous Flow file format (newer) | continuous flow |
-| .iarc     | ionOS     | Continuous Flow data archive        | continuous flow |
-| .cf.rda   | isoreader | R Data Archive (deprecated)         | continuous flow |
-| .cf.rds   | isoreader | R Data Storage                      | continuous flow |
-| .scn      | Isodat    | Scan file format                    | scan            |
-| .scan.rds | isoreader | R Data Storage                      | scan            |
+| type            | extension | software  | description                         |
+| :-------------- | :-------- | :-------- | :---------------------------------- |
+| continuous flow | .cf       | Isodat    | Continuous Flow file format (older) |
+| continuous flow | .cf.rds   | isoreader | R Data Storage                      |
+| continuous flow | .dxf      | Isodat    | Continuous Flow file format (newer) |
+| continuous flow | .iarc     | ionOS     | Continuous Flow data archive        |
+| dual inlet      | .caf      | Isodat    | Dual Inlet file format (older)      |
+| dual inlet      | .di.rds   | isoreader | R Data Storage                      |
+| dual inlet      | .did      | Isodat    | Dual Inlet file format (newer)      |
+| dual inlet      | .txt      | Nu        | Dual Inlet file format              |
+| scan            | .scan.rds | isoreader | R Data Storage                      |
+| scan            | .scn      | Isodat    | Scan file format                    |
 
+## Documentation
+
+  - for a quick introduction, check out the aforementioned [**Quick
+    Start
+    Vignette**](https://isoreader.isoverse.org/articles/quick_start.html)
   - for a full reference of all available functions, see the **[Function
     Reference](https://isoreader.isoverse.org/reference/)**
-  - for an example of how to work with continuous flow data files, see
-    the vignette on **[Continuous
+  - for function help within RStudio, simply start typing `?iso_` in the
+    console and a list of available function will appear (all functions
+    share the `iso_` prefix)
+  - for a detailed example of how to work with continuous flow data
+    files, see the vignette on **[Continuous
     Flow](https://isoreader.isoverse.org/articles/continuous_flow.html)**
-  - for an example of how to work with dual inlet data files, see the
-    vignette on **[Dual
+  - for a detailed example of how to work with dual inlet data files,
+    see the vignette on **[Dual
     Inlet](https://isoreader.isoverse.org/articles/dual_inlet.html)**
+  - for a detailed example of how to work with scan data files, see the
+    vignette on
+    **[Scans](https://isoreader.isoverse.org/articles/scan.html)**
 
 ## Troubleshooting
 
@@ -103,14 +146,14 @@ issues with supported formats, please file a request/bug report in the
 [issue tracker](https://github.com/isoverse/isoreader/issues). Likewise
 if you run into any unexpected behavior or uncaught errors. Most
 isoreader functionality is continuously tested on Unix and Windows
-systems using [Travis](https://travis-ci.org/) and
-[AppVeyor](https://ci.appveyor.com/), respectively. This makes it
-possible to ensure proper functionality and catch issues quickly,
-however, sometimes something slips through or is not yet automatically
-tested. We try to make sure to fix such errors as soon as possible but
-ask for patience due to the small development team. If you have the
-skills and are willing to fix problems yourself, that’s great, please
-take a look at the development section below.
+systems using [GitHub
+Actions](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check).
+This makes it possible to ensure proper functionality and catch issues
+quickly, however, sometimes something slips through or is not yet
+automatically tested. We try to make sure to fix such errors as soon as
+possible but ask for patience due to the small development team. If you
+have the skills and are willing to fix problems yourself, that’s great,
+please take a look at the development section below.
 
 ## Development
 

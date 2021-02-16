@@ -11,7 +11,7 @@ iso_save(iso_files, filepath, quiet = default(quiet))
 
 \item{filepath}{the path (folder and filename) to the export file. The correct file extension is automatically added if not already in the filename, i.e. filename can be provided with or without extension.}
 
-\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_message_on} and \link[=iso_info_messages]{iso_turn_info_message_off}}
+\item{quiet}{whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to \link[=iso_info_messages]{iso_turn_info_messages_on} and \link[=iso_info_messages]{iso_turn_info_messages_off}}
 }
 \value{
 returns the iso_files object invisibly for use in pipelines
@@ -22,7 +22,6 @@ This function saves the passed in iso_files to an R Data Storage (.rds) file, wh
 \seealso{
 Other export functions: 
 \code{\link{iso_export_to_excel}()},
-\code{\link{iso_export_to_feather}()},
-\code{\link{iso_export_to_rda}()}
+\code{\link{iso_export_to_feather}()}
 }
 \concept{export functions}

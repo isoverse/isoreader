@@ -100,6 +100,7 @@ iso_strip_units <- function(x) {
 #' @export
 iso_make_units_explicit <- function(df, prefix = " [", suffix = "]") {
   if(!is.data.frame(df)) stop("can only make units explicit in data frames", call. = FALSE)
+  if (ncol(df) == 0) return(df)
   col_names <- names(df)
   col_units <- iso_get_units(df)
   new_col_names <- ifelse(is.na(col_units), col_names, paste0(col_names, prefix, col_units, suffix))

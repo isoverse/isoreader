@@ -41,7 +41,7 @@ new_reader <- function(ds, options = list()) {
 
 # register new reader
 readers <- iso_register_dual_inlet_file_reader(".new.did", "new_reader")
-rmarkdown::paged_table(readers)
+knitr::kable(readers)
 
 # copy an example file from the package with the new extension
 iso_get_reader_example("dual_inlet_example.did") %>% file.copy(to = "example.new.did")
@@ -103,15 +103,13 @@ This structure representation shows recognized control elements in `<...>` and d
 For an overview of all the control elements that are currently consider, use the internal `get_ctrl_blocks_config_df()` function.
 
 ```{r}
-isoreader:::get_ctrl_blocks_config_df() %>%
-  rmarkdown::paged_table()
+isoreader:::get_ctrl_blocks_config_df()
 ```
 
 Additional information can be gleaned from the so-called control blocks, which are larger structural elements of Isodat binary files and are kept in a data frame within the binary object (again only available in debug mode).
 
 ```{r}
-bin$C_blocks %>%
-  rmarkdown::paged_table()
+bin$C_blocks
 ```
 
 Same as for specific byte positions, one can use the control blocks to navigate the file and `map_binary_structure`.
