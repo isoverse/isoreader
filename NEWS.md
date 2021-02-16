@@ -1,3 +1,15 @@
+# isoreader 1.3.0
+
+## Major changes
+
+ - functions for previously deprecated `.rda` file format removed
+ - R version (>= 4.0.0) and dependency version requirements clarified
+ - dependencies simplified (`openxlsx`, `feather`, `xml2` and `rhdf5` are now optional extensions)
+
+## Bug fixes
+
+ - dependency on pandoc removed
+
 # isoreader 1.2.3
 
 ## Major Features
