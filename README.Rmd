@@ -37,7 +37,15 @@ You can install the latest release of isoreader from [CRAN](https://cran.r-proje
 install.packages("isoreader")
 ```
 
-To install the current development version directly from GitHub, please use the devtools package:
+Some isoreader features including Excel and feather export depend on optional packages that are not required for the core functionality of isoreader. To use this functionality, please install the following packages manually if not already installed (isoreader will throw an informative warning if they are needed but missing):
+
+```{r, optional-installation, eval = FALSE}
+# optional extensions
+install.packages(c("feather", "openxlsx", "xml2", "BiocManager"))
+BiocManager::install("rhdf5")
+```
+
+To install the current development version of isoreader directly from GitHub, please use the devtools package:
 
 ```{r gh-installation, eval = FALSE}
 # installs the development tools package if not yet installed
@@ -45,7 +53,7 @@ if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
 devtools::install_github("isoverse/isoreader")
 ```
 
-Troubleshooting note: depending on your workspace and operating system, you may have to re-start your R session or manually install some dependencies. For example, the [Bioconductor](https://www.bioconductor.org/) package manager may need manual installation: `install.packages("BiocManager")`; also, the `digest` package sometimes causes trouble - re-install with `remove.packages("digest"); install.packages("digest")`.
+Troubleshooting note: depending on your workspace and operating system, you may have to re-start your R session or manually install some dependencies. For example, the `digest` package sometimes causes trouble - re-install with `remove.packages("digest"); install.packages("digest")`.
 
 ## Show me some code
 
