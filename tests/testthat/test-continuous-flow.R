@@ -18,16 +18,10 @@ test_that("test that parameter checks are performed", {
 })
 
 
-test_that("test that dxf files can be read", {
+test_that("test that continous flow files can be read", {
   
   # skip on CRAN to reduce checktime to below 10 minutes
   skip_on_cran()
-  
-  # check if tests are enabled
-  run_file_tests <- getOption("isoreader.run_file_tests")
-  if (!is.null(run_file_tests) && identical(run_file_tests, FALSE)) {
-    skip("Currently not testing all continuous flow data files.")
-  }
   
   # test specific files
   iso_turn_reader_caching_off()
@@ -61,14 +55,22 @@ test_that("test that dxf files can be read", {
   expect_equal(nrow(iso_get_vendor_data_table(cf)), 6)
   expect_equal(ncol(iso_get_vendor_data_table(cf)), 61)
   
+  # skip if optional dependencies are not installed
+  skip_if_not_installed("xml2")
+  skip_if_not_installed("rhdf5")
   expect_true(file.exists(file <- iso_get_reader_example("continuous_flow_example.iarc")))
   expect_is(iarc <- iso_read_continuous_flow(file), "iso_file_list")
   expect_equal(nrow(problems(iarc)), 0)
   
+})
+
+test_that("test that additional continous flow files can be read", {
+  
   # additional test files (skip on CRAN because test files not includes due to tarball size limits) =====
   skip_on_cran()
   test_folder <- file.path("test_data") # test_folder <- file.path("tests", "testthat", "test_data") # direct
-  
+  iso_turn_reader_caching_off()
+
   # testing wrapper
   check_continuous_flow_test_file <- function(file) {
     file_path <- get_isoreader_test_file(file, local_folder = test_folder)

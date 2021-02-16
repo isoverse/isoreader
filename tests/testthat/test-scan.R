@@ -17,16 +17,10 @@ test_that("test that parameter checks are performed", {
 })
 
 
-test_that("test that scn files can be read", {
+test_that("test that scan files can be read", {
   
   # skip on CRAN to reduce checktime to below 10 minutes
   skip_on_cran()
-  
-  # check if tests are enabled
-  run_file_tests <- getOption("isoreader.run_file_tests")
-  if (!is.null(run_file_tests) && identical(run_file_tests, FALSE)) {
-    skip("Currently not testing all scan data files.")
-  }
   
   # test specific files
   iso_turn_reader_caching_off()

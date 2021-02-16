@@ -28,16 +28,10 @@ test_that("test that nu file processor works properly", {
 
 # actual files ========
 
-test_that("test that did files can be read", {
+test_that("test that dual inlet files can be read", {
   
   # skip on CRAN to reduce checktime to below 10 minutes
   skip_on_cran()
-  
-  # check if tests are enabled
-  run_file_tests <- getOption("isoreader.run_file_tests")
-  if (!is.null(run_file_tests) && identical(run_file_tests, FALSE)) {
-    skip("Currently not testing all dual inlet data files.")
-  }
   
   # test specific files
   iso_turn_reader_caching_off()
@@ -62,8 +56,13 @@ test_that("test that did files can be read", {
   expect_true(stringr::str_detect(iso_get_problems(did)$details, fixed("found 6 channels but 0 masses were specified")))
   expect_equal(nrow(problems(did)), 1)
   
+})
+
+test_that("test that additional dual inlet files can be read", {
+  
   # additional test files (skip on CRAN because test files not includes due to tarball size limits) =====
   skip_on_cran()
+  iso_turn_reader_caching_off()
   
   # testing wrapper
   check_dual_inlet_test_file <- function(file, ...) {
