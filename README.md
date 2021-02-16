@@ -53,8 +53,20 @@ You can install the latest release of isoreader from
 install.packages("isoreader")
 ```
 
-To install the current development version directly from GitHub, please
-use the devtools package:
+Some isoreader features including Excel and feather export depend on
+optional packages that are not required for the core functionality of
+isoreader. To use this functionality, please install the following
+packages manually if not already installed (isoreader will throw an
+informative warning if they are needed but missing):
+
+``` r
+# optional extensions
+install.packages(c("feather", "openxlsx", "xml2", "BiocManager"))
+BiocManager::install("rhdf5")
+```
+
+To install the current development version of isoreader directly from
+GitHub, please use the devtools package:
 
 ``` r
 # installs the development tools package if not yet installed
@@ -64,11 +76,9 @@ devtools::install_github("isoverse/isoreader")
 
 Troubleshooting note: depending on your workspace and operating system,
 you may have to re-start your R session or manually install some
-dependencies. For example, the
-[Bioconductor](https://www.bioconductor.org/) package manager may need
-manual installation: `install.packages("BiocManager")`; also, the
-`digest` package sometimes causes trouble - re-install with
-`remove.packages("digest"); install.packages("digest")`.
+dependencies. For example, the `digest` package sometimes causes trouble
+- re-install with `remove.packages("digest");
+install.packages("digest")`.
 
 ## Show me some code
 
@@ -89,7 +99,7 @@ iso_files <- iso_read_scan(data_folder)
 #> Info: reading file 'full_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'time_scan_example.scn' with '.scn' reader...
-#> Info: finished reading 4 files in 0.94 secs
+#> Info: finished reading 4 files in 1.00 secs
 
 iso_files
 #> Data from 4 scan iso files: 

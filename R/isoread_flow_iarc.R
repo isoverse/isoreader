@@ -7,6 +7,24 @@ iso_read_flow_iarc <- function(ds, options = list()) {
   if(!iso_is_file(ds) || !is(ds, "continuous_flow")) 
     stop("data structure must be a 'continuous_flow' iso_file", call. = FALSE)
   
+  # check for availability of xml2
+  if (!requireNamespace("xml2", quietly = TRUE)) {
+    stop(
+      "'xml2' package is required to read .iarc, please run: install.packages('xml2')",
+      call. = FALSE
+    )
+    return(invisible(iso_files))
+  }
+  
+  # check for availability of rhdf5
+  if (!requireNamespace("rhdf5", quietly = TRUE)) {
+    stop(
+      "'rhdf5' package is required to read .iarc, please run: install.packages('BiocManager'); BiocManager::install('rhdf5')",
+      call. = FALSE
+    )
+    return(invisible(iso_files))
+  }
+  
   # unzipping iarc archive ====
   folder_name <- ds$file_info$file_path %>% basename() %>% { str_replace(., fixed(get_file_ext(.)), "") }
   folder_path <- file.path(tempdir(), folder_name)
@@ -170,18 +188,18 @@ process_iarc_sample_data <- function(iso_file, task, gas_configs, folder_path) {
 # will also add H3 factor if part of the gas configuration
 # @param iso_file
 read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data_units = "nA", data_scaling = 1e-9) {
-  if (!"DataSet" %in% h5ls(filepath)$name)
+  if (!"DataSet" %in% rhdf5::h5ls(filepath)$name)
     stop("expected DataSet attribute not present in HDF5 data file", call. = FALSE)
   
   # attributes (NOTE: not sure what to do with the $Tuning information (usually not filled))
-  dataset_attributes <- h5readAttributes(filepath, "DataSet")
+  dataset_attributes <- rhdf5::h5readAttributes(filepath, "DataSet")
   if (!dataset_attributes$Species %in% names(gas_config$species))
     stop("gas configuration for species ", dataset_attributes$Species, " not specified", call. = FALSE)
   config <- gas_config$species[[dataset_attributes$Species]]
   
   # read irms data and determine which beams are used
-  irms_data <- h5read(filepath, "DataSet") %>% dplyr::as_tibble()
-  H5close() # garbage collect
+  irms_data <- rhdf5::h5read(filepath, "DataSet") %>% dplyr::as_tibble()
+  rhdf5::H5close() # garbage collect
   
   if (!"Scan" %in% names(irms_data)) 
     stop("Scan column missing from data file ", basename(filepath), call. = FALSE)

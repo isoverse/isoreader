@@ -4,7 +4,7 @@
 map_xml_children <- function(nodes, select = NULL) {
   nodes %>% 
     map_df(function(node) {
-      as_list(node) %>% 
+      xml2::as_list(node) %>% 
         # if select is specific, only take the children specific
       { if(is.null(select)) . else .[select[select %in% names(.)]] } %>% 
         # map all as text ignoring everything that does not have exactly 1 value
@@ -17,8 +17,8 @@ map_xml_children <- function(nodes, select = NULL) {
 # retrieve Identifier/Value pairs from 'container' type children of current node
 xml_fetch_container_value <- function(xml, ids, container = "PersistedPropertyBagProperty") {
   sapply(ids, function(id) {
-    xml %>% xml_find_all(str_c(".//", container, "[Identifier[.='", id, "']]")) %>% 
-      xml_child("Value") %>% xml_text() %>% list()
+    xml %>% xml2::xml_find_all(str_c(".//", container, "[Identifier[.='", id, "']]")) %>% 
+      xml2::xml_child("Value") %>% xml2::xml_text() %>% list()
   })
 }
 
@@ -26,13 +26,13 @@ xml_fetch_container_value <- function(xml, ids, container = "PersistedPropertyBa
 
 # process iarc info xml file
 process_iarc_info_xml <- function(filepath) {
-  info_xml <- read_xml(filepath, encoding = "UTF-8")
-  info_version <- info_xml %>% xml_child("Version") %>% xml_text()
+  info_xml <- xml2::read_xml(filepath, encoding = "UTF-8")
+  info_version <- info_xml %>% xml2::xml_child("Version") %>% xml2::xml_text()
   
   # retrieve processing lists information
   processing_lists <- 
-    info_xml %>% xml_child("ProcessingLists") %>% 
-    xml_children() %>% 
+    info_xml %>% xml2::xml_child("ProcessingLists") %>% 
+    xml2::xml_children() %>% 
     map_xml_children() 
   
   # version safety check
@@ -69,12 +69,12 @@ process_iarc_methods_xml <- function(filepaths) {
   method_params <- 
     filepaths %>% 
     lapply(function(methods_file) {
-      method_xml <- read_xml(methods_file, encoding = "UTF-8")
+      method_xml <- xml2::read_xml(methods_file, encoding = "UTF-8")
       # id
-      method_id <- method_xml %>% xml_child("Id") %>% xml_text()
+      method_id <- method_xml %>% xml2::xml_child("Id") %>% xml2::xml_text()
       # method parameters
       method_xml %>% 
-        xml_find_all(".//SerialisedFlowParameter") %>% 
+        xml2::xml_find_all(".//SerialisedFlowParameter") %>% 
         map_xml_children() %>% 
         mutate(MethodId = method_id,
                MethodFile = basename(methods_file))
@@ -101,20 +101,20 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
   
   process_iarc_task_xml <- function(task_file) {
     # read file
-    task_xml <- read_xml(task_file, encoding = "UTF-8")  
+    task_xml <- xml2::read_xml(task_file, encoding = "UTF-8")  
     
     # retrieve general task info
     task_info <- 
       c("GlobalIdentifier", "Name", "Id", 
         "AcquisitionStartDate", "AcquisitionEndDate", # not sure these are useful
         "CompletionState", "MethodId", "ProcessingListTypeIdentifier") %>% 
-      sapply(function(child) task_xml %>% xml_child(child) %>% xml_text() %>% list())
+      sapply(function(child) task_xml %>% xml2::xml_child(child) %>% xml2::xml_text() %>% list())
     
     # retrieve task values based on methods information (if there is any)
     if (nrow(method_parameters) > 0) {
       task_values <-
         task_xml %>% 
-        xml_find_all(".//SerialisableTaskValue") %>% 
+        xml2::xml_find_all(".//SerialisableTaskValue") %>% 
         map_xml_children() %>% 
         # link with parameters defined in methods
         mutate(
@@ -131,7 +131,7 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
     # retrieve task data (where the real information is recorded)
     task_data <- 
       task_xml %>% 
-      xml_find_all(".//SerialisableDataSet") %>% 
+      xml2::xml_find_all(".//SerialisableDataSet") %>% 
       map_xml_children(
         select = c("Id", "AcquireDataStatus", "AcquireStartDate", "AcquireEndDate", "TypeIdentifier")) %>% 
       mutate(
@@ -188,8 +188,8 @@ process_iarc_processing_xml <- function(processing_list_id, filepath) {
   Label <- NumeratorBeamChannel <- numerator_mass <- DenominatorBeamChannel <- denominator_mass <- NULL
   
   # read file
-  xml <- read_xml(filepath, encoding = "UTF-8")
-  global_id <- xml %>% xml_child("DefinitionUniqueIdentifier") %>% xml_text()
+  xml <- xml2::read_xml(filepath, encoding = "UTF-8")
+  global_id <- xml %>% xml2::xml_child("DefinitionUniqueIdentifier") %>% xml2::xml_text()
   
   # safety check
   if (global_id != processing_list_id) {
@@ -201,7 +201,7 @@ process_iarc_processing_xml <- function(processing_list_id, filepath) {
   # find the species
   xml_find_species <- function(node) {
     # potentially useful(?): DetectionBeamChannel
-    node %>% xml_child("SerialisedPropertyBagProperties") %>%
+    node %>% xml2::xml_child("SerialisedPropertyBagProperties") %>%
       xml_fetch_container_value("Species") %>% { .$Species }
   }
   
@@ -209,8 +209,8 @@ process_iarc_processing_xml <- function(processing_list_id, filepath) {
   xml_find_channel_masses <- function(node) {
     # find the beam ratio definitions
     ratio_defs <-
-      node %>% xml_child("SerialisedChildPropertyBags") %>% 
-      xml_find_all(".//SerialisablePropertyBag[Identifier[.='{42D28191-A6E9-4B7B-8C3D-0F0037624F7D}']]") %>%  
+      node %>% xml2::xml_child("SerialisedChildPropertyBags") %>% 
+      xml2::xml_find_all(".//SerialisablePropertyBag[Identifier[.='{42D28191-A6E9-4B7B-8C3D-0F0037624F7D}']]") %>%  
       map(xml_fetch_container_value, c("NumeratorBeamChannel", "DenominatorBeamChannel", "Label")) %>%
       bind_rows() 
     if (nrow(ratio_defs) == 0) return (tibble(channel = character(), mass = character()))  
@@ -237,7 +237,7 @@ process_iarc_processing_xml <- function(processing_list_id, filepath) {
   # find the H3 factor
   xml_find_H3_factor <- function(node) {
     H3_factor <- 
-      node %>% xml_child("SerialisedPropertyBagProperties") %>%
+      node %>% xml2::xml_child("SerialisedPropertyBagProperties") %>%
       xml_fetch_container_value(c("ApplyH3CorrectionFactor", "H3CorrectionFactor"))
     if (!is.na(H3_factor$ApplyH3CorrectionFactor) && H3_factor$ApplyH3CorrectionFactor == "True") 
       return(as.numeric(H3_factor$H3CorrectionFactor))
@@ -246,7 +246,7 @@ process_iarc_processing_xml <- function(processing_list_id, filepath) {
   
   # process channel configurations
   species_config <- xml %>% 
-    xml_find_all("//SerialisablePropertyBag[Identifier[.='10DC1602-5ED4-4D62-BAB0-2693E3FBC3AF']]") %>% 
+    xml2::xml_find_all("//SerialisablePropertyBag[Identifier[.='10DC1602-5ED4-4D62-BAB0-2693E3FBC3AF']]") %>% 
     sapply(function(node) {
       species <- xml_find_species(node)
       if (is.null(species) || is.na(species)) # no species definition found

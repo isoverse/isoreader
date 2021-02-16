@@ -14,8 +14,6 @@
 #' @importFrom stringr str_c str_detect str_to_title str_replace str_replace_all str_replace_na str_match str_match_all str_interp str_subset str_extract fixed
 #' @importFrom methods is
 #' @importFrom utils unzip head tail modifyList packageVersion
-#' @importFrom xml2 xml_find_all xml_child xml_text read_xml xml_children as_list
-#' @importFrom rhdf5 h5ls h5read h5readAttributes H5close
 #' @importFrom UNF unf
 NULL
 
