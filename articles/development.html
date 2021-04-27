@@ -105,7 +105,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Development features of isoreader</h1>
             
-            <h4 class="date">2021-02-16</h4>
+            <h4 class="date">2021-04-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/development.Rmd"><code>vignettes/development.Rmd</code></a></small>
       <div class="hidden name"><code>development.Rmd</code></div>
@@ -295,7 +295,7 @@
 <span class="co">#&gt;   ..$ method_info      : logi TRUE</span>
 <span class="co">#&gt;   ..$ raw_data         : logi TRUE</span>
 <span class="co">#&gt;   ..$ vendor_data_table: logi TRUE</span>
-<span class="co">#&gt;  $ file_info        : tibble [1 × 6] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;  $ file_info        : tibble[,6] [1 × 6] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;   ..$ file_id      : chr "example.new.did"</span>
 <span class="co">#&gt;   ..$ file_root    : chr "."</span>
 <span class="co">#&gt;   ..$ file_path    : chr "example.new.did"</span>
@@ -303,18 +303,18 @@
 <span class="co">#&gt;   ..$ file_datetime: POSIXct[1:1], format: NA</span>
 <span class="co">#&gt;   ..$ file_size    : int 134446</span>
 <span class="co">#&gt;  $ method_info      : list()</span>
-<span class="co">#&gt;  $ raw_data         : tibble [0 × 0] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;  $ raw_data         : tibble[,0] [0 × 0] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  Named list()</span>
-<span class="co">#&gt;  $ vendor_data_table: tibble [0 × 0] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;  $ vendor_data_table: tibble[,0] [0 × 0] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  Named list()</span>
-<span class="co">#&gt;  $ bgrd_data        : tibble [0 × 0] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;  $ bgrd_data        : tibble[,0] [0 × 0] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  Named list()</span>
 <span class="co">#&gt;  - attr(*, "class")= chr [1:2] "dual_inlet" "iso_file"</span>
-<span class="co">#&gt;  - attr(*, "problems")= tibble [0 × 3] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;  - attr(*, "problems")= tibble[,3] [0 × 3] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;   ..$ type   : chr(0) </span>
 <span class="co">#&gt;   ..$ func   : chr(0) </span>
 <span class="co">#&gt;   ..$ details: chr(0)</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.34 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.39 secs</span>
 <span class="co">#&gt; Dual inlet iso file 'example.new.did': 0 cycles, 0 ions ()</span>
 <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.remove</a></span><span class="op">(</span><span class="st">"example.new.did"</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
@@ -344,7 +344,7 @@
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader...</span>
 <span class="co">#&gt; Info: starting file #2, named 'dual_inlet_example.caf'</span>
 <span class="co">#&gt; Info: finished file #2</span>
-<span class="co">#&gt; Info: finished reading 2 files in 3.68 secs</span>
+<span class="co">#&gt; Info: finished reading 2 files in 3.46 secs</span>
 <span class="co">#&gt; Data from 2 dual inlet iso files: </span>
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   file_id    raw_data       file_info  method_info  vendor_data_tab… file_path  </span>
