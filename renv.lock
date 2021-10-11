@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.0.2",
+    "Version": "4.1.1",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -9,7 +9,7 @@
     ]
   },
   "Bioconductor": {
-    "Version": "3.12"
+    "Version": "3.13"
   },
   "Packages": {
     "BH": {
@@ -21,14 +21,14 @@
     },
     "BiocManager": {
       "Package": "BiocManager",
-      "Version": "1.30.10",
+      "Version": "1.30.16",
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "db75371846625725e221470b310da1d5"
     },
     "BiocVersion": {
       "Package": "BiocVersion",
-      "Version": "3.12.0",
+      "Version": "3.13.1",
       "Source": "Bioconductor",
       "Hash": "ee4d027afb8f52fec1f46b9f0a8660e9"
     },
@@ -76,7 +76,7 @@
     },
     "Rhdf5lib": {
       "Package": "Rhdf5lib",
-      "Version": "1.12.0",
+      "Version": "1.14.2",
       "Source": "Bioconductor",
       "Hash": "81fed119d9a5564408d38ca6d55280dd"
     },
@@ -299,7 +299,7 @@
     },
     "gert": {
       "Package": "gert",
-      "Version": "1.0.2",
+      "Version": "1.4.1",
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "0ebdadbb2b742cd230cb3ec7fdf5898a"
@@ -495,7 +495,7 @@
     },
     "pkgload": {
       "Package": "pkgload",
-      "Version": "1.1.0",
+      "Version": "1.2.2",
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "b6b150cd4709e0c0c9b5d51ac4376282"
@@ -551,7 +551,7 @@
     },
     "ragg": {
       "Package": "ragg",
-      "Version": "0.3.1",
+      "Version": "1.1.3",
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "a39fa2ccf55e72d5984247ef891217c2"
@@ -607,10 +607,8 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "0.12.3",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "b5510c50c7f31d453c385c7b460af2b9"
+      "Version": "0.14.0",
+      "Source": "Repository"
     },
     "rex": {
       "Package": "rex",
@@ -621,13 +619,13 @@
     },
     "rhdf5": {
       "Package": "rhdf5",
-      "Version": "2.34.0",
+      "Version": "2.36.0",
       "Source": "Bioconductor",
       "Hash": "bf25b880f72c8b6dcbd8719b5ac9113b"
     },
     "rhdf5filters": {
       "Package": "rhdf5filters",
-      "Version": "1.2.0",
+      "Version": "1.4.0",
       "Source": "Bioconductor",
       "Hash": "9dee5e2185e9a498c7d910f6b3f33150"
     },
@@ -640,7 +638,7 @@
     },
     "rmarkdown": {
       "Package": "rmarkdown",
-      "Version": "2.4.6",
+      "Version": "2.11",
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "fe6d91c77e8725a0f6b7eeb41a38433f"
@@ -703,7 +701,7 @@
     },
     "systemfonts": {
       "Package": "systemfonts",
-      "Version": "0.3.1",
+      "Version": "1.0.2",
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "6e439131d7b1638c9ec76cd609851aa3"
