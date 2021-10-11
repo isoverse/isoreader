@@ -35,6 +35,8 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
 
+      - uses: r-lib/actions/setup-pandoc@v1
+
       - name: Remove .Rprofile
         run: rm .Rprofile
 
