@@ -73,7 +73,10 @@ jobs:
       - name: Install stringi from source (for Linux)
         if: runner.os == 'Linux'
         run: |
+          remove.packages("stringr")
+          remove.packages("stringi")
           install.packages("stringi", type="source")
+          install.packages("stringr", type="source")
         shell: Rscript {0}
 
       - name: Install package
