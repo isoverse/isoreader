@@ -59,10 +59,14 @@ iso_get_reader_examples() %>% knitr::kable()
 ```{r}
 # read all available examples
 di_files <- iso_read_dual_inlet(iso_get_reader_examples_folder())
+```
 
+```{r}
 # save as r data storage (read back in with iso_read_dual_inlet)
 iso_save(di_files, filepath = "di_save")
+```
 
+```{r, eval = FALSE}
 # export to excel
 iso_export_to_excel(di_files, filepath = "di_export")
 ```
@@ -72,10 +76,14 @@ iso_export_to_excel(di_files, filepath = "di_export")
 ```{r}
 # read all available examples
 cf_files <- iso_read_continuous_flow(iso_get_reader_examples_folder())
+```
 
+```{r}
 # save as r data storage (read back in with iso_read_continuous_flow)
 iso_save(cf_files, filepath = "cf_save")
+```
 
+```{r, eval = FALSE}
 # export to excel
 iso_export_to_excel(cf_files, filepath = "cf_export")
 ```
@@ -85,10 +93,14 @@ iso_export_to_excel(cf_files, filepath = "cf_export")
 ```{r}
 # read all available examples
 scan_files <- iso_read_scan(iso_get_reader_examples_folder())
+```
 
+```{r}
 # save as r data storage (read back in with iso_read_scan)
 iso_save(scan_files, filepath = "scan_save")
+```
 
+```{r, eval = FALSE}
 # export to excel
 iso_export_to_excel(scan_files, filepath = "scan_export")
 ```
