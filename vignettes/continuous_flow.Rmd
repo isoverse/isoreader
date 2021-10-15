@@ -153,7 +153,7 @@ cf_files3 %>%
 
 ## Add
 
-Additionally, a wide range of new file information can be added in the form of a data frame with any number of columns (usually read from a comma-separated-value/csv file or an Excel/xlsx file) using the function `iso_add_file_info` and specifying which existing file information should be used to merge in the new information. It is similar to [dplyr's left_join](https://dplyr.tidyverse.org/reference/join.html) but with additional safety checks and the possibility to join the new information sequentially as illustrated below.
+Additionally, a wide range of new file information can be added in the form of a data frame with any number of columns (usually read from a comma-separated-value/csv file or an Excel/xlsx file) using the function `iso_add_file_info` and specifying which existing file information should be used to merge in the new information. It is similar to [dplyr's left_join](https://dplyr.tidyverse.org/reference/mutate-joins.html) but with additional safety checks and the possibility to join the new information sequentially as illustrated below.
 
 ```{r}
 # this kind of information data frame is frequently read in from a csv or xlsx file
