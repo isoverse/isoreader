@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.3.0</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.3.1</span>
       </span>
     </div>
 
@@ -86,7 +86,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/isoverse/isoreader">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -105,7 +105,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Dual Inlet Examples</h1>
             
-            <h4 class="date">2021-05-04</h4>
+            <h4 class="date">2021-10-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/dual_inlet.Rmd"><code>vignettes/dual_inlet.Rmd</code></a></small>
       <div class="hidden name"><code>dual_inlet.Rmd</code></div>
@@ -218,7 +218,7 @@
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.did' from cache...</span>
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' from cache...</span>
 <span class="co">#&gt; Info: reading file 'dual_inlet_nu_example.txt' with '.txt' reader...</span>
-<span class="co">#&gt; Info: finished reading 3 files in 0.88 secs</span></code></pre></div>
+<span class="co">#&gt; Info: finished reading 3 files in 0.83 secs</span></code></pre></div>
 </div>
 <div id="file-summary" class="section level1">
 <h1 class="hasAnchor">
@@ -749,7 +749,7 @@
 <div id="add" class="section level2">
 <h2 class="hasAnchor">
 <a href="#add" class="anchor"></a>Add</h2>
-<p>Additionally, a wide range of new file information can be added in the form of a data frame with any number of columns (usually read from a comma-separated-value/csv file or an Excel/xlsx file) using the function <code>iso_add_file_info</code> and specifying which existing file information should be used to merge in the new information. It is similar to <a href="https://dplyr.tidyverse.org/reference/join.html">dplyr’s left_join</a> but with additional safety checks and the possibility to join the new information sequentially as illustrated below.</p>
+<p>Additionally, a wide range of new file information can be added in the form of a data frame with any number of columns (usually read from a comma-separated-value/csv file or an Excel/xlsx file) using the function <code>iso_add_file_info</code> and specifying which existing file information should be used to merge in the new information. It is similar to <a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">dplyr’s left_join</a> but with additional safety checks and the possibility to join the new information sequentially as illustrated below.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># this kind of information data frame is frequently read in from a csv or xlsx file</span>
 <span class="va">new_info</span> <span class="op">&lt;-</span>
@@ -2215,7 +2215,7 @@
 <span class="co">#&gt; Info: loaded 3 data files from R Data Storage</span>
 <span class="co">#&gt; Info: finished reading 1 files in 0.11 secs</span>
 <span class="co">#&gt; Data from 3 dual inlet iso files: </span>
-<span class="co">#&gt; # A tibble: 3 x 6</span>
+<span class="co">#&gt; # A tibble: 3 × 6</span>
 <span class="co">#&gt;   file_id     raw_data      file_info  method_info  vendor_data_tab… file_path  </span>
 <span class="co">#&gt;   &lt;chr&gt;       &lt;glue&gt;        &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span>
 <span class="co">#&gt; 1 dual_inlet… 7 cycles, 6 … 16 entries standards, … 7 rows, 8 colum… dual_inlet…</span>
@@ -2229,27 +2229,15 @@
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># export to excel</span>
 <span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span><span class="op">(</span><span class="st">"di_files_export"</span><span class="op">)</span>
-<span class="co">#&gt; Info: exporting data from 3 iso_files into Excel 'di_files_export.di.xlsx'</span>
-<span class="co">#&gt; Info: aggregating all data from 3 data file(s)</span>
 
 <span class="co"># data sheets available in the exported data file:</span>
-<span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/excel_sheets.html">excel_sheets</a></span><span class="op">(</span><span class="st">"di_files_export.di.xlsx"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "file info"         "raw data"          "standards"        </span>
-<span class="co">#&gt; [4] "resistors"         "vendor data table" "problems"</span></code></pre></div>
+<span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/excel_sheets.html">excel_sheets</a></span><span class="op">(</span><span class="st">"di_files_export.di.xlsx"</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># export to feather</span>
 <span class="va">di_files</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_export_to_feather.html">iso_export_to_feather</a></span><span class="op">(</span><span class="st">"di_files_export"</span><span class="op">)</span>
-<span class="co">#&gt; Info: exporting data from 3 iso_files into .di.feather files at 'di_files_export'</span>
-<span class="co">#&gt; Info: aggregating all data from 3 data file(s)</span>
 
 <span class="co"># exported feather files</span>
-<span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">".di.feather"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "di_files_export_file_info.di.feather"        </span>
-<span class="co">#&gt; [2] "di_files_export_problems.di.feather"         </span>
-<span class="co">#&gt; [3] "di_files_export_raw_data.di.feather"         </span>
-<span class="co">#&gt; [4] "di_files_export_resistors.di.feather"        </span>
-<span class="co">#&gt; [5] "di_files_export_standards.di.feather"        </span>
-<span class="co">#&gt; [6] "di_files_export_vendor_data_table.di.feather"</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">".di.feather"</span><span class="op">)</span></code></pre></div>
 </div>
   </div>
 

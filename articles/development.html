@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.3.0</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.3.1</span>
       </span>
     </div>
 
@@ -86,7 +86,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/isoverse/isoreader">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -105,7 +105,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Development features of isoreader</h1>
             
-            <h4 class="date">2021-05-04</h4>
+            <h4 class="date">2021-10-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/development.Rmd"><code>vignettes/development.Rmd</code></a></small>
       <div class="hidden name"><code>development.Rmd</code></div>
@@ -289,13 +289,13 @@
 <span class="co">#&gt; Info: this is the new reader!</span>
 <span class="co">#&gt; List of 7</span>
 <span class="co">#&gt;  $ version          :Classes 'package_version', 'numeric_version'  hidden list of 1</span>
-<span class="co">#&gt;   ..$ : int [1:3] 1 3 0</span>
+<span class="co">#&gt;   ..$ : int [1:3] 1 3 1</span>
 <span class="co">#&gt;  $ read_options     :List of 4</span>
 <span class="co">#&gt;   ..$ file_info        : logi TRUE</span>
 <span class="co">#&gt;   ..$ method_info      : logi TRUE</span>
 <span class="co">#&gt;   ..$ raw_data         : logi TRUE</span>
 <span class="co">#&gt;   ..$ vendor_data_table: logi TRUE</span>
-<span class="co">#&gt;  $ file_info        : tibble[,6] [1 × 6] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;  $ file_info        : tibble [1 × 6] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;   ..$ file_id      : chr "example.new.did"</span>
 <span class="co">#&gt;   ..$ file_root    : chr "."</span>
 <span class="co">#&gt;   ..$ file_path    : chr "example.new.did"</span>
@@ -303,18 +303,18 @@
 <span class="co">#&gt;   ..$ file_datetime: POSIXct[1:1], format: NA</span>
 <span class="co">#&gt;   ..$ file_size    : int 134446</span>
 <span class="co">#&gt;  $ method_info      : list()</span>
-<span class="co">#&gt;  $ raw_data         : tibble[,0] [0 × 0] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;  $ raw_data         : tibble [0 × 0] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  Named list()</span>
-<span class="co">#&gt;  $ vendor_data_table: tibble[,0] [0 × 0] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;  $ vendor_data_table: tibble [0 × 0] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  Named list()</span>
-<span class="co">#&gt;  $ bgrd_data        : tibble[,0] [0 × 0] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;  $ bgrd_data        : tibble [0 × 0] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  Named list()</span>
 <span class="co">#&gt;  - attr(*, "class")= chr [1:2] "dual_inlet" "iso_file"</span>
-<span class="co">#&gt;  - attr(*, "problems")= tibble[,3] [0 × 3] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;  - attr(*, "problems")= tibble [0 × 3] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;   ..$ type   : chr(0) </span>
 <span class="co">#&gt;   ..$ func   : chr(0) </span>
 <span class="co">#&gt;   ..$ details: chr(0)</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.45 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.32 secs</span>
 <span class="co">#&gt; Dual inlet iso file 'example.new.did': 0 cycles, 0 ions ()</span>
 <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.remove</a></span><span class="op">(</span><span class="st">"example.new.did"</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
@@ -344,9 +344,9 @@
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader...</span>
 <span class="co">#&gt; Info: starting file #2, named 'dual_inlet_example.caf'</span>
 <span class="co">#&gt; Info: finished file #2</span>
-<span class="co">#&gt; Info: finished reading 2 files in 3.94 secs</span>
+<span class="co">#&gt; Info: finished reading 2 files in 4.10 secs</span>
 <span class="co">#&gt; Data from 2 dual inlet iso files: </span>
-<span class="co">#&gt; # A tibble: 2 x 6</span>
+<span class="co">#&gt; # A tibble: 2 × 6</span>
 <span class="co">#&gt;   file_id    raw_data       file_info  method_info  vendor_data_tab… file_path  </span>
 <span class="co">#&gt;   &lt;chr&gt;      &lt;glue&gt;         &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span>
 <span class="co">#&gt; 1 dual_inle… 7 cycles, 6 i… 16 entries standards, … 7 rows, 8 colum… dual_inlet…</span>
@@ -385,24 +385,24 @@
 <p>For an overview of all the control elements that are currently consider, use the internal <code>get_ctrl_blocks_config_df()</code> function.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">get_ctrl_blocks_config_df</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 26 x 3</span>
-<span class="co">#&gt;    block    regexp                      hexadecimal                             </span>
-<span class="co">#&gt;    &lt;chr&gt;    &lt;chr&gt;                       &lt;chr&gt;                                   </span>
-<span class="co">#&gt;  1 del-nl   "\x7f\x85"                  7f 85                                   </span>
-<span class="co">#&gt;  2 eop-nl   "܅"                         dc 85                                   </span>
-<span class="co">#&gt;  3 0b-80    "\v\x80"                    0b 80                                   </span>
-<span class="co">#&gt;  4 e0-81    "\xe0\x81"                  e0 81                                   </span>
-<span class="co">#&gt;  5 ce-80    "\u0380"                    ce 80                                   </span>
-<span class="co">#&gt;  6 ce-8a    "Ί"                         ce 8a                                   </span>
-<span class="co">#&gt;  7 ee-85    "\xee\x85"                  ee 85                                   </span>
-<span class="co">#&gt;  8 75-84    "u\x84"                     75 84                                   </span>
-<span class="co">#&gt;  9 ff-80    "\\x00\xff\x80\\x00"        5c 78 30 30 ff 80 5c 78 30 30           </span>
-<span class="co">#&gt; 10 07-80-id "\x05\x80.\xff(\\x00|\x80|… 05 80 2e ff 28 5c 78 30 30 7c 80 7c ff …</span>
+<span class="co">#&gt; # A tibble: 26 × 3</span>
+<span class="co">#&gt;    block    regexp                              hexadecimal                     </span>
+<span class="co">#&gt;    &lt;chr&gt;    &lt;chr&gt;                               &lt;chr&gt;                           </span>
+<span class="co">#&gt;  1 del-nl   "\x7f\x85"                          7f 85                           </span>
+<span class="co">#&gt;  2 eop-nl   "܅"                                 dc 85                           </span>
+<span class="co">#&gt;  3 0b-80    "\v\x80"                            0b 80                           </span>
+<span class="co">#&gt;  4 e0-81    "\xe0\x81"                          e0 81                           </span>
+<span class="co">#&gt;  5 ce-80    "\u0380"                            ce 80                           </span>
+<span class="co">#&gt;  6 ce-8a    "Ί"                                 ce 8a                           </span>
+<span class="co">#&gt;  7 ee-85    "\xee\x85"                          ee 85                           </span>
+<span class="co">#&gt;  8 75-84    "u\x84"                             75 84                           </span>
+<span class="co">#&gt;  9 ff-80    "\\x00\xff\x80\\x00"                5c 78 30 30 ff 80 5c 78 30 30   </span>
+<span class="co">#&gt; 10 07-80-id "\x05\x80.\xff(\\x00|\x80|\xff){2}" 05 80 2e ff 28 5c 78 30 30 7c 8…</span>
 <span class="co">#&gt; # … with 16 more rows</span></code></pre></div>
 <p>Additional information can be gleaned from the so-called control blocks, which are larger structural elements of Isodat binary files and are kept in a data frame within the binary object (again only available in debug mode).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">bin</span><span class="op">$</span><span class="va">C_blocks</span>
-<span class="co">#&gt; # A tibble: 107 x 5</span>
+<span class="co">#&gt; # A tibble: 107 × 5</span>
 <span class="co">#&gt;    id1   id2   block                 start   end</span>
 <span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;                 &lt;int&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt;  1 06    0b    CFileHeader               1    17</span>
