@@ -17,3 +17,10 @@ auto_test:
 # test with all example files (= as if not on CRAN)
 auto_test_all:
 	R -q -e "rm(list = ls()); testthat::auto_test_package()"
+
+# check code complexity
+count:
+	scc R tests --include-ext r --sort lines
+	
+count_all:
+	scc . --sort lines

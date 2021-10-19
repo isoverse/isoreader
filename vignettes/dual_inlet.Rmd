@@ -157,7 +157,7 @@ di_files3 %>%
 
 ## Add
 
-Additionally, a wide range of new file information can be added in the form of a data frame with any number of columns (usually read from a comma-separated-value/csv file or an Excel/xlsx file) using the function `iso_add_file_info` and specifying which existing file information should be used to merge in the new information. It is similar to [dplyr's left_join](https://dplyr.tidyverse.org/reference/join.html) but with additional safety checks and the possibility to join the new information sequentially as illustrated below.
+Additionally, a wide range of new file information can be added in the form of a data frame with any number of columns (usually read from a comma-separated-value/csv file or an Excel/xlsx file) using the function `iso_add_file_info` and specifying which existing file information should be used to merge in the new information. It is similar to [dplyr's left_join](https://dplyr.tidyverse.org/reference/mutate-joins.html) but with additional safety checks and the possibility to join the new information sequentially as illustrated below.
 
 ```{r}
 # this kind of information data frame is frequently read in from a csv or xlsx file
@@ -310,7 +310,7 @@ iso_read_dual_inlet("di_files_export.di.rds")
 
 At the moment, isoreader supports export of all data to Excel and the [Feather file format](https://blog.rstudio.com/2016/03/29/feather/) (a Python/R cross-over format). Note that both export methods have similar syntax and append the appropriate file extension for each type of export file (`.di.xlsx` and `.di.feather`, respectively).
 
-```{r}
+```{r, eval = FALSE}
 # export to excel
 di_files %>% iso_export_to_excel("di_files_export")
 
@@ -318,7 +318,7 @@ di_files %>% iso_export_to_excel("di_files_export")
 readxl::excel_sheets("di_files_export.di.xlsx")
 ```
 
-```{r}
+```{r, eval=FALSE}
 # export to feather
 di_files %>% iso_export_to_feather("di_files_export")
 

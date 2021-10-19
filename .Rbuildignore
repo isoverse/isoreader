@@ -31,3 +31,4 @@
 ^LICENSE$
 ^paper.bib$
 ^paper.md$
+^[^/]*\.feather$
