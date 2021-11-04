@@ -154,7 +154,7 @@
     </div>
 
     <div class="ref-description">
-    <p>This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data <code><a href='iso_get_raw_data.html'>iso_get_raw_data</a></code>, <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>, <code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a></code>, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To <code><a href='https://tidyr.tidyverse.org/reference/nest.html'>unnest</a></code> any of the specific data types (e.g. <code>raw_data</code>), make sure to filter first for the files that have this data type available (e.g. <code><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter(has_raw_data)</a></code>). Exclude specific types of information by setting its <code>include...</code> parameter to <code>NULL</code> (Note: for historical reasons, setting it to <code>FALSE</code> will also include the information).</p>
+    <p>This function aggregates all isofiles data and returns it in a large data frame with nested columns for each type of information (file_info, raw_data, etc.). For targeted retrieval of specific data <code><a href='iso_get_raw_data.html'>iso_get_raw_data</a></code>, <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>, <code><a href='iso_get_vendor_data_table.html'>iso_get_vendor_data_table</a></code>, etc. are much faster and easier to work with. This function is primarily useful for downstream processing pipelines that want to carry all information along. To <code><a href='https://tidyr.tidyverse.org/reference/nest.html'>unnest</a></code> any of the specific data types (e.g. <code>raw_data</code>), make sure to filter first for the files that have this data type available (e.g. <code>filter(has_raw_data)</code>). Exclude specific types of information by setting its <code>include...</code> parameter to <code>NULL</code> (Note: for historical reasons, setting it to <code>FALSE</code> will also include the information).</p>
     </div>
 
     <pre class="usage"><span class='fu'>iso_get_all_data</span><span class='op'>(</span>
@@ -181,27 +181,27 @@
     </tr>
     <tr>
       <th>include_file_info</th>
-      <td><p>which file information to include (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>). Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns.</p></td>
+      <td><p>which file information to include (see <code><a href='iso_get_file_info.html'>iso_get_file_info</a></code>). Use <code>c(...)</code> to select multiple, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns.</p></td>
     </tr>
     <tr>
       <th>include_raw_data</th>
-      <td><p>which columns from the raw data to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set to NULL to include no raw data.</p></td>
+      <td><p>which columns from the raw data to include. Use <code>c(...)</code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set to NULL to include no raw data.</p></td>
     </tr>
     <tr>
       <th>include_standards</th>
-      <td><p>which columns from the standards info to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. By default, everything is included (both standards and ratios). To omit the ratios, change to <code>select = file_id:reference</code>. Set to NULL to include no standards info.</p></td>
+      <td><p>which columns from the standards info to include. Use <code>c(...)</code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. By default, everything is included (both standards and ratios). To omit the ratios, change to <code>select = file_id:reference</code>. Set to NULL to include no standards info.</p></td>
     </tr>
     <tr>
       <th>include_resistors</th>
-      <td><p>which columns from the resistors info to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set to NULL to include no resistors info.</p></td>
+      <td><p>which columns from the resistors info to include. Use <code>c(...)</code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set to NULL to include no resistors info.</p></td>
     </tr>
     <tr>
       <th>include_vendor_data_table</th>
-      <td><p>which columns from the vendor data table to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set parameter <code>with_explicit_units = TRUE</code> to make column units explicit (keep in mind that this will require specific <code>include_vendor_data_table</code> column selections to reflect the column names including the units). Set to NULL to include no vendor data table.</p></td>
+      <td><p>which columns from the vendor data table to include. Use <code>c(...)</code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes all columns by default. Set parameter <code>with_explicit_units = TRUE</code> to make column units explicit (keep in mind that this will require specific <code>include_vendor_data_table</code> column selections to reflect the column names including the units). Set to NULL to include no vendor data table.</p></td>
     </tr>
     <tr>
       <th>include_problems</th>
-      <td><p>which columns from problems to include. Use <code><a href='https://rdrr.io/r/base/c.html'>c(...)</a></code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes none of the read problems by default. Set to <code>include_problems = everything()</code> to include all columns.</p></td>
+      <td><p>which columns from problems to include. Use <code>c(...)</code> to select multiple columns, supports all <a href='https://dplyr.tidyverse.org/reference/select.html'>select</a> syntax including renaming columns. Includes none of the read problems by default. Set to <code>include_problems = everything()</code> to include all columns.</p></td>
     </tr>
     <tr>
       <th>gather</th>

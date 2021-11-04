@@ -105,7 +105,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Development features of isoreader</h1>
             
-            <h4 class="date">2021-10-19</h4>
+            <h4 class="date">2021-11-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/development.Rmd"><code>vignettes/development.Rmd</code></a></small>
       <div class="hidden name"><code>development.Rmd</code></div>
@@ -279,7 +279,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="co"># copy an example file from the package with the new extension</span>
-<span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.copy</a></span><span class="op">(</span>to <span class="op">=</span> <span class="st">"example.new.did"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.copy</a></span><span class="op">(</span>to <span class="op">=</span> <span class="st">"example.new.did"</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span>
 
 <span class="co"># read the file</span>
@@ -314,17 +314,17 @@
 <span class="co">#&gt;   ..$ type   : chr(0) </span>
 <span class="co">#&gt;   ..$ func   : chr(0) </span>
 <span class="co">#&gt;   ..$ details: chr(0)</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.32 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.27 secs</span>
 <span class="co">#&gt; Dual inlet iso file 'example.new.did': 0 cycles, 0 ions ()</span>
 <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.remove</a></span><span class="op">(</span><span class="st">"example.new.did"</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
-<p>Note that for parallel processing to work during the read process (<code>parallel = TRUE</code>), isoreader needs to know where to find the new reader function. It will figure this out automatically as long as the function name is unique but if this fails (or to be on the safe side), please specify e.g. <code>env = "R_GlobalEnv"</code> or <code>env = "newpackage"</code> during the reader registration. Also note that isoreader will not automatically know where to find all functions called from within the new reader function if they are not part of base R and it is recommended to make all outside calls explicit (e.g. <code><a href="https://dplyr.tidyverse.org/reference/filter.html">dplyr::filter(...)</a></code>) to preempt this potential problem. For info messages and warnings to work with the progress bar and in parallel reads, make sure to use <code>isoreader:::log_message(...)</code> and <code>isoreader:::log_warning(...)</code> instead of base R’s <code><a href="https://rdrr.io/r/base/message.html">message(...)</a></code> and <code><a href="https://rdrr.io/r/base/warning.html">warning(...)</a></code>.</p>
+<p>Note that for parallel processing to work during the read process (<code>parallel = TRUE</code>), isoreader needs to know where to find the new reader function. It will figure this out automatically as long as the function name is unique but if this fails (or to be on the safe side), please specify e.g. <code>env = "R_GlobalEnv"</code> or <code>env = "newpackage"</code> during the reader registration. Also note that isoreader will not automatically know where to find all functions called from within the new reader function if they are not part of base R and it is recommended to make all outside calls explicit (e.g. <code>dplyr::filter(...)</code>) to preempt this potential problem. For info messages and warnings to work with the progress bar and in parallel reads, make sure to use <code>isoreader:::log_message(...)</code> and <code>isoreader:::log_warning(...)</code> instead of base R’s <code>message(...)</code> and <code>warning(...)</code>.</p>
 <p>If you have designed and tested a new reader, please consider contributing it to the <code>isoreader</code> github repository via pull request.</p>
 </div>
 <div id="processing-hooks" class="section level1">
 <h1 class="hasAnchor">
 <a href="#processing-hooks" class="anchor"></a>Processing hooks</h1>
-<p>Isoreader defines two processing hooks at the beginning and end of reading an individual file. This is useful for integration into pipelines that require additional output (such as GUIs) but is also sometimes useful for debugging purposes. The expressions are evaluated in the context of the <code>isoreader:::read_iso_file</code> function and have access to all parameters passed to this function, such as e.g. <code>file_n</code> and <code>path</code>. Same as for new readers: for info messages and warnings to work with the progress bar and in parallel reads, make sure to use <code>isoreader:::log_message(...)</code> and <code>isoreader:::log_warning(...)</code> instead of base R’s <code><a href="https://rdrr.io/r/base/message.html">message(...)</a></code> and <code><a href="https://rdrr.io/r/base/warning.html">warning(...)</a></code>. The main difference between the two is that <code>log_message()</code> will honor the <code>quiet = TRUE</code> flag passed to the main <code>iso_read...()</code> call whereas <code>log_warning()</code> will always show its message no matter the <code>quiet</code> setting.</p>
+<p>Isoreader defines two processing hooks at the beginning and end of reading an individual file. This is useful for integration into pipelines that require additional output (such as GUIs) but is also sometimes useful for debugging purposes. The expressions are evaluated in the context of the <code>isoreader:::read_iso_file</code> function and have access to all parameters passed to this function, such as e.g. <code>file_n</code> and <code>path</code>. Same as for new readers: for info messages and warnings to work with the progress bar and in parallel reads, make sure to use <code>isoreader:::log_message(...)</code> and <code>isoreader:::log_warning(...)</code> instead of base R’s <code>message(...)</code> and <code>warning(...)</code>. The main difference between the two is that <code>log_message()</code> will honor the <code>quiet = TRUE</code> flag passed to the main <code>iso_read...()</code> call whereas <code>log_warning()</code> will always show its message no matter the <code>quiet</code> setting.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/iso_debug_mode.html">set_read_file_event_expr</a></span><span class="op">(</span><span class="op">{</span>
   <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">log_message</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"starting file #%.d, named '%s'"</span>, <span class="va">file_n</span>, <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
@@ -336,7 +336,7 @@
 <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
   <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span>,
   <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.caf"</span><span class="op">)</span>
-<span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span>read_cache <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span>read_cache <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#&gt; Info: preparing to read 2 data files (all will be cached)...</span>
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.did' with '.did' reader...</span>
 <span class="co">#&gt; Info: starting file #1, named 'dual_inlet_example.did'</span>
@@ -344,7 +344,7 @@
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader...</span>
 <span class="co">#&gt; Info: starting file #2, named 'dual_inlet_example.caf'</span>
 <span class="co">#&gt; Info: finished file #2</span>
-<span class="co">#&gt; Info: finished reading 2 files in 4.10 secs</span>
+<span class="co">#&gt; Info: finished reading 2 files in 3.62 secs</span>
 <span class="co">#&gt; Data from 2 dual inlet iso files: </span>
 <span class="co">#&gt; # A tibble: 2 × 6</span>
 <span class="co">#&gt;   file_id    raw_data       file_info  method_info  vendor_data_tab… file_path  </span>
@@ -357,7 +357,7 @@
 <div id="debugging-isoreader" class="section level1">
 <h1 class="hasAnchor">
 <a href="#debugging-isoreader" class="anchor"></a>Debugging isoreader</h1>
-<p>The best way to start debugging an isoreader call is to switch the package into debug mode. This is done using the internal <code><a href="../reference/iso_debug_mode.html">iso_turn_debug_on()</a></code> function. This enables debug messages, turns caching off by default so files are always read anew, and makes the package keep more information in the isofile objects. It continues to catch errors inside file readers (keeping track of them in the <a href="operations.html#dealing-with-file-read-problems">problems</a>) unless you set <code><a href="../reference/iso_debug_mode.html">iso_turn_debug_on(catch_errors = FALSE)</a></code>, in which case no errors are caught and stop the processing so you get the full traceback and debugging options of your IDE.</p>
+<p>The best way to start debugging an isoreader call is to switch the package into debug mode. This is done using the internal <code><a href="../reference/iso_debug_mode.html">iso_turn_debug_on()</a></code> function. This enables debug messages, turns caching off by default so files are always read anew, and makes the package keep more information in the isofile objects. It continues to catch errors inside file readers (keeping track of them in the <a href="operations.html#dealing-with-file-read-problems">problems</a>) unless you set <code>iso_turn_debug_on(catch_errors = FALSE)</code>, in which case no errors are caught and stop the processing so you get the full traceback and debugging options of your IDE.</p>
 <div id="debugging-binary-file-reads-isodat" class="section level2">
 <h2 class="hasAnchor">
 <a href="#debugging-binary-file-reads-isodat" class="anchor"></a>Debugging binary file reads (Isodat)</h2>
@@ -367,13 +367,13 @@
 <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/iso_debug_mode.html">iso_turn_debug_on</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: debug mode turned on, error catching turned on, caching turned off</span>
 <span class="co"># read example file</span>
-<span class="va">ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op">%&gt;%</span>  
+<span class="va">ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
   <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co"># access binary</span>
 <span class="va">bin</span> <span class="op">&lt;-</span> <span class="va">ex</span><span class="op">$</span><span class="va">binary</span>
 <span class="co"># use structure mapping</span>
-<span class="va">bin</span> <span class="op">%&gt;%</span>
-  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">move_to_pos</span><span class="op">(</span><span class="fl">1340</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="va">bin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">move_to_pos</span><span class="op">(</span><span class="fl">1340</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/map_binary_structure.html">map_binary_structure</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fl">200</span><span class="op">)</span>
 <span class="co">#&gt; # Binary data structure:  </span>
 <span class="co">#&gt; 0001340: {4d 65 73 73 61 67 65 44 61 74 61}</span>
@@ -418,8 +418,8 @@
 <span class="co">#&gt; # … with 97 more rows</span></code></pre></div>
 <p>Same as for specific byte positions, one can use the control blocks to navigate the file and <code>map_binary_structure</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">bin</span> <span class="op">%&gt;%</span>
-  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">move_to_C_block</span><span class="op">(</span><span class="st">"CMethod"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<code class="sourceCode R"><span class="va">bin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">move_to_C_block</span><span class="op">(</span><span class="st">"CMethod"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/map_binary_structure.html">map_binary_structure</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fl">200</span><span class="op">)</span>
 <span class="co">#&gt; # Binary data structure:  </span>
 <span class="co">#&gt; 0080269: &lt;etx&gt;</span>

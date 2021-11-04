@@ -197,13 +197,15 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='iso_with_units.html'>iso_with_units</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='st'>"V"</span><span class='op'>)</span>
-<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='iso_with_units.html'>iso_with_units</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='st'>"permil"</span><span class='op'>)</span>
-<span class='fu'>iso_format</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "x: 1V\ny: 1‰" "x: 2V\ny: 2‰" "x: 3V\ny: 3‰" "x: 4V\ny: 4‰" "x: 5V\ny: 5‰"</div><div class='input'><span class='fu'>iso_format</span><span class='op'>(</span>amplitude <span class='op'>=</span> <span class='va'>x</span>, d13C <span class='op'>=</span> <span class='va'>y</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "amplitude: 1V\nd13C: 1‰" "amplitude: 2V\nd13C: 2‰"
-#&gt; [3] "amplitude: 3V\nd13C: 3‰" "amplitude: 4V\nd13C: 4‰"
-#&gt; [5] "amplitude: 5V\nd13C: 5‰"</div></pre>
+    <pre class="examples"><span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='iso_with_units.html'>iso_with_units</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='st'>"V"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='iso_with_units.html'>iso_with_units</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='st'>"permil"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>iso_format</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "x: 1V\ny: 1‰" "x: 2V\ny: 2‰" "x: 3V\ny: 3‰" "x: 4V\ny: 4‰" "x: 5V\ny: 5‰"</span>
+<span class='r-in'><span class='fu'>iso_format</span><span class='op'>(</span>amplitude <span class='op'>=</span> <span class='va'>x</span>, d13C <span class='op'>=</span> <span class='va'>y</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "amplitude: 1V\nd13C: 1‰" "amplitude: 2V\nd13C: 2‰"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [3] "amplitude: 3V\nd13C: 3‰" "amplitude: 4V\nd13C: 4‰"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [5] "amplitude: 5V\nd13C: 5‰"</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
