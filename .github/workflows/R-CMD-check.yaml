@@ -83,7 +83,7 @@ jobs:
         run: |
           # install isoreader before check so parallel processing examples work
           remotes::install_cran("devtools")
-          devtools::install_github("isoverse/isoreader")
+          devtools::install(".", dependencies = FALSE)
         shell: Rscript {0}
 
       - name: Check
