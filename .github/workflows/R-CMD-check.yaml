@@ -53,8 +53,8 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+          key: ${{ runner.os }}-r-${{ matrix.config.r }}-2-${{ hashFiles('depends.Rds') }}
+          restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-2-
 
       - name: Install system dependencies
         if: runner.os == 'Linux'
@@ -69,15 +69,6 @@ jobs:
         run: |
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
-        shell: Rscript {0}
-
-      - name: Install stringi from source (for Linux)
-        if: runner.os == 'Linux'
-        run: |
-          remove.packages("stringr")
-          remove.packages("stringi")
-          install.packages("stringi", type="source")
-          install.packages("stringr", type="source")
         shell: Rscript {0}
 
       - name: Install package
