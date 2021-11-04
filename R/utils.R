@@ -11,10 +11,7 @@ col_in_df <- function(df, col) {
 
 # collapse helper to deal with naming change in the glue package
 collapse <- function(...) {
-  if (exists("glue_collapse", where=asNamespace("glue"), mode="function"))
-    glue::glue_collapse(...)
-  else
-    glue::collapse(...)
+  glue::glue_collapse(...)
 }
 
 # helper to make sure columns exist
