@@ -130,7 +130,7 @@ test_that("Test that filtering by file info works", {
   expect_null(filter(iso_file1, new_info != 42))
   expect_equal(filter(iso_files, file_id == "A"), c(iso_file1))
   expect_null(filter(iso_files, file_id == "DNE"))
-  expect_error(filter(iso_files, dne == 5), "not.*found", class = "dplyr_error")
+  expect_error(filter(iso_files, dne == 5))
   
   # filter and iso_filter_files equivalence
   expect_equal(filter(iso_files, file_id != "A"), iso_filter_files(iso_files, file_id != "A"))
