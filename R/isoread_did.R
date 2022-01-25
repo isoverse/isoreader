@@ -8,7 +8,7 @@ iso_read_did <- function(ds, options = list()) {
     stop("data structure must be a 'dual_inlet' iso_file", call. = FALSE)
   
   # read binary file
-  ds$binary <- get_ds_file_path(ds) %>% read_binary_file()
+  ds$binary <- get_ds_file_path(ds) %>% read_binary_isodat_file()
   
   # process file info
   if(ds$read_options$file_info) {
@@ -45,12 +45,12 @@ extract_did_raw_voltage_data <- function(ds) {
     move_to_next_C_block_range("CTraceInfoEntry", "CPlotRange") 
   
   # read all masses
-  masses_re <- re_combine(re_block("fef-x"), re_text("Mass "))
+  masses_re <- re_combine(re_text_x(), re_unicode("Mass "))
   masses_positions <- find_next_patterns(ds$binary, masses_re)
   masses <- map_chr(masses_positions, function(pos) {
     ds$binary %>%
       move_to_pos(pos + masses_re$size) %>%  
-      capture_data("mass", "text", re_or(re_block("fef-x"), re_block("C-block")), 
+      capture_data_till_pattern("mass", "text", re_or(re_text_x(), re_block("C-block")), 
                    data_bytes_max = 8, move_past_dots = FALSE) %>% 
       { .$data$mass }
   })
@@ -67,9 +67,9 @@ extract_did_raw_voltage_data <- function(ds) {
   
   # find binary positions for voltage standards and samples
   voltages <- list()
-  standard_voltage_start_re <- re_combine(re_text("/"), re_block("fef-x"), re_block("fef-x"), re_text("Standard "))
+  standard_voltage_start_re <- re_combine(re_unicode("/"), re_text_x(), re_text_x(), re_unicode("Standard "))
   standard_positions <- find_next_patterns(ds$binary, standard_voltage_start_re)
-  sample_voltage_start_re <- re_combine(re_text("/"), re_block("fef-0"), re_block("fef-x"), re_text("Sample "))
+  sample_voltage_start_re <- re_combine(re_unicode("/"), re_text_0(), re_text_x(), re_unicode("Sample "))
   sample_positions <- find_next_patterns(ds$binary, sample_voltage_start_re)
 
   # function to capture voltages
@@ -77,14 +77,14 @@ extract_did_raw_voltage_data <- function(ds) {
     
     bin <- ds$binary %>% 
       move_to_pos(pos) %>% 
-      capture_data("cycle", "text", re_null(4), re_block("stx"), move_past_dots = TRUE) %>% 
-      move_to_next_pattern(re_text("/"), re_block("fef-0"), re_block("fef-0"), re_null(4), re_block("stx")) %>%
-      move_to_next_pattern(re_block("x-000"), re_block("x-000")) %>% 
-      capture_data("voltage", "double", re_null(6),re_block("x-000"), sensible = c(-1000, 100000))
+      capture_data_till_pattern("cycle", "text", re_null(4), re_block("stx"), move_past_dots = TRUE) %>% 
+      move_to_next_pattern(re_unicode("/"), re_text_0(), re_text_0(), re_null(4), re_block("stx")) %>%
+      move_to_next_pattern(re_x_000(), re_x_000()) %>% 
+      capture_data_till_pattern("voltage", "double", re_null(6),re_x_000(), sensible = c(-1000, 100000))
     
     # safety check
     if (length(bin$data$voltage) != length(masses)) {
-      op_error(bin, glue("inconsistent number of voltage measurements encountered ({length(bin$data$voltage)}), expected {length(masses)}"))
+      iso_source_file_op_error(bin, glue("inconsistent number of voltage measurements encountered ({length(bin$data$voltage)}), expected {length(masses)}"))
     }
 
     # return voltage data
@@ -124,27 +124,27 @@ extract_did_vendor_data_table <- function(ds) {
     move_to_C_block_range("CDualInletEvaluatedData", "CParsedEvaluationString")
   
   # cap
-  if (!is.null(pos <- find_next_pattern(ds$binary, re_text("Gas Indices")))) {
+  if (!is.null(pos <- find_next_pattern(ds$binary, re_unicode("Gas Indices")))) {
     ds$binary <- ds$binary %>% cap_at_pos(pos - 20)
-  } else op_error(ds$binary, "cannot find data deliminter 'Gas Indices'")
+  } else iso_source_file_op_error(ds$binary, "cannot find data deliminter 'Gas Indices'")
   
   # find data positions
-  column_header_re <- re_combine(re_block("etx"), re_text("/"), re_block("fef-x"), re_block("text"), # Delta or AT%
-                                 re_block("fef-x"), re_block("text"), # actual column name
+  column_header_re <- re_combine(re_block("etx"), re_unicode("/"), re_text_x(), re_block("text"), # Delta or AT%
+                                 re_text_x(), re_block("text"), # actual column name
                                  re_null(4), re_block("stx"))
-  column_data_re <- re_combine(re_text("/"), re_block("fef-0"), re_block("fef-x"), re_block("text"), re_null(4), 
-                               re_block("x-000"), re_block("x-000")) # data comes after this
+  column_data_re <- re_combine(re_unicode("/"), re_text_0(), re_text_x(), re_block("text"), re_null(4), 
+                               re_x_000(), re_x_000()) # data comes after this
   column_header_positions <- find_next_patterns(ds$binary, column_header_re)
   column_data_positions <- find_next_patterns(ds$binary, column_data_re)
   
   # safety checks
   if (length(column_header_positions) == 0) {
-    op_error(ds$binary, "no column headers found")
+    iso_source_file_op_error(ds$binary, "no column headers found")
   } else if (length(column_header_positions) != length(column_data_positions)) {
-    op_error(ds$binary, sprintf("unequal number of column headers (%d) and data entries (%d) found", 
+    iso_source_file_op_error(ds$binary, sprintf("unequal number of column headers (%d) and data entries (%d) found", 
                              length(column_header_positions), length(column_data_positions)))
   } else if (!all(column_header_positions < column_data_positions)) {
-    op_error(ds$binary, "found column headers not interspersed with data entries")
+    iso_source_file_op_error(ds$binary, "found column headers not interspersed with data entries")
   }
   
   # read the data
@@ -153,14 +153,14 @@ extract_did_vendor_data_table <- function(ds) {
     ds$binary <- ds$binary %>%
       move_to_pos(column_header_positions[i] + 10) %>% # skip initial <stx>/<fef-x> at the start of header
       # capture column type (typically Delta or AT%) # could skip this to speed up
-      capture_data("type", "text", re_block("fef-x"), move_past_dots = TRUE) %>%
+      capture_data_till_pattern("type", "text", re_text_x(), move_past_dots = TRUE) %>%
       # capture actual colum name
-      capture_data("column", "text", re_null(4), re_block("stx")) %>%
+      capture_data_till_pattern("column", "text", re_null(4), re_block("stx")) %>%
       # capture column data
       move_to_pos(column_data_positions[i]) %>% 
       move_to_next_pattern(column_data_re, max_gap = 0) %>% # move to start of data
       capture_n_data("n_values", "integer", n = 1, sensible = c(1, 1000)) %>%  # NOTE: this assumes more than 1000 cycles are unrealistic in dual inlet
-      capture_data("values", "double", re_block("fef-0"), re_block("stx"), sensible = c(-1e10, 1e10))
+      capture_data_till_pattern("values", "double", re_text_0(), re_block("stx"), sensible = c(-1e10, 1e10))
     
     # safety check
     if (length(ds$binary$data$values) != 2 * ds$binary$data$n_values)

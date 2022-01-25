@@ -8,7 +8,7 @@ iso_read_dxf <- function(ds, options = list()) {
     stop("data structure must be a 'continuous_flow' iso_file", call. = FALSE)
   
   # read binary file
-  ds$binary <- get_ds_file_path(ds) %>% read_binary_file()
+  ds$binary <- get_ds_file_path(ds) %>% read_binary_isodat_file()
   
   # process file info
   if(ds$read_options$file_info) {
@@ -36,7 +36,7 @@ iso_read_dxf <- function(ds, options = list()) {
   if (ds$read_options$vendor_data_table) {
     ds <- exec_func_with_error_catch(
       extract_isodat_continuous_flow_vendor_data_table, ds, 
-      cap_at_fun = function(bin) cap_at_pos(bin, find_next_pattern(bin, re_text("DetectorDataBlock"))))
+      cap_at_fun = function(bin) cap_at_pos(bin, find_next_pattern(bin, re_unicode("DetectorDataBlock"))))
   }
   
   return(ds)
@@ -55,7 +55,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
   
   # find all gas configurations
   configs <- list()
-  gas_config_name_re <- re_combine(re_block("fef-x"), re_block("alpha"), re_block("fef-0"), re_block("fef-x"))
+  gas_config_name_re <- re_combine(re_text_x(), re_block("alpha"), re_text_0(), re_text_x())
   config_positions <- ds$binary %>% find_next_patterns(gas_config_name_re)
   config_caps <- c(config_positions[-1], ds$binary$max_pos)
   if (length(config_positions) == 0) return(ds)
@@ -64,8 +64,8 @@ extract_dxf_raw_voltage_data <- function(ds) {
     # find name of gas configuration
     ds$binary <- ds$binary %>% 
       move_to_pos(config_positions[i]) %>% 
-      move_to_next_pattern(re_block("fef-x"), max_gap = 0) %>% 
-      capture_data("gas", "text", re_block("fef-0"), re_block("fef-x")) 
+      move_to_next_pattern(re_text_x(), max_gap = 0) %>% 
+      capture_data_till_pattern("gas", "text", re_text_0(), re_text_x()) 
     
     # make sure we have the right starts and caps for each configuration
     if (ds$binary$data$gas %in% names(configs)) {
@@ -89,11 +89,11 @@ extract_dxf_raw_voltage_data <- function(ds) {
       cap_at_pos(configs[[config]]$cap)
     
     intensity_id <- 1
-    while(!is.null(find_next_pattern(ds$binary, re_text(str_c("rIntensity", intensity_id))))) {
+    while(!is.null(find_next_pattern(ds$binary, re_unicode(str_c("rIntensity", intensity_id))))) {
       ds$binary <- ds$binary %>%
-        move_to_next_pattern(re_text(str_c("rIntensity", intensity_id))) %>%
-        move_to_next_pattern(re_block("fef-x"), re_text("rIntensity "), max_gap = 0) %>%
-        capture_data("mass", "text", re_block("fef-x"), move_past_dots = TRUE)
+        move_to_next_pattern(re_unicode(str_c("rIntensity", intensity_id))) %>%
+        move_to_next_pattern(re_text_x(), re_unicode("rIntensity "), max_gap = 0) %>%
+        capture_data_till_pattern("mass", "text", re_text_x(), move_past_dots = TRUE)
       configs[[config]]$masses <- c(configs[[config]]$masses, ds$binary$data$mass)
       intensity_id <- intensity_id + 1
     }
@@ -102,17 +102,17 @@ extract_dxf_raw_voltage_data <- function(ds) {
   # find gas config alternative names (sometimes set, sometimes not)
   ds$binary <- ds$binary %>% 
     move_to_C_block_range("CPeakFindParameter", "CResultArray") 
-  smoothing_positions <- find_next_patterns(ds$binary, re_text("Smoothing"))
+  smoothing_positions <- find_next_patterns(ds$binary, re_unicode("Smoothing"))
   gas_name_end_re <- re_combine(re_null(4), re_direct("[\x01-\xff]", label = "x01-xff"))
-  gas_name_re <- re_combine(re_block("fef-x"), re_block("text0"), gas_name_end_re)
+  gas_name_re <- re_combine(re_text_x(), re_block("text0"), gas_name_end_re)
   
   for (pos in smoothing_positions) {
     ds$binary <- ds$binary %>%
       move_to_pos(pos, reset_cap = TRUE) %>%
-      { cap_at_pos(., find_next_pattern(., re_text("Peak Center"))) } %>%
+      { cap_at_pos(., find_next_pattern(., re_unicode("Peak Center"))) } %>%
       move_to_next_pattern(gas_name_re, move_to_end = FALSE) %>%
       skip_pos(4) %>% # skip the fef-x at the beginning
-      capture_data("gas_name1", "text", gas_name_end_re, data_bytes_max = 50)
+      capture_data_till_pattern("gas_name1", "text", gas_name_end_re, data_bytes_max = 50)
     gas_name1 <- ds$binary$data$gas_name1
     
     # gas name 2
@@ -121,7 +121,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
       ds$binary <- ds$binary %>% 
         move_to_next_pattern(gas_name_re, move_to_end = FALSE) %>%
         skip_pos(4) %>% # skip the fef-x at the beginning
-        capture_data("gas_name2", "text", gas_name_end_re, data_bytes_max = 50)
+        capture_data_till_pattern("gas_name2", "text", gas_name_end_re, data_bytes_max = 50)
       gas_name2 <-  ds$binary$data$gas_name2
       
       # update config with alternative name
@@ -142,16 +142,16 @@ extract_dxf_raw_voltage_data <- function(ds) {
     set_binary_file_error_prefix("cannot recover raw voltages") %>%
     move_to_C_block_range("CAllMoleculeWeights", "CMethod") %>%
     move_to_next_C_block("CStringArray") %>%
-    move_to_next_pattern(re_text("OrigDataBlock"), re_null(4), re_block("stx"))
+    move_to_next_pattern(re_unicode("OrigDataBlock"), re_null(4), re_block("stx"))
 
   # find all data sets
   data_start_re <- re_combine(
-    re_block("fef-0"), re_null(4), re_block("x-000"), re_block("x-000"), 
-    re_direct("..", size = 2, label = ".."), re_block("x-000"))
+    re_text_0(), re_null(4), re_x_000(), re_x_000(), 
+    re_direct("..", size = 2, label = ".."), re_x_000())
   data_end_re <- re_combine(
     re_direct(".{4}", label = ".{4}"), re_null(4), 
-    re_block("fef-0"), re_block("stx"))
-  gas_config_re <- re_combine(re_block("fef-x"), re_block("text"), re_block("fef-0"))
+    re_text_0(), re_block("stx"))
+  gas_config_re <- re_combine(re_text_x(), re_block("text"), re_text_0())
   voltages <- tibble()
   positions <- find_next_patterns(ds$binary, data_start_re)
 
@@ -165,7 +165,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
       move_to_next_pattern(data_end_re) %>%
       move_to_next_pattern(gas_config_re, move_to_end = FALSE, max_gap = 20) %>%
       skip_pos(4) %>% # skip the fef-x at the beginning
-      capture_data("gas", "text", re_block("fef-0"), data_bytes_max = 50) %>%
+      capture_data_till_pattern("gas", "text", re_text_0(), data_bytes_max = 50) %>%
       { list(gas = .$data$gas, pos = .$pos) }
     gas_config <- gas_data_block_end$gas
 
@@ -187,7 +187,7 @@ extract_dxf_raw_voltage_data <- function(ds) {
 
     # save voltage data
     ds$binary <- ds$binary %>%
-      capture_data("voltages", c("float", rep("double", length(masses))), data_end_re)
+      capture_data_till_pattern("voltages", c("float", rep("double", length(masses))), data_end_re)
     voltages <- bind_rows(voltages,
                           ds$binary$data$voltages %>%
                             dplyr::as_tibble() %>% rlang::set_names(c("time.s", masses_columns)))

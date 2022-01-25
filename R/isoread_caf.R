@@ -8,7 +8,7 @@ iso_read_caf <- function(ds, options = list()) {
     stop("data structure must be a 'dual_inlet' iso_file", call. = FALSE)
   
   # read binary file
-  ds$binary <- get_ds_file_path(ds) %>% read_binary_file()
+  ds$binary <- get_ds_file_path(ds) %>% read_binary_isodat_file()
   
   # process file info
   if(ds$read_options$file_info) {
@@ -29,7 +29,7 @@ iso_read_caf <- function(ds, options = list()) {
   if (ds$read_options$method_info) {
     ds <- exec_func_with_error_catch(
       extract_isodat_reference_values, ds,
-      function(bin) cap_at_pos(bin, find_next_pattern(bin, re_text("Administrator"))))
+      function(bin) cap_at_pos(bin, find_next_pattern(bin, re_unicode("Administrator"))))
     ds <- exec_func_with_error_catch(extract_isodat_resistors, ds)
   }
   
@@ -49,7 +49,7 @@ extract_caf_raw_voltage_data <- function(ds) {
     move_to_C_block_range("CResultData", "CEvalDataIntTransferPart") 
   
   # read all masses
-  masses_re <- re_combine(re_block("x-000"), re_block("fef-x"), re_text("rIntensity"))
+  masses_re <- re_combine(re_x_000(), re_text_x(), re_unicode("rIntensity"))
   masses <- 
     tibble(
       pos = find_next_patterns(ds$binary, masses_re) + masses_re$size,
@@ -57,9 +57,9 @@ extract_caf_raw_voltage_data <- function(ds) {
       data = map(.data$pos, function(pos) {
         ds$binary %>%
           move_to_pos(pos) %>%  
-          capture_data("cup", "text", re_block("fef-x"), data_bytes_max = 8, move_past_dots = TRUE) %>%
-          move_to_next_pattern(re_text("rIntensity "), max_gap = 0L) %>% 
-          capture_data("mass", "text", re_block("fef-x"), data_bytes_max = 8) %>% 
+          capture_data_till_pattern("cup", "text", re_text_x(), data_bytes_max = 8, move_past_dots = TRUE) %>%
+          move_to_next_pattern(re_unicode("rIntensity "), max_gap = 0L) %>% 
+          capture_data_till_pattern("mass", "text", re_text_x(), data_bytes_max = 8) %>% 
           { dplyr::as_tibble(.$data[c("cup", "mass")]) }
       })
     ) %>% 
@@ -77,21 +77,21 @@ extract_caf_raw_voltage_data <- function(ds) {
   
   # find binary positions for voltage standards and samples
   standard_block_start <- find_next_pattern(
-    ds$binary, re_combine(re_text("Standard Block"), re_null(4), re_block("x-000")))
+    ds$binary, re_combine(re_unicode("Standard Block"), re_null(4), re_x_000()))
   sample_block_start <- find_next_pattern(
-    ds$binary, re_combine(re_text("Sample Block"), re_null(4), re_block("x-000")))
+    ds$binary, re_combine(re_unicode("Sample Block"), re_null(4), re_x_000()))
   
   # safety checks
   if (is.null(standard_block_start) || is.null(sample_block_start) || 
       standard_block_start > sample_block_start) {
-    op_error(ds$binary, "cannot find standard and sample voltage data blocks at expected positions")
+    iso_source_file_op_error(ds$binary, "cannot find standard and sample voltage data blocks at expected positions")
   }
   
   # read voltage data
   ds$binary <- set_binary_file_error_prefix(ds$binary, "cannot process voltage data") 
   
   # right before this sequence there is a 4 byte sequence that could be a date, the last block is the # of masses
-  read_blocks_re <- re_combine(re_null(4), re_block("etx"), re_block("x-000"))
+  read_blocks_re <- re_combine(re_null(4), re_block("etx"), re_x_000())
   positions <- find_next_patterns(ds$binary, read_blocks_re)
   
   # function to capture voltages
@@ -102,7 +102,7 @@ extract_caf_raw_voltage_data <- function(ds) {
     
     # safety check
     if (bin$data$n_masses != nrow(masses)) {
-      op_error(bin, glue("inconsistent number of voltage measurements encountered ({bin$data$n_masses}), expected {nrow(masses)}"))
+      iso_source_file_op_error(bin, glue("inconsistent number of voltage measurements encountered ({bin$data$n_masses}), expected {nrow(masses)}"))
     }
     
     bin <- bin %>% 
@@ -131,7 +131,7 @@ extract_caf_raw_voltage_data <- function(ds) {
   
   # safety check
   if (any(notok <- is.na(voltages$column))) {
-    op_error(ds$binary, glue("inconsistent cup designations: {collapse(voltages$cup[notok], ', ')}"))
+    iso_source_file_op_error(ds$binary, glue("inconsistent cup designations: {collapse(voltages$cup[notok], ', ')}"))
   }
   
   # voltages data frame
@@ -153,6 +153,7 @@ extract_caf_vendor_data_table <- function(ds) {
   # get data table
   extracted_dt <- 
     ds %>% 
+    # FIXME: see testing.Rmd for trying to switch to vendor_data_table2 (not possible yet)
     extract_isodat_main_vendor_data_table(
       C_block = "CResultData", cap_at_fun = NULL,
       col_include = "^(d |AT |Nr\\.|Is Ref)", 
