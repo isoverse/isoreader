@@ -179,7 +179,7 @@ iso_read_scan("scan_files_export.scan.rds")
 
 # Data Export
 
-At the moment, isoreader supports export of all data to Excel and the [Feather file format](https://blog.rstudio.com/2016/03/29/feather/) (a Python/R cross-over format). Note that both export methods have similar syntax and append the appropriate file extension for each type of export file (`.scan.xlsx` and `.scan.feather`, respectively).
+At the moment, isoreader supports export of all data to Excel and the [Feather file format](https://www.rstudio.com/blog/feather/) (a Python/R cross-over format). Note that both export methods have similar syntax and append the appropriate file extension for each type of export file (`.scan.xlsx` and `.scan.feather`, respectively).
 
 ```{r, eval=FALSE}
 # export to excel
