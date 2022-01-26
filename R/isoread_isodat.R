@@ -800,6 +800,19 @@ extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$binary$po
     filter(!is.na(format), nchar(format) > 1) %>%
     # row numbers
     dplyr::mutate(row = cumsum(.data$column == .data$column[1])) %>%
+    # remove duplicates
+    dplyr::group_by(column, row) %>%
+    dplyr::summarize(
+      group = .data$group[1],
+      continue_pos = .data$continue_pos[1],
+      id = .data$id[1],
+      format = .data$format[1],
+      `gas_config?` = .data$`gas_config?`[1],
+      units = .data$units[1],
+      ref_frame = .data$units[1],
+      .groups = "drop"
+    ) %>%
+    dplyr::arrange(group) %>%
     # nest by column and expand column details
     tidyr::nest(data = c(-.data$column)) %>%
     dplyr::mutate(
@@ -818,8 +831,10 @@ extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$binary$po
     dplyr::mutate(
       # avoid issues with delta symbol on different OS
       column = stringr::str_replace(column, fixed("\U03B4"), "d"),
-      # and rename per mil to permil
-      column_units = stringr::str_replace(column_units, fixed("per mil"), "permil")
+      # and rename per mil and \U2030 to permil
+      column_units = 
+        stringr::str_replace(column_units, fixed("per mil"), "permil") %>%
+        stringr::str_replace(fixed("\U2030"), "permil")
     )
 
 
