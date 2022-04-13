@@ -229,7 +229,7 @@
 <span class="co">#&gt;       processing sample '6617_IAEA600' (IRMS data '80.hdf5', '82.hdf5')</span>
 <span class="co">#&gt;       processing sample '6630_GlutamicAcid04' (IRMS data '124.hdf5', '126.h...</span>
 <span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' with '.dxf' reader...</span>
-<span class="co">#&gt; Info: finished reading 3 files in 7.59 secs</span></code></pre></div>
+<span class="co">#&gt; Info: finished reading 3 files in 8.94 secs</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="file-summary">File summary<a class="anchor" aria-label="anchor" href="#file-summary"></a>
@@ -4588,7 +4588,7 @@
 <span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span>
 <span class="co">#&gt; Info: reading file 'cf_files_export.cf.rds' with '.cf.rds' reader...</span>
 <span class="co">#&gt; Info: loaded 6 data files from R Data Storage</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.12 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.16 secs</span>
 <span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: aggregating data summary from 6 data file(s)</span></code></pre></div>
 <table class="table">
@@ -4663,7 +4663,7 @@
 <div class="section level2">
 <h2 id="data-export">Data Export<a class="anchor" aria-label="anchor" href="#data-export"></a>
 </h2>
-<p>At the moment, isoreader supports export of all data to Excel and the <a href="https://blog.rstudio.com/2016/03/29/feather/" class="external-link">Feather file format</a> (a Python/R cross-over format). Note that both export methods have similar syntax and append the appropriate file extension for each type of export file (<code>.cf.xlsx</code> and <code>.cf.feather</code>, respectively).</p>
+<p>At the moment, isoreader supports export of all data to Excel and the <a href="https://www.rstudio.com/blog/feather/" class="external-link">Feather file format</a> (a Python/R cross-over format). Note that both export methods have similar syntax and append the appropriate file extension for each type of export file (<code>.cf.xlsx</code> and <code>.cf.feather</code>, respectively).</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># export to excel</span>
 <span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span><span class="op">(</span><span class="st">"cf_files_export"</span><span class="op">)</span>
