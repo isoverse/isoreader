@@ -116,7 +116,7 @@ test_that("test that additional continous flow files can be read", {
                  sprintf("%.0f cores.*requested.*only %.0f.*available", future::availableCores() + 1, future::availableCores()))
   
   # multiproccess
-  expect_message(files <- iso_read_continuous_flow(file_paths, parallel = TRUE, parallel_plan = future::multiprocess),
+  expect_message(files <- iso_read_continuous_flow(file_paths, parallel = TRUE, parallel_plan = future::multicore),
                  "preparing to read 5 data files.*setting up.*parallel processes")
   expect_equal(nrow(problems(files)), 0)
   
