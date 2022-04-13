@@ -25,6 +25,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -37,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="release candidate">1.3.2</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.3.3</span>
       </span>
     </div>
 
@@ -47,7 +49,7 @@
   <a href="../articles/quick_start.html">Quick Start</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Full Examples
      
     <span class="caret"></span>
@@ -65,7 +67,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Advanced
      
     <span class="caret"></span>
@@ -85,7 +87,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/isoverse/isoreader">
+  <a href="https://github.com/isoverse/isoreader" class="external-link">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -105,9 +107,9 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Development features of isoreader</h1>
             
-            <h4 class="date">2021-11-18</h4>
+            <h4 data-toc-skip class="date">2022-04-13</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/master/vignettes/development.Rmd"><code>vignettes/development.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/HEAD/vignettes/development.Rmd" class="external-link"><code>vignettes/development.Rmd</code></a></small>
       <div class="hidden name"><code>development.Rmd</code></div>
 
     </div>
@@ -115,20 +117,20 @@
     
     
 <p>This vignette introduces some of the development features of the isoreader package and is aimed primarily at code contributors interested in expanding its functionality or helping with bug fixes.</p>
-<div id="adding-new-file-format-readers" class="section level1">
-<h1 class="hasAnchor">
-<a href="#adding-new-file-format-readers" class="anchor"></a>Adding new file format readers</h1>
+<div class="section level2">
+<h2 id="adding-new-file-format-readers">Adding new file format readers<a class="anchor" aria-label="anchor" href="#adding-new-file-format-readers"></a>
+</h2>
 <p>Testing out new file format readers is easiest by registering a new reader function for a specific file extension using <code>iso_register_dual_inlet_file_reader</code> and <code>iso_register_continuous_flow_file_reader</code>, respectively. Both require an extension (e.g. <code>".ext"</code>), name of the new reader function (<code>"new_reader"</code>), and optionally a description. Both functions automatically return a data frame with a list of all registered reader. Overwriting of existing readers with a different function requires an explicit <code>overwrite = TRUE</code> flag. All reader functions must accept an isoreader data structure object (<code>ds</code>) as the first argument, a list of reader specific options as the second argument (<code>options</code>), and should return the structure with data filled in for downstream isoreader operations to work smoothly. The following minimal example illustrates how to do this with the <code>new_reader</code> function simply printing out the layout of the provided data structure skeleton <code>ds</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">new_reader</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">ds</span>, <span class="va">options</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+<code class="sourceCode R"><span class="va">new_reader</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">ds</span>, <span class="va">options</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">log_message</span><span class="op">(</span><span class="st">"this is the new reader!"</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span>
 <span class="op">}</span>
 
 <span class="co"># register new reader</span>
-<span class="va">readers</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_register_dual_inlet_file_reader.html">iso_register_dual_inlet_file_reader</a></span><span class="op">(</span><span class="st">".new.did"</span>, <span class="st">"new_reader"</span><span class="op">)</span>
-<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">readers</span><span class="op">)</span></code></pre></div>
+<span class="va">readers</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/file_readers.html">iso_register_dual_inlet_file_reader</a></span><span class="op">(</span><span class="st">".new.did"</span>, <span class="st">"new_reader"</span><span class="op">)</span>
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">readers</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="10%">
@@ -279,7 +281,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="co"># copy an example file from the package with the new extension</span>
-<span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.copy</a></span><span class="op">(</span>to <span class="op">=</span> <span class="st">"example.new.did"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>to <span class="op">=</span> <span class="st">"example.new.did"</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span>
 
 <span class="co"># read the file</span>
@@ -289,7 +291,7 @@
 <span class="co">#&gt; Info: this is the new reader!</span>
 <span class="co">#&gt; List of 7</span>
 <span class="co">#&gt;  $ version          :Classes 'package_version', 'numeric_version'  hidden list of 1</span>
-<span class="co">#&gt;   ..$ : int [1:3] 1 3 2</span>
+<span class="co">#&gt;   ..$ : int [1:3] 1 3 3</span>
 <span class="co">#&gt;  $ read_options     :List of 4</span>
 <span class="co">#&gt;   ..$ file_info        : logi TRUE</span>
 <span class="co">#&gt;   ..$ method_info      : logi TRUE</span>
@@ -314,29 +316,29 @@
 <span class="co">#&gt;   ..$ type   : chr(0) </span>
 <span class="co">#&gt;   ..$ func   : chr(0) </span>
 <span class="co">#&gt;   ..$ details: chr(0)</span>
-<span class="co">#&gt; Info: finished reading 1 files in 0.29 secs</span>
+<span class="co">#&gt; Info: finished reading 1 files in 0.28 secs</span>
 <span class="co">#&gt; Dual inlet iso file 'example.new.did': 0 cycles, 0 ions ()</span>
-<span class="fu"><a href="https://rdrr.io/r/base/files.html">file.remove</a></span><span class="op">(</span><span class="st">"example.new.did"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.remove</a></span><span class="op">(</span><span class="st">"example.new.did"</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
 <p>Note that for parallel processing to work during the read process (<code>parallel = TRUE</code>), isoreader needs to know where to find the new reader function. It will figure this out automatically as long as the function name is unique but if this fails (or to be on the safe side), please specify e.g. <code>env = "R_GlobalEnv"</code> or <code>env = "newpackage"</code> during the reader registration. Also note that isoreader will not automatically know where to find all functions called from within the new reader function if they are not part of base R and it is recommended to make all outside calls explicit (e.g. <code>dplyr::filter(...)</code>) to preempt this potential problem. For info messages and warnings to work with the progress bar and in parallel reads, make sure to use <code>isoreader:::log_message(...)</code> and <code>isoreader:::log_warning(...)</code> instead of base R’s <code>message(...)</code> and <code>warning(...)</code>.</p>
 <p>If you have designed and tested a new reader, please consider contributing it to the <code>isoreader</code> github repository via pull request.</p>
 </div>
-<div id="processing-hooks" class="section level1">
-<h1 class="hasAnchor">
-<a href="#processing-hooks" class="anchor"></a>Processing hooks</h1>
+<div class="section level2">
+<h2 id="processing-hooks">Processing hooks<a class="anchor" aria-label="anchor" href="#processing-hooks"></a>
+</h2>
 <p>Isoreader defines two processing hooks at the beginning and end of reading an individual file. This is useful for integration into pipelines that require additional output (such as GUIs) but is also sometimes useful for debugging purposes. The expressions are evaluated in the context of the <code>isoreader:::read_iso_file</code> function and have access to all parameters passed to this function, such as e.g. <code>file_n</code> and <code>path</code>. Same as for new readers: for info messages and warnings to work with the progress bar and in parallel reads, make sure to use <code>isoreader:::log_message(...)</code> and <code>isoreader:::log_warning(...)</code> instead of base R’s <code>message(...)</code> and <code>warning(...)</code>. The main difference between the two is that <code>log_message()</code> will honor the <code>quiet = TRUE</code> flag passed to the main <code>iso_read...()</code> call whereas <code>log_warning()</code> will always show its message no matter the <code>quiet</code> setting.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/iso_debug_mode.html">set_read_file_event_expr</a></span><span class="op">(</span><span class="op">{</span>
-  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">log_message</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"starting file #%.d, named '%s'"</span>, <span class="va">file_n</span>, <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">log_message</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"starting file #%.d, named '%s'"</span>, <span class="va">file_n</span>, <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/iso_debug_mode.html">set_finish_file_event_expr</a></span><span class="op">(</span><span class="op">{</span>
-  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">log_message</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"finished file #%.d"</span>, <span class="va">file_n</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">log_message</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"finished file #%.d"</span>, <span class="va">file_n</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
+<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>
   <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span>,
   <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.caf"</span><span class="op">)</span>
-<span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span>read_cache <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span>read_cache <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#&gt; Info: preparing to read 2 data files (all will be cached)...</span>
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.did' with '.did' reader...</span>
 <span class="co">#&gt; Info: starting file #1, named 'dual_inlet_example.did'</span>
@@ -344,36 +346,36 @@
 <span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader...</span>
 <span class="co">#&gt; Info: starting file #2, named 'dual_inlet_example.caf'</span>
 <span class="co">#&gt; Info: finished file #2</span>
-<span class="co">#&gt; Info: finished reading 2 files in 3.95 secs</span>
+<span class="co">#&gt; Info: finished reading 2 files in 4.68 secs</span>
 <span class="co">#&gt; Data from 2 dual inlet iso files: </span>
-<span class="co">#&gt; # A tibble: 2 × 6</span>
-<span class="co">#&gt;   file_id    raw_data       file_info  method_info  vendor_data_tab… file_path  </span>
-<span class="co">#&gt;   &lt;chr&gt;      &lt;glue&gt;         &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;      </span>
-<span class="co">#&gt; 1 dual_inle… 7 cycles, 6 i… 16 entries standards, … 7 rows, 8 colum… dual_inlet…</span>
-<span class="co">#&gt; 2 dual_inle… 8 cycles, 6 i… 22 entries standards, … 8 rows, 9 colum… dual_inlet…</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span>
+<span class="co">#&gt;   file_id              raw_data file_info method_info vendor_data_tab… file_path</span>
+<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.… 7 cycle… 16 entri… standards,… 7 rows, 8 colum… dual_inl…</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.… 8 cycle… 22 entri… standards,… 8 rows, 9 colum… dual_inl…</span>
 
 <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">initialize_options</span><span class="op">(</span><span class="op">)</span> <span class="co"># reset all isoreader options</span></code></pre></div>
 </div>
-<div id="debugging-isoreader" class="section level1">
-<h1 class="hasAnchor">
-<a href="#debugging-isoreader" class="anchor"></a>Debugging isoreader</h1>
+<div class="section level2">
+<h2 id="debugging-isoreader">Debugging isoreader<a class="anchor" aria-label="anchor" href="#debugging-isoreader"></a>
+</h2>
 <p>The best way to start debugging an isoreader call is to switch the package into debug mode. This is done using the internal <code><a href="../reference/iso_debug_mode.html">iso_turn_debug_on()</a></code> function. This enables debug messages, turns caching off by default so files are always read anew, and makes the package keep more information in the isofile objects. It continues to catch errors inside file readers (keeping track of them in the <a href="operations.html#dealing-with-file-read-problems">problems</a>) unless you set <code>iso_turn_debug_on(catch_errors = FALSE)</code>, in which case no errors are caught and stop the processing so you get the full traceback and debugging options of your IDE.</p>
-<div id="debugging-binary-file-reads-isodat" class="section level2">
-<h2 class="hasAnchor">
-<a href="#debugging-binary-file-reads-isodat" class="anchor"></a>Debugging binary file reads (Isodat)</h2>
+<div class="section level3">
+<h3 id="debugging-binary-file-reads-isodat">Debugging binary file reads (Isodat)<a class="anchor" aria-label="anchor" href="#debugging-binary-file-reads-isodat"></a>
+</h3>
 <p>Errors during the binary file reads usually indicate the approximate position in the file where the error was encountered. The easiest way to get started on figuring out what the file looks like at that position is to use a binary file editor and jump to the position. For a sense of the interpreted structure around that position, one can use the internal function <code>map_binary_structure</code> which tries to apply all frequently occurring binary patterns recognized by isoreader. The binary representation of the source file is only available if in debug mode but if debug mode is ON, it can be accessed as follows:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># turn on debug mode</span>
 <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/iso_debug_mode.html">iso_turn_debug_on</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Info: debug mode turned on, error catching turned on, caching turned off</span>
 <span class="co"># read example file</span>
-<span class="va">ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+<span class="va">ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  
   <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co"># access binary</span>
 <span class="va">bin</span> <span class="op">&lt;-</span> <span class="va">ex</span><span class="op">$</span><span class="va">binary</span>
 <span class="co"># use structure mapping</span>
-<span class="va">bin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">move_to_pos</span><span class="op">(</span><span class="fl">1340</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+<span class="va">bin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">move_to_pos</span><span class="op">(</span><span class="fl">1340</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/map_binary_structure.html">map_binary_structure</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fl">200</span><span class="op">)</span>
 <span class="co">#&gt; # Binary data structure:  </span>
 <span class="co">#&gt; 0001340: {4d 65 73 73 61 67 65 44 61 74 61}</span>
@@ -385,41 +387,41 @@
 <p>For an overview of all the control elements that are currently consider, use the internal <code>get_ctrl_blocks_config_df()</code> function.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">get_ctrl_blocks_config_df</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 26 × 3</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 26 × 3</span></span>
 <span class="co">#&gt;    block    regexp                              hexadecimal                     </span>
-<span class="co">#&gt;    &lt;chr&gt;    &lt;chr&gt;                               &lt;chr&gt;                           </span>
-<span class="co">#&gt;  1 del-nl   "\x7f\x85"                          7f 85                           </span>
-<span class="co">#&gt;  2 eop-nl   "܅"                                 dc 85                           </span>
-<span class="co">#&gt;  3 0b-80    "\v\x80"                            0b 80                           </span>
-<span class="co">#&gt;  4 e0-81    "\xe0\x81"                          e0 81                           </span>
-<span class="co">#&gt;  5 ce-80    "\u0380"                            ce 80                           </span>
-<span class="co">#&gt;  6 ce-8a    "Ί"                                 ce 8a                           </span>
-<span class="co">#&gt;  7 ee-85    "\xee\x85"                          ee 85                           </span>
-<span class="co">#&gt;  8 75-84    "u\x84"                             75 84                           </span>
-<span class="co">#&gt;  9 ff-80    "\\x00\xff\x80\\x00"                5c 78 30 30 ff 80 5c 78 30 30   </span>
-<span class="co">#&gt; 10 07-80-id "\x05\x80.\xff(\\x00|\x80|\xff){2}" 05 80 2e ff 28 5c 78 30 30 7c 8…</span>
-<span class="co">#&gt; # … with 16 more rows</span></code></pre></div>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                           </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> del-nl   <span style="color: #949494;">"</span>\x7f\x85<span style="color: #949494;">"</span>                          7f 85                           </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> eop-nl   <span style="color: #949494;">"</span>܅<span style="color: #949494;">"</span>                                 dc 85                           </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 0b-80    <span style="color: #949494;">"</span>\v\x80<span style="color: #949494;">"</span>                            0b 80                           </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> e0-81    <span style="color: #949494;">"</span>\xe0\x81<span style="color: #949494;">"</span>                          e0 81                           </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> ce-80    <span style="color: #949494;">"</span>\u0380<span style="color: #949494;">"</span>                            ce 80                           </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> ce-8a    <span style="color: #949494;">"</span>Ί<span style="color: #949494;">"</span>                                 ce 8a                           </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> ee-85    <span style="color: #949494;">"</span>\xee\x85<span style="color: #949494;">"</span>                          ee 85                           </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 75-84    <span style="color: #949494;">"</span>u\x84<span style="color: #949494;">"</span>                             75 84                           </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ff-80    <span style="color: #949494;">"</span>\\x00\xff\x80\\x00<span style="color: #949494;">"</span>                5c 78 30 30 ff 80 5c 78 30 30   </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 07-80-id <span style="color: #949494;">"</span>\x05\x80.\xff(\\x00|\x80|\xff){2}<span style="color: #949494;">"</span> 05 80 2e ff 28 5c 78 30 30 7c 8…</span>
+<span class="co">#&gt; <span style="color: #949494;"># … with 16 more rows</span></span></code></pre></div>
 <p>Additional information can be gleaned from the so-called control blocks, which are larger structural elements of Isodat binary files and are kept in a data frame within the binary object (again only available in debug mode).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">bin</span><span class="op">$</span><span class="va">C_blocks</span>
-<span class="co">#&gt; # A tibble: 107 × 5</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 107 × 5</span></span>
 <span class="co">#&gt;    id1   id2   block                 start   end</span>
-<span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;                 &lt;int&gt; &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 06    0b    CFileHeader               1    17</span>
-<span class="co">#&gt;  2 01    0b    CTimeObject             182   198</span>
-<span class="co">#&gt;  3 02    04    CStr                    241   250</span>
-<span class="co">#&gt;  4 01    0a    CDataIndex              471   486</span>
-<span class="co">#&gt;  5 01    11    CSeqLineIndexData       513   535</span>
-<span class="co">#&gt;  6 03    05    CData                   588   598</span>
-<span class="co">#&gt;  7 01    13    CDualInletBlockData    1133  1157</span>
-<span class="co">#&gt;  8 01    10    CMeasurmentInfos       1240  1261</span>
-<span class="co">#&gt;  9 01    15    CISLScriptMessageData  1324  1350</span>
-<span class="co">#&gt; 10 01    11    CMeasurmentErrors      1945  1967</span>
-<span class="co">#&gt; # … with 97 more rows</span></code></pre></div>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 06    0b    CFileHeader               1    17</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 01    0b    CTimeObject             182   198</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 02    04    CStr                    241   250</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 01    0a    CDataIndex              471   486</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 01    11    CSeqLineIndexData       513   535</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 03    05    CData                   588   598</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 01    13    CDualInletBlockData    <span style="text-decoration: underline;">1</span>133  <span style="text-decoration: underline;">1</span>157</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 01    10    CMeasurmentInfos       <span style="text-decoration: underline;">1</span>240  <span style="text-decoration: underline;">1</span>261</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 01    15    CISLScriptMessageData  <span style="text-decoration: underline;">1</span>324  <span style="text-decoration: underline;">1</span>350</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 01    11    CMeasurmentErrors      <span style="text-decoration: underline;">1</span>945  <span style="text-decoration: underline;">1</span>967</span>
+<span class="co">#&gt; <span style="color: #949494;"># … with 97 more rows</span></span></code></pre></div>
 <p>Same as for specific byte positions, one can use the control blocks to navigate the file and <code>map_binary_structure</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">bin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">move_to_C_block</span><span class="op">(</span><span class="st">"CMethod"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+<code class="sourceCode R"><span class="va">bin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">move_to_C_block</span><span class="op">(</span><span class="st">"CMethod"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/map_binary_structure.html">map_binary_structure</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fl">200</span><span class="op">)</span>
 <span class="co">#&gt; # Binary data structure:  </span>
 <span class="co">#&gt; 0080269: &lt;etx&gt;</span>
@@ -449,11 +451,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Sebastian Kopf, Brett Davidheiser-Kroll, Ilja Kocken.</p>
+  <p></p>
+<p>Developed by Sebastian Kopf, Brett Davidheiser-Kroll, Ilja Kocken.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -461,6 +465,8 @@
 
   
 
+
+  
 
   </body>
 </html>
