@@ -49,7 +49,10 @@ You can install the latest release of isoreader from
 [CRAN](https://cran.r-project.org/package=isoreader):
 
 ``` r
-install.packages("isoreader")
+# Note: isoreader is temporarily not available on CRAN because of a missing dependency, please install directly from GitHub using the commands below
+# install.packages("isoreader")
+if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
+devtools::install_github("isoverse/isoreader")
 ```
 
 Some isoreader features including Excel and feather export depend on
