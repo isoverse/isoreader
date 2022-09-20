@@ -52,6 +52,7 @@ You can install the latest release of isoreader from
 # Note: isoreader is temporarily not available on CRAN because of a missing dependency, please install directly from GitHub using the commands below
 # install.packages("isoreader")
 if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
+devtools::install_github("leeper/UNF") # missing CRAN dependency
 devtools::install_github("isoverse/isoreader")
 ```
 
@@ -73,7 +74,6 @@ GitHub, please use the devtools package:
 ``` r
 # installs the development tools package if not yet installed
 if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
-devtools::install_github("leeper/UNF") # missing CRAN dependency
 devtools::install_github("isoverse/isoreader")
 ```
 
