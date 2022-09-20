@@ -49,6 +49,7 @@ To install the current development version of isoreader directly from GitHub, pl
 ```{r gh-installation, eval = FALSE}
 # installs the development tools package if not yet installed
 if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
+devtools::install_github("leeper/UNF") # missing CRAN dependency
 devtools::install_github("isoverse/isoreader")
 ```
 
