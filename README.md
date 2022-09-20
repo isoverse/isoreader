@@ -73,6 +73,7 @@ GitHub, please use the devtools package:
 ``` r
 # installs the development tools package if not yet installed
 if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
+devtools::install_github("leeper/UNF") # missing CRAN dependency
 devtools::install_github("isoverse/isoreader")
 ```
 
