@@ -49,6 +49,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          remotes::install_cran("devtools")
           devtools::install_github("leeper/UNF")
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("pkgdown")
