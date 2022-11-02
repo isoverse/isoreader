@@ -19,7 +19,7 @@ Authors@R:
         role = c("aut"), 
         comment = c(ORCID = "0000-0003-2196-8718"))
     )
-URL: https://github.com/isoverse/isoreader
+URL: http://isoreader.isoverse.org, https://github.com/isoverse/isoreader
 BugReports: https://github.com/isoverse/isoreader/issues
 Depends:
     R (>= 4.0.0),
