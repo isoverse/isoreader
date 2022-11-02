@@ -49,6 +49,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          devtools::install_github("leeper/UNF")
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("pkgdown")
         shell: Rscript {0}
