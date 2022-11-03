@@ -30,7 +30,7 @@ jobs:
         with:
           extra-packages: |
             leeper/UNF
-            pkgdown
+            any::pkgdown
           needs: website
 
       - name: Deploy package
