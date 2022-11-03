@@ -15,7 +15,7 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
       - name: Remove .Rprofile
         run: rm .Rprofile
@@ -28,9 +28,11 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: |
-            any::pkgdown
+          extra-packages: leeper/UNF, any::pkgdown, local::.
           needs: website
+
+      - name: Install package
+        run: R CMD INSTALL .
 
       - name: Deploy package
         run: |
