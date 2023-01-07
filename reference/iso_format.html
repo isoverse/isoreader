@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.3.3</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.4.0</span>
       </span>
     </div>
 
@@ -88,39 +88,50 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">iso_format</span><span class="op">(</span>
-  <span class="va">...</span>,
-  signif <span class="op">=</span> <span class="fl">3</span>,
-  format_names <span class="op">=</span> <span class="st">"%s: "</span>,
-  format_units <span class="op">=</span> <span class="st">"%s"</span>,
-  replace_permil <span class="op">=</span> <span class="cn">TRUE</span>,
-  sep <span class="op">=</span> <span class="st">"\n"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">iso_format</span><span class="op">(</span></span>
+<span>  <span class="va">...</span>,</span>
+<span>  signif <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  format_names <span class="op">=</span> <span class="st">"%s: "</span>,</span>
+<span>  format_units <span class="op">=</span> <span class="st">"%s"</span>,</span>
+<span>  replace_permil <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  sep <span class="op">=</span> <span class="st">"\n"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>...</dt>
 <dd><p>variable names with data. Must have the same dimensions if multiple are supplied. Can be named to rename variable name output. Will include units in output for all <a href="iso_with_units.html">iso_with_units</a>.</p></dd>
+
+
 <dt>signif</dt>
 <dd><p>number of significant digits for numbered data</p></dd>
+
+
 <dt>format_names</dt>
 <dd><p>how to format the variable names, set to <code>NULL</code> to remove names</p></dd>
+
+
 <dt>format_units</dt>
 <dd><p>how to format the units from <code><a href="iso_with_units.html">iso_double_with_units</a></code> variables, set to <code>NULL</code> to omit units</p></dd>
+
+
 <dt>replace_permil</dt>
 <dd><p>whether to replace the term 'permil' with the permil symbol (\u2030)</p></dd>
+
+
 <dt>sep</dt>
 <dd><p>separator between variables if multiple are provided in <code>...</code></p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="iso_with_units.html">iso_with_units</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="st">"V"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="iso_with_units.html">iso_with_units</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="st">"permil"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">iso_format</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="iso_with_units.html">iso_with_units</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="st">"V"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="iso_with_units.html">iso_with_units</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="st">"permil"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">iso_format</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "x: 1V\ny: 1‰" "x: 2V\ny: 2‰" "x: 3V\ny: 3‰" "x: 4V\ny: 4‰" "x: 5V\ny: 5‰"</span>
-<span class="r-in"><span class="fu">iso_format</span><span class="op">(</span>amplitude <span class="op">=</span> <span class="va">x</span>, d13C <span class="op">=</span> <span class="va">y</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">iso_format</span><span class="op">(</span>amplitude <span class="op">=</span> <span class="va">x</span>, d13C <span class="op">=</span> <span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "amplitude: 1V\nd13C: 1‰" "amplitude: 2V\nd13C: 2‰"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3] "amplitude: 3V\nd13C: 3‰" "amplitude: 4V\nd13C: 4‰"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "amplitude: 5V\nd13C: 5‰"</span>
@@ -138,7 +149,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

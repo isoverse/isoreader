@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.3.3</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.4.0</span>
       </span>
     </div>
 
@@ -88,52 +88,77 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">iso_get_all_data</span><span class="op">(</span>
-  <span class="va">iso_files</span>,
-  include_file_info <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,
-  include_raw_data <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,
-  include_standards <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,
-  include_resistors <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,
-  include_vendor_data_table <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,
-  include_problems <span class="op">=</span> <span class="cn">NULL</span>,
-  gather <span class="op">=</span> <span class="cn">FALSE</span>,
-  with_explicit_units <span class="op">=</span> <span class="va">with_units</span>,
-  with_units <span class="op">=</span> <span class="cn">FALSE</span>,
-  with_ratios <span class="op">=</span> <span class="cn">NULL</span>,
-  quiet <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="va">quiet</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">iso_get_all_data</span><span class="op">(</span></span>
+<span>  <span class="va">iso_files</span>,</span>
+<span>  include_file_info <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  include_raw_data <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  include_standards <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  include_resistors <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  include_vendor_data_table <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  include_problems <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gather <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  with_explicit_units <span class="op">=</span> <span class="va">with_units</span>,</span>
+<span>  with_units <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  with_ratios <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="va">quiet</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>iso_files</dt>
 <dd><p>collection of iso_file objects</p></dd>
+
+
 <dt>include_file_info</dt>
 <dd><p>which file information to include (see <code><a href="iso_get_file_info.html">iso_get_file_info</a></code>). Use <code>c(...)</code> to select multiple, supports all <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> syntax including renaming columns.</p></dd>
+
+
 <dt>include_raw_data</dt>
 <dd><p>which columns from the raw data to include. Use <code>c(...)</code> to select multiple columns, supports all <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> syntax including renaming columns. Includes all columns by default. Set to NULL to include no raw data.</p></dd>
+
+
 <dt>include_standards</dt>
 <dd><p>which columns from the standards info to include. Use <code>c(...)</code> to select multiple columns, supports all <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> syntax including renaming columns. By default, everything is included (both standards and ratios). To omit the ratios, change to <code>select = file_id:reference</code>. Set to NULL to include no standards info.</p></dd>
+
+
 <dt>include_resistors</dt>
 <dd><p>which columns from the resistors info to include. Use <code>c(...)</code> to select multiple columns, supports all <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> syntax including renaming columns. Includes all columns by default. Set to NULL to include no resistors info.</p></dd>
+
+
 <dt>include_vendor_data_table</dt>
 <dd><p>which columns from the vendor data table to include. Use <code>c(...)</code> to select multiple columns, supports all <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> syntax including renaming columns. Includes all columns by default. Set parameter <code>with_explicit_units = TRUE</code> to make column units explicit (keep in mind that this will require specific <code>include_vendor_data_table</code> column selections to reflect the column names including the units). Set to NULL to include no vendor data table.</p></dd>
+
+
 <dt>include_problems</dt>
 <dd><p>which columns from problems to include. Use <code>c(...)</code> to select multiple columns, supports all <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> syntax including renaming columns. Includes none of the read problems by default. Set to <code>include_problems = everything()</code> to include all columns.</p></dd>
+
+
 <dt>gather</dt>
 <dd><p>whether to gather raw data into long format (e.g. for ease of use in plotting). Not that the <code>select</code> parameter applies to the data columns BEFORE gathering.</p></dd>
+
+
 <dt>with_explicit_units</dt>
 <dd><p>whether to include units in the column headers of the returned data frame instead of the column data types (see <code><a href="iso_with_units.html">iso_double_with_units</a></code>). Note that any <code>select</code> conditions have to refer to the column names including the full units.</p></dd>
+
+
 <dt>with_units</dt>
 <dd><p>this parameter has been DEPRECATED with the introduction of unit-data types (see <code><a href="iso_with_units.html">iso_double_with_units</a></code>) and will be removed in future versions of isoreader. Please use <code>with_explicit_units</code> instead if you really want columns to have units explicitly in the column name. Alternatively, consider working with the new implicit unit system and convert vendor data tables as needed with <code><a href="iso_make_units_explicit.html">iso_make_units_explicit</a></code> and <code><a href="iso_make_units_implicit.html">iso_make_units_implicit</a></code>.</p></dd>
+
+
 <dt>with_ratios</dt>
 <dd><p>deprecated, please use the <code>select</code> parameter to explicitly include or exclude ratio columns</p></dd>
+
+
 <dt>quiet</dt>
 <dd><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href="iso_info_messages.html">iso_turn_info_messages_on</a> and <a href="iso_info_messages.html">iso_turn_info_messages_off</a></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>data_frame with file_ids, file_types and nested data frames for each data type (file_info, raw_data, vendor_data_table, etc.)</p>
+    
+
+<p>data_frame with file_ids, file_types and nested data frames for each data type (file_info, raw_data, vendor_data_table, etc.)</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -158,7 +183,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

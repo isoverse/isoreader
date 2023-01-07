@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.3.3</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.4.0</span>
       </span>
     </div>
 
@@ -88,21 +88,28 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">iso_save</span><span class="op">(</span><span class="va">iso_files</span>, <span class="va">filepath</span>, quiet <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="va">quiet</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">iso_save</span><span class="op">(</span><span class="va">iso_files</span>, <span class="va">filepath</span>, quiet <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="va">quiet</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>iso_files</dt>
 <dd><p>collection of iso_file objects</p></dd>
+
+
 <dt>filepath</dt>
 <dd><p>the path (folder and filename) to the export file. The correct file extension is automatically added if not already in the filename, i.e. filename can be provided with or without extension.</p></dd>
+
+
 <dt>quiet</dt>
 <dd><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href="iso_info_messages.html">iso_turn_info_messages_on</a> and <a href="iso_info_messages.html">iso_turn_info_messages_off</a></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>returns the iso_files object invisibly for use in pipelines</p>
+    
+
+<p>returns the iso_files object invisibly for use in pipelines</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -123,7 +130,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

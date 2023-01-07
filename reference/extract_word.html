@@ -24,7 +24,7 @@ Can adjust whether characters such as "_", "-", " ", and "." should be counted a
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.3.3</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.4.0</span>
       </span>
     </div>
 
@@ -90,36 +90,51 @@ Can adjust whether characters such as "_", "-", " ", and "." should be counted a
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">extract_word</span><span class="op">(</span>
-  <span class="va">string</span>,
-  capture_n <span class="op">=</span> <span class="fl">1</span>,
-  include_numbers <span class="op">=</span> <span class="cn">TRUE</span>,
-  include_underscore <span class="op">=</span> <span class="cn">FALSE</span>,
-  include_dash <span class="op">=</span> <span class="cn">FALSE</span>,
-  include_space <span class="op">=</span> <span class="cn">FALSE</span>,
-  include_colon <span class="op">=</span> <span class="cn">FALSE</span>,
-  missing <span class="op">=</span> <span class="cn">NA_character_</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extract_word</span><span class="op">(</span></span>
+<span>  <span class="va">string</span>,</span>
+<span>  capture_n <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  include_numbers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_underscore <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  include_dash <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  include_space <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  include_colon <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  missing <span class="op">=</span> <span class="cn">NA_character_</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>string</dt>
 <dd><p>string to extract</p></dd>
+
+
 <dt>capture_n</dt>
 <dd><p>which word to extract? 1st, 2nd, 3rd?</p></dd>
+
+
 <dt>include_numbers</dt>
 <dd><p>whether to include numbers (0-9) as part of the word (if FALSE, numbers will work as a word separator)</p></dd>
+
+
 <dt>include_underscore</dt>
 <dd><p>whether to include the underscore character (_) as part of a word (if FALSE, it will work as a word separator)</p></dd>
+
+
 <dt>include_dash</dt>
 <dd><p>whether to include the dash character (-) as part of a word (if FALSE, it will work as a word separator)</p></dd>
+
+
 <dt>include_space</dt>
 <dd><p>whether to include the space character ( ) as part of a word (if FALSE, it will work as a word separator)</p></dd>
+
+
 <dt>include_colon</dt>
 <dd><p>whether to include the colon character (.) as part of a word (if FALSE, it will work as a word separator)</p></dd>
+
+
 <dt>missing</dt>
 <dd><p>what to replace missing values with? Note that values can be missing because there are not enough captured matches or because the actual capture_bracket is empty.</p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -130,11 +145,11 @@ Can adjust whether characters such as "_", "-", " ", and "." should be counted a
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">x_text</span> <span class="op">&lt;-</span> <span class="fu">extract_word</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sample number16.2"</span>, <span class="st">"sample number7b"</span><span class="op">)</span>,</span>
-<span class="r-in">                       capture_n <span class="op">=</span> <span class="fl">2</span>, include_colon <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># "number16.2" "number7b"</span></span>
-<span class="r-in"><span class="va">x_num</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_number.html" class="external-link">parse_number</a></span><span class="op">(</span><span class="va">x_text</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># 16.2 7.0</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x_text</span> <span class="op">&lt;-</span> <span class="fu">extract_word</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sample number16.2"</span>, <span class="st">"sample number7b"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                       capture_n <span class="op">=</span> <span class="fl">2</span>, include_colon <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># "number16.2" "number7b"</span></span></span>
+<span class="r-in"><span><span class="va">x_num</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_number.html" class="external-link">parse_number</a></span><span class="op">(</span><span class="va">x_text</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># 16.2 7.0</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -149,7 +164,7 @@ Can adjust whether characters such as "_", "-", " ", and "." should be counted a
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

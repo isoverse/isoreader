@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.3.3</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.4.0</span>
       </span>
     </div>
 
@@ -88,36 +88,51 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">iso_parse_file_info</span><span class="op">(</span>
-  <span class="va">iso_files</span>,
-  number <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,
-  double <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,
-  integer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,
-  logical <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,
-  datetime <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,
-  text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,
-  quiet <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="va">quiet</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">iso_parse_file_info</span><span class="op">(</span></span>
+<span>  <span class="va">iso_files</span>,</span>
+<span>  number <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  double <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  integer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  logical <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  datetime <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="va">quiet</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>iso_files</dt>
 <dd><p>collection of iso_file objects</p></dd>
+
+
 <dt>number</dt>
 <dd><p>dplyr-style <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> condition to choose columns that should be converted to a number using parse_number. Use <code>c(...)</code> to select multiple columns.</p></dd>
+
+
 <dt>double</dt>
 <dd><p>dplyr-style <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> condition to choose columns that should be converted to a double using parse_double. Use <code>c(...)</code> to select multiple columns.</p></dd>
+
+
 <dt>integer</dt>
 <dd><p>dplyr-style <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> condition to choose columns that should be converted to an integer using parse_integer. Use <code>c(...)</code> to select multiple columns.</p></dd>
+
+
 <dt>logical</dt>
 <dd><p>dplyr-style <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> condition to choose columns that should be converted to a boolean (TRUE/FALSE) using parse_logical. Use <code>c(...)</code> to select multiple columns.</p></dd>
+
+
 <dt>datetime</dt>
 <dd><p>dplyr-style <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> condition to choose columns that should be converted to a date-time using parse_datetime. Use <code>c(...)</code> to select multiple columns.</p></dd>
+
+
 <dt>text</dt>
 <dd><p>dplyr-style <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> condition to choose columns that should be converted to text using <a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a>. Use <code>c(...)</code> to select multiple columns.</p></dd>
+
+
 <dt>quiet</dt>
 <dd><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href="iso_info_messages.html">iso_turn_info_messages_on</a> and <a href="iso_info_messages.html">iso_turn_info_messages_off</a></p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -142,7 +157,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

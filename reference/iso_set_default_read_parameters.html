@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.3.3</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.4.0</span>
       </span>
     </div>
 
@@ -88,30 +88,41 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">iso_set_default_read_parameters</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">read_raw_data</span>,
-  <span class="va">read_file_info</span>,
-  <span class="va">read_method_info</span>,
-  <span class="va">read_vendor_data_table</span>,
-  quiet <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="va">quiet</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">iso_set_default_read_parameters</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">read_raw_data</span>,</span>
+<span>  <span class="va">read_file_info</span>,</span>
+<span>  <span class="va">read_method_info</span>,</span>
+<span>  <span class="va">read_vendor_data_table</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="va">quiet</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>data</dt>
 <dd><p>a data frame - returned invisibly as is if provided (e.g. in the middle of a pipeline)</p></dd>
+
+
 <dt>read_raw_data</dt>
 <dd><p>if provided, set as the default for `read_raw_data` parameters</p></dd>
+
+
 <dt>read_file_info</dt>
 <dd><p>if provided, set as the default for `read_file_info` parameters</p></dd>
+
+
 <dt>read_method_info</dt>
 <dd><p>if provided, set as the default for `read_method_info` parameters</p></dd>
+
+
 <dt>read_vendor_data_table</dt>
 <dd><p>if provided, set as the default for `read_vendor_data_table` parameters</p></dd>
+
+
 <dt>quiet</dt>
 <dd><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href="iso_info_messages.html">iso_turn_info_messages_on</a> and <a href="iso_info_messages.html">iso_turn_info_messages_off</a></p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -133,7 +144,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.3.3</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.4.0</span>
       </span>
     </div>
 
@@ -88,24 +88,31 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">iso_get_resistors</span><span class="op">(</span>
-  <span class="va">iso_files</span>,
-  select <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,
-  include_file_info <span class="op">=</span> <span class="cn">NULL</span>,
-  quiet <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="va">quiet</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">iso_get_resistors</span><span class="op">(</span></span>
+<span>  <span class="va">iso_files</span>,</span>
+<span>  select <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  include_file_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="va">quiet</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>iso_files</dt>
 <dd><p>collection of iso_file objects</p></dd>
+
+
 <dt>select</dt>
 <dd><p>which data columns to select - use <code>c(...)</code> to select multiple, supports all <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> syntax. By default, all columns are selected.</p></dd>
+
+
 <dt>include_file_info</dt>
 <dd><p>which file information to include (see <code><a href="iso_get_file_info.html">iso_get_file_info</a></code>). Use <code>c(...)</code> to select multiple, supports all <a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a> syntax including renaming columns.</p></dd>
+
+
 <dt>quiet</dt>
 <dd><p>whether to display (quiet=FALSE) or silence (quiet = TRUE) information messages. Set parameter to overwrite global defaults for this function or set global defaults with calls to <a href="iso_info_messages.html">iso_turn_info_messages_on</a> and <a href="iso_info_messages.html">iso_turn_info_messages_off</a></p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -130,7 +137,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -24,7 +24,7 @@ Uses str_match_all internally but instead of returning everything, always return
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.3.3</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.4.0</span>
       </span>
     </div>
 
@@ -90,32 +90,43 @@ Uses <code><a href="https://stringr.tidyverse.org/reference/str_match.html" clas
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">extract_substring</span><span class="op">(</span>
-  <span class="va">string</span>,
-  <span class="va">pattern</span>,
-  capture_n <span class="op">=</span> <span class="fl">1</span>,
-  capture_bracket <span class="op">=</span> <span class="fl">0</span>,
-  missing <span class="op">=</span> <span class="cn">NA_character_</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extract_substring</span><span class="op">(</span></span>
+<span>  <span class="va">string</span>,</span>
+<span>  <span class="va">pattern</span>,</span>
+<span>  capture_n <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  capture_bracket <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  missing <span class="op">=</span> <span class="cn">NA_character_</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>string</dt>
 <dd><p>string to extract</p></dd>
+
+
 <dt>pattern</dt>
 <dd><p>regular expression pattern to search for</p></dd>
+
+
 <dt>capture_n</dt>
 <dd><p>within each string, which match of the <code>pattern</code> should be extracted? e.g. if the pattern searches for words, should the first, second or third word be captured?</p></dd>
+
+
 <dt>capture_bracket</dt>
 <dd><p>for the captured match, which capture group should be extracted? i.e. which parentheses-enclosed segment of the <code>pattern</code>?
 by default captures the whole pattern (<code>capture_bracket = 0</code>).</p></dd>
+
+
 <dt>missing</dt>
 <dd><p>what to replace missing values with? Note that values can be missing because there are not enough captured matches or because the actual capture_bracket is empty.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>character vector of same length as <code>string</code> with the extracted substrings</p>
+    
+
+<p>character vector of same length as <code>string</code> with the extracted substrings</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -136,7 +147,7 @@ by default captures the whole pattern (<code>capture_bracket = 0</code>).</p></d
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

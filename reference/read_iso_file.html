@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.3.3</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.4.0</span>
       </span>
     </div>
 
@@ -88,60 +88,81 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">read_iso_file</span><span class="op">(</span>
-  <span class="va">ds</span>,
-  <span class="va">root</span>,
-  <span class="va">path</span>,
-  <span class="va">file_n</span>,
-  <span class="va">files_n</span>,
-  <span class="va">read_from_cache</span>,
-  <span class="va">read_from_old_cache</span>,
-  <span class="va">reread_outdated_cache</span>,
-  <span class="va">write_to_cache</span>,
-  <span class="va">cachepath</span>,
-  <span class="va">old_cachepath</span>,
-  <span class="va">post_read_check</span>,
-  <span class="va">ext</span>,
-  <span class="va">reader_fun</span>,
-  <span class="va">reader_options</span>,
-  <span class="va">reader_fun_env</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_iso_file</span><span class="op">(</span></span>
+<span>  <span class="va">ds</span>,</span>
+<span>  <span class="va">root</span>,</span>
+<span>  <span class="va">path</span>,</span>
+<span>  <span class="va">file_n</span>,</span>
+<span>  <span class="va">files_n</span>,</span>
+<span>  <span class="va">read_from_cache</span>,</span>
+<span>  <span class="va">reread_outdated_cache</span>,</span>
+<span>  <span class="va">write_to_cache</span>,</span>
+<span>  <span class="va">cachepath</span>,</span>
+<span>  <span class="va">post_read_check</span>,</span>
+<span>  <span class="va">ext</span>,</span>
+<span>  <span class="va">reader_fun</span>,</span>
+<span>  <span class="va">reader_options</span>,</span>
+<span>  <span class="va">reader_fun_env</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ds</dt>
 <dd><p>the basic data structure for the type of iso_file</p></dd>
+
+
 <dt>root</dt>
 <dd><p>root directory for the isofiles. Can be relative to the current working directory (e.g. <code>"data"</code>) or an absolute path on the file system (e.g. <code>"/Users/..."</code> or <code>"C:/Data/.."</code>). The default is the current working directory (<code>"."</code>). Can be supplied as a vector of same length as the provided paths if the paths have different roots.</p></dd>
+
+
 <dt>path</dt>
 <dd><p>file path</p></dd>
+
+
 <dt>file_n</dt>
 <dd><p>number of processed file for info messages</p></dd>
+
+
 <dt>files_n</dt>
 <dd><p>total number of files for info messages</p></dd>
+
+
 <dt>read_from_cache</dt>
 <dd><p>whether to read from cache</p></dd>
-<dt>read_from_old_cache</dt>
-<dd><p>whether to read from old cache files (to be deprecated in isoreader 2.0)</p></dd>
+
+
 <dt>reread_outdated_cache</dt>
 <dd><p>whether to reread outdated cache files</p></dd>
+
+
 <dt>write_to_cache</dt>
 <dd><p>whether to write to cache</p></dd>
+
+
 <dt>cachepath</dt>
 <dd><p>path for the cache file</p></dd>
-<dt>old_cachepath</dt>
-<dd><p>path for the old cache files</p></dd>
+
+
 <dt>post_read_check</dt>
 <dd><p>whether to run data integrity checks after a file read</p></dd>
+
+
 <dt>ext</dt>
 <dd><p>file extension</p></dd>
+
+
 <dt>reader_fun</dt>
 <dd><p>file reader function</p></dd>
+
+
 <dt>reader_options</dt>
 <dd><p>list of parameters to be passed on to the reader</p></dd>
+
+
 <dt>reader_fun_env</dt>
 <dd><p>where to find the reader function</p></dd>
+
 </dl></div>
 
   </div>
@@ -156,7 +177,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

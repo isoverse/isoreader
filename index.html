@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.3.3</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.4.0</span>
       </span>
     </div>
 
@@ -106,64 +106,70 @@
   <div class="contents col-md-9">
 <div class="section level1">
 
-
+<p><a href="https://cran.r-project.org/package=isoreader" class="external-link"><img src="https://www.r-pkg.org/badges/version/isoreader" alt="CRAN_Status_Badge"></a> <a href="https://isoreader.isoverse.org/" class="external-link"><img src="https://img.shields.io/badge/docs-online-green.svg" alt="Documentation"></a> <a href="https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check" class="external-link"><img src="https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg" alt="R build status"></a> <a href="https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=rstudio" class="external-link"><img src="https://img.shields.io/badge/explore%20online-in%20RStudio-blue.svg" alt="Binder"></a> <a href="https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=lab" class="external-link"><img src="https://img.shields.io/badge/explore%20online-in%20Jupyter-orange.svg" alt="Binder"></a></p>
 <div class="section level2">
 <h2 id="about">About<a class="anchor" aria-label="anchor" href="#about"></a>
 </h2>
 <p>This package is intended as a unified one-stop command line interface to all common IRMS (isotope ratio mass spectrometry) file formats used in stable isotope geochemistry. It is an extension and highly stream-lined re-implementation of the proof-of-concept <a href="https://github.com/sebkopf/isoread" class="external-link">isoread</a> package and is designed to fit into a larger framework of IRMS data tools that includes the web-based graphical user interface package <a href="https://github.com/isoverse/isoviewer" class="external-link">isoviewer</a> and the data processing and visualization pipeline <a href="https://github.com/isoverse/isoprocessor" class="external-link">isoprocessor</a>.</p>
-<p><a href="https://isoreader.isoverse.org/">isoreader</a> enables the reading and processing of stable isotope data directly from the data files and thus provides a tool for platform-independent (Windows, Mac, Linux), efficient and reproducible data reduction. Although implemented in R, it can be used in both RMarkdown as well as Jupyter data processing notebooks and also provides functionality for easy export to Python using the shared R/Python feather file format. At present, it can read most Thermo dual inlet (.did, .caf) and continuous flow (.dxf, .cf) data files as well as Elementar continuous flow data archives (.iarc) with additional extensions for other file formats in the works. Due to the dynamic implementation and design based on the popular <a href="https://www.tidyverse.org/" class="external-link">tidyverse</a> style of R programming, isoreader is easily extendable, takes care of error catching to avoid pipeline breaks due to problems encountered in source data files (modeled after <a href="https://readr.tidyverse.org/" class="external-link">readr</a>) and works great with <a href="https://www.tidyverse.org/" class="external-link">tidyverse</a> packages such as <a href="https://tidyr.tidyverse.org/" class="external-link">tidyr</a>, <a href="https://dplyr.tidyverse.org/" class="external-link">dplyr</a> and <a href="https://ggplot2.tidyverse.org/" class="external-link">ggplot</a>.</p>
+<p><a href="https://isoreader.isoverse.org/" class="external-link">isoreader</a> enables the reading and processing of stable isotope data directly from the data files and thus provides a tool for platform-independent (Windows, Mac, Linux), efficient and reproducible data reduction. Although implemented in R, it can be used in both RMarkdown as well as Jupyter data processing notebooks and also provides functionality for easy export to Python using the shared R/Python feather file format. At present, it can read most Thermo dual inlet (.did, .caf) and continuous flow (.dxf, .cf) data files as well as Elementar continuous flow data archives (.iarc) with additional extensions for other file formats in the works. Due to the dynamic implementation and design based on the popular <a href="https://www.tidyverse.org/" class="external-link">tidyverse</a> style of R programming, isoreader is easily extendable, takes care of error catching to avoid pipeline breaks due to problems encountered in source data files (modeled after <a href="https://readr.tidyverse.org/" class="external-link">readr</a>) and works great with <a href="https://www.tidyverse.org/" class="external-link">tidyverse</a> packages such as <a href="https://tidyr.tidyverse.org/" class="external-link">tidyr</a>, <a href="https://dplyr.tidyverse.org/" class="external-link">dplyr</a> and <a href="https://ggplot2.tidyverse.org/" class="external-link">ggplot</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>You can install the latest release of isoreader from <a href="https://cran.r-project.org/package=isoreader" class="external-link">CRAN</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Note: isoreader is temporarily not available on CRAN because of a missing dependency, please install directly from GitHub using the commands below</span>
-<span class="co"># install.packages("isoreader")</span>
-<span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"isoverse/isoreader"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Note: isoreader is temporarily not available on CRAN because of a missing dependency, please install directly from GitHub using the commands below</span></span>
+<span><span class="co"># install.packages("isoreader")</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"isoverse/isoreader"</span><span class="op">)</span></span></code></pre></div>
 <p>Some isoreader features including Excel and feather export depend on optional packages that are not required for the core functionality of isoreader. To use this functionality, please install the following packages manually if not already installed (isoreader will throw an informative warning if they are needed but missing):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># optional extensions</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"feather"</span>, <span class="st">"openxlsx"</span>, <span class="st">"xml2"</span>, <span class="st">"BiocManager"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="st">"rhdf5"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># optional extensions</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"feather"</span>, <span class="st">"openxlsx"</span>, <span class="st">"xml2"</span>, <span class="st">"BiocManager"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="st">"rhdf5"</span><span class="op">)</span></span></code></pre></div>
 <p>To install the current development version of isoreader directly from GitHub, please use the devtools package:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># installs the development tools package if not yet installed</span>
-<span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"isoverse/isoreader"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># installs the development tools package if not yet installed</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"isoverse/isoreader"</span><span class="op">)</span></span></code></pre></div>
 <p>Troubleshooting note: depending on your workspace and operating system, you may have to re-start your R session or manually install some dependencies. For example, the <code>digest</code> package sometimes causes trouble - re-install with <code>remove.packages("digest"); install.packages("digest")</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="show-me-some-code">Show me some code<a class="anchor" aria-label="anchor" href="#show-me-some-code"></a>
 </h2>
-<p>You can, for example, automatically read the data from <strong>all</strong> supported scan files in a directory (and all its subdirectories) simply by providing the path to the folder. The following code demonstrates this with the example data files bundled with the <code>isoreader</code> package. For a more detailed example including continuous flow and dual inlet file reads, check out our <a href="https://isoreader.isoverse.org/articles/quick_start.html"><strong>Quick Start Vignette</strong></a>.</p>
+<p>You can, for example, automatically read the data from <strong>all</strong> supported scan files in a directory (and all its subdirectories) simply by providing the path to the folder. The following code demonstrates this with the example data files bundled with the <code>isoreader</code> package. For a more detailed example including continuous flow and dual inlet file reads, check out our <a href="https://isoreader.isoverse.org/articles/quick_start.html" class="external-link"><strong>Quick Start Vignette</strong></a>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/isoverse/isoreader" class="external-link">isoreader</a></span><span class="op">)</span>
-<span class="va">data_folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/iso_get_reader_example.html">iso_get_reader_examples_folder</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">iso_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/iso_read_scan.html">iso_read_scan</a></span><span class="op">(</span><span class="va">data_folder</span><span class="op">)</span>
-<span class="co">#&gt; Info: preparing to read 4 data files...</span>
-<span class="co">#&gt; Info: reading file 'background_scan_example.scn' with '.scn' reader...</span>
-<span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader...</span>
-<span class="co">#&gt; Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...</span>
-<span class="co">#&gt; Info: reading file 'time_scan_example.scn' with '.scn' reader...</span>
-<span class="co">#&gt; Info: finished reading 4 files in 0.82 secs</span>
-
-<span class="va">iso_files</span>
-<span class="co">#&gt; Data from 4 scan iso files: </span>
-<span class="co">#&gt; # A tibble: 4 × 5</span>
-<span class="co">#&gt;   file_id                     raw_data        file_info method_info file_path   </span>
-<span class="co">#&gt;   &lt;chr&gt;                       &lt;glue&gt;          &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;       </span>
-<span class="co">#&gt; 1 background_scan_example.scn 525 measuremen… 8 entries resistors   background_…</span>
-<span class="co">#&gt; 2 full_scan_example.scn       799 measuremen… 8 entries resistors   full_scan_e…</span>
-<span class="co">#&gt; 3 peak_shape_scan_example.scn 220 measuremen… 8 entries resistors   peak_shape_…</span>
-<span class="co">#&gt; 4 time_scan_example.scn       5532 measureme… 8 entries resistors   time_scan_e…</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://isoreader.isoverse.org">isoreader</a></span><span class="op">)</span></span>
+<span><span class="va">data_folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/iso_get_reader_example.html">iso_get_reader_examples_folder</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">iso_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/iso_read_scan.html">iso_read_scan</a></span><span class="op">(</span><span class="va">data_folder</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Info: preparing to read 4 data files...</span></span>
+<span><span class="co">#&gt; Info: reading file 'background_scan_example.scn' with '.scn' reader...</span></span>
+<span><span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader...</span></span>
+<span><span class="co">#&gt; Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...</span></span>
+<span><span class="co">#&gt; Info: reading file 'time_scan_example.scn' with '.scn' reader...</span></span>
+<span><span class="co">#&gt; Info: finished reading 4 files in 2.40 secs</span></span>
+<span></span>
+<span><span class="va">iso_files</span></span>
+<span><span class="co">#&gt; Data from 4 scan iso files: </span></span>
+<span><span class="co">#&gt; # A tibble: 4 × 5</span></span>
+<span><span class="co">#&gt;   file_id                     raw_data           file_info method_info file_path</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;                       &lt;glue&gt;             &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;    </span></span>
+<span><span class="co">#&gt; 1 background_scan_example.scn 525 measurements,… 8 entries resistors   backgrou…</span></span>
+<span><span class="co">#&gt; 2 full_scan_example.scn       799 measurements,… 8 entries resistors   full_sca…</span></span>
+<span><span class="co">#&gt; 3 peak_shape_scan_example.scn 220 measurements,… 8 entries resistors   peak_sha…</span></span>
+<span><span class="co">#&gt; 4 time_scan_example.scn       5532 measurements… 8 entries resistors   time_sca…</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="supported-file-types">Supported File Types<a class="anchor" aria-label="anchor" href="#supported-file-types"></a>
 </h2>
 <p>Currently supported file types:</p>
 <table class="table">
+<colgroup>
+<col width="22%">
+<col width="14%">
+<col width="14%">
+<col width="48%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">type</th>
 <th align="left">extension</th>
@@ -238,16 +244,16 @@
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
 <ul>
-<li>for a quick introduction, check out the aforementioned <a href="https://isoreader.isoverse.org/articles/quick_start.html"><strong>Quick Start Vignette</strong></a>
+<li>for a quick introduction, check out the aforementioned <a href="https://isoreader.isoverse.org/articles/quick_start.html" class="external-link"><strong>Quick Start Vignette</strong></a>
 </li>
-<li>for a full reference of all available functions, see the <strong><a href="https://isoreader.isoverse.org/reference/">Function Reference</a></strong>
+<li>for a full reference of all available functions, see the <strong><a href="https://isoreader.isoverse.org/reference/" class="external-link">Function Reference</a></strong>
 </li>
 <li>for function help within RStudio, simply start typing <code>?iso_</code> in the console and a list of available function will appear (all functions share the <code>iso_</code> prefix)</li>
-<li>for a detailed example of how to work with continuous flow data files, see the vignette on <strong><a href="https://isoreader.isoverse.org/articles/continuous_flow.html">Continuous Flow</a></strong>
+<li>for a detailed example of how to work with continuous flow data files, see the vignette on <strong><a href="https://isoreader.isoverse.org/articles/continuous_flow.html" class="external-link">Continuous Flow</a></strong>
 </li>
-<li>for a detailed example of how to work with dual inlet data files, see the vignette on <strong><a href="https://isoreader.isoverse.org/articles/dual_inlet.html">Dual Inlet</a></strong>
+<li>for a detailed example of how to work with dual inlet data files, see the vignette on <strong><a href="https://isoreader.isoverse.org/articles/dual_inlet.html" class="external-link">Dual Inlet</a></strong>
 </li>
-<li>for a detailed example of how to work with scan data files, see the vignette on <strong><a href="https://isoreader.isoverse.org/articles/scan.html">Scans</a></strong>
+<li>for a detailed example of how to work with scan data files, see the vignette on <strong><a href="https://isoreader.isoverse.org/articles/scan.html" class="external-link">Scans</a></strong>
 </li>
 </ul>
 </div>
@@ -259,12 +265,12 @@
 <div class="section level2">
 <h2 id="development">Development<a class="anchor" aria-label="anchor" href="#development"></a>
 </h2>
-<p>If you are interested in helping with development, that’s fantastic! Please fork the repository and branch off from the <a href="https://github.com/isoverse/isoreader/tree/dev" class="external-link">dev branch</a> since it contains the most up-to-date development version of <a href="https://isoreader.isoverse.org/">isoreader</a>. Make sure to write <a href="https://r-pkgs.org/tests.html" class="external-link"><code>testthat</code> tests</a> for your work (stored in the tests/testthat directory). All tests can be run automatically and continuously during development to make it easier to spot any code problems on the go. The easiest way to run them is by running <code>make auto_test</code> in the <a href="https://isoreader.isoverse.org/">isoreader</a> directory from command line (it will test everything automatically in a completely separate R session).</p>
+<p>If you are interested in helping with development, that’s fantastic! Please fork the repository and branch off from the <a href="https://github.com/isoverse/isoreader/tree/dev" class="external-link">dev branch</a> since it contains the most up-to-date development version of <a href="https://isoreader.isoverse.org/" class="external-link">isoreader</a>. Make sure to write <a href="https://r-pkgs.org/tests.html" class="external-link"><code>testthat</code> tests</a> for your work (stored in the tests/testthat directory). All tests can be run automatically and continuously during development to make it easier to spot any code problems on the go. The easiest way to run them is by running <code>make auto_test</code> in the <a href="https://isoreader.isoverse.org/" class="external-link">isoreader</a> directory from command line (it will test everything automatically in a completely separate R session).</p>
 </div>
 <div class="section level2">
 <h2 id="open-source">Open Source<a class="anchor" aria-label="anchor" href="#open-source"></a>
 </h2>
-<p><a href="https://isoreader.isoverse.org/">isoreader</a> is and will always be fully open-source (i.e. free as in <strong>freedom</strong> and free as in <strong>free beer</strong>) and is provided as is. The source code is released under GPL-2.</p>
+<p><a href="https://isoreader.isoverse.org/" class="external-link">isoreader</a> is and will always be fully open-source (i.e. free as in <strong>freedom</strong> and free as in <strong>free beer</strong>) and is provided as is. The source code is released under GPL-2.</p>
 </div>
 <div class="section level2">
 <h2 id="isoverse-">isoverse <a href="https://www.isoverse.org" class="external-link"><img src="reference/figures/isoverse_logo_thumb.png" align="right" height="138.5"></a>
@@ -309,16 +315,7 @@
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://cran.r-project.org/package=isoreader" class="external-link"><img src="https://www.r-pkg.org/badges/version/isoreader" alt="CRAN_Status_Badge"></a></li>
-<li><a href="https://isoreader.isoverse.org/"><img src="https://img.shields.io/badge/docs-online-green.svg" alt="Documentation"></a></li>
-<li><a href="https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check" class="external-link"><img src="https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=rstudio" class="external-link"><img src="https://img.shields.io/badge/explore%20online-in%20RStudio-blue.svg" alt="Binder"></a></li>
-<li><a href="https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=lab" class="external-link"><img src="https://img.shields.io/badge/explore%20online-in%20Jupyter-orange.svg" alt="Binder"></a></li>
-</ul>
-</div>
+
 
   </div>
 </div>
@@ -331,7 +328,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.3.3</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.4.0</span>
       </span>
     </div>
 
@@ -88,25 +88,32 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">iso_turn_debug_on</span><span class="op">(</span>data <span class="op">=</span> <span class="cn">NULL</span>, catch_errors <span class="op">=</span> <span class="cn">TRUE</span>, cache <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-
-<span class="fu">iso_turn_debug_off</span><span class="op">(</span>data <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-
-<span class="fu">set_read_file_event_expr</span><span class="op">(</span>event_expr <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-
-<span class="fu">set_finish_file_event_expr</span><span class="op">(</span>event_expr <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">iso_turn_debug_on</span><span class="op">(</span>data <span class="op">=</span> <span class="cn">NULL</span>, catch_errors <span class="op">=</span> <span class="cn">TRUE</span>, cache <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">iso_turn_debug_off</span><span class="op">(</span>data <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_read_file_event_expr</span><span class="op">(</span>event_expr <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_finish_file_event_expr</span><span class="op">(</span>event_expr <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>data</dt>
 <dd><p>a data frame - returned invisibly as is if provided (e.g. in the middle of a pipeline)</p></dd>
+
+
 <dt>catch_errors</dt>
 <dd><p>whether to still catch errors in debug mode or whether to throw them</p></dd>
+
+
 <dt>cache</dt>
 <dd><p>whether to cache or read anything from cache</p></dd>
+
+
 <dt>event_expr</dt>
 <dd><p>an expression to evaluate in the context of reading individual iso files (evaluated in the local environment at the beginning of a file read)</p></dd>
+
 </dl></div>
 
   </div>
@@ -121,7 +128,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
