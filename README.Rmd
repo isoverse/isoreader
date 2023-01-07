@@ -33,7 +33,10 @@ This package is intended as a unified one-stop command line interface to all com
 You can install the latest release of isoreader from [CRAN](https://cran.r-project.org/package=isoreader):
 
 ```{r cran-installation, eval = FALSE}
-install.packages("isoreader")
+# Note: isoreader is temporarily not available on CRAN because of a missing dependency, please install directly from GitHub using the commands below
+# install.packages("isoreader")
+if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
+devtools::install_github("isoverse/isoreader")
 ```
 
 Some isoreader features including Excel and feather export depend on optional packages that are not required for the core functionality of isoreader. To use this functionality, please install the following packages manually if not already installed (isoreader will throw an informative warning if they are needed but missing):
@@ -49,7 +52,6 @@ To install the current development version of isoreader directly from GitHub, pl
 ```{r gh-installation, eval = FALSE}
 # installs the development tools package if not yet installed
 if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
-devtools::install_github("leeper/UNF") # missing CRAN dependency
 devtools::install_github("isoverse/isoreader")
 ```
 

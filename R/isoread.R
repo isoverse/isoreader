@@ -213,7 +213,7 @@ iso_read_continuous_flow <- function(
       immediate. = TRUE, call. = FALSE
     )
   }
-
+  
   # process data
   iso_read_files(
     unlist_paths(list(...)),
@@ -378,7 +378,6 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
       file_n = 1:n(),
       files_n = n(),
       cachepath = generate_cache_filepaths(file.path(.data$root, .data$path)),
-      old_cachepath = generate_old_cache_filepaths(file.path(.data$root, .data$path), data_structure$read_options),
       process = if(!parallel) NA_integer_ else ((.data$file_n - 1) %% cores) + 1L,
       reader_options = list(!!reader_options)
     ) %>%
@@ -387,7 +386,6 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
     # make cache read/write decisions
     mutate(
       read_from_cache = read_cache & .data$cacheable & file.exists(.data$cachepath),
-      read_from_old_cache = read_cache & .data$cacheable & file.exists(.data$old_cachepath),
       reread_outdated_cache = !!reread_outdated_cache,
       write_to_cache = cache & .data$cacheable
     )
@@ -493,8 +491,8 @@ create_read_process <- function(process, data_structure, files) {
   files <- files %>%
     select(
       .data$root, .data$path, .data$file_n, .data$files_n,
-      .data$read_from_cache, .data$read_from_old_cache, .data$reread_outdated_cache,
-      .data$write_to_cache, .data$cachepath, .data$old_cachepath,
+      .data$read_from_cache, .data$reread_outdated_cache,
+      .data$write_to_cache, .data$cachepath, 
       .data$post_read_check, ext = .data$extension,
       reader_fun = .data$func, reader_options = .data$reader_options, reader_fun_env = .data$env
     )
@@ -545,11 +543,9 @@ create_read_process <- function(process, data_structure, files) {
 #' @param file_n number of processed file for info messages
 #' @param files_n total number of files for info messages
 #' @param read_from_cache whether to read from cache
-#' @param read_from_old_cache whether to read from old cache files (to be deprecated in isoreader 2.0)
 #' @param reread_outdated_cache whether to reread outdated cache files
 #' @param write_to_cache whether to write to cache
 #' @param cachepath path for the cache file
-#' @param old_cachepath path for the old cache files
 #' @param post_read_check whether to run data integrity checks after a file read
 #' @param ext file extension
 #' @param reader_fun file reader function
@@ -558,20 +554,17 @@ create_read_process <- function(process, data_structure, files) {
 #' @export
 read_iso_file <- function(
   ds, root, path, file_n, files_n,
-  read_from_cache, read_from_old_cache, reread_outdated_cache,
-  write_to_cache, cachepath, old_cachepath,
+  read_from_cache, reread_outdated_cache,
+  write_to_cache, cachepath, 
   post_read_check, ext, reader_fun, reader_options, reader_fun_env) {
 
   # prepare iso_file object
   ds <- set_ds_file_path(ds, root, path)
   iso_file <- ds # default
 
-  # cache
-  has_cache <- read_from_cache || read_from_old_cache
-
   # progress update
   if (!default("quiet")) {
-    if (has_cache) {
+    if (read_from_cache) {
       msg <- glue("reading file '{path}' from cache...")
     } else {
       msg <- glue("reading file '{path}' with '{ext}' reader...")
@@ -595,11 +588,9 @@ read_iso_file <- function(
   }
 
   # read cache
-  if (has_cache) {
-    iso_file <-
-      if (read_from_cache) load_cached_iso_file(cachepath)
-      else if (read_from_old_cache) load_cached_iso_file(old_cachepath)
-
+  if (read_from_cache) {
+    iso_file <- load_cached_iso_file(cachepath)
+      
     # check if reader options match, if not: re-read
     # FIXME: implement this
     # pseudocode
@@ -638,7 +629,7 @@ read_iso_file <- function(
   }
 
   # read isofile
-  if (!has_cache || reread_file) {
+  if (!read_from_cache || reread_file) {
     # read from original file
     env <- if (reader_fun_env == "R_GlobalEnv") .GlobalEnv else asNamespace(reader_fun_env)
     ds <- set_ds_file_size(ds)
@@ -1070,34 +1061,6 @@ generate_cache_filepaths <- function(filepaths) {
       cache_filepath = file.path(default("cache_dir"), .data$cache_file)
     ) %>%
     dplyr::pull(.data$cache_filepath)
-}
-
-# generates old cache file path
-generate_old_cache_filepaths <- function(filepaths, read_options = list()) {
-
-  calculate_unf_hash <- function(filepath, size, modified) {
-    obj <- c(list(filepath, size, modified), read_options)
-    unf(obj)$hash %>% str_c(collapse = "")
-  }
-
-  # old cached files versioning
-  iso_v <-
-    packageVersion("isoreader") %>% {
-      if (.$major < 1) paste0(.$major, ".", .$minor)
-      else paste0(.$major, ".0")
-    }
-
-  file_info <- file.info(filepaths) %>%
-    dplyr::as_tibble() %>%
-    rownames_to_column() %>%
-    select(filepath = .data$rowname, size = .data$size, modified = .data$mtime) %>%
-    mutate(
-      hash = mapply(calculate_unf_hash, .data$filepath, .data$size, .data$modified),
-      cache_file = sprintf("iso_file_v%s_%s_%s.rds", !!iso_v, basename(.data$filepath), .data$hash),
-      cache_filepath = file.path(default("cache_dir"), .data$cache_file)
-    )
-
-  return(file_info$cache_filepath)
 }
 
 # Cache iso_file
