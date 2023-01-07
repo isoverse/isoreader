@@ -3,7 +3,7 @@
 
 # isoreader <a href='https://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
-[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://isoreader.isoverse.org/)
 [![R build
 status](https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg)](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check)
@@ -52,7 +52,6 @@ You can install the latest release of isoreader from
 # Note: isoreader is temporarily not available on CRAN because of a missing dependency, please install directly from GitHub using the commands below
 # install.packages("isoreader")
 if(!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
-devtools::install_github("leeper/UNF") # missing CRAN dependency
 devtools::install_github("isoverse/isoreader")
 ```
 
@@ -79,8 +78,8 @@ devtools::install_github("isoverse/isoreader")
 
 Troubleshooting note: depending on your workspace and operating system,
 you may have to re-start your R session or manually install some
-dependencies. For example, the `digest` package sometimes causes trouble
-- re-install with
+dependencies. For example, the `digest` package sometimes causes
+trouble - re-install with
 `remove.packages("digest"); install.packages("digest")`.
 
 ## Show me some code
@@ -102,17 +101,17 @@ iso_files <- iso_read_scan(data_folder)
 #> Info: reading file 'full_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'time_scan_example.scn' with '.scn' reader...
-#> Info: finished reading 4 files in 0.82 secs
+#> Info: finished reading 4 files in 2.40 secs
 
 iso_files
 #> Data from 4 scan iso files: 
 #> # A tibble: 4 × 5
-#>   file_id                     raw_data        file_info method_info file_path   
-#>   <chr>                       <glue>          <chr>     <chr>       <chr>       
-#> 1 background_scan_example.scn 525 measuremen… 8 entries resistors   background_…
-#> 2 full_scan_example.scn       799 measuremen… 8 entries resistors   full_scan_e…
-#> 3 peak_shape_scan_example.scn 220 measuremen… 8 entries resistors   peak_shape_…
-#> 4 time_scan_example.scn       5532 measureme… 8 entries resistors   time_scan_e…
+#>   file_id                     raw_data           file_info method_info file_path
+#>   <chr>                       <glue>             <chr>     <chr>       <chr>    
+#> 1 background_scan_example.scn 525 measurements,… 8 entries resistors   backgrou…
+#> 2 full_scan_example.scn       799 measurements,… 8 entries resistors   full_sca…
+#> 3 peak_shape_scan_example.scn 220 measurements,… 8 entries resistors   peak_sha…
+#> 4 time_scan_example.scn       5532 measurements… 8 entries resistors   time_sca…
 ```
 
 ## Supported File Types
@@ -134,23 +133,22 @@ Currently supported file types:
 
 ## Documentation
 
--   for a quick introduction, check out the aforementioned [**Quick
-    Start
-    Vignette**](https://isoreader.isoverse.org/articles/quick_start.html)
--   for a full reference of all available functions, see the **[Function
-    Reference](https://isoreader.isoverse.org/reference/)**
--   for function help within RStudio, simply start typing `?iso_` in the
-    console and a list of available function will appear (all functions
-    share the `iso_` prefix)
--   for a detailed example of how to work with continuous flow data
-    files, see the vignette on **[Continuous
-    Flow](https://isoreader.isoverse.org/articles/continuous_flow.html)**
--   for a detailed example of how to work with dual inlet data files,
-    see the vignette on **[Dual
-    Inlet](https://isoreader.isoverse.org/articles/dual_inlet.html)**
--   for a detailed example of how to work with scan data files, see the
-    vignette on
-    **[Scans](https://isoreader.isoverse.org/articles/scan.html)**
+- for a quick introduction, check out the aforementioned [**Quick Start
+  Vignette**](https://isoreader.isoverse.org/articles/quick_start.html)
+- for a full reference of all available functions, see the **[Function
+  Reference](https://isoreader.isoverse.org/reference/)**
+- for function help within RStudio, simply start typing `?iso_` in the
+  console and a list of available function will appear (all functions
+  share the `iso_` prefix)
+- for a detailed example of how to work with continuous flow data files,
+  see the vignette on **[Continuous
+  Flow](https://isoreader.isoverse.org/articles/continuous_flow.html)**
+- for a detailed example of how to work with dual inlet data files, see
+  the vignette on **[Dual
+  Inlet](https://isoreader.isoverse.org/articles/dual_inlet.html)**
+- for a detailed example of how to work with scan data files, see the
+  vignette on
+  **[Scans](https://isoreader.isoverse.org/articles/scan.html)**
 
 ## Troubleshooting
 

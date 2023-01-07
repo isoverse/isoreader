@@ -11,6 +11,7 @@ Interface to the raw data file formats commonly encountered in scientific discip
 \seealso{
 Useful links:
 \itemize{
+  \item \url{http://isoreader.isoverse.org}
   \item \url{https://github.com/isoverse/isoreader}
   \item Report bugs at \url{https://github.com/isoverse/isoreader/issues}
 }
