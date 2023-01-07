@@ -1,5 +1,6 @@
+url: http://isoreader.isoverse.org
+
 title: Isoreader
-url: https://isoreader.isoverse.org/
 template:
   params:
     bootswatch: simplex

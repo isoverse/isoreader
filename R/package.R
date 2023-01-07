@@ -14,7 +14,6 @@
 #' @importFrom stringr str_c str_detect str_to_title str_replace str_replace_all str_replace_na str_match str_match_all str_interp str_subset str_extract fixed
 #' @importFrom methods is
 #' @importFrom utils unzip head tail modifyList packageVersion
-#' @importFrom UNF unf
 NULL
 
 # re-export rlang !! and !!!

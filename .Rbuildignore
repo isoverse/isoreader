@@ -32,3 +32,4 @@
 ^paper.bib$
 ^paper.md$
 ^[^/]*\.feather$
+^pkgdown$

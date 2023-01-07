@@ -32,7 +32,7 @@ below to see their documentation.
 
   \item{readr}{\code{\link[readr]{parse_datetime}}, \code{\link[readr:parse_atomic]{parse_double}}, \code{\link[readr:parse_atomic]{parse_integer}}, \code{\link[readr:parse_atomic]{parse_logical}}, \code{\link[readr]{parse_number}}, \code{\link[readr]{problems}}, \code{\link[readr:problems]{stop_for_problems}}}
 
-  \item{rlang}{\code{\link[rlang:nse-force]{!!}}, \code{\link[rlang:nse-force]{!!!}}}
+  \item{rlang}{\code{\link[rlang:injection-operator]{!!}}, \code{\link[rlang:splice-operator]{!!!}}}
 
   \item{tibble}{\code{\link[tibble]{tibble}}}
 

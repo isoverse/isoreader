@@ -11,11 +11,9 @@ read_iso_file(
   file_n,
   files_n,
   read_from_cache,
-  read_from_old_cache,
   reread_outdated_cache,
   write_to_cache,
   cachepath,
-  old_cachepath,
   post_read_check,
   ext,
   reader_fun,
@@ -36,15 +34,11 @@ read_iso_file(
 
 \item{read_from_cache}{whether to read from cache}
 
-\item{read_from_old_cache}{whether to read from old cache files (to be deprecated in isoreader 2.0)}
-
 \item{reread_outdated_cache}{whether to reread outdated cache files}
 
 \item{write_to_cache}{whether to write to cache}
 
 \item{cachepath}{path for the cache file}
-
-\item{old_cachepath}{path for the old cache files}
 
 \item{post_read_check}{whether to run data integrity checks after a file read}
 
