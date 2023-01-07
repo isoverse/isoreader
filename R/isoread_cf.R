@@ -8,7 +8,7 @@ iso_read_cf <- function(ds, options = list()) {
     stop("data structure must be a 'continuous_flow' iso_file", call. = FALSE)
   
   # read binary file
-  ds$binary <- get_ds_file_path(ds) %>% read_binary_file()
+  ds$binary <- get_ds_file_path(ds) %>% read_binary_isodat_file()
   
   # process file info
   if(ds$read_options$file_info) {
@@ -28,7 +28,7 @@ iso_read_cf <- function(ds, options = list()) {
   if (ds$read_options$method_info) {
     ds <- exec_func_with_error_catch(
       extract_isodat_reference_values, ds, 
-      function(bin) cap_at_pos(bin, find_next_pattern(bin, re_text("Administrator"))))
+      function(bin) cap_at_pos(bin, find_next_pattern(bin, re_unicode("Administrator"))))
     ds <- exec_func_with_error_catch(extract_isodat_resistors, ds)
   }
   
@@ -60,7 +60,7 @@ extract_cf_raw_voltage_data <- function(ds) {
   
   # get trace positions
   gas_positions <- ds$binary %>% 
-    find_next_patterns(re_block("fef-0"), re_block("fef-x"), re_text("Trace Data "), re_block("text"), re_null(4), re_block("stx"))
+    find_next_patterns(re_text_0(), re_text_x(), re_unicode("Trace Data "), re_block("text"), re_null(4), re_block("stx"))
   
   # raw_data
   raw_data <- tibble::tibble()
@@ -70,13 +70,13 @@ extract_cf_raw_voltage_data <- function(ds) {
     ds$binary <- ds$binary %>% 
       move_to_pos(gas_pos) %>% 
       skip_pos(30) %>% 
-      capture_data("gas", "text", re_null(4), re_block("stx"))
+      capture_data_till_pattern("gas", "text", re_null(4), re_block("stx"))
     
     gas_config <- ds$binary$data$gas
     
     # data start
     data_start_re <- re_combine(
-      re_block("stx"), re_block("fef-0"), re_block("stx"), 
+      re_block("stx"), re_text_0(), re_block("stx"), 
       re_direct(".{4}", size = 4, label = ".{4}"))
     ds$binary <- ds$binary %>% move_to_next_pattern(data_start_re)
     data_start <- ds$binary$pos
@@ -84,13 +84,13 @@ extract_cf_raw_voltage_data <- function(ds) {
     # find all masses at end of data
     data_end_re <- re_combine(
       re_direct(".{2}", size = 2, label = ".{2}"), re_block("stx"), 
-      re_block("fef-0"), re_block("stx"), re_null(4))
+      re_text_0(), re_block("stx"), re_null(4))
     ds$binary <- ds$binary %>% move_to_next_pattern(data_end_re)
     data_end <- ds$binary$pos - data_end_re$size
     
-    mass_re <- re_combine(re_block("fef-x"), re_text("Mass "))
+    mass_re <- re_combine(re_text_x(), re_unicode("Mass "))
     mass_positions <- ds$binary %>% 
-      cap_at_next_pattern(re_text("MS/Clock")) %>% 
+      cap_at_next_pattern(re_unicode("MS/Clock")) %>% 
       find_next_patterns(mass_re)
     
     masses <- c()
@@ -98,7 +98,7 @@ extract_cf_raw_voltage_data <- function(ds) {
       # a bit tricky to capture but this should do the trick reliably
       raw_mass <- 
         ds$binary %>% move_to_pos(pos + mass_re$size) %>% 
-        capture_data("mass", "raw", re_block("fef-x"), ignore_trailing_zeros = FALSE) %>% 
+        capture_data_till_pattern("mass", "raw", re_text_x(), ignore_trailing_zeros = FALSE) %>% 
         { .$data$mass }
       text_mass <- parse_raw_data(grepRaw("^([0-9]\\x00)+", raw_mass, value = TRUE), type = "text")
       masses <- c(masses, text_mass)

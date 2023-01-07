@@ -8,7 +8,7 @@ iso_read_scn <- function(ds, options = list()) {
     stop("data structure must be a 'scan' iso_file", call. = FALSE)
   
   # read binary file
-  ds$binary <- get_ds_file_path(ds) %>% read_binary_file()
+  ds$binary <- get_ds_file_path(ds) %>% read_binary_isodat_file()
   
   # get scan file type
   ds <- exec_func_with_error_catch(extract_scn_file_type, ds)
@@ -45,8 +45,8 @@ extract_scn_file_type <- function(ds) {
     set_binary_file_error_prefix("cannot identify scan type") %>% 
     move_to_C_block_range("CPlotInfo", "CTraceInfo")
   ds$binary <- ds$binary %>% 
-    move_to_next_pattern(re_block("fef-x"), re_text("Arial"), re_block("fef-x")) %>% 
-    capture_data("type", "text", re_block("fef-x"))
+    move_to_next_pattern(re_text_x(), re_unicode("Arial"), re_text_x()) %>% 
+    capture_data_till_pattern("type", "text", re_text_x())
   ds$file_info$type <- ds$binary$data$type
   return(ds)
 }
@@ -58,7 +58,7 @@ extract_scn_file_info <- function(ds) {
     set_binary_file_error_prefix("cannot extrat comment") %>%  
     move_to_C_block_range("CScanStorage", "CBinary")
   ds$binary <- ds$binary %>% 
-    move_to_next_pattern(re_block("x-000"), re_block("fef-x"))
+    move_to_next_pattern(re_x_000(), re_text_x())
   end_pos <- ds$binary %>% find_next_pattern(re_direct("\xff\xff"))
   
   # comment
@@ -79,25 +79,25 @@ extract_scn_mass_cup_info <- function(ds){
   ds$binary <- ds$binary %>% 
     set_binary_file_error_prefix("cannot identify masses/cups") %>%  
     move_to_C_block("^CPlotRange", regexp_match = TRUE) %>% 
-    cap_at_next_pattern(re_text("Administrator"))
+    cap_at_next_pattern(re_unicode("Administrator"))
   
   # masses
-  mass_positions <- find_next_patterns(ds$binary, re_text("Mass"))
+  mass_positions <- find_next_patterns(ds$binary, re_unicode("Mass"))
   masses <- c()
   cups <- c()
   if (length(mass_positions) > 0) {
     for (pos in mass_positions) {
       ds$binary <- ds$binary %>% move_to_pos(pos) %>% 
-        capture_data("mass", "text", re_not_null(2)) 
+        capture_data_till_pattern("mass", "text", re_not_null(2)) 
       masses <- c(masses, ds$binary$data$mass)
     }
     cups <- c(stringr::str_extract(masses, "C\\d+"))
   } else {
     # cups
-    cup_positions <- find_next_patterns(ds$binary, re_text("Cup"))
+    cup_positions <- find_next_patterns(ds$binary, re_unicode("Cup"))
     for (pos in cup_positions) {
       ds$binary <- ds$binary %>% move_to_pos(pos) %>% 
-        capture_data("cup", "text", re_not_null(2)) 
+        capture_data_till_pattern("cup", "text", re_not_null(2)) 
       cups <- c(cups, ds$binary$data$cup)
     }
     masses <- rep(NA_character_, length(cups))
@@ -126,7 +126,7 @@ extract_scn_raw_voltage_data <- function(ds) {
     move_to_C_block_range("CScanStorage", "CBinary")
   
   ds$binary <- ds$binary %>% 
-    move_to_next_pattern(re_block("x-000"), re_block("fef-x"))
+    move_to_next_pattern(re_x_000(), re_text_x())
   end_pos <- ds$binary %>% find_next_pattern(re_direct("\xff\xff", label = "xffxff"))
   
   ds$binary <- ds$binary %>% 
@@ -139,16 +139,16 @@ extract_scn_raw_voltage_data <- function(ds) {
     set_binary_file_error_prefix("cannot identify scan units") %>% 
     move_to_C_block_range("CVisualisationData", "CIntegrationUnitScanPart")
   ds$binary <- ds$binary %>% 
-    move_to_next_pattern(re_text("Arial")) %>% 
+    move_to_next_pattern(re_unicode("Arial")) %>% 
     move_to_next_pattern(
       # seems to begin with this unique 88 c3 40 sequence
       re_direct("\x88\xc3\x40", label = "x88xc3x40")
     ) %>% 
     move_to_next_pattern(
       # but this could be sufficient too if the above turns too specific
-      re_block("x-000"), re_block("fef-x")
+      re_x_000(), re_text_x()
     ) %>% 
-    capture_data("units", "text", re_null(4), re_not_null(1))
+    capture_data_till_pattern("units", "text", re_null(4), re_not_null(1))
   
   # range
   ds$binary <- ds$binary %>%
@@ -225,7 +225,7 @@ extract_scn_resistors <- function(ds) {
   ds$binary <- ds$binary %>% 
     move_to_C_block_range("CCupHardwarePart", "CChannelHardwarePart")
   
-  cup_positions <- find_next_patterns(ds$binary, re_block("fef-x"), re_text("Cup"))
+  cup_positions <- find_next_patterns(ds$binary, re_text_x(), re_unicode("Cup"))
   cup_caps <- c(cup_positions[-1], ds$binary$max_pos)
   
   cups <- c()
@@ -234,8 +234,8 @@ extract_scn_resistors <- function(ds) {
     ds$binary <- ds$binary %>% move_to_pos(cup_positions[i]) %>% 
       cap_at_pos(cup_caps[i]) %>% 
       skip_pos(4) %>% 
-      capture_data("cup", "text", re_block("x-000")) %>% 
-      move_to_next_pattern(re_null(16), re_direct("(\xff\xfe\xff\\x00)?"), re_block("x-000"), re_not_null(1)) %>% 
+      capture_data_till_pattern("cup", "text", re_x_000()) %>% 
+      move_to_next_pattern(re_null(16), re_direct("(\xff\xfe\xff\\x00)?"), re_x_000(), re_not_null(1)) %>% 
       capture_n_data("R.Ohm", "double", 1)
     cups <- c(cups, ds$binary$data$cup)
     ohms <- c(ohms, ds$binary$data$R.Ohm)
