@@ -12,7 +12,7 @@ check:
 	R -q -e "devtools::check(env_vars = c())"
 
 auto_test:
-	R -q -e "rm(list = ls()); Sys.setenv(NOT_CRAN = \"false\"); testthat::auto_test_package()"
+	R -q -e "rm(list = ls()); Sys.setenv(NOT_CRAN = \"true\"); testthat::auto_test_package()"
 
 # test with all example files (= as if not on CRAN)
 auto_test_all:
