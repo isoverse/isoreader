@@ -127,7 +127,7 @@ test_that("actual problem file works", {
       file_id = "cf_without_data.dxf",
       type = "error",
       func = "extract_dxf_raw_voltage_data",
-      details = "cannot identify measured masses - block 'CEvalDataIntTransferPart' not found after position 1 (pos 65327, max 119237)"
+      details = "cannot identify measured masses - block 'CEvalDataIntTransferPart' not found after position 1 (nav block#1 'CFileHeader', pos 65327, max 119237)"
     ) 
   )
 })
