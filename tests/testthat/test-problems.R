@@ -115,7 +115,7 @@ test_that("Test that removing files with errors works properly", {
 
 test_that("actual problem file works", {
   expect_warning(
-    err <- iso_read_continuous_flow(system.file("errdata", "cf_without_data.dxf", package = "isoreader")),
+    err <- iso_read_continuous_flow(system.file("errdata", "cf_without_data.dxf", package = "isoreader"), read_cache = FALSE),
     "encountered 1 problem\\.")
   expect_warning( # warnings cannot be quieted with quiet
     err <- iso_read_continuous_flow(system.file("errdata", "cf_without_data.dxf", package = "isoreader"), quiet = TRUE),
@@ -130,4 +130,5 @@ test_that("actual problem file works", {
       details = "cannot identify measured masses - block 'CEvalDataIntTransferPart' not found after position 1 (nav block#1 'CFileHeader', pos 65327, max 119237)"
     ) 
   )
+  
 })
