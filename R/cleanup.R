@@ -107,6 +107,6 @@ extract_word <- function(string, capture_n = 1, include_numbers = TRUE, include_
   chr_dash <- if(include_dash) "-" else ""
   chr_space <- if(include_space) " " else ""
   chr_colon <- if(include_colon) "." else ""
-  pattern <- glue("[{chr_numbers}A-Za-z{chr_underscore}{chr_dash}{chr_space}{chr_colon}]+") %>% as.character()
+  pattern <- glue("[{chr_numbers}A-Za-z{chr_underscore}{chr_dash}{chr_space}{chr_colon}]+") |> as.character()
   extract_substring(string, pattern = pattern, capture_n = capture_n, missing = missing)
 }

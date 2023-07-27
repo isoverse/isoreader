@@ -109,7 +109,7 @@ iso_read_nu <- function(ds, options = list()) {
   if (!is.null(ds$raw_data) && nrow(ds$raw_data) > 0) {
     if (any(n_channels <- stringr::str_detect(names(ds$raw_data), "^[iIvV]C(\\d+)"))) {
       # only have channel information, provide warning
-      ds <- ds %>% register_warning(
+      ds <- ds |> register_warning(
         glue::glue(
           "found {sum(n_channels)} channels but {length(options$nu_masses)} masses were specified ",
           "- the raw data will be reported in channels instead of masses. ",
@@ -130,9 +130,10 @@ read_nu_data_file <- function(filepath) {
     stop("file does not exist or is a directory: ", filepath, call. = TRUE)
   
   # read file data
-  readLines(con = filepath) %>% 
-    group_lines("^\\\"") %>% 
-    return()
+  lines <- readLines(con = filepath) |> 
+    group_lines("^\\\"")
+  
+  return(lines)
 }
 
 # parser functions =======
@@ -211,7 +212,7 @@ process_nu_parser <- function(ds, parser, options = list()) {
   else FALSE
   
   if (!meets_n_req) {
-    glue::glue("capture failed, parser expected {parser$n_req} value(s) but found {length(matches)}") %>% 
+    glue::glue("capture failed, parser expected {parser$n_req} value(s) but found {length(matches)}") |> 
       stop(call. = FALSE)
   }
   
@@ -248,7 +249,7 @@ parse_nu_data <- function(data, n_blocks, n_channels, masses = c()) {
   
   # sanity checks on block number
   if (nrow(raw_data) != n_blocks) {
-    glue::glue("found {nrow(raw_data)} data blocks, expected {n_blocks}") %>% stop(call. = FALSE)
+    glue::glue("found {nrow(raw_data)} data blocks, expected {n_blocks}") |> stop(call. = FALSE)
   }
   
   # read in zeros
@@ -256,18 +257,18 @@ parse_nu_data <- function(data, n_blocks, n_channels, masses = c()) {
   
   # prepare raw data
   raw_data <- 
-    raw_data %>% 
-    select(block = "group", "data") %>% 
+    raw_data |> 
+    select(block = "group", "data") |> 
     # unpack the blocks
     mutate(
       n_channels = !!n_channels,
-      n_cycles = map_int(data, ~str_subset(.x, fixed("No_C_O_Cycles")) %>% readr::parse_number() %>% as.integer()),
-      cycle_length = map_int(data, ~str_subset(.x, fixed("Cycle_Length")) %>% readr::parse_number() %>% as.integer()),
-      zero_length = map_int(data, ~str_subset(.x, fixed("Zero_Measurement_Length")) %>% readr::parse_number() %>% as.integer()),
+      n_cycles = map_int(data, ~str_subset(.x, fixed("No_C_O_Cycles")) |> readr::parse_number() |> as.integer()),
+      cycle_length = map_int(data, ~str_subset(.x, fixed("Cycle_Length")) |> readr::parse_number() |> as.integer()),
+      zero_length = map_int(data, ~str_subset(.x, fixed("Zero_Measurement_Length")) |> readr::parse_number() |> as.integer()),
       data = map(data, group_lines, "^\\s*Gas")
-    ) %>% 
+    ) |> 
     # unpack the 'Gas...' data chunks
-    unnest("data") %>% 
+    unnest("data") |> 
     mutate(
       is_ref = str_detect(header, "^\\s*Gas\\s+Ref"),
       is_sample = str_detect(header, "^\\s*Gas\\s+Sam"),
@@ -282,7 +283,7 @@ parse_nu_data <- function(data, n_blocks, n_channels, masses = c()) {
   
   # check for problems (log & return empty dta frames)
   if (n_problems(zero_data) > 0 || n_problems(raw_data) > 0) {
-    retval <- list(bgrd_data = tibble(), raw_data = tibble()) %>% 
+    retval <- list(bgrd_data = tibble(), raw_data = tibble()) |> 
       set_problems(combined_problems(zero_data, raw_data)) 
     return(retval)
   }
@@ -292,19 +293,19 @@ parse_nu_data <- function(data, n_blocks, n_channels, masses = c()) {
   data_blocks <- unique(raw_data$block)
   if (length(zero_blocks) == 1) {
     # single zero block for all
-    zero_data <- select(zero_data, -"block") %>% 
-      tidyr::crossing(select(raw_data, "block") %>% unique) %>% 
+    zero_data <- select(zero_data, -"block") |> 
+      tidyr::crossing(select(raw_data, "block") |> unique()) |> 
       select("block", everything())
   } else if (!setequal(zero_blocks, data_blocks)) {
-    glue::glue("found {length(zero_blocks)} zero blocks, expected {length(data_blocks)}") %>% 
+    glue::glue("found {length(zero_blocks)} zero blocks, expected {length(data_blocks)}") |> 
       stop(call. = FALSE)
   }
   
   # subtract zeros from data
   raw_data <-
-    raw_data %>% 
-    left_join(rename(zero_data, background = "intensity"), by = c("block", "channel")) %>% 
-    mutate(intensity = intensity - background) %>% 
+    raw_data |> 
+    left_join(rename(zero_data, background = "intensity"), by = c("block", "channel")) |> 
+    mutate(intensity = intensity - background) |> 
     select(-"background")
 
   # spread data
@@ -323,9 +324,9 @@ parse_nu_zero_data <- function(raw_data, masses = c()) {
   
   # process raw data for zeros
   df <- 
-    raw_data %>% 
-    group_by(block) %>% 
-    mutate(data = map(data, ~tibble(channel = seq_along(.x), intensities = stringr::str_split(.x, "\\s+")))) %>% 
+    raw_data |> 
+    group_by(block) |> 
+    mutate(data = map(data, ~tibble(channel = seq_along(.x), intensities = stringr::str_split(.x, "\\s+")))) |> 
     select("block", "n_channels", "zero_length", "data")
 
   # safety checks
@@ -349,27 +350,27 @@ parse_nu_raw_data <- function(raw_data, masses = c()) {
   
   # process raw data
   df <- 
-    raw_data %>% 
+    raw_data |> 
     # determine cycles
-    group_by(block, is_ref) %>% 
-    mutate(cycle = 1:n() - is_ref) %>% ungroup() %>% 
+    group_by(block, is_ref) |> 
+    mutate(cycle = 1:n() - is_ref) |> ungroup() |> 
     # convert string data to numeric data
     mutate(
       type = ifelse(is_ref, "standard", "sample"),
       data = map(data, ~tibble(channel = seq_along(.x), intensities = stringr::str_split(.x, "\\s+")))
-    ) %>% 
+    ) |> 
     select("block", "n_channels", "n_cycles", "cycle_length", "data", "cycle", "type")
   
   # safety check on cycles
   cycles_count <- 
-    dplyr::count(df, block, n_cycles, type) %>% 
+    dplyr::count(df, block, n_cycles, type) |> 
     mutate(
       n = n - (type == "standard"), # the inital REF cycle add 1 to the "standard"
       check = n == n_cycles) 
   if (!all(cycles_count$check)) {
     glue::glue(
       "found data for {str_c(unique(cycles_count$n), collapse = ', ')} cycles, ",
-      "expected {cycles_count$n_cycles[1]}") %>% 
+      "expected {cycles_count$n_cycles[1]}") |> 
       stop(call. = FALSE)
   }
   
@@ -393,12 +394,12 @@ check_channels <- function(df) {
   data <- channel_n <- n_channels <- NULL
   
   channels_count <- 
-    mutate(df, channel_n = map_int(data, nrow)) %>%
+    mutate(df, channel_n = map_int(data, nrow)) |>
     mutate(check = channel_n == n_channels)
   if (!all(channels_count$check)) {
     glue::glue(
       "found data for {str_c(unique(channels_count$channel_n), collapse = ', ')} channels, ",
-      "expected {channels_count$n_channels[1]}") %>% 
+      "expected {channels_count$n_channels[1]}") |> 
       stop(call. = FALSE)
   }
 }
@@ -409,7 +410,7 @@ check_cycle_length <- function(df_channels, length_column) {
   # global vars
   intensities <- intensities_n <- first_value_0 <- NULL
   
-  intensities_check <- df_channels %>% 
+  intensities_check <- df_channels |> 
     mutate(
       intensities_n = map_int(intensities, length),
       check = intensities_n == !!sym(length_column) + 1L,
@@ -420,14 +421,14 @@ check_cycle_length <- function(df_channels, length_column) {
   if (!all(intensities_check$check)) {
     glue::glue(
       "found {str_c(unique(intensities_check$intensities_n - 1L), collapse = ', ')} measurements, ",
-      "expected {intensities_check[[length_column]][1]}") %>% 
+      "expected {intensities_check[[length_column]][1]}") |> 
       stop(call. = FALSE)
   }
   if (!all(intensities_check$first_value_0)) {
-    wrong_first_value <- filter(intensities_check, !first_value_0)$intensities %>% map_chr(~.x[1]) %>% unique()
+    wrong_first_value <- filter(intensities_check, !first_value_0)$intensities |> map_chr(~.x[1]) |> unique()
     glue::glue(
       "found {str_c(wrong_first_value, collapse = ', ')} as first value(s), ",
-      "expected 0.000000E+00") %>% 
+      "expected 0.000000E+00") |> 
       stop(call. = FALSE)
   }
 }
@@ -436,11 +437,11 @@ check_cycle_length <- function(df_channels, length_column) {
 calculate_intensities <- function(df_channels, grouping, masses = c()) {
 
   # calculate raw data intensities
-  df_intensities <- df_channels %>% 
-    unnest("intensities") %>% 
-    mutate(intensities = as.numeric(.data$intensities)) %>% 
-    group_by(!!!map(grouping, sym)) %>% 
-    summarize(intensity = mean(.data$intensities[-1])) %>% 
+  df_intensities <- df_channels |> 
+    unnest("intensities") |> 
+    mutate(intensities = as.numeric(.data$intensities)) |> 
+    group_by(!!!map(grouping, sym)) |> 
+    summarize(intensity = mean(.data$intensities[-1])) |> 
     ungroup() 
   
   # convert channels to masses
@@ -452,14 +453,14 @@ calculate_intensities <- function(df_channels, grouping, masses = c()) {
         channel = 1L:n_channels,
         mass = paste0("i", unname(!!masses), ".A")
       )
-    df_intensities <- df_intensities %>% 
-      left_join(masses, by = "channel") %>% 
-      select(-"channel") %>% 
+    df_intensities <- df_intensities |> 
+      left_join(masses, by = "channel") |> 
+      select(-"channel") |> 
       rename(channel = "mass")
     
   } else {
     # don't have the right number
-    df_intensities <- df_intensities %>% 
+    df_intensities <- df_intensities |> 
       mutate(channel = sprintf("iC%d.A", .data$channel))
   }
   
@@ -478,9 +479,9 @@ group_lines <- function(lines, group_regexp) {
     lines = lines,
     line = seq_along(lines),
     group = cumsum(str_detect(lines, group_regexp))
-  ) %>% 
-    filter(group > 0) %>% 
-    group_by(group) %>% 
+  ) |> 
+    filter(group > 0) |> 
+    group_by(group) |> 
     summarize(
       start = min(line),
       end = max(line),

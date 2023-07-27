@@ -20,7 +20,7 @@ extract_os_file_creation_datetime <- function(ds) {
       # last modification time the only info that's available
       if (default("datetime_warnings")) {
         # report warning if requested
-        ds <- ds %>% register_warning(
+        ds <- ds |> register_warning(
           paste0(
             "file creation date cannot be accessed on this Linux system, using last modified time for file_datetime instead"
           ), 
@@ -38,9 +38,9 @@ extract_os_file_creation_datetime <- function(ds) {
         cmd <- paste0('stat -f "%DB" "', path, '"') # use BSD stat command
         ds$file_info$file_datetime <- 
           # retrieve birth date in seconds from start of epoch (%DB)
-          system(cmd, intern=TRUE, ignore.stderr = TRUE) %>% as.integer() %>% 
+          system(cmd, intern=TRUE, ignore.stderr = TRUE) |> as.integer() |> 
           # convert to POSIXct
-          as.POSIXct(origin = "1970-01-01", tz = "") %>% 
+          as.POSIXct(origin = "1970-01-01", tz = "") |> 
           # force local timezone
           as_datetime(tz = Sys.timezone())
         ds

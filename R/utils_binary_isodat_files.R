@@ -73,16 +73,16 @@ fetch_block_idx <- function(bfile, filter = NULL, type = NULL, block = NULL, blo
   
   # get block ids
   block_idx <- 
-    bfile$blocks %>%
-    { if(!is.null(min_pos)) dplyr::filter(., .data$start >= min_pos) else . } %>%
-    { if(!is.null(max_pos)) dplyr::filter(., .data$end <= max_pos) else . } %>%
-    { if(!is.null(min_block_idx)) dplyr::filter(., .data$block_idx >= min_block_idx) else . } %>%
-    { if(!is.null(max_block_idx)) dplyr::filter(., .data$block_idx <= max_block_idx) else . } %>%
-    { if (!rlang::quo_is_null(filter_quo)) dplyr::filter(., !!filter_quo) else . } %>%
-    { if (!is.null(type)) dplyr::filter(., .data$type %in% !!type) else . } %>%
-    { if (!is.null(block) && !block_regex_match) dplyr::filter(., .data$block %in% !!block) else . } %>%
-    { if (!is.null(block) && block_regex_match) dplyr::filter(., stringr::str_detect(.data$block, !!block)) else . } %>%
-    { if (!is.null(occurence)) dplyr::filter(., dplyr::row_number() %in% occurence) else . } %>%
+    bfile$blocks |>
+    if_y_then(!is.null(min_pos), true_func = dplyr::filter, .data$start >= !!min_pos) |>
+    if_y_then(!is.null(max_pos), true_func = dplyr::filter, .data$end <= !!max_pos) |>
+    if_y_then(!is.null(min_block_idx), true_func = dplyr::filter, .data$block_idx >= !!min_block_idx) |>
+    if_y_then(!is.null(max_block_idx), true_func = dplyr::filter, .data$block_idx <= !!max_block_idx) |>
+    if_y_then(!rlang::quo_is_null(filter_quo), true_func = dplyr::filter, !!filter_quo) |>
+    if_y_then(!is.null(type), true_func = dplyr::filter, .data$type %in% !!type) |>
+    if_y_then(!is.null(block) && !block_regex_match, true_func = dplyr::filter, .data$block %in% !!block) |>
+    if_y_then(!is.null(block) && block_regex_match, true_func = dplyr::filter, stringr::str_detect(.data$block, !!block)) |>
+    if_y_then(!is.null(occurence), true_func = dplyr::filter, dplyr::row_number() %in% !!occurence) |>
     dplyr::pull(block_idx)
   
   # check requirements
@@ -246,8 +246,8 @@ move_to_C_block_range <- function(bfile, from_C_block, to_C_block, min_pos = 1){
   }
 
   # move to blocks
-  bfile %>% 
-    move_to_C_block(from_C_block, min_pos = min_pos, reset_cap = TRUE) %>% 
+  bfile |> 
+    move_to_C_block(from_C_block, min_pos = min_pos, reset_cap = TRUE) |> 
     cap_at_C_block(to_C_block, min_pos = min_pos)
 }
 
@@ -340,7 +340,7 @@ re_control <- function(raw) {
   structure(
     list(
       label = sprintf("{%s}", str_c(ctrls, collapse = " ")),
-      regexp = hex[ctrls] %>% str_c(collapse = ""),
+      regexp = hex[ctrls] |> str_c(collapse = ""),
       size = length(raw)
     ),
     class = "binary_regexp")
@@ -355,7 +355,7 @@ re_unicode <- function(text) {
   structure(
     list(
       label = sprintf("{%s}", text),
-      regexp = hex[as.character(charToRaw(text))] %>% str_c("\\x00") %>% str_c(collapse = ""),
+      regexp = hex[as.character(charToRaw(text))] |> str_c("\\x00") |> str_c(collapse = ""),
       size = 2*nchar(text)
     ),
     class = "binary_regexp")
@@ -460,9 +460,9 @@ move_to_next_pattern <- function(bfile, ..., max_gap = NULL, move_to_end = TRUE)
     sprintf("could not find '%s'%s in search interval %.0f to %.0f, found '%s...'",
             regexps$label, 
             gap_text, bfile$pos, bfile$max_pos,
-            bfile %>% 
+            bfile |> 
               map_binary_structure(length = regexps$size + 
-                                     (if(!is.null(max_gap)) max_gap else 50) + 10) %>% 
+                                     (if(!is.null(max_gap)) max_gap else 50) + 10) |> 
               generate_binary_structure_map_printout()))
 }
 
@@ -491,9 +491,9 @@ cap_at_next_pattern <- function(bfile, ..., max_gap = NULL) {
     sprintf("could not find '%s'%s in search interval %.0f to %.0f, found '%s...'",
             regexps$label, 
             gap_text, bfile$pos, bfile$max_pos,
-            bfile %>% 
+            bfile |> 
               map_binary_structure(length = regexps$size + 
-                                     (if(!is.null(max_gap)) max_gap else 50) + 10) %>% 
+                                     (if(!is.null(max_gap)) max_gap else 50) + 10) |> 
               generate_binary_structure_map_printout()))
 }
 
@@ -627,7 +627,7 @@ find_C_blocks <- function(raw) {
       id2 = as.character(readBin(x[5], "raw")),
       block = str_c(readBin(x[7:length(x)], "character", n = length(x) - 7), collapse = "")
     )
-  }) %>% bind_rows() %>% 
+  }) |> bind_rows() |> 
     # byte positions
     mutate(
       start = re_positions,
@@ -688,17 +688,15 @@ get_ctrl_blocks_config <- function() {
 
 # helper function to get the control blokcs as a data frame
 get_ctrl_blocks_config_df <- function() {
-  get_ctrl_blocks_config() %>%
-    {
-      tibble(
-        block = names(.),
-        regexp = map_chr(., "regexp"),
-        hexadecimal = map_chr(
-          .,
-          ~.x$regexp %>% charToRaw() %>% as.character() %>% paste(collapse = " ")
-        )
-      )
-    }
+  blocks <- get_ctrl_blocks_config()
+  tibble(
+    block = names(blocks),
+    regexp = map_chr(blocks, "regexp"),
+    hexadecimal = map_chr(
+      blocks,
+      ~.x$regexp |> charToRaw() |> as.character() |> paste(collapse = " ")
+    )
+  )
 }
 
 # get configuration information for the data blocks
@@ -794,13 +792,16 @@ parse_raw_data <- function(raw, type, n = full_raw(), ignore_trailing_zeros = FA
       non_text_pos <- grepRaw("([\x20-\xff][\x01-\xff])|(\\x00\\x00)", raw_trim)
       actual_text <- intToUtf8(raw_trim[1:(non_text_pos - 1)])
       if (!is.null(errors)) {
+        err_raw <- raw_trim[(non_text_pos + 1):length(raw_trim)]
         stop(
           sprintf("%sexpected unicode data for %.0f bytes but found only %.0f ('%s'), non-text raw data afterwards: %s", 
                   error_prefix, n*2, non_text_pos, actual_text, 
-                  raw_trim[(non_text_pos + 1):length(raw_trim)] %>% {
-                    if (length(.) > 10) c(as.character(head(., 10)), sprintf("+%d more", length(.) - 10))
-                    else as.character(.)
-                  } %>% paste(collapse = " ")
+                  if (length(err_raw) > 10) 
+                    c(as.character(head(err_raw, 10)), sprintf("+%d more", length(err_raw) - 10)) |>
+                    paste(collapse = " ")
+                  else 
+                    as.character(err_raw) |>
+                    paste(collapse = " ")
           ), 
           call. = FALSE)
       }
@@ -809,12 +810,12 @@ parse_raw_data <- function(raw, type, n = full_raw(), ignore_trailing_zeros = FA
   }
   
   # process data
-  type_bytes <- seq_along(dbc) %>% rep(times = map_int(dbc, "size")) %>% rep(times = n)
+  type_bytes <- seq_along(dbc) |> rep(times = map_int(dbc, "size")) |> rep(times = n)
   data <- list()
   for (i in 1:length(dbc)) {
     
     if (dbc[[i]]$type == "character") {
-      parsed_data <- raw[type_bytes == i] %>% intToUtf8()
+      parsed_data <- raw[type_bytes == i] |> intToUtf8()
     } else {
       parsed_data <- readBin(raw[type_bytes == i], what = dbc[[i]]$type, size = dbc[[i]]$size, n = n)
     }
@@ -865,7 +866,7 @@ remove_trailing_zeros <- function(raw, size) {
   # find number of trailing 0s (i.e. everything after the highest byte that is not 00)
   is_null_block <- raw == as.raw(0)
   if (any(is_null_block == FALSE))
-    trailing_00s <- is_null_block %>% { length(.) - max(which(. == FALSE)) } 
+    trailing_00s <- length(is_null_block) - max(which(is_null_block == FALSE)) 
   else
     trailing_00s <- length(is_null_block)
   
@@ -978,7 +979,7 @@ find_pattern_blocks <- function(raw, regex, start_expr, len_expr, data_len_expr,
     end = start + len - 1L,
     data_len = rlang::eval_tidy(data_len_expr),
     block = rlang::eval_tidy(block_expr)
-  ) %>% 
+  ) |> 
     filter(len > 0)
 }
 
@@ -997,7 +998,7 @@ find_unknown_blocks <- function(raw, blocks) {
       data_len = len,
       priority = max(blocks$priority) + 1L,
       block = NA_character_
-    ) %>%
+    ) |>
     filter(len > 0)
 }
 
@@ -1005,14 +1006,14 @@ find_unknown_blocks <- function(raw, blocks) {
 # @param unknown_block_n_chars how many characters before abbreviating with ...
 get_unknown_blocks_text <- function(blocks, raw, unknown_block_n_chars = 8L) {
   # block text for unknown blocks
-  blocks %>% 
+  blocks |> 
     mutate(
       block =
         dplyr::case_when(
           type == "unknown" & start + unknown_block_n_chars < length(raw) ~ 
             rlang::eval_tidy(rlang::expr(paste(!!!map(
               0:(unknown_block_n_chars - 1L), ~ rlang::expr(raw[start+!!.x])
-            ), "..."))) %>%
+            ), "..."))) |>
             stringr::str_sub(end = data_len *  3L - 1L),
           TRUE ~ block
         )
@@ -1029,7 +1030,7 @@ find_isodat_structure_blocks <- function(bfile, unknown_block_n_chars = 8L) {
   if (!is(bfile, "binary_isodat_file")) stop("this function is for isodat binary files only", call. = FALSE)
   
   ctrl_blocks <- 
-    get_isodat_control_blocks_config() %>% 
+    get_isodat_control_blocks_config() |> 
     mutate(
       priority = dplyr::row_number(),
       blocks = purrr::pmap(
@@ -1043,24 +1044,25 @@ find_isodat_structure_blocks <- function(bfile, unknown_block_n_chars = 8L) {
         find_pattern_blocks, 
         raw = bfile$raw
       )
-    ) %>%
-    dplyr::select(-"start_expr", -"block_expr", -"len_expr") %>% 
+    ) |>
+    dplyr::select(-"start_expr", -"block_expr", -"len_expr") |> 
     tidyr::unnest("blocks") 
 
   unknown_blocks <- 
-    find_unknown_blocks(raw = bfile$raw, blocks = ctrl_blocks) %>%
+    find_unknown_blocks(raw = bfile$raw, blocks = ctrl_blocks) |>
     get_unknown_blocks_text(raw = bfile$raw, unknown_block_n_chars = unknown_block_n_chars)
 
   all_blocks <- 
     dplyr::bind_rows(
       ctrl_blocks,
       unknown_blocks
-    ) %>% 
-    dplyr::arrange(start) %>%
+    ) |> 
+    dplyr::arrange(start) |>
     dplyr::mutate(
       block_idx = dplyr::row_number()
-    ) %>%
-    dplyr::select("block_idx", "start", "end", "len", "data_len", "type", "priority", "block") %>% 
+    ) |>
+    dplyr::select("block_idx", "start", "end", "len", "data_len", "type", "priority", "block")
+  
   return(all_blocks)
 }
 
@@ -1094,15 +1096,15 @@ format_isodat_structure_blocks <- function(
   
   # generate printout
   indent_width <- 2
-  blocks_formatted <- bfile$blocks %>% 
-    get_unknown_blocks_text(raw = bfile$raw, unknown_block_n_chars = unknown_block_n_chars) %>%
+  blocks_formatted <- bfile$blocks |> 
+    get_unknown_blocks_text(raw = bfile$raw, unknown_block_n_chars = unknown_block_n_chars) |>
     mutate(
       # new lines
       nl_block = !!new_line_blocks_expr, 
       nl_text = ifelse(c(FALSE, nl_block[-1]), "\n", ""),
       # indents
       indent_block = !!indent_blocks_expr,
-      indent_text = ifelse(nl_block & indent_block, sprintf("%%%ds", indent_width) %>% sprintf(""), ""),
+      indent_text = ifelse(nl_block & indent_block, sprintf("%%%ds", indent_width) |> sprintf(""), ""),
       # position markers
       pos_text = ifelse(!!pos_info & nl_block, sprintf("%07d: ", start),  ""),
       # block text
@@ -1137,14 +1139,7 @@ iso_print_source_file_structure.default <- function(x, ..., save_to_file = NULL)
        class(x)[1], "'", call. = FALSE)
 }
 
-#' @examples
-#' \dontrun{
-#' isoreader:::iso_turn_debug_on()
-#' iso_get_reader_example("dual_inlet_example.did") %>%  
-#'    iso_read_dual_inlet() %>%
-#'    iso_get_source_file_structure() %>%
-#'    iso_print_source_file_structure(save_to_file = "structure.txt")
-#' }
+#' @rdname iso_get_source_file_structure
 #' @export
 iso_print_source_file_structure.iso_file <- function(x, ..., save_to_file = NULL) {
   # FIXME: should be $source instead of $binary!!
@@ -1166,14 +1161,14 @@ iso_print_source_file_structure.binary_isodat_file <- function(x, start = 1, len
   
   # save to file
   if (!is.null(save_to_file)) {
-    sprintf("Writing binary isodat file structure to file '%s'... ", save_to_file) %>% cat()
+    sprintf("Writing binary isodat file structure to file '%s'... ", save_to_file) |> cat()
     cat(file_structure$block_formatted, sep = "", file = save_to_file)
     cat("complete.")
   } else {
     if (partial)
       sprintf(
         "# Textual representation of the partial structure (bytes %d - %d) of the isodat file.\n# Print more/less by specifying the 'start', 'length' or 'end' parameters.\n",
-        min(file_structure$start), max(file_structure$end)) %>% cat()
+        min(file_structure$start), max(file_structure$end)) |> cat()
     else
       cat("# Textual representation of the complete structure of the isodat file\n")
     cat(file_structure$block_formatted, sep = "")

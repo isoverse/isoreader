@@ -6,16 +6,16 @@ test_that("test that file reader registration works", {
   
   initialize_options()
   expect_error(iso_register_continuous_flow_file_reader(".new", nrow), "please provide the function name")
-  expect_equal(iso_register_continuous_flow_file_reader(".new", "nrow") %>% dplyr::filter(extension == ".new") %>% nrow(), 1)
-  expect_equal(iso_register_continuous_flow_file_reader(".new", "nrow") %>% dplyr::filter(extension == ".new") %>% nrow(), 1)
+  expect_equal(iso_register_continuous_flow_file_reader(".new", "nrow") |> dplyr::filter(extension == ".new") |> nrow(), 1)
+  expect_equal(iso_register_continuous_flow_file_reader(".new", "nrow") |> dplyr::filter(extension == ".new") |> nrow(), 1)
   expect_error(iso_register_continuous_flow_file_reader(".new", "mean"), "already exists")
   expect_warning(new <- iso_register_continuous_flow_file_reader(".new", "mean", overwrite = TRUE), "will be overwritte")
-  expect_equal(new %>% dplyr::filter(extension == ".new") %>% nrow(), 1)
+  expect_equal(new |> dplyr::filter(extension == ".new") |> nrow(), 1)
   expect_error(iso_register_continuous_flow_file_reader(".new2", "THISFUNCTIONDOESNOTEXIST"), "could not find function")
   .GlobalEnv$iso_is_file <- function() stop("testing")
   expect_error(iso_register_continuous_flow_file_reader(".new2", "iso_is_file"), "exists in more than one environment")
-  expect_equal(iso_register_continuous_flow_file_reader(".new2", "iso_is_file", env = "isoreader") %>% 
-                 dplyr::filter(extension == ".new") %>% nrow(), 1)
+  expect_equal(iso_register_continuous_flow_file_reader(".new2", "iso_is_file", env = "isoreader") |> 
+                 dplyr::filter(extension == ".new") |> nrow(), 1)
   rm("iso_is_file", envir = .GlobalEnv)
 })
 
@@ -121,7 +121,7 @@ test_that("test that version checking and re-reads are working properly", {
   temp_cache <- file.path(tempdir(), "cache_files")
   temp_storage <- file.path(tempdir(), "scan_storage_old.scan.rds")
   dir.create(temp_cache, showWarnings = FALSE)
-  save_files <- files %>% iso_set_file_root(remove_embedded_root = data_folder)
+  save_files <- files |> iso_set_file_root(remove_embedded_root = data_folder)
   readr::write_rds(save_files[[1]], file.path(temp_cache, basename(generate_cache_filepaths(test_files)[1])))
   readr::write_rds(save_files[[2]], file.path(temp_cache, basename(generate_cache_filepaths(test_files)[2])))
   readr::write_rds(save_files[[3]], file.path(temp_cache, basename(generate_cache_filepaths(test_files)[3])))
@@ -188,11 +188,11 @@ test_that("test that version checking and re-reads are working properly", {
   expect_true(is_iso_object_outdated(re_files))
   
   # re-read with changed root
-  expect_message(files %>% iso_set_file_root(root = "DNE") %>% reread_iso_files(), "Warning.*3 file.*not exist")
-  expect_error(files %>% iso_set_file_root(root = "DNE") %>% reread_iso_files(stop_if_missing = TRUE), "3 file.*not exist")
+  expect_message(files |> iso_set_file_root(root = "DNE") |> reread_iso_files(), "Warning.*3 file.*not exist")
+  expect_error(files |> iso_set_file_root(root = "DNE") |> reread_iso_files(stop_if_missing = TRUE), "3 file.*not exist")
   expect_message(
-    files %>% 
-    iso_set_file_root(root = data_folder, remove_embedded_root = data_folder) %>% iso_reread_all_files(),
+    files |> 
+    iso_set_file_root(root = data_folder, remove_embedded_root = data_folder) |> iso_reread_all_files(),
     "found 3.*re-reading 3/3"
   )
   
@@ -206,17 +206,17 @@ test_that("test that version checking and re-reads are working properly", {
   expect_true(nrow(problems(files)) == 4)
   expect_true(is_iso_object_outdated(files))
   expect_false(is_iso_object_outdated(files[[3]]))
-  expect_message(re_files <- files %>% iso_set_file_root(data_folder) %>% iso_reread_outdated_files(),
+  expect_message(re_files <- files |> iso_set_file_root(data_folder) |> iso_reread_outdated_files(),
                  "found 2 outdated.*re-reading 2/3")
   expect_false(is_iso_object_outdated(re_files))
   expect_true(nrow(problems(re_files)) == 1)
-  expect_message(re_files <- files %>% iso_set_file_root(data_folder) %>% iso_reread_changed_files(),
+  expect_message(re_files <- files |> iso_set_file_root(data_folder) |> iso_reread_changed_files(),
                  "found 0 changed.*re-reading 0/3")
-  expect_message(re_files <- files %>% iso_set_file_root(data_folder) %>% iso_reread_problem_files(),
+  expect_message(re_files <- files |> iso_set_file_root(data_folder) |> iso_reread_problem_files(),
                  "found 1.*with errors.*re-reading 1/3")
   expect_true(is_iso_object_outdated(re_files))
   expect_true(nrow(problems(re_files)) == 3)
-  expect_message(re_files <- files %>% iso_set_file_root(data_folder) %>% iso_reread_problem_files(reread_files_with_warnings = TRUE),
+  expect_message(re_files <- files |> iso_set_file_root(data_folder) |> iso_reread_problem_files(reread_files_with_warnings = TRUE),
                  "found 3.*with warnings or errors.*re-reading 3/3")
   expect_false(is_iso_object_outdated(re_files))
   expect_true(nrow(problems(re_files)) == 0)

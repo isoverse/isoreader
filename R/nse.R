@@ -13,16 +13,19 @@ get_column_names <- function(df, ..., df_name = rlang::as_label(rlang::enexpr(df
   df_name <- force(df_name)
   df <- force(df)
   if (!is.data.frame(df))
-    sprintf("parameter '%s' is not a data frame", df_name) %>% stop(call. = FALSE)
+    sprintf("parameter '%s' is not a data frame", df_name) |> stop(call. = FALSE)
   
   # get colum name expressions from ...
-  cols_exps <- list(...) %>% 
+  cols_exps <- list(...) |> 
     # make sure to evaluate calls to default
-    resolve_defaults() %>% 
+    resolve_defaults() |> 
     # convert quos to expressions (to ensure evaluation inside the df data frame to avoid name conflicts)
-    map(~{if (rlang::is_quosure(.x)) rlang::quo_get_expr(.x) else .x}) %>% 
-    # naming
-    { if(is.null(names(.))) rlang::set_names(., rep("", length(.))) else . }
+    map(~{if (rlang::is_quosure(.x)) rlang::quo_get_expr(.x) else .x})
+  
+  # naming
+  cols_exps <- 
+    if(is.null(names(cols_exps))) rlang::set_names(cols_exps, rep("", length(cols_exps))) 
+    else cols_exps
   
   # find column positions
   pos_results <- map(cols_exps, safe_local_eval_select, data = df)
@@ -34,9 +37,9 @@ get_column_names <- function(df, ..., df_name = rlang::as_label(rlang::enexpr(df
       map2_chr(names(cols_exps)[!ok], cols_exps[!ok], function(var, val) {
         if (nchar(var) > 0 && var != rlang::as_label(val)) str_c(var, " = ", rlang::as_label(val))
         else rlang::as_label(val)
-      }) %>% 
+      }) |> 
       collapse("', '", last = "' and '")
-    errors <- map_chr(pos_results[!ok], ~stringr::str_replace(.x$error, "\n", " ")) %>% 
+    errors <- map_chr(pos_results[!ok], ~stringr::str_replace(.x$error, "\n", " ")) |> 
       paste(collapse = "\n- ")
     
     # check for unique names error
@@ -62,11 +65,15 @@ get_column_names <- function(df, ..., df_name = rlang::as_label(rlang::enexpr(df
   # check on the number requirements for each column match
   cols <- map(pos_results, ~eval_select_pos_to_cols(.x$result, data = df))
   if (any(missing <- !names(n_reqs) %in% names(cols)))
-    glue("column requirements for unknow parameter(s) provided: {collapse(names(n_reqs[missing]), ', ')}") %>%
+    glue("column requirements for unknow parameter(s) provided: {collapse(names(n_reqs[missing]), ', ')}") |>
     stop(call. = FALSE)
   
   ## reqs labels
-  all_n_reqs <- rep(1, length(cols)) %>% as.list() %>% rlang::set_names(names(cols)) %>% modifyList(n_reqs) %>% { .[names(cols)] }
+  all_n_reqs <- rep(1, length(cols)) |> as.list() |> 
+    rlang::set_names(names(cols)) |> 
+    modifyList(n_reqs)
+  all_n_reqs <- all_n_reqs[names(cols)]
+  
   n_req_types <- c("*" = "any number", "+" = "at least one", "?" = "none or one", "integer" = "the specified number")
   all_n_req_types <- map_chr(all_n_reqs, function(req) {
     if (is_integerish(req)) return("integer")
@@ -75,7 +82,7 @@ get_column_names <- function(df, ..., df_name = rlang::as_label(rlang::enexpr(df
   })
   if ( any(unknown <- map_lgl(all_n_req_types, is.na))) {
     n_req_unknown <- map_chr(all_n_reqs[unknown], as.character)
-    glue("unknown number requirement specification(s): '{collapse(n_req_unknown, \"', '\")}'. Allowed are: {collapse(names(n_req_types), ', ')}") %>%
+    glue("unknown number requirement specification(s): '{collapse(n_req_unknown, \"', '\")}'. Allowed are: {collapse(names(n_req_types), ', ')}") |>
       stop(call. = FALSE)
   }
   
@@ -90,15 +97,16 @@ get_column_names <- function(df, ..., df_name = rlang::as_label(rlang::enexpr(df
   
   ## report missing columns
   if (!all(col_meets_n_reqs)) {
+    missing_cols_names <- names(cols_exps)[!col_meets_n_reqs]
     n_errors <-
       sprintf("'%s%s' refers to %d column(s) instead of %s (%s)",
-              names(cols_exps)[!col_meets_n_reqs] %>% { ifelse(nchar(.) > 0, str_c(., " = "), .) },
+              ifelse(nchar(missing_cols_names) > 0, str_c(missing_cols_names, " = "), missing_cols_names),
               map_chr(cols_exps[!col_meets_n_reqs], rlang::as_label),
               map_int(cols[!col_meets_n_reqs], length),
               n_req_types[all_n_req_types[!col_meets_n_reqs]],
-              map_chr(all_n_reqs[!col_meets_n_reqs], as.character)) %>%
+              map_chr(all_n_reqs[!col_meets_n_reqs], as.character)) |>
       collapse("\n- ")
-    glue("not all parameters refer to the correct number of columns in data frame '{df_name}':\n- {n_errors}") %>%
+    glue("not all parameters refer to the correct number of columns in data frame '{df_name}':\n- {n_errors}") |>
       stop(call. = FALSE)
   }
   
@@ -111,12 +119,14 @@ get_column_names <- function(df, ..., df_name = rlang::as_label(rlang::enexpr(df
                character = "text (<chr>)", logical = "logical (<lgl>)")
     if (!all(ok <- unlist(type_reqs) %in% names(types))) {
       type_req_unknown <- unlist(type_reqs)[!ok]
-      glue("unknown type requirement specification(s): '{collapse(type_req_unknown, \"', '\")}'. Allowed are: {collapse(names(types), ', ')}") %>%
+      glue("unknown type requirement specification(s): '{collapse(type_req_unknown, \"', '\")}'. Allowed are: {collapse(names(types), ', ')}") |>
         stop(call. = FALSE)
     }
     
     # find type requirement problems
-    all_type_reqs <- rep(NA_character_, length(cols)) %>% as.list() %>% rlang::set_names(names(cols)) %>% modifyList(type_reqs) %>% { .[names(cols)] }
+    all_type_reqs <- rep(NA_character_, length(cols)) |> as.list() |> 
+      rlang::set_names(names(cols)) |> modifyList(type_reqs)
+    all_type_reqs <- all_type_reqs[names(cols)]
     all_df_types <- map_chr(df, ~class(.x)[1])
     col_meets_type_reqs <- map2_lgl(cols, all_type_reqs, function(col, req) {
       if (is.na(req)) return(TRUE)
@@ -128,14 +138,15 @@ get_column_names <- function(df, ..., df_name = rlang::as_label(rlang::enexpr(df
     
     ## report type mismatches
     if (!all(col_meets_type_reqs)) {
+      mismatch_cols_names <- names(cols_exps)[!col_meets_type_reqs]
       n_errors <-
         sprintf("'%s%s' refers to column(s) of type '%s' instead of '%s'",
-                names(cols_exps)[!col_meets_type_reqs] %>% { ifelse(nchar(.) > 0, str_c(., " = "), .) },
+                ifelse(nchar(mismatch_cols_names) > 0, str_c(mismatch_cols_names, " = "), mismatch_cols_names),
                 map_chr(cols_exps[!col_meets_type_reqs], rlang::as_label),
                 map_chr(cols[!col_meets_type_reqs], ~collapse(all_df_types[.x], "/")),
-                map_chr(all_type_reqs[!col_meets_type_reqs], ~types[.x])) %>%
+                map_chr(all_type_reqs[!col_meets_type_reqs], ~types[.x])) |>
         collapse("\n- ")
-      glue("not all parameters refer to the correct column types in data frame '{df_name}':\n- {n_errors}") %>%
+      glue("not all parameters refer to the correct column types in data frame '{df_name}':\n- {n_errors}") |>
         stop(call. = FALSE)
     }
     

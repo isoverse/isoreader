@@ -23,11 +23,6 @@ rlang::`!!`
 #' @export
 rlang::`!!!`
 
-# re-export magrittr functions
-#' @importFrom magrittr %>%
-#' @export
-magrittr::`%>%`
-
 # re-export select/rename functions
 #' @export
 tidyselect::everything

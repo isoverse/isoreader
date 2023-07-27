@@ -109,17 +109,17 @@ test_that("test that data structure can be printed", {
 test_that("test that iso_file list checks work", {
   # empty iso file list doesn't break anything
   expect_is(iso_files <- iso_as_file_list(), "iso_file_list")
-  expect_error(make_cf_data_structure() %>% iso_as_file_list(), "encountered undefined.*file ID")
+  expect_error(make_cf_data_structure() |> iso_as_file_list(), "encountered undefined.*file ID")
   
-  expect_is(make_cf_data_structure("NA") %>% iso_as_file_list(), "iso_file_list")
-  expect_is(make_cf_data_structure("NA") %>% iso_as_file_list() %>% 
+  expect_is(make_cf_data_structure("NA") |> iso_as_file_list(), "iso_file_list")
+  expect_is(make_cf_data_structure("NA") |> iso_as_file_list() |> 
               iso_as_file_list(), "iso_file_list")
-  expect_equal(iso_as_file_list() %>% iso_get_problems() %>% nrow(), 0)
-  expect_equal(iso_as_file_list() %>% iso_get_problems() %>% names(), c("file_id", "type", "func", "details"))
-  expect_equal(iso_as_file_list() %>% iso_get_data_summary() %>% nrow(), 0)
-  expect_equal(iso_as_file_list() %>% iso_get_raw_data() %>% nrow(), 0)
-  expect_equal(iso_as_file_list() %>% iso_get_file_info() %>% nrow(), 0)
-  expect_equal(iso_as_file_list() %>% iso_get_resistors() %>% nrow(), 0)
+  expect_equal(iso_as_file_list() |> iso_get_problems() |> nrow(), 0)
+  expect_equal(iso_as_file_list() |> iso_get_problems() |> names(), c("file_id", "type", "func", "details"))
+  expect_equal(iso_as_file_list() |> iso_get_data_summary() |> nrow(), 0)
+  expect_equal(iso_as_file_list() |> iso_get_raw_data() |> nrow(), 0)
+  expect_equal(iso_as_file_list() |> iso_get_file_info() |> nrow(), 0)
+  expect_equal(iso_as_file_list() |> iso_get_resistors() |> nrow(), 0)
   
   # combining data structures with filled and unfilled file_datetime
   cf1 <- make_cf_data_structure("A")
@@ -131,8 +131,8 @@ test_that("test that iso_file list checks work", {
                as_datetime(c(NA, cf2$file_info$file_datetime), tz = Sys.timezone()))
   
   # expected errors
-  expect_error(iso_as_file_list() %>% iso_get_vendor_data_table(), "only dual inlet.*continuous flow")
-  expect_error(iso_as_file_list() %>% iso_get_standards(), "only dual inlet.*continuous flow")
+  expect_error(iso_as_file_list() |> iso_get_vendor_data_table(), "only dual inlet.*continuous flow")
+  expect_error(iso_as_file_list() |> iso_get_standards(), "only dual inlet.*continuous flow")
   expect_error(iso_as_file_list(1, error = "test"), "encountered incompatible data type")
   expect_false(iso_is_file_list(42))
   expect_false(iso_is_file_list(make_iso_file_data_structure("NA")))
@@ -193,9 +193,9 @@ test_that("test that can update read options", {
 test_that("test that isofils objects can be combined and subset", {
   
   expect_is(iso_file <- make_iso_file_data_structure("NA"), "iso_file")
-  expect_equal({ iso_fileA <- iso_file %>% { .$file_info$file_id <- "A"; . }; iso_fileA$file_info$file_id }, "A")
-  expect_equal({ iso_fileB <- iso_file %>% { .$file_info$file_id <- "B"; . }; iso_fileB$file_info$file_id }, "B")
-  expect_equal({ iso_fileC <- iso_file %>% { .$file_info$file_id <- "C"; . }; iso_fileC$file_info$file_id }, "C")
+  expect_equal({ iso_fileA <- iso_file; iso_fileA$file_info$file_id <- "A"; iso_fileA$file_info$file_id }, "A")
+  expect_equal({ iso_fileB <- iso_file; iso_fileB$file_info$file_id <- "B"; iso_fileB$file_info$file_id }, "B")
+  expect_equal({ iso_fileC <- iso_file; iso_fileC$file_info$file_id <- "C"; iso_fileC$file_info$file_id }, "C")
   
   # combinining iso_files
   expect_error(c(iso_fileA, 5), "can only process iso_file and iso_file\\_list")
@@ -210,10 +210,10 @@ test_that("test that isofils objects can be combined and subset", {
                  "duplicate files kept")
   expect_is(iso_filesABABC, "iso_file_list")
   expect_equal(names(iso_filesABABC), c("A#1", "B#1", "A#2", "B#2", "C"))
-  expect_equal(problems(iso_filesABABC) %>% select(file_id, type), tibble(file_id = c("A#1", "B#1", "A#2", "B#2"), type = "warning"))
-  expect_equal(problems(iso_filesABABC[[1]]) %>% select(type), tibble(type = "warning"))
-  expect_equal(problems(iso_filesABABC[[2]]) %>% select(type), tibble(type = "warning"))
-  expect_equal(problems(iso_filesABABC[[5]]) %>% select(type), tibble(type = character(0)))
+  expect_equal(problems(iso_filesABABC) |> select(file_id, type), tibble(file_id = c("A#1", "B#1", "A#2", "B#2"), type = "warning"))
+  expect_equal(problems(iso_filesABABC[[1]]) |> select(type), tibble(type = "warning"))
+  expect_equal(problems(iso_filesABABC[[2]]) |> select(type), tibble(type = "warning"))
+  expect_equal(problems(iso_filesABABC[[5]]) |> select(type), tibble(type = character(0)))
   expect_warning(warn_problems(iso_filesABABC), "encountered 4 problems")
   expect_warning(warn_problems(iso_filesABABC), "4 \\|")
   expect_warning(warn_problems(iso_filesABABC, cutoff = 3), "3-4")
@@ -221,7 +221,7 @@ test_that("test that isofils objects can be combined and subset", {
   ## combining identical files (with discarding duplicates, i.e. default behavior)
   expect_message(iso_filesABA <- c(iso_fileA, iso_fileB, iso_fileA), 
                  "duplicate files encountered, only first kept")
-  expect_equal(problems(iso_filesABA) %>% select(file_id, type), tibble(file_id = "A", type = "warning"))
+  expect_equal(problems(iso_filesABA) |> select(file_id, type), tibble(file_id = "A", type = "warning"))
   expect_equal(names(iso_filesABA), c("A", "B"))
   expect_warning(warn_problems(iso_filesABA), "encountered 1 problem\\.")
   expect_equal(problems(c(iso_fileA, iso_fileA)), problems(c(iso_fileA, iso_fileA, iso_fileA)))
@@ -233,10 +233,10 @@ test_that("test that isofils objects can be combined and subset", {
       register_warning(iso_fileB, "warning B", warn=FALSE)),
     "iso_file_list"
   )
-  expect_equal(problems(iso_filesAB_probs) %>% select(file_id, details),
+  expect_equal(problems(iso_filesAB_probs) |> select(file_id, details),
                tibble(file_id = c("A", "B"), details = paste("warning", c("A", "B"))))
   expect_message(iso_files_ABB_probs <- c(iso_filesAB_probs, iso_fileB), "duplicate files encountered")
-  expect_equal(problems(iso_files_ABB_probs) %>% select(file_id, details),
+  expect_equal(problems(iso_files_ABB_probs) |> select(file_id, details),
                tibble(file_id = c("A", "B", "B"), details = c("warning A", "warning B", 
                           "duplicate files encountered, only first kept: B")))
   
@@ -266,7 +266,7 @@ test_that("test that isofils objects can be combined and subset", {
   expect_equal(names(iso_files), "B")
   
   # convertion to list
-  expect_equal(as.list(iso_filesABC) %>% class(), "list")
+  expect_equal(as.list(iso_filesABC) |> class(), "list")
   expect_equal(as.list(iso_filesABC)[[1]], iso_filesABC[[1]])
 })
 

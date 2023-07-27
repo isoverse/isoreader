@@ -23,7 +23,7 @@ test_that("binary isodat file navigation", {
   expect_error(move_to_pos(tl, 9), "exceeds position max")
   expect_equal(move_to_pos(tl, 9, reset_cap = TRUE)$pos, 9L)
   expect_error(cap_at_pos(tl, NULL), "cannot cap at position")
-  expect_error(move_to_pos(tl, 5) %>% cap_at_pos(4), "smaller than current position")
+  expect_error(move_to_pos(tl, 5) |> cap_at_pos(4), "smaller than current position")
   expect_equal(cap_at_pos(tl, 5)$max_pos, 5L)
   expect_equal(set_pos_and_cap(tl, 2, 4)[c("pos", "max_pos")], list(pos = 2L, max_pos = 4L))
   

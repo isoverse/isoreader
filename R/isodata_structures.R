@@ -9,10 +9,17 @@
 #' @param iso_file iso file object
 #' @examples
 #' isoreader:::iso_turn_debug_on()
-#' iso_get_reader_example("dual_inlet_example.did") %>%  
-#'    iso_read_dual_inlet() %>%
-#'    iso_get_source_file_structure() %>%
+#' iso_get_reader_example("dual_inlet_example.did") |>  
+#'    iso_read_dual_inlet() |>
+#'    iso_get_source_file_structure() |>
 #'    iso_print_source_file_structure(length = 500)
+#' \dontrun{
+#' isoreader:::iso_turn_debug_on()
+#' iso_get_reader_example("dual_inlet_example.did") |>  
+#'    iso_read_dual_inlet() |>
+#'    iso_get_source_file_structure() |>
+#'    iso_print_source_file_structure(save_to_file = "structure.txt")
+#' }
 #' @export
 iso_get_source_file_structure <- function(iso_file) {
   
@@ -51,7 +58,7 @@ make_iso_file_data_structure <- function(file_id = NA_character_) {
       raw_data = tibble::tibble() # all mass data
     ),
     class = c("iso_file")
-  ) %>%
+  ) |>
     initialize_problems_attribute()
 }
 
@@ -99,20 +106,20 @@ get_last_structure_update_version <- function() {
 
 # get version for all objects
 get_iso_object_versions <- function(iso_obj) {
-  iso_obj %>% iso_as_file_list() %>%
+  iso_obj |> iso_as_file_list() |>
     purrr::map(~if (!is.null(.x$version)) { .x$version } else { as.package_version("0.0.0") })
 }
 
 # get outdated boolean vector
 get_iso_object_outdated <- function(iso_obj) {
-  iso_obj %>%
-    get_iso_object_versions() %>%
+  iso_obj |>
+    get_iso_object_versions() |>
     purrr::map_lgl(~.x < get_last_structure_update_version())
 }
 
 # test whether an iso object structure is outdated
 is_iso_object_outdated <- function(iso_obj) {
-  iso_obj %>% get_iso_object_outdated() %>% any()
+  iso_obj |> get_iso_object_outdated() |> any()
 }
 
 
@@ -192,18 +199,18 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
   if (length(iso_objs) == 0) {
     # empty list
     iso_list <- list()
-    all_problems <- get_problems_structure() %>% mutate(file_id = character()) %>% 
+    all_problems <- get_problems_structure() |> mutate(file_id = character()) |> 
       select("file_id", dplyr::everything())
   } else {
     # check if everything is an iso object
     if(!all(is_iso <- map_lgl(iso_objs, iso_is_object))) {
       stop("can only process iso_file and iso_file_list objects, encountered incompatible data type(s): ",
-           unlist(lapply(iso_objs[!is_iso], class)) %>% unique() %>% str_c(collapse = ", "),
+           unlist(lapply(iso_objs[!is_iso], class)) |> unique() |> str_c(collapse = ", "),
            call. = FALSE)
     }
 
     # flatten isofiles and isofile lists to make one big isofile list
-    iso_list <- map(iso_objs, ~if(iso_is_file_list(.x)) { .x } else { list(.x) }) %>% unlist(recursive = FALSE)
+    iso_list <- map(iso_objs, ~if(iso_is_file_list(.x)) { .x } else { list(.x) }) |> unlist(recursive = FALSE)
 
     # reset file ids
     file_ids <- map_chr(iso_list, ~.x$file_info$file_id)
@@ -215,8 +222,8 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     # check if al elements are the same data type
     classes <- map_chr(iso_list, ~class(.x)[1])
     if (!all(classes == classes[1])) {
-      wrong_dt <- classes[classes != classes[1]] %>% unique %>% collapse(", ")
-      glue("can only process iso_file objects with the same data type (first: {classes[1]}), encountered: {wrong_dt}") %>%
+      wrong_dt <- classes[classes != classes[1]] |> unique() |> collapse(", ")
+      glue("can only process iso_file objects with the same data type (first: {classes[1]}), encountered: {wrong_dt}") |>
         stop(call. = FALSE)
     }
     list_classes <- c(paste0(classes[1], "_list"), list_classes)
@@ -226,10 +233,10 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
       tibble(
         idx = 1:length(iso_list),
         file_id = names(iso_list)
-      ) %>%
-      group_by(.data$file_id) %>%
-      mutate(n = 1:n(), has_duplicates = any(n > 1)) %>%
-      ungroup() %>%
+      ) |>
+      group_by(.data$file_id) |>
+      mutate(n = 1:n(), has_duplicates = any(n > 1)) |>
+      ungroup() |>
       filter(has_duplicates)
 
     # process duplicates
@@ -259,8 +266,8 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
     }
 
     # propagate problems
-    all_problems <- map(iso_list, ~get_problems(.x) %>% mutate(file_id = .x$file_info$file_id)) %>%
-      bind_rows() %>% 
+    all_problems <- map(iso_list, ~get_problems(.x) |> mutate(file_id = .x$file_info$file_id)) |>
+      bind_rows() |> 
       dplyr::select("file_id", dplyr::everything())
   }
 
@@ -274,7 +281,7 @@ iso_as_file_list <- function(..., discard_duplicates = TRUE) {
   structure(
     iso_list,
     class = unique(list_classes)
-  ) %>% set_problems(all_problems)
+  ) |> set_problems(all_problems)
 }
 
 
@@ -291,10 +298,13 @@ print.iso_file_list <- function(x, ...) {
 
   # what type of iso files
   if (length(x) == 0) data_type <- "unknown"
-  else data_type <- class(x[[1]]) %>% { .[.!="iso_file"][1] } %>% str_replace("_", " ")
+  else { 
+    data_types <- class(x[[1]]) 
+    data_type <- data_types[data_types != "iso_file"][1] |> str_replace("_", " ")
+  }
 
   # print summary
-  glue("Data from {length(x)} {data_type} iso files:") %>% cat("\n")
+  glue("Data from {length(x)} {data_type} iso files:") |> cat("\n")
   print(iso_get_data_summary(x, quiet = TRUE))
 
   if (n_problems(x) > 0) {
@@ -309,9 +319,12 @@ print.iso_file_list <- function(x, ...) {
 #' @rdname iso_printing
 #' @export
 print.iso_file <- function(x, ..., show_problems = TRUE) {
-  data_type <- class(x) %>% { .[.!="iso_file"][1] } %>% str_to_title() %>% str_replace("_", " ")
+  
+  data_types <- class(x) 
+  data_type <- data_types[data_types != "iso_file"][1] |> str_to_title() |> str_replace("_", " ")
+  
   if (is.na(data_type)) data_type <- "Iso"
-  glue("{data_type} iso file '{x$file_info$file_id}': {get_raw_data_info(x)$raw_data}") %>% cat("\n")
+  glue("{data_type} iso file '{x$file_info$file_id}': {get_raw_data_info(x)$raw_data}") |> cat("\n")
   if (show_problems && n_problems(x) > 0) {
     cat("Problems:\n")
     print(iso_get_problems(x), ...)
@@ -375,7 +388,7 @@ get_ds_file_path <- function(ds, include_root = TRUE) {
 update_read_options <- function(ds, read_options) {
   # remove read_ prefix in function parameters
   if(!is.list(read_options)) read_options <- as.list(read_options)
-  names(read_options) <- names(read_options) %>% str_replace("^read_", "")
+  names(read_options) <- names(read_options) |> str_replace("^read_", "")
   update <- read_options[names(read_options) %in% names(ds$read_options)]
   # update all that exist in the read options
   ds$read_options <- modifyList(ds$read_options, update)

@@ -4,10 +4,10 @@
 # extract the datetime of the run
 extract_isodat_datetime <- function(ds) {
   # find date time
-  ds$binary <- ds$binary %>%
-    set_binary_file_error_prefix("cannot recover run datetime") %>%
-    move_to_C_block("CTimeObject") %>%
-    move_to_next_pattern(re_null(4), re_x_000()) %>%
+  ds$binary <- ds$binary |>
+    set_binary_file_error_prefix("cannot recover run datetime") |>
+    move_to_C_block("CTimeObject") |>
+    move_to_next_pattern(re_null(4), re_x_000()) |>
     capture_n_data("date", "integer", 1, sensible = c(0,1000*365*24*3600)) # 1000 years as sensible limit
 
   # store as POSIXct (converting seconds from CTimeObject) - use system time zone
@@ -19,8 +19,8 @@ extract_isodat_datetime <- function(ds) {
 extract_isodat_resistors <- function(ds) {
 
   # move to resistor information
-  ds$binary <- ds$binary %>%
-    set_binary_file_error_prefix("cannot recover resistors") %>%
+  ds$binary <- ds$binary |>
+    set_binary_file_error_prefix("cannot recover resistors") |>
     move_to_C_block("CEvalIntegrationUnitHWInfo")
 
   # cap depends on dxf vs did
@@ -38,10 +38,10 @@ extract_isodat_resistors <- function(ds) {
   positions <- find_next_patterns(ds$binary, R_pre_re, re_direct(".{20}", label = ".{20}"), R_post_re)
   resistors <- list()
   for (pos in positions) {
-    ds$binary <- ds$binary %>%
-      move_to_pos(pos + R_pre_re$size) %>%
-      capture_n_data("mass", "double", n =  1) %>%
-      capture_n_data("cup", "integer", n = 1) %>%
+    ds$binary <- ds$binary |>
+      move_to_pos(pos + R_pre_re$size) |>
+      capture_n_data("mass", "double", n =  1) |>
+      capture_n_data("cup", "integer", n = 1) |>
       capture_n_data("R.Ohm", "double", n = 1)
     resistors <- c(resistors, list(ds$binary$data[c("cup", "R.Ohm", "mass")]))
   }
@@ -57,19 +57,18 @@ extract_isodat_resistors <- function(ds) {
   # if mass data is read, double check that it's the right number of resistors
   if (ds$read_options$raw_data && nrow(ds$raw_data) > 0) {
     mass_column_pattern <- "^[vi](\\d+)\\.(.*)$"
-    masses <- ds$raw_data %>%
-      names() %>%
-      str_subset(mass_column_pattern) %>%
-      { if(length(.) == 0) return (NULL) else
-        str_match(., mass_column_pattern) %>%  { .[,2] }
-      }
+    masses <- ds$raw_data |>
+      names() |>
+      str_subset(mass_column_pattern)
+    if (length(masses) == 0) masses <- NULL
+    else masses <- str_match(masses, mass_column_pattern)[,2]
 
     if (!setequal(masses, resistor_masses)) {
       ds <- register_warning(
         ds, func = "extract_isodat_resistors",
         details = sprintf("masses found for resistors (%s) do not match those found for the raw data (%s)",
-                          resistor_masses %>% { if (length(.) > 0) str_c(., collapse = ",") else "none" },
-                          masses %>% { if (length(.) > 0) str_c(., collapse = ",") else "none" }))
+                          if (length(resistor_masses) > 0) str_c(resistor_masses, collapse = ",") else "none",
+                          if (length(masses) > 0) str_c(masses, collapse = ",") else "none"))
     }
   }
   return(ds)
@@ -79,8 +78,8 @@ extract_isodat_resistors <- function(ds) {
 extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
 
   # get secondar standard values
-  ds$binary <- ds$binary %>%
-    set_binary_file_error_prefix("cannot recover references") %>%
+  ds$binary <- ds$binary |>
+    set_binary_file_error_prefix("cannot recover references") |>
     move_to_C_block("CSecondaryStandardMethodPart", reset_cap = TRUE)
 
   # run cap at function if provided
@@ -95,18 +94,18 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
 
   # capture reference names
   capture_ref_names <- function(pos) {
-    bin <- ds$binary %>%
-      move_to_pos(pos) %>%
-      move_to_next_pattern(instrument_pre1, max_gap = 0) %>%
+    bin <- ds$binary |>
+      move_to_pos(pos) |>
+      move_to_next_pattern(instrument_pre1, max_gap = 0) |>
       capture_data_till_pattern("ref_name", "text", instrument_pre2, move_past_dots = TRUE)
 
     instrument_post1 <- re_combine(re_block("etx"), re_text_x(), re_unicode(bin$data$ref_name), re_text_x())
 
     # check for gas configuration name
     if(!is.null(pos <- find_next_pattern(bin, re_combine(instrument_post1, re_block("text"), instrument_post2), max_gap = 0))) {
-      bin <- bin %>%
-        move_to_pos(pos) %>%
-        move_to_next_pattern(instrument_post1, max_gap = 0) %>%
+      bin <- bin |>
+        move_to_pos(pos) |>
+        move_to_next_pattern(instrument_post1, max_gap = 0) |>
         capture_data_till_pattern("config", "text", instrument_post2)
     } else {
       bin$data$config <- ""
@@ -127,12 +126,12 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   refs <- tibble(
     start_pos = start_pos,
     data = map(.data$start_pos, capture_ref_names)
-  ) %>% unnest("data")
+  ) |> unnest("data")
 
   ### deltas
   # get reference delta values
-  ds$binary <- ds$binary %>%
-    set_binary_file_error_prefix("cannot recover reference delta values") %>%
+  ds$binary <- ds$binary |>
+    set_binary_file_error_prefix("cannot recover reference delta values") |>
     move_to_C_block("CSecondaryStandardMethodPart", reset_cap = FALSE)
 
   # find delta values
@@ -141,23 +140,23 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
 
   # capture delta values
   capture_delta_values <- function(pos) {
-    bin <- ds$binary %>%
-      move_to_pos(pos) %>%
-      capture_data_till_pattern("delta_code", "text", re_text_x(), move_past_dots = TRUE) %>%
-      capture_data_till_pattern("delta_name", "text", re_text_x(), move_past_dots = TRUE) %>%
-      capture_data_till_pattern("delta_format", "text", re_text_x(), move_past_dots = TRUE) %>%
-      capture_data_till_pattern("gas", "text", re_text_0(), re_text_x(), move_past_dots = TRUE) %>%
-      #capture_data_till_pattern("delta_units", "text", re_text_x(), move_past_dots = TRUE) %>%
-      move_to_next_pattern(re_x_000(), re_x_000()) %>%
-      capture_n_data("delta_value", "double", 1) %>%
-      move_to_next_pattern(re_block("stx"), re_text_x()) %>%
+    bin <- ds$binary |>
+      move_to_pos(pos) |>
+      capture_data_till_pattern("delta_code", "text", re_text_x(), move_past_dots = TRUE) |>
+      capture_data_till_pattern("delta_name", "text", re_text_x(), move_past_dots = TRUE) |>
+      capture_data_till_pattern("delta_format", "text", re_text_x(), move_past_dots = TRUE) |>
+      capture_data_till_pattern("gas", "text", re_text_0(), re_text_x(), move_past_dots = TRUE) |>
+      #capture_data_till_pattern("delta_units", "text", re_text_x(), move_past_dots = TRUE) |>
+      move_to_next_pattern(re_x_000(), re_x_000()) |>
+      capture_n_data("delta_value", "double", 1) |>
+      move_to_next_pattern(re_block("stx"), re_text_x()) |>
       capture_data_till_pattern("reference", "text", re_null(12),
                    re_direct("([^\\x00]{2})?", label = "[^00]{2}"), re_x_000())
 
     # return as data frame
     dplyr::as_tibble(
       bin$data[c("gas", "delta_code", "delta_name", "delta_value", "delta_format", "reference")]
-    ) %>% mutate(
+    ) |> mutate(
       standard = refs$name[max(which(bin$pos > refs$pos))]
       #config = refs$config[max(which(bin$pos > refs$pos))], # not actually used, usually the same as the $gas
     )
@@ -167,7 +166,7 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   deltas <- tibble(
     pos = positions + delta_re$size,
     data = map(.data$pos, capture_delta_values)
-  ) %>% unnest("data") %>%
+  ) |> unnest("data") |>
     # delta_code is very isodat specific and not stored in final, delta_format does not really hold additional information
     select("standard", "gas", "delta_name", "delta_value", "reference")
 
@@ -175,8 +174,8 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   ### ratios
 
   # get reference delta values
-  ds$binary <- ds$binary %>%
-    set_binary_file_error_prefix("cannot recover reference ratio values") %>%
+  ds$binary <- ds$binary |>
+    set_binary_file_error_prefix("cannot recover reference ratio values") |>
     move_to_C_block("CSecondaryStandardMethodPart", reset_cap = FALSE)
 
   # find ratios
@@ -185,17 +184,17 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
 
   # capture ratio values
   capture_ratio_values <- function(pos) {
-    bin <- ds$binary %>%
-      move_to_pos(pos) %>%
-      capture_data_till_pattern("ratio_code", "text", re_text_x(), move_past_dots = TRUE) %>%
-      capture_data_till_pattern("ratio_name", "text", re_text_x(), move_past_dots = TRUE) %>%
-      capture_data_till_pattern("ratio_format", "text", re_text_0(), re_text_x(), move_past_dots = TRUE) %>%
-      capture_data_till_pattern("element", "text", re_text_x(), move_past_dots = TRUE) %>%
-      move_to_next_pattern(re_x_000(), re_x_000()) %>%  ###
+    bin <- ds$binary |>
+      move_to_pos(pos) |>
+      capture_data_till_pattern("ratio_code", "text", re_text_x(), move_past_dots = TRUE) |>
+      capture_data_till_pattern("ratio_name", "text", re_text_x(), move_past_dots = TRUE) |>
+      capture_data_till_pattern("ratio_format", "text", re_text_0(), re_text_x(), move_past_dots = TRUE) |>
+      capture_data_till_pattern("element", "text", re_text_x(), move_past_dots = TRUE) |>
+      move_to_next_pattern(re_x_000(), re_x_000()) |>  ###
       capture_n_data("ratio_value", "double", 1)
 
     # return as data frame
-    dplyr::as_tibble(bin$data[c("ratio_code", "element", "ratio_name", "ratio_value", "ratio_format")]) %>%
+    dplyr::as_tibble(bin$data[c("ratio_code", "element", "ratio_name", "ratio_value", "ratio_format")]) |>
       mutate(
         reference = refs$name[max(which(bin$pos > refs$pos))]
       )
@@ -206,8 +205,8 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
     ratios <- tibble(
       pos = positions + ratio_re$size,
       data = map(.data$pos, capture_ratio_values)
-    ) %>%
-      unnest("data") %>%
+    ) |>
+      unnest("data") |>
       select("reference", "element", "ratio_name", "ratio_value")
   } else {
     # no ratios defined
@@ -226,9 +225,9 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
 extract_isodat_sequence_line_info <- function(ds) {
 
   # find sequence line information
-  ds$binary <- ds$binary %>%
-    set_binary_file_error_prefix("cannot process sequence line info") %>%
-    move_to_C_block_range("CParsedEvaluationString", "CBinary") %>%
+  ds$binary <- ds$binary |>
+    set_binary_file_error_prefix("cannot process sequence line info") |>
+    move_to_C_block_range("CParsedEvaluationString", "CBinary") |>
     move_to_next_pattern(re_unicode("Sequence Line Information"))
 
   seq_line_info <- list()
@@ -246,17 +245,17 @@ extract_isodat_sequence_line_info <- function(ds) {
   # loop through all
   for (i in 1:length(positions)) {
     # capture value
-    ds$binary <- ds$binary %>%
-      move_to_pos(positions[i], reset_cap = TRUE) %>%
-      cap_at_pos(caps[i]) %>%
-      move_to_next_pattern(re_or(re_unicode("/"), re_unicode(".")), re_text_x()) %>%
+    ds$binary <- ds$binary |>
+      move_to_pos(positions[i], reset_cap = TRUE) |>
+      cap_at_pos(caps[i]) |>
+      move_to_next_pattern(re_or(re_unicode("/"), re_unicode(".")), re_text_x()) |>
       capture_data_till_pattern("value", "text", re_val_var_break, data_bytes_max = 500, move_past_dots = TRUE)
 
     # capture info name
     info_length <- (ds$binary$max_pos - ds$binary$pos)/2
     if (info_length %% 1 > 0)
       stop("length of sequence info for value '", ds$binary$data$value, "' is not an integer (", info_length, ")", call. = FALSE)
-    ds$binary <- ds$binary %>%
+    ds$binary <- ds$binary |>
       capture_n_data("info", "text", (ds$binary$max_pos - ds$binary$pos)/2)
 
     # store info
@@ -271,9 +270,9 @@ extract_isodat_sequence_line_info <- function(ds) {
 extract_isodat_old_sequence_line_info <- function(ds) {
 
   # find sequence line information
-  ds$binary <- ds$binary %>%
-    set_binary_file_error_prefix("cannot process sequence line info") %>%
-    move_to_C_block("CSequenceLineInformationGridStorage") %>%
+  ds$binary <- ds$binary |>
+    set_binary_file_error_prefix("cannot process sequence line info") |>
+    move_to_C_block("CSequenceLineInformationGridStorage") |>
     move_to_next_pattern(re_direct("\xff{12}", label = "ff{12}"))
 
   # block delimiter
@@ -283,15 +282,15 @@ extract_isodat_old_sequence_line_info <- function(ds) {
               label = "86{3}0096{3}00cb{3}00b2{3}00d7{3}00dd{3}00")
   )
   if (!is.null(cap_pos)) {
-    ds$binary <- ds$binary %>% cap_at_pos(cap_pos)
+    ds$binary <- ds$binary |> cap_at_pos(cap_pos)
   } else iso_source_file_op_error(ds$binary, "cannot find binary delimiter for end of Sequence Information")
 
   # first line marker
   line_re <- re_combine(
     re_x_000(), re_direct(".{2,8}", label = ".{2,8}"),
     re_text_x(), re_unicode("Line"))
-  ds$binary <- ds$binary %>%
-    move_to_next_pattern(line_re, move_to_end = FALSE) %>%
+  ds$binary <- ds$binary |>
+    move_to_next_pattern(line_re, move_to_end = FALSE) |>
     capture_n_data("info_marker", "raw", 4)
 
   # regular expressions
@@ -312,12 +311,13 @@ extract_isodat_old_sequence_line_info <- function(ds) {
   values <- list()
   reached_values <- FALSE
   for (pos in positions) {
-    ds$binary <- ds$binary %>% move_to_pos(pos + re_entry_start$size)
+    ds$binary <- ds$binary |> move_to_pos(pos + re_entry_start$size)
     if (!is.null(find_next_pattern(ds$binary, label_pre_re, max_gap = 0))) {
-      ds$binary <- ds$binary %>%
-        move_to_next_pattern(label_pre_re) %>%
-        { move_to_pos(., .$pos - 1) } %>%
-        capture_n_data("marker", "raw", 1) %>%
+      ds$binary <- ds$binary |>
+        move_to_next_pattern(label_pre_re)
+      ds$binary <- ds$binary |>
+        move_to_pos(ds$binary$pos - 1) |>
+        capture_n_data("marker", "raw", 1) |>
         capture_data_till_pattern("text", "text", label_post_re)
       text <- ds$binary$data$text
       marker <- as.character(ds$binary$data$marker)
@@ -351,8 +351,8 @@ extract_isodat_old_sequence_line_info <- function(ds) {
 
   # store file info
   file_info <- left_join(
-    bind_rows(labels) %>% mutate(n = 1:n()),
-    bind_rows(values) %>% mutate(n = 1:n()),
+    bind_rows(labels) |> mutate(n = 1:n()),
+    bind_rows(values) |> mutate(n = 1:n()),
     by = "n"
   )
 
@@ -372,15 +372,15 @@ extract_isodat_old_sequence_line_info <- function(ds) {
 extract_isodat_measurement_info <- function(ds) {
 
   # find measurement info
-  ds$binary <- ds$binary %>%
-    set_binary_file_error_prefix("cannot process measurement info") %>%
-    move_to_C_block_range("CMeasurmentInfos", "CMeasurmentErrors") %>%
+  ds$binary <- ds$binary |>
+    set_binary_file_error_prefix("cannot process measurement info") |>
+    move_to_C_block_range("CMeasurmentInfos", "CMeasurmentErrors") |>
     move_to_next_C_block("CISLScriptMessageData")
 
   isl_info_msgs <- c()
   while(!is.null(find_next_pattern(ds$binary, re_unicode("CUserInfo")))) {
-    ds$binary <- ds$binary %>%
-      move_to_next_pattern(re_x_000(), re_text_x()) %>%
+    ds$binary <- ds$binary |>
+      move_to_next_pattern(re_x_000(), re_text_x()) |>
       capture_data_till_pattern("info", "text", re_text_x(), re_unicode("CUserInfo"), move_past_dots = TRUE)
     isl_info_msgs <- c(isl_info_msgs, ds$binary$data$info)
   }
@@ -396,11 +396,11 @@ extract_H3_factor_info <- function(ds) {
   # H3 factor (if available)
   if ("CH3FactorResult" %in% ds$binary$C_blocks$block) {
     # extract H3 factor value (note H3 stability is not present)
-    ds$binary <- ds$binary %>%
-      set_binary_file_error_prefix("cannot extract H3 factor") %>%
-      move_to_C_block("CH3FactorResult") %>%
-      move_to_next_pattern(re_unicode("H3 Factor")) %>%
-      move_to_next_pattern(re_x_000()) %>%
+    ds$binary <- ds$binary |>
+      set_binary_file_error_prefix("cannot extract H3 factor") |>
+      move_to_C_block("CH3FactorResult") |>
+      move_to_next_pattern(re_unicode("H3 Factor")) |>
+      move_to_next_pattern(re_x_000()) |>
       capture_n_data("H3_factor", "double", 1)
     # this is a text field for compatibility with other file formats
     ds$file_info$`H3 Factor` <- as.character(ds$binary$data$H3_factor)
@@ -411,10 +411,10 @@ extract_H3_factor_info <- function(ds) {
 # extract MS integration time
 extract_MS_integration_time_info <- function(ds) {
 
-  ds$binary <- ds$binary %>%
-    set_binary_file_error_prefix("cannot extract MS integration time") %>%
-    move_to_C_block("CActionPeakCenter", move_to_end = FALSE) %>%
-    skip_pos(-5) %>%
+  ds$binary <- ds$binary |>
+    set_binary_file_error_prefix("cannot extract MS integration time") |>
+    move_to_C_block("CActionPeakCenter", move_to_end = FALSE) |>
+    skip_pos(-5) |>
     capture_n_data("ms_integration_time", "integer", 1, sensible = c(0L, 3600000L))
 
   # store ms integration time (should this be text for compatibility with other formats?)
@@ -427,8 +427,8 @@ extract_MS_integration_time_info <- function(ds) {
 extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NULL) {
 
   # find vendor data table
-  ds$binary <- ds$binary %>%
-    set_binary_file_error_prefix("cannot process vendor identified peaks") %>%
+  ds$binary <- ds$binary |>
+    set_binary_file_error_prefix("cannot process vendor identified peaks") |>
     move_to_C_block("CGCPeakList")
 
   # run cap at function if provided
@@ -446,18 +446,18 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   positions <- find_next_patterns(ds$binary, rt_re)
   rts <- list()
   for (pos in positions) {
-    ds$binary <- ds$binary %>%
-      move_to_pos(pos + rt_pre_re$size) %>%
-      capture_n_data("mass", "integer", 1) %>%
-      move_to_next_pattern(re_x_000(), max_gap = 0) %>%
-      capture_n_data("peak", "integer", 1) %>%
-      skip_pos(4) %>% # random xx00 follows
-      capture_n_data("start", "double", 1) %>%
-      capture_n_data("bg", "double", 1) %>%
-      skip_pos(4) %>%
-      capture_n_data("rt", "double", 1) %>%
-      capture_n_data("amp", "double", 1) %>%
-      skip_pos(4) %>%
+    ds$binary <- ds$binary |>
+      move_to_pos(pos + rt_pre_re$size) |>
+      capture_n_data("mass", "integer", 1) |>
+      move_to_next_pattern(re_x_000(), max_gap = 0) |>
+      capture_n_data("peak", "integer", 1) |>
+      skip_pos(4) |> # random xx00 follows
+      capture_n_data("start", "double", 1) |>
+      capture_n_data("bg", "double", 1) |>
+      skip_pos(4) |>
+      capture_n_data("rt", "double", 1) |>
+      capture_n_data("amp", "double", 1) |>
+      skip_pos(4) |>
       capture_n_data("end", "double", 1)
     # NOTE: after this there is another unknown value similar to 'bg', then the rIntensity, then the Intensity (but we get those from the data table too)
     # FIXME: is this maybe the more accurate background value? main vendor data table seems to not always pull the right one
@@ -475,23 +475,23 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   # filter out false matches
   rts_df <- dplyr::filter(rts_df, .data$mass > 0)
   # retention times
-  peaks <- rts_df %>%
-    select("peak", Start = "start", Rt = "rt", End = "end") %>%
-    distinct(.data$peak, .keep_all = TRUE) %>%
+  peaks <- rts_df |>
+    select("peak", Start = "start", Rt = "rt", End = "end") |>
+    distinct(.data$peak, .keep_all = TRUE) |>
     # add in amplitudes
     left_join(
-      rts_df %>%
-        select("peak", Ampl = "mass", "amp") %>%
+      rts_df |>
+        select("peak", Ampl = "mass", "amp") |>
         spread(.data$Ampl, .data$amp, sep = " "),
       by = "peak"
-    ) %>%
+    ) |>
     # add in backgrounds
     left_join (
-      rts_df %>%
-        select("peak", BGD = "mass", "bg") %>%
+      rts_df |>
+        select("peak", BGD = "mass", "bg") |>
         spread(.data$BGD, .data$bg, sep = " "),
       by = "peak"
-    ) %>%
+    ) |>
     rename(`Nr.` = "peak")
 
   ### rest of data table
@@ -512,8 +512,8 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
     bind_rows(
       dplyr::select(extracted_dt$columns, "column", units = "column_units"),
       tibble::tibble(column = c("Start", "Rt", "End"), units = "[s]"),
-      tibble::tibble(column = peaks %>% select(starts_with("Ampl"), starts_with("BGD")) %>% names(), units = "[mV]")
-    ) %>%
+      tibble::tibble(column = peaks |> select(starts_with("Ampl"), starts_with("BGD")) |> names(), units = "[mV]")
+    ) |>
     mutate(units = ifelse(units == " ", "", units))
 
   # FIXME: do this directly
@@ -532,9 +532,9 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
                                                   skip_row_check = function(column, value) FALSE) {
 
   # main data table
-  ds$binary <- ds$binary %>%
-    set_binary_file_error_prefix("cannot process vendor data table") %>%
-    move_to_C_block(C_block, reset_cap = FALSE) %>% # important to NOT reset position cap
+  ds$binary <- ds$binary |>
+    set_binary_file_error_prefix("cannot process vendor data table") |>
+    move_to_C_block(C_block, reset_cap = FALSE) |> # important to NOT reset position cap
     move_to_next_C_block("CEvalDataIntTransferPart")
 
   # run cap at function if provided
@@ -556,13 +556,13 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
 
   for(pos in positions) {
     # get column name
-    ds$binary <- ds$binary %>%
-      move_to_pos(pos + pre_column_re$size) %>%
+    ds$binary <- ds$binary |>
+      move_to_pos(pos + pre_column_re$size) |>
       # skip ID column since it is not unique in peak jumping files
       move_to_next_pattern(re_text_x())
 
     # capture column
-    ds$binary <- ds$binary %>%
+    ds$binary <- ds$binary |>
       capture_data_till_pattern("column", "raw", re_text_x(), move_past_dots = TRUE, ignore_trailing_zeros = FALSE)
 
     # check for columns starting with delta symbol, replace with d instead of delta symbol
@@ -590,7 +590,7 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
     }
 
     # get column formatting
-    ds$binary <- ds$binary %>%
+    ds$binary <- ds$binary |>
       # retrieve format (!not always the same)
       capture_data_till_pattern("format", "text", re_text_x(), move_past_dots = TRUE)
 
@@ -601,9 +601,9 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
 
     # store information about new column if not already stored
     if (!col %in% names(columns)) {
-      ds$binary <- ds$binary %>%
+      ds$binary <- ds$binary |>
         # skip what looks like it might be the gas configuration and an unknown piece of information
-        move_to_next_pattern(re_block("text0"), re_text_x(), re_block("text0"), re_text_x()) %>%
+        move_to_next_pattern(re_block("text0"), re_text_x(), re_block("text0"), re_text_x()) |>
         capture_data_till_pattern("units", "raw", re_text_x(), move_past_dots = TRUE, ignore_trailing_zeros = FALSE) # retrieve units
 
       # process isodat units
@@ -632,13 +632,13 @@ extract_isodat_main_vendor_data_table <- function(ds, C_block, cap_at_fun = NULL
     # capture data
     if (columns[[col]]$type == "text") {
       ds$binary <-
-        ds$binary %>% move_to_next_pattern(
+        ds$binary |> move_to_next_pattern(
           re_x_000(), re_direct("\\x00{4,6}", label = "00{4,6}"),
-          re_x_000(), re_x_000()) %>%
+          re_x_000(), re_x_000()) |>
         capture_data_till_pattern("value", "text", re_null(2), re_direct("..", label = ".."), re_block("etx"))
     } else {
       ds$binary <-
-        ds$binary %>% move_to_next_pattern(re_x_000(), re_x_000()) %>%
+        ds$binary |> move_to_next_pattern(re_x_000(), re_x_000()) |>
         capture_data_till_pattern("value", columns[[col]]$type, re_x_000(),
                      data_bytes_min = 4) # read at least one number
 
@@ -683,18 +683,18 @@ process_isodat_units <- function(raw_units) {
         pos1 = raw_units,
         pos2 = c(raw_units[-1], as.raw(0x00)),
         idx = 1:length(.data$pos1)
-      ) %>%
+      ) |>
       mutate(
         is_permil = purrr::map2_lgl(.data$pos1, .data$pos2, ~ identical(c(.x, .y), raw_permil)),
         pos1 = purrr::map2(.data$pos1, .data$is_permil, ~ {
           if(.y) text_permil
           else .x
         })
-      ) %>%
+      ) |>
       filter(
         !.data$idx %in% (.data$idx[.data$is_permil] + 1L)
-      ) %>%
-      dplyr::pull(.data$pos1) %>%
+      ) |>
+      dplyr::pull(.data$pos1) |>
       unlist()
   }
 
@@ -717,9 +717,9 @@ process_isodat_units <- function(raw_units) {
 extract_isodat_main_vendor_data_table_fast <- function(ds, C_block, cap_at_fun = NULL, col_include = NULL) {
 
   # main data table
-  ds$binary <- ds$binary %>%
-    set_binary_file_error_prefix("cannot process vendor data table") %>%
-    move_to_control_block(block = C_block, reset_cap = TRUE) %>%
+  ds$binary <- ds$binary |>
+    set_binary_file_error_prefix("cannot process vendor data table") |>
+    move_to_control_block(block = C_block, reset_cap = TRUE) |>
     move_to_next_control_block(block = "CEvalDataIntTransferPart")
 
   # run cap at function if provided
@@ -751,8 +751,8 @@ extract_isodat_main_vendor_data_table_fast <- function(ds, C_block, cap_at_fun =
 extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$binary$pos, max = ds$binary$max_pos, col_include = NULL) {
 
   # error message
-  ds$binary <- ds$binary %>%
-    set_pos_and_cap(pos = pos, max = max) %>%
+  ds$binary <- ds$binary |>
+    set_pos_and_cap(pos = pos, max = max) |>
     set_binary_file_error_prefix("cannot retrieve vendor data table columns")
 
   # find columns and row data for the whole data table
@@ -786,24 +786,24 @@ extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$binary$po
 
   # pull out all the columns
   columns <-
-    ds$binary %>%
-    fetch_block_entry(filter = !!filter_expr, type = "text", min_pos = positions[1], max_pos = ds$binary$max_pos) %>%
-    dplyr::mutate(group = purrr::map_int(.data$start, ~sum(.x >= positions))) %>%
-    dplyr::group_by(group) %>%
+    ds$binary |>
+    fetch_block_entry(filter = !!filter_expr, type = "text", min_pos = positions[1], max_pos = ds$binary$max_pos) |>
+    dplyr::mutate(group = purrr::map_int(.data$start, ~sum(.x >= positions))) |>
+    dplyr::group_by(group) |>
     dplyr::mutate(
       idx = 1:n(),
       continue_pos = max(.data$end[.data$idx <= nrow(cols_info)])
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::inner_join(cols_info, by = "idx") %>%
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::inner_join(cols_info, by = "idx") |>
     tidyr::pivot_wider(id_cols = c("group", "continue_pos"), 
-                       names_from = "col", values_from = "block") %>%
+                       names_from = "col", values_from = "block") |>
     # skip entries that don't have formats
-    filter(!is.na(format), nchar(format) > 1) %>%
+    filter(!is.na(format), nchar(format) > 1) |>
     # row numbers
-    dplyr::mutate(row = cumsum(.data$column == .data$column[1])) %>%
+    dplyr::mutate(row = cumsum(.data$column == .data$column[1])) |>
     # remove duplicates
-    dplyr::group_by(column, row) %>%
+    dplyr::group_by(column, row) |>
     dplyr::summarize(
       group = .data$group[1],
       continue_pos = .data$continue_pos[1],
@@ -813,10 +813,10 @@ extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$binary$po
       units = .data$units[1],
       ref_frame = .data$units[1],
       .groups = "drop"
-    ) %>%
-    dplyr::arrange(group) %>%
+    ) |>
+    dplyr::arrange(group) |>
     # nest by column and expand column details
-    tidyr::nest(data = c(-"column")) %>%
+    tidyr::nest(data = c(-"column")) |>
     dplyr::mutate(
       n_formats = purrr::map_int(.data$data, ~length(unique(.x$format))),
       column_format = purrr::map_chr(.data$data, ~.x$format[1]),
@@ -828,14 +828,14 @@ extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$binary$po
           str_detect(.data$column_format, "\\%[0-9.]*f") ~ "double",
           TRUE ~ NA_character_
         )
-    ) %>%
+    ) |>
     # naming adjustments
     dplyr::mutate(
       # avoid issues with delta symbol on different OS
       column = stringr::str_replace(column, fixed("\U03B4"), "d"),
       # and rename per mil and \U2030 to permil
       column_units = 
-        stringr::str_replace(column_units, fixed("per mil"), "permil") %>%
+        stringr::str_replace(column_units, fixed("per mil"), "permil") |>
         stringr::str_replace(fixed("\U2030"), "permil")
     )
 
@@ -857,16 +857,16 @@ extract_isodat_main_vendor_data_table_values <- function(ds, columns) {
   # NOTES: adds about 1s to a 300 cell table)
   capture_table_cell_value <- function(pos, type) {
     # capture data
-    bin <- ds$binary %>% move_to_pos(pos)
+    bin <- ds$binary |> move_to_pos(pos)
     if (type == "text") {
       bin <-
-        bin %>% move_to_next_pattern(
+        bin |> move_to_next_pattern(
           re_x_000(), re_direct("\\x00{4,6}", label = "00{4,6}"),
-          re_x_000(), re_x_000()) %>%
+          re_x_000(), re_x_000()) |>
         capture_data_till_pattern("value", "text", re_null(2), re_direct("..", label = ".."), re_x_000())
     } else {
       bin <-
-        bin %>% move_to_next_pattern(re_x_000(), re_x_000()) %>%
+        bin |> move_to_next_pattern(re_x_000(), re_x_000()) |>
         capture_data_till_pattern("value", type, re_x_000(),
                      data_bytes_min = 4) # read at least one number
 
@@ -881,16 +881,17 @@ extract_isodat_main_vendor_data_table_values <- function(ds, columns) {
   }
 
   # get cell values
-  columns %>%
-    filter(!is.na(type)) %>%
-    unnest("data") %>%
-    select("column", "continue_pos", "type", "row") %>%
-    nest(data = c(-row)) %>%
+  columns |>
+    filter(!is.na(type)) |>
+    unnest("data") |>
+    select("column", "continue_pos", "type", "row") |>
+    nest(data = c(-row)) |>
     mutate(
       data = map(data, function(row) {
         # note: have to do it this way (by row instead of in long format) to keep correct data types for each column
         mapply(function(x,y,z) list(capture_table_cell_value(y, z)), row$column, row$continue_pos, row$type)
       })
-    ) %>%
-    { bind_rows(.$data) }
+    ) |>
+    dplyr::pull(data) |>
+    bind_rows()
 }

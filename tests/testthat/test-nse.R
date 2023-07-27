@@ -2,7 +2,7 @@ context("Standard and non-standard evaluation")
 
 test_that("Getting column names (with # and type requirement checks) works", {
   
-  df <- dplyr::as_tibble(mtcars) %>% tibble::rownames_to_column()
+  df <- dplyr::as_tibble(mtcars) |> tibble::rownames_to_column()
   
   # basic errors
   expect_error(get_column_names(), "no data frame supplied")

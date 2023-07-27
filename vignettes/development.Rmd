@@ -44,7 +44,7 @@ readers <- iso_register_dual_inlet_file_reader(".new.did", "new_reader")
 knitr::kable(readers)
 
 # copy an example file from the package with the new extension
-iso_get_reader_example("dual_inlet_example.did") %>% file.copy(to = "example.new.did")
+iso_get_reader_example("dual_inlet_example.did") |> file.copy(to = "example.new.did")
 
 # read the file
 iso_read_dual_inlet("example.new.did", read_cache = FALSE)
@@ -70,7 +70,7 @@ isoreader:::set_finish_file_event_expr({
 c(
   iso_get_reader_example("dual_inlet_example.did"),
   iso_get_reader_example("dual_inlet_example.caf")
-) %>% iso_read_dual_inlet(read_cache = FALSE)
+) |> iso_read_dual_inlet(read_cache = FALSE)
 
 isoreader:::initialize_options() # reset all isoreader options
 ```
@@ -88,11 +88,11 @@ Errors during the binary file reads usually indicate the approximate position in
 # turn on debug mode
 isoreader:::iso_turn_debug_on()
 # read example file
-ex <- iso_get_reader_example("dual_inlet_example.did") %>%  
+ex <- iso_get_reader_example("dual_inlet_example.did") |>  
   iso_read_dual_inlet(quiet = TRUE)
 # retrieve source structure and print a part of it
-bin <- ex %>% iso_get_source_file_structure() 
-bin %>% iso_print_source_file_structure(length = 500)
+bin <- ex |> iso_get_source_file_structure() 
+bin |> iso_print_source_file_structure(length = 500)
 ```
 
 This structure representation shows recognized control elements in `<...>` and data elements in `{...}` which are converted to text or numeric representation if the interpretation is unambiguous, or plain hexadecimal characters if the nature of the data cannot be determined with certainty. You can adjust `start` and `length` to look at different parts of the binary file or save the the structure to a text file with `save_to_file`.
@@ -100,20 +100,20 @@ This structure representation shows recognized control elements in `<...>` and d
 For an overview of all the elements (`blocks`) identified in the binary file as a tibble, use:
 
 ```{r}
-bin$blocks %>% head(20)
+bin$blocks |> head(20)
 ```
 
 While this provides all elements, the top level structure is provided by the so-called control blocks:
 
 ```{r}
-bin$blocks %>% dplyr::filter(type == "C block") %>% head(20)
+bin$blocks |> dplyr::filter(type == "C block") |> head(20)
 ```
 
 To look at specific control-blocks, simply provide the relevant start position to `iso_print_source_file_structure()`:
 
 ```{r}
-cdata <- bin$blocks %>% dplyr::filter(block == "CData")
+cdata <- bin$blocks |> dplyr::filter(block == "CData")
 cdata
 
-bin %>% iso_print_source_file_structure(start = cdata$start, length = 500)
+bin |> iso_print_source_file_structure(start = cdata$start, length = 500)
 ```

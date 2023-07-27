@@ -1,3 +1,24 @@
+# pipe (|>) compatible syntax helpers =======
+
+# if x is not empty, apply `then` (with ... params), otherwise return `empty` value
+if_not_empty_then <- function(x, then = identity, ..., empty) {
+  stopifnot(!missing(x), rlang::is_function(then), !missing(empty))
+  if(!rlang::is_empty(x)) {
+    # not empty, run thention with it
+    return(then(x, ...))
+  } else {
+    # return empty
+    return(empty)
+  }
+}
+
+# if y is true, apply true_func (with ... params), if y is false, apply false func (no params)
+if_y_then <- function(x, y, ..., true_func = identity, false_func = identity) {
+  stopifnot(!missing(x), !missing(y), rlang::is_function(true_func), rlang::is_function(false_func))
+  if(y) return(true_func(x, ...))
+  else return(false_func(x))
+}
+
 # general helper functions ===========
 
 # check if a column is in a data frame
@@ -27,7 +48,7 @@ col_check <- function(cols, data, fun = sys.call(-1), msg = "You may have to cha
 # helper function for showing a message via progress bar or logging it in log file (parallel)
 log_message <- function(..., type = "info", prefix = "Info: ", quiet = default(quiet)) {
   if (!quiet) {
-    msg <- purrr::map_chr(list(...), ~paste(format(.x), collapse = "\n")) %>% paste(collapse = "")
+    msg <- purrr::map_chr(list(...), ~paste(format(.x), collapse = "\n")) |> paste(collapse = "")
     pb <- get_temp("progress_bar", allow_null = TRUE)
     process <- get_temp("parallel_process", allow_null = FALSE)
     if (!is.na(process)) {
@@ -35,7 +56,7 @@ log_message <- function(..., type = "info", prefix = "Info: ", quiet = default(q
       log_file <- get_temp("parallel_log_file")
       if (!is.null(log_file)) {
         sprintf("\"%s\",%d,\"%s\"\n", type, process,
-                str_replace_all(msg, fixed("\""), "\\\"")) %>%
+                str_replace_all(msg, fixed("\""), "\\\"")) |>
           cat(file = log_file, append = TRUE)
       }
     } else if (!is.null(pb) && !pb$finished) {
@@ -86,7 +107,7 @@ setup_parallel_logs <- function() {
 
   if (default(debug)) {
     glue::glue("\n\nDEBUG  (log files will not be deleted afer run):\n\t",
-               "log file path '{log}'\n\tprogress file path '{progress}'") %>%
+               "log file path '{log}'\n\tprogress file path '{progress}'") |>
       message()
   }
 }
@@ -142,15 +163,15 @@ process_parallel_logs <- function(status) {
     } else if (nrow(logs) > 0) {
       # display logs
       status$log_n <- status$log_n + nrow(logs)
-      logs %>%
+      display_logs <- logs |>
         mutate(
           X2 = as.character(.data$X2),
           prefix = case_when(
             X1 == "info" ~ sprintf("Info (process %s): ", .data$X2),
             X1 == "warning" ~ sprintf("Warning (process %s): ", .data$X2),
             TRUE ~ sprintf("Process %s: ", .data$X2)
-          )) %>%
-        { purrr::walk2(.$X3, .$prefix, ~log_message(.x, prefix = .y)) }
+          ))
+      purrr::walk2(display_logs$X3, display_logs$prefix, ~log_message(.x, prefix = .y))
     }
   }
 
@@ -187,7 +208,7 @@ cleanup_parallel_logs <- function() {
 iso_get_reader_example <- function(filename) {
   filepath <- system.file(package = "isoreader", "extdata", filename)
   if(!file.exists(filepath))
-    sprintf("The example file '%s' does not exist. Please use iso_get_reader_examples() to see a list of all available example files.", filename) %>%
+    sprintf("The example file '%s' does not exist. Please use iso_get_reader_examples() to see a list of all available example files.", filename) |>
     stop(call. = FALSE)
   return(filepath)
 }
@@ -200,10 +221,10 @@ iso_get_reader_example <- function(filename) {
 iso_get_reader_examples <- function() {
   file_types <- iso_get_supported_file_types()
   iso_expand_paths(
-      ".", extensions = file_types$extension, root = system.file(package = "isoreader", "extdata")) %>%
-    mutate(filename = basename(.data$path)) %>%
-    match_to_supported_file_types(file_types) %>%
-    arrange(.data$type, .data$extension, .data$filename) %>%
+      ".", extensions = file_types$extension, root = system.file(package = "isoreader", "extdata")) |>
+    mutate(filename = basename(.data$path)) |>
+    match_to_supported_file_types(file_types) |>
+    arrange(.data$type, .data$extension, .data$filename) |>
     select("filename", "type", "software", "description")
 }
 
@@ -312,16 +333,16 @@ find_common_different_from_start <- function(vectors, empty = character(0)) {
     map2(
       1:length(vectors), vectors,
       ~tibble(v = .x, i = 1:length(.y), entry = .y)
-    ) %>%
+    ) |>
     bind_rows()
 
   # common segments
-  commons <- vectors %>%
-    filter(i <= min_length) %>%
-    group_by(i) %>%
-    summarize(same = all(entry == entry[1])) %>%
-    arrange(i) %>%
-    mutate(diff = cumsum(abs(c(same[1] == FALSE,diff(!same))))) %>%
+  commons <- vectors |>
+    filter(i <= min_length) |>
+    group_by(i) |>
+    summarize(same = all(entry == entry[1])) |>
+    arrange(i) |>
+    mutate(diff = cumsum(abs(c(same[1] == FALSE,diff(!same))))) |>
     filter(diff == 0)
 
   # common vector
@@ -330,20 +351,20 @@ find_common_different_from_start <- function(vectors, empty = character(0)) {
 
   # differences vector
   different <-
-    filter(vectors, !i %in% commons$i) %>%
-    select("v", "entry") %>%
-    nest(data = c(-v)) %>%
+    filter(vectors, !i %in% commons$i) |>
+    select("v", "entry") |>
+    nest(data = c(-v)) |>
     full_join(tibble(
       v = unique(vectors$v),
-      empty = list(entry = empty)), by = "v") %>%
+      empty = list(entry = empty)), by = "v") |>
     mutate(
       missing = map_lgl(data, is.null),
       data = map2(missing, data, ~if(.x) { NULL } else { .y$entry }),
       result = ifelse(missing, empty, data)
-    ) %>%
-    select("v", "result") %>%
-    arrange(v) %>%
-    tibble::deframe() %>%
+    ) |>
+    select("v", "result") |>
+    arrange(v) |>
+    tibble::deframe() |>
     unname()
 
   return(
@@ -372,7 +393,7 @@ get_path_segments <- function(path) {
 # unlist paths
 unlist_paths <- function(path_list) {
   if (!all(ok <- purrr::map_lgl(path_list, is.character))) {
-    not_ok <- path_list[!ok] %>% purrr::map_chr(~class(.x)[1])
+    not_ok <- path_list[!ok] |> purrr::map_chr(~class(.x)[1])
     stop("paths must be character vectors, encountered: ", paste(not_ok, collapse = ", "), call. = FALSE)
   }
   unlist(path_list, use.names = FALSE)
@@ -401,8 +422,9 @@ iso_expand_paths <- function(path, extensions = c(), root = ".") {
 
   # extensions check
   if(length(extensions) == 0) stop("no extensions provided for retrieving file paths", call. = FALSE)
-  pattern <- extensions %>% str_replace_all("\\.", "\\\\.") %>% str_c(collapse = "|") %>% { str_c("(", ., ")$") }
-  paths <- paths %>%
+  pattern <- extensions |> str_replace_all("\\.", "\\\\.") |> str_c(collapse = "|")
+  pattern <- str_c("(", pattern, ")$")
+  paths <- paths |>
     mutate(
       is_dir = dir.exists(full_path),
       has_ext = ifelse(is_dir, TRUE, str_detect(basename(full_path), pattern))
@@ -410,14 +432,14 @@ iso_expand_paths <- function(path, extensions = c(), root = ".") {
   if (!all(paths$has_ext)) {
     stop("some file(s) do not have one of the supported extensions (",
          str_c(extensions, collapse = ", "),
-         "):\n\t", with(paths, path[!has_ext]) %>% str_c(collapse = "\n\t"), call. = FALSE)
+         "):\n\t", with(paths, path[!has_ext]) |> str_c(collapse = "\n\t"), call. = FALSE)
   }
 
   # retrieve all the files
   filepaths <-
-    paths %>%
-    filter(is_dir) %>%
-    mutate(file = map(full_path, ~list.files(.x, pattern = pattern, recursive = TRUE, include.dirs = FALSE))) %>%
+    paths |>
+    filter(is_dir) |>
+    mutate(file = map(full_path, ~list.files(.x, pattern = pattern, recursive = TRUE, include.dirs = FALSE))) |>
     unnest("file")
 
   if (nrow(filepaths) > 0)
@@ -428,9 +450,9 @@ iso_expand_paths <- function(path, extensions = c(), root = ".") {
     bind_rows(
       filter(paths, !is_dir),
       select(filepaths, "i", "root", "path")
-    ) %>%
-    arrange(i) %>%
-    select("root", "path") %>%
+    ) |>
+    arrange(i) |>
+    select("root", "path") |>
     unique() # make sure all unique files
 
   # double check that filenames are unique
@@ -438,7 +460,7 @@ iso_expand_paths <- function(path, extensions = c(), root = ".") {
   if (anyDuplicated(filenames)) {
     dups <- duplicated(filenames) | duplicated(filenames, fromLast = T)
     warning("some files from different folders have identical file names:\n\t",
-            paths$path[dups] %>% str_c(collapse = "\n\t"), immediate. = TRUE, call. = FALSE)
+            paths$path[dups] |> str_c(collapse = "\n\t"), immediate. = TRUE, call. = FALSE)
   }
 
   return(paths)
@@ -496,38 +518,38 @@ iso_shorten_relative_paths <- function(path, root = ".") {
       root = root,
       absolute = R.utils::isAbsolutePath(path),
       path_folders = map(path, get_path_segments)
-    ) %>%
+    ) |>
     # put roots into working directory context if possible
-    group_by(root) %>%
+    group_by(root) |>
     mutate(
       root_folders_all = map(root[1], get_path_segments),
       root_folders_rel = find_common_different_from_start(c(list(wd_folders), root_folders_all[1]))$different[-1],
       root_folders = if (has_common_start(root_folders_all[1], wd_folders)) root_folders_rel else root_folders_all
-    ) %>%
+    ) |>
     ungroup()
 
   # shorten relative paths
-  rel_paths <- paths %>% filter(!absolute)
+  rel_paths <- paths |> filter(!absolute)
   if (nrow(rel_paths) > 0) {
-    rel_paths <- rel_paths %>%
+    rel_paths <- rel_paths |>
       # shorten with most possible overlap
-      group_by(root, path) %>%
+      group_by(root, path) |>
       mutate(
         root_folders = list(find_common_different_from_start(c(root_folders[1], path_folders[1]))$common),
         path_folders = find_common_different_from_start(c(root_folders[1], path_folders[1]))$different[-1]
-      ) %>%
-      ungroup() %>%
+      ) |>
+      ungroup() |>
       # assmple paths
       mutate(
-        path = path_folders %>% map_chr(
+        path = path_folders |> map_chr(
           ~if(length(.x) == 0) { "." } else { do.call(file.path, args = as.list(.x))})
       )
   }
 
   # return all
-  paths <- bind_rows(rel_paths, filter(paths, absolute)) %>% arrange(i) %>%
+  paths <- bind_rows(rel_paths, filter(paths, absolute)) |> arrange(i) |>
     # simplify root path
-    mutate(root = root_folders %>% map_chr(~if(length(.x) == 0) { "." } else { do.call(file.path, args = as.list(.x))}))
+    mutate(root = root_folders |> map_chr(~if(length(.x) == 0) { "." } else { do.call(file.path, args = as.list(.x))}))
   return(select(paths, "root", "path"))
 }
 
@@ -551,15 +573,15 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
   paths <- get_paths_data_frame(path, root, check_existence = check_existence)
 
   # process absolute paths
-  abs_paths <- paths %>% filter(absolute)
+  abs_paths <- paths |> filter(absolute)
   if (nrow(abs_paths) > 0) {
 
     # determine root folders
-    abs_paths <- abs_paths %>%
+    abs_paths <- abs_paths |>
       # get path folders
-      mutate(path_folders = ifelse(is_dir, full_path, dirname(full_path)) %>% map(get_path_segments)) %>%
+      mutate(path_folders = ifelse(is_dir, full_path, dirname(full_path)) |> map(get_path_segments)) |>
       # get root folders
-      group_by(root) %>%
+      group_by(root) |>
       mutate(
         rel_root_folders = map(root, get_path_segments),
         abs_root_folders = map2(
@@ -567,15 +589,15 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
           ~if(R.utils::isAbsolutePath(.x)) { .y } else { get_path_segments(file.path(getwd(), .x)) }
         ),
         has_rel_root = has_common_start(path_folders, abs_root_folders[[1]])
-      ) %>%
+      ) |>
       ungroup()
 
     # absolute paths that share relative root
-    abs_rel_paths <- abs_paths %>% filter(has_rel_root)
+    abs_rel_paths <- abs_paths |> filter(has_rel_root)
     if (nrow(abs_rel_paths) > 0) {
-      abs_rel_paths <- abs_rel_paths %>%
-        group_by(root) %>%
-        mutate(new_path = find_common_different_from_start(c(abs_root_folders[1], path_folders))$different[-1]) %>%
+      abs_rel_paths <- abs_rel_paths |>
+        group_by(root) |>
+        mutate(new_path = find_common_different_from_start(c(abs_root_folders[1], path_folders))$different[-1]) |>
         ungroup()
     }
 
@@ -583,7 +605,7 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
     abs_paths <- filter(abs_paths, !has_rel_root)
     if (nrow(abs_paths) > 0) {
       common_diff <- find_common_different_from_start(abs_paths$path_folders)
-      abs_paths <- abs_paths %>%
+      abs_paths <- abs_paths |>
         mutate(
           new_path = common_diff$different,
           root = do.call(file.path, args = as.list(common_diff$common))
@@ -592,7 +614,7 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
 
     # reassemble absolute paths
     abs_paths <-
-      bind_rows(abs_paths, abs_rel_paths) %>%
+      bind_rows(abs_paths, abs_rel_paths) |>
       # expand the paths
       mutate(
         path =
@@ -607,14 +629,14 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
                           return(".") # current directory
                         else
                           return(path)
-                      }) %>%
+                      }) |>
           # combine into file path
           map_chr(~do.call(file.path, args = as.list(.x)))
       )
   }
 
   # combine all
-  paths <- bind_rows(abs_paths, filter(paths, !absolute)) %>%  arrange(i)
+  paths <- bind_rows(abs_paths, filter(paths, !absolute)) |>  arrange(i)
 
   return(select(paths, "root", "path"))
 }
@@ -624,14 +646,14 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
 
 # get file extension
 get_file_ext <- function(filepath) {
-  basename(filepath) %>% str_extract("\\.[^.]+$")
+  basename(filepath) |> str_extract("\\.[^.]+$")
 }
 
 # match file extension
 # returns the longest extension that matches
 match_file_ext <- function(filepath, extensions) {
-  exts_regexp <- extensions %>% stringr::str_to_lower() %>%
-    stringr::str_replace_all("\\.", "\\\\.") %>% str_c("$")
+  exts_regexp <- extensions |> stringr::str_to_lower() |>
+    stringr::str_replace_all("\\.", "\\\\.") |> str_c("$")
   exts <- extensions[str_detect(stringr::str_to_lower(filepath), exts_regexp)]
   if (length(exts) == 0) return(NA_character_)
   else return(exts[stringr::str_length(exts) == max(stringr::str_length(exts))][1])
@@ -648,17 +670,17 @@ match_to_supported_file_types <- function(filepaths_df, extensions_df) {
   path <- .ext_exists <- NULL
 
   files <-
-    filepaths_df %>%
-    mutate(extension = map_chr(path, match_file_ext, extensions_df$extension)) %>%
+    filepaths_df |>
+    mutate(extension = map_chr(path, match_file_ext, extensions_df$extension)) |>
     left_join(mutate(extensions_df, .ext_exists = TRUE), by = "extension")
 
   # safety check
   if ( nrow(missing <- dplyr::filter(files, is.na(.ext_exists))) > 0) {
-    exts <- missing$path %>% get_file_ext() %>% unique() %>% str_c(collapse = ", ")
+    exts <- missing$path |> get_file_ext() |> unique() |> str_c(collapse = ", ")
     glue::glue(
       "unexpected file extension(s): {exts} ",
       "(expected one of the following: ",
-      "{str_c(extensions_df$extension, collapse = ', ')})") %>%
+      "{str_c(extensions_df$extension, collapse = ', ')})") |>
     stop(call. = FALSE)
   }
 
@@ -673,7 +695,7 @@ match_to_supported_file_types <- function(filepaths_df, extensions_df) {
 # @note: maybe could use tidyverse::safely for this at some point?
 exec_func_with_error_catch <- function(func, obj, ..., env = asNamespace("isoreader"), msg_prefix = "") {
   if (is.character(func)) func_name <- func
-  else func_name <- substitute(func) %>% deparse()
+  else func_name <- substitute(func) |> deparse()
   if (!default("catch_errors")) {
     # debug mode, don't catch any errors
     obj <- do.call(func, args = c(list(obj), list(...)), envir = env)
@@ -697,7 +719,7 @@ find_parent_call <- function(current_func) {
   calls <- sapply(calls, as.character)
   is_trycatch <- sapply(calls, function(x) any(str_detect(x, "tryCatch")))
   calls <- calls[!is_trycatch]
-  has_func <- sapply(calls, function(x) any(str_detect(x, current_func))) %>% which()
+  has_func <- sapply(calls, function(x) any(str_detect(x, current_func))) |> which()
   if (has_func[1] == 1) return("") # called from top-level
   calls[[has_func[1] - 1]][1]
 }
@@ -757,7 +779,7 @@ show_isoprocessor_migration_message <- function(func) {
              "isoreader on its core functionality. Please install and load ",
              "isoprocessor to access this function:\n",
              "-->  devtools::install_github(\"isoverse/isoprocessor\") # install\n",
-             "-->  library(isoprocessor) # load") %>%
+             "-->  library(isoprocessor) # load") |>
     stop(call. = FALSE)
 }
 

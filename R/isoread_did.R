@@ -8,7 +8,7 @@ iso_read_did <- function(ds, options = list()) {
     stop("data structure must be a 'dual_inlet' iso_file", call. = FALSE)
   
   # read binary file
-  ds$binary <- get_ds_file_path(ds) %>% read_binary_isodat_file()
+  ds$binary <- get_ds_file_path(ds) |> read_binary_isodat_file()
   
   # process file info
   if(ds$read_options$file_info) {
@@ -39,30 +39,30 @@ iso_read_did <- function(ds, options = list()) {
 extract_did_raw_voltage_data <- function(ds) {
 
   # mass information
-  ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot identify measured masses") %>% 
-    move_to_C_block("CBinary") %>%
+  ds$binary <- ds$binary |> 
+    set_binary_file_error_prefix("cannot identify measured masses") |> 
+    move_to_C_block("CBinary") |>
     move_to_next_C_block_range("CTraceInfoEntry", "CPlotRange") 
   
   # read all masses
   masses_re <- re_combine(re_text_x(), re_unicode("Mass "))
   masses_positions <- find_next_patterns(ds$binary, masses_re)
   masses <- map_chr(masses_positions, function(pos) {
-    ds$binary %>%
-      move_to_pos(pos + masses_re$size) %>%  
+    ds$binary |>
+      move_to_pos(pos + masses_re$size) |>  
       capture_data_till_pattern("mass", "text", re_or(re_text_x(), re_block("C-block")), 
-                   data_bytes_max = 8, move_past_dots = FALSE) %>% 
-      { .$data$mass }
+                   data_bytes_max = 8, move_past_dots = FALSE) |> 
+      purrr::pluck("data", "mass")
   })
   
   # mass column formatting
   masses_columns <- str_c("v", masses, ".mV")
   
   # locate voltage data
-  ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot locate voltage data") %>% 
-    move_to_C_block_range("CDualInletRawData", "CTwoDoublesArrayData") %>% 
-    move_to_next_C_block("CIntegrationUnitTransferPart") %>% 
+  ds$binary <- ds$binary |> 
+    set_binary_file_error_prefix("cannot locate voltage data") |> 
+    move_to_C_block_range("CDualInletRawData", "CTwoDoublesArrayData") |> 
+    move_to_next_C_block("CIntegrationUnitTransferPart") |> 
     set_binary_file_error_prefix("cannot process voltage data") 
   
   # find binary positions for voltage standards and samples
@@ -75,11 +75,11 @@ extract_did_raw_voltage_data <- function(ds) {
   # function to capture voltages
   capture_voltages <- function(pos) {
     
-    bin <- ds$binary %>% 
-      move_to_pos(pos) %>% 
-      capture_data_till_pattern("cycle", "text", re_null(4), re_block("stx"), move_past_dots = TRUE) %>% 
-      move_to_next_pattern(re_unicode("/"), re_text_0(), re_text_0(), re_null(4), re_block("stx")) %>%
-      move_to_next_pattern(re_x_000(), re_x_000()) %>% 
+    bin <- ds$binary |> 
+      move_to_pos(pos) |> 
+      capture_data_till_pattern("cycle", "text", re_null(4), re_block("stx"), move_past_dots = TRUE) |> 
+      move_to_next_pattern(re_unicode("/"), re_text_0(), re_text_0(), re_null(4), re_block("stx")) |>
+      move_to_next_pattern(re_x_000(), re_x_000()) |> 
       capture_data_till_pattern("voltage", "double", re_null(6),re_x_000(), sensible = c(-1000, 100000))
     
     # safety check
@@ -96,16 +96,16 @@ extract_did_raw_voltage_data <- function(ds) {
     bind_rows(
       tibble(pos = standard_positions + standard_voltage_start_re$size, type = "standard"),
       tibble(pos = sample_positions + sample_voltage_start_re$size, type = "sample")
-    ) %>% 
+    ) |> 
     mutate(
       voltages = map(.data$pos, capture_voltages)
-    ) %>% 
-    unnest("voltages") %>% 
+    ) |> 
+    unnest("voltages") |> 
     # join in the mass information
-    left_join(tibble(cup = 1:length(masses), mass = masses_columns), by = "cup") %>% 
+    left_join(tibble(cup = 1:length(masses), mass = masses_columns), by = "cup") |> 
     # spread out the volrages
-    select(-"pos", -"cup") %>% 
-    spread(.data$mass, .data$voltage) %>% 
+    select(-"pos", -"cup") |> 
+    spread(.data$mass, .data$voltage) |> 
     # update cycle
     mutate(cycle = as.integer(ifelse(.data$cycle == "Pre", -1L, .data$cycle)) + 1L)
   
@@ -119,13 +119,13 @@ extract_did_raw_voltage_data <- function(ds) {
 extract_did_vendor_data_table <- function(ds) {
   
   # find vendor data table
-  ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot process vendor computed data table") %>% 
+  ds$binary <- ds$binary |> 
+    set_binary_file_error_prefix("cannot process vendor computed data table") |> 
     move_to_C_block_range("CDualInletEvaluatedData", "CParsedEvaluationString")
   
   # cap
   if (!is.null(pos <- find_next_pattern(ds$binary, re_unicode("Gas Indices")))) {
-    ds$binary <- ds$binary %>% cap_at_pos(pos - 20)
+    ds$binary <- ds$binary |> cap_at_pos(pos - 20)
   } else iso_source_file_op_error(ds$binary, "cannot find data deliminter 'Gas Indices'")
   
   # find data positions
@@ -150,29 +150,29 @@ extract_did_vendor_data_table <- function(ds) {
   # read the data
   vendor_dt <- list()
   for (i in 1:length(column_header_positions)) {
-    ds$binary <- ds$binary %>%
-      move_to_pos(column_header_positions[i] + 10) %>% # skip initial <stx>/<fef-x> at the start of header
+    ds$binary <- ds$binary |>
+      move_to_pos(column_header_positions[i] + 10) |> # skip initial <stx>/<fef-x> at the start of header
       # capture column type (typically Delta or AT%) # could skip this to speed up
-      capture_data_till_pattern("type", "text", re_text_x(), move_past_dots = TRUE) %>%
+      capture_data_till_pattern("type", "text", re_text_x(), move_past_dots = TRUE) |>
       # capture actual colum name
-      capture_data_till_pattern("column", "text", re_null(4), re_block("stx")) %>%
+      capture_data_till_pattern("column", "text", re_null(4), re_block("stx")) |>
       # capture column data
-      move_to_pos(column_data_positions[i]) %>% 
-      move_to_next_pattern(column_data_re, max_gap = 0) %>% # move to start of data
-      capture_n_data("n_values", "integer", n = 1, sensible = c(1, 1000)) %>%  # NOTE: this assumes more than 1000 cycles are unrealistic in dual inlet
+      move_to_pos(column_data_positions[i]) |> 
+      move_to_next_pattern(column_data_re, max_gap = 0) |> # move to start of data
+      capture_n_data("n_values", "integer", n = 1, sensible = c(1, 1000)) |>  # NOTE: this assumes more than 1000 cycles are unrealistic in dual inlet
       capture_data_till_pattern("values", "double", re_text_0(), re_block("stx"), sensible = c(-1e10, 1e10))
     
     # safety check
     if (length(ds$binary$data$values) != 2 * ds$binary$data$n_values)
       glue::glue("inconsistent number of data entries recovered ({length(ds$binary$data$values)}) - ",
-                 "expected {2 * ds$binary$data$n_values} values from {ds$binary$data$n_values} cycles") %>% 
+                 "expected {2 * ds$binary$data$n_values} values from {ds$binary$data$n_values} cycles") |> 
       stop(call. = FALSE)
     
     table_column <- list(
       list(
         cycle = as.integer(ds$binary$data$values[c(TRUE, FALSE)] + 1L),
         value = ds$binary$data$values[c(FALSE, TRUE)]
-      )) %>% rlang::set_names(str_replace(ds$binary$data$column, "\\s*$", "")) # remove trailing white spaces in column names
+      )) |> rlang::set_names(str_replace(ds$binary$data$column, "\\s*$", "")) # remove trailing white spaces in column names
     vendor_dt <- c(vendor_dt, table_column)
   }
   
@@ -185,7 +185,7 @@ extract_did_vendor_data_table <- function(ds) {
   # vendor table
   ds$vendor_data_table <- bind_cols(
     tibble(cycle = vendor_dt[[1]][[1]]), 
-    lapply(vendor_dt, `[[`, 2) %>% dplyr::as_tibble())
+    lapply(vendor_dt, `[[`, 2) |> dplyr::as_tibble())
   attr(ds$vendor_data_table, "units") <- NULL # units do not apply
   return(ds)
 }

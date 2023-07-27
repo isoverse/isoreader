@@ -4,6 +4,7 @@
 \name{iso_get_source_file_structure}
 \alias{iso_get_source_file_structure}
 \alias{iso_print_source_file_structure}
+\alias{iso_print_source_file_structure.iso_file}
 \alias{iso_print_source_file_structure.binary_isodat_file}
 \alias{print.binary_isodat_file}
 \title{Get source file and structure}
@@ -11,6 +12,8 @@
 iso_get_source_file_structure(iso_file)
 
 iso_print_source_file_structure(x, ..., save_to_file = NULL)
+
+\method{iso_print_source_file_structure}{iso_file}(x, ..., save_to_file = NULL)
 
 \method{iso_print_source_file_structure}{binary_isodat_file}(
   x,
@@ -46,8 +49,15 @@ Typically these functions are used for debugging purposes only.
 }
 \examples{
 isoreader:::iso_turn_debug_on()
-iso_get_reader_example("dual_inlet_example.did") \%>\%  
-   iso_read_dual_inlet() \%>\%
-   iso_get_source_file_structure() \%>\%
+iso_get_reader_example("dual_inlet_example.did") |>  
+   iso_read_dual_inlet() |>
+   iso_get_source_file_structure() |>
    iso_print_source_file_structure(length = 500)
+\dontrun{
+isoreader:::iso_turn_debug_on()
+iso_get_reader_example("dual_inlet_example.did") |>  
+   iso_read_dual_inlet() |>
+   iso_get_source_file_structure() |>
+   iso_print_source_file_structure(save_to_file = "structure.txt")
+}
 }

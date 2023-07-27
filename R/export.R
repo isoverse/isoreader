@@ -37,7 +37,7 @@ iso_export_to_excel <- function(
   # info message
   if (!quiet) {
     sprintf("Info: exporting data from %d iso_files into Excel '%s'", length(export_iso_files),
-            str_replace(filepath, "^\\.(/|\\\\)", "")) %>% message()
+            str_replace(filepath, "^\\.(/|\\\\)", "")) |> message()
   }
 
   # include method info message
@@ -70,40 +70,40 @@ iso_export_to_excel <- function(
   if ("file_info" %in% names(all_data)) {
     # note: collapse_list_columns takes care of nested vectors, they get concatenated with ', '
     file_info <-
-      all_data %>% dplyr::select("file_id", "file_info") %>%
-      unnest("file_info") %>%
+      all_data |> dplyr::select("file_id", "file_info") |>
+      unnest("file_info") |>
       collapse_list_columns()
     add_excel_sheet(wb, "file info", file_info)
   }
 
   # raw data
   if ("raw_data" %in% names(all_data)) {
-    raw_data <- all_data %>% select("file_id", "raw_data") %>% unnest("raw_data")
+    raw_data <- all_data |> select("file_id", "raw_data") |> unnest("raw_data")
     add_excel_sheet(wb, "raw data", raw_data)
   }
 
   # standards
   if ("standards" %in% names(all_data)) {
-    standards <- all_data %>% select("file_id", "standards") %>% unnest("standards")
+    standards <- all_data |> select("file_id", "standards") |> unnest("standards")
     add_excel_sheet(wb, "standards", standards)
   }
 
   # resistors
   if ("resistors" %in% names(all_data)) {
-    resistors <- all_data %>% select("file_id", "resistors") %>% unnest("resistors")
+    resistors <- all_data |> select("file_id", "resistors") |> unnest("resistors")
     add_excel_sheet(wb, "resistors", resistors)
   }
 
   # vendor data table
   if ("vendor_data_table" %in% names(all_data)) {
-    vendor_data <- all_data %>% select("file_id", "vendor_data_table") %>%
-      unnest("vendor_data_table") %>% iso_strip_units()
+    vendor_data <- all_data |> select("file_id", "vendor_data_table") |>
+      unnest("vendor_data_table") |> iso_strip_units()
     add_excel_sheet(wb, "vendor data table", vendor_data)
   }
 
   # problems
   if ("problems" %in% names(all_data)) {
-    problems <- all_data %>% select("file_id", "problems") %>% unnest("problems")
+    problems <- all_data |> select("file_id", "problems") |> unnest("problems")
     add_excel_sheet(wb, "problems", problems)
   }
   openxlsx::saveWorkbook(wb, filepath, overwrite = TRUE)
@@ -155,10 +155,10 @@ add_excel_sheet <- function(wb, sheet_name, ..., dbl_digits = 2, col_max_width =
 
   # calculate header widths
   header_widths <-
-    sheet_data_sets %>%
+    sheet_data_sets |>
     # account for bold width
     purrr::map(~nchar(names(.x)))
-  max_n_cols <- purrr::map_int(header_widths, length) %>% max()
+  max_n_cols <- purrr::map_int(header_widths, length) |> max()
 
   # calculate data widths
   if (max_n_cols > 0) {
@@ -169,9 +169,9 @@ add_excel_sheet <- function(wb, sheet_name, ..., dbl_digits = 2, col_max_width =
       return(max(c(0, nchar(x)), na.rm = TRUE))
     }
     data_widths <-
-      sheet_data_sets %>%
+      sheet_data_sets |>
       purrr::map(
-        ~dplyr::summarise_all(.x, list(calculate_data_width)) %>%
+        ~dplyr::summarise_all(.x, list(calculate_data_width)) |>
           unlist(use.names = FALSE)
       )
     max_widths <- purrr::map2(header_widths, data_widths , ~{
@@ -226,7 +226,7 @@ iso_export_to_feather <- function(
   # info
   if (!quiet) {
     sprintf("Info: exporting data from %d iso_files into %s files at '%s'", length(iso_as_file_list(iso_files)),
-            filepaths[['ext']], str_replace(filepaths[['base']], "^\\.(/|\\\\)", "")) %>% message()
+            filepaths[['ext']], str_replace(filepaths[['base']], "^\\.(/|\\\\)", "")) |> message()
   }
 
   # get all data
@@ -246,40 +246,40 @@ iso_export_to_feather <- function(
   # file info
   if ("file_info" %in% names(all_data)) {
     # note: collapse_list_columns takes care of nested vectors, they get concatenated with ', '
-    all_data %>% select("file_id", "file_info") %>%
-      unnest("file_info") %>%
-      collapse_list_columns() %>%
+    all_data |> select("file_id", "file_info") |>
+      unnest("file_info") |>
+      collapse_list_columns() |>
       feather::write_feather(filepaths[['file_info']])
   }
 
   # raw data
   if ("raw_data" %in% names(all_data)) {
-    all_data %>% dplyr::select("file_id", "raw_data") %>% unnest("raw_data") %>%
+    all_data |> dplyr::select("file_id", "raw_data") |> unnest("raw_data") |>
       feather::write_feather(filepaths[['raw_data']])
   }
 
   # standards
   if ("standards" %in% names(all_data)) {
-   all_data %>% dplyr::select("file_id", "standards") %>% unnest("standards") %>%
+   all_data |> dplyr::select("file_id", "standards") |> unnest("standards") |>
       feather::write_feather(filepaths[['method_info_standards']])
   }
 
   # resistors
   if ("resistors" %in% names(all_data)) {
-    all_data %>% dplyr::select("file_id", "resistors") %>% unnest("resistors") %>%
+    all_data |> dplyr::select("file_id", "resistors") |> unnest("resistors") |>
       feather::write_feather(filepaths[['method_info_resistors']])
   }
 
   # vendor data table
   if ("vendor_data_table" %in% names(all_data)) {
-    all_data %>% dplyr::select("file_id", "vendor_data_table") %>%
-      unnest("vendor_data_table") %>% iso_strip_units() %>%
+    all_data |> dplyr::select("file_id", "vendor_data_table") |>
+      unnest("vendor_data_table") |> iso_strip_units() |>
       feather::write_feather(filepaths[['vendor_data_table']])
   }
 
   # problems
   if ("problems" %in% names(all_data)) {
-   all_data %>% dplyr::select("file_id", "problems") %>% unnest("problems") %>%
+   all_data |> dplyr::select("file_id", "problems") |> unnest("problems") |>
       feather::write_feather(filepaths[['problems']])
   }
 
@@ -297,7 +297,7 @@ get_export_filepath <- function(filepath, ext) {
   folder <- dirname(filepath)
   if (!file.exists(folder)) stop("the folder '", folder, "' does not exist", call. = FALSE)
   if (!is.null(ext))
-    filename <- filename %>% str_replace(fixed(ext), "") %>% str_c(ext) # to make sure correct extension
+    filename <- filename |> str_replace(fixed(ext), "") |> str_c(ext) # to make sure correct extension
   return(file.path(folder, filename))
 }
 

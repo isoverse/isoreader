@@ -255,18 +255,18 @@ test_that("test that retrieving file paths works correctly", {
   expect_error(iso_expand_paths(c(".", ".", "."), root = c(".", ".")), "one entry or be of the same length")
   expect_error(iso_expand_paths(""), "empty paths .* are not valid")
   expect_error(iso_expand_paths(system.file("extdata", package = "isoreader")), "no extensions")
-  expect_error(iso_expand_paths(system.file("extdata", package = "isoreader") %>% list.files(full.names = TRUE), "did"), 
+  expect_error(iso_expand_paths(system.file("extdata", package = "isoreader") |> list.files(full.names = TRUE), "did"), 
                "do not have one of the supported extensions")
   
   # check expected result
-  direct_list <-  system.file("extdata", package = "isoreader") %>% list.files(full.names = T, pattern = "\\.(dxf|did|cf)$")
+  direct_list <-  system.file("extdata", package = "isoreader") |> list.files(full.names = T, pattern = "\\.(dxf|did|cf)$")
   expect_identical(
     tibble(root = ".", path = direct_list),
-    system.file("extdata", package = "isoreader") %>% iso_expand_paths(c("did", "dxf", "cf"))
+    system.file("extdata", package = "isoreader") |> iso_expand_paths(c("did", "dxf", "cf"))
   )
   expect_identical(
-    tibble(root = ".", path = direct_list %>% {.[c(2,1,3:length(.))]}),
-    c(direct_list[2], system.file("extdata", package = "isoreader")) %>% iso_expand_paths(c("did", "dxf", "cf"))
+    tibble(root = ".", path = direct_list[c(2,1,3:length(direct_list))]),
+    c(direct_list[2], system.file("extdata", package = "isoreader")) |> iso_expand_paths(c("did", "dxf", "cf"))
   )
   
   expect_warning(
@@ -287,7 +287,7 @@ test_that("test that column name checks work correctly", {
 test_that("test that get support file types are listed", {
   expect_true(is.data.frame(iso_get_supported_file_types()))
   expect_equal(
-    iso_get_supported_file_types() %>% names(),
+    iso_get_supported_file_types() |> names(),
     c("type", "extension", "software", "description", "call")
   )
 })
@@ -311,7 +311,7 @@ test_that("test that error catching works correctly", {
   expect_error(exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
   expect_equal( {suppressMessages(iso_turn_debug_off()); default(debug)}, FALSE)
   expect_message(y <- exec_func_with_error_catch(function(x) stop("problem"), 1), "problem")
-  expect_equal(problems(y) %>% select(type, details), tibble(type = "error", details = "problem"))
+  expect_equal(problems(y) |> select(type, details), tibble(type = "error", details = "problem"))
 })
 
 

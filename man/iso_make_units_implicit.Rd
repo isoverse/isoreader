@@ -22,7 +22,7 @@ df <- tibble(peak = 1:5, `height [V]` = 1:5)
 iso_make_units_implicit(df)
 
 # convert back and forth
-iso_make_units_implicit(df) \%>\% iso_make_units_explicit()
+iso_make_units_implicit(df) |> iso_make_units_explicit()
 
 # implicit units from custom prefix & suffix
 df <- tibble(peak = 1:5, height.V = 1:5)

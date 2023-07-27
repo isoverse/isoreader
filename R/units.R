@@ -120,7 +120,7 @@ iso_make_units_explicit <- function(df, prefix = " [", suffix = "]") {
 #' iso_make_units_implicit(df)
 #'
 #' # convert back and forth
-#' iso_make_units_implicit(df) %>% iso_make_units_explicit()
+#' iso_make_units_implicit(df) |> iso_make_units_explicit()
 #'
 #' # implicit units from custom prefix & suffix
 #' df <- tibble(peak = 1:5, height.V = 1:5)
@@ -139,8 +139,8 @@ iso_make_units_implicit <- function(df, prefix = " [", suffix = "]") {
     ends_with_suffix <- rep(TRUE, length(col_names))
   col_names <- stringr::str_sub(col_names, 1L, -1L - ends_with_suffix * nchar(suffix))
   prefix <- stringr::str_locate_all(col_names, fixed(prefix))
-  prefix_start <- prefix %>% purrr::map(~.x[,1]) %>% purrr::map_int(~if(length(.x) == 0) { NA_integer_ } else { max(.x) })
-  prefix_end <- prefix %>% purrr::map(~.x[,2]) %>% purrr::map_int(~if(length(.x) == 0) { NA_integer_ } else { max(.x) })
+  prefix_start <- prefix |> purrr::map(~.x[,1]) |> purrr::map_int(~if(length(.x) == 0) { NA_integer_ } else { max(.x) })
+  prefix_end <- prefix |> purrr::map(~.x[,2]) |> purrr::map_int(~if(length(.x) == 0) { NA_integer_ } else { max(.x) })
   has_units <- ends_with_suffix & !is.na(prefix_end)
 
   # update units
@@ -162,7 +162,7 @@ check_units_identical <- function(x, y, warn_if_not = FALSE) {
   if (!check && warn_if_not) {
     glue::glue(
       "don't know how to reconcile different units '{iso_get_units(x)}' and ",
-      "'{iso_get_units(y)}', converting to double without units to continue") %>%
+      "'{iso_get_units(y)}', converting to double without units to continue") |>
       warning(call. = FALSE, immediate. = TRUE)
   }
   return(check)
@@ -320,7 +320,7 @@ downcast_for_unknown_op <- function(op, x, y, warn = TRUE) {
     glue::glue(
       "don't know how to calculate <{vctrs::vec_ptype_full(x)}> {op} <{vctrs::vec_ptype_full(y)}>, ",
       "converting to double without units to continue"
-    ) %>% warning(call. = FALSE, immediate. = TRUE)
+    ) |> warning(call. = FALSE, immediate. = TRUE)
   }
   vctrs::vec_arith_base(op, x, y)
 }
@@ -400,31 +400,31 @@ convert_df_units_attr_to_implicit_units <- function(df) {
   }
 
   # process units
-  units <- units %>%
+  units <- units |>
     # find out which columns are numeric
     dplyr::left_join(
-      purrr::map_lgl(df, is.numeric) %>% tibble::enframe("column", "numeric"),
+      purrr::map_lgl(df, is.numeric) |> tibble::enframe("column", "numeric"),
       by = "column"
-    ) %>%
+    ) |>
     filter(nchar(units) > 0)
 
   # info check
   if (nrow(problematic <- filter(units, !numeric)) > 0) {
     glue::glue("encountered non-numeric data table columns with units: ",
                "{paste(problematic$units, collapse = ', ')}. Only numeric column ",
-               "units can be preserved.") %>%
+               "units can be preserved.") |>
       warning(immediate. = TRUE, call. = FALSE)
   }
 
   # convert columns into double_with_units
-  units <- dplyr::filter(units, numeric) %>%
-    dplyr::mutate(units = stringr::str_remove(units, "^\\[") %>% stringr::str_remove("\\]$"))
+  units <- dplyr::filter(units, numeric) |>
+    dplyr::mutate(units = stringr::str_remove(units, "^\\[") |> stringr::str_remove("\\]$"))
 
   # construct the conversion quos
   unit_quos <-
     with(units,
          purrr::map2(column, units,
-                     ~quo(iso_double_with_units(!!sym(.x), units = !!.y))) %>%
+                     ~quo(iso_double_with_units(!!sym(.x), units = !!.y))) |>
            rlang::set_names(column))
 
   # convert the units
@@ -480,7 +480,7 @@ iso_format <- function(..., signif = 3, format_names = "%s: ", format_units="%s"
 
   # full text
   return(
-    do.call(paste, args = c(values, list(sep = sep))) %>%
+    do.call(paste, args = c(values, list(sep = sep))) |>
       stringr::str_replace_all(fixed("permil"), "\u2030")
   )
 }

@@ -4,8 +4,8 @@ test_that("test that supported cf files are correct", {
   initialize_options()
   expect_is(exts <- get_supported_cf_files(), "data.frame")
   expect_equal(exts$extension, c(".cf", ".cf.rds", ".dxf", ".iarc"))
-  expect_true(all(exts$func %>% sapply(class) == "character"))
-  expect_true(all(exts$func %>% map_lgl(exists, mode = "function", where = asNamespace("isoreader"))))
+  expect_true(all(exts$func |> sapply(class) == "character"))
+  expect_true(all(exts$func |> map_lgl(exists, mode = "function", where = asNamespace("isoreader"))))
 })
 
 test_that("test that parameter checks are performed", {
@@ -60,7 +60,7 @@ test_that("test that continous flow files can be read", {
     )
   )
   expect_equal(
-    iso_get_units(iso_get_vendor_data_table(cf)) %>% as.character(),
+    iso_get_units(iso_get_vendor_data_table(cf)) |> as.character(),
     c(NA, NA, "s", "s", "s", "mV", "mV", "mV", "mV", "mVs", "mVs", 
       "mVs", "Vs", "Vs", "Vs", NA, NA, NA, NA, NA, "permil", "permil", 
       NA, "permil", "%", NA)
@@ -109,7 +109,7 @@ test_that("test that continous flow files can be read", {
       "d 17O/16O", "Rps 45CO2/44CO2", "Rps 46CO2/44CO2")
   )
   expect_equal(
-    iso_get_units(iso_get_vendor_data_table(dxf)) %>% as.character(),
+    iso_get_units(iso_get_vendor_data_table(dxf)) |> as.character(),
     c(NA, NA, "s", "s", "s", "mV", "mV", "mV", "mV", "mV", "mV", 
       "mV", "mV", "mV", "mV", "mV", "mV", "mVs", "mVs", "mVs", "mVs", 
       "Vs", "Vs", "Vs", "Vs", "%", NA, NA, NA, NA, NA, "permil", "permil", 
