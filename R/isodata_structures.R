@@ -1,41 +1,5 @@
 # Structures ----
 
-#' Get source file and structure
-#'
-#' If an iso file is read with the \link[=iso_turn_debug_on]{debug mode on}, the source data (e.g. binary file) is stored with the file. By default this is not the case because it makes file objects unnecessarily large. Use these functions to retrieve and explore source structures.
-#' 
-#' Typically these functions are used for debugging purposes only.
-#' 
-#' @param iso_file iso file object
-#' @examples
-#' isoreader:::iso_turn_debug_on()
-#' iso_get_reader_example("dual_inlet_example.did") |>  
-#'    iso_read_dual_inlet() |>
-#'    iso_get_source_file_structure() |>
-#'    iso_print_source_file_structure(length = 500)
-#' \dontrun{
-#' isoreader:::iso_turn_debug_on()
-#' iso_get_reader_example("dual_inlet_example.did") |>  
-#'    iso_read_dual_inlet() |>
-#'    iso_get_source_file_structure() |>
-#'    iso_print_source_file_structure(save_to_file = "structure.txt")
-#' }
-#' @export
-iso_get_source_file_structure <- function(iso_file) {
-  
-  # checks
-  stopifnot(
-    "`iso_file` has to be an iso file object" = iso_is_file(iso_file),
-    "the provided `iso_file` does not have any source information. If it should, make sure to turn debug mode on to preserve it during file read." = !is.null(iso_file$binary)
-  )
-  
-  # reset position
-  if (is.list(iso_file$binary) && !is.null(iso_file$binary$pos))
-    iso_file$binary$pos <- 1L
-  
-  return(iso_file$binary)
-}
-
 # basic data structure
 make_iso_file_data_structure <- function(file_id = NA_character_) {
   structure(
