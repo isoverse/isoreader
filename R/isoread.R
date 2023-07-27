@@ -683,9 +683,8 @@ read_iso_file <- function(
 
     }
 
-    # cleanup any binary and source content depending on debug setting
+    # cleanup source content depending on debug setting
     if (!default(debug)) {
-      iso_file$binary <- NULL # @FIXME: binary should be renamed to source throughout
       iso_file$source <- NULL
       iso_file$temp <- NULL
     }

@@ -138,8 +138,8 @@ fetch_block_entry <- function(bfile, ..., block_idx = NULL) {
 # @param reset_cap whether to reset the cap
 # @param update_current_nav_block whether to update the navigation block position (typically/default yes)
 # @param ... additional parameters passed to fetch_block_idx (e.g. for using regex matching or a broader filter criterion)
-# move_to_control_block(my_test$binary, "NO")
-# move_to_control_block(my_test$binary, "CData", occurence = 2)
+# move_to_control_block(my_test$source, "NO")
+# move_to_control_block(my_test$source, "CData", occurence = 2)
 move_to_control_block <- function(bfile, block = NULL, type = "C block", min_pos = 1, occurence = 1, require_n = 1, move_to_end = FALSE, reset_cap = TRUE, update_current_nav_block = TRUE, ...) {
   
   # fetch right C block
@@ -199,8 +199,8 @@ fetch_C_block <- function(bfile, C_block, min_pos = 1, occurence = NULL, regexp_
 # @inheritParams fetch_C_block
 # @param reset_cap whether to reset the cap
 # @FIXME: testing
-# move_to_C_block(my_test$binary, "NO")
-# move_to_C_block(my_test$binary, "CData", occurence = 2)
+# move_to_C_block(my_test$source, "NO")
+# move_to_C_block(my_test$source, "CData", occurence = 2)
 move_to_C_block <- function(bfile, C_block, min_pos = 1, occurence = 1, move_to_end = TRUE, reset_cap = TRUE, regexp_match = FALSE) {
   # fetch right C block
   cblock <- fetch_C_block(bfile, C_block, min_pos = min_pos, occurence = occurence, regexp_match = regexp_match)

@@ -8,7 +8,7 @@ iso_read_caf <- function(ds, options = list()) {
     stop("data structure must be a 'dual_inlet' iso_file", call. = FALSE)
   
   # read binary file
-  ds$binary <- get_ds_file_path(ds) |> read_binary_isodat_file()
+  ds$source <- get_ds_file_path(ds) |> read_binary_isodat_file()
   
   # process file info
   if(ds$read_options$file_info) {
@@ -44,7 +44,7 @@ iso_read_caf <- function(ds, options = list()) {
 extract_caf_raw_voltage_data <- function(ds) {
 
   # locate masses
-  ds$binary <- ds$binary |> 
+  ds$source <- ds$source |> 
     set_binary_file_error_prefix("cannot identify measured masses") |> 
     move_to_C_block_range("CResultData", "CEvalDataIntTransferPart") 
   
@@ -52,11 +52,11 @@ extract_caf_raw_voltage_data <- function(ds) {
   masses_re <- re_combine(re_x_000(), re_text_x(), re_unicode("rIntensity"))
   masses <- 
     tibble(
-      pos = find_next_patterns(ds$binary, masses_re) + masses_re$size,
+      pos = find_next_patterns(ds$source, masses_re) + masses_re$size,
       # capture cup and mass
       data = map(.data$pos, function(pos) {
         capture <- 
-          ds$binary |>
+          ds$source |>
           move_to_pos(pos) |>  
           capture_data_till_pattern("cup", "text", re_text_x(), data_bytes_max = 8, move_past_dots = TRUE) |>
           move_to_next_pattern(re_unicode("rIntensity "), max_gap = 0L) |> 
@@ -72,32 +72,32 @@ extract_caf_raw_voltage_data <- function(ds) {
     )
 
   # locate voltage data
-  ds$binary <- ds$binary |> 
+  ds$source <- ds$source |> 
     set_binary_file_error_prefix("cannot locate voltage data") |> 
     move_to_C_block_range("CDualInletRawData", "CResultData") 
   
   # find binary positions for voltage standards and samples
   standard_block_start <- find_next_pattern(
-    ds$binary, re_combine(re_unicode("Standard Block"), re_null(4), re_x_000()))
+    ds$source, re_combine(re_unicode("Standard Block"), re_null(4), re_x_000()))
   sample_block_start <- find_next_pattern(
-    ds$binary, re_combine(re_unicode("Sample Block"), re_null(4), re_x_000()))
+    ds$source, re_combine(re_unicode("Sample Block"), re_null(4), re_x_000()))
   
   # safety checks
   if (is.null(standard_block_start) || is.null(sample_block_start) || 
       standard_block_start > sample_block_start) {
-    iso_source_file_op_error(ds$binary, "cannot find standard and sample voltage data blocks at expected positions")
+    iso_source_file_op_error(ds$source, "cannot find standard and sample voltage data blocks at expected positions")
   }
   
   # read voltage data
-  ds$binary <- set_binary_file_error_prefix(ds$binary, "cannot process voltage data") 
+  ds$source <- set_binary_file_error_prefix(ds$source, "cannot process voltage data") 
   
   # right before this sequence there is a 4 byte sequence that could be a date, the last block is the # of masses
   read_blocks_re <- re_combine(re_null(4), re_block("etx"), re_x_000())
-  positions <- find_next_patterns(ds$binary, read_blocks_re)
+  positions <- find_next_patterns(ds$source, read_blocks_re)
   
   # function to capture voltages
   capture_voltages <- function(pos) {
-    bin <- ds$binary |> 
+    bin <- ds$source |> 
       move_to_pos(pos - 4) |> 
       capture_n_data("n_masses", "integer", n = 1)
     
@@ -132,7 +132,7 @@ extract_caf_raw_voltage_data <- function(ds) {
   
   # safety check
   if (any(notok <- is.na(voltages$column))) {
-    iso_source_file_op_error(ds$binary, glue("inconsistent cup designations: {collapse(voltages$cup[notok], ', ')}"))
+    iso_source_file_op_error(ds$source, glue("inconsistent cup designations: {collapse(voltages$cup[notok], ', ')}"))
   }
   
   # voltages data frame
@@ -149,7 +149,7 @@ extract_caf_raw_voltage_data <- function(ds) {
 extract_caf_vendor_data_table <- function(ds) {
   
   # reset navigation
-  ds$binary <- reset_binary_file_navigation(ds$binary)
+  ds$source <- reset_binary_file_navigation(ds$source)
   
   # get data table
   extracted_dt <- 

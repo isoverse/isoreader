@@ -26,14 +26,14 @@ iso_get_source_file_structure <- function(iso_file) {
   # checks
   stopifnot(
     "`iso_file` has to be an iso file object" = !missing(iso_file) && iso_is_file(iso_file),
-    "the provided `iso_file` does not have any source information. If it should, make sure to turn debug mode on to preserve it during file read." = !is.null(iso_file$binary)
+    "the provided `iso_file` does not have any source information. If it should, make sure to turn debug mode on to preserve it during file read." = !is.null(iso_file$source)
   )
   
   # reset position
-  if (is.list(iso_file$binary) && !is.null(iso_file$binary$pos))
-    iso_file$binary$pos <- 1L
+  if (is.list(iso_file$source) && !is.null(iso_file$source$pos))
+    iso_file$source$pos <- 1L
   
-  return(iso_file$binary)
+  return(iso_file$source)
 }
 
 # Print Source File Structure ======
@@ -56,9 +56,9 @@ iso_print_source_file_structure.default <- function(x, ..., save_to_file = NULL)
 #' @rdname iso_get_source_file_structure
 #' @export
 iso_print_source_file_structure.iso_file <- function(x, ..., save_to_file = NULL) {
-  # FIXME: should be $source instead of $binary!!
-  check_bfile(x$binary)
-  iso_print_source_file_structure(x$binary, ..., save_to_file = save_to_file)
+  # FIXME: should be $source instead of $source!!
+  check_bfile(x$source)
+  iso_print_source_file_structure(x$source, ..., save_to_file = save_to_file)
 }
 
 #' @rdname iso_get_source_file_structure
