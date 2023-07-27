@@ -27,8 +27,8 @@ Depends:
 Imports:
     methods,
     R.utils,
-    magrittr,
     rlang (>= 1.1.0),
+    lifecycle (>= 1.0.0),
     tidyselect (>= 1.2.0),
     vctrs (>= 0.6.0),
     tibble (>= 3.0.0),
@@ -57,4 +57,4 @@ biocViews:
 License: GPL (>= 2)
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
