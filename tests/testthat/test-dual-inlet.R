@@ -26,14 +26,18 @@ test_that("test that nu file processor works properly", {
 
 })
 
-# actual files ========
+# example files ========
 
-test_that("test that dual inlet files can be read", {
+test_that("test that dual inlet example files can be read", {
 
-  # skip on CRAN to reduce checktime to below 10 minutes
+  # skip on CRAN to reduce check time to below 10 minutes
   skip_on_cran()
+  
+  # skip if flag is set
+  if (identical(getOption("isoreader.skip_file_tests"), TRUE))
+    skip("Currently not testing dual inlet example files.")
 
-  # test specific files
+  # start tests for files
   iso_turn_reader_caching_off()
 
   # .did
@@ -88,10 +92,18 @@ test_that("test that dual inlet files can be read", {
 
 })
 
+# additional test files ======
+
 test_that("test that additional dual inlet files can be read", {
 
-  # additional test files (skip on CRAN because test files not includes due to tarball size limits) =====
+  # skip on CRAN (test files too big and check time too long)
   skip_on_cran()
+  
+  # skip if flag is set
+  if (identical(getOption("isoreader.skip_file_tests"), TRUE))
+    skip("Currently not testing additional dual inlet files.")
+  
+  # start tests for files
   iso_turn_reader_caching_off()
 
   # testing wrapper

@@ -27,7 +27,7 @@ iso_read_flow_iarc <- function(ds, options = list()) {
   
   # unzipping iarc archive ====
   folder_name <- ds$file_info$file_path |> basename()
-  folder_name <- str_remove(folder_name, fixed(get_file_ext(folder_name)))
+  folder_name <- stringr::str_remove(folder_name, fixed(get_file_ext(folder_name)))
   
   folder_path <- file.path(tempdir(), folder_name)
   if (!file.exists(folder_path)) {

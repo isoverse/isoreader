@@ -146,7 +146,7 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
     Value <- NULL # global variables
     
     # task info tibble
-    task_info_tibble <- dplyr::as_tibble()
+    task_info_tibble <- task_info |> dplyr::as_tibble()
     if (nrow(task_values) > 0) {
       task_info_tibble <- task_info_tibble |>
         left_join(
