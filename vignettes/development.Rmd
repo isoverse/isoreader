@@ -93,9 +93,9 @@ ex <- iso_get_reader_example("dual_inlet_example.did") %>%
 # access binary
 bin <- ex$binary
 # use structure mapping
-bin %>%
-  isoreader:::move_to_pos(1340) %>%
-  isoreader:::map_binary_structure(length = 200)
+# bin %>%
+#   isoreader:::move_to_pos(1340) %>%
+#   isoreader:::map_binary_structure(length = 200)
 ```
 
 This structure representation shows recognized control elements in `<...>` and data elements in `{...}` which are converted to text or numeric representation if the interpretation is unambiguous, or plain hexadecimal characters if the nature of the data cannot be determined with certainty. Because this function tries all possible control elements and data interpretations, it is quite slow and may take a while if run for large stretches of binary code (i.e. if the `length` parameter is very long).
@@ -115,7 +115,7 @@ bin$C_blocks
 Same as for specific byte positions, one can use the control blocks to navigate the file and `map_binary_structure`.
 
 ```{r}
-bin %>%
-  isoreader:::move_to_C_block("CMethod") %>%
-  isoreader:::map_binary_structure(length = 200)
+# bin %>%
+#   isoreader:::move_to_C_block("CMethod") %>%
+#   isoreader:::map_binary_structure(length = 200)
 ```
