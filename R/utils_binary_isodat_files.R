@@ -22,7 +22,7 @@ read_binary_isodat_file <- function(filepath) {
   # read file
   bfile <- read_binary_file(filepath, bfile = template_binary_isodat_file_object())
   
-  # find C_blocks
+  # find structure blocks
   bfile$blocks <- find_isodat_structure_blocks(bfile)
   bfile$C_blocks <- dplyr::filter(bfile$blocks, type == "C block")
   
@@ -953,13 +953,13 @@ get_isodat_control_blocks_config <- function() {
 
 
 # @TODO: write tests
-#' find regular expression pattern and turn into a block tibble
-#' @param raw binary vector
-#' @param regular expression to match
-#' @param start_expr expression to calculate starting point (relative to the regexp match var 'pos')
-#' @param len_expr expression to calculate the length of the block
-#' @param data_len_expr expression to calculate the length of the data in the block
-#' @param block_expr expression to construct the block text
+# find regular expression pattern and turn into a block tibble
+# @param raw binary vector
+# @param regex regular expression to match
+# @param start_expr expression to calculate starting point (relative to the regexp match var 'pos')
+# @param len_expr expression to calculate the length of the block
+# @param data_len_expr expression to calculate the length of the data in the block
+# @param block_expr expression to construct the block text
 find_pattern_blocks <- function(raw, regex, start_expr, len_expr, data_len_expr, block_expr) {
   # safety checks
   stopifnot(rlang::is_expression(start_expr))
@@ -983,14 +983,12 @@ find_pattern_blocks <- function(raw, regex, start_expr, len_expr, data_len_expr,
 }
 
 # @TODO: write tests
-# @NOTE: speed optimized
-#' find unknown patterns and turn into a block tibble
-#' @param raw binary vector
-#' @param blocks tibble with identified blocks, must have columns start & end
+# find unknown patterns and turn into a block tibble (speed optimized)
+# @param raw binary vector
+# @param blocks tibble with identified blocks, must have columns start & end
 find_unknown_blocks <- function(raw, blocks) {
   # blocks inbetween the identified ones
   blocks <- arrange(blocks, start)
-  max <- 8
   tibble(
       type = "unknown",
       start = c(1L, blocks$end + 1L),
@@ -1003,7 +1001,8 @@ find_unknown_blocks <- function(raw, blocks) {
     filter(len > 0)
 }
 
-#' updates block information for unknown blocks
+# updates block information for unknown blocks
+# @param unknown_block_n_chars how many characters before abbreviating with ...
 get_unknown_blocks_text <- function(blocks, raw, unknown_block_n_chars = 8L) {
   # block text for unknown blocks
   blocks %>% 
@@ -1022,9 +1021,9 @@ get_unknown_blocks_text <- function(blocks, raw, unknown_block_n_chars = 8L) {
 
 
 # @TODO: write tests
-#' find all isodat structure blocks
-#' @param bfile the isodat binary file object (must have $raw set)
-#' @param unknown_block_n_chars the number of chars to preview as 'block' text in the resulting tibble
+# find all isodat structure blocks - main function called by read_binary_isodat_file
+# @param bfile the isodat binary file object (must have $raw set)
+# @param unknown_block_n_chars the number of chars to preview as 'block' text in the resulting tibble
 find_isodat_structure_blocks <- function(bfile, unknown_block_n_chars = 8L) {
   # safety checks
   if (!is(bfile, "binary_isodat_file")) stop("this function is for isodat binary files only", call. = FALSE)
@@ -1123,43 +1122,47 @@ format_isodat_structure_blocks <- function(
 
 # Print Source File Structure ======
 
-#' Print source file structure
-#' 
-#' Debugging function to print a representation of the structure of the source file underlying an isofile (if there is one).
-#' 
-#' @param object the object for which to print the source file structure.
+#' @rdname iso_get_source_file_structure
+#' @param x the object for which to print the source file structure.
 #' @param ... additional parameters depending on source file types
-#' @param save_to_file whether to save the source file structure to a text file (provide file path, will overwrite anything already in the file!)
-#' @return the source file structure (invisibly if it is also saved to a file via \code{save_to_file})
+#' @param save_to_file whether to save the source file structure to a text file (provide file path, will overwrite anything already in the file!) in addition to printing it out
 #' @export 
-iso_print_source_file_structure <- function(object, ..., save_to_file = NULL) {
+iso_print_source_file_structure <- function(x, ..., save_to_file = NULL) {
   UseMethod("iso_print_source_file_structure")
 } 
 
 #' @export
-iso_print_source_file_structure.default <- function(object, ..., save_to_file = NULL) {
+iso_print_source_file_structure.default <- function(x, ..., save_to_file = NULL) {
   stop("this function is not defined for objects of type '", 
-       class(object)[1], "'", call. = FALSE)
+       class(x)[1], "'", call. = FALSE)
 }
 
+#' @examples
+#' \dontrun{
+#' isoreader:::iso_turn_debug_on()
+#' iso_get_reader_example("dual_inlet_example.did") %>%  
+#'    iso_read_dual_inlet() %>%
+#'    iso_get_source_file_structure() %>%
+#'    iso_print_source_file_structure(save_to_file = "structure.txt")
+#' }
 #' @export
-iso_print_source_file_structure.iso_file <- function(object, ..., save_to_file = NULL) {
+iso_print_source_file_structure.iso_file <- function(x, ..., save_to_file = NULL) {
   # FIXME: should be $source instead of $binary!!
-  check_bfile(object$binary)
-  iso_print_source_file_structure(object$binary, ..., save_to_file = save_to_file)
+  check_bfile(x$binary)
+  iso_print_source_file_structure(x$binary, ..., save_to_file = save_to_file)
 }
 
-#' @rdname iso_print_source_file_structure
+#' @rdname iso_get_source_file_structure
 #' @param start starting position in the binary file to print from (prints the first block that spans this range)
 #' @param length length in the binary file to print to (by default \code{NULL}, which means print everything)
 #' @param end until which point in the binary file to print to. If provided, overrides whatever is specified in \code{length}
 #' @export
-iso_print_source_file_structure.binary_isodat_file <- function(object, start = 1, length = NULL, end = start + length, ..., save_to_file = NULL) {
-  if(rlang::is_empty(end)) end <- max(object$blocks$end)
-  partial <- start > 1 | end < max(object$blocks$end, 1)
+iso_print_source_file_structure.binary_isodat_file <- function(x, start = 1, length = NULL, end = start + length, ..., save_to_file = NULL) {
+  if(rlang::is_empty(end)) end <- max(x$blocks$end)
+  partial <- start > 1 | end < max(x$blocks$end, 1)
   if(end <= start) stop("'end' cannot be smaller than 'start'", call. = FALSE)
-  object$blocks <- filter(object$blocks, start >= !!start | (start < !!start & end > !!start), start <= !!end)
-  file_structure <- format_isodat_structure_blocks(object, ...)
+  x$blocks <- filter(x$blocks, start >= !!start | (start < !!start & end > !!start), start <= !!end)
+  file_structure <- format_isodat_structure_blocks(x, ...)
   
   # save to file
   if (!is.null(save_to_file)) {
@@ -1177,11 +1180,7 @@ iso_print_source_file_structure.binary_isodat_file <- function(object, start = 1
   }
 }
 
-#' Print formatted isodat structure, first 200 bytes by default
-#' @param x object to show
-#' @param start where to start to print (set by default by the current position of the file)
-#' @param length how much to print
-#' @param ... additional parameters (passed to iso_print_source_file_structure)
+#' @rdname iso_get_source_file_structure
 #' @export
 print.binary_isodat_file <- function(x, start = x$pos, length = 200, ...) {
   iso_print_source_file_structure(x, start = start, length = length, ...)
