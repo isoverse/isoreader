@@ -78,7 +78,7 @@ Currently supported file types:
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(isoreader)
 iso_get_supported_file_types() %>% 
-  dplyr::select(-call) %>%
+  dplyr::select(-"call") %>%
   knitr::kable()
 ```
 

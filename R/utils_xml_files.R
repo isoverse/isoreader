@@ -138,7 +138,7 @@ process_iarc_tasks_xml <- function(filepaths, method_parameters) {
         GlobalIdentifier = task_info[["GlobalIdentifier"]],
         DataFile = str_c(Id, ".hdf5")
       ) %>% 
-      select(-Id)
+      select(-"Id")
     
     # prepare return
     Value <- NULL # global variables
@@ -226,8 +226,8 @@ process_iarc_processing_xml <- function(processing_list_id, filepath) {
       # channel to mass matches
       {
         bind_rows(
-          select(., channel=NumeratorBeamChannel, mass=numerator_mass),
-          select(., channel=DenominatorBeamChannel, mass=denominator_mass)
+          select(., channel="NumeratorBeamChannel", mass="numerator_mass"),
+          select(., channel="DenominatorBeamChannel", mass="denominator_mass")
         )
       } %>% 
       unique()

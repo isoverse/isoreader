@@ -1045,8 +1045,8 @@ find_isodat_structure_blocks <- function(bfile, unknown_block_n_chars = 8L) {
         raw = bfile$raw
       )
     ) %>%
-    dplyr::select(-start_expr, -block_expr, -len_expr) %>% 
-    tidyr::unnest(blocks) 
+    dplyr::select(-"start_expr", -"block_expr", -"len_expr") %>% 
+    tidyr::unnest("blocks") 
 
   unknown_blocks <- 
     find_unknown_blocks(raw = bfile$raw, blocks = ctrl_blocks) %>%
@@ -1061,7 +1061,7 @@ find_isodat_structure_blocks <- function(bfile, unknown_block_n_chars = 8L) {
     dplyr::mutate(
       block_idx = dplyr::row_number()
     ) %>%
-    dplyr::select(block_idx, start, end, len, data_len, type, priority, block) %>% 
+    dplyr::select("block_idx", "start", "end", "len", "data_len", "type", "priority", "block") %>% 
   return(all_blocks)
 }
 

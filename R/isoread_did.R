@@ -100,11 +100,11 @@ extract_did_raw_voltage_data <- function(ds) {
     mutate(
       voltages = map(.data$pos, capture_voltages)
     ) %>% 
-    unnest(voltages) %>% 
+    unnest("voltages") %>% 
     # join in the mass information
     left_join(tibble(cup = 1:length(masses), mass = masses_columns), by = "cup") %>% 
     # spread out the volrages
-    select(-.data$pos, -.data$cup) %>% 
+    select(-"pos", -"cup") %>% 
     spread(.data$mass, .data$voltage) %>% 
     # update cycle
     mutate(cycle = as.integer(ifelse(.data$cycle == "Pre", -1L, .data$cycle)) + 1L)

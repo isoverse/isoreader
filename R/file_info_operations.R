@@ -83,7 +83,7 @@ iso_select_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
       )
 
       # select file_info columns
-      isofile$file_info <- dplyr::select(isofile$file_info, !!!select_cols)
+      isofile$file_info <- dplyr::select(isofile$file_info, dplyr::all_of(select_cols))
 
       # check for file id
       if (!"file_id" %in% names(isofile$file_info)) {
@@ -148,7 +148,7 @@ iso_select_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
       file_info <-
         file_info %>%
         # focus on selected columns only (also takes care of the rename)
-        dplyr::select(!!!select_cols)
+        dplyr::select(dplyr::all_of(select_cols))
 
       # check for file id
       if (!"file_id" %in% names(file_info)) {
@@ -271,7 +271,7 @@ iso_rename_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
 
       # rename file_info columns
       if (length(rename_cols) > 0)
-      isofile$file_info <- dplyr::rename(isofile$file_info, !!!rename_cols)
+      isofile$file_info <- dplyr::rename(isofile$file_info, dplyr::all_of(rename_cols))
 
       # check for file id
       if (!"file_id" %in% names(isofile$file_info)) {
@@ -327,7 +327,7 @@ iso_rename_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
       cols_must_exist = FALSE)$rename
 
     # then run the rename
-    file_info <- dplyr::rename(file_info, !!!rename_cols)
+    file_info <- dplyr::rename(file_info, dplyr::all_of(rename_cols))
 
     # check for file id
     if (!"file_id" %in% names(file_info)) {
@@ -623,7 +623,7 @@ iso_parse_file_info.iso_file_list <- function(iso_files, number = c(), double = 
         names(file_info)[tidyselect::eval_select(rlang::enexpr(text), file_info)]
     ) %>%
     tibble::enframe(name = "parse", value = "column") %>%
-    tidyr::unnest(.data$column) %>%
+    tidyr::unnest("column") %>%
     # find out number of casts per column
     group_by(.data$column) %>% mutate(n = n()) %>% ungroup() %>%
     # get column info
@@ -798,7 +798,7 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
 
   new_data_rows <-
     join_by_cols %>%
-    unnest(.data$join_by_col) %>%
+    unnest("join_by_col") %>%
     mutate(
       new_data_idx = map(.data$join_by_col, ~which(!is.na(new_file_info[[.x]]) & nchar(as.character(new_file_info[[.x]])) > 0))
     ) %>%
@@ -814,7 +814,9 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
   # join new file info based on the join by and new row indices
   join_new_file_info <- function(join_by, new_rows, shared_cols) {
     if (length(join_by) > 0 && length(new_rows) > 0) {
-      dplyr::inner_join(df, rename(new_file_info[new_rows, ], !!!shared_cols), by = join_by)
+      # allow many to many here -- duplicates are caught later
+      # consider catching the issue here instead for speed
+      dplyr::inner_join(df, rename(new_file_info[new_rows, ], dplyr::all_of(shared_cols)), by = join_by, relationship = "many-to-many")
     } else {
       tibble()
     }
@@ -834,11 +836,11 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
   # select data based on priority
   final_data <-
     joined_data %>%
-    select(.data$..priority, .data$data) %>%
+    select("..priority", "data") %>%
     # avoid problems with the temp columns during unnest
     mutate(data = map(.data$data, ~select(.x, -starts_with("..ni_temp_")))) %>%
-    unnest(.data$data) %>%
-    select(-starts_with("..ni_temp_")) %>%
+    unnest("data") %>%
+    dplyr::select(-dplyr::starts_with("..ni_temp_")) %>%
     group_by(.data$..df_id) %>%
     filter(.data$..priority == max(.data$..priority)) %>%
     ungroup()
@@ -907,7 +909,7 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
     message(" - ", paste(info_sum$label, collapse = "\n - "))
   }
 
-  return(select(final_data, -.data$..df_id, -.data$..ni_id, -.data$..priority))
+  return(select(final_data, -"..df_id", -"..ni_id", -"..priority"))
 }
 
 # check doesn't work unless it's at the beginning

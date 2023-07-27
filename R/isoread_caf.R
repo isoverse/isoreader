@@ -64,7 +64,7 @@ extract_caf_raw_voltage_data <- function(ds) {
       })
     ) %>% 
     # unnest data
-    unnest(.data$data) %>% 
+    unnest("data") %>% 
     mutate(
       cup = as.integer(.data$cup),
       column = str_c("v", .data$mass, ".mV")
@@ -125,9 +125,9 @@ extract_caf_raw_voltage_data <- function(ds) {
       voltages = map(.data$pos, capture_voltages)
     ) %>% ungroup() %>% 
     # unnest voltager data
-    unnest(.data$voltages) %>% 
+    unnest("voltages") %>% 
     # combine with cup/mass information
-    left_join(select(masses, .data$cup, .data$column), by = "cup") 
+    left_join(select(masses, "cup", "column"), by = "cup") 
   
   # safety check
   if (any(notok <- is.na(voltages$column))) {
@@ -137,7 +137,7 @@ extract_caf_raw_voltage_data <- function(ds) {
   # voltages data frame
   ds$raw_data <- 
     voltages %>% 
-    select(-.data$pos, -.data$cup) %>% 
+    select(-"pos", -"cup") %>% 
     spread(.data$column, .data$voltage) %>% 
     arrange(desc(.data$type), .data$cycle)
   
@@ -182,8 +182,8 @@ extract_caf_vendor_data_table <- function(ds) {
   ds$vendor_data_table <- vendor_dt %>% 
     arrange(!!as.name("Nr.")) %>% 
     mutate(cycle = as.integer(1:n())) %>% 
-    select(-!!as.name("Nr."), -!!as.name("Is Ref.?")) %>% 
-    select(!!as.name("cycle"), everything())
+    select(-"Nr.", -"Is Ref.?") %>% 
+    select("cycle", dplyr::everything())
   
   # save information on the column units
   attr(ds$vendor_data_table, "units") <- 

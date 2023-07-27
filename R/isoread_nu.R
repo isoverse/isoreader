@@ -257,7 +257,7 @@ parse_nu_data <- function(data, n_blocks, n_channels, masses = c()) {
   # prepare raw data
   raw_data <- 
     raw_data %>% 
-    select(block = group, data) %>% 
+    select(block = "group", "data") %>% 
     # unpack the blocks
     mutate(
       n_channels = !!n_channels,
@@ -267,7 +267,7 @@ parse_nu_data <- function(data, n_blocks, n_channels, masses = c()) {
       data = map(data, group_lines, "^\\s*Gas")
     ) %>% 
     # unpack the 'Gas...' data chunks
-    unnest(data) %>% 
+    unnest("data") %>% 
     mutate(
       is_ref = str_detect(header, "^\\s*Gas\\s+Ref"),
       is_sample = str_detect(header, "^\\s*Gas\\s+Sam"),
@@ -292,9 +292,9 @@ parse_nu_data <- function(data, n_blocks, n_channels, masses = c()) {
   data_blocks <- unique(raw_data$block)
   if (length(zero_blocks) == 1) {
     # single zero block for all
-    zero_data <- select(zero_data, -block) %>% 
-      tidyr::crossing(select(raw_data, block) %>% unique) %>% 
-      select(block, everything())
+    zero_data <- select(zero_data, -"block") %>% 
+      tidyr::crossing(select(raw_data, "block") %>% unique) %>% 
+      select("block", everything())
   } else if (!setequal(zero_blocks, data_blocks)) {
     glue::glue("found {length(zero_blocks)} zero blocks, expected {length(data_blocks)}") %>% 
       stop(call. = FALSE)
@@ -303,9 +303,9 @@ parse_nu_data <- function(data, n_blocks, n_channels, masses = c()) {
   # subtract zeros from data
   raw_data <-
     raw_data %>% 
-    left_join(rename(zero_data, background = intensity), by = c("block", "channel")) %>% 
+    left_join(rename(zero_data, background = "intensity"), by = c("block", "channel")) %>% 
     mutate(intensity = intensity - background) %>% 
-    select(-background)
+    select(-"background")
 
   # spread data
   zero_data <- tidyr::spread(zero_data, channel, intensity)
@@ -326,13 +326,13 @@ parse_nu_zero_data <- function(raw_data, masses = c()) {
     raw_data %>% 
     group_by(block) %>% 
     mutate(data = map(data, ~tibble(channel = seq_along(.x), intensities = stringr::str_split(.x, "\\s+")))) %>% 
-    select(block, n_channels, zero_length, data)
+    select("block", "n_channels", "zero_length", "data")
 
   # safety checks
   check_channels(df)
   
   # safety check on cycle length and first value
-  df_channels <- unnest(df, data)
+  df_channels <- unnest(df, "data")
   check_cycle_length(df_channels, "zero_length")
   
   # calculate intensities
@@ -358,7 +358,7 @@ parse_nu_raw_data <- function(raw_data, masses = c()) {
       type = ifelse(is_ref, "standard", "sample"),
       data = map(data, ~tibble(channel = seq_along(.x), intensities = stringr::str_split(.x, "\\s+")))
     ) %>% 
-    select(block, n_channels, n_cycles, cycle_length, data, cycle, type)
+    select("block", "n_channels", "n_cycles", "cycle_length", "data", "cycle", "type")
   
   # safety check on cycles
   cycles_count <- 
@@ -377,7 +377,7 @@ parse_nu_raw_data <- function(raw_data, masses = c()) {
   check_channels(df)
   
   # safety check on cycle length and first value
-  df_channels <- unnest(df, data)
+  df_channels <- unnest(df, "data")
   check_cycle_length(df_channels, "cycle_length")
   
   # calculate intensities
@@ -437,7 +437,7 @@ calculate_intensities <- function(df_channels, grouping, masses = c()) {
 
   # calculate raw data intensities
   df_intensities <- df_channels %>% 
-    unnest(.data$intensities) %>% 
+    unnest("intensities") %>% 
     mutate(intensities = as.numeric(.data$intensities)) %>% 
     group_by(!!!map(grouping, sym)) %>% 
     summarize(intensity = mean(.data$intensities[-1])) %>% 
@@ -454,8 +454,8 @@ calculate_intensities <- function(df_channels, grouping, masses = c()) {
       )
     df_intensities <- df_intensities %>% 
       left_join(masses, by = "channel") %>% 
-      select(-.data$channel) %>% 
-      rename(channel = .data$mass)
+      select(-"channel") %>% 
+      rename(channel = "mass")
     
   } else {
     # don't have the right number

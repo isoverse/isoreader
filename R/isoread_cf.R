@@ -130,7 +130,7 @@ extract_cf_raw_voltage_data <- function(ds) {
   ds$raw_data <-
     raw_data %>% arrange(.data$time.s) %>%
     mutate(tp = 1:n()) %>%
-    select(.data$tp, .data$time.s, everything())
+    select("tp", "time.s", everything())
   
   return(ds)
 }

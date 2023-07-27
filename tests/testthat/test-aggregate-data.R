@@ -65,8 +65,8 @@ test_that("test that unnesting of aggregated data works properly", {
   expect_true((unnest_aggregated_data_frame(tibble(dt = list(dt)))$dt - dt) < 10)
   # unnest even with NULLs present
   expect_equal(
-    bind_rows(df, select(df, -int)) %>% unnest_aggregated_data_frame(),
-    bind_rows(unnest(df, cols = everything()), unnest(select(df, -int), cols = everything()))
+    bind_rows(df, select(df, -"int")) %>% unnest_aggregated_data_frame(),
+    bind_rows(unnest(df, cols = everything()), unnest(select(df, -"int"), cols = everything()))
   )
   # don't unnest mixed type columns (throw warning instead)
   expect_warning(
@@ -86,19 +86,19 @@ test_that("test that unnesting of aggregated data works properly", {
   )
   # replace missing entries with NA instead (for string)
   expect_equal(
-    unnest_aggregated_data_frame(bind_rows(select(df, -chr), df2))$chr,
+    unnest_aggregated_data_frame(bind_rows(select(df, -"chr"), df2))$chr,
     c(NA_character_, df2$chr)
   )
   # replace missing entries with NA instead (for integer)
   df2 <- mutate(df, int = map(int, ~c(1L,2L)))
   expect_equal(
-    unnest_aggregated_data_frame(bind_rows(select(df, -int), df2))$int,
+    unnest_aggregated_data_frame(bind_rows(select(df, -"int"), df2))$int,
     c(NA_integer_, df2$int)
   )
   # replace missing entries with NA instead (for double)
   df2 <- mutate(df, dbl = map(dbl, ~c(1.0, 4.2)))
   expect_equal(
-    unnest_aggregated_data_frame(bind_rows(select(df, -dbl), df2))$dbl,
+    unnest_aggregated_data_frame(bind_rows(select(df, -"dbl"), df2))$dbl,
     c(NA_real_, df2$dbl)
   )
   
@@ -193,10 +193,10 @@ test_that("test that aggregeting raw data works", {
   expect_equal(iso_get_raw_data(c(iso_file1, iso_file2)), 
                data <- bind_rows(mutate(iso_file1$raw_data, file_id="a"), 
                                  mutate(iso_file2$raw_data, file_id = "b")) %>% 
-                 select(file_id, everything()))
+                 select("file_id", everything()))
   
   expect_equal(iso_get_raw_data(c(iso_file1, iso_file2), gather = TRUE), 
-               data %>% tidyr::pivot_longer(matches("^[virdx]"), names_to = "column", values_to = "value", values_drop_na = TRUE) %>% 
+               data %>% tidyr::pivot_longer(dplyr::matches("^[virdx]"), names_to = "column", values_to = "value", values_drop_na = TRUE) %>% 
                  left_join(tibble(
                    column = c("v44.mV", "v46.mV", "i47.mA", "vC1.mV", "r46/44", "d46/44.permil", "x45.mA", "v45.mV"),
                    category = c("mass", "mass", "mass", "channel", "ratio", "delta", "other", "mass"),

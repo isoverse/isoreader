@@ -227,7 +227,7 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
   
   # rename channels
   rename_dots <- config_channels %>% { rlang::set_names(.$channel, str_c("i", .$mass, ".", data_units)) }
-  irms_data <- irms_data %>% dplyr::rename(!!!rename_dots)
+  irms_data <- irms_data %>% dplyr::rename(dplyr::all_of(rename_dots))
   
   # scale currents
   scale_data <- function(x) x / data_scaling
@@ -236,9 +236,9 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
   # scale time
   dt <- run_time.s / nrow(irms_data)
   irms_data <- irms_data %>% 
-    rename(tp = .data$Scan) %>% 
+    rename(tp = "Scan") %>% 
     mutate(tp = as.integer(.data$tp), time.s = dt * .data$tp) %>% 
-    select(.data$tp, .data$time.s, everything())
+    select("tp", "time.s", everything())
   
   # store mass data
   if (nrow(iso_file$raw_data) > 0) {

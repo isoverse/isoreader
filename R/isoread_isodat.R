@@ -126,7 +126,7 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   refs <- tibble(
     start_pos = start_pos,
     data = map(.data$start_pos, capture_ref_names)
-  ) %>% unnest(.data$data)
+  ) %>% unnest("data")
 
   ### deltas
   # get reference delta values
@@ -166,9 +166,9 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
   deltas <- tibble(
     pos = positions + delta_re$size,
     data = map(.data$pos, capture_delta_values)
-  ) %>% unnest(.data$data) %>%
+  ) %>% unnest("data") %>%
     # delta_code is very isodat specific and not stored in final, delta_format does not really hold additional information
-    select(.data$standard, .data$gas, .data$delta_name, .data$delta_value, .data$reference)
+    select("standard", "gas", "delta_name", "delta_value", "reference")
 
 
   ### ratios
@@ -206,8 +206,8 @@ extract_isodat_reference_values <- function(ds, cap_at_fun = NULL) {
       pos = positions + ratio_re$size,
       data = map(.data$pos, capture_ratio_values)
     ) %>%
-      unnest(.data$data) %>%
-      select(.data$reference, .data$element, .data$ratio_name, .data$ratio_value)
+      unnest("data") %>%
+      select("reference", "element", "ratio_name", "ratio_value")
   } else {
     # no ratios defined
     ratios <- tibble(reference = character(0), element = character(0),
@@ -475,23 +475,23 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   rts_df <- dplyr::filter(rts_df, .data$mass > 0)
   # retention times
   peaks <- rts_df %>%
-    select(.data$peak, Start = .data$start, Rt = .data$rt, End = .data$end) %>%
+    select("peak", Start = "start", Rt = "rt", End = "end") %>%
     distinct(.data$peak, .keep_all = TRUE) %>%
     # add in amplitudes
     left_join(
       rts_df %>%
-        select(.data$peak, Ampl = .data$mass, .data$amp) %>%
+        select("peak", Ampl = "mass", "amp") %>%
         spread(.data$Ampl, .data$amp, sep = " "),
       by = "peak"
     ) %>%
     # add in backgrounds
     left_join (
       rts_df %>%
-        select(.data$peak, BGD = .data$mass, .data$bg) %>%
+        select("peak", BGD = "mass", "bg") %>%
         spread(.data$BGD, .data$bg, sep = " "),
       by = "peak"
     ) %>%
-    rename(`Nr.` = .data$peak)
+    rename(`Nr.` = "peak")
 
   ### rest of data table
   extracted_dt <- extract_isodat_main_vendor_data_table_fast(ds, C_block = "CGCPeakList", cap_at_fun = cap_at_fun)
@@ -504,12 +504,12 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   if (any(is.na(data_table$Start) | any(is.na(data_table$.check)))) {
     ds <- register_warning(ds, details = "vendor data table has unexpected empty cells, process vendor table with care")
   }
-  ds$vendor_data_table <- select(data_table, -.data$.check)
+  ds$vendor_data_table <- select(data_table, -".check")
 
   # safe information on the column units
   attr(ds$vendor_data_table, "units") <-
     bind_rows(
-      dplyr::select(extracted_dt$columns, .data$column, units = .data$column_units),
+      dplyr::select(extracted_dt$columns, "column", units = "column_units"),
       tibble::tibble(column = c("Start", "Rt", "End"), units = "[s]"),
       tibble::tibble(column = peaks %>% select(starts_with("Ampl"), starts_with("BGD")) %>% names(), units = "[mV]")
     ) %>%
@@ -795,7 +795,8 @@ extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$binary$po
     ) %>%
     dplyr::ungroup() %>%
     dplyr::inner_join(cols_info, by = "idx") %>%
-    tidyr::pivot_wider(id_cols = c(.data$group, .data$continue_pos), names_from = .data$col, values_from = .data$block) %>%
+    tidyr::pivot_wider(id_cols = c("group", "continue_pos"), 
+                       names_from = "col", values_from = "block") %>%
     # skip entries that don't have formats
     filter(!is.na(format), nchar(format) > 1) %>%
     # row numbers
@@ -814,7 +815,7 @@ extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$binary$po
     ) %>%
     dplyr::arrange(group) %>%
     # nest by column and expand column details
-    tidyr::nest(data = c(-.data$column)) %>%
+    tidyr::nest(data = c(-"column")) %>%
     dplyr::mutate(
       n_formats = purrr::map_int(.data$data, ~length(unique(.x$format))),
       column_format = purrr::map_chr(.data$data, ~.x$format[1]),
@@ -881,8 +882,8 @@ extract_isodat_main_vendor_data_table_values <- function(ds, columns) {
   # get cell values
   columns %>%
     filter(!is.na(type)) %>%
-    unnest(data) %>%
-    select(column, continue_pos, type, row) %>%
+    unnest("data") %>%
+    select("column", "continue_pos", "type", "row") %>%
     nest(data = c(-row)) %>%
     mutate(
       data = map(data, function(row) {

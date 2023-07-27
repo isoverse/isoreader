@@ -70,40 +70,40 @@ iso_export_to_excel <- function(
   if ("file_info" %in% names(all_data)) {
     # note: collapse_list_columns takes care of nested vectors, they get concatenated with ', '
     file_info <-
-      all_data %>% select(.data$file_id, .data$file_info) %>%
-      unnest(.data$file_info) %>%
+      all_data %>% dplyr::select("file_id", "file_info") %>%
+      unnest("file_info") %>%
       collapse_list_columns()
     add_excel_sheet(wb, "file info", file_info)
   }
 
   # raw data
   if ("raw_data" %in% names(all_data)) {
-    raw_data <- all_data %>% select(.data$file_id, .data$raw_data) %>% unnest(.data$raw_data)
+    raw_data <- all_data %>% select("file_id", "raw_data") %>% unnest("raw_data")
     add_excel_sheet(wb, "raw data", raw_data)
   }
 
   # standards
   if ("standards" %in% names(all_data)) {
-    standards <- all_data %>% select(.data$file_id, standards) %>% unnest(standards)
+    standards <- all_data %>% select("file_id", "standards") %>% unnest("standards")
     add_excel_sheet(wb, "standards", standards)
   }
 
   # resistors
   if ("resistors" %in% names(all_data)) {
-    resistors <- all_data %>% select(.data$file_id, .data$resistors) %>% unnest(.data$resistors)
+    resistors <- all_data %>% select("file_id", "resistors") %>% unnest("resistors")
     add_excel_sheet(wb, "resistors", resistors)
   }
 
   # vendor data table
   if ("vendor_data_table" %in% names(all_data)) {
-    vendor_data <- all_data %>% select(.data$file_id, .data$vendor_data_table) %>%
-      unnest(.data$vendor_data_table) %>% iso_strip_units()
+    vendor_data <- all_data %>% select("file_id", "vendor_data_table") %>%
+      unnest("vendor_data_table") %>% iso_strip_units()
     add_excel_sheet(wb, "vendor data table", vendor_data)
   }
 
   # problems
   if ("problems" %in% names(all_data)) {
-    problems <- all_data %>% select(.data$file_id, .data$problems) %>% unnest(.data$problems)
+    problems <- all_data %>% select("file_id", "problems") %>% unnest("problems")
     add_excel_sheet(wb, "problems", problems)
   }
   openxlsx::saveWorkbook(wb, filepath, overwrite = TRUE)
@@ -246,40 +246,40 @@ iso_export_to_feather <- function(
   # file info
   if ("file_info" %in% names(all_data)) {
     # note: collapse_list_columns takes care of nested vectors, they get concatenated with ', '
-    all_data %>% select(.data$file_id, .data$file_info) %>%
-      unnest(.data$file_info) %>%
+    all_data %>% select("file_id", "file_info") %>%
+      unnest("file_info") %>%
       collapse_list_columns() %>%
       feather::write_feather(filepaths[['file_info']])
   }
 
   # raw data
   if ("raw_data" %in% names(all_data)) {
-    all_data %>% select(.data$file_id, .data$raw_data) %>% unnest(.data$raw_data) %>%
+    all_data %>% dplyr::select("file_id", "raw_data") %>% unnest("raw_data") %>%
       feather::write_feather(filepaths[['raw_data']])
   }
 
   # standards
   if ("standards" %in% names(all_data)) {
-   all_data %>% select(.data$file_id, .data$standards) %>% unnest(.data$standards) %>%
+   all_data %>% dplyr::select("file_id", "standards") %>% unnest("standards") %>%
       feather::write_feather(filepaths[['method_info_standards']])
   }
 
   # resistors
   if ("resistors" %in% names(all_data)) {
-    all_data %>% select(.data$file_id, .data$resistors) %>% unnest(.data$resistors) %>%
+    all_data %>% dplyr::select("file_id", "resistors") %>% unnest("resistors") %>%
       feather::write_feather(filepaths[['method_info_resistors']])
   }
 
   # vendor data table
   if ("vendor_data_table" %in% names(all_data)) {
-    all_data %>% select(.data$file_id, .data$vendor_data_table) %>%
-      unnest(.data$vendor_data_table) %>% iso_strip_units() %>%
+    all_data %>% dplyr::select("file_id", "vendor_data_table") %>%
+      unnest("vendor_data_table") %>% iso_strip_units() %>%
       feather::write_feather(filepaths[['vendor_data_table']])
   }
 
   # problems
   if ("problems" %in% names(all_data)) {
-   all_data %>% select(.data$file_id, .data$problems) %>% unnest(.data$problems) %>%
+   all_data %>% dplyr::select("file_id", "problems") %>% unnest("problems") %>%
       feather::write_feather(filepaths[['problems']])
   }
 

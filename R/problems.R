@@ -48,7 +48,7 @@ iso_get_problems <- function(iso_files, select = everything()) {
   select_cols <- get_column_names(probs, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
   if (!"file_id" %in% select_cols) 
     select_cols <- c("file_id", select_cols) # file info always included
-  return(dplyr::select(probs, !!!select_cols))
+  return(dplyr::select(probs, dplyr::all_of(select_cols)))
 }
 
 #' @importFrom readr stop_for_problems
@@ -116,7 +116,7 @@ warn_problems <- function(x, cutoff = 5L, width = getOption("width")) {
   has_many_problems <- n > cutoff
   probs <- iso_get_problems(x) %>%
     dplyr::mutate(i = as.character(dplyr::row_number())) %>% 
-    dplyr::select(c("i", "file_id", "type", "func", "details"))
+    dplyr::select("i", "file_id", "type", "func", "details")
   probs_list <-
     base::rbind(
       c("#", "FILE", "PROBLEM", "OCCURRED IN", "DETAILS"), 

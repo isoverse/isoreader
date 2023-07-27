@@ -211,7 +211,7 @@ extract_scn_raw_voltage_data <- function(ds) {
       # set x units
       x_units = ds$binary$data$units
     ) %>% 
-    dplyr::select(.data$step, .data$x, .data$x_units, everything())
+    dplyr::select("step", "x", "x_units", everything())
   
   return(ds)
   
@@ -247,7 +247,7 @@ extract_scn_resistors <- function(ds) {
       R.Ohm = ohms
     ) %>%
     dplyr::right_join(
-      select(ds$binary$data$config, .data$cup, .data$mass),
+      select(ds$binary$data$config, "cup", "mass"),
       by = "cup"
     )
   

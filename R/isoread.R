@@ -104,7 +104,7 @@ find_func <- function(func) {
 #' @export
 iso_get_supported_file_types <- function() {
   default("file_readers") %>% 
-    dplyr::select(.data$type, .data$extension, .data$software, .data$description, .data$call) %>% 
+    dplyr::select("type", "extension", "software", "description", "call") %>% 
     dplyr::arrange(.data$type, .data$extension)
 }
 
@@ -406,7 +406,7 @@ iso_read_files <- function(paths, root, supported_extensions, data_structure,
   set_temp("parallel_process", NA_integer_) # mark the main process
   processes <-
     files %>%
-    nest(data = c(-.data$process)) %>%
+    nest(data = c(-"process")) %>%
     mutate(
       result = purrr::map2(
         .data$process,
@@ -490,11 +490,11 @@ create_read_process <- function(process, data_structure, files) {
   # specify relevant files columns to match read_iso_file parameters
   files <- files %>%
     select(
-      .data$root, .data$path, .data$file_n, .data$files_n,
-      .data$read_from_cache, .data$reread_outdated_cache,
-      .data$write_to_cache, .data$cachepath, 
-      .data$post_read_check, ext = .data$extension,
-      reader_fun = .data$func, reader_options = .data$reader_options, reader_fun_env = .data$env
+      "root", "path", "file_n", "files_n",
+      "read_from_cache", "reread_outdated_cache",
+      "write_to_cache", "cachepath", 
+      "post_read_check", ext = "extension",
+      reader_fun = "func", reader_options = "reader_options", reader_fun_env = "env"
     )
 
   # parallel
@@ -818,7 +818,7 @@ reread_iso_files <- function(
   if (!all(file_paths$file_exists)) {
     msg <-
       # 'unique' paths to account for IARC type multi-file re-reads
-      file_paths %>% select(-.data$file_id) %>% filter(!.data$file_exists) %>% unique() %>%
+      file_paths %>% select(-"file_id") %>% filter(!.data$file_exists) %>% unique() %>%
       {
         sprintf(
           "%d file(s) do not exist at their referenced location and can not be re-read. Consider setting a new root directory with iso_set_file_root() first:\n - %s\n",
@@ -882,7 +882,7 @@ reread_iso_files <- function(
   # reread files
   if (nrow(file_paths) > 0) {
     # 'unique' paths to account for IARC type multi-file re-reads
-    reread_file_paths <- file_paths %>% select(-.data$file_id) %>% unique()
+    reread_file_paths <- file_paths %>% select(-"file_id") %>% unique()
     args <- c(list(
       paths = reread_file_paths$file_path, root = reread_file_paths$file_root,
       read_cache = reread_only_outdated_files,

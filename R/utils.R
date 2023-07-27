@@ -204,7 +204,7 @@ iso_get_reader_examples <- function() {
     mutate(filename = basename(.data$path)) %>%
     match_to_supported_file_types(file_types) %>%
     arrange(.data$type, .data$extension, .data$filename) %>%
-    select(.data$filename, .data$type, .data$software, .data$description)
+    select("filename", "type", "software", "description")
 }
 
 #' @rdname iso_get_reader_example
@@ -331,7 +331,7 @@ find_common_different_from_start <- function(vectors, empty = character(0)) {
   # differences vector
   different <-
     filter(vectors, !i %in% commons$i) %>%
-    select(v, entry) %>%
+    select("v", "entry") %>%
     nest(data = c(-v)) %>%
     full_join(tibble(
       v = unique(vectors$v),
@@ -341,7 +341,7 @@ find_common_different_from_start <- function(vectors, empty = character(0)) {
       data = map2(missing, data, ~if(.x) { NULL } else { .y$entry }),
       result = ifelse(missing, empty, data)
     ) %>%
-    select(v, result) %>%
+    select("v", "result") %>%
     arrange(v) %>%
     tibble::deframe() %>%
     unname()
@@ -418,7 +418,7 @@ iso_expand_paths <- function(path, extensions = c(), root = ".") {
     paths %>%
     filter(is_dir) %>%
     mutate(file = map(full_path, ~list.files(.x, pattern = pattern, recursive = TRUE, include.dirs = FALSE))) %>%
-    unnest(file)
+    unnest("file")
 
   if (nrow(filepaths) > 0)
     filepaths <- mutate(filepaths, path = file.path(path, file))
@@ -427,10 +427,10 @@ iso_expand_paths <- function(path, extensions = c(), root = ".") {
   paths <-
     bind_rows(
       filter(paths, !is_dir),
-      select(filepaths, i, root, path)
+      select(filepaths, "i", "root", "path")
     ) %>%
     arrange(i) %>%
-    select(root, path) %>%
+    select("root", "path") %>%
     unique() # make sure all unique files
 
   # double check that filenames are unique
@@ -528,7 +528,7 @@ iso_shorten_relative_paths <- function(path, root = ".") {
   paths <- bind_rows(rel_paths, filter(paths, absolute)) %>% arrange(i) %>%
     # simplify root path
     mutate(root = root_folders %>% map_chr(~if(length(.x) == 0) { "." } else { do.call(file.path, args = as.list(.x))}))
-  return(select(paths, root, path))
+  return(select(paths, "root", "path"))
 }
 
 #' Find roots for absolute paths
@@ -616,7 +616,7 @@ iso_find_absolute_path_roots <- function(path, root = ".", check_existence = TRU
   # combine all
   paths <- bind_rows(abs_paths, filter(paths, !absolute)) %>%  arrange(i)
 
-  return(select(paths, root, path))
+  return(select(paths, "root", "path"))
 }
 
 # file extensions ======
@@ -662,7 +662,7 @@ match_to_supported_file_types <- function(filepaths_df, extensions_df) {
     stop(call. = FALSE)
   }
 
-  return(dplyr::select(files, -.ext_exists))
+  return(dplyr::select(files, -".ext_exists"))
 }
 
 # function execution with error catching =====

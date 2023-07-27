@@ -49,7 +49,7 @@ iso_get_data_summary <- function(iso_files, quiet = default(quiet)) {
       else .
     } %>%
     mutate(file_path = ifelse(!is.na(file_subpath), glue("{file_path_}|{file_subpath}"), file_path_)) %>%
-    select(-file_path_, -file_subpath)
+    select(-"file_path_", -"file_subpath")
 }
 
 # summary of raw data info
@@ -112,7 +112,7 @@ get_raw_data_info <- function(iso_files) {
     glue("cannot process '{class(iso_files[[1]])[1]}' in get_raw_data_info") %>% stop(call. = FALSE)
   }
 
-  return(dplyr::select(raw_data_sum, .data$file_id, raw_data = .data$label))
+  return(dplyr::select(raw_data_sum, "file_id", raw_data = "label"))
 }
 
 # summary of file info
@@ -130,7 +130,7 @@ get_file_info_info <- function(iso_files) {
       file_id = names(iso_files),
       read_file_info = map_lgl(iso_files, ~.x$read_options$file_info),
       file_info = ifelse(!.data$read_file_info, "file info not read", paste(map_int(iso_files, ~length(.x$file_info)), "entries"))
-    ) %>% select(.data$file_id, .data$file_info)
+    ) %>% select("file_id", "file_info")
   }
 }
 
@@ -157,7 +157,7 @@ get_method_info_info <- function(iso_files) {
         has_resistors ~ "resistors",
         TRUE ~ "no method info"
       )
-    ) %>% select(.data$file_id, .data$method_info)
+    ) %>% select("file_id", "method_info")
   }
 
 }
@@ -182,7 +182,7 @@ get_vendor_data_table_info <- function(iso_files) {
         .data$rows > 0 & .data$cols > 0 ~ sprintf("%d rows, %d columns", .data$rows, .data$cols),
         TRUE ~ "no vendor data table"
       )
-    ) %>% select(.data$file_id, .data$vendor_data_table)
+    ) %>% select("file_id", "vendor_data_table")
   }
 }
 
@@ -262,9 +262,9 @@ iso_get_all_data <- function(
 
   # data merge function
   merge_with_file_class <- function(new_df, col_name) {
-    nested_df <- nest(new_df[c(),], !!col_name := c(-.data$file_id))
+    nested_df <- nest(new_df[c(),], !!col_name := c(-"file_id"))
     if (ncol(new_df) > 1)
-      nested_df <- nest(new_df, !!col_name := c(-.data$file_id))
+      nested_df <- nest(new_df, !!col_name := c(-"file_id"))
     nested_df <- bind_rows(nested_df, tibble(file_id = setdiff(file_class$file_id, nested_df$file_id), !!col_name := list(tibble())))
     left_join(file_class, nested_df, by = "file_id")
   }
@@ -404,10 +404,10 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
     # make sure to include only existing raw data
     filter(!map_lgl(raw_data, is.null)) %>%
     # unnest
-    unnest(raw_data)
+    unnest("raw_data")
 
   # check for rows
-  if (nrow(data) == 0) return(dplyr::select(data, .data$file_id))
+  if (nrow(data) == 0) return(dplyr::select(data, "file_id"))
 
   # selecting columns
   select_cols <- get_column_names(data, select = select_exp, n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
@@ -415,7 +415,7 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
     select_cols <- c("file_id", select_cols) # file id always included
   data <- data %>%
     # focus on selected columns only (also takes care of the rename)
-    dplyr::select(!!!select_cols)
+    dplyr::select(dplyr::all_of(select_cols))
 
   # if gathering
   if (gather) {
@@ -423,10 +423,10 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
     gather_cols <- stringr::str_subset(names(data), data_cols_re)
     data <- data %>%
       # gather all masses and ratios
-      tidyr::pivot_longer(gather_cols, names_to = "column", values_to = "value", values_drop_na = TRUE) %>%
+      tidyr::pivot_longer(dplyr::all_of(gather_cols), names_to = "column", values_to = "value", values_drop_na = TRUE) %>%
       # extract unit information
       extract(.data$column, into = c("prefix", "data", "extra_parens", "units"), regex = data_cols_re) %>%
-      dplyr::select(-.data$extra_parens) %>%
+      dplyr::select(-"extra_parens") %>%
       mutate(
         # units cleanup
         units = ifelse(is.na(units) | nchar(units) == 0, NA_character_, units),
@@ -443,7 +443,7 @@ iso_get_raw_data <- function(iso_files, select = everything(), gather = FALSE, i
           TRUE ~ paste0(.data$prefix, .data$data)
         )
       ) %>%
-      dplyr::select(-.data$prefix)
+      dplyr::select(-"prefix")
   }
 
   # if file info
@@ -492,10 +492,10 @@ iso_get_bgrd_data <- function(iso_files, select = everything(), gather = FALSE, 
     # make sure to include only existing raw data
     filter(!map_lgl(bgrd_data, is.null)) %>%
     # unnest
-    unnest(bgrd_data)
+    unnest("bgrd_data")
 
   # check for rows
-  if (nrow(data) == 0) return(dplyr::select(data, .data$file_id))
+  if (nrow(data) == 0) return(dplyr::select(data, "file_id"))
 
   # selecting columns
   select_cols <- get_column_names(data, select = select_exp, n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
@@ -503,7 +503,7 @@ iso_get_bgrd_data <- function(iso_files, select = everything(), gather = FALSE, 
     select_cols <- c("file_id", select_cols) # file info always included
   data <- data %>%
     # focus on selected columns only (also takes care of the rename)
-    dplyr::select(!!!select_cols)
+    dplyr::select(dplyr::all_of(select_cols))
 
   # if gathering
   if (gather) {
@@ -514,7 +514,7 @@ iso_get_bgrd_data <- function(iso_files, select = everything(), gather = FALSE, 
       gather(column, value, matches(masses_ratios_re)) %>%
       # extract unit information
       extract(.data$column, into = c("category", "data", "extra_parens", "units"), regex = masses_ratios_re) %>%
-      dplyr::select(-.data$extra_parens) %>%
+      dplyr::select(-"extra_parens") %>%
       # remove unknown data
       filter(!is.na(.data$value)) %>%
       # assign category
@@ -585,15 +585,15 @@ iso_get_standards <- function(iso_files, select = everything(), include_file_inf
     )
 
   # check for rows
-  if (nrow(data) == 0) return(dplyr::select(data, .data$file_id))
+  if (nrow(data) == 0) return(dplyr::select(data, "file_id"))
 
   # merge info
   standards <- data %>%
-    dplyr::select(.data$file_id, standards) %>%
-    dplyr::filter(!map_lgl(.data$standards, is.null)) %>% unnest(.data$standards)
-  ref_ratios <- data %>% dplyr::select(.data$file_id, .data$ref_ratios) %>%
+    dplyr::select("file_id", "standards") %>%
+    dplyr::filter(!map_lgl(.data$standards, is.null)) %>% unnest("standards")
+  ref_ratios <- data %>% dplyr::select("file_id", "ref_ratios") %>%
       dplyr::filter(!map_lgl(.data$ref_ratios, is.null)) %>%
-      tidyr::unnest(.data$ref_ratios)
+      tidyr::unnest("ref_ratios")
   if ("reference" %in% names(ref_ratios))
     data <- dplyr::left_join(standards, ref_ratios, by = c("file_id", "reference"))
   else
@@ -607,7 +607,7 @@ iso_get_standards <- function(iso_files, select = everything(), include_file_inf
     select_cols <- c("file_id", select_cols) # file info always included
 
   # focus on selected columns only (also takes care of the rename)
-  data <- dplyr::select(data, !!!select_cols) %>% unique()
+  data <- dplyr::select(data, dplyr::all_of(select_cols)) %>% unique()
 
   # if file info
   if (!quo_is_null(include_file_info_quo)) {
@@ -664,10 +664,10 @@ iso_get_resistors  <- function(iso_files, select = everything(), include_file_in
     # make sure to include only existing raw data
     dplyr::filter(!map_lgl(resistors, is.null)) %>%
     # unnest
-    tidyr::unnest(resistors)
+    tidyr::unnest("resistors")
 
   # check for rows
-  if (nrow(data) == 0) return(dplyr::select(data, .data$file_id))
+  if (nrow(data) == 0) return(dplyr::select(data, "file_id"))
 
   # select columns
   select_cols <- get_column_names(data, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
@@ -675,7 +675,7 @@ iso_get_resistors  <- function(iso_files, select = everything(), include_file_in
     select_cols <- c("file_id", select_cols) # file info always included
 
   # focus on selected columns only (also takes care of the rename)
-  data <- dplyr::select(data, !!!select_cols)
+  data <- dplyr::select(data, dplyr::all_of(select_cols))
 
   # if file info
   if (!quo_is_null(include_file_info_quo)) {
@@ -745,7 +745,7 @@ iso_get_vendor_data_table <- function(
     filter(map_lgl(dt, ~!is.null(.x) & nrow(.x) > 0))
 
   # check for any rows
-  if (nrow(vendor_data_table) == 0) return(dplyr::select(vendor_data_table, .data$file_id))
+  if (nrow(vendor_data_table) == 0) return(dplyr::select(vendor_data_table, "file_id"))
 
   # make units explicit if wanted
   if (with_explicit_units) {
@@ -754,7 +754,7 @@ iso_get_vendor_data_table <- function(
   }
 
   # unnest
-  vendor_data_table <- dplyr::select(vendor_data_table, .data$file_id, .data$dt) %>% unnest(.data$dt)
+  vendor_data_table <- dplyr::select(vendor_data_table, "file_id", "dt") %>% unnest("dt")
 
   # get include information
   select_cols <- get_column_names(vendor_data_table, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
@@ -762,7 +762,7 @@ iso_get_vendor_data_table <- function(
     select_cols <- c("file_id", select_cols) # file info always included
 
   # focus on selected columns only (also takes care of the rename)
-  vendor_data_table <- dplyr::select(vendor_data_table, !!!select_cols)
+  vendor_data_table <- dplyr::select(vendor_data_table, dplyr::all_of(select_cols))
 
   # include file info
   if (!quo_is_null(include_file_info_quo)) {
