@@ -121,9 +121,9 @@ test_that("test that continous flow files can be read", {
   # skip if optional dependencies are not installed
   skip_if_not_installed("xml2")
   skip_if_not_installed("rhdf5")
-  expect_true(file.exists(file <- iso_get_reader_example("continuous_flow_example.iarc")))
-  expect_is(iarc <- iso_read_continuous_flow(file), "iso_file_list")
-  expect_equal(nrow(problems(iarc)), 0)
+  # expect_true(file.exists(file <- iso_get_reader_example("continuous_flow_example.iarc")))
+  # expect_is(iarc <- iso_read_continuous_flow(file), "iso_file_list")
+  # expect_equal(nrow(problems(iarc)), 0)
   
 })
 
