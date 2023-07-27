@@ -103,9 +103,9 @@ test_that("test that export to Excel works properly", {
     skip("'readxl' package not installed - skipping Excel export tests")
   }
   
-  expect_error(iso_export_to_excel(42), "can only export iso files")
-  expect_error(iso_export_to_excel(make_cf_data_structure("NA")), "no filepath provided")
-  expect_error(iso_export_to_excel(make_cf_data_structure("NA"), file.path("DOESNOTEXIST", "test")), 
+  expect_error(iso_export_files_to_excel(42), "can only export iso files")
+  expect_error(iso_export_files_to_excel(make_cf_data_structure("NA")), "no filepath provided")
+  expect_error(iso_export_files_to_excel(make_cf_data_structure("NA"), file.path("DOESNOTEXIST", "test")), 
                "folder .* does not exist")
   
   # test data
@@ -121,7 +121,7 @@ test_that("test that export to Excel works properly", {
   filepath <- file.path(tempdir(), "test")
   
   # export and check
-  expect_message(cf_out <- iso_export_to_excel(cf, filepath, quiet = FALSE), "exporting data .* into Excel")
+  expect_message(cf_out <- iso_export_files_to_excel(cf, filepath, quiet = FALSE), "exporting data .* into Excel")
   expect_equal(names(cf), names(cf_out))
   expect_true(is_tibble(cf$file_info))
   expect_true(is_tibble(cf_out$file_info))
@@ -152,7 +152,7 @@ test_that("test that export to Excel works properly", {
   expect_true(file.remove(str_c(filepath, ".cf.xlsx")))
   
   # export real data files - dual inlet
-  expect_message(iso_export_to_excel(di_example, filepath, quiet = FALSE), "exporting data .* into Excel")
+  expect_message(iso_export_files_to_excel(di_example, filepath, quiet = FALSE), "exporting data .* into Excel")
   expect_true(file.exists(str_c(filepath, ".di.xlsx")))
   expect_equal(iso_get_raw_data(di_example) |> 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
@@ -181,7 +181,7 @@ test_that("test that export to Excel works properly", {
   
   # export real data files - continuous flow
   cf_examples <- c(cf_example, cf_err_example)
-  expect_message(iso_export_to_excel(cf_examples, filepath, quiet = FALSE), "exporting data .* into Excel")
+  expect_message(iso_export_files_to_excel(cf_examples, filepath, quiet = FALSE), "exporting data .* into Excel")
   expect_true(file.exists(str_c(filepath, ".cf.xlsx")))
   expect_equal(iso_get_raw_data(cf_examples) |> 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
@@ -210,7 +210,7 @@ test_that("test that export to Excel works properly", {
   expect_true(file.remove(str_c(filepath, ".cf.xlsx")))
   
   # export real data files with explicit units
-  expect_message(iso_export_to_excel(cf_example, filepath, with_explicit_units = TRUE, quiet = FALSE), "exporting data .* into Excel")
+  expect_message(iso_export_files_to_excel(cf_example, filepath, with_explicit_units = TRUE, quiet = FALSE), "exporting data .* into Excel")
   expect_true(file.exists(str_c(filepath, ".cf.xlsx")))
   expect_equal(iso_get_vendor_data_table(cf_example, with_explicit_units = TRUE) |> 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
@@ -219,7 +219,7 @@ test_that("test that export to Excel works properly", {
   expect_true(file.remove(str_c(filepath, ".cf.xlsx")))
   
   # export real data files - scan
-  expect_message(iso_export_to_excel(scan_example, filepath, quiet = FALSE), "exporting data .* into Excel")
+  expect_message(iso_export_files_to_excel(scan_example, filepath, quiet = FALSE), "exporting data .* into Excel")
   expect_true(file.exists(str_c(filepath, ".scan.xlsx")))
   expect_equal(iso_get_raw_data(scan_example) |> 
                  dplyr::mutate_if(.predicate = is.numeric, .funs = signif), 
@@ -250,9 +250,9 @@ test_that("test that export to Feather works properly", {
     skip("'feather' package not installed - skipping feather export tests")
   }
   
-  expect_error(iso_export_to_feather(42), "can only export iso files")
-  expect_error(iso_export_to_feather(make_cf_data_structure("NA")), "no filepath provided")
-  expect_error(iso_export_to_feather(make_cf_data_structure("NA"), file.path("DOESNOTEXIST", "test")), 
+  expect_error(iso_export_files_to_feather(42), "can only export iso files")
+  expect_error(iso_export_files_to_feather(make_cf_data_structure("NA")), "no filepath provided")
+  expect_error(iso_export_files_to_feather(make_cf_data_structure("NA"), file.path("DOESNOTEXIST", "test")), 
                "folder .* does not exist")
   
   # test data
@@ -269,7 +269,7 @@ test_that("test that export to Feather works properly", {
   filepath <- file.path(tempdir(), "test")
   
   # export and check
-  expect_message(cf_out <- iso_export_to_feather(cf, filepath, quiet = FALSE), "exporting data .* into .cf.feather")
+  expect_message(cf_out <- iso_export_files_to_feather(cf, filepath, quiet = FALSE), "exporting data .* into .cf.feather")
   expect_equal(names(cf), names(cf_out))
   expect_true(is_tibble(cf$file_info))
   expect_true(is_tibble(cf_out$file_info))
@@ -294,7 +294,7 @@ test_that("test that export to Feather works properly", {
   expect_true(all(file.remove(list.files(dirname(filepath), pattern = "\\.cf\\.feather$", full.names = TRUE))))
   
   # export real data files - dual inlet
-  expect_message(iso_export_to_feather(di_example, filepath, quiet = FALSE), "exporting data .* into .di.feather")
+  expect_message(iso_export_files_to_feather(di_example, filepath, quiet = FALSE), "exporting data .* into .di.feather")
   expect_true(file.exists(str_c(filepath, "_raw_data.di.feather")))
   expect_true(file.exists(str_c(filepath, "_file_info.di.feather")))
   expect_true(file.exists(str_c(filepath, "_standards.di.feather")))
@@ -312,7 +312,7 @@ test_that("test that export to Feather works properly", {
   
   # export real data files - continuous flow
   cf_examples <- c(cf_example, cf_err_example)
-  expect_message(iso_export_to_feather(cf_examples, filepath, quiet = FALSE), "exporting data .* into .cf.feather")
+  expect_message(iso_export_files_to_feather(cf_examples, filepath, quiet = FALSE), "exporting data .* into .cf.feather")
   expect_true(file.exists(str_c(filepath, "_raw_data.cf.feather")))
   expect_true(file.exists(str_c(filepath, "_file_info.cf.feather")))
   expect_true(file.exists(str_c(filepath, "_standards.cf.feather")))
@@ -330,14 +330,14 @@ test_that("test that export to Feather works properly", {
   expect_true(all(file.remove(list.files(dirname(filepath), pattern = "\\.cf\\.feather$", full.names = TRUE))))
   
   # export with explicit units
-  expect_message(iso_export_to_feather(cf_example, filepath, with_explicit_units = TRUE, quiet = FALSE), "exporting data .* into .cf.feather")
+  expect_message(iso_export_files_to_feather(cf_example, filepath, with_explicit_units = TRUE, quiet = FALSE), "exporting data .* into .cf.feather")
   expect_true(file.exists(str_c(filepath, "_vendor_data_table.cf.feather")))
   expect_equal(iso_get_vendor_data_table(cf_example, with_explicit_units = TRUE), 
                feather::read_feather(str_c(filepath, "_vendor_data_table.cf.feather")))
   expect_true(all(file.remove(list.files(dirname(filepath), pattern = "\\.cf\\.feather$", full.names = TRUE))))
   
   # export real data files - scan
-  expect_message(iso_export_to_feather(scan_example, filepath, quiet = FALSE), "exporting data .* into .scan.feather")
+  expect_message(iso_export_files_to_feather(scan_example, filepath, quiet = FALSE), "exporting data .* into .scan.feather")
   expect_true(file.exists(str_c(filepath, "_raw_data.scan.feather")))
   expect_true(file.exists(str_c(filepath, "_file_info.scan.feather")))
   expect_true(file.exists(str_c(filepath, "_resistors.scan.feather")))

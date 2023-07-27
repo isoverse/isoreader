@@ -126,18 +126,6 @@ get_supported_scan_files <- function() {
 
 # file reading ===========
 
-#' Read isotope data file
-#'
-#' This function from the original isoread package is deprecated, please use \link{iso_read_dual_inlet}, \link{iso_read_continuous_flow} and \link{iso_read_scan} instead.
-#'
-#' @param ... original isoread parameters
-#' @export
-isoread <- function(...) {
-  stop(
-    "Deprecated, use iso_read_dual_inlet(), iso_read_continuous_flow() or iso_read_scan() instead.",
-    call. = FALSE)
-}
-
 #' Load dual inlet data
 #'
 #' @inheritParams iso_read_files

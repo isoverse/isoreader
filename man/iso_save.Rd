@@ -21,7 +21,7 @@ This function saves the passed in iso_files to an R Data Storage (.rds) file, wh
 }
 \seealso{
 Other export functions: 
-\code{\link{iso_export_to_excel}()},
-\code{\link{iso_export_to_feather}()}
+\code{\link{iso_export_files_to_excel}()},
+\code{\link{iso_export_files_to_feather}()}
 }
 \concept{export functions}

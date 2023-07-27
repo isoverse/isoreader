@@ -68,7 +68,7 @@ iso_save(di_files, filepath = "di_save")
 
 ```{r, eval = FALSE}
 # export to excel
-iso_export_to_excel(di_files, filepath = "di_export")
+iso_export_files_to_excel(di_files, filepath = "di_export")
 ```
 
 # Continuous Flow Files
@@ -85,7 +85,7 @@ iso_save(cf_files, filepath = "cf_save")
 
 ```{r, eval = FALSE}
 # export to excel
-iso_export_to_excel(cf_files, filepath = "cf_export")
+iso_export_files_to_excel(cf_files, filepath = "cf_export")
 ```
 
 # Scan Files
@@ -102,6 +102,6 @@ iso_save(scan_files, filepath = "scan_save")
 
 ```{r, eval = FALSE}
 # export to excel
-iso_export_to_excel(scan_files, filepath = "scan_export")
+iso_export_files_to_excel(scan_files, filepath = "scan_export")
 ```
 

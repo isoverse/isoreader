@@ -770,19 +770,6 @@ get_info_message_concat <- function(variable, prefix = "", suffix = "", empty = 
 }
 
 
-# migration to isoprocessor ====
-
-# migration message for function moved to isoprocessor
-show_isoprocessor_migration_message <- function(func) {
-  glue::glue("as of isoreader version 1.0, '{func}' has moved to ",
-             "the isoprocessor package (isoprocessor.isoverse.org) to re-focus ",
-             "isoreader on its core functionality. Please install and load ",
-             "isoprocessor to access this function:\n",
-             "-->  devtools::install_github(\"isoverse/isoprocessor\") # install\n",
-             "-->  library(isoprocessor) # load") |>
-    stop(call. = FALSE)
-}
-
 # testing utilities ====
 
 # utility function to get a test file path

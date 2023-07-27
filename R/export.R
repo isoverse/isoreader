@@ -1,5 +1,22 @@
 ## Export functions =======
 
+#' Function renamed
+#' 
+#' Use \link{iso_export_files_to_excel} instead.
+#' 
+#' @param ... deprecated
+#' @export
+iso_export_to_excel <- function(...) {
+  lifecycle::deprecate_warn(
+    "1.4.0",
+    "iso_export_to_excel()",
+    "iso_export_files_to_excel()",
+    details = "Function renamed to avoid ambiguity with other export functions.", 
+    always = TRUE
+  )
+  iso_export_files_to_excel(...)
+}
+
 #' Export data to Excel
 #'
 #' This function exports the passed in iso_files to Excel. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate tabs within the excel file. Use the various \code{include_...} parameters to specify what information to include. Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in the excel export. Note that the openxlsx package required for this export is not installed automatically as part of isoreader. Please install it manually if missing using \code{install.packages("openxlsx")}.
@@ -10,7 +27,7 @@
 #' @family export functions
 #' @return returns the iso_files object invisibly for use in pipelines
 #' @export
-iso_export_to_excel <- function(
+iso_export_files_to_excel <- function(
   iso_files, filepath,
   include_file_info = everything(), include_raw_data = everything(),
   include_standards = !!enexpr(include_method_info), include_resistors = !!enquo(include_method_info),
@@ -185,17 +202,34 @@ add_excel_sheet <- function(wb, sheet_name, ..., dbl_digits = 2, col_max_width =
 
 }
 
+#' Function renamed
+#' 
+#' Use \link{iso_export_files_to_feather} instead.
+#' 
+#' @param ... deprecated
+#' @export
+iso_export_to_feather <- function(...) {
+  lifecycle::deprecate_warn(
+    "1.4.0",
+    "iso_export_to_feather()",
+    "iso_export_files_to_feather()",
+    details = "Function renamed to avoid ambiguity with other export functions.", 
+    always = TRUE
+  )
+  iso_export_files_to_feather(...)
+}
+
 #' Export to feather
 #'
 #' This function exports the passed in iso_files to the Python and R shared feather file format. The different kinds of data (raw data, file info, methods info, etc.) are exported to separate feather files that are saved with the provided \code{filepath_prefix} as prefix. All are only exported if the corresponding \code{include_} parameter is set to \code{TRUE} and only for data types for which this type of data is available and was read (see \code{\link{iso_read_dual_inlet}}, \code{\link{iso_read_continuous_flow}} for details on read parameters). Note that in rare instances where vectorized data columns exist in the file information (e.g. measurement_info), they are concatenated with ', ' in feather output. Note that the feather package required for this export is not installed automatically as part of isoreader. Please install it manually if missing using \code{install.packages("feather")}.
 #'
 #' @inheritParams iso_save
-#' @inheritParams iso_export_to_excel
+#' @inheritParams iso_export_files_to_excel
 #' @param filepath_prefix what to use as the prefix for the feather file names (e.g. name of the data collection or current date)
 #' @family export functions
 #' @return returns the iso_files object invisibly for use in pipelines
 #' @export
-iso_export_to_feather <- function(
+iso_export_files_to_feather <- function(
   iso_files, filepath_prefix,
   include_file_info = everything(), include_raw_data = everything(),
   include_standards = !!enexpr(include_method_info), include_resistors = !!enquo(include_method_info),
