@@ -80,7 +80,7 @@ isoreader:::initialize_options() # reset all isoreader options
 
 The best way to start debugging an isoreader call is to switch the package into debug mode. This is done using the internal `iso_turn_debug_on()` function. This enables debug messages, turns caching off by default so files are always read anew, and makes the package keep more information in the isofile objects. It continues to catch errors inside file readers (keeping track of them in the [problems](operations.html#dealing-with-file-read-problems)) unless you set `iso_turn_debug_on(catch_errors = FALSE)`, in which case no errors are caught and stop the processing so you get the full traceback and debugging options of your IDE.
 
-## Debugging binary file reads (Isodat)
+# Debugging binary file reads (Isodat)
 
 Errors during the binary file reads usually indicate the approximate position in the file where the error was encountered. The easiest way to get started on figuring out what the file looks like at that position is to use a binary file editor and jump to the position. For a sense of the interpreted structure around that position, one can use `iso_print_source_file_structure()` which shows what binary patterns isoreader recognized. This binary representation of the source file is only available if the file is read while in debug mode, otherwise file objects would get unnecessarily large:
 
