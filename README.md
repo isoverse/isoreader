@@ -3,10 +3,13 @@
 
 # isoreader <a href='https://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
+<!-- badges: start -->
+
 [![R build
 status](https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg)](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://isoreader.isoverse.org/)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.02878/status.svg)](https://doi.org/10.21105/joss.02878)
+<!-- badges: end -->
 
 ## About
 
@@ -96,7 +99,7 @@ iso_files <- iso_read_scan(data_folder)
 #> Info: reading file 'full_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'time_scan_example.scn' with '.scn' reader...
-#> Info: finished reading 4 files in 1.30 secs
+#> Info: finished reading 4 files in 1.34 secs
 
 iso_files
 #> Data from 4 scan iso files: 
