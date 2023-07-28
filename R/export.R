@@ -1,10 +1,7 @@
 ## Export functions =======
 
-#' Function renamed
-#' 
-#' Use \link{iso_export_files_to_excel} instead.
-#' 
-#' @param ... deprecated
+#' @rdname deprecated
+#' @details \code{iso_export_to_excel}: use \link{iso_export_files_to_excel} instead
 #' @export
 iso_export_to_excel <- function(...) {
   lifecycle::deprecate_warn(
@@ -202,11 +199,8 @@ add_excel_sheet <- function(wb, sheet_name, ..., dbl_digits = 2, col_max_width =
 
 }
 
-#' Function renamed
-#' 
-#' Use \link{iso_export_files_to_feather} instead.
-#' 
-#' @param ... deprecated
+#' @rdname deprecated
+#' @details \code{iso_export_to_feather}: use \link{iso_export_files_to_feather} instead
 #' @export
 iso_export_to_feather <- function(...) {
   lifecycle::deprecate_warn(

@@ -96,8 +96,8 @@ reference:
     These functions provide tools to save the data to specific file formats.
   contents:
   - iso_save
-  - iso_export_to_excel
-  - iso_export_to_feather
+  - iso_export_files_to_excel
+  - iso_export_files_to_feather
 
 - title: Package information and default parameters
   desc: >
@@ -136,37 +136,30 @@ reference:
   contents:
   - iso_read_files
   - iso_register_dual_inlet_file_reader
+  - iso_register_continuous_flow_file_reader
+  - iso_register_scan_file_reader
   - iso_is_file
   - iso_is_file_list
   - iso_is_continuous_flow
   - iso_is_dual_inlet
+  - iso_is_scan
   - iso_debug_mode
+  - iso_source_file_op_error
+  - iso_get_source_file_structure
+  - iso_print_source_file_structure
   - read_iso_file
   - reread_iso_files
   - set_temp
-  - map_binary_structure
-  - print.binary_structure_map
+  - print.binary_isodat_file
   - print.iso_file_list
   - print.iso_file
   - vec_arith.iso_double_with_units
   - vec_cast.iso_double_with_units
   - vec_ptype2.iso_double_with_units 
 
-- title: Moved to isoprocessor or deprecated
+- title: Deprecated
   contents:
-  - iso_get_data
-  - iso_get_resistors_info
-  - iso_get_standards_info
-  - iso_omit_files_with_problems
-  - iso_calculate_ratios
-  - iso_convert_signals
-  - iso_convert_time
-  - iso_plot_continuous_flow_data
-  - iso_plot_dual_inlet_data
-  - iso_plot_raw_data
-  - isoread
-  
-
+  - deprecated
 
 # additional modification notes on 
 # https://www.r-bloggers.com/building-a-website-with-pkgdown-a-short-guide/

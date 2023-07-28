@@ -191,14 +191,17 @@ get_vendor_data_table_info <- function(iso_files) {
 
 # Specific data aggregation calls =====
 
-#' DEPRECATED
-#'
-#' Please use \link{iso_get_all_data} instead.
-#' @param ... forwarded to \link{iso_get_all_data}
-#'
+#' @rdname deprecated
+#' @details \code{iso_get_data}: use \link{iso_get_all_data} instead
 #' @export
 iso_get_data <- function(...) {
-  warning("'iso_get_data()' is deprecated in favor of the more descriptive 'iso_get_all_data()'. Please use 'iso_get_all_data()' directly to avoid this warning.", immediate. = TRUE, call. = FALSE)
+  lifecycle::deprecate_warn(
+    "1.3.0",
+    "iso_get_data()",
+    "iso_get_all_data()",
+    details = "Function renamed to be more descriptive.", 
+    always = TRUE
+  )
   iso_get_all_data(...)
 }
 
@@ -532,14 +535,17 @@ iso_get_bgrd_data <- function(iso_files, select = everything(), gather = FALSE, 
   return(data)
 }
 
-#' DEPRECATED
-#'
-#' Please use \link{iso_get_standards} instead.
-#' @param ... forwarded to \link{iso_get_standards}
-#'
+#' @rdname deprecated
+#' @details \code{iso_get_standards_info}: use \link{iso_get_standards} instead
 #' @export
 iso_get_standards_info <- function(...) {
-  warning("'iso_get_standards_info()' is deprecated in favor of the simpler 'iso_get_standards()'. Please use 'iso_get_standards()' directly to avoid this warning.", immediate. = TRUE, call. = FALSE)
+  lifecycle::deprecate_warn(
+    "1.3.0",
+    "iso_get_standards_info()",
+    "iso_get_standards()",
+    details = "Function renamed for simplification.", 
+    always = TRUE
+  )
   iso_get_standards(...)
 }
 
@@ -620,16 +626,17 @@ iso_get_standards <- function(iso_files, select = everything(), include_file_inf
   return(data)
 }
 
-
-#' DEPRECATED
-#'
-#' Please use \link{iso_get_resistors} instead.
-#'
-#' @param ... forwarded to \link{iso_get_resistors}
-#'
+#' @rdname deprecated
+#' @details \code{iso_get_resistors_info}: use \link{iso_get_resistors} instead
 #' @export
 iso_get_resistors_info <- function(...) {
-  warning("'iso_get_resistors_info()' is deprecated in favor of the simpler 'iso_get_resistors()'. Please use 'iso_get_resistors()' directly to avoid this warning.", immediate. = TRUE, call. = FALSE)
+  lifecycle::deprecate_warn(
+    "1.3.0",
+    "iso_get_resistors_info()",
+    "iso_get_resistors()",
+    details = "Function renamed for simplification.", 
+    always = TRUE
+  )
   iso_get_resistors(...)
 }
 
