@@ -16,9 +16,11 @@ version <- as.character(packageVersion("isoreader"))
 
 # isoreader <a href='https://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
+<!-- badges: start -->
 [![R build status](https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg)](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://isoreader.isoverse.org/)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.02878/status.svg)](https://doi.org/10.21105/joss.02878)
+<!-- badges: end -->
 
 ## About
 

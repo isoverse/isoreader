@@ -7,9 +7,7 @@ template:
     ganalytics: UA-106138361-3
 
 development:
-  mode: unreleased
-  version_label: danger
-  version_tooltip: "release candidate"
+  mode: devel
 
 home:
   strip_header: true    
