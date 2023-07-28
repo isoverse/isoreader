@@ -55,3 +55,9 @@ release_questions <- function() {
     "Is it passing travis, appveyor and win-builder?"
   )
 }
+
+# deprecated documentation block
+#' These functions have been deprecated and will be removed in future versions of isoreader.
+#' @name deprecated
+#' @param ... deprecated (passed on to new function if superseded)
+NULL
