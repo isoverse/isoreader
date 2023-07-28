@@ -1,11 +1,13 @@
 context("Continuous flow")
 
+# data structures ========
+
 test_that("test that supported cf files are correct", {
   initialize_options()
   expect_is(exts <- get_supported_cf_files(), "data.frame")
   expect_equal(exts$extension, c(".cf", ".cf.rds", ".dxf", ".iarc"))
-  expect_true(all(exts$func %>% sapply(class) == "character"))
-  expect_true(all(exts$func %>% map_lgl(exists, mode = "function", where = asNamespace("isoreader"))))
+  expect_true(all(exts$func |> sapply(class) == "character"))
+  expect_true(all(exts$func |> map_lgl(exists, mode = "function", where = asNamespace("isoreader"))))
 })
 
 test_that("test that parameter checks are performed", {
@@ -18,12 +20,18 @@ test_that("test that parameter checks are performed", {
 })
 
 
+# example files ========
+
 test_that("test that continous flow files can be read", {
   
-  # skip on CRAN to reduce checktime to below 10 minutes
+  # skip on CRAN to reduce check time to below 10 minutes
   skip_on_cran()
   
-  # test specific files
+  # skip if flag is set
+  if (identical(getOption("isoreader.skip_file_tests"), TRUE))
+    skip("Currently not testing continuous flow example files.")
+  
+  # start tests for files
   iso_turn_reader_caching_off()
 
   # .cf file
@@ -60,7 +68,7 @@ test_that("test that continous flow files can be read", {
     )
   )
   expect_equal(
-    iso_get_units(iso_get_vendor_data_table(cf)) %>% as.character(),
+    iso_get_units(iso_get_vendor_data_table(cf)) |> as.character(),
     c(NA, NA, "s", "s", "s", "mV", "mV", "mV", "mV", "mVs", "mVs", 
       "mVs", "Vs", "Vs", "Vs", NA, NA, NA, NA, NA, "permil", "permil", 
       NA, "permil", "%", NA)
@@ -109,7 +117,7 @@ test_that("test that continous flow files can be read", {
       "d 17O/16O", "Rps 45CO2/44CO2", "Rps 46CO2/44CO2")
   )
   expect_equal(
-    iso_get_units(iso_get_vendor_data_table(dxf)) %>% as.character(),
+    iso_get_units(iso_get_vendor_data_table(dxf)) |> as.character(),
     c(NA, NA, "s", "s", "s", "mV", "mV", "mV", "mV", "mV", "mV", 
       "mV", "mV", "mV", "mV", "mV", "mV", "mVs", "mVs", "mVs", "mVs", 
       "Vs", "Vs", "Vs", "Vs", "%", NA, NA, NA, NA, NA, "permil", "permil", 
@@ -127,10 +135,21 @@ test_that("test that continous flow files can be read", {
   
 })
 
+# additional test files ======
+
 test_that("test that additional continous flow files can be read", {
   
-  # additional test files (skip on CRAN because test files not includes due to tarball size limits) =====
+  # skip on CRAN (test files too big and check time too long)
   skip_on_cran()
+  
+  # skip if flag is set
+  if (identical(getOption("isoreader.skip_file_tests"), TRUE))
+    skip("Currently not testing additional continuous flow files.")
+  
+  # start tests for files
+  iso_turn_reader_caching_off()
+  
+  
   test_folder <- file.path("test_data") # test_folder <- file.path("tests", "testthat", "test_data") # direct
   iso_turn_reader_caching_off()
 
@@ -470,13 +489,13 @@ test_that("test that additional continous flow files can be read", {
       `d 2H/1H` = "permil", `AT% 2H/1H` = "%", `Rps 3H2/2H2` = NA)
   )
   
-  # test re-reading =======
+  ## test re-reading =======
   # NOTE: ideally this should also include an iarc file
   iso_files <- c(dxf1, dxf2, cf1)
   expect_true(iso_is_continuous_flow(reread_dxf <- reread_iso_files(iso_files)))
   expect_equal(nrow(problems(reread_dxf)), 0)
   
-  # test parallel processing ======
+  ## test parallel processing ======
   # multisession
   file_paths <-
     file.path(test_folder,

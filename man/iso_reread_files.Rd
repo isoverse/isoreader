@@ -83,14 +83,14 @@ iso_turn_reader_caching_off()
 saved_files_path <- "saved_isofile.scan.rds"
 
 # create saved collection
-iso_get_reader_examples_folder() \%>\% 
- iso_read_scan() \%>\%
+iso_get_reader_examples_folder() |> 
+ iso_read_scan() |>
  iso_save(saved_files_path)
  
 # load collection
-iso_read_scan(saved_files_path) \%>\%
+iso_read_scan(saved_files_path) |>
  # reread outdated files (alternatively "_all_" or "_changed_")
- iso_reread_outdated_files() \%>\%
+ iso_reread_outdated_files() |>
  # re-save collection to its original location
  iso_save(saved_files_path)
 

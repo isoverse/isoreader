@@ -44,7 +44,7 @@ readers <- iso_register_dual_inlet_file_reader(".new.did", "new_reader")
 knitr::kable(readers)
 
 # copy an example file from the package with the new extension
-iso_get_reader_example("dual_inlet_example.did") %>% file.copy(to = "example.new.did")
+iso_get_reader_example("dual_inlet_example.did") |> file.copy(to = "example.new.did")
 
 # read the file
 iso_read_dual_inlet("example.new.did", read_cache = FALSE)
@@ -70,7 +70,7 @@ isoreader:::set_finish_file_event_expr({
 c(
   iso_get_reader_example("dual_inlet_example.did"),
   iso_get_reader_example("dual_inlet_example.caf")
-) %>% iso_read_dual_inlet(read_cache = FALSE)
+) |> iso_read_dual_inlet(read_cache = FALSE)
 
 isoreader:::initialize_options() # reset all isoreader options
 ```
@@ -80,42 +80,40 @@ isoreader:::initialize_options() # reset all isoreader options
 
 The best way to start debugging an isoreader call is to switch the package into debug mode. This is done using the internal `iso_turn_debug_on()` function. This enables debug messages, turns caching off by default so files are always read anew, and makes the package keep more information in the isofile objects. It continues to catch errors inside file readers (keeping track of them in the [problems](operations.html#dealing-with-file-read-problems)) unless you set `iso_turn_debug_on(catch_errors = FALSE)`, in which case no errors are caught and stop the processing so you get the full traceback and debugging options of your IDE.
 
-## Debugging binary file reads (Isodat)
+# Debugging binary file reads (Isodat)
 
-Errors during the binary file reads usually indicate the approximate position in the file where the error was encountered. The easiest way to get started on figuring out what the file looks like at that position is to use a binary file editor and jump to the position. For a sense of the interpreted structure around that position, one can use the internal function `map_binary_structure` which tries to apply all frequently occurring binary patterns recognized by isoreader. The binary representation of the source file is only available if in debug mode but if debug mode is ON, it can be accessed as follows:
+Errors during the binary file reads usually indicate the approximate position in the file where the error was encountered. The easiest way to get started on figuring out what the file looks like at that position is to use a binary file editor and jump to the position. For a sense of the interpreted structure around that position, one can use `iso_print_source_file_structure()` which shows what binary patterns isoreader recognized. This binary representation of the source file is only available if the file is read while in debug mode, otherwise file objects would get unnecessarily large:
 
 ```{r}
 # turn on debug mode
 isoreader:::iso_turn_debug_on()
 # read example file
-ex <- iso_get_reader_example("dual_inlet_example.did") %>%  
+ex <- iso_get_reader_example("dual_inlet_example.did") |>  
   iso_read_dual_inlet(quiet = TRUE)
-# access binary
-bin <- ex$binary
-# use structure mapping
-bin %>%
-  isoreader:::move_to_pos(1340) %>%
-  isoreader:::map_binary_structure(length = 200)
+# retrieve source structure and print a part of it
+bin <- ex |> iso_get_source_file_structure() 
+bin |> iso_print_source_file_structure(length = 500)
 ```
 
-This structure representation shows recognized control elements in `<...>` and data elements in `{...}` which are converted to text or numeric representation if the interpretation is unambiguous, or plain hexadecimal characters if the nature of the data cannot be determined with certainty. Because this function tries all possible control elements and data interpretations, it is quite slow and may take a while if run for large stretches of binary code (i.e. if the `length` parameter is very long).
+This structure representation shows recognized control elements in `<...>` and data elements in `{...}` which are converted to text or numeric representation if the interpretation is unambiguous, or plain hexadecimal characters if the nature of the data cannot be determined with certainty. You can adjust `start` and `length` to look at different parts of the binary file or save the the structure to a text file with `save_to_file`.
 
-For an overview of all the control elements that are currently consider, use the internal `get_ctrl_blocks_config_df()` function.
+For an overview of all the elements (`blocks`) identified in the binary file as a tibble, use:
 
 ```{r}
-isoreader:::get_ctrl_blocks_config_df()
+bin$blocks |> head(20)
 ```
 
-Additional information can be gleaned from the so-called control blocks, which are larger structural elements of Isodat binary files and are kept in a data frame within the binary object (again only available in debug mode).
+While this provides all elements, the top level structure is provided by the so-called control blocks:
 
 ```{r}
-bin$C_blocks
+bin$blocks |> dplyr::filter(type == "C block") |> head(20)
 ```
 
-Same as for specific byte positions, one can use the control blocks to navigate the file and `map_binary_structure`.
+To look at specific control-blocks, simply provide the relevant start position to `iso_print_source_file_structure()`:
 
 ```{r}
-bin %>%
-  isoreader:::move_to_C_block("CMethod") %>%
-  isoreader:::map_binary_structure(length = 200)
+cdata <- bin$blocks |> dplyr::filter(block == "CData")
+cdata
+
+bin |> iso_print_source_file_structure(start = cdata$start, length = 500)
 ```

@@ -16,11 +16,9 @@ version <- as.character(packageVersion("isoreader"))
 
 # isoreader <a href='https://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
-[![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://isoreader.isoverse.org/)
 [![R build status](https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg)](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check)
-[![Binder](https://img.shields.io/badge/explore%20online-in%20RStudio-blue.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=rstudio)
-[![Binder](https://img.shields.io/badge/explore%20online-in%20Jupyter-orange.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=lab)
+[![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://isoreader.isoverse.org/)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02878/status.svg)](https://doi.org/10.21105/joss.02878)
 
 ## About
 
@@ -29,8 +27,6 @@ This package is intended as a unified one-stop command line interface to all com
 [isoreader](https://isoreader.isoverse.org/) enables the reading and processing of stable isotope data directly from the data files and thus provides a tool for platform-independent (Windows, Mac, Linux), efficient and reproducible data reduction. Although implemented in R, it can be used in both RMarkdown as well as Jupyter data processing notebooks and also provides functionality for easy export to Python using the shared R/Python feather file format. At present, it can read most Thermo dual inlet (.did, .caf) and continuous flow (.dxf, .cf) data files as well as Elementar continuous flow data archives (.iarc) with additional extensions for other file formats in the works. Due to the dynamic implementation and design based on the popular [tidyverse](https://www.tidyverse.org/) style of R programming, isoreader is easily extendable, takes care of error catching to avoid pipeline breaks due to problems encountered in source data files (modeled after  [readr](https://readr.tidyverse.org/)) and works great with [tidyverse](https://www.tidyverse.org/) packages such as [tidyr](https://tidyr.tidyverse.org/), [dplyr](https://dplyr.tidyverse.org/) and [ggplot](https://ggplot2.tidyverse.org/).
 
 ## Installation
-
-You can install the latest release of isoreader from [CRAN](https://cran.r-project.org/package=isoreader):
 
 ```{r cran-installation, eval = FALSE}
 # Note: isoreader is temporarily not available on CRAN because of a missing dependency, please install directly from GitHub using the commands below
@@ -77,8 +73,8 @@ Currently supported file types:
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(isoreader)
-iso_get_supported_file_types() %>% 
-  dplyr::select(-call) %>%
+iso_get_supported_file_types() |> 
+  dplyr::select(-"call") |>
   knitr::kable()
 ```
 

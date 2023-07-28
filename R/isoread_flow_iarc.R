@@ -26,7 +26,9 @@ iso_read_flow_iarc <- function(ds, options = list()) {
   }
   
   # unzipping iarc archive ====
-  folder_name <- ds$file_info$file_path %>% basename() %>% { str_replace(., fixed(get_file_ext(.)), "") }
+  folder_name <- ds$file_info$file_path |> basename()
+  folder_name <- stringr::str_remove(folder_name, fixed(get_file_ext(folder_name)))
+  
   folder_path <- file.path(tempdir(), folder_name)
   if (!file.exists(folder_path)) {
     if (!default("quiet")) log_message("unpacking isoprime archive file...", prefix = "      ")
@@ -56,22 +58,22 @@ iso_read_flow_iarc <- function(ds, options = list()) {
   }
   tasks <- exec_func_with_error_catch(process_iarc_tasks_xml, task_files, method_params) 
   col_check(c("GlobalIdentifier", "Name", "Id", "ProcessingListTypeIdentifier"), 
-            map(tasks, "info") %>% bind_rows(), msg = "iarc tasks' information insufficient")
+            map(tasks, "info") |> bind_rows(), msg = "iarc tasks' information insufficient")
   
   # processing lists / gas configuration ====
   all_processing_lists <- 
-    tasks %>% map("info") %>% bind_rows() %>% 
-    group_by(.data$ProcessingListTypeIdentifier) %>% 
-    summarize(samples = n()) %>% 
-    ungroup() %>% 
+    tasks |> map("info") |> bind_rows() |> 
+    group_by(.data$ProcessingListTypeIdentifier) |> 
+    summarize(samples = n()) |> 
+    ungroup() |> 
     full_join(processing_lists, by = c("ProcessingListTypeIdentifier" = "DefinitionUniqueIdentifier"))
   
   # safety check on processing lists (make sure all processing lists defined in tasks have a ProcessingListId)
   if (any(is.na(all_processing_lists$ProcessingListId))) {
     sprintf("mismatch between processing lists in tasks ('%s') and in iarc info ('%s')",
-            all_processing_lists$ProcessingListTypeIdentifier[is.na(all_processing_lists$samples)] %>% str_c(collapse = "', '"),
-            all_processing_lists$ProcessingListTypeIdentifier[is.na(all_processing_lists$ProcessingListId)] %>% str_c(collapse = "', '")
-    ) %>% stop(call. = FALSE)
+            all_processing_lists$ProcessingListTypeIdentifier[is.na(all_processing_lists$samples)] |> str_c(collapse = "', '"),
+            all_processing_lists$ProcessingListTypeIdentifier[is.na(all_processing_lists$ProcessingListId)] |> str_c(collapse = "', '")
+    ) |> stop(call. = FALSE)
   }
   
   # get gas configurations
@@ -106,12 +108,12 @@ process_iarc_samples <- function(iso_file_template, tasks, gas_configs, folder_p
   # sort task to process in order 
   #FIXME: sorting no longer works because purrr removed the function
   #not sorting at all right now but revisit this
-  #tasks <- tasks %>% sort_by(generate_task_sample_id)
+  #tasks <- tasks |> sort_by(generate_task_sample_id)
   
   # loop through and process info and data
   sapply(tasks, function(task) {
     # prepare iso_file object
-    iso_file <- iso_file_template %>% 
+    iso_file <- iso_file_template |> 
       # set file path parameters
       set_ds_file_path(
         file_root = iso_file_template$file_info$file_root,
@@ -121,14 +123,14 @@ process_iarc_samples <- function(iso_file_template, tasks, gas_configs, folder_p
     
     # processing info
     if (!default("quiet")) {
-      sprintf("processing sample '%s' (IRMS data '%s')",
-              generate_task_sample_id(task), 
-              task$data_files %>% 
-                dplyr::filter(!!sym("TypeIdentifier") == "Acquire") %>% 
-                { .$DataFile } %>% 
-                { if(length(.) > 0) str_c(., collapse = "', '") else "" }
-              #task$info$GlobalIdentifier
-              ) %>% 
+      "processing sample '%s' (IRMS data '%s')" |>
+        sprintf(
+          generate_task_sample_id(task), 
+          task$data_files |> 
+            dplyr::filter(!!sym("TypeIdentifier") == "Acquire") |> 
+            dplyr::pull(.data$DataFile) |>
+            if_not_empty_then(str_c, collapse = "', '", empty = "")
+        ) |> 
         log_message(prefix = "      ")
     }
     
@@ -163,7 +165,7 @@ process_iarc_sample_info <- function(iso_file, task) {
 process_iarc_sample_data <- function(iso_file, task, gas_configs, folder_path) {
   
   # aquire = IRMS data
-  irms_data <- task$data_files %>% dplyr::filter(!!sym("TypeIdentifier") == "Acquire") 
+  irms_data <- task$data_files |> dplyr::filter(!!sym("TypeIdentifier") == "Acquire") 
   if (nrow(irms_data) == 0) stop("no IRMS acquisitions associated with this sample", call. = FALSE)
   
   # check for gas configurations
@@ -176,7 +178,7 @@ process_iarc_sample_data <- function(iso_file, task, gas_configs, folder_path) {
   for (i in 1:nrow(irms_data)) {
     iso_file <- with(irms_data[i,], {
       filepath <- file.path(folder_path, DataFile)
-      run_time.s <- difftime(parse_datetime(AcquireEndDate, format = dt_format), parse_datetime(AcquireStartDate, format = dt_format), units = "s") %>% as.numeric()
+      run_time.s <- difftime(parse_datetime(AcquireEndDate, format = dt_format), parse_datetime(AcquireStartDate, format = dt_format), units = "s") |> as.numeric()
       read_irms_data_file(iso_file, filepath, gas_config, run_time.s, data_units = "nA", data_scaling = 1e-9)
     })
   }
@@ -198,27 +200,29 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
   config <- gas_config$species[[dataset_attributes$Species]]
   
   # read irms data and determine which beams are used
-  irms_data <- rhdf5::h5read(filepath, "DataSet") %>% dplyr::as_tibble()
+  irms_data <- rhdf5::h5read(filepath, "DataSet") |> dplyr::as_tibble()
   rhdf5::H5close() # garbage collect
   
   if (!"Scan" %in% names(irms_data)) 
     stop("Scan column missing from data file ", basename(filepath), call. = FALSE)
   
-  data_channels <- irms_data %>% names() %>% str_subset("^Beam")
-  config_channels <- config$channels %>% filter(.data$channel %in% data_channels)
+  data_channels <- irms_data |> names() |> str_subset("^Beam")
+  config_channels <- config$channels |> filter(.data$channel %in% data_channels)
   
   # safety check for channels (if no channels defined in the config at all, we've got problems)
   if ( nrow(config_channels) == 0)
-    stop("no channel information in gas configuration for ", data_channels %>% str_c(collapse = ", "), call. = FALSE)
+    stop("no channel information in gas configuration for ", data_channels |> str_c(collapse = ", "), call. = FALSE)
   
   # proceed only with the channels that are config defined
   irms_data <- irms_data[c("Scan", config_channels$channel)]
   
-  multiple <- config_channels %>% group_by(.data$channel) %>% summarize(n = n(), masses = str_c(.data$mass, collapse = ", "))
+  multiple <- config_channels |> group_by(.data$channel) |> summarize(n = n(), masses = str_c(.data$mass, collapse = ", "))
   if (any(multiple$n > 1)) {
     stop("cannot process beam channels, some channels assigned to more than one mass: ",
-         multiple %>% filter(n > 1) %>% mutate(label = paste0(.data$channel, ": ", .data$masses)) %>%
-         { .$label } %>% str_c(collapse = "; "), call. = FALSE)
+         multiple |> filter(n > 1) |> 
+           mutate(label = paste0(.data$channel, ": ", .data$masses)) |>
+           dplyr::pull(.data$label) |> 
+           str_c(collapse = "; "), call. = FALSE)
   }
   
   # h3 factor
@@ -226,23 +230,26 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
     iso_file$file_info$H3_factor <- config$H3_factor
   
   # rename channels
-  rename_dots <- config_channels %>% { rlang::set_names(.$channel, str_c("i", .$mass, ".", data_units)) }
-  irms_data <- irms_data %>% dplyr::rename(!!!rename_dots)
+  rename_dots <- rlang::set_names(
+    config_channels$channel, 
+    str_c("i", config_channels$mass, ".", data_units)
+  )
+  irms_data <- irms_data |> dplyr::rename(dplyr::all_of(rename_dots))
   
   # scale currents
   scale_data <- function(x) x / data_scaling
-  irms_data <- irms_data %>% mutate_at(vars(starts_with("i")), scale_data)
+  irms_data <- irms_data |> mutate_at(vars(starts_with("i")), scale_data)
   
   # scale time
   dt <- run_time.s / nrow(irms_data)
-  irms_data <- irms_data %>% 
-    rename(tp = .data$Scan) %>% 
-    mutate(tp = as.integer(.data$tp), time.s = dt * .data$tp) %>% 
-    select(.data$tp, .data$time.s, everything())
+  irms_data <- irms_data |> 
+    rename(tp = "Scan") |> 
+    mutate(tp = as.integer(.data$tp), time.s = dt * .data$tp) |> 
+    select("tp", "time.s", everything())
   
   # store mass data
   if (nrow(iso_file$raw_data) > 0) {
-    existing <- iso_file$raw_data %>% select(starts_with("i")) %>% names()
+    existing <- iso_file$raw_data |> select(starts_with("i")) |> names()
     if ( any(dups <- existing %in% names(irms_data)) )
       stop("same ions reported in multiple data files, cannot reconcile duplicate data: ", 
            str_c(existing[dups], collapse = ", "), call. = FALSE)

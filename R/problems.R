@@ -48,7 +48,7 @@ iso_get_problems <- function(iso_files, select = everything()) {
   select_cols <- get_column_names(probs, select = enquo(select), n_reqs = list(select = "*"), cols_must_exist = FALSE)$select
   if (!"file_id" %in% select_cols) 
     select_cols <- c("file_id", select_cols) # file info always included
-  return(dplyr::select(probs, !!!select_cols))
+  return(dplyr::select(probs, dplyr::all_of(select_cols)))
 }
 
 #' @importFrom readr stop_for_problems
@@ -72,13 +72,13 @@ iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE, inclu
   # tally up problems
   probs_templ <- tibble(file_id = character(0), error = integer(0), warning = integer(0))
   if (n_problems(iso_files) > 0) {
-    probs <- problems(iso_files) %>% 
+    probs <- problems(iso_files) |> 
       # tally up number of warnings/errors per file
-      group_by(.data$file_id, .data$type) %>%
-      tally() %>% 
-      spread(.data$type, .data$n) %>%
+      group_by(.data$file_id, .data$type) |>
+      tally() |> 
+      spread(.data$type, .data$n) |>
       # to ensure these columns exists
-      bind_rows(probs_templ) %>% 
+      bind_rows(probs_templ) |> 
       ungroup()
   } else {
     probs <- probs_templ
@@ -88,12 +88,12 @@ iso_get_problems_summary <- function(iso_files, problem_files_only = TRUE, inclu
     # merge with file list to get all listed
     probs <- tibble(
       file_id = names(iso_files)
-    ) %>%
+    ) |>
       left_join(probs, by = "file_id") 
   }
   
   # finalize data frame
-  probs <- probs %>%
+  probs <- probs |>
     mutate(
       warning = ifelse(!is.na(.data$warning), .data$warning, 0L),
       error = ifelse(!is.na(.data$error), .data$error, 0L)
@@ -114,14 +114,14 @@ warn_problems <- function(x, cutoff = 5L, width = getOption("width")) {
   n <- n_problems(x)
   if (n == 0) return(invisible(x))
   has_many_problems <- n > cutoff
-  probs <- iso_get_problems(x) %>%
-    dplyr::mutate(i = as.character(dplyr::row_number())) %>% 
-    dplyr::select(c("i", "file_id", "type", "func", "details"))
+  probs <- iso_get_problems(x) |>
+    dplyr::mutate(i = as.character(dplyr::row_number())) |> 
+    dplyr::select("i", "file_id", "type", "func", "details")
   probs_list <-
     base::rbind(
       c("#", "FILE", "PROBLEM", "OCCURRED IN", "DETAILS"), 
       if (has_many_problems) utils::head(probs, cutoff - 1L) else probs
-    ) %>% as.list()
+    ) |> as.list()
     
   # add .... entries at end if there are too many problems
   if (has_many_problems) {
@@ -135,7 +135,7 @@ warn_problems <- function(x, cutoff = 5L, width = getOption("width")) {
   probs_f <- purrr::map(probs_list, format, justify = "left")
   
   # format lines to account for max display width
-  probs_lines <- do.call(paste, c(probs_f, list(sep = " | "))) %>% 
+  probs_lines <- do.call(paste, c(probs_f, list(sep = " | "))) |> 
     stringr::str_trim(side = "right")
   line_widths <- purrr::map_int(probs_lines, nchar)
   probs_lines[line_widths > width] <-
@@ -153,13 +153,17 @@ warn_problems <- function(x, cutoff = 5L, width = getOption("width")) {
   return(invisible(x))
 }
 
-#' Renamed to iso_filter_files_with_problems
-#' 
-#' This function has been renamed to \link{iso_filter_files_with_problems} for naming consistency.
-#' @param ... deprecated
+#' @rdname deprecated
+#' @details \code{iso_omit_files_with_problems}: use \link{iso_filter_files_with_problems} instead
 #' @export
 iso_omit_files_with_problems <- function(...) {
-  warning("iso_filter_files_with_problems() was renamed and will be removed in a future version of the isoreader package. Please use iso_filter_files_with_problems() directly instead to make your code future-proof.", immediate. = TRUE, call. = FALSE)
+  lifecycle::deprecate_warn(
+    "1.3.0",
+    "iso_omit_files_with_problems()",
+    "iso_filter_files_with_problems()",
+    details = "Function renamed for simplification.", 
+    always = TRUE
+  )
   iso_filter_files_with_problems(...)
 }
 
@@ -181,9 +185,10 @@ iso_filter_files_with_problems <- function(iso_files, remove_files_with_errors =
   iso_files <- iso_as_file_list(iso_files)
   
   # find trouble file ids
-  trouble_files <- problems(iso_files) %>% 
-    filter(.data$type %in% types) %>% 
-    { unique(.$file_id) }
+  trouble_files <- problems(iso_files) |> 
+    filter(.data$type %in% types) |> 
+    dplyr::pull(.data$file_id) |>
+    unique()
   
   # exclude
   exclude <- names(iso_files) %in% trouble_files
@@ -191,7 +196,7 @@ iso_filter_files_with_problems <- function(iso_files, remove_files_with_errors =
     sprintf("Info: removing %d/%d files that have any %s (keeping %d)", 
             sum(exclude), length(iso_files), 
             collapse(types, ", ", last = " or "),
-            length(iso_files) - sum(exclude)) %>% message()
+            length(iso_files) - sum(exclude)) |> message()
   }
   return(iso_files[!exclude])
 }
@@ -218,7 +223,7 @@ register_problem <- function(obj, type = NA_character_, details = NA_character_,
   } else {
     all_problems <- suppressWarnings(bind_rows(get_problems(obj), problem))
     if (!keep_duplicates) all_problems <- unique(all_problems)
-    obj <- obj %>% set_problems(all_problems)
+    obj <- obj |> set_problems(all_problems)
   }
   return(obj)
 }
@@ -261,7 +266,7 @@ get_problems <- function(x) {
 combined_problems <- function(...) {
   objs <- list(...)
   suppressWarnings(
-    lapply(objs, get_problems) %>% 
+    lapply(objs, get_problems) |> 
       bind_rows()
   )
 }

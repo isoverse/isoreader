@@ -8,7 +8,7 @@ iso_read_cf <- function(ds, options = list()) {
     stop("data structure must be a 'continuous_flow' iso_file", call. = FALSE)
   
   # read binary file
-  ds$binary <- get_ds_file_path(ds) %>% read_binary_isodat_file()
+  ds$source <- get_ds_file_path(ds) |> read_binary_isodat_file()
   
   # process file info
   if(ds$read_options$file_info) {
@@ -53,13 +53,13 @@ iso_read_cf <- function(ds, options = list()) {
 # extract voltage data in cf file
 extract_cf_raw_voltage_data <- function(ds) {
   # move to beginning of intensity information (the larger block coming 
-  ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot identify measured masses") %>%  
+  ds$source <- ds$source |> 
+    set_binary_file_error_prefix("cannot identify measured masses") |>  
     # can have data in multiple positions (e.g. if peak jumping) throughout the rest of the binary
     move_to_C_block("CRawDataScanStorage", reset_cap = TRUE) 
   
   # get trace positions
-  gas_positions <- ds$binary %>% 
+  gas_positions <- ds$source |> 
     find_next_patterns(re_text_0(), re_text_x(), re_unicode("Trace Data "), re_block("text"), re_null(4), re_block("stx"))
   
   # raw_data
@@ -67,39 +67,39 @@ extract_cf_raw_voltage_data <- function(ds) {
   
   # loop through gas positions
   for (gas_pos in gas_positions) {
-    ds$binary <- ds$binary %>% 
-      move_to_pos(gas_pos) %>% 
-      skip_pos(30) %>% 
+    ds$source <- ds$source |> 
+      move_to_pos(gas_pos) |> 
+      skip_pos(30) |> 
       capture_data_till_pattern("gas", "text", re_null(4), re_block("stx"))
     
-    gas_config <- ds$binary$data$gas
+    gas_config <- ds$source$data$gas
     
     # data start
     data_start_re <- re_combine(
       re_block("stx"), re_text_0(), re_block("stx"), 
       re_direct(".{4}", size = 4, label = ".{4}"))
-    ds$binary <- ds$binary %>% move_to_next_pattern(data_start_re)
-    data_start <- ds$binary$pos
+    ds$source <- ds$source |> move_to_next_pattern(data_start_re)
+    data_start <- ds$source$pos
     
     # find all masses at end of data
     data_end_re <- re_combine(
       re_direct(".{2}", size = 2, label = ".{2}"), re_block("stx"), 
       re_text_0(), re_block("stx"), re_null(4))
-    ds$binary <- ds$binary %>% move_to_next_pattern(data_end_re)
-    data_end <- ds$binary$pos - data_end_re$size
+    ds$source <- ds$source |> move_to_next_pattern(data_end_re)
+    data_end <- ds$source$pos - data_end_re$size
     
     mass_re <- re_combine(re_text_x(), re_unicode("Mass "))
-    mass_positions <- ds$binary %>% 
-      cap_at_next_pattern(re_unicode("MS/Clock")) %>% 
+    mass_positions <- ds$source |> 
+      cap_at_next_pattern(re_unicode("MS/Clock")) |> 
       find_next_patterns(mass_re)
     
     masses <- c()
     for (pos in mass_positions) {
       # a bit tricky to capture but this should do the trick reliably
       raw_mass <- 
-        ds$binary %>% move_to_pos(pos + mass_re$size) %>% 
-        capture_data_till_pattern("mass", "raw", re_text_x(), ignore_trailing_zeros = FALSE) %>% 
-        { .$data$mass }
+        ds$source |> move_to_pos(pos + mass_re$size) |> 
+        capture_data_till_pattern("mass", "raw", re_text_x(), ignore_trailing_zeros = FALSE) |> 
+        purrr::pluck("data", "mass")
       text_mass <- parse_raw_data(grepRaw("^([0-9]\\x00)+", raw_mass, value = TRUE), type = "text")
       masses <- c(masses, text_mass)
     }
@@ -112,10 +112,10 @@ extract_cf_raw_voltage_data <- function(ds) {
     if (n_data_points %% 1 > 0)
       stop("number of data points for ", gas_config, " is not an integer (", n_data_points, ")", call. = FALSE)
     
-    ds$binary<- ds$binary %>% 
-      move_to_pos(data_start) %>% 
+    ds$source<- ds$source |> 
+      move_to_pos(data_start) |> 
       capture_n_data("voltages", c("float", rep("double", length(masses))), n_data_points)
-    voltages <- bind_rows(ds$binary$data$voltages %>% dplyr::as_tibble() %>% rlang::set_names(c("time.s", masses_columns)))
+    voltages <- bind_rows(ds$source$data$voltages |> dplyr::as_tibble() |> rlang::set_names(c("time.s", masses_columns)))
     
     # check for data
     if (nrow(voltages) == 0) 
@@ -128,9 +128,9 @@ extract_cf_raw_voltage_data <- function(ds) {
   
   # add time point column
   ds$raw_data <-
-    raw_data %>% arrange(.data$time.s) %>%
-    mutate(tp = 1:n()) %>%
-    select(.data$tp, .data$time.s, everything())
+    raw_data |> arrange(.data$time.s) |>
+    mutate(tp = 1:n()) |>
+    select("tp", "time.s", everything())
   
   return(ds)
 }

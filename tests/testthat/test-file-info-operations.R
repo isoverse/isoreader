@@ -43,27 +43,27 @@ test_that("Test that selecting/renaming file info works", {
   
   # select outcomes
   expect_equal(
-    iso_select_file_info(iso_files, y = new_info2, y = new_info3, file_specific = TRUE) %>% iso_get_file_info(),
+    iso_select_file_info(iso_files, y = new_info2, y = new_info3, file_specific = TRUE) |> iso_get_file_info(),
     tibble(file_id = c("A", "B", "C"), y = c(NA, 2, 3))
   )
   expect_equal(
-    iso_select_file_info(iso_files, -starts_with("file"), -new_info) %>% iso_get_file_info(),
+    iso_select_file_info(iso_files, -starts_with("file"), -new_info) |> iso_get_file_info(),
     tibble(file_id = c("A", "B", "C"), new_info2 = c(NA, 2, NA), new_info3 = c(NA, NA, 3))
   )
   expect_equal(
-    iso_select_file_info(iso_files, -starts_with("file"), -new_info, file_specific = TRUE) %>% iso_get_file_info(),
+    iso_select_file_info(iso_files, -starts_with("file"), -new_info, file_specific = TRUE) |> iso_get_file_info(),
     tibble(file_id = c("A", "B", "C"), new_info2 = c(NA, 2, NA), new_info3 = c(NA, NA, 3))
   )
   expect_equal(
-    iso_select_file_info(iso_files, newer_info = new_info) %>% iso_get_file_info(),
+    iso_select_file_info(iso_files, newer_info = new_info) |> iso_get_file_info(),
     tibble(file_id = c("A", "B", "C"), newer_info = 42)
   )
   expect_equal(
-    iso_select_file_info(iso_files, newer_info = new_info, file_specific = TRUE) %>% iso_get_file_info(),
+    iso_select_file_info(iso_files, newer_info = new_info, file_specific = TRUE) |> iso_get_file_info(),
     tibble(file_id = c("A", "B", "C"), newer_info = 42)
   )
   expect_equal(
-    iso_select_file_info(iso_files, newest_info = new_info, new_info2, new_info2 = new_info3, file_specific = TRUE) %>% iso_get_file_info(),
+    iso_select_file_info(iso_files, newest_info = new_info, new_info2, new_info2 = new_info3, file_specific = TRUE) |> iso_get_file_info(),
     tibble(file_id = c("A", "B", "C"), newest_info = 42, new_info2 = c(NA, 2, 3))
   )
   
@@ -86,16 +86,16 @@ test_that("Test that selecting/renaming file info works", {
   
   # rename outcomes
   expect_equal(
-    iso_rename_file_info(iso_files, y = new_info2, y = new_info3, file_specific = TRUE) %>%
-      iso_get_file_info() %>% select(file_id, new_info, y),
+    iso_rename_file_info(iso_files, y = new_info2, y = new_info3, file_specific = TRUE) |>
+      iso_get_file_info() |> select(file_id, new_info, y),
     tibble(file_id = c("A", "B", "C"), new_info = 42, y = c(NA, 2, 3))
   )
   expect_equal(
-    iso_rename_file_info(iso_files, newer_info = new_info) %>% iso_get_file_info() %>% select(file_id, newer_info),
+    iso_rename_file_info(iso_files, newer_info = new_info) |> iso_get_file_info() |> select(file_id, newer_info),
     tibble(file_id = c("A", "B", "C"), newer_info = 42)
   )
   expect_equal(
-    iso_rename_file_info(iso_files, newest_info = new_info, new_info2 = new_info3, file_specific = TRUE) %>% iso_get_file_info() %>% select(file_id, newest_info, new_info2),
+    iso_rename_file_info(iso_files, newest_info = new_info, new_info2 = new_info3, file_specific = TRUE) |> iso_get_file_info() |> select(file_id, newest_info, new_info2),
     tibble(file_id = c("A", "B", "C"), newest_info = 42, new_info2 = c(NA, 2, 3))
   )
   
@@ -161,14 +161,14 @@ test_that("Test that mutating file info works", {
   
   # mutating
   expect_equal(
-    mutate(iso_files) %>% iso_get_file_info(), 
-    iso_files %>% iso_get_file_info())
+    mutate(iso_files) |> iso_get_file_info(), 
+    iso_files |> iso_get_file_info())
   expect_equal(
-    mutate(iso_files, new_info = as.character(new_info)) %>% iso_get_file_info(), 
-    iso_files %>% iso_get_file_info() %>% mutate(new_info = as.character(new_info)))
+    mutate(iso_files, new_info = as.character(new_info)) |> iso_get_file_info(), 
+    iso_files |> iso_get_file_info() |> mutate(new_info = as.character(new_info)))
   expect_equal(
-    mutate(iso_files, new_info = iso_double_with_units(1:3, "s")) %>% iso_get_file_info(), 
-    iso_files %>% iso_get_file_info() %>% mutate(new_info = iso_double_with_units(1:3, "s")))
+    mutate(iso_files, new_info = iso_double_with_units(1:3, "s")) |> iso_get_file_info(), 
+    iso_files |> iso_get_file_info() |> mutate(new_info = iso_double_with_units(1:3, "s")))
   
   expect_true(
     iso_is_file_list(
@@ -176,8 +176,8 @@ test_that("Test that mutating file info works", {
         mutate(iso_files, newest_info = case_when(new_info2 == 2 ~ 20, new_info3 == 3 ~ 30, TRUE ~ 00)))
   )
   expect_equal(
-    mutated_iso_files %>% iso_get_file_info(),
-    iso_files %>% iso_get_file_info() %>% 
+    mutated_iso_files |> iso_get_file_info(),
+    iso_files |> iso_get_file_info() |> 
       mutate(newest_info = case_when(new_info2 == 2 ~ 20, new_info3 == 3 ~ 30, TRUE ~ 00))
   )
   
@@ -189,8 +189,8 @@ test_that("Test that mutating file info works", {
   
   # mutate and iso_mutate_file_info equivalence
   expect_equal(
-    mutate(iso_files, newest_info = "A") %>% iso_get_file_info(), 
-    iso_mutate_file_info(iso_files, newest_info = "A") %>% iso_get_file_info())
+    mutate(iso_files, newest_info = "A") |> iso_get_file_info(), 
+    iso_mutate_file_info(iso_files, newest_info = "A") |> iso_get_file_info())
   
   
   # file root update =====
@@ -201,7 +201,7 @@ test_that("Test that mutating file info works", {
   expect_message(rerooted_files <- iso_set_file_root(iso_files, root = "test"), 
                  "setting file root for 3 data file.*to.*test")
   expect_equal(iso_get_file_info(rerooted_files, c(file_root, file_path)),
-               iso_get_file_info(iso_files, c(file_root, file_path)) %>% mutate(file_root = "test"))
+               iso_get_file_info(iso_files, c(file_root, file_path)) |> mutate(file_root = "test"))
   
   # with removing embedded root
   iso_files[[1]]$file_info$file_path <- "A/B/C/a.cf"
@@ -211,12 +211,12 @@ test_that("Test that mutating file info works", {
   expect_warning(rerooted_files <- iso_set_file_root(iso_files, remove_embedded_root = "DNE"), 
                  "3/3 file paths do not include the embedded root")
   expect_equal(iso_get_file_info(rerooted_files, c(file_root, file_path)),
-               iso_get_file_info(iso_files, c(file_root, file_path)) %>% mutate(file_root = "."))
+               iso_get_file_info(iso_files, c(file_root, file_path)) |> mutate(file_root = "."))
   
   expect_warning(rerooted_files <- iso_set_file_root(iso_files, root = "test", remove_embedded_root = "A/B/C"), 
                  "1/3 file paths do not include the embedded root")
   expect_equal(iso_get_file_info(rerooted_files, c(file_root, file_path)),
-               iso_get_file_info(iso_files, c(file_root, file_path)) %>% 
+               iso_get_file_info(iso_files, c(file_root, file_path)) |> 
                  mutate(file_path = str_replace(file_path, "A/B/C/", ""), file_root = "test"))
   
   expect_message(rerooted_files <- iso_set_file_root(iso_files, remove_embedded_root = "A/B"), 
@@ -224,7 +224,7 @@ test_that("Test that mutating file info works", {
   expect_message(rerooted_files <- iso_set_file_root(iso_files, root = "test", remove_embedded_root = "././A/B"), 
                  "setting file root for 3 data file.*to.*test.*removing embedded root.*A/B")
   expect_equal(iso_get_file_info(rerooted_files, c(file_root, file_path)),
-               iso_get_file_info(iso_files, c(file_root, file_path)) %>% 
+               iso_get_file_info(iso_files, c(file_root, file_path)) |> 
                  mutate(file_path = str_replace(file_path, "A/B/", ""), file_root = "test"))
 
   
@@ -286,17 +286,17 @@ test_that("Test that file info parsing works", {
   
   # outcome
   expect_equal(iso_get_file_info(no_effect_isos), iso_get_file_info(iso_files))
-  expect_equal(iso_get_file_info(text_isos), iso_get_file_info(iso_files) %>% 
+  expect_equal(iso_get_file_info(text_isos), iso_get_file_info(iso_files) |> 
                  mutate(new_info = as.character(new_info)))
-  expect_equal(iso_get_file_info(number_isos), iso_get_file_info(iso_files) %>% 
+  expect_equal(iso_get_file_info(number_isos), iso_get_file_info(iso_files) |> 
                  mutate(new_info2 = parse_number(new_info2),
                         new_info3 = parse_number(new_info3)))
-  expect_equal(iso_get_file_info(integer_isos), iso_get_file_info(iso_files) %>% 
+  expect_equal(iso_get_file_info(integer_isos), iso_get_file_info(iso_files) |> 
                  mutate(new_info2 = parse_integer(new_info2)))
-  expect_equal(iso_get_file_info(double_isos), iso_get_file_info(iso_files) %>% 
+  expect_equal(iso_get_file_info(double_isos), iso_get_file_info(iso_files) |> 
                  mutate(new_info2 = parse_double(new_info2)))
-  expect_equal(iso_get_file_info(datetime_isos)$new_info3, (iso_get_file_info(iso_files) %>% 
-                 mutate(new_info3 = parse_datetime(new_info3) %>% lubridate::with_tz(Sys.timezone())))$new_info3)
+  expect_equal(iso_get_file_info(datetime_isos)$new_info3, (iso_get_file_info(iso_files) |> 
+                 mutate(new_info3 = parse_datetime(new_info3) |> lubridate::with_tz(Sys.timezone())))$new_info3)
   
 })
 
@@ -373,7 +373,7 @@ test_that("Test that file info addition works", {
   # test with isofiles (not just in data frame)
   template <- make_cf_data_structure("NA")
   template$read_options$file_info <- TRUE
-  iso_files <- map(split(file_info, seq(nrow(file_info))), ~{ x <- template; x$file_info <- .x; x }) %>% 
+  iso_files <- map(split(file_info, seq(nrow(file_info))), ~{ x <- template; x$file_info <- .x; x }) |> 
     iso_as_file_list()
   
   expect_message(
@@ -389,7 +389,7 @@ test_that("Test that file info addition works", {
     "'file_id' join.*3/3 new info.*matched 3" 
   )
   # check that iso files and df derived are the same
-  expect_equal(iso_files_out %>% iso_get_file_info(), df_out)
+  expect_equal(iso_files_out |> iso_get_file_info(), df_out)
   
   
 })

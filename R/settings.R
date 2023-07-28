@@ -31,7 +31,7 @@ resolve_defaults <- function(q) {
 # set package setting, internal function, not exported
 set_default <- function(name, value, overwrite = TRUE) {
   if (overwrite || !str_c("isoreader.", name) %in% names(options()))
-    options(list(value) %>% rlang::set_names(str_c("isoreader.", name)))
+    options(list(value) |> rlang::set_names(str_c("isoreader.", name)))
   return(invisible(value))
 }
 
@@ -50,7 +50,7 @@ get_temp <- function(name, allow_null = TRUE) {
 #' @param value value of the temporary option
 #' @export
 set_temp <- function(name, value) {
-  options(list(value) %>% rlang::set_names(str_c("isoreader_temp.", name)))
+  options(list(value) |> rlang::set_names(str_c("isoreader_temp.", name)))
   return(invisible(value))
 }
 
@@ -71,12 +71,13 @@ get_all_options <- function(with_temp = FALSE) {
 #' @family settings functions
 #' @export
 iso_get_default_reader_parameters <- function() {
-    c("quiet", "cache", "cache_dir", "read_raw_data", "read_file_info", "read_method_info", "read_vendor_data_table") %>% 
-    sapply(function(x) list(default(!!x))) %>% 
-    {
-      tibble(parameter = names(.),
-                 value = as.character(unlist(.)))
-    }
+    params <- c("quiet", "cache", "cache_dir", "read_raw_data", "read_file_info", "read_method_info", "read_vendor_data_table") |> 
+    sapply(function(x) list(default(!!x)))
+    
+    tibble(
+      parameter = names(params),
+      value = as.character(unlist(params))
+    )
 }
 
 #' Turn caching on/off
@@ -124,14 +125,14 @@ iso_set_default_read_parameters <- function(data = NULL, read_raw_data, read_fil
   
   # safety check
   if (!all(ok <- map_lgl(read_params, is.logical))){
-    glue("read parameters must be TRUE or FALSE, provided: {collapse(as.character(unlist(read_params[!ok])), ', ')}") %>% 
+    glue("read parameters must be TRUE or FALSE, provided: {collapse(as.character(unlist(read_params[!ok])), ', ')}") |> 
       stop(call. = FALSE)
   }
   
   # info message
   if(!quiet) {
     params <- sprintf("%s = %s", names(read_params), read_params)
-    glue("Info: setting read parameter(s) '{collapse(params, \"', '\", last = \"' and '\")}'") %>% message()
+    glue("Info: setting read parameter(s) '{collapse(params, \"', '\", last = \"' and '\")}'") |> message()
   }
 
   # set values
@@ -211,7 +212,7 @@ iso_turn_debug_on <- function(data = NULL, catch_errors = TRUE, cache = FALSE) {
   glue(
     "Info: debug mode turned on, ",
     "error catching turned {if(catch_errors) 'on' else 'off'}, ",
-    "caching turned {if(cache) 'on' else 'off'}") %>% 
+    "caching turned {if(cache) 'on' else 'off'}") |> 
     message()
   if (!missing(data)) return(data)
 }

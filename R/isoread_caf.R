@@ -8,7 +8,7 @@ iso_read_caf <- function(ds, options = list()) {
     stop("data structure must be a 'dual_inlet' iso_file", call. = FALSE)
   
   # read binary file
-  ds$binary <- get_ds_file_path(ds) %>% read_binary_isodat_file()
+  ds$source <- get_ds_file_path(ds) |> read_binary_isodat_file()
   
   # process file info
   if(ds$read_options$file_info) {
@@ -44,60 +44,61 @@ iso_read_caf <- function(ds, options = list()) {
 extract_caf_raw_voltage_data <- function(ds) {
 
   # locate masses
-  ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot identify measured masses") %>% 
+  ds$source <- ds$source |> 
+    set_binary_file_error_prefix("cannot identify measured masses") |> 
     move_to_C_block_range("CResultData", "CEvalDataIntTransferPart") 
   
   # read all masses
   masses_re <- re_combine(re_x_000(), re_text_x(), re_unicode("rIntensity"))
   masses <- 
     tibble(
-      pos = find_next_patterns(ds$binary, masses_re) + masses_re$size,
+      pos = find_next_patterns(ds$source, masses_re) + masses_re$size,
       # capture cup and mass
       data = map(.data$pos, function(pos) {
-        ds$binary %>%
-          move_to_pos(pos) %>%  
-          capture_data_till_pattern("cup", "text", re_text_x(), data_bytes_max = 8, move_past_dots = TRUE) %>%
-          move_to_next_pattern(re_unicode("rIntensity "), max_gap = 0L) %>% 
-          capture_data_till_pattern("mass", "text", re_text_x(), data_bytes_max = 8) %>% 
-          { dplyr::as_tibble(.$data[c("cup", "mass")]) }
+        capture <- 
+          ds$source |>
+          move_to_pos(pos) |>  
+          capture_data_till_pattern("cup", "text", re_text_x(), data_bytes_max = 8, move_past_dots = TRUE) |>
+          move_to_next_pattern(re_unicode("rIntensity "), max_gap = 0L) |> 
+          capture_data_till_pattern("mass", "text", re_text_x(), data_bytes_max = 8)
+        dplyr::as_tibble(capture$data[c("cup", "mass")])
       })
-    ) %>% 
+    ) |> 
     # unnest data
-    unnest(.data$data) %>% 
+    unnest("data") |> 
     mutate(
       cup = as.integer(.data$cup),
       column = str_c("v", .data$mass, ".mV")
     )
 
   # locate voltage data
-  ds$binary <- ds$binary %>% 
-    set_binary_file_error_prefix("cannot locate voltage data") %>% 
+  ds$source <- ds$source |> 
+    set_binary_file_error_prefix("cannot locate voltage data") |> 
     move_to_C_block_range("CDualInletRawData", "CResultData") 
   
   # find binary positions for voltage standards and samples
   standard_block_start <- find_next_pattern(
-    ds$binary, re_combine(re_unicode("Standard Block"), re_null(4), re_x_000()))
+    ds$source, re_combine(re_unicode("Standard Block"), re_null(4), re_x_000()))
   sample_block_start <- find_next_pattern(
-    ds$binary, re_combine(re_unicode("Sample Block"), re_null(4), re_x_000()))
+    ds$source, re_combine(re_unicode("Sample Block"), re_null(4), re_x_000()))
   
   # safety checks
   if (is.null(standard_block_start) || is.null(sample_block_start) || 
       standard_block_start > sample_block_start) {
-    iso_source_file_op_error(ds$binary, "cannot find standard and sample voltage data blocks at expected positions")
+    iso_source_file_op_error(ds$source, "cannot find standard and sample voltage data blocks at expected positions")
   }
   
   # read voltage data
-  ds$binary <- set_binary_file_error_prefix(ds$binary, "cannot process voltage data") 
+  ds$source <- set_binary_file_error_prefix(ds$source, "cannot process voltage data") 
   
   # right before this sequence there is a 4 byte sequence that could be a date, the last block is the # of masses
   read_blocks_re <- re_combine(re_null(4), re_block("etx"), re_x_000())
-  positions <- find_next_patterns(ds$binary, read_blocks_re)
+  positions <- find_next_patterns(ds$source, read_blocks_re)
   
   # function to capture voltages
   capture_voltages <- function(pos) {
-    bin <- ds$binary %>% 
-      move_to_pos(pos - 4) %>% 
+    bin <- ds$source |> 
+      move_to_pos(pos - 4) |> 
       capture_n_data("n_masses", "integer", n = 1)
     
     # safety check
@@ -105,7 +106,7 @@ extract_caf_raw_voltage_data <- function(ds) {
       iso_source_file_op_error(bin, glue("inconsistent number of voltage measurements encountered ({bin$data$n_masses}), expected {nrow(masses)}"))
     }
     
-    bin <- bin %>% 
+    bin <- bin |> 
       capture_n_data("voltage", "double", n = nrow(masses), sensible = c(-1000, 100000))
     
     # return voltage data
@@ -117,28 +118,28 @@ extract_caf_raw_voltage_data <- function(ds) {
     pos = positions + read_blocks_re$size,
     # note last read in the sample block is actually the "pre"-read of the standard
     type = ifelse(.data$pos < sample_block_start | .data$pos==max(.data$pos), "standard", "sample")
-  ) %>% 
-    group_by(.data$type) %>% 
+  ) |> 
+    group_by(.data$type) |> 
     mutate(
       cycle = as.integer(ifelse(.data$type[1] == "standard" & .data$pos == max(.data$pos), 0L, 1L:n())),
       # capture voltages
       voltages = map(.data$pos, capture_voltages)
-    ) %>% ungroup() %>% 
+    ) |> ungroup() |> 
     # unnest voltager data
-    unnest(.data$voltages) %>% 
+    unnest("voltages") |> 
     # combine with cup/mass information
-    left_join(select(masses, .data$cup, .data$column), by = "cup") 
+    left_join(select(masses, "cup", "column"), by = "cup") 
   
   # safety check
   if (any(notok <- is.na(voltages$column))) {
-    iso_source_file_op_error(ds$binary, glue("inconsistent cup designations: {collapse(voltages$cup[notok], ', ')}"))
+    iso_source_file_op_error(ds$source, glue("inconsistent cup designations: {collapse(voltages$cup[notok], ', ')}"))
   }
   
   # voltages data frame
   ds$raw_data <- 
-    voltages %>% 
-    select(-.data$pos, -.data$cup) %>% 
-    spread(.data$column, .data$voltage) %>% 
+    voltages |> 
+    select(-"pos", -"cup") |> 
+    spread(.data$column, .data$voltage) |> 
     arrange(desc(.data$type), .data$cycle)
   
   return(ds)
@@ -148,11 +149,11 @@ extract_caf_raw_voltage_data <- function(ds) {
 extract_caf_vendor_data_table <- function(ds) {
   
   # reset navigation
-  ds$binary <- reset_binary_file_navigation(ds$binary)
+  ds$source <- reset_binary_file_navigation(ds$source)
   
   # get data table
   extracted_dt <- 
-    ds %>% 
+    ds |> 
     # FIXME: see testing.Rmd for trying to switch to vendor_data_table2 (not possible yet)
     extract_isodat_main_vendor_data_table(
       C_block = "CResultData", cap_at_fun = NULL,
@@ -163,12 +164,12 @@ extract_caf_vendor_data_table <- function(ds) {
   # safety check
   req_cols <- c("Nr.", "Is Ref.?")
   if (!all(ok <- req_cols %in% names(vendor_dt))) {
-    glue("not all required columns found, missing: {collapse(req_cols[!ok], '. ')}") %>% 
+    glue("not all required columns found, missing: {collapse(req_cols[!ok], '. ')}") |> 
       stop(call. = FALSE)
   }
   
   # divided row columns (some are in the first block, some in the second)
-  second_block_cols <- vendor_dt[1,] %>% map_lgl(~is.na(.x))
+  second_block_cols <- vendor_dt[1,] |> map_lgl(~is.na(.x))
   if (sum(second_block_cols) > 0) {
     # separate and merge the two blocks
     condition <- as.name(names(vendor_dt)[which(second_block_cols)[1]])
@@ -179,11 +180,11 @@ extract_caf_vendor_data_table <- function(ds) {
   }
   
   # assign data table
-  ds$vendor_data_table <- vendor_dt %>% 
-    arrange(!!as.name("Nr.")) %>% 
-    mutate(cycle = as.integer(1:n())) %>% 
-    select(-!!as.name("Nr."), -!!as.name("Is Ref.?")) %>% 
-    select(!!as.name("cycle"), everything())
+  ds$vendor_data_table <- vendor_dt |> 
+    arrange(!!as.name("Nr.")) |> 
+    mutate(cycle = as.integer(1:n())) |> 
+    select(-"Nr.", -"Is Ref.?") |> 
+    select("cycle", dplyr::everything())
   
   # save information on the column units
   attr(ds$vendor_data_table, "units") <- 

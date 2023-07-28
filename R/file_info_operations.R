@@ -40,7 +40,7 @@ iso_select_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
         "Info: selecting/renaming the following file info across {length(iso_files)} data file(s): ",
         if (length(select_exps) == 0) "keeping only 'file_id'"
         else get_info_message_concat(select_exps, include_names = TRUE, names_sep = "->", flip_names_and_values = TRUE)
-      ) %>% message()
+      ) |> message()
     }
   }
 
@@ -83,7 +83,7 @@ iso_select_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
       )
 
       # select file_info columns
-      isofile$file_info <- dplyr::select(isofile$file_info, !!!select_cols)
+      isofile$file_info <- dplyr::select(isofile$file_info, dplyr::all_of(select_cols))
 
       # check for file id
       if (!"file_id" %in% names(isofile$file_info)) {
@@ -99,19 +99,19 @@ iso_select_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
 
     # summarize individual file updates
     if (!quiet) {
-      info <- map(isofiles_select, "vars") %>%
-        bind_rows() %>%
-        group_by(.data$file_id) %>%
+      info <- map(isofiles_select, "vars") |>
+        bind_rows() |>
+        group_by(.data$file_id) |>
         summarize(
           label =
             ifelse(
               .data$changed,
               sprintf("'%s'->'%s'", .data$from, .data$to),
               sprintf("'%s'", .data$from)
-            ) %>% paste(collapse = ", ")
-        ) %>%
-        dplyr::count(.data$label) %>%
-        mutate(label = sprintf(" - for %d file(s): %s", .data$n, .data$label)) %>%
+            ) |> paste(collapse = ", ")
+        ) |>
+        dplyr::count(.data$label) |>
+        mutate(label = sprintf(" - for %d file(s): %s", .data$n, .data$label)) |>
         arrange(desc(.data$n))
       message(paste(info$label, collapse = "\n"))
     }
@@ -125,9 +125,9 @@ iso_select_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
   } else {
     # across all files  - fast but less flexible
     # retrieve info
-    file_info <- iso_files %>%
+    file_info <- iso_files |>
       # retrieve file info
-      map(~.x$file_info) %>%
+      map(~.x$file_info) |>
       # combine in data frame (use safe bind to make sure different data column
       # types of the same name don't trip up the combination)
       safe_bind_rows()
@@ -146,9 +146,9 @@ iso_select_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
 
       # final processing
       file_info <-
-        file_info %>%
+        file_info |>
         # focus on selected columns only (also takes care of the rename)
-        dplyr::select(!!!select_cols)
+        dplyr::select(dplyr::all_of(select_cols))
 
       # check for file id
       if (!"file_id" %in% names(file_info)) {
@@ -157,17 +157,17 @@ iso_select_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
 
       # convert back to list format
       file_info <-
-        file_info %>%
+        file_info |>
         # should still be list columns but doesn't hurt to check
-        ensure_data_frame_list_columns() %>%
+        ensure_data_frame_list_columns() |>
         # split by file info
-        split(seq(nrow(file_info))) %>%
+        split(seq(nrow(file_info))) |>
         # clean back out the columns that were only added through the row bind
         map(~.x[!map_lgl(.x, ~is.list(.x) && all(map_lgl(.x, is.null)))])
 
       # update
       updated_iso_files <-
-        map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) %>%
+        map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) |>
         iso_as_file_list()
 
     } else {
@@ -231,7 +231,7 @@ iso_rename_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
       glue::glue(
         "Info: renaming the following file info across {length(iso_files)} data file(s): ",
         get_info_message_concat(rename_exps, include_names = TRUE, names_sep = "->", flip_names_and_values = TRUE)
-      ) %>% message()
+      ) |> message()
     }
   }
 
@@ -271,7 +271,7 @@ iso_rename_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
 
       # rename file_info columns
       if (length(rename_cols) > 0)
-      isofile$file_info <- dplyr::rename(isofile$file_info, !!!rename_cols)
+      isofile$file_info <- dplyr::rename(isofile$file_info, dplyr::all_of(rename_cols))
 
       # check for file id
       if (!"file_id" %in% names(isofile$file_info)) {
@@ -287,19 +287,19 @@ iso_rename_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
 
     # summarize individual file updates
     if (!quiet) {
-      info <- map(isofiles_rename, "vars") %>%
-        bind_rows() %>%
-        group_by(.data$file_id) %>%
+      info <- map(isofiles_rename, "vars") |>
+        bind_rows() |>
+        group_by(.data$file_id) |>
         summarize(
           label =
             ifelse(
               .data$changed,
               sprintf("'%s'->'%s'", .data$from, .data$to),
               sprintf("'%s'", .data$from)
-            ) %>% paste(collapse = ", ")
-        ) %>%
-        dplyr::count(.data$label) %>%
-        mutate(label = sprintf(" - for %d file(s): %s", .data$n, .data$label)) %>%
+            ) |> paste(collapse = ", ")
+        ) |>
+        dplyr::count(.data$label) |>
+        mutate(label = sprintf(" - for %d file(s): %s", .data$n, .data$label)) |>
         arrange(desc(.data$n))
       message(paste(info$label, collapse = "\n"))
     }
@@ -313,9 +313,9 @@ iso_rename_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
   } else {
     # across all files  - fast but less flexible
     # retrieve info
-    file_info <- iso_files %>%
+    file_info <- iso_files |>
       # retrieve file info
-      map(~.x$file_info) %>%
+      map(~.x$file_info) |>
       # combine in data frame (use safe bind to make sure different data column
       # types of the same name don't trip up the combination)
       safe_bind_rows()
@@ -327,7 +327,7 @@ iso_rename_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
       cols_must_exist = FALSE)$rename
 
     # then run the rename
-    file_info <- dplyr::rename(file_info, !!!rename_cols)
+    file_info <- dplyr::rename(file_info, dplyr::all_of(rename_cols))
 
     # check for file id
     if (!"file_id" %in% names(file_info)) {
@@ -336,17 +336,17 @@ iso_rename_file_info.iso_file_list <- function(iso_files, ..., file_specific = F
 
     # convert back to list format
     file_info <-
-      file_info %>%
+      file_info |>
       # should still be list columns but doesn't hurt to check
-      ensure_data_frame_list_columns() %>%
+      ensure_data_frame_list_columns() |>
       # split by file info
-      split(seq(nrow(file_info))) %>%
+      split(seq(nrow(file_info))) |>
       # clean back out the columns that were only added through the row bind
       map(~.x[!map_lgl(.x, ~is.list(.x) && all(map_lgl(.x, is.null)))])
 
     # update
     updated_iso_files <-
-      map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) %>%
+      map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) |>
       iso_as_file_list()
   }
 
@@ -393,7 +393,7 @@ iso_filter_files.iso_file <- function(iso_files, ..., quiet = default(quiet)) {
 #' @export
 iso_filter_files.iso_file_list <- function(iso_files, ..., quiet = default(quiet)) {
   # filter iso_files by file info
-  file_info <- iso_get_file_info(iso_files, quiet = TRUE) %>% dplyr::filter(...)
+  file_info <- iso_get_file_info(iso_files, quiet = TRUE) |> dplyr::filter(...)
   filtered_iso_files <-
     if (nrow(file_info) == 0) NULL
     else iso_files[names(iso_files) %in% file_info$file_id]
@@ -401,7 +401,7 @@ iso_filter_files.iso_file_list <- function(iso_files, ..., quiet = default(quiet
   # information
   if (!quiet) {
     str_interp("Info: applying file filter, keeping $[d]{n} of $[d]{n_all} files",
-               list(n = length(filtered_iso_files), n_all = length(iso_files))) %>% message()
+               list(n = length(filtered_iso_files), n_all = length(iso_files))) |> message()
   }
 
   return(filtered_iso_files)
@@ -447,24 +447,24 @@ iso_mutate_file_info.iso_file_list <- function(iso_files, ..., quiet = default(q
 
   # information
   if (!quiet) {
-    glue::glue("Info: mutating file info for {length(iso_files)} data file(s)") %>%
+    glue::glue("Info: mutating file info for {length(iso_files)} data file(s)") |>
       message()
   }
 
   # mutate iso_files' file info
   file_info <-
-    iso_get_file_info(iso_files, quiet = TRUE) %>%
+    iso_get_file_info(iso_files, quiet = TRUE) |>
     dplyr::mutate(...)
 
   # convert back to list format
   file_info <-
-    file_info %>%
-    ensure_data_frame_list_columns() %>%
+    file_info |>
+    ensure_data_frame_list_columns() |>
     split(seq(nrow(file_info)))
 
   # mutate
   mutated_iso_files <-
-    map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) %>%
+    map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) |>
     iso_as_file_list()
 
   # return
@@ -511,7 +511,7 @@ iso_set_file_root <- function(iso_files, root = ".", remove_embedded_root = NULL
     glue::glue(
       "Info: setting file root for {length(iso_files)} data file(s)",
       if(length(root) == 1) {" to '{root}'"} else {""},
-      if(!is.null(remove_embedded_root)) {" and removing embedded root '{remove_embedded_root}'"} else {""}) %>%
+      if(!is.null(remove_embedded_root)) {" and removing embedded root '{remove_embedded_root}'"} else {""}) |>
       message()
   }
 
@@ -520,8 +520,8 @@ iso_set_file_root <- function(iso_files, root = ".", remove_embedded_root = NULL
     embedded_root_simplified <- iso_shorten_relative_paths(remove_embedded_root)$path
     original_paths <- map_chr(iso_files, ~.x$file_info$file_path)
     paths <-
-      original_paths %>%
-      iso_root_paths(root = embedded_root_simplified, check_existence = FALSE) %>%
+      original_paths |>
+      iso_root_paths(root = embedded_root_simplified, check_existence = FALSE) |>
       mutate(original_path = !!original_paths)
 
     no_match_paths <- filter(paths, root != !!embedded_root_simplified)
@@ -530,11 +530,11 @@ iso_set_file_root <- function(iso_files, root = ".", remove_embedded_root = NULL
         "%d/%d file paths do not include the embedded root. The following paths could NOT be simplified:\n - %s",
         nrow(no_match_paths), nrow(paths),
         paste(no_match_paths$original_path, collapse = "\n - ")
-      ) %>% warning(immediate. = TRUE, call. = FALSE)
+      ) |> warning(immediate. = TRUE, call. = FALSE)
     }
 
     # file info updates
-    paths <- paths %>% mutate(
+    paths <- paths |> mutate(
       path = ifelse(.data$root == !!embedded_root_simplified, .data$path, .data$original_path),
       root = !!root
     )
@@ -548,8 +548,8 @@ iso_set_file_root <- function(iso_files, root = ".", remove_embedded_root = NULL
   }
 
   # update
-  iso_files <- as.list(iso_files) %>%
-    modifyList(file_info_update) %>%
+  iso_files <- as.list(iso_files) |>
+    modifyList(file_info_update) |>
     iso_as_file_list()
 
   # return single (if passed in as single)
@@ -621,13 +621,13 @@ iso_parse_file_info.iso_file_list <- function(iso_files, number = c(), double = 
         names(file_info)[tidyselect::eval_select(rlang::enexpr(datetime), file_info)],
       text =
         names(file_info)[tidyselect::eval_select(rlang::enexpr(text), file_info)]
-    ) %>%
-    tibble::enframe(name = "parse", value = "column") %>%
-    tidyr::unnest(.data$column) %>%
+    ) |>
+    tibble::enframe(name = "parse", value = "column") |>
+    tidyr::unnest("column") |>
     # find out number of casts per column
-    group_by(.data$column) %>% mutate(n = n()) %>% ungroup() %>%
+    group_by(.data$column) |> mutate(n = n()) |> ungroup() |>
     # get column info
-    left_join(classes, by = "parse") %>%
+    left_join(classes, by = "parse") |>
     mutate(
       old_class = map_chr(.data$column, ~class(file_info[[.x]])[1]),
       already_cast = .data$new_class == .data$old_class,
@@ -637,69 +637,67 @@ iso_parse_file_info.iso_file_list <- function(iso_files, number = c(), double = 
   # check on multi-casts
   if (any(vars$n > 1)) {
     probs <-
-      vars %>% filter(.data$n > 1) %>% group_by(.data$column) %>%
-      summarize(convert_to = paste(unique(.data$parse), collapse = ", ")) %>%
+      vars |> filter(.data$n > 1) |> group_by(.data$column) |>
+      summarize(convert_to = paste(unique(.data$parse), collapse = ", ")) |>
       mutate(label = sprintf(" - '%s' to %s", .data$column, .data$convert_to))
     glue::glue("cannot convert the same column(s) to multiple formats:\n",
-               "{paste(probs$label, collapse = '\n')}") %>%
+               "{paste(probs$label, collapse = '\n')}") |>
       stop(call. = FALSE)
   }
 
   # information
   if (!quiet) {
     info <-
-      vars %>% filter(!.data$problem, !.data$already_cast) %>%
-      group_by(.data$parse) %>%
-      summarize(convert = paste(unique(.data$column), collapse = "', '")) %>%
+      vars |> filter(!.data$problem, !.data$already_cast) |>
+      group_by(.data$parse) |>
+      summarize(convert = paste(unique(.data$column), collapse = "', '")) |>
       mutate(label = sprintf(" - to %s: '%s'", .data$parse, .data$convert))
-    already <- filter(vars, .data$already_cast)$column %>%
-      { if(length(.) > 0)
-          sprintf("\n - already the target data type (and thus ignored): '%s'",
-               paste(., collapse = "', '"))
-        else ""
-      }
+    
+    already_cols <- filter(vars, .data$already_cast)$column
+    already <- ""
+    if(length(already_cols) > 0)
+      already <- sprintf(
+        "\n - already the target data type (and thus ignored): '%s'",
+        paste(already_cols, collapse = "', '"))
+    
     glue::glue(
       "Info: parsing {nrow(filter(vars, !.data$problem, !.data$already_cast))} ",
       "file info columns for {length(iso_files)} data file(s)",
       if (nrow(info) > 0) ":\n{paste(info$label, collapse = '\n')}" else "",
-      "{already}") %>%
+      "{already}") |>
       message()
   }
 
   # check on conversion problems
   if (any(vars$problem)) {
     probs <-
-      vars %>% filter(.data$problem) %>%
+      vars |> filter(.data$problem) |>
       mutate(label =
                sprintf(" - cannot convert '%s' from %s to %s",
                        .data$column, .data$old_class, .data$parse))
     glue::glue(
       "missing automatic parsers for the following type conversions ",
-      "(columns are ignored):\n{paste(probs$label, collapse = '\n')}") %>%
+      "(columns are ignored):\n{paste(probs$label, collapse = '\n')}") |>
       warning(immediate. = TRUE, call. = FALSE)
   }
 
   # cast
-  mutate_quos <-
-    vars %>% filter(!.data$problem, !.data$already_cast) %>%
-    # note for RMD check, since this is a with statement, does not take .data!
-    {
-      rlang::set_names(
-        purrr::map2(.$column, .$func, ~quo((!!.y)(!!sym(.x)))),
-        .$column
-      )
-    }
-
+  mutate_quos <- vars |> filter(!.data$problem, !.data$already_cast) 
+  mutate_quos <- rlang::set_names(
+    purrr::map2(mutate_quos$column, mutate_quos$func, ~quo((!!.y)(!!sym(.x)))),
+    mutate_quos$column
+  )
+  
   # mutate file info
   file_info <-
-    file_info %>%
-    mutate(!!!mutate_quos) %>%
-    ensure_data_frame_list_columns() %>%
+    file_info |>
+    mutate(!!!mutate_quos) |>
+    ensure_data_frame_list_columns() |>
     split(seq(nrow(file_info)))
 
   # mutate
   mutated_iso_files <-
-    map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) %>%
+    map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) |>
     iso_as_file_list()
 
   # return
@@ -726,7 +724,7 @@ iso_add_file_info.iso_file_list <- function(iso_files, new_file_info, ..., quiet
 
   # add to iso_files' file_info
   file_info <-
-    iso_get_file_info(iso_files, quiet = TRUE) %>%
+    iso_get_file_info(iso_files, quiet = TRUE) |>
     iso_add_file_info(new_file_info = new_file_info, ..., quiet = quiet)
 
   # safety check
@@ -736,13 +734,13 @@ iso_add_file_info.iso_file_list <- function(iso_files, new_file_info, ..., quiet
 
   # convert back to list format
   file_info <-
-    file_info %>%
-    ensure_data_frame_list_columns() %>%
+    file_info |>
+    ensure_data_frame_list_columns() |>
     split(seq(nrow(file_info)))
 
   # mutate
   updated_iso_files <-
-    map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) %>%
+    map2(iso_files, file_info, ~{ .x$file_info <- .y; .x }) |>
     iso_as_file_list()
 
   return(updated_iso_files)
@@ -768,13 +766,13 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
     glue::glue(
       "Info: adding new file information ('{paste(new_cols, collapse = \"', '\")}') ",
       "to {n_data_files} data file(s), ",
-      "joining by '{purrr::map_chr(join_bys, paste, collapse = \"'+'\") %>% paste(collapse = \"' then '\")}'...") %>%
+      "joining by '{purrr::map_chr(join_bys, paste, collapse = \"'+'\") |> paste(collapse = \"' then '\")}'...") |>
       message()
   }
 
   # additional safety checks
   if (length(new_cols) == 0) {
-    glue::glue("no new information columns that don't already exist, returning data unchanged") %>%
+    glue::glue("no new information columns that don't already exist, returning data unchanged") |>
       warning(immediate. = TRUE, call. = FALSE)
     return(df)
   }
@@ -785,7 +783,7 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
       "all join_by (...) columns must exist in both the existing file ",
       "information and the new_file_info",
       if(length(missing_df) > 0) "\n - missing in existing file info: '{paste(missing_df, collapse = \"', '\")}'" else "",
-      if (length(missing_new_fi) > 0) "\n - missing in new file info: '{paste(missing_new_fi, collapse = \"', '\")}'" else "") %>%
+      if (length(missing_new_fi) > 0) "\n - missing in new file info: '{paste(missing_new_fi, collapse = \"', '\")}'" else "") |>
       stop(call. = FALSE)
   }
 
@@ -797,24 +795,28 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
     )
 
   new_data_rows <-
-    join_by_cols %>%
-    unnest(.data$join_by_col) %>%
+    join_by_cols |>
+    unnest("join_by_col") |>
     mutate(
       new_data_idx = map(.data$join_by_col, ~which(!is.na(new_file_info[[.x]]) & nchar(as.character(new_file_info[[.x]])) > 0))
-    ) %>%
-    group_by(.data$..priority) %>%
-    summarize(new_data_idx = list(Reduce(intersect, .data$new_data_idx))) %>%
+    ) |>
+    group_by(.data$..priority) |>
+    summarize(new_data_idx = list(Reduce(intersect, .data$new_data_idx))) |>
     right_join(join_by_cols, by = "..priority")
 
   # prep for joins
-  shared_cols <- intersect(names(new_file_info), names(df)) %>% { rlang::set_names(., paste0("..ni_temp_", .)) }
+  shared_cols <- intersect(names(new_file_info), names(df))
+  shared_cols <- rlang::set_names(shared_cols, paste0("..ni_temp_", shared_cols))
+  
   df <- mutate(df, ..df_id = dplyr::row_number())
   new_file_info <- mutate(new_file_info, ..ni_id = dplyr::row_number())
 
   # join new file info based on the join by and new row indices
   join_new_file_info <- function(join_by, new_rows, shared_cols) {
     if (length(join_by) > 0 && length(new_rows) > 0) {
-      dplyr::inner_join(df, rename(new_file_info[new_rows, ], !!!shared_cols), by = join_by)
+      # allow many to many here -- duplicates are caught later
+      # consider catching the issue here instead for speed
+      dplyr::inner_join(df, rename(new_file_info[new_rows, ], dplyr::all_of(shared_cols)), by = join_by, relationship = "many-to-many")
     } else {
       tibble()
     }
@@ -822,7 +824,7 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
 
   # generate joined data
   joined_data <-
-    new_data_rows %>%
+    new_data_rows |>
     mutate(
       n_ni_considered = map_int(.data$new_data_idx, length),
       shared_cols = map(.data$join_by_col, ~shared_cols[!shared_cols %in% .x]),
@@ -833,27 +835,27 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
 
   # select data based on priority
   final_data <-
-    joined_data %>%
-    select(.data$..priority, .data$data) %>%
+    joined_data |>
+    select("..priority", "data") |>
     # avoid problems with the temp columns during unnest
-    mutate(data = map(.data$data, ~select(.x, -starts_with("..ni_temp_")))) %>%
-    unnest(.data$data) %>%
-    select(-starts_with("..ni_temp_")) %>%
-    group_by(.data$..df_id) %>%
-    filter(.data$..priority == max(.data$..priority)) %>%
+    mutate(data = map(.data$data, ~select(.x, -starts_with("..ni_temp_")))) |>
+    unnest("data") |>
+    dplyr::select(-dplyr::starts_with("..ni_temp_")) |>
+    group_by(.data$..df_id) |>
+    filter(.data$..priority == max(.data$..priority)) |>
     ungroup()
 
   # make sure all data is present (even those not matched by any join)
-  final_data <- final_data %>%
-    vctrs::vec_rbind(filter(df, !.data$..df_id %in% final_data$..df_id)) %>%
+  final_data <- final_data |>
+    vctrs::vec_rbind(filter(df, !.data$..df_id %in% final_data$..df_id)) |>
     arrange(.data$..df_id)
 
   # safety checks
-  dup_data <- final_data %>% group_by(.data$..df_id) %>% mutate(n = n()) %>% filter(.data$n > 1L)
+  dup_data <- final_data |> group_by(.data$..df_id) |> mutate(n = n()) |> filter(.data$n > 1L)
   if (nrow(dup_data) > 0) {
-    error_data <- dup_data %>%
-      left_join(joined_data, by = "..priority") %>%
-      group_by(.data$..priority) %>%
+    error_data <- dup_data |>
+      left_join(joined_data, by = "..priority") |>
+      group_by(.data$..priority) |>
       summarize(
         label = sprintf(
           "'%s' join: %d/%d new info rows match %d/%d data files but would lead to the duplication of %d data files.",
@@ -868,18 +870,18 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
 
     glue::glue(
       "join operation(s) would create duplicate entries:\n - ",
-      "{paste(error_data$label, collapse = '\n - ')}") %>%
+      "{paste(error_data$label, collapse = '\n - ')}") |>
     stop(call. = FALSE)
   }
 
   # info summary
   info_sum <-
-    final_data %>% group_by(.data$..priority) %>%
+    final_data |> group_by(.data$..priority) |>
     summarize(
       n_ni_actual = length(unique(.data$..ni_id)),
       n_df_actual = length(unique(.data$file_id))
-    ) %>%
-    right_join(joined_data, by = "..priority") %>%
+    ) |>
+    right_join(joined_data, by = "..priority") |>
     mutate(
       n_ni_actual = ifelse(is.na(.data$n_ni_actual), 0L, .data$n_ni_actual),
       n_df_actual = ifelse(is.na(.data$n_df_actual), 0L, .data$n_df_actual),
@@ -907,7 +909,7 @@ iso_add_file_info.data.frame <- function(df, new_file_info, ..., quiet = default
     message(" - ", paste(info_sum$label, collapse = "\n - "))
   }
 
-  return(select(final_data, -.data$..df_id, -.data$..ni_id, -.data$..priority))
+  return(select(final_data, -"..df_id", -"..ni_id", -"..priority"))
 }
 
 # check doesn't work unless it's at the beginning

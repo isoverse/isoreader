@@ -45,7 +45,7 @@ Reading scan files is as simple as passing one or multiple file or folder paths 
 
 ```{r, message=FALSE}
 # all available examples
-iso_get_reader_examples() %>% knitr::kable()
+iso_get_reader_examples() |> knitr::kable()
 ```
 
 ```{r}
@@ -64,7 +64,7 @@ scan_files <-
 The `scan_files` variable now contains a set of isoreader objects, one for each file. Take a look at what information was retrieved from the files using the `iso_get_data_summary()` function.
 
 ```{r}
-scan_files %>% iso_get_data_summary() %>% knitr::kable()
+scan_files |> iso_get_data_summary() |> knitr::kable()
 ```
 
 ## Problems
@@ -72,8 +72,8 @@ scan_files %>% iso_get_data_summary() %>% knitr::kable()
 In case there was any trouble with reading any of the files, the following functions provide an overview summary as well as details of all errors and warnings, respectively. The examples here contain no errors but if you run into any unexpected file read problems, please file a bug report in the [isoreader issue tracker](https://github.com/isoverse/isoreader/issues).
 
 ```{r}
-scan_files %>% iso_get_problems_summary() %>% knitr::kable()
-scan_files %>% iso_get_problems() %>% knitr::kable()
+scan_files |> iso_get_problems_summary() |> knitr::kable()
+scan_files |> iso_get_problems() |> knitr::kable()
 ```
 
 # File Information
@@ -82,7 +82,7 @@ Detailed file information can be aggregated for all isofiles using the `iso_get_
 
 ```{r}
 # all file information
-scan_files %>% iso_get_file_info(select = c(-file_root)) %>% knitr::kable()
+scan_files |> iso_get_file_info(select = c(-file_root)) |> knitr::kable()
 ```
 
 ## Select/Rename
@@ -91,12 +91,12 @@ File information can also be modified across an entire collection of isofiles us
 
 ```{r}
 # select + rename specific file info columns
-scan_files2 <- scan_files %>%
-  iso_select_file_info(-file_root) %>%
+scan_files2 <- scan_files |>
+  iso_select_file_info(-file_root) |>
   iso_rename_file_info(`Date & Time` = file_datetime)
 
 # fetch all file info
-scan_files2 %>% iso_get_file_info() %>% knitr::kable()
+scan_files2 |> iso_get_file_info() |> knitr::kable()
 ```
 
 
@@ -106,9 +106,9 @@ Any collection of isofiles can also be filtered based on the available file info
 
 ```{r}
 # find files that have 'CIT' in the new ID field
-scan_files2 %>%
-  iso_filter_files(type == "High Voltage") %>%
-  iso_get_file_info() %>%
+scan_files2 |>
+  iso_filter_files(type == "High Voltage") |>
+  iso_get_file_info() |>
   knitr::kable()
 ```
 
@@ -117,14 +117,14 @@ scan_files2 %>%
 The file information in any collection of isofiles can also be mutated using the function `iso_mutate_file_info`. This function can introduce new columns and operate on any existing columns available in the file information (even if it does not exist in all files) and supports full [dplyr](https://dplyr.tidyverse.org/reference/mutate.html) syntax.
 
 ```{r}
-scan_files3 <- scan_files2 %>%
+scan_files3 <- scan_files2 |>
   iso_mutate_file_info(
     # introduce new column
     `Run in 2019?` = `Date & Time` > "2019-01-01" & `Date & Time` < "2020-01-01"
   )
 
-scan_files3 %>%
-  iso_get_file_info() %>%
+scan_files3 |>
+  iso_get_file_info() |>
   knitr::kable()
 ```
 
@@ -133,7 +133,7 @@ scan_files3 %>%
 Additionally, some IRMS data files contain resistor information that are useful for downstream calculations (see e.g. section on signal conversion later in this vignette):
 
 ```{r}
-scan_files %>% iso_get_resistors() %>% knitr::kable()
+scan_files |> iso_get_resistors() |> knitr::kable()
 ```
 
 # Raw Data
@@ -142,17 +142,17 @@ The raw data read from the scan files can be retrieved similarly using the `iso_
 
 ```{r}
 # get raw data with default selections (all raw data, no additional file info)
-scan_files %>% iso_get_raw_data() %>% head(n=10) %>% knitr::kable()
+scan_files |> iso_get_raw_data() |> head(n=10) |> knitr::kable()
 # get specific raw data and add some file information
-scan_files %>%
+scan_files |>
   iso_get_raw_data(
     # select just time and the two ions
     select = c(x, x_units, v44.mV, v45.mV),
     # include the scan type and rename the column
     include_file_info = c(`Scan Type` = type)
-  ) %>%
+  ) |>
   # look at first few records only
-  head(n=10) %>% knitr::kable()
+  head(n=10) |> knitr::kable()
 ```
 
 # For expert users: retrieving all data
@@ -160,7 +160,7 @@ scan_files %>%
 For users familiar with the nested data frames from the [tidyverse](https://www.tidyverse.org/) (particularly [tidyr](https://tidyr.tidyverse.org/)'s `nest` and `unnest`), there is an easy way to retrieve all data from the iso file objects in a single nested data frame:
 
 ```{r}
-all_data <- scan_files %>% iso_get_all_data()
+all_data <- scan_files |> iso_get_all_data()
 # not printed out because this data frame is very big
 ```
 
@@ -171,7 +171,7 @@ Saving entire collections of isofiles for retrieval at a later point is easily d
 
 ```{r}
 # export to R data archive
-scan_files %>% iso_save("scan_files_export.scan.rds")
+scan_files |> iso_save("scan_files_export.scan.rds")
 
 # read back the exported R data storage
 iso_read_scan("scan_files_export.scan.rds")
@@ -183,7 +183,7 @@ At the moment, isoreader supports export of all data to Excel and the [Feather f
 
 ```{r, eval=FALSE}
 # export to excel
-scan_files %>% iso_export_to_excel("scan_files_export")
+scan_files |> iso_export_files_to_excel("scan_files_export")
 
 # data sheets available in the exported data file:
 readxl::excel_sheets("scan_files_export.scan.xlsx")
@@ -191,7 +191,7 @@ readxl::excel_sheets("scan_files_export.scan.xlsx")
 
 ```{r, eval=FALSE}
 # export to feather
-scan_files %>% iso_export_to_feather("scan_files_export")
+scan_files |> iso_export_files_to_feather("scan_files_export")
 
 # exported feather files
 list.files(pattern = ".scan.feather")

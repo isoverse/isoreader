@@ -40,8 +40,8 @@ test_that("test that units class works properly", {
   expect_warning(out <- vctrs::vec_c(x, y), "different units")
   expect_equal(out, c(data, data))
   expect_is(iso_double_with_units(x), "iso_double_with_units")
-  expect_equal(iso_double_with_units(x) %>% iso_get_units(), "undefined units")
-  expect_equal(iso_double_with_units(x, units = "new units") %>% iso_get_units(), "new units")
+  expect_equal(iso_double_with_units(x) |> iso_get_units(), "undefined units")
+  expect_equal(iso_double_with_units(x, units = "new units") |> iso_get_units(), "new units")
   # double
   expect_is(vctrs::vec_ptype2(x, double()), "numeric")
   expect_is(vctrs::vec_ptype2(double(), x), "numeric")
@@ -69,23 +69,23 @@ test_that("test that units class works properly", {
   expect_equal(iso_get_units(iso_double_with_units()), "undefined units")
   expect_equal(iso_get_units(x), "permil")
   expect_equal(iso_get_units(y), "not permil")
-  expect_equal(data.frame(x = x, y = y, z = 42) %>% iso_get_units(), 
+  expect_equal(data.frame(x = x, y = y, z = 42) |> iso_get_units(), 
                c(x = "permil", y = "not permil", z = NA_character_))
   
   # strip units
   expect_equal(iso_strip_units(42.), 42.)
-  expect_equal(iso_strip_units(42) %>% iso_get_units(), NA_character_)
+  expect_equal(iso_strip_units(42) |> iso_get_units(), NA_character_)
   expect_equal(iso_strip_units(x), data)
-  expect_equal(iso_strip_units(x) %>% iso_get_units(), NA_character_)
-  expect_equal(data.frame(x = x, y = y, z = 42) %>% iso_strip_units() %>% iso_get_units(), 
+  expect_equal(iso_strip_units(x) |> iso_get_units(), NA_character_)
+  expect_equal(data.frame(x = x, y = y, z = 42) |> iso_strip_units() |> iso_get_units(), 
                c(x = NA_character_, y = NA_character_, z = NA_character_))
-  expect_equal(data.frame(x = x, y = y, z = 42) %>% iso_strip_units(),
+  expect_equal(data.frame(x = x, y = y, z = 42) |> iso_strip_units(),
                data.frame(x = data, y = data, z = 42))
   
   # is this what should happen for lists?
-  expect_equal(list(x = x, y = y, z = 42) %>% iso_get_units(), NA_character_)
-  expect_equal(list(x = x, y = y, z = 42) %>% purrr::map_chr(iso_get_units), c(x = "permil", y = "not permil", z = NA_character_))
-  expect_equal(list(x = x, y = y, z = 42) %>% iso_strip_units() %>% purrr::map_chr(iso_get_units), c(x = "permil", y = "not permil", z = NA_character_))
+  expect_equal(list(x = x, y = y, z = 42) |> iso_get_units(), NA_character_)
+  expect_equal(list(x = x, y = y, z = 42) |> purrr::map_chr(iso_get_units), c(x = "permil", y = "not permil", z = NA_character_))
+  expect_equal(list(x = x, y = y, z = 42) |> iso_strip_units() |> purrr::map_chr(iso_get_units), c(x = "permil", y = "not permil", z = NA_character_))
   
   # implicit / explicit units
   expect_error(iso_make_units_explicit(42), "only.*data frames")
@@ -99,7 +99,7 @@ test_that("test that units class works properly", {
   expect_equal(names(out), c("x.permil", "y.not permil"))
   expect_equal(
     iso_make_units_explicit(tibble(x = x, y = y)),
-    iso_make_units_explicit(tibble(x = x, y = y)) %>% iso_make_units_explicit()
+    iso_make_units_explicit(tibble(x = x, y = y)) |> iso_make_units_explicit()
   )
   expect_error(iso_make_units_implicit(42), "only.*data frames")
   expect_error(iso_make_units_implicit(tibble(), prefix = ""), "must be at least 1")
@@ -113,9 +113,9 @@ test_that("test that units class works properly", {
   expect_is(out <- iso_make_units_implicit(tibble(x.permil = data), prefix = ".", suffix = ""), "tbl_df")
   expect_equal(names(out), "x")
   expect_equal(iso_get_units(out), c(x = "permil"))
-  expect_equal(iso_make_units_implicit(tibble(`x [permil]` = data, `y [not permil]` = data, other = data)) %>% iso_make_units_explicit(), 
+  expect_equal(iso_make_units_implicit(tibble(`x [permil]` = data, `y [not permil]` = data, other = data)) |> iso_make_units_explicit(), 
                tibble(`x [permil]` = data, `y [not permil]` = data, other = data))
-  expect_equal(iso_make_units_explicit(tibble(x = x, y = y)) %>% iso_make_units_implicit(), tibble(x = x, y = y))
+  expect_equal(iso_make_units_explicit(tibble(x = x, y = y)) |> iso_make_units_implicit(), tibble(x = x, y = y))
   
   # printout
   expect_equal(vctrs::vec_ptype_full(x), "double in 'permil'")
@@ -133,11 +133,11 @@ test_that("test that units class works properly", {
   expect_equal( vctrs::vec_rbind(tibble(x = x), tibble(y = y))$x, vctrs::vec_c(x, rep(NA, length(y))))
   expect_equal( vctrs::vec_rbind(tibble(x = x), tibble(y = y))$y, vctrs::vec_c(rep(NA, length(x)), y))
   expect_equal(
-    tibble(a = c("a", "b"), x = purrr::map(a, ~x)) %>% tidyr::unnest(x),
+    tibble(a = c("a", "b"), x = purrr::map(a, ~x)) |> tidyr::unnest(x),
     tibble(a = rep(c("a", "b"), each = length(data)), x = iso_double_with_units(c(data, data), "permil"))
   )
   expect_equal(
-    tibble(a = c("a", "b"), x = purrr::map(a, ~tibble(x=x, y=y))) %>% tidyr::unnest(x),
+    tibble(a = c("a", "b"), x = purrr::map(a, ~tibble(x=x, y=y))) |> tidyr::unnest(x),
     tibble(a = rep(c("a", "b"), each = length(data)), x = iso_double_with_units(c(data, data), "permil"), y = iso_double_with_units(c(data, data), "not permil"))
   )
   

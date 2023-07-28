@@ -46,8 +46,8 @@ test_that("info messages can be switched for just one function", {
 
 test_that("info message functions can be part of a pipeline", {
   df <- tibble(a = 1:5)
-  expect_equal(df %>% iso_turn_info_messages_on(), df)
-  expect_equal(df %>% iso_turn_info_messages_off(), df)
+  expect_equal(df |> iso_turn_info_messages_on(), df)
+  expect_equal(df |> iso_turn_info_messages_off(), df)
 })
 
 test_that("test that caching can be turned on/off", {

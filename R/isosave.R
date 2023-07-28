@@ -19,7 +19,7 @@ iso_save <- function(iso_files, filepath, quiet = default(quiet)) {
   if (!quiet) {
     sprintf("Info: exporting data from %d iso_files into R Data Storage '%s'", 
             length(iso_as_file_list(iso_files)), 
-            str_replace(filepath, "^\\.(/|\\\\)", "")) %>% message()
+            str_replace(filepath, "^\\.(/|\\\\)", "")) |> message()
   }
   
   saveRDS(iso_files, file = filepath)

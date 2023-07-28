@@ -3,12 +3,10 @@
 
 # isoreader <a href='https://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/isoreader)](https://cran.r-project.org/package=isoreader)
-[![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://isoreader.isoverse.org/)
 [![R build
 status](https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg)](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check)
-[![Binder](https://img.shields.io/badge/explore%20online-in%20RStudio-blue.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=rstudio)
-[![Binder](https://img.shields.io/badge/explore%20online-in%20Jupyter-orange.svg)](https://mybinder.org/v2/gh/isoverse/isoreader/binder?urlpath=lab)
+[![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://isoreader.isoverse.org/)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02878/status.svg)](https://doi.org/10.21105/joss.02878)
 
 ## About
 
@@ -44,9 +42,6 @@ with [tidyverse](https://www.tidyverse.org/) packages such as
 [ggplot](https://ggplot2.tidyverse.org/).
 
 ## Installation
-
-You can install the latest release of isoreader from
-[CRAN](https://cran.r-project.org/package=isoreader):
 
 ``` r
 # Note: isoreader is temporarily not available on CRAN because of a missing dependency, please install directly from GitHub using the commands below
@@ -101,17 +96,17 @@ iso_files <- iso_read_scan(data_folder)
 #> Info: reading file 'full_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'time_scan_example.scn' with '.scn' reader...
-#> Info: finished reading 4 files in 2.40 secs
+#> Info: finished reading 4 files in 1.30 secs
 
 iso_files
 #> Data from 4 scan iso files: 
-#> # A tibble: 4 × 5
-#>   file_id                     raw_data           file_info method_info file_path
-#>   <chr>                       <glue>             <chr>     <chr>       <chr>    
-#> 1 background_scan_example.scn 525 measurements,… 8 entries resistors   backgrou…
-#> 2 full_scan_example.scn       799 measurements,… 8 entries resistors   full_sca…
-#> 3 peak_shape_scan_example.scn 220 measurements,… 8 entries resistors   peak_sha…
-#> 4 time_scan_example.scn       5532 measurements… 8 entries resistors   time_sca…
+#> # A tibble: 4 × 6
+#>   file_id                 file_path_ file_subpath raw_data file_info method_info
+#>   <chr>                   <chr>      <chr>        <glue>   <chr>     <chr>      
+#> 1 background_scan_exampl… backgroun… <NA>         525 mea… 8 entries resistors  
+#> 2 full_scan_example.scn   full_scan… <NA>         799 mea… 8 entries resistors  
+#> 3 peak_shape_scan_exampl… peak_shap… <NA>         220 mea… 7 entries resistors  
+#> 4 time_scan_example.scn   time_scan… <NA>         5532 me… 8 entries resistors
 ```
 
 ## Supported File Types

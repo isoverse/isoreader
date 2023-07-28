@@ -111,7 +111,7 @@ cap_at_pos <- function(bfile, pos) {
 
 # set pos and cap
 set_pos_and_cap <- function(bfile, pos, max) {
-  move_to_pos(bfile, pos = pos, reset_cap = TRUE) %>%
+  move_to_pos(bfile, pos = pos, reset_cap = TRUE) |>
     cap_at_pos(pos = max)
 }
 
