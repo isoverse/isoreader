@@ -1,3 +1,24 @@
+# isoreader 1.4.0
+
+## Breaking changes
+
+Several previously deprecated functions have been removed: `iso_calculate_ratios()`, `iso_convert_signals()`, `iso_convert_time()`, `iso_plot_continuous_flow_data()`, `iso_plot_dual_inlet_data()`, `iso_plot_raw_data()`, `isoread()`. Older code that still uses these functions instead of their replacements will no longer work.
+
+## New features
+
+* simpler cache file names that also removed dependency on the `UNF` package
+* faster implementation of binary file structure analysis for isodat files, accessible via the new `iso_get_source_file_structure()` function
+
+## Enhancements
+
+* ~20% performance increase in reading isodat files through code optimization
+* `iso_export_to_excel()` and `iso_export_to_feather()` renamed to `iso_export_files_to_excel()` and `iso_export_files_to_feather()`, respectively, to avoid ambiguity with other export functions.
+
+## Bug fixes
+
+* fixes to be compatible with latest tidyselect and dplyr updates
+
+
 # isoreader 1.3.0
 
 ## Major changes
@@ -40,6 +61,6 @@ This package provides the following data aggregation and data processing functio
 
 This package provides the following data export functionality for all supported data files:
 
- - export to open Excel (.xslx) with `?iso_export_to_excel`
- - export to the Python/R cross-over feather file format with `?iso_export_to_feather`
+ - export to open Excel (.xslx) with `?iso_export_files_to_excel`
+ - export to the Python/R cross-over feather file format with `?iso_export_files_to_feather`
  
