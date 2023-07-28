@@ -107,7 +107,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Scan Examples</h1>
             
-            <h4 data-toc-skip class="date">2023-01-07</h4>
+            <h4 data-toc-skip class="date">2023-07-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/HEAD/vignettes/scan.Rmd" class="external-link"><code>vignettes/scan.Rmd</code></a></small>
       <div class="hidden name"><code>scan.Rmd</code></div>
@@ -142,7 +142,7 @@ Here we read several files that are bundled with the package as examples
 <code><a href="../reference/iso_get_reader_example.html">iso_get_reader_example()</a></code> function).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># all available examples</span></span>
-<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="32%">
@@ -233,11 +233,11 @@ Here we read several files that are bundled with the package as examples
 <span><span class="co">#&gt; Info: reading file 'background_scan_example.scn' with '.scn' reader...</span></span>
 <span><span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader...</span></span>
 <span><span class="co">#&gt; Info: reading file 'time_scan_example.scn' with '.scn' reader...</span></span>
-<span><span class="co">#&gt; Info: finished reading 4 files in 3.02 secs</span></span>
-<span><span class="co">#&gt; Warning: file creation date could not be accessed for all files because</span></span>
-<span><span class="co">#&gt; this information is not available on some Linux systems, reporting</span></span>
-<span><span class="co">#&gt; last modified time for file_datetime instead. To turn these warnings</span></span>
-<span><span class="co">#&gt; off, call iso_turn_datetime_warnings_off() and reread these files with</span></span>
+<span><span class="co">#&gt; Info: finished reading 4 files in 1.44 secs</span></span>
+<span><span class="co">#&gt; Warning: file creation date could not be accessed for all files because this</span></span>
+<span><span class="co">#&gt; information is not available on some Linux systems, reporting last modified</span></span>
+<span><span class="co">#&gt; time for file_datetime instead. To turn these warnings off, call</span></span>
+<span><span class="co">#&gt; iso_turn_datetime_warnings_off() and reread these files with</span></span>
 <span><span class="co">#&gt; iso_reread_all_files().</span></span>
 <span><span class="co">#&gt; Warning: encountered 4 problems.</span></span>
 <span><span class="co">#&gt; # | FILE                        | PROBLEM | OCCURRED IN                      ...</span></span>
@@ -255,51 +255,57 @@ objects, one for each file. Take a look at what information was
 retrieved from the files using the <code><a href="../reference/iso_get_data_summary.html">iso_get_data_summary()</a></code>
 function.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scan_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">scan_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating data summary from 4 data file(s)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="22%">
-<col width="38%">
-<col width="7%">
+<col width="20%">
+<col width="20%">
 <col width="9%">
-<col width="22%">
+<col width="34%">
+<col width="7%">
+<col width="8%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">file_id</th>
+<th align="left">file_path_</th>
+<th align="left">file_subpath</th>
 <th align="left">raw_data</th>
 <th align="left">file_info</th>
 <th align="left">method_info</th>
-<th align="left">file_path</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">peak_shape_scan_example.scn</td>
-<td align="left">220 measurements, 3 ions (44,45,46)</td>
-<td align="left">8 entries</td>
-<td align="left">resistors</td>
 <td align="left">peak_shape_scan_example.scn</td>
+<td align="left">NA</td>
+<td align="left">220 measurements, 3 ions (44,45,46)</td>
+<td align="left">7 entries</td>
+<td align="left">resistors</td>
 </tr>
 <tr class="even">
 <td align="left">background_scan_example.scn</td>
+<td align="left">background_scan_example.scn</td>
+<td align="left">NA</td>
 <td align="left">525 measurements, 7 ions (44,45,46,47,54,48,49)</td>
 <td align="left">8 entries</td>
 <td align="left">resistors</td>
-<td align="left">background_scan_example.scn</td>
 </tr>
 <tr class="odd">
 <td align="left">full_scan_example.scn</td>
+<td align="left">full_scan_example.scn</td>
+<td align="left">NA</td>
 <td align="left">799 measurements, 3 channels (2,4,6)</td>
 <td align="left">8 entries</td>
 <td align="left">resistors</td>
-<td align="left">full_scan_example.scn</td>
 </tr>
 <tr class="even">
 <td align="left">time_scan_example.scn</td>
+<td align="left">time_scan_example.scn</td>
+<td align="left">NA</td>
 <td align="left">5532 measurements, 2 ions (38,40)</td>
 <td align="left">8 entries</td>
 <td align="left">resistors</td>
-<td align="left">time_scan_example.scn</td>
 </tr>
 </tbody>
 </table>
@@ -313,7 +319,7 @@ errors but if you run into any unexpected file read problems, please
 file a bug report in the <a href="https://github.com/isoverse/isoreader/issues" class="external-link">isoreader issue
 tracker</a>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scan_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">scan_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">file_id</th>
@@ -344,7 +350,7 @@ tracker</a>.</p>
 </tbody>
 </table>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scan_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_problems.html">iso_get_problems</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">scan_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_problems.html">iso_get_problems</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="15%">
@@ -401,17 +407,17 @@ package to specify which columns are of interest (by default, all file
 information is retrieved).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># all file information</span></span>
-<span><span class="va">scan_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">file_root</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">scan_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">file_root</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 4 data file(s), selecting info columns 'c(-file_root)'</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="20%">
-<col width="20%">
-<col width="9%">
-<col width="14%">
-<col width="7%">
+<col width="23%">
+<col width="23%">
 <col width="10%">
-<col width="18%">
+<col width="16%">
+<col width="8%">
+<col width="11%">
+<col width="6%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">file_id</th>
@@ -427,16 +433,16 @@ information is retrieved).</p>
 <td align="left">peak_shape_scan_example.scn</td>
 <td align="left">peak_shape_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">36411</td>
 <td align="left">High Voltage</td>
-<td align="left">test this comment feature</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">background_scan_example.scn</td>
 <td align="left">background_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">62303</td>
 <td align="left">High Voltage</td>
 <td align="left">NA</td>
@@ -445,7 +451,7 @@ information is retrieved).</p>
 <td align="left">full_scan_example.scn</td>
 <td align="left">full_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">57551</td>
 <td align="left">MagnetCurrent</td>
 <td align="left">NA</td>
@@ -454,7 +460,7 @@ information is retrieved).</p>
 <td align="left">time_scan_example.scn</td>
 <td align="left">time_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">140550</td>
 <td align="left">Clock</td>
 <td align="left">NA</td>
@@ -469,24 +475,24 @@ isofiles using the <code><a href="../reference/iso_select_file_info.html">iso_se
 <code><a href="../reference/iso_rename_file_info.html">iso_rename_file_info()</a></code> functions:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># select + rename specific file info columns</span></span>
-<span><span class="va">scan_files2</span> <span class="op">&lt;-</span> <span class="va">scan_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_select_file_info.html">iso_select_file_info</a></span><span class="op">(</span><span class="op">-</span><span class="va">file_root</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">scan_files2</span> <span class="op">&lt;-</span> <span class="va">scan_files</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_select_file_info.html">iso_select_file_info</a></span><span class="op">(</span><span class="op">-</span><span class="va">file_root</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_rename_file_info.html">iso_rename_file_info</a></span><span class="op">(</span>`Date &amp; Time` <span class="op">=</span> <span class="va">file_datetime</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: selecting/renaming the following file info across 4 data file(s): '-file_root'</span></span>
 <span><span class="co">#&gt; Info: renaming the following file info across 4 data file(s): 'file_datetime'-&gt;'Date &amp; Time'</span></span>
 <span></span>
 <span><span class="co"># fetch all file info</span></span>
-<span><span class="va">scan_files2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">scan_files2</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 4 data file(s)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="20%">
-<col width="20%">
-<col width="9%">
-<col width="14%">
-<col width="7%">
+<col width="23%">
+<col width="23%">
 <col width="10%">
-<col width="18%">
+<col width="16%">
+<col width="8%">
+<col width="11%">
+<col width="6%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">file_id</th>
@@ -502,16 +508,16 @@ isofiles using the <code><a href="../reference/iso_select_file_info.html">iso_se
 <td align="left">peak_shape_scan_example.scn</td>
 <td align="left">peak_shape_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">36411</td>
 <td align="left">High Voltage</td>
-<td align="left">test this comment feature</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">background_scan_example.scn</td>
 <td align="left">background_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">62303</td>
 <td align="left">High Voltage</td>
 <td align="left">NA</td>
@@ -520,7 +526,7 @@ isofiles using the <code><a href="../reference/iso_select_file_info.html">iso_se
 <td align="left">full_scan_example.scn</td>
 <td align="left">full_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">57551</td>
 <td align="left">MagnetCurrent</td>
 <td align="left">NA</td>
@@ -529,7 +535,7 @@ isofiles using the <code><a href="../reference/iso_select_file_info.html">iso_se
 <td align="left">time_scan_example.scn</td>
 <td align="left">time_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">140550</td>
 <td align="left">Clock</td>
 <td align="left">NA</td>
@@ -547,21 +553,21 @@ available in the file information and supports full <a href="https://dplyr.tidyv
 syntax.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># find files that have 'CIT' in the new ID field</span></span>
-<span><span class="va">scan_files2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"High Voltage"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">scan_files2</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"High Voltage"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: applying file filter, keeping 2 of 4 files</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 2 data file(s)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="20%">
-<col width="20%">
-<col width="9%">
-<col width="14%">
-<col width="7%">
-<col width="9%">
-<col width="18%">
+<col width="23%">
+<col width="23%">
+<col width="10%">
+<col width="16%">
+<col width="8%">
+<col width="10%">
+<col width="6%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">file_id</th>
@@ -577,16 +583,16 @@ syntax.</p>
 <td align="left">peak_shape_scan_example.scn</td>
 <td align="left">peak_shape_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">36411</td>
 <td align="left">High Voltage</td>
-<td align="left">test this comment feature</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">background_scan_example.scn</td>
 <td align="left">background_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">62303</td>
 <td align="left">High Voltage</td>
 <td align="left">NA</td>
@@ -604,27 +610,27 @@ available in the file information (even if it does not exist in all
 files) and supports full <a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr</a>
 syntax.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scan_files3</span> <span class="op">&lt;-</span> <span class="va">scan_files2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">scan_files3</span> <span class="op">&lt;-</span> <span class="va">scan_files2</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_mutate_file_info.html">iso_mutate_file_info</a></span><span class="op">(</span></span>
 <span>    <span class="co"># introduce new column</span></span>
 <span>    `Run in 2019?` <span class="op">=</span> <span class="va">`Date &amp; Time`</span> <span class="op">&gt;</span> <span class="st">"2019-01-01"</span> <span class="op">&amp;</span> <span class="va">`Date &amp; Time`</span> <span class="op">&lt;</span> <span class="st">"2020-01-01"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="co">#&gt; Info: mutating file info for 4 data file(s)</span></span>
 <span></span>
-<span><span class="va">scan_files3</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">scan_files3</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 4 data file(s)</span></span></code></pre></div>
-<table style="width:100%;" class="table">
+<table class="table">
 <colgroup>
-<col width="18%">
-<col width="18%">
-<col width="8%">
-<col width="13%">
-<col width="6%">
+<col width="20%">
+<col width="20%">
 <col width="9%">
-<col width="17%">
-<col width="8%">
+<col width="14%">
+<col width="7%">
+<col width="10%">
+<col width="5%">
+<col width="9%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">file_id</th>
@@ -641,17 +647,17 @@ syntax.</p>
 <td align="left">peak_shape_scan_example.scn</td>
 <td align="left">peak_shape_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">36411</td>
 <td align="left">High Voltage</td>
-<td align="left">test this comment feature</td>
+<td align="left">NA</td>
 <td align="left">FALSE</td>
 </tr>
 <tr class="even">
 <td align="left">background_scan_example.scn</td>
 <td align="left">background_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">62303</td>
 <td align="left">High Voltage</td>
 <td align="left">NA</td>
@@ -661,7 +667,7 @@ syntax.</p>
 <td align="left">full_scan_example.scn</td>
 <td align="left">full_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">57551</td>
 <td align="left">MagnetCurrent</td>
 <td align="left">NA</td>
@@ -671,7 +677,7 @@ syntax.</p>
 <td align="left">time_scan_example.scn</td>
 <td align="left">time_scan_example.scn</td>
 <td align="left">NA</td>
-<td align="left">2023-01-07 08:46:37</td>
+<td align="left">2023-07-28 01:18:12</td>
 <td align="right">140550</td>
 <td align="left">Clock</td>
 <td align="left">NA</td>
@@ -688,7 +694,7 @@ syntax.</p>
 are useful for downstream calculations (see e.g. section on signal
 conversion later in this vignette):</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scan_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_resistors.html">iso_get_resistors</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">scan_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_resistors.html">iso_get_resistors</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating resistors info from 4 data file(s)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -802,7 +808,7 @@ identically to the <code>select</code> parameter of the
 <code>iso_get_file_info</code> function discussed earlier.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get raw data with default selections (all raw data, no additional file info)</span></span>
-<span><span class="va">scan_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">scan_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating raw data from 4 data file(s)</span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <colgroup>
@@ -1026,15 +1032,15 @@ identically to the <code>select</code> parameter of the
 </table>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get specific raw data and add some file information</span></span>
-<span><span class="va">scan_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">scan_files</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span><span class="op">(</span></span>
 <span>    <span class="co"># select just time and the two ions</span></span>
 <span>    select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">x_units</span>, <span class="va">v44.mV</span>, <span class="va">v45.mV</span><span class="op">)</span>,</span>
 <span>    <span class="co"># include the scan type and rename the column</span></span>
 <span>    include_file_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>`Scan Type` <span class="op">=</span> <span class="va">type</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># look at first few records only</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating raw data from 4 data file(s), selecting data columns 'c(x, x_units, v44.mV, v45.mV)', including file info 'c(`Scan Type` = type)'</span></span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -1144,7 +1150,7 @@ identically to the <code>select</code> parameter of the
 <code>unnest</code>), there is an easy way to retrieve all data from the
 iso file objects in a single nested data frame:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">all_data</span> <span class="op">&lt;-</span> <span class="va">scan_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_all_data.html">iso_get_all_data</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">all_data</span> <span class="op">&lt;-</span> <span class="va">scan_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_all_data.html">iso_get_all_data</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating all data from 4 data file(s)</span></span>
 <span><span class="co"># not printed out because this data frame is very big</span></span></code></pre></div>
 </div>
@@ -1160,7 +1166,7 @@ collections can be conveniently read back using the same
 <code>iso_read_scan</code> command used for raw data files.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># export to R data archive</span></span>
-<span><span class="va">scan_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_save.html">iso_save</a></span><span class="op">(</span><span class="st">"scan_files_export.scan.rds"</span><span class="op">)</span></span>
+<span><span class="va">scan_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_save.html">iso_save</a></span><span class="op">(</span><span class="st">"scan_files_export.scan.rds"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: exporting data from 4 iso_files into R Data Storage 'scan_files_export.scan.rds'</span></span>
 <span></span>
 <span><span class="co"># read back the exported R data storage</span></span>
@@ -1168,11 +1174,11 @@ collections can be conveniently read back using the same
 <span><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></span>
 <span><span class="co">#&gt; Info: reading file 'scan_files_export.scan.rds' with '.scan.rds' reader...</span></span>
 <span><span class="co">#&gt; Info: loaded 4 data files from R Data Storage</span></span>
-<span><span class="co">#&gt; Info: finished reading 1 files in 0.17 secs</span></span>
-<span><span class="co">#&gt; Warning: file creation date could not be accessed for all files because</span></span>
-<span><span class="co">#&gt; this information is not available on some Linux systems, reporting</span></span>
-<span><span class="co">#&gt; last modified time for file_datetime instead. To turn these warnings</span></span>
-<span><span class="co">#&gt; off, call iso_turn_datetime_warnings_off() and reread these files with</span></span>
+<span><span class="co">#&gt; Info: finished reading 1 files in 0.09 secs</span></span>
+<span><span class="co">#&gt; Warning: file creation date could not be accessed for all files because this</span></span>
+<span><span class="co">#&gt; information is not available on some Linux systems, reporting last modified</span></span>
+<span><span class="co">#&gt; time for file_datetime instead. To turn these warnings off, call</span></span>
+<span><span class="co">#&gt; iso_turn_datetime_warnings_off() and reread these files with</span></span>
 <span><span class="co">#&gt; iso_reread_all_files().</span></span>
 <span><span class="co">#&gt; Warning: encountered 4 problems.</span></span>
 <span><span class="co">#&gt; # | FILE                        | PROBLEM | OCCURRED IN                      ...</span></span>
@@ -1182,14 +1188,13 @@ collections can be conveniently read back using the same
 <span><span class="co">#&gt; 4 | time_scan_example.scn       | warning | extract_os_file_creation_datetime...</span></span>
 <span><span class="co">#&gt; Use iso_get_problems(...) for more details.</span></span>
 <span><span class="co">#&gt; Data from 4 scan iso files: </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 5</span></span></span>
-<span><span class="co">#&gt;   file_id                     raw_data                   file_…¹ metho…² file_…³</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> peak_shape_scan_example.scn 220 measurements, 3 ions … 8 entr… resist… peak_s…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> background_scan_example.scn 525 measurements, 7 ions … 8 entr… resist… backgr…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> full_scan_example.scn       799 measurements, 3 chann… 8 entr… resist… full_s…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> time_scan_example.scn       5532 measurements, 2 ions… 8 entr… resist… time_s…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​file_info, ²​method_info, ³​file_path</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 6</span></span></span>
+<span><span class="co">#&gt;   file_id                 file_path_ file_subpath raw_data file_info method_info</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> peak_shape_scan_exampl… peak_shap… <span style="color: #BB0000;">NA</span>           220 mea… 7 entries resistors  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> background_scan_exampl… backgroun… <span style="color: #BB0000;">NA</span>           525 mea… 8 entries resistors  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> full_scan_example.scn   full_scan… <span style="color: #BB0000;">NA</span>           799 mea… 8 entries resistors  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> time_scan_example.scn   time_scan… <span style="color: #BB0000;">NA</span>           5532 me… 8 entries resistors  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Problem summary:</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 3</span></span></span>
@@ -1211,13 +1216,13 @@ of export file (<code>.scan.xlsx</code> and <code>.scan.feather</code>,
 respectively).</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># export to excel</span></span>
-<span><span class="va">scan_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span><span class="op">(</span><span class="st">"scan_files_export"</span><span class="op">)</span></span>
+<span><span class="va">scan_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_export_files_to_excel.html">iso_export_files_to_excel</a></span><span class="op">(</span><span class="st">"scan_files_export"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># data sheets available in the exported data file:</span></span>
 <span><span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/excel_sheets.html" class="external-link">excel_sheets</a></span><span class="op">(</span><span class="st">"scan_files_export.scan.xlsx"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># export to feather</span></span>
-<span><span class="va">scan_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_export_to_feather.html">iso_export_to_feather</a></span><span class="op">(</span><span class="st">"scan_files_export"</span><span class="op">)</span></span>
+<span><span class="va">scan_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_export_files_to_feather.html">iso_export_files_to_feather</a></span><span class="op">(</span><span class="st">"scan_files_export"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># exported feather files</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">".scan.feather"</span><span class="op">)</span></span></code></pre></div>

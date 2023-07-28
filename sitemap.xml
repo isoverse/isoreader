@@ -40,6 +40,9 @@
     <loc>http://isoreader.isoverse.org/paper.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org/reference/deprecated.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org/reference/extract_data.html</loc>
   </url>
   <url>
@@ -61,16 +64,7 @@
     <loc>http://isoreader.isoverse.org/reference/iso_caching.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org/reference/iso_calculate_ratios.html</loc>
-  </url>
-  <url>
     <loc>http://isoreader.isoverse.org/reference/iso_cleanup_reader_cache.html</loc>
-  </url>
-  <url>
-    <loc>http://isoreader.isoverse.org/reference/iso_convert_signals.html</loc>
-  </url>
-  <url>
-    <loc>http://isoreader.isoverse.org/reference/iso_convert_time.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org/reference/iso_data_structure.html</loc>
@@ -82,10 +76,10 @@
     <loc>http://isoreader.isoverse.org/reference/iso_expand_paths.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org/reference/iso_export_to_excel.html</loc>
+    <loc>http://isoreader.isoverse.org/reference/iso_export_files_to_excel.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org/reference/iso_export_to_feather.html</loc>
+    <loc>http://isoreader.isoverse.org/reference/iso_export_files_to_feather.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org/reference/iso_filter_files.html</loc>
@@ -104,9 +98,6 @@
   </url>
   <url>
     <loc>http://isoreader.isoverse.org/reference/iso_get_bgrd_data.html</loc>
-  </url>
-  <url>
-    <loc>http://isoreader.isoverse.org/reference/iso_get_data.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org/reference/iso_get_data_summary.html</loc>
@@ -133,13 +124,10 @@
     <loc>http://isoreader.isoverse.org/reference/iso_get_resistors.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org/reference/iso_get_resistors_info.html</loc>
+    <loc>http://isoreader.isoverse.org/reference/iso_get_source_file_structure.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org/reference/iso_get_standards.html</loc>
-  </url>
-  <url>
-    <loc>http://isoreader.isoverse.org/reference/iso_get_standards_info.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org/reference/iso_get_supported_file_types.html</loc>
@@ -169,19 +157,7 @@
     <loc>http://isoreader.isoverse.org/reference/iso_mutate_file_info.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org/reference/iso_omit_files_with_problems.html</loc>
-  </url>
-  <url>
     <loc>http://isoreader.isoverse.org/reference/iso_parse_file_info.html</loc>
-  </url>
-  <url>
-    <loc>http://isoreader.isoverse.org/reference/iso_plot_continuous_flow_data.html</loc>
-  </url>
-  <url>
-    <loc>http://isoreader.isoverse.org/reference/iso_plot_dual_inlet_data.html</loc>
-  </url>
-  <url>
-    <loc>http://isoreader.isoverse.org/reference/iso_plot_raw_data.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org/reference/iso_printing.html</loc>
@@ -226,22 +202,16 @@
     <loc>http://isoreader.isoverse.org/reference/iso_shorten_relative_paths.html</loc>
   </url>
   <url>
+    <loc>http://isoreader.isoverse.org/reference/iso_source_file_op_error.html</loc>
+  </url>
+  <url>
     <loc>http://isoreader.isoverse.org/reference/iso_strip_units.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org/reference/iso_with_units.html</loc>
   </url>
   <url>
-    <loc>http://isoreader.isoverse.org/reference/isoread.html</loc>
-  </url>
-  <url>
     <loc>http://isoreader.isoverse.org/reference/isoreader-package.html</loc>
-  </url>
-  <url>
-    <loc>http://isoreader.isoverse.org/reference/map_binary_structure.html</loc>
-  </url>
-  <url>
-    <loc>http://isoreader.isoverse.org/reference/print.binary_structure_map.html</loc>
   </url>
   <url>
     <loc>http://isoreader.isoverse.org/reference/read_iso_file.html</loc>

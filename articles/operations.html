@@ -107,7 +107,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Operations</h1>
             
-            <h4 data-toc-skip class="date">2023-01-07</h4>
+            <h4 data-toc-skip class="date">2023-07-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/HEAD/vignettes/operations.Rmd" class="external-link"><code>vignettes/operations.Rmd</code></a></small>
       <div class="hidden name"><code>operations.Rmd</code></div>
@@ -132,8 +132,8 @@ these general operations.</p>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># list all suported file types</span></span>
-<span><span class="fu"><a href="../reference/iso_get_supported_file_types.html">iso_get_supported_file_types</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">extension</span>, <span class="va">software</span>, <span class="va">description</span>, <span class="va">type</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="fu"><a href="../reference/iso_get_supported_file_types.html">iso_get_supported_file_types</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">extension</span>, <span class="va">software</span>, <span class="va">description</span>, <span class="va">type</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -221,14 +221,14 @@ parameter <code>quiet = TRUE</code> to the function call. This can also
 be done globally using <code><a href="../reference/iso_info_messages.html">iso_turn_info_messages_off()</a></code></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read a file in the default verbose mode</span></span>
-<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_select_file_info.html">iso_select_file_info</a></span><span class="op">(</span><span class="va">file_datetime</span>, <span class="va">`Identifier 1`</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_select_file_info.html">iso_select_file_info</a></span><span class="op">(</span><span class="va">file_datetime</span>, <span class="va">`Identifier 1`</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></span>
 <span><span class="co">#&gt; Info: reading file 'dual_inlet_example.did' from cache...</span></span>
-<span><span class="co">#&gt; Info: finished reading 1 files in 0.59 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 1 files in 0.31 secs</span></span>
 <span><span class="co">#&gt; Info: selecting/renaming the following file info across 1 data file(s): 'file_datetime', 'Identifier 1'</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 1 data file(s)</span></span></code></pre></div>
 <table class="table">
@@ -246,10 +246,10 @@ be done globally using <code><a href="../reference/iso_info_messages.html">iso_t
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># read the same file but make the read process quiet</span></span>
-<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_select_file_info.html">iso_select_file_info</a></span><span class="op">(</span><span class="va">file_datetime</span>, <span class="va">`Identifier 1`</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_select_file_info.html">iso_select_file_info</a></span><span class="op">(</span><span class="va">file_datetime</span>, <span class="va">`Identifier 1`</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: selecting/renaming the following file info across 1 data file(s): 'file_datetime', 'Identifier 1'</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 1 data file(s)</span></span></code></pre></div>
@@ -269,10 +269,10 @@ be done globally using <code><a href="../reference/iso_info_messages.html">iso_t
 <code class="sourceCode R"><span></span>
 <span><span class="co"># read the same file but turn all isoreader messages off</span></span>
 <span><span class="fu"><a href="../reference/iso_info_messages.html">iso_turn_info_messages_off</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_select_file_info.html">iso_select_file_info</a></span><span class="op">(</span><span class="va">file_datetime</span>, <span class="va">`Identifier 1`</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_select_file_info.html">iso_select_file_info</a></span><span class="op">(</span><span class="va">file_datetime</span>, <span class="va">`Identifier 1`</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -306,29 +306,29 @@ reads.</p>
 <span><span class="co">#&gt; Info: removed all (0) cached isoreader files.</span></span>
 <span></span>
 <span><span class="co"># read a new file (notice the time elapsed)</span></span>
-<span><span class="va">cf_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"continuous_flow_example.dxf"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"continuous_flow_example.dxf"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></span>
 <span><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' from cache...</span></span>
-<span><span class="co">#&gt; Info: finished reading 1 files in 0.28 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 1 files in 0.16 secs</span></span>
 <span></span>
 <span><span class="co"># re-read the same file much faster (it will be read from cache)</span></span>
-<span><span class="va">cf_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"continuous_flow_example.dxf"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"continuous_flow_example.dxf"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></span>
 <span><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' from cache...</span></span>
-<span><span class="co">#&gt; Info: finished reading 1 files in 0.27 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 1 files in 0.15 secs</span></span>
 <span></span>
 <span><span class="co"># turn reader caching off</span></span>
 <span><span class="fu"><a href="../reference/iso_caching.html">iso_turn_reader_caching_off</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: caching turned off</span></span>
 <span></span>
 <span><span class="co"># re-read the same file (it will NOT be read from cache)</span></span>
-<span><span class="va">cf_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"continuous_flow_example.dxf"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"continuous_flow_example.dxf"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: preparing to read 1 data files...</span></span>
 <span><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' with '.dxf' reader...</span></span>
-<span><span class="co">#&gt; Info: finished reading 1 files in 5.00 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 1 files in 2.17 secs</span></span>
 <span></span>
 <span><span class="co"># turn reader caching back on</span></span>
 <span><span class="fu"><a href="../reference/iso_caching.html">iso_turn_reader_caching_on</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -368,7 +368,7 @@ read in parallel once a set of files is already cached.</p>
 <span><span class="co">#&gt; Info (process 1): reading file 'dual_inlet_example.did' from cache...</span></span>
 <span><span class="co">#&gt; Info (process 1): reading file 'dual_inlet_nu_example.txt' from cache...</span></span>
 <span><span class="co">#&gt; Info (process 2): reading file 'dual_inlet_example.caf' from cache...</span></span>
-<span><span class="co">#&gt; Info: finished reading 3 files in 3.30 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Info: finished reading 3 files in 2.61 secs</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="combining-subsetting-isofiles">Combining / subsetting isofiles<a class="anchor" aria-label="anchor" href="#combining-subsetting-isofiles"></a>
@@ -380,13 +380,11 @@ work with only specific files or create a larger collection.</p>
 <span><span class="va">di_files</span></span>
 <span><span class="co">#&gt; Data from 3 dual inlet iso files: </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
-<span><span class="co">#&gt;   file_id                   raw_data             file_…¹ metho…² vendo…³ file_…⁴</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did    7 cycles, 6 ions (4… 16 ent… standa… 7 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.caf    8 cycles, 6 ions (4… 22 ent… standa… 8 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> dual_inlet_nu_example.txt 82 cycles, 6 ions (… 9 entr… no met… no ven… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​file_info, ²​method_info,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ³​vendor_data_table, ⁴​file_path</span></span></span>
+<span><span class="co">#&gt;   file_id                 file_path_ file_subpath raw_data file_info method_info</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did  dual_inle… <span style="color: #BB0000;">NA</span>           7 cycle… 16 entri… standards,…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.caf  dual_inle… <span style="color: #BB0000;">NA</span>           8 cycle… 22 entri… standards,…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> dual_inlet_nu_example.… dual_inle… <span style="color: #BB0000;">NA</span>           82 cycl… 9 entries no method …</span></span>
 <span></span>
 <span><span class="co"># only one of the files (by index)</span></span>
 <span><span class="va">di_files</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
@@ -400,37 +398,31 @@ work with only specific files or create a larger collection.</p>
 <span><span class="va">di_files</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt; Data from 2 dual inlet iso files: </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
-<span><span class="co">#&gt;   file_id                   raw_data             file_…¹ metho…² vendo…³ file_…⁴</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did    7 cycles, 6 ions (4… 16 ent… standa… 7 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_nu_example.txt 82 cycles, 6 ions (… 9 entr… no met… no ven… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​file_info, ²​method_info,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ³​vendor_data_table, ⁴​file_path</span></span></span>
+<span><span class="co">#&gt;   file_id                 file_path_ file_subpath raw_data file_info method_info</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did  dual_inle… <span style="color: #BB0000;">NA</span>           7 cycle… 16 entri… standards,…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_nu_example.… dual_inle… <span style="color: #BB0000;">NA</span>           82 cycl… 9 entries no method …</span></span>
 <span></span>
 <span><span class="co"># a subset of the files (by file_id)</span></span>
 <span><span class="va">di_files</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span>, <span class="st">"dual_inlet_example.caf"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt; Data from 2 dual inlet iso files: </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
-<span><span class="co">#&gt;   file_id                raw_data                file_…¹ metho…² vendo…³ file_…⁴</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did 7 cycles, 6 ions (44,4… 16 ent… standa… 7 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.caf 8 cycles, 6 ions (44,4… 22 ent… standa… 8 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​file_info, ²​method_info,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ³​vendor_data_table, ⁴​file_path</span></span></span>
+<span><span class="co">#&gt;   file_id                file_path_  file_subpath raw_data file_info method_info</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did dual_inlet… <span style="color: #BB0000;">NA</span>           7 cycle… 16 entri… standards,…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.caf dual_inlet… <span style="color: #BB0000;">NA</span>           8 cycle… 22 entri… standards,…</span></span>
 <span></span>
 <span><span class="co"># same result using iso_filter_files (more flexible + verbose output)</span></span>
-<span><span class="va">di_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span></span>
+<span><span class="va">di_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span></span>
 <span>  <span class="va">file_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span>, <span class="st">"dual_inlet_example.caf"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: applying file filter, keeping 2 of 3 files</span></span>
 <span><span class="co">#&gt; Data from 2 dual inlet iso files: </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
-<span><span class="co">#&gt;   file_id                raw_data                file_…¹ metho…² vendo…³ file_…⁴</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did 7 cycles, 6 ions (44,4… 16 ent… standa… 7 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.caf 8 cycles, 6 ions (44,4… 22 ent… standa… 8 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​file_info, ²​method_info,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ³​vendor_data_table, ⁴​file_path</span></span></span>
+<span><span class="co">#&gt;   file_id                file_path_  file_subpath raw_data file_info method_info</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did dual_inlet… <span style="color: #BB0000;">NA</span>           7 cycle… 16 entri… standards,…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.caf dual_inlet… <span style="color: #BB0000;">NA</span>           8 cycle… 22 entri… standards,…</span></span>
 <span></span>
 <span><span class="co"># recombining subset files</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -439,12 +431,10 @@ work with only specific files or create a larger collection.</p>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Data from 2 dual inlet iso files: </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
-<span><span class="co">#&gt;   file_id                   raw_data             file_…¹ metho…² vendo…³ file_…⁴</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_nu_example.txt 82 cycles, 6 ions (… 9 entr… no met… no ven… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.did    7 cycles, 6 ions (4… 16 ent… standa… 7 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​file_info, ²​method_info,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ³​vendor_data_table, ⁴​file_path</span></span></span></code></pre></div>
+<span><span class="co">#&gt;   file_id                 file_path_ file_subpath raw_data file_info method_info</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_nu_example.… dual_inle… <span style="color: #BB0000;">NA</span>           82 cycl… 9 entries no method …</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.did  dual_inle… <span style="color: #BB0000;">NA</span>           7 cycle… 16 entri… standards,…</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="dealing-with-file-read-problems">Dealing with file read problems<a class="anchor" aria-label="anchor" href="#dealing-with-file-read-problems"></a>
@@ -467,14 +457,14 @@ please file a bug report and submit your file at <a href="https://github.com/iso
 <span><span class="co">#&gt; Info: reading file 'extdata/continuous_flow_example.dxf' from cache...</span></span>
 <span><span class="co">#&gt; Info: reading file 'errdata/cf_without_data.dxf' with '.dxf' reader...</span></span>
 <span><span class="co">#&gt; Warning: caught error - cannot identify measured masses - block 'CEvalDataI...</span></span>
-<span><span class="co">#&gt; Info: finished reading 2 files in 1.19 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 2 files in 0.73 secs</span></span>
 <span><span class="co">#&gt; Warning: encountered 1 problem.</span></span>
 <span><span class="co">#&gt; # | FILE                | PROBLEM | OCCURRED IN                  | DETAILS</span></span>
 <span><span class="co">#&gt; 1 | cf_without_data.dxf | error   | extract_dxf_raw_voltage_data | cannot ide...</span></span>
 <span><span class="co">#&gt; Use iso_get_problems(...) for more details.</span></span>
 <span></span>
 <span><span class="co"># retrieve problem summary</span></span>
-<span><span class="va">iso_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">iso_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">file_id</th>
@@ -490,13 +480,13 @@ please file a bug report and submit your file at <a href="https://github.com/iso
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># retrieve problem details</span></span>
-<span><span class="va">iso_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_problems.html">iso_get_problems</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">iso_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_problems.html">iso_get_problems</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="12%">
+<col width="10%">
 <col width="3%">
-<col width="18%">
-<col width="65%">
+<col width="14%">
+<col width="72%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">file_id</th>
@@ -509,13 +499,14 @@ please file a bug report and submit your file at <a href="https://github.com/iso
 <td align="left">error</td>
 <td align="left">extract_dxf_raw_voltage_data</td>
 <td align="left">cannot identify measured masses - block
-‘CEvalDataIntTransferPart’ not found after position 1 (pos 65327)</td>
+‘CEvalDataIntTransferPart’ not found after position 1 (nav block#1
+‘CFileHeader’, pos 65327, max 119237)</td>
 </tr></tbody>
 </table>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># filter out erroneous files</span></span>
-<span><span class="va">iso_files</span> <span class="op">&lt;-</span> <span class="va">iso_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_filter_files_with_problems.html">iso_filter_files_with_problems</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">iso_files</span> <span class="op">&lt;-</span> <span class="va">iso_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_filter_files_with_problems.html">iso_filter_files_with_problems</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: removing 1/2 files that have any error (keeping 1)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -536,23 +527,21 @@ re-read problematic files that had read errors/warnings
 in a collection (<code><a href="../reference/iso_reread_files.html">iso_reread_all_files()</a></code>).</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># re-read the 3 dual inlet files from their original location if any have changed</span></span>
-<span><span class="va">di_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">di_files</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_reread_files.html">iso_reread_changed_files</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: found 0 changed data file(s), re-reading 0/3.</span></span>
 <span><span class="co">#&gt; Data from 3 dual inlet iso files: </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
-<span><span class="co">#&gt;   file_id                   raw_data             file_…¹ metho…² vendo…³ file_…⁴</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did    7 cycles, 6 ions (4… 16 ent… standa… 7 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.caf    8 cycles, 6 ions (4… 22 ent… standa… 8 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> dual_inlet_nu_example.txt 82 cycles, 6 ions (… 9 entr… no met… no ven… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​file_info, ²​method_info,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ³​vendor_data_table, ⁴​file_path</span></span></span>
+<span><span class="co">#&gt;   file_id                 file_path_ file_subpath raw_data file_info method_info</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did  dual_inle… <span style="color: #BB0000;">NA</span>           7 cycle… 16 entri… standards,…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.caf  dual_inle… <span style="color: #BB0000;">NA</span>           8 cycle… 22 entri… standards,…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> dual_inlet_nu_example.… dual_inle… <span style="color: #BB0000;">NA</span>           82 cycl… 9 entries no method …</span></span>
 <span></span>
 <span><span class="co"># update the file_root for the files before re-read (in this case to a location</span></span>
 <span><span class="co"># that does not hold these files and hence will lead to a warning)</span></span>
-<span><span class="va">di_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_set_file_root.html">iso_set_file_root</a></span><span class="op">(</span>root <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">di_files</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_set_file_root.html">iso_set_file_root</a></span><span class="op">(</span>root <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_reread_files.html">iso_reread_all_files</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: setting file root for 3 data file(s) to '.'</span></span>
 <span><span class="co">#&gt; Warning: 3 file(s) do not exist at their referenced location and can not be re-read. Consider setting a new root directory with iso_set_file_root() first:</span></span>
@@ -562,13 +551,11 @@ in a collection (<code><a href="../reference/iso_reread_files.html">iso_reread_a
 <span><span class="co">#&gt; Info: found 0 data file(s), re-reading 0/3.</span></span>
 <span><span class="co">#&gt; Data from 3 dual inlet iso files: </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
-<span><span class="co">#&gt;   file_id                   raw_data             file_…¹ metho…² vendo…³ file_…⁴</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did    7 cycles, 6 ions (4… 16 ent… standa… 7 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.caf    8 cycles, 6 ions (4… 22 ent… standa… 8 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> dual_inlet_nu_example.txt 82 cycles, 6 ions (… 9 entr… no met… no ven… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​file_info, ²​method_info,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ³​vendor_data_table, ⁴​file_path</span></span></span>
+<span><span class="co">#&gt;   file_id                 file_path_ file_subpath raw_data file_info method_info</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did  dual_inle… <span style="color: #BB0000;">NA</span>           7 cycle… 16 entri… standards,…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.caf  dual_inle… <span style="color: #BB0000;">NA</span>           8 cycle… 22 entri… standards,…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> dual_inlet_nu_example.… dual_inle… <span style="color: #BB0000;">NA</span>           82 cycl… 9 entries no method …</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Problem summary:</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 3</span></span></span>
@@ -588,9 +575,9 @@ the column header), stripped altogether, or turned back to be
 implicit.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># strip all units</span></span>
-<span><span class="va">cf_file</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">`Ampl 28`</span>, <span class="va">`rIntensity 28`</span>, <span class="va">`d 15N/14N`</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_strip_units.html">iso_strip_units</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">cf_file</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">`Ampl 28`</span>, <span class="va">`rIntensity 28`</span>, <span class="va">`d 15N/14N`</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_strip_units.html">iso_strip_units</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating vendor data table from 1 data file(s)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 4</span></span></span>
 <span><span class="co">#&gt;   file_id                     `Ampl 28` `rIntensity 28` `d 15N/14N`</span></span>
@@ -600,41 +587,39 @@ implicit.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> continuous_flow_example.dxf     <span style="text-decoration: underline;">2</span>074.          <span style="text-decoration: underline;">52</span>732.      1.05</span></span>
 <span></span>
 <span><span class="co"># make units explicit</span></span>
-<span><span class="va">cf_file</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">`Ampl 28`</span>, <span class="va">`rIntensity 28`</span>, <span class="va">`d 15N/14N`</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_make_units_explicit.html">iso_make_units_explicit</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">cf_file</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">`Ampl 28`</span>, <span class="va">`rIntensity 28`</span>, <span class="va">`d 15N/14N`</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_make_units_explicit.html">iso_make_units_explicit</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating vendor data table from 1 data file(s)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 4</span></span></span>
-<span><span class="co">#&gt;   file_id                     `Ampl 28 [mV]` `rIntensity 28 [mVs]` d 15N/14N […¹</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> continuous_flow_example.dxf          <span style="text-decoration: underline;">3</span>024.                <span style="text-decoration: underline;">57</span>524.        0.016<span style="text-decoration: underline;">0</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> continuous_flow_example.dxf          <span style="text-decoration: underline;">3</span>023.                <span style="text-decoration: underline;">57</span>383.        0     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> continuous_flow_example.dxf          <span style="text-decoration: underline;">2</span>074.                <span style="text-decoration: underline;">52</span>732.        1.05  </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable name ¹​`d 15N/14N [permil]`</span></span></span>
+<span><span class="co">#&gt;   file_id              `Ampl 28 [mV]` `rIntensity 28 [mVs]` `d 15N/14N [permil]`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> continuous_flow_exa…          <span style="text-decoration: underline;">3</span>024.                <span style="text-decoration: underline;">57</span>524.               0.016<span style="text-decoration: underline;">0</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> continuous_flow_exa…          <span style="text-decoration: underline;">3</span>023.                <span style="text-decoration: underline;">57</span>383.               0     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> continuous_flow_exa…          <span style="text-decoration: underline;">2</span>074.                <span style="text-decoration: underline;">52</span>732.               1.05</span></span>
 <span></span>
 <span><span class="co"># introduce new unit columns e.g. in the file info</span></span>
-<span><span class="va">cf_file</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_mutate_file_info.html">iso_mutate_file_info</a></span><span class="op">(</span>weight <span class="op">=</span> <span class="fu"><a href="../reference/iso_with_units.html">iso_with_units</a></span><span class="op">(</span><span class="fl">0.42</span>, <span class="st">"mg"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_file</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_mutate_file_info.html">iso_mutate_file_info</a></span><span class="op">(</span>weight <span class="op">=</span> <span class="fu"><a href="../reference/iso_with_units.html">iso_with_units</a></span><span class="op">(</span><span class="fl">0.42</span>, <span class="st">"mg"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">`Ampl 28`</span>, <span class="va">`rIntensity 28`</span>, <span class="va">`d 15N/14N`</span><span class="op">)</span>,</span>
-<span>                            include_file_info <span class="op">=</span> <span class="va">weight</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_make_units_explicit.html">iso_make_units_explicit</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span>                            include_file_info <span class="op">=</span> <span class="va">weight</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_make_units_explicit.html">iso_make_units_explicit</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: mutating file info for 1 data file(s)</span></span>
 <span><span class="co">#&gt; Info: aggregating vendor data table from 1 data file(s), including file info 'weight'</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
-<span><span class="co">#&gt;   file_id                     `weight [mg]` `Ampl 28 [mV]` rIntensity …¹ d 15N…²</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> continuous_flow_example.dxf          0.42          <span style="text-decoration: underline;">3</span>024.        <span style="text-decoration: underline;">57</span>524.  0.016<span style="text-decoration: underline;">0</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> continuous_flow_example.dxf          0.42          <span style="text-decoration: underline;">3</span>023.        <span style="text-decoration: underline;">57</span>383.  0     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> continuous_flow_example.dxf          0.42          <span style="text-decoration: underline;">2</span>074.        <span style="text-decoration: underline;">52</span>732.  1.05  </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​`rIntensity 28 [mVs]`,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ²​`d 15N/14N [permil]`</span></span></span>
+<span><span class="co">#&gt;   file_id                     `weight [mg]` `Ampl 28 [mV]` `rIntensity 28 [mVs]`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> continuous_flow_example.dxf          0.42          <span style="text-decoration: underline;">3</span>024.                <span style="text-decoration: underline;">57</span>524.</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> continuous_flow_example.dxf          0.42          <span style="text-decoration: underline;">3</span>023.                <span style="text-decoration: underline;">57</span>383.</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> continuous_flow_example.dxf          0.42          <span style="text-decoration: underline;">2</span>074.                <span style="text-decoration: underline;">52</span>732.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: `d 15N/14N [permil]` &lt;dbl&gt;</span></span></span>
 <span></span>
 <span><span class="co"># or turn a column e.g. with custom format units in the header into implicit units</span></span>
-<span><span class="va">cf_file</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_mutate_file_info.html">iso_mutate_file_info</a></span><span class="op">(</span>weight.mg <span class="op">=</span> <span class="fl">0.42</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_file</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_mutate_file_info.html">iso_mutate_file_info</a></span><span class="op">(</span>weight.mg <span class="op">=</span> <span class="fl">0.42</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">`Ampl 28`</span>, <span class="va">`rIntensity 28`</span>, <span class="va">`d 15N/14N`</span><span class="op">)</span>,</span>
-<span>                            include_file_info <span class="op">=</span> <span class="va">weight.mg</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_make_units_implicit.html">iso_make_units_implicit</a></span><span class="op">(</span>prefix <span class="op">=</span> <span class="st">"."</span>, suffix <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span>                            include_file_info <span class="op">=</span> <span class="va">weight.mg</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_make_units_implicit.html">iso_make_units_implicit</a></span><span class="op">(</span>prefix <span class="op">=</span> <span class="st">"."</span>, suffix <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: mutating file info for 1 data file(s)</span></span>
 <span><span class="co">#&gt; Info: aggregating vendor data table from 1 data file(s), including file info 'weight.mg'</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
@@ -665,10 +650,10 @@ frame.</p>
 <span><span class="co">#&gt; [1] "pi: 3.142 | x: 42mg | ID: ABC"</span></span>
 <span></span>
 <span><span class="co"># example inside a data frame</span></span>
-<span><span class="va">cf_file</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">`Nr.`</span>, <span class="va">`Ampl 28`</span>, <span class="va">`d 15N/14N`</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">file_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_file</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">`Nr.`</span>, <span class="va">`Ampl 28`</span>, <span class="va">`d 15N/14N`</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">file_id</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># introduce new label columns using iso_format</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    <span class="co"># default concatenation of values</span></span>
@@ -689,12 +674,11 @@ frame.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating vendor data table from 1 data file(s)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
-<span><span class="co">#&gt;     Nr. `Ampl 28`   `d 15N/14N` label_default                    label…¹ label…²</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl[mV]&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl[permil]&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1  3024.040    0.01600287 Nr.: 1, Ampl 28: 3020mV, d 15N/… #: 1, … 1, 302…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2  3022.789    0.00000000 Nr.: 2, Ampl 28: 3020mV, d 15N/… #: 2, … 2, 302…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     3  2073.872    1.04910065 Nr.: 3, Ampl 28: 2070mV, d 15N/… #: 3, … 3, 207…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​label_named, ²​label_value</span></span></span></code></pre></div>
+<span><span class="co">#&gt;     Nr. `Ampl 28`   `d 15N/14N` label_default            label_named label_value</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl[mV]&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl[permil]&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1  3024.040    0.01600287 Nr.: 1, Ampl 28: 3020mV… #: 1, A: 3… 1, 3024.04…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2  3022.789    0.00000000 Nr.: 2, Ampl 28: 3020mV… #: 2, A: 3… 2, 3022.79…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     3  2073.872    1.04910065 Nr.: 3, Ampl 28: 2070mV… #: 3, A: 2… 3, 2073.87…</span></span></code></pre></div>
 </div>
   </div>
 

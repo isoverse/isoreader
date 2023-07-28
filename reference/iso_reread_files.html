@@ -170,15 +170,15 @@
 <span class="r-in"><span><span class="va">saved_files_path</span> <span class="op">&lt;-</span> <span class="st">"saved_isofile.scan.rds"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># create saved collection</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="iso_get_reader_example.html">iso_get_reader_examples_folder</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
-<span class="r-in"><span> <span class="fu"><a href="iso_read_scan.html">iso_read_scan</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span><span class="fu"><a href="iso_get_reader_example.html">iso_get_reader_examples_folder</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
+<span class="r-in"><span> <span class="fu"><a href="iso_read_scan.html">iso_read_scan</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="iso_save.html">iso_save</a></span><span class="op">(</span><span class="va">saved_files_path</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Info: preparing to read 4 data files...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Info: reading file 'background_scan_example.scn' with '.scn' reader...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Info: reading file 'full_scan_example.scn' with '.scn' reader...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Info: reading file 'time_scan_example.scn' with '.scn' reader...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Info: finished reading 4 files in 2.95 secs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Info: finished reading 4 files in 1.35 secs</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>file creation date could not be accessed for all files because this information is not available on some Linux systems, reporting last modified time for file_datetime instead. To turn these warnings off, call iso_turn_datetime_warnings_off() and reread these files with iso_reread_all_files().</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>encountered 4 problems.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> # | FILE                        | PROBLEM | OCCURRED IN                      ...</span>
@@ -190,15 +190,15 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Info: exporting data from 4 iso_files into R Data Storage 'saved_isofile.scan.rds'</span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># load collection</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="iso_read_scan.html">iso_read_scan</a></span><span class="op">(</span><span class="va">saved_files_path</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span><span class="fu"><a href="iso_read_scan.html">iso_read_scan</a></span><span class="op">(</span><span class="va">saved_files_path</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span> <span class="co"># reread outdated files (alternatively "_all_" or "_changed_")</span></span></span>
-<span class="r-in"><span> <span class="fu">iso_reread_outdated_files</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span> <span class="fu">iso_reread_outdated_files</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span> <span class="co"># re-save collection to its original location</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="iso_save.html">iso_save</a></span><span class="op">(</span><span class="va">saved_files_path</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Info: preparing to read 1 data files...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Info: reading file 'saved_isofile.scan.rds' with '.scan.rds' reader...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Info: loaded 4 data files from R Data Storage</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Info: finished reading 1 files in 0.20 secs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Info: finished reading 1 files in 0.11 secs</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>file creation date could not be accessed for all files because this information is not available on some Linux systems, reporting last modified time for file_datetime instead. To turn these warnings off, call iso_turn_datetime_warnings_off() and reread these files with iso_reread_all_files().</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>encountered 4 problems.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> # | FILE                        | PROBLEM | OCCURRED IN                      ...</span>

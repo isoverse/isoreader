@@ -107,7 +107,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Development features of isoreader</h1>
             
-            <h4 data-toc-skip class="date">2023-01-07</h4>
+            <h4 data-toc-skip class="date">2023-07-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/HEAD/vignettes/development.Rmd" class="external-link"><code>vignettes/development.Rmd</code></a></small>
       <div class="hidden name"><code>development.Rmd</code></div>
@@ -299,7 +299,7 @@ out the layout of the provided data structure skeleton
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># copy an example file from the package with the new extension</span></span>
-<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>to <span class="op">=</span> <span class="st">"example.new.did"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>to <span class="op">=</span> <span class="st">"example.new.did"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
 <span><span class="co"># read the file</span></span>
@@ -334,7 +334,7 @@ out the layout of the provided data structure skeleton
 <span><span class="co">#&gt;   ..$ type   : chr(0) </span></span>
 <span><span class="co">#&gt;   ..$ func   : chr(0) </span></span>
 <span><span class="co">#&gt;   ..$ details: chr(0)</span></span>
-<span><span class="co">#&gt; Info: finished reading 1 files in 0.54 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 1 files in 0.25 secs</span></span>
 <span><span class="co">#&gt; Dual inlet iso file 'example.new.did': 0 cycles, 0 ions ()</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.remove</a></span><span class="op">(</span><span class="st">"example.new.did"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
@@ -387,7 +387,7 @@ always show its message no matter the <code>quiet</code> setting.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.caf"</span><span class="op">)</span></span>
-<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span>read_cache <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span>read_cache <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: preparing to read 2 data files (all will be cached)...</span></span>
 <span><span class="co">#&gt; Info: reading file 'dual_inlet_example.did' with '.did' reader...</span></span>
 <span><span class="co">#&gt; Info: starting file #1, named 'dual_inlet_example.did'</span></span>
@@ -395,15 +395,13 @@ always show its message no matter the <code>quiet</code> setting.</p>
 <span><span class="co">#&gt; Info: reading file 'dual_inlet_example.caf' with '.caf' reader...</span></span>
 <span><span class="co">#&gt; Info: starting file #2, named 'dual_inlet_example.caf'</span></span>
 <span><span class="co">#&gt; Info: finished file #2</span></span>
-<span><span class="co">#&gt; Info: finished reading 2 files in 10.73 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 2 files in 8.90 secs</span></span>
 <span><span class="co">#&gt; Data from 2 dual inlet iso files: </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
-<span><span class="co">#&gt;   file_id                raw_data                file_…¹ metho…² vendo…³ file_…⁴</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did 7 cycles, 6 ions (44,4… 16 ent… standa… 7 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.caf 8 cycles, 6 ions (44,4… 22 ent… standa… 8 rows… dual_i…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​file_info, ²​method_info,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ³​vendor_data_table, ⁴​file_path</span></span></span>
+<span><span class="co">#&gt;   file_id                file_path_  file_subpath raw_data file_info method_info</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> dual_inlet_example.did dual_inlet… <span style="color: #BB0000;">NA</span>           7 cycle… 16 entri… standards,…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> dual_inlet_example.caf dual_inlet… <span style="color: #BB0000;">NA</span>           8 cycle… 22 entri… standards,…</span></span>
 <span></span>
 <span><span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">initialize_options</span><span class="op">(</span><span class="op">)</span> <span class="co"># reset all isoreader options</span></span></code></pre></div>
 </div>
@@ -419,104 +417,131 @@ to catch errors inside file readers (keeping track of them in the <a href="opera
 unless you set <code>iso_turn_debug_on(catch_errors = FALSE)</code>, in
 which case no errors are caught and stop the processing so you get the
 full traceback and debugging options of your IDE.</p>
-<div class="section level3">
-<h3 id="debugging-binary-file-reads-isodat">Debugging binary file reads (Isodat)<a class="anchor" aria-label="anchor" href="#debugging-binary-file-reads-isodat"></a>
-</h3>
+</div>
+<div class="section level2">
+<h2 id="debugging-binary-file-reads-isodat">Debugging binary file reads (Isodat)<a class="anchor" aria-label="anchor" href="#debugging-binary-file-reads-isodat"></a>
+</h2>
 <p>Errors during the binary file reads usually indicate the approximate
 position in the file where the error was encountered. The easiest way to
 get started on figuring out what the file looks like at that position is
 to use a binary file editor and jump to the position. For a sense of the
-interpreted structure around that position, one can use the internal
-function <code>map_binary_structure</code> which tries to apply all
-frequently occurring binary patterns recognized by isoreader. The binary
-representation of the source file is only available if in debug mode but
-if debug mode is ON, it can be accessed as follows:</p>
+interpreted structure around that position, one can use
+<code><a href="../reference/iso_get_source_file_structure.html">iso_print_source_file_structure()</a></code> which shows what binary
+patterns isoreader recognized. This binary representation of the source
+file is only available if the file is read while in debug mode,
+otherwise file objects would get unnecessarily large:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># turn on debug mode</span></span>
 <span><span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/iso_debug_mode.html">iso_turn_debug_on</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: debug mode turned on, error catching turned on, caching turned off</span></span>
 <span><span class="co"># read example file</span></span>
-<span><span class="va">ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  </span>
+<span><span class="va">ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"dual_inlet_example.did"</span><span class="op">)</span> <span class="op">|&gt;</span>  </span>
 <span>  <span class="fu"><a href="../reference/iso_read_dual_inlet.html">iso_read_dual_inlet</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co"># access binary</span></span>
-<span><span class="va">bin</span> <span class="op">&lt;-</span> <span class="va">ex</span><span class="op">$</span><span class="va">binary</span></span>
-<span><span class="co"># use structure mapping</span></span>
-<span><span class="va">bin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">move_to_pos</span><span class="op">(</span><span class="fl">1340</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/map_binary_structure.html">map_binary_structure</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # Binary data structure:  </span></span>
-<span><span class="co">#&gt; 0001340: {4d 65 73 73 61 67 65 44 61 74 61}</span></span>
-<span><span class="co">#&gt; 0001351:   &lt;etx&gt;</span></span>
-<span><span class="co">#&gt; 0001355:   {/}&lt;fef-0&gt;&lt;fef-12&gt;{Peak Center foun..}&lt;4x00&gt;&lt;1-000&gt;&lt;fef-1c&gt;{Peak Center found at [61032]}&lt;fef-09&gt;{CUserInfo}&lt;ffff&gt;{00 00 00 00 1b 80}</span></span>
-<span><span class="co">#&gt; 0001501: &lt;etx&gt;</span></span>
-<span><span class="co">#&gt; 0001505: {/}&lt;fef-0&gt;&lt;fef-12&gt;</span></span></code></pre></div>
+<span><span class="co"># retrieve source structure and print a part of it</span></span>
+<span><span class="va">bin</span> <span class="op">&lt;-</span> <span class="va">ex</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_source_file_structure.html">iso_get_source_file_structure</a></span><span class="op">(</span><span class="op">)</span> </span>
+<span><span class="va">bin</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_source_file_structure.html">iso_print_source_file_structure</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # Textual representation of the partial structure (bytes 1 - 504) of the isodat file.</span></span>
+<span><span class="co">#&gt; # Print more/less by specifying the 'start', 'length' or 'end' parameters.</span></span>
+<span><span class="co">#&gt; 0000001: &lt;CFileHeader&gt;{unknown-4: 'fe f7 31 01'}</span></span>
+<span><span class="co">#&gt; 0000022:   &lt;06-000&gt;{text-10: 'CBlockData'}{text-18: 'CDualInletDocument'}&lt;4x00&gt;</span></span>
+<span><span class="co">#&gt; 0000094:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-20: 'Acquisition-1568.did'}{text-11: 'File Header'}&lt;4x00&gt;</span></span>
+<span><span class="co">#&gt; 0000174:   &lt;02-000&gt;</span></span>
+<span><span class="co">#&gt; 0000178:   &lt;02-000&gt;</span></span>
+<span><span class="co">#&gt; 0000182: &lt;CTimeObject&gt;</span></span>
+<span><span class="co">#&gt; 0000199:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-4: 'Date'}{text-4: 'Date'}&lt;4x00&gt;</span></span>
+<span><span class="co">#&gt; 0000233:   &lt;01-000&gt;{unknown-4: '4a 2b 4e 54'}</span></span>
+<span><span class="co">#&gt; 0000241: &lt;CStr&gt;</span></span>
+<span><span class="co">#&gt; 0000251:   &lt;02-000&gt;{text-18: 'RW2000TemplateName'}</span></span>
+<span><span class="co">#&gt; 0000295:   &lt;02-000&gt;{text-84: 'C:\Thermo\Isodat NT\Global\User\Dual Inlet System\Result Workshop\Default Result.IRW'}</span></span>
+<span><span class="co">#&gt; 0000471: &lt;CDataIndex&gt;</span></span>
+<span><span class="co">#&gt; 0000487:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-0: 'NA'}{text-0: 'NA'}&lt;4x00&gt;</span></span></code></pre></div>
 <p>This structure representation shows recognized control elements in
 <code>&lt;...&gt;</code> and data elements in <code>{...}</code> which
 are converted to text or numeric representation if the interpretation is
 unambiguous, or plain hexadecimal characters if the nature of the data
-cannot be determined with certainty. Because this function tries all
-possible control elements and data interpretations, it is quite slow and
-may take a while if run for large stretches of binary code (i.e. if the
-<code>length</code> parameter is very long).</p>
-<p>For an overview of all the control elements that are currently
-consider, use the internal <code>get_ctrl_blocks_config_df()</code>
-function.</p>
+cannot be determined with certainty. You can adjust <code>start</code>
+and <code>length</code> to look at different parts of the binary file or
+save the the structure to a text file with
+<code>save_to_file</code>.</p>
+<p>For an overview of all the elements (<code>blocks</code>) identified
+in the binary file as a tibble, use:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">get_ctrl_blocks_config_df</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 26 × 3</span></span></span>
-<span><span class="co">#&gt;    block    regexp                              hexadecimal                     </span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> del-nl   <span style="color: #949494;">"</span>\x7f\x85<span style="color: #949494;">"</span>                          7f 85                           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> eop-nl   <span style="color: #949494;">"</span>܅<span style="color: #949494;">"</span>                                 dc 85                           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 0b-80    <span style="color: #949494;">"</span>\v\x80<span style="color: #949494;">"</span>                            0b 80                           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> e0-81    <span style="color: #949494;">"</span>\xe0\x81<span style="color: #949494;">"</span>                          e0 81                           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> ce-80    <span style="color: #949494;">"</span>\u0380<span style="color: #949494;">"</span>                            ce 80                           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> ce-8a    <span style="color: #949494;">"</span>Ί<span style="color: #949494;">"</span>                                 ce 8a                           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> ee-85    <span style="color: #949494;">"</span>\xee\x85<span style="color: #949494;">"</span>                          ee 85                           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 75-84    <span style="color: #949494;">"</span>u\x84<span style="color: #949494;">"</span>                             75 84                           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ff-80    <span style="color: #949494;">"</span>\\x00\xff\x80\\x00<span style="color: #949494;">"</span>                5c 78 30 30 ff 80 5c 78 30 30   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 07-80-id <span style="color: #949494;">"</span>\x05\x80.\xff(\\x00|\x80|\xff){2}<span style="color: #949494;">"</span> 05 80 2e ff 28 5c 78 30 30 7c 8…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 16 more rows</span></span></span></code></pre></div>
-<p>Additional information can be gleaned from the so-called control
-blocks, which are larger structural elements of Isodat binary files and
-are kept in a data frame within the binary object (again only available
-in debug mode).</p>
+<code class="sourceCode R"><span><span class="va">bin</span><span class="op">$</span><span class="va">blocks</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 20 × 8</span></span></span>
+<span><span class="co">#&gt;    block_idx start   end   len data_len type    priority block               </span></span>
+<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>         1     1    17    17       11 C block        1 CFileHeader         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>         2    18    21     4        4 unknown        5 fe f7 31 01         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>         3    22    25     4        0 x-000          3 06-000              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>         4    26    49    24       10 text           2 CBlockData          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>         5    50    89    40       18 text           2 CDualInletDocument  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>         6    90    93     4        0 0000+          4 4x00                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>         7    94    97     4        0 x-000          3 03-000              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>         8    98    99     2        2 unknown        5 2f 00               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>         9   100   143    44       20 text           2 Acquisition-1568.did</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>        10   144   169    26       11 text           2 File Header         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>        11   170   173     4        0 0000+          4 4x00                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span>        12   174   177     4        0 x-000          3 02-000              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span>        13   178   181     4        0 x-000          3 02-000              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span>        14   182   198    17       11 C block        1 CTimeObject         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span>        15   199   202     4        0 x-000          3 03-000              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span>        16   203   204     2        2 unknown        5 2f 00               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span>        17   205   216    12        4 text           2 Date                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span>        18   217   228    12        4 text           2 Date                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span>        19   229   232     4        0 0000+          4 4x00                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">20</span>        20   233   236     4        0 x-000          3 01-000</span></span></code></pre></div>
+<p>While this provides all elements, the top level structure is provided
+by the so-called control blocks:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bin</span><span class="op">$</span><span class="va">C_blocks</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 107 × 5</span></span></span>
-<span><span class="co">#&gt;    id1   id2   block                 start   end</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 06    0b    CFileHeader               1    17</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 01    0b    CTimeObject             182   198</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 02    04    CStr                    241   250</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 01    0a    CDataIndex              471   486</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 01    11    CSeqLineIndexData       513   535</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 03    05    CData                   588   598</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 01    13    CDualInletBlockData    <span style="text-decoration: underline;">1</span>133  <span style="text-decoration: underline;">1</span>157</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 01    10    CMeasurmentInfos       <span style="text-decoration: underline;">1</span>240  <span style="text-decoration: underline;">1</span>261</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 01    15    CISLScriptMessageData  <span style="text-decoration: underline;">1</span>324  <span style="text-decoration: underline;">1</span>350</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 01    11    CMeasurmentErrors      <span style="text-decoration: underline;">1</span>945  <span style="text-decoration: underline;">1</span>967</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 97 more rows</span></span></span></code></pre></div>
-<p>Same as for specific byte positions, one can use the control blocks
-to navigate the file and <code>map_binary_structure</code>.</p>
+<code class="sourceCode R"><span><span class="va">bin</span><span class="op">$</span><span class="va">blocks</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"C block"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 20 × 8</span></span></span>
+<span><span class="co">#&gt;    block_idx start   end   len data_len type    priority block                  </span></span>
+<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>         1     1    17    17       11 C block        1 CFileHeader            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>        14   182   198    17       11 C block        1 CTimeObject            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>        22   241   250    10        4 C block        1 CStr                   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>        27   471   486    16       10 C block        1 CDataIndex             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>        35   513   535    23       17 C block        1 CSeqLineIndexData      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>        43   588   598    11        5 C block        1 CData                  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>       113  <span style="text-decoration: underline;">1</span>133  <span style="text-decoration: underline;">1</span>157    25       19 C block        1 CDualInletBlockData    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>       121  <span style="text-decoration: underline;">1</span>240  <span style="text-decoration: underline;">1</span>261    22       16 C block        1 CMeasurmentInfos       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>       129  <span style="text-decoration: underline;">1</span>324  <span style="text-decoration: underline;">1</span>350    27       21 C block        1 CISLScriptMessageData  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>       163  <span style="text-decoration: underline;">1</span>945  <span style="text-decoration: underline;">1</span>967    23       17 C block        1 CMeasurmentErrors      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>       172  <span style="text-decoration: underline;">2</span>038  <span style="text-decoration: underline;">2</span>060    23       17 C block        1 CDualInletRawData      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span>       180  <span style="text-decoration: underline;">2</span>099  <span style="text-decoration: underline;">2</span>114    16       10 C block        1 CBlockData             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span>       188  <span style="text-decoration: underline;">2</span>269  <span style="text-decoration: underline;">2</span>302    34       28 C block        1 CIntegrationUnitTransf…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span>       199  <span style="text-decoration: underline;">2</span>361  <span style="text-decoration: underline;">2</span>380    20       14 C block        1 CIntensityData         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span>       639  <span style="text-decoration: underline;">5</span>299  <span style="text-decoration: underline;">5</span>319    21       15 C block        1 CDualInletShout        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span>       655  <span style="text-decoration: underline;">5</span>460  <span style="text-decoration: underline;">5</span>485    26       20 C block        1 CTwoDoublesArrayData   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span>       827  <span style="text-decoration: underline;">6</span>412  <span style="text-decoration: underline;">6</span>433    22       16 C block        1 CStatusArrayData       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span>       885  <span style="text-decoration: underline;">6</span>747  <span style="text-decoration: underline;">6</span>764    18       12 C block        1 COutlierData           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span>      <span style="text-decoration: underline;">6</span>461 <span style="text-decoration: underline;">40</span>876 <span style="text-decoration: underline;">40</span>902    27       21 C block        1 CResultDataSimpleList  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">20</span>      <span style="text-decoration: underline;">6</span>469 <span style="text-decoration: underline;">40</span>951 <span style="text-decoration: underline;">40</span>973    23       17 C block        1 CResultDataSimple</span></span></code></pre></div>
+<p>To look at specific control-blocks, simply provide the relevant start
+position to <code><a href="../reference/iso_get_source_file_structure.html">iso_print_source_file_structure()</a></code>:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu">move_to_C_block</span><span class="op">(</span><span class="st">"CMethod"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">isoreader</span><span class="fu">:::</span><span class="fu"><a href="../reference/map_binary_structure.html">map_binary_structure</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # Binary data structure:  </span></span>
-<span><span class="co">#&gt; 0080269: &lt;etx&gt;</span></span>
-<span><span class="co">#&gt; 0080273:   {-}&lt;fef-0&gt;&lt;fef-06&gt;{Method}&lt;4x00&gt;</span></span>
-<span><span class="co">#&gt; 0080299:   &lt;stx&gt;</span></span>
-<span><span class="co">#&gt; 0080303:     &lt;7-000&gt;</span></span>
-<span><span class="co">#&gt; 0080307:     &lt;C-01-09 CMolecule&gt;</span></span>
-<span><span class="co">#&gt; 0080322:   &lt;etx&gt;</span></span>
-<span><span class="co">#&gt; 0080326:   {-}&lt;fef-0d&gt;{Eval@Molecule}&lt;fef-0d&gt;{Eval@Molecule}&lt;4x00&gt;&lt;1-000&gt;&lt;fef-03&gt;{CO2}</span></span>
-<span><span class="co">#&gt; 0080406:   &lt;C-00-0b CPartMirror&gt;</span></span>
-<span><span class="co">#&gt; 0080423:   &lt;C-02-13 CMethodPrintoutDesc&gt;</span></span>
-<span><span class="co">#&gt; 0080448: &lt;etx&gt;</span></span>
-<span><span class="co">#&gt; 0080452: {-}&lt;fef-0&gt;&lt;fef-0&gt;&lt;4x00&gt;</span></span>
-<span><span class="co">#&gt; 0080466: &lt;stx&gt;</span></span></code></pre></div>
-</div>
+<code class="sourceCode R"><span><span class="va">cdata</span> <span class="op">&lt;-</span> <span class="va">bin</span><span class="op">$</span><span class="va">blocks</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">block</span> <span class="op">==</span> <span class="st">"CData"</span><span class="op">)</span></span>
+<span><span class="va">cdata</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 8</span></span></span>
+<span><span class="co">#&gt;   block_idx start   end   len data_len type    priority block</span></span>
+<span><span class="co">#&gt;       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        43   588   598    11        5 C block        1 CData</span></span>
+<span></span>
+<span><span class="va">bin</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_source_file_structure.html">iso_print_source_file_structure</a></span><span class="op">(</span>start <span class="op">=</span> <span class="va">cdata</span><span class="op">$</span><span class="va">start</span>, length <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # Textual representation of the partial structure (bytes 588 - 1098) of the isodat file.</span></span>
+<span><span class="co">#&gt; # Print more/less by specifying the 'start', 'length' or 'end' parameters.</span></span>
+<span><span class="co">#&gt; 0000588: &lt;CData&gt;</span></span>
+<span><span class="co">#&gt; 0000599:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-3: '158'}{text-4: 'Line'}&lt;4x00&gt;{unknown-2: '0b 80'}</span></span>
+<span><span class="co">#&gt; 0000633:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-1: '1'}{text-11: 'Peak Center'}&lt;4x00&gt;{unknown-2: '0b 80'}</span></span>
+<span><span class="co">#&gt; 0000677:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-1: '1'}{text-11: 'Pressadjust'}&lt;4x00&gt;{unknown-2: '0b 80'}</span></span>
+<span><span class="co">#&gt; 0000721:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-1: '1'}{text-10: 'Background'}&lt;4x00&gt;{unknown-2: '0b 80'}</span></span>
+<span><span class="co">#&gt; 0000763:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-11: 'CIT Carrara'}{text-12: 'Identifier 1'}&lt;4x00&gt;{unknown-2: '0b 80'}</span></span>
+<span><span class="co">#&gt; 0000829:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-2: '13'}{text-12: 'Identifier 2'}&lt;4x00&gt;{unknown-2: '0b 80'}</span></span>
+<span><span class="co">#&gt; 0000877:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-5: '49077'}{text-8: 'Analysis'}&lt;4x00&gt;{unknown-2: '0b 80'}</span></span>
+<span><span class="co">#&gt; 0000923:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-0: 'NA'}{text-7: 'Comment'}&lt;4x00&gt;{unknown-2: '0b 80'}</span></span>
+<span><span class="co">#&gt; 0000957:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-0: 'NA'}{text-11: 'Preparation'}&lt;4x00&gt;{unknown-2: '0b 80'}</span></span>
+<span><span class="co">#&gt; 0000999:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-0: 'NA'}{text-11: 'Post Script'}&lt;4x00&gt;{unknown-2: '0b 80'}</span></span>
+<span><span class="co">#&gt; 0001041:   &lt;03-000&gt;{unknown-2: '2f 00'}{text-16: 'CO2_multiply_16V'}{text-6: 'Method'}</span></span></code></pre></div>
 </div>
   </div>
 

@@ -107,7 +107,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Quick Start Guide</h1>
             
-            <h4 data-toc-skip class="date">2023-01-07</h4>
+            <h4 data-toc-skip class="date">2023-07-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/HEAD/vignettes/quick_start.Rmd" class="external-link"><code>vignettes/quick_start.Rmd</code></a></small>
       <div class="hidden name"><code>quick_start.Rmd</code></div>
@@ -145,7 +145,7 @@ Inlet</a></li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># all available examples</span></span>
-<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="32%">
@@ -234,7 +234,7 @@ Inlet</a></li>
 <span><span class="co">#&gt; Info: reading file 'dual_inlet_example.did' with '.did' reader...</span></span>
 <span><span class="co">#&gt; Info: reading file 'dual_inlet_nu_example.txt' with '.txt' reader...</span></span>
 <span><span class="co">#&gt; Warning: found 6 channels but 0 masses were specified - the raw data will b...</span></span>
-<span><span class="co">#&gt; Info: finished reading 3 files in 11.57 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 3 files in 9.46 secs</span></span>
 <span><span class="co">#&gt; Warning: encountered 1 problem.</span></span>
 <span><span class="co">#&gt; # | FILE                      | PROBLEM | OCCURRED IN | DETAILS</span></span>
 <span><span class="co">#&gt; 1 | dual_inlet_nu_example.txt | warning | iso_read_nu | found 6 channels but ...</span></span>
@@ -245,7 +245,7 @@ Inlet</a></li>
 <span><span class="co">#&gt; Info: exporting data from 3 iso_files into R Data Storage 'di_save.di.rds'</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># export to excel</span></span>
-<span><span class="fu"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span><span class="op">(</span><span class="va">di_files</span>, filepath <span class="op">=</span> <span class="st">"di_export"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/iso_export_files_to_excel.html">iso_export_files_to_excel</a></span><span class="op">(</span><span class="va">di_files</span>, filepath <span class="op">=</span> <span class="st">"di_export"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="continuous-flow-files">Continuous Flow Files<a class="anchor" aria-label="anchor" href="#continuous-flow-files"></a>
@@ -267,14 +267,14 @@ Inlet</a></li>
 <span><span class="co">#&gt;       processing sample '6605_USGS41' (IRMS data '40.hdf5', '43.hdf5')</span></span>
 <span><span class="co">#&gt;       processing sample '6617_IAEA600' (IRMS data '80.hdf5', '82.hdf5')</span></span>
 <span><span class="co">#&gt;       processing sample '6630_GlutamicAcid04' (IRMS data '124.hdf5', '126.h...</span></span>
-<span><span class="co">#&gt; Info: finished reading 3 files in 13.68 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Info: finished reading 3 files in 6.61 secs</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># save as r data storage (read back in with iso_read_continuous_flow)</span></span>
 <span><span class="fu"><a href="../reference/iso_save.html">iso_save</a></span><span class="op">(</span><span class="va">cf_files</span>, filepath <span class="op">=</span> <span class="st">"cf_save"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: exporting data from 6 iso_files into R Data Storage 'cf_save.cf.rds'</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># export to excel</span></span>
-<span><span class="fu"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span><span class="op">(</span><span class="va">cf_files</span>, filepath <span class="op">=</span> <span class="st">"cf_export"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/iso_export_files_to_excel.html">iso_export_files_to_excel</a></span><span class="op">(</span><span class="va">cf_files</span>, filepath <span class="op">=</span> <span class="st">"cf_export"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="scan-files">Scan Files<a class="anchor" aria-label="anchor" href="#scan-files"></a>
@@ -287,11 +287,11 @@ Inlet</a></li>
 <span><span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader...</span></span>
 <span><span class="co">#&gt; Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...</span></span>
 <span><span class="co">#&gt; Info: reading file 'time_scan_example.scn' with '.scn' reader...</span></span>
-<span><span class="co">#&gt; Info: finished reading 4 files in 2.76 secs</span></span>
-<span><span class="co">#&gt; Warning: file creation date could not be accessed for all files because</span></span>
-<span><span class="co">#&gt; this information is not available on some Linux systems, reporting</span></span>
-<span><span class="co">#&gt; last modified time for file_datetime instead. To turn these warnings</span></span>
-<span><span class="co">#&gt; off, call iso_turn_datetime_warnings_off() and reread these files with</span></span>
+<span><span class="co">#&gt; Info: finished reading 4 files in 1.19 secs</span></span>
+<span><span class="co">#&gt; Warning: file creation date could not be accessed for all files because this</span></span>
+<span><span class="co">#&gt; information is not available on some Linux systems, reporting last modified</span></span>
+<span><span class="co">#&gt; time for file_datetime instead. To turn these warnings off, call</span></span>
+<span><span class="co">#&gt; iso_turn_datetime_warnings_off() and reread these files with</span></span>
 <span><span class="co">#&gt; iso_reread_all_files().</span></span>
 <span><span class="co">#&gt; Warning: encountered 4 problems.</span></span>
 <span><span class="co">#&gt; # | FILE                        | PROBLEM | OCCURRED IN                      ...</span></span>
@@ -306,7 +306,7 @@ Inlet</a></li>
 <span><span class="co">#&gt; Info: exporting data from 4 iso_files into R Data Storage 'scan_save.scan.rds'</span></span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># export to excel</span></span>
-<span><span class="fu"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span><span class="op">(</span><span class="va">scan_files</span>, filepath <span class="op">=</span> <span class="st">"scan_export"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/iso_export_files_to_excel.html">iso_export_files_to_excel</a></span><span class="op">(</span><span class="va">scan_files</span>, filepath <span class="op">=</span> <span class="st">"scan_export"</span><span class="op">)</span></span></code></pre></div>
 </div>
   </div>
 

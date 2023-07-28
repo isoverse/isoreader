@@ -107,7 +107,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Continuous Flow Examples</h1>
             
-            <h4 data-toc-skip class="date">2023-01-07</h4>
+            <h4 data-toc-skip class="date">2023-07-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/HEAD/vignettes/continuous_flow.Rmd" class="external-link"><code>vignettes/continuous_flow.Rmd</code></a></small>
       <div class="hidden name"><code>continuous_flow.Rmd</code></div>
@@ -144,7 +144,7 @@ files (.cf, .dxf) are individual analysis files whereas others (.iarc)
 are collections of several files.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># all available examples</span></span>
-<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_examples</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="32%">
@@ -243,7 +243,7 @@ are collections of several files.</p>
 <span><span class="co">#&gt;       processing sample '6617_IAEA600' (IRMS data '80.hdf5', '82.hdf5')</span></span>
 <span><span class="co">#&gt;       processing sample '6630_GlutamicAcid04' (IRMS data '124.hdf5', '126.h...</span></span>
 <span><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' with '.dxf' reader...</span></span>
-<span><span class="co">#&gt; Info: finished reading 3 files in 13.96 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Info: finished reading 3 files in 6.78 secs</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="file-summary">File summary<a class="anchor" aria-label="anchor" href="#file-summary"></a>
@@ -253,73 +253,73 @@ objects, one for each file. Take a look at what information was
 retrieved from the files using the <code><a href="../reference/iso_get_data_summary.html">iso_get_data_summary()</a></code>
 function.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating data summary from 6 data file(s)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="13%">
-<col width="22%">
-<col width="5%">
-<col width="10%">
-<col width="10%">
-<col width="37%">
+<col width="15%">
+<col width="16%">
+<col width="23%">
+<col width="25%">
+<col width="6%">
+<col width="11%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">file_id</th>
+<th align="left">file_path_</th>
+<th align="left">file_subpath</th>
 <th align="left">raw_data</th>
 <th align="left">file_info</th>
 <th align="left">method_info</th>
-<th align="left">vendor_data_table</th>
-<th align="left">file_path</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">continuous_flow_example.cf</td>
+<td align="left">continuous_flow_example.cf</td>
+<td align="left">NA</td>
 <td align="left">8605 time points, 2 ions (2,3)</td>
 <td align="left">21 entries</td>
 <td align="left">standards, resistors</td>
-<td align="left">19 rows, 25 columns</td>
-<td align="left">continuous_flow_example.cf</td>
 </tr>
 <tr class="even">
 <td align="left">6632_WSL-2 wood</td>
+<td align="left">continuous_flow_example.iarc</td>
+<td align="left">Task_0b7e6b49-7756-4cca-b387-4d6617cb28e6</td>
 <td align="left">1952 time points, 3 ions (45,46,44)</td>
 <td align="left">17 entries</td>
 <td align="left">no method info</td>
-<td align="left">no vendor data table</td>
-<td align="left">continuous_flow_example.iarc|Task_0b7e6b49-7756-4cca-b387-4d6617cb28e6</td>
 </tr>
 <tr class="odd">
 <td align="left">6605_USGS41</td>
+<td align="left">continuous_flow_example.iarc</td>
+<td align="left">Task_0e08e8b4-c625-4fd7-bf5b-9f4823f660cd</td>
 <td align="left">2387 time points, 2 ions (29,28)</td>
 <td align="left">17 entries</td>
 <td align="left">no method info</td>
-<td align="left">no vendor data table</td>
-<td align="left">continuous_flow_example.iarc|Task_0e08e8b4-c625-4fd7-bf5b-9f4823f660cd</td>
 </tr>
 <tr class="even">
 <td align="left">6617_IAEA600</td>
+<td align="left">continuous_flow_example.iarc</td>
+<td align="left">Task_1de1fdc3-0797-4e44-8357-52acbd0d4a6d</td>
 <td align="left">1796 time points, 3 ions (45,46,44)</td>
 <td align="left">17 entries</td>
 <td align="left">no method info</td>
-<td align="left">no vendor data table</td>
-<td align="left">continuous_flow_example.iarc|Task_1de1fdc3-0797-4e44-8357-52acbd0d4a6d</td>
 </tr>
 <tr class="odd">
 <td align="left">6630_GlutamicAcid04</td>
+<td align="left">continuous_flow_example.iarc</td>
+<td align="left">Task_261a3286-0bc6-4aca-bba2-183c02597d8b</td>
 <td align="left">2386 time points, 2 ions (29,28)</td>
 <td align="left">17 entries</td>
 <td align="left">no method info</td>
-<td align="left">no vendor data table</td>
-<td align="left">continuous_flow_example.iarc|Task_261a3286-0bc6-4aca-bba2-183c02597d8b</td>
 </tr>
 <tr class="even">
 <td align="left">continuous_flow_example.dxf</td>
+<td align="left">continuous_flow_example.dxf</td>
+<td align="left">NA</td>
 <td align="left">2435 time points, 6 ions (28,29,30,44,45,46)</td>
 <td align="left">21 entries</td>
 <td align="left">standards, resistors</td>
-<td align="left">6 rows, 60 columns</td>
-<td align="left">continuous_flow_example.dxf</td>
 </tr>
 </tbody>
 </table>
@@ -333,7 +333,7 @@ errors but if you run into any unexpected file read problems, please
 file a bug report in the <a href="https://github.com/isoverse/isoreader/issues" class="external-link">isoreader issue
 tracker</a>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_problems_summary.html">iso_get_problems_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">file_id</th>
@@ -343,7 +343,7 @@ tracker</a>.</p>
 <tbody></tbody>
 </table>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_problems.html">iso_get_problems</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_problems.html">iso_get_problems</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">file_id</th>
@@ -369,7 +369,7 @@ this can be used (the names of the interesting info columns may vary
 between different file formats):</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># all file information</span></span>
-<span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">file_root</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">file_root</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 6 data file(s), selecting info columns 'c(-file_root)'</span></span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -686,7 +686,7 @@ Dilution found at 0 [] , Set Sample Dilution to 0 [%] , Sample dilution:
 </table>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># select file information</span></span>
-<span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_files</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span></span>
 <span>    select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>       <span class="co"># rename sample id columns from the different file types to a new ID column</span></span>
@@ -698,7 +698,7 @@ Dilution found at 0 [] , Set Sample Dilution to 0 [%] , Sample dilution:
 <span>    <span class="op">)</span>,</span>
 <span>    <span class="co"># explicitly allow for file specific rename (for the new ID column)</span></span>
 <span>    file_specific <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 6 data file(s), selecting info columns 'c(ID = `Identifier 1`, ID = Name, Analysis, `Peak Center`, `H3 Factor`, `Date &amp; Time` = file_datetime)'</span></span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -780,7 +780,7 @@ example could be similarly achieved with the following use of
 <code><a href="../reference/iso_select_file_info.html">iso_select_file_info()</a></code>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># select + rename specific file info columns</span></span>
-<span><span class="va">cf_files2</span> <span class="op">&lt;-</span> <span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_files2</span> <span class="op">&lt;-</span> <span class="va">cf_files</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_select_file_info.html">iso_select_file_info</a></span><span class="op">(</span></span>
 <span>    ID <span class="op">=</span> <span class="va">`Identifier 1`</span>, ID <span class="op">=</span> <span class="va">`Name`</span>, <span class="va">Analysis</span>, <span class="va">`Peak Center`</span>, <span class="va">`H3 Factor`</span>,</span>
 <span>    `Date &amp; Time` <span class="op">=</span> <span class="va">file_datetime</span>,</span>
@@ -793,7 +793,7 @@ example could be similarly achieved with the following use of
 <span><span class="co">#&gt;  - for 2 file(s): 'file_id', 'Identifier 1'-&gt;'ID', 'Analysis', 'Peak Center', 'H3 Factor', 'file_datetime'-&gt;'Date &amp; Time', 'Identifier 2'-&gt;'Sample Weight'</span></span>
 <span></span>
 <span><span class="co"># fetch all file info</span></span>
-<span><span class="va">cf_files2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cf_files2</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 6 data file(s)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -882,8 +882,8 @@ available in the file information and supports full <a href="https://dplyr.tidyv
 syntax.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># find files that have 'acetanilide' in the new ID field</span></span>
-<span><span class="va">cf_files2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"acetanilide"</span>, <span class="va">ID</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_files2</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"acetanilide"</span>, <span class="va">ID</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: applying file filter, keeping 1 of 6 files</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 1 data file(s)</span></span></code></pre></div>
@@ -919,9 +919,9 @@ syntax.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># find files that were run since 2015</span></span>
-<span><span class="va">cf_files2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span><span class="va">`Date &amp; Time`</span> <span class="op">&gt;</span> <span class="st">"2015-01-01"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_files2</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span><span class="va">`Date &amp; Time`</span> <span class="op">&gt;</span> <span class="st">"2015-01-01"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: applying file filter, keeping 1 of 6 files</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 1 data file(s)</span></span></code></pre></div>
@@ -967,20 +967,20 @@ syntax. It can also be used in conjunction with
 <code>iso_with_unit</code> to generate values with implicit units.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cf_files3</span> <span class="op">&lt;-</span></span>
-<span>  <span class="va">cf_files2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="va">cf_files2</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_mutate_file_info.html">iso_mutate_file_info</a></span><span class="op">(</span></span>
 <span>    <span class="co"># update existing column</span></span>
 <span>    ID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"ID:"</span>, <span class="va">ID</span><span class="op">)</span>,</span>
 <span>    <span class="co"># introduce new column</span></span>
 <span>    `Run since 2015?` <span class="op">=</span> <span class="va">`Date &amp; Time`</span> <span class="op">&gt;</span> <span class="st">"2015-01-01"</span>,</span>
 <span>    <span class="co"># parse weight as a number and turn into a column with units</span></span>
-<span>    `Sample Weight` <span class="op">=</span> <span class="va">`Sample Weight`</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_number.html" class="external-link">parse_number</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_with_units.html">iso_with_units</a></span><span class="op">(</span><span class="st">"mg"</span><span class="op">)</span></span>
+<span>    `Sample Weight` <span class="op">=</span> <span class="va">`Sample Weight`</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_number.html" class="external-link">parse_number</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_with_units.html">iso_with_units</a></span><span class="op">(</span><span class="st">"mg"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="co">#&gt; Info: mutating file info for 6 data file(s)</span></span>
 <span></span>
-<span><span class="va">cf_files3</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_make_units_explicit.html">iso_make_units_explicit</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_files3</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_make_units_explicit.html">iso_make_units_explicit</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 6 data file(s)</span></span></code></pre></div>
 <table class="table">
@@ -1082,7 +1082,7 @@ join the new information sequentially as illustrated below.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># this kind of information data frame is frequently read in from a csv or xlsx file</span></span>
 <span><span class="va">new_info</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
 <span>    <span class="co"># new information based on new vs. old samples</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html" class="external-link">tribble</a></span><span class="op">(</span></span>
 <span>      <span class="op">~</span><span class="va">file_id</span>, <span class="op">~</span><span class="va">`Run since 2015?`</span>,  <span class="op">~</span><span class="va">process</span>,  <span class="op">~</span><span class="va">info</span>,</span>
@@ -1095,7 +1095,7 @@ join the new information sequentially as illustrated below.</p>
 <span>       <span class="st">"6617_IAEA600"</span>,  <span class="st">"no"</span>,      <span class="st">"did not inject properly"</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="va">new_info</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">new_info</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="18%">
@@ -1138,9 +1138,9 @@ join the new information sequentially as illustrated below.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># adding it to the isofiles</span></span>
-<span><span class="va">cf_files3</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_add_file_info.html">iso_add_file_info</a></span><span class="op">(</span><span class="va">new_info</span>, by1 <span class="op">=</span> <span class="st">"Run since 2015?"</span>, by2 <span class="op">=</span> <span class="st">"file_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="op">!</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">new_info</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_files3</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_add_file_info.html">iso_add_file_info</a></span><span class="op">(</span><span class="va">new_info</span>, by1 <span class="op">=</span> <span class="st">"Run since 2015?"</span>, by2 <span class="op">=</span> <span class="st">"file_id"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="op">!</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">new_info</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: adding new file information ('process', 'info', 'note') to 6 data file(s), joining by 'Run since 2015?' then 'file_id'...</span></span>
 <span><span class="co">#&gt;  - 'Run since 2015?' join: 2/2 new info rows matched 6/6 data files - 1 of these was/were also matched by subsequent joins which took precedence</span></span>
@@ -1221,7 +1221,7 @@ below for examples. For a complete overview, see the
 documentation.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># use parsing and extraction in iso_mutate_file_info</span></span>
-<span><span class="va">cf_files2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_files2</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_mutate_file_info.html">iso_mutate_file_info</a></span><span class="op">(</span></span>
 <span>    <span class="co"># change type of Peak Center to logical</span></span>
 <span>    `Peak Center` <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html" class="external-link">parse_logical</a></span><span class="op">(</span><span class="va">`Peak Center`</span><span class="op">)</span>,</span>
@@ -1231,8 +1231,8 @@ documentation.</p>
 <span>    file_id_2nd <span class="op">=</span> <span class="fu"><a href="../reference/extract_word.html">extract_word</a></span><span class="op">(</span><span class="va">file_id</span>, <span class="fl">2</span><span class="op">)</span>,</span>
 <span>    <span class="co"># retrieve file extension from the file_id using regular expression</span></span>
 <span>    name <span class="op">=</span> <span class="fu"><a href="../reference/extract_substring.html">extract_substring</a></span><span class="op">(</span><span class="va">ID</span>, <span class="st">"(\\w+)-?(.*)?"</span>, capture_bracket <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">matches</a></span><span class="op">(</span><span class="st">"file_id"</span><span class="op">)</span>, <span class="va">ID</span>, <span class="va">name</span>, <span class="va">`Peak Center`</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">matches</a></span><span class="op">(</span><span class="st">"file_id"</span><span class="op">)</span>, <span class="va">ID</span>, <span class="va">name</span>, <span class="va">`Peak Center`</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: mutating file info for 6 data file(s)</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 6 data file(s), selecting info columns 'c(matches("file_id"), ID, name, `Peak Center`)'</span></span></code></pre></div>
@@ -1307,9 +1307,9 @@ documentation.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># use parsing in iso_filter_file_info</span></span>
-<span><span class="va">cf_files2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span><span class="fu"><a href="https://readr.tidyverse.org/reference/parse_number.html" class="external-link">parse_number</a></span><span class="op">(</span><span class="va">`H3 Factor`</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_files2</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_filter_files.html">iso_filter_files</a></span><span class="op">(</span><span class="fu"><a href="https://readr.tidyverse.org/reference/parse_number.html" class="external-link">parse_number</a></span><span class="op">(</span><span class="va">`H3 Factor`</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: applying file filter, keeping 1 of 6 files</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 1 data file(s)</span></span></code></pre></div>
@@ -1345,13 +1345,13 @@ documentation.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># use iso_parse_file_info for simplified parsing of column data types</span></span>
-<span><span class="va">cf_files2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_files2</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_parse_file_info.html">iso_parse_file_info</a></span><span class="op">(</span></span>
 <span>    integer <span class="op">=</span> <span class="va">Analysis</span>,</span>
 <span>    number <span class="op">=</span> <span class="va">`H3 Factor`</span>,</span>
 <span>    logical <span class="op">=</span> <span class="va">`Peak Center`</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/iso_get_file_info.html">iso_get_file_info</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: parsing 3 file info columns for 6 data file(s):</span></span>
 <span><span class="co">#&gt;  - to integer: 'Analysis'</span></span>
@@ -1443,7 +1443,7 @@ documentation.</p>
 are useful for downstream calculations (see e.g. section on signal
 conversion later in this vignette):</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_resistors.html">iso_get_resistors</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_resistors.html">iso_get_resistors</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating resistors info from 6 data file(s)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -1510,7 +1510,7 @@ conversion later in this vignette):</p>
 <p>As well as isotopic reference values for the different gases:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># reference delta values without ratio values</span></span>
-<span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_standards.html">iso_get_standards</a></span><span class="op">(</span><span class="va">file_id</span><span class="op">:</span><span class="va">reference</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_standards.html">iso_get_standards</a></span><span class="op">(</span><span class="va">file_id</span><span class="op">:</span><span class="va">reference</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating standards info from 6 data file(s)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -1566,7 +1566,7 @@ conversion later in this vignette):</p>
 </table>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># reference values with ratios</span></span>
-<span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_standards.html">iso_get_standards</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_standards.html">iso_get_standards</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating standards info from 6 data file(s)</span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <colgroup>
@@ -1716,7 +1716,7 @@ identically to the <code>select</code> parameter of the
 <code>iso_get_file_info</code> function discussed earlier.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get raw data with default selections (all raw data, no additional file info)</span></span>
-<span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating raw data from 6 data file(s)</span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <colgroup>
@@ -1940,15 +1940,15 @@ identically to the <code>select</code> parameter of the
 </table>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get specific raw data and add some file information</span></span>
-<span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_files</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_get_raw_data.html">iso_get_raw_data</a></span><span class="op">(</span></span>
 <span>    <span class="co"># select just time and the m/z 2 and 3 ions</span></span>
 <span>    select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">time.s</span>, <span class="va">v2.mV</span>, <span class="va">v3.mV</span><span class="op">)</span>,</span>
 <span>    <span class="co"># include the Analysis number fron the file info and rename it to 'run'</span></span>
 <span>    include_file_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>run <span class="op">=</span> <span class="va">Analysis</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># look at first few records only</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating raw data from 6 data file(s), selecting data columns 'c(time.s, v2.mV, v3.mV)', including file info 'c(run = Analysis)'</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -2058,7 +2058,7 @@ addition of file information via the <code>include_file_info</code>
 parameter (by default, none is included).</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># entire vendor data table</span></span>
-<span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating vendor data table from 6 data file(s)</span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <colgroup>
@@ -4199,13 +4199,13 @@ parameter (by default, none is included).</p>
 </table>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get specific parts and add some file information</span></span>
-<span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_files</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span></span>
 <span>    <span class="co"># select peak number, ret. time, overall intensity and all H delta columns</span></span>
 <span>    select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Nr.</span>, <span class="va">Rt</span>, area <span class="op">=</span> <span class="va">`rIntensity All`</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">matches</a></span><span class="op">(</span><span class="st">"^d \\d+H"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    <span class="co"># include the Analysis number fron the file info and rename it to 'run'</span></span>
 <span>    include_file_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>run <span class="op">=</span> <span class="va">Analysis</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating vendor data table from 6 data file(s), including file info 'c(run = Analysis)'</span></span></code></pre></div>
 <table style="width:100%;" class="table">
@@ -4459,15 +4459,15 @@ parameter (by default, none is included).</p>
 <code class="sourceCode R"><span></span>
 <span><span class="co"># the data table also provides units if included in the original data file</span></span>
 <span><span class="co"># which can be made explicit using the function iso_make_units_explicit()</span></span>
-<span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">cf_files</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/iso_get_vendor_data_table.html">iso_get_vendor_data_table</a></span><span class="op">(</span></span>
 <span>    <span class="co"># select peak number, ret. time, overall intensity and all H delta columns</span></span>
 <span>    select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Nr.</span>, <span class="va">Rt</span>, area <span class="op">=</span> <span class="va">`rIntensity All`</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">matches</a></span><span class="op">(</span><span class="st">"^d \\d+H"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    <span class="co"># include the Analysis number fron the file info and rename it to 'run'</span></span>
 <span>    include_file_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>run <span class="op">=</span> <span class="va">Analysis</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># make column units explicit</span></span>
-<span>  <span class="fu"><a href="../reference/iso_make_units_explicit.html">iso_make_units_explicit</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/iso_make_units_explicit.html">iso_make_units_explicit</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating vendor data table from 6 data file(s), including file info 'c(run = Analysis)'</span></span></code></pre></div>
 <table class="table">
@@ -4726,7 +4726,7 @@ parameter (by default, none is included).</p>
 <code>unnest</code>), there is an easy way to retrieve all data from the
 iso file objects in a single nested data frame:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">all_data</span> <span class="op">&lt;-</span> <span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_all_data.html">iso_get_all_data</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">all_data</span> <span class="op">&lt;-</span> <span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_all_data.html">iso_get_all_data</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating all data from 6 data file(s)</span></span>
 <span><span class="co"># not printed out because this data frame is very big</span></span></code></pre></div>
 </div>
@@ -4743,7 +4743,7 @@ collections can be conveniently read back using the same
 files.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># export to R data archive</span></span>
-<span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_save.html">iso_save</a></span><span class="op">(</span><span class="st">"cf_files_export.cf.rds"</span><span class="op">)</span></span>
+<span><span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_save.html">iso_save</a></span><span class="op">(</span><span class="st">"cf_files_export.cf.rds"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: exporting data from 6 iso_files into R Data Storage 'cf_files_export.cf.rds'</span></span>
 <span></span>
 <span><span class="co"># read back the exported R data archive</span></span>
@@ -4751,74 +4751,74 @@ files.</p>
 <span><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></span>
 <span><span class="co">#&gt; Info: reading file 'cf_files_export.cf.rds' with '.cf.rds' reader...</span></span>
 <span><span class="co">#&gt; Info: loaded 6 data files from R Data Storage</span></span>
-<span><span class="co">#&gt; Info: finished reading 1 files in 0.17 secs</span></span>
-<span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Info: finished reading 1 files in 0.10 secs</span></span>
+<span><span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_get_data_summary.html">iso_get_data_summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: aggregating data summary from 6 data file(s)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="13%">
-<col width="22%">
-<col width="5%">
-<col width="10%">
-<col width="10%">
-<col width="37%">
+<col width="15%">
+<col width="16%">
+<col width="23%">
+<col width="25%">
+<col width="6%">
+<col width="11%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">file_id</th>
+<th align="left">file_path_</th>
+<th align="left">file_subpath</th>
 <th align="left">raw_data</th>
 <th align="left">file_info</th>
 <th align="left">method_info</th>
-<th align="left">vendor_data_table</th>
-<th align="left">file_path</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">continuous_flow_example.cf</td>
+<td align="left">continuous_flow_example.cf</td>
+<td align="left">NA</td>
 <td align="left">8605 time points, 2 ions (2,3)</td>
 <td align="left">21 entries</td>
 <td align="left">standards, resistors</td>
-<td align="left">19 rows, 25 columns</td>
-<td align="left">continuous_flow_example.cf</td>
 </tr>
 <tr class="even">
 <td align="left">6632_WSL-2 wood</td>
+<td align="left">continuous_flow_example.iarc</td>
+<td align="left">Task_0b7e6b49-7756-4cca-b387-4d6617cb28e6</td>
 <td align="left">1952 time points, 3 ions (45,46,44)</td>
 <td align="left">17 entries</td>
 <td align="left">no method info</td>
-<td align="left">no vendor data table</td>
-<td align="left">continuous_flow_example.iarc|Task_0b7e6b49-7756-4cca-b387-4d6617cb28e6</td>
 </tr>
 <tr class="odd">
 <td align="left">6605_USGS41</td>
+<td align="left">continuous_flow_example.iarc</td>
+<td align="left">Task_0e08e8b4-c625-4fd7-bf5b-9f4823f660cd</td>
 <td align="left">2387 time points, 2 ions (29,28)</td>
 <td align="left">17 entries</td>
 <td align="left">no method info</td>
-<td align="left">no vendor data table</td>
-<td align="left">continuous_flow_example.iarc|Task_0e08e8b4-c625-4fd7-bf5b-9f4823f660cd</td>
 </tr>
 <tr class="even">
 <td align="left">6617_IAEA600</td>
+<td align="left">continuous_flow_example.iarc</td>
+<td align="left">Task_1de1fdc3-0797-4e44-8357-52acbd0d4a6d</td>
 <td align="left">1796 time points, 3 ions (45,46,44)</td>
 <td align="left">17 entries</td>
 <td align="left">no method info</td>
-<td align="left">no vendor data table</td>
-<td align="left">continuous_flow_example.iarc|Task_1de1fdc3-0797-4e44-8357-52acbd0d4a6d</td>
 </tr>
 <tr class="odd">
 <td align="left">6630_GlutamicAcid04</td>
+<td align="left">continuous_flow_example.iarc</td>
+<td align="left">Task_261a3286-0bc6-4aca-bba2-183c02597d8b</td>
 <td align="left">2386 time points, 2 ions (29,28)</td>
 <td align="left">17 entries</td>
 <td align="left">no method info</td>
-<td align="left">no vendor data table</td>
-<td align="left">continuous_flow_example.iarc|Task_261a3286-0bc6-4aca-bba2-183c02597d8b</td>
 </tr>
 <tr class="even">
 <td align="left">continuous_flow_example.dxf</td>
+<td align="left">continuous_flow_example.dxf</td>
+<td align="left">NA</td>
 <td align="left">2435 time points, 6 ions (28,29,30,44,45,46)</td>
 <td align="left">21 entries</td>
 <td align="left">standards, resistors</td>
-<td align="left">6 rows, 60 columns</td>
-<td align="left">continuous_flow_example.dxf</td>
 </tr>
 </tbody>
 </table>
@@ -4834,13 +4834,13 @@ of export file (<code>.cf.xlsx</code> and <code>.cf.feather</code>,
 respectively).</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># export to excel</span></span>
-<span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_export_to_excel.html">iso_export_to_excel</a></span><span class="op">(</span><span class="st">"cf_files_export"</span><span class="op">)</span></span>
+<span><span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_export_files_to_excel.html">iso_export_files_to_excel</a></span><span class="op">(</span><span class="st">"cf_files_export"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># data sheets available in the exported data file:</span></span>
 <span><span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/excel_sheets.html" class="external-link">excel_sheets</a></span><span class="op">(</span><span class="st">"cf_files_export.cf.xlsx"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># export to feather</span></span>
-<span><span class="va">cf_files</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/iso_export_to_feather.html">iso_export_to_feather</a></span><span class="op">(</span><span class="st">"cf_files_export"</span><span class="op">)</span></span>
+<span><span class="va">cf_files</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/iso_export_files_to_feather.html">iso_export_files_to_feather</a></span><span class="op">(</span><span class="st">"cf_files_export"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># exported feather files</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">".cf.feather"</span><span class="op">)</span></span></code></pre></div>
