@@ -108,9 +108,6 @@ test_that("Test that removing files with errors works properly", {
                  sapply(function(x) x$file_info$file_id) |> as.character(), 
                c("A"))
   
-  # deprecated iso_omit_files_with_problems
-  expect_warning(iso_omit_files_with_problems(iso_files), "renamed.*will be removed")
-  
 })
 
 test_that("actual problem file works", {

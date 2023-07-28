@@ -153,13 +153,17 @@ warn_problems <- function(x, cutoff = 5L, width = getOption("width")) {
   return(invisible(x))
 }
 
-#' Renamed to iso_filter_files_with_problems
-#' 
-#' This function has been renamed to \link{iso_filter_files_with_problems} for naming consistency.
-#' @param ... deprecated
+#' @rdname deprecated
+#' @details \code{iso_omit_files_with_problems}: use \link{iso_filter_files_with_problems} instead
 #' @export
 iso_omit_files_with_problems <- function(...) {
-  warning("iso_filter_files_with_problems() was renamed and will be removed in a future version of the isoreader package. Please use iso_filter_files_with_problems() directly instead to make your code future-proof.", immediate. = TRUE, call. = FALSE)
+  lifecycle::deprecate_warn(
+    "1.3.0",
+    "iso_omit_files_with_problems()",
+    "iso_filter_files_with_problems()",
+    details = "Function renamed for simplification.", 
+    always = TRUE
+  )
   iso_filter_files_with_problems(...)
 }
 
@@ -183,7 +187,7 @@ iso_filter_files_with_problems <- function(iso_files, remove_files_with_errors =
   # find trouble file ids
   trouble_files <- problems(iso_files) |> 
     filter(.data$type %in% types) |> 
-    dplyr::pull(file_id) |>
+    dplyr::pull(.data$file_id) |>
     unique()
   
   # exclude

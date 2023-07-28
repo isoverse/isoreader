@@ -24,7 +24,7 @@ read_binary_isodat_file <- function(filepath) {
   
   # find structure blocks
   bfile$blocks <- find_isodat_structure_blocks(bfile)
-  bfile$C_blocks <- dplyr::filter(bfile$blocks, type == "C block")
+  bfile$C_blocks <- dplyr::filter(bfile$blocks, .data$type == "C block")
   
   return(bfile)
 }
@@ -120,7 +120,7 @@ fetch_block_idx <- function(bfile, filter = NULL, type = NULL, block = NULL, blo
 
 # get the block where the binary file is currently at
 fetch_current_block_idx <- function(bfile, pos = bfile$pos) {
-  fetch_block_idx(bfile, filter = start <= !!pos & !!pos <= end, occurence = 1)
+  fetch_block_idx(bfile, filter = .data$start <= !!pos & !!pos <= .data$end, occurence = 1)
 }
 
 # retrieve block entry/entries
@@ -461,9 +461,11 @@ move_to_next_pattern <- function(bfile, ..., max_gap = NULL, move_to_end = TRUE)
             regexps$label, 
             gap_text, bfile$pos, bfile$max_pos,
             bfile |> 
-              map_binary_structure(length = regexps$size + 
-                                     (if(!is.null(max_gap)) max_gap else 50) + 10) |> 
-              generate_binary_structure_map_printout()))
+              iso_print_source_file_structure(
+                length = regexps$size + (if(!is.null(max_gap)) max_gap else 50) + 10
+              )
+    )
+  )
 }
 
 # cap at next regular expression pattern
@@ -492,9 +494,11 @@ cap_at_next_pattern <- function(bfile, ..., max_gap = NULL) {
             regexps$label, 
             gap_text, bfile$pos, bfile$max_pos,
             bfile |> 
-              map_binary_structure(length = regexps$size + 
-                                     (if(!is.null(max_gap)) max_gap else 50) + 10) |> 
-              generate_binary_structure_map_printout()))
+              iso_print_source_file_structure(
+                length = regexps$size + (if(!is.null(max_gap)) max_gap else 50) + 10
+              )
+    )
+  )
 }
 
 # capture data block data in specified type
@@ -833,8 +837,8 @@ parse_raw_data <- function(raw, type, n = full_raw(), ignore_trailing_zeros = FA
     
     # check all data 
     for (i in 1:length(type)) {
-      if (class(data[[i]]) != class(sensible[[i]]) && 
-          class(data[[i]]) != "integer" && class(sensible[[i]]) != "numeric" ) # allow integer to numeric comparison
+      if (!inherits(data[[i]], class(sensible[[i]])) && 
+          !is(data[[i]], "integer") && !is(sensible[[i]], "numeric") ) # allow integer to numeric comparison
         stop(sprintf("%scannot compare data (%s) to expected values (%s), data type mismatch", 
                      error_prefix, class(data[[i]]), class(sensible[[i]])), call. = FALSE)
       if (is.character(sensible[[i]]) && !all(good_data <- str_detect(sensible[[i]], data[[i]]))) 
@@ -894,35 +898,37 @@ remove_trailing_zeros <- function(raw, size) {
 
 # @TODO: write tests
 # @NOTE: speed optimized
-#' returns a tibble with control blacks for isodat files
-#' @return tibble with control blocks for isodat
+# returns a tibble with control blacks for isodat files
+# @return tibble with control blocks for isodat
 get_isodat_control_blocks_config <- function() {
+  # global vars
+  regex <- NULL
   bind_rows(
     # C blocks
     list(
       type = "C block",
       regex = "\xff\xff(\\x00|[\x01-\x0f])\\x00.\\x00\x43[\x20-\x7e]",
-      start_expr = rlang::exprs(pos),
+      start_expr = rlang::exprs(.data$pos),
       len_expr = rlang::exprs(
-        6L + readBin(raw[rep(start, each = 2) + c(4,5)], "int", size = 2, n = length(start))
+        6L + readBin(raw[rep(.data$start, each = 2) + c(4,5)], "int", size = 2, n = length(.data$start))
       ),
-      data_len_expr = rlang::exprs(len - 6L),
+      data_len_expr = rlang::exprs(.data$len - 6L),
       block_expr = rlang::exprs(
-        purrr::map2_chr(start + 5L, len - 6L, ~intToUtf8(raw[.x+c(1L:.y)]))
+        purrr::map2_chr(.data$start + 5L, .data$len - 6L, ~intToUtf8(raw[.x+c(1L:.y)]))
       )
     ),
     # text blocks
     list(
       type = "text",
       regex = "\xff\xfe\xff",
-      start_expr = rlang::exprs(pos),
+      start_expr = rlang::exprs(.data$pos),
       len_expr = rlang::exprs(
-        4L + readBin(raw[start + 3L], "int", size = 1,n = length(start)) * 2L
+        4L + readBin(raw[.data$start + 3L], "int", size = 1,n = length(.data$start)) * 2L
       ),
-      data_len_expr = rlang::exprs((len - 4L)/2L),
+      data_len_expr = rlang::exprs((.data$len - 4L)/2L),
       block_expr = rlang::exprs(
         purrr::map2_chr(
-          start + 3L, len - 4L,
+          .data$start + 3L, .data$len - 4L,
           ~if (.y > 0L) {
             intToUtf8(readBin(raw[.x + c(1:.y)], "int", n = .y/2L, size = 2))
           } else {
@@ -935,19 +941,19 @@ get_isodat_control_blocks_config <- function() {
     list(
       type = "x-000",
       regex = "[\x01-\x1f]\\x00{3}",
-      start_expr = rlang::exprs(pos),
+      start_expr = rlang::exprs(.data$pos),
       len_expr = rlang::exprs(4L),
       data_len_expr = rlang::exprs(0L),
-      block_expr = rlang::exprs(sprintf("%s-000", raw[start]))
+      block_expr = rlang::exprs(sprintf("%s-000", raw[.data$start]))
     ),
     # 0000+ blocks (zeros in multiples of 2, at least 4 at a time ending in a non-zero)
     list(
       type = "0000+",
       regex = "(\\x00\\x00){2,}[\x01-\xff]",
-      start_expr = rlang::exprs(pos),
+      start_expr = rlang::exprs(.data$pos),
       len_expr = rlang::exprs(lengths(grepRaw(regex, raw, all = TRUE, value = TRUE)) - 1L),
       data_len_expr = rlang::exprs(0L),
-      block_expr = rlang::exprs(sprintf("%dx00", len))
+      block_expr = rlang::exprs(sprintf("%dx00", .data$len))
     )
   ) 
 }
@@ -976,11 +982,11 @@ find_pattern_blocks <- function(raw, regex, start_expr, len_expr, data_len_expr,
     pos = re_positions,
     start = rlang::eval_tidy(start_expr),
     len = rlang::eval_tidy(len_expr),
-    end = start + len - 1L,
+    end = .data$start + .data$len - 1L,
     data_len = rlang::eval_tidy(data_len_expr),
     block = rlang::eval_tidy(block_expr)
   ) |> 
-    filter(len > 0)
+    filter(.data$len > 0)
 }
 
 # @TODO: write tests
@@ -989,17 +995,17 @@ find_pattern_blocks <- function(raw, regex, start_expr, len_expr, data_len_expr,
 # @param blocks tibble with identified blocks, must have columns start & end
 find_unknown_blocks <- function(raw, blocks) {
   # blocks inbetween the identified ones
-  blocks <- arrange(blocks, start)
+  blocks <- arrange(blocks, .data$start)
   tibble(
       type = "unknown",
       start = c(1L, blocks$end + 1L),
       end = c(blocks$start - 1L, length(raw)),
-      len = end - start + 1L,
-      data_len = len,
+      len = .data$end - .data$start + 1L,
+      data_len = .data$len,
       priority = max(blocks$priority) + 1L,
       block = NA_character_
     ) |>
-    filter(len > 0)
+    filter(.data$len > 0)
 }
 
 # updates block information for unknown blocks
@@ -1035,11 +1041,11 @@ find_isodat_structure_blocks <- function(bfile, unknown_block_n_chars = 8L) {
       priority = dplyr::row_number(),
       blocks = purrr::pmap(
         list(
-          regex = regex,
-          start_expr = start_expr,
-          len_expr = len_expr,
-          data_len_expr = data_len_expr,
-          block_expr = block_expr
+          regex = .data$regex,
+          start_expr = .data$start_expr,
+          len_expr = .data$len_expr,
+          data_len_expr = .data$data_len_expr,
+          block_expr = .data$block_expr
         ), 
         find_pattern_blocks, 
         raw = bfile$raw
@@ -1057,7 +1063,7 @@ find_isodat_structure_blocks <- function(bfile, unknown_block_n_chars = 8L) {
       ctrl_blocks,
       unknown_blocks
     ) |> 
-    dplyr::arrange(start) |>
+    dplyr::arrange(.data$start) |>
     dplyr::mutate(
       block_idx = dplyr::row_number()
     ) |>
@@ -1067,20 +1073,20 @@ find_isodat_structure_blocks <- function(bfile, unknown_block_n_chars = 8L) {
 }
 
 # @TODO: write tests
-#' format isodat structure blocks for printout
-#' @param bfile the isodat binary file object (must have $raw set)
-#' @param new_line_blocks expression when to create a new line
-#' @param indent_blocks expression when to indent a line (only if also matched by new_line_blocks)
-#' @param unknown_block_n_chars the number of chars to preview as 'block' text in the resulting tibble
-#' @param data_blocks expression to mark data blocks
-#' @param data_highlight expression to insert a 'HIGHLIGHT' marker in the text, example `len > 1000` to highlight large data blocks
-#' @param pos_info whether to include position information for each line  (highly recommended)
+# format isodat structure blocks for printout
+# @param bfile the isodat binary file object (must have $raw set)
+# @param new_line_blocks expression when to create a new line
+# @param indent_blocks expression when to indent a line (only if also matched by new_line_blocks)
+# @param unknown_block_n_chars the number of chars to preview as 'block' text in the resulting tibble
+# @param data_blocks expression to mark data blocks
+# @param data_highlight expression to insert a 'HIGHLIGHT' marker in the text, example `len > 1000` to highlight large data blocks
+# @param pos_info whether to include position information for each line  (highly recommended)
 format_isodat_structure_blocks <- function(
   bfile, 
-  new_line_blocks = type %in% c("C block", "x-000"),
-  indent_blocks = type == "x-000",
+  new_line_blocks = .data$type %in% c("C block", "x-000"),
+  indent_blocks = .data$type == "x-000",
   unknown_block_n_chars = 8L,
-  data_blocks = type %in% c("text", "unknown"),
+  data_blocks = .data$type %in% c("text", "unknown"),
   data_highlight = FALSE,
   pos_info = TRUE) {
   
@@ -1101,22 +1107,27 @@ format_isodat_structure_blocks <- function(
     mutate(
       # new lines
       nl_block = !!new_line_blocks_expr, 
-      nl_text = ifelse(c(FALSE, nl_block[-1]), "\n", ""),
+      nl_text = ifelse(c(FALSE, .data$nl_block[-1]), "\n", ""),
       # indents
       indent_block = !!indent_blocks_expr,
-      indent_text = ifelse(nl_block & indent_block, sprintf("%%%ds", indent_width) |> sprintf(""), ""),
+      indent_text = ifelse(.data$nl_block & .data$indent_block, sprintf("%%%ds", !!indent_width) |> sprintf(""), ""),
       # position markers
-      pos_text = ifelse(!!pos_info & nl_block, sprintf("%07d: ", start),  ""),
+      pos_text = ifelse(!!pos_info & .data$nl_block, sprintf("%07d: ", .data$start),  ""),
       # block text
       data_block = !!data_blocks_expr,
       data_highlight = !!data_highlight_expr,
       block_text = case_when(
-        data_block & data_highlight ~ sprintf("{HIGHLIGHT: '%s'; %d: '%s'}", data_highlight_text, len, block),
-        data_block ~ sprintf("{%s-%d: '%s'}", type, data_len, block),
-        TRUE ~ sprintf("<%s>", block)
+        .data$data_block & .data$data_highlight ~ 
+          sprintf("{HIGHLIGHT: '%s'; %d: '%s'}", data_highlight_text, .data$len, .data$block),
+        .data$data_block ~ 
+          sprintf("{%s-%d: '%s'}", .data$type, .data$data_len, .data$block),
+        TRUE ~ sprintf("<%s>", .data$block)
       ),
       # everything
-      block_formatted = sprintf("%s%s%s%s", nl_text, pos_text, indent_text, block_text)
+      block_formatted = sprintf(
+        "%s%s%s%s", 
+        .data$nl_text, .data$pos_text, .data$indent_text, .data$block_text
+      )
     )
   
   return(blocks_formatted)

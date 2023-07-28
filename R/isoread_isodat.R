@@ -773,7 +773,7 @@ extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$source$po
                                          min_block_idx = raw_data_block, max_pos = ds$source$max_pos, occurence = 1)
   }
   if(length(raw_data_block) > 0 && length(overwritten_block) > 0) {
-    filter_expr <- rlang::expr(block_idx < !!raw_data_block | block_idx > !!overwritten_block)
+    filter_expr <- rlang::expr(.data$block_idx < !!raw_data_block | .data$block_idx > !!overwritten_block)
   } else {
     filter_expr <- rlang::expr(TRUE)
   }
@@ -789,7 +789,7 @@ extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$source$po
     ds$source |>
     fetch_block_entry(filter = !!filter_expr, type = "text", min_pos = positions[1], max_pos = ds$source$max_pos) |>
     dplyr::mutate(group = purrr::map_int(.data$start, ~sum(.x >= positions))) |>
-    dplyr::group_by(group) |>
+    dplyr::group_by(.data$group) |>
     dplyr::mutate(
       idx = 1:n(),
       continue_pos = max(.data$end[.data$idx <= nrow(cols_info)])
@@ -803,7 +803,7 @@ extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$source$po
     # row numbers
     dplyr::mutate(row = cumsum(.data$column == .data$column[1])) |>
     # remove duplicates
-    dplyr::group_by(column, row) |>
+    dplyr::group_by(.data$column, .data$row) |>
     dplyr::summarize(
       group = .data$group[1],
       continue_pos = .data$continue_pos[1],
@@ -814,7 +814,7 @@ extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$source$po
       ref_frame = .data$units[1],
       .groups = "drop"
     ) |>
-    dplyr::arrange(group) |>
+    dplyr::arrange(.data$group) |>
     # nest by column and expand column details
     tidyr::nest(data = c(-"column")) |>
     dplyr::mutate(
@@ -832,16 +832,17 @@ extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$source$po
     # naming adjustments
     dplyr::mutate(
       # avoid issues with delta symbol on different OS
-      column = stringr::str_replace(column, fixed("\U03B4"), "d"),
+      column = stringr::str_replace(.data$column, fixed("\U03B4"), "d"),
       # and rename per mil and \U2030 to permil
       column_units = 
-        stringr::str_replace(column_units, fixed("per mil"), "permil") |>
+        stringr::str_replace(.data$column_units, fixed("per mil"), "permil") |>
         stringr::str_replace(fixed("\U2030"), "permil")
     )
 
 
   # apply col_include parameter if provided
-  if (!is.null(col_include))  columns <- filter(columns, str_detect(column, !!col_include))
+  if (!is.null(col_include)) 
+    columns <- filter(columns, str_detect(.data$column, !!col_include))
 
   return(columns)
 }

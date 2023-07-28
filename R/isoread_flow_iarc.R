@@ -128,7 +128,7 @@ process_iarc_samples <- function(iso_file_template, tasks, gas_configs, folder_p
           generate_task_sample_id(task), 
           task$data_files |> 
             dplyr::filter(!!sym("TypeIdentifier") == "Acquire") |> 
-            dplyr::pull(DataFile) |>
+            dplyr::pull(.data$DataFile) |>
             if_not_empty_then(str_c, collapse = "', '", empty = "")
         ) |> 
         log_message(prefix = "      ")
@@ -219,8 +219,10 @@ read_irms_data_file <- function(iso_file, filepath, gas_config, run_time.s, data
   multiple <- config_channels |> group_by(.data$channel) |> summarize(n = n(), masses = str_c(.data$mass, collapse = ", "))
   if (any(multiple$n > 1)) {
     stop("cannot process beam channels, some channels assigned to more than one mass: ",
-         multiple |> filter(n > 1) |> mutate(label = paste0(.data$channel, ": ", .data$masses)) |>
-           dplyr::pull(label) |> str_c(collapse = "; "), call. = FALSE)
+         multiple |> filter(n > 1) |> 
+           mutate(label = paste0(.data$channel, ": ", .data$masses)) |>
+           dplyr::pull(.data$label) |> 
+           str_c(collapse = "; "), call. = FALSE)
   }
   
   # h3 factor
