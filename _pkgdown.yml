@@ -7,7 +7,7 @@ template:
     ganalytics: UA-106138361-3
 
 development:
-  mode: devel
+  mode: auto
 
 home:
   strip_header: true    
