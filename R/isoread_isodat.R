@@ -499,6 +499,9 @@ extract_isodat_continuous_flow_vendor_data_table <- function(ds, cap_at_fun = NU
   if (nrow(extracted_dt$cell_values) == 0L) {
     stop("could not find any vendor table data", call. = FALSE)
   }
+  
+  # propagated newly registered problems
+  ds <- ds |> set_problems(combined_problems(ds, extracted_dt))
 
   # store vendor data table
   data_table <- full_join(peaks, mutate(extracted_dt$cell_values, .check = TRUE), by = "Nr.")
@@ -727,24 +730,40 @@ extract_isodat_main_vendor_data_table_fast <- function(ds, C_block, cap_at_fun =
     ds$source <- cap_at_fun(ds$source)
   }
 
-  columns <- extract_isodat_main_vendor_data_table_columns(ds, col_include = col_include)
-
-  # safety check: to make sure all columns have the same format specification
-  if (!all(ok <- columns$n_formats == 1)) {
-    formats <- map_chr(columns$data[!ok], ~collapse(unique(.x$format), ", "))
-    problems <- glue("column {columns$column[!ok]} has multiple formats '{formats}'")
+  # start output
+  output <- list()
+  
+  # add columns
+  output$columns <- extract_isodat_main_vendor_data_table_columns(ds, col_include = col_include)
+  
+  # safety check: to make sure all output$columns have the same format specification
+  if (!all(ok <- output$columns$n_types == 1)) {
+    formats <- map_chr(output$columns$data[!ok], ~collapse(unique(.x$format), ", "))
+    problems <- glue("column {output$columns$column[!ok]} has multiple formats '{formats}'")
     iso_source_file_op_error(ds$source, glue("mismatched data column formats:\n{collapse(problems, '\n')}"))
   }
 
+  # safety check: warn if different precisions
+  if (!all(ok <- output$columns$n_precisions == 1)) {
+    precisions <- map_chr(output$columns$data[!ok], ~collapse(unique(.x$precision), ", "))
+    problems <- glue("column {output$columns$column[!ok]} has multiple precisions '{precisions}'")
+    output <- register_warning(
+      output, 
+      details = glue("mismatched data column formats:\n{collapse(problems, '\n')}"),
+      func = "extract_isodat_main_vendor_data_table"
+    )
+  }
+  
   # safety check: to make sure all formats are resolved
-  if (!all(ok <- !is.na(columns$type))) {
-    problems <- glue("column {columns$column[!ok]} has unknown format '{columns$column_format[!ok]}'")
+  if (!all(ok <- !is.na(output$columns$column_type))) {
+    problems <- glue("column {output$columns$column[!ok]} has unknown format '{output$columns$column_format[!ok]}'")
     iso_source_file_op_error(ds$source, glue("unknown column formats:\n{collapse(problems, '\n')}"))
   }
 
-  cell_values <- extract_isodat_main_vendor_data_table_values(ds, columns)
+  # finish output with cell values
+  output$cell_values <- extract_isodat_main_vendor_data_table_values(ds, output$columns)
 
-  return(list(columns = columns, cell_values = cell_values))
+  return(output)
 }
 
 # extract the main (recurring) portion of the vendor data table
@@ -804,32 +823,45 @@ extract_isodat_main_vendor_data_table_columns <- function(ds, pos = ds$source$po
     dplyr::mutate(row = cumsum(.data$column == .data$column[1])) |>
     # remove duplicates
     dplyr::group_by(.data$column, .data$row) |>
-    dplyr::summarize(
-      group = .data$group[1],
-      continue_pos = .data$continue_pos[1],
-      id = .data$id[1],
-      format = .data$format[1],
-      `gas_config?` = .data$`gas_config?`[1],
-      units = .data$units[1],
-      ref_frame = .data$units[1],
-      .groups = "drop"
-    ) |>
+    dplyr::filter(dplyr::row_number() == 1) |>
+    dplyr::ungroup() |>
+    # dplyr::summarize(
+    #   group = .data$group[1],
+    #   continue_pos = .data$continue_pos[1],
+    #   id = .data$id[1],
+    #   format = .data$format[1],
+    #   `gas_config?` = .data$`gas_config?`[1],
+    #   units = .data$units[1],
+    #   ref_frame = .data$units[1],
+    #   .groups = "drop"
+    # ) |>
     dplyr::arrange(.data$group) |>
+    # parse column format
+    dplyr::mutate(
+      type =
+        dplyr::case_when(
+          .data$format == "%s" ~ "text",
+          .data$format %in% c("%u", "%d") ~ "integer",
+          str_detect(.data$format, "\\%[0-9.]*f") ~ "double",
+          TRUE ~ NA_character_
+        ),
+      precision = dplyr::if_else(
+        type == "double", 
+        stringr::str_extract(.data$format, "(?<=\\.)\\d*(?=f)"),
+        NA_character_
+      )
+    ) |>
     # nest by column and expand column details
     tidyr::nest(data = c(-"column")) |>
     dplyr::mutate(
-      n_formats = purrr::map_int(.data$data, ~length(unique(.x$format))),
-      column_format = purrr::map_chr(.data$data, ~.x$format[1]),
-      column_units = purrr::map_chr(.data$data, ~.x$units[1]),
-      type =
-        dplyr::case_when(
-          .data$column_format == "%s" ~ "text",
-          .data$column_format %in% c("%u", "%d") ~ "integer",
-          str_detect(.data$column_format, "\\%[0-9.]*f") ~ "double",
-          TRUE ~ NA_character_
-        )
+      n_types = purrr::map_int(.data$data, ~length(unique(.x$type))),
+      n_precisions = purrr::map_int(.data$data, ~length(unique(.x$precision))),
+      line1 = purrr::map(.data$data, ~.x[1,c("format", "units", "type", "precision")])
     ) |>
+    tidyr::unnest(line1) |>
     # naming adjustments
+    dplyr::rename("column_format" = "format", "column_units" = "units", 
+                  "column_type" = "type", "column_precision" = "precision") |>
     dplyr::mutate(
       # avoid issues with delta symbol on different OS
       column = stringr::str_replace(.data$column, fixed("\U03B4"), "d"),
@@ -883,7 +915,7 @@ extract_isodat_main_vendor_data_table_values <- function(ds, columns) {
 
   # get cell values
   columns |>
-    filter(!is.na(type)) |>
+    filter(!is.na(.data$column_type)) |>
     unnest("data") |>
     select("column", "continue_pos", "type", "row") |>
     nest(data = c(-row)) |>
