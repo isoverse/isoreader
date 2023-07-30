@@ -220,7 +220,6 @@ process_nu_parser <- function(ds, parser, options = list()) {
   if (length(matches) > 0) {
     header <- ds$source$header[matches]
     data <- ds$source$data[matches]
-    #if (default(debug)) nu_data <<- data
     value <- rlang::eval_tidy(rlang::get_expr(parser$parse_quo))
     if (n_problems(value) > 0) {
       ds <- set_problems(ds, combined_problems(ds, value))
