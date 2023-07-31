@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
       </span>
     </div>
 
@@ -107,7 +107,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Quick Start Guide</h1>
             
-            <h4 data-toc-skip class="date">2023-07-28</h4>
+            <h4 data-toc-skip class="date">2023-07-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/HEAD/vignettes/quick_start.Rmd" class="external-link"><code>vignettes/quick_start.Rmd</code></a></small>
       <div class="hidden name"><code>quick_start.Rmd</code></div>
@@ -234,7 +234,7 @@ Inlet</a></li>
 <span><span class="co">#&gt; Info: reading file 'dual_inlet_example.did' with '.did' reader...</span></span>
 <span><span class="co">#&gt; Info: reading file 'dual_inlet_nu_example.txt' with '.txt' reader...</span></span>
 <span><span class="co">#&gt; Warning: found 6 channels but 0 masses were specified - the raw data will b...</span></span>
-<span><span class="co">#&gt; Info: finished reading 3 files in 9.46 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 3 files in 8.15 secs</span></span>
 <span><span class="co">#&gt; Warning: encountered 1 problem.</span></span>
 <span><span class="co">#&gt; # | FILE                      | PROBLEM | OCCURRED IN | DETAILS</span></span>
 <span><span class="co">#&gt; 1 | dual_inlet_nu_example.txt | warning | iso_read_nu | found 6 channels but ...</span></span>
@@ -267,7 +267,7 @@ Inlet</a></li>
 <span><span class="co">#&gt;       processing sample '6605_USGS41' (IRMS data '40.hdf5', '43.hdf5')</span></span>
 <span><span class="co">#&gt;       processing sample '6617_IAEA600' (IRMS data '80.hdf5', '82.hdf5')</span></span>
 <span><span class="co">#&gt;       processing sample '6630_GlutamicAcid04' (IRMS data '124.hdf5', '126.h...</span></span>
-<span><span class="co">#&gt; Info: finished reading 3 files in 6.61 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Info: finished reading 3 files in 5.65 secs</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># save as r data storage (read back in with iso_read_continuous_flow)</span></span>
 <span><span class="fu"><a href="../reference/iso_save.html">iso_save</a></span><span class="op">(</span><span class="va">cf_files</span>, filepath <span class="op">=</span> <span class="st">"cf_save"</span><span class="op">)</span></span>
@@ -287,7 +287,7 @@ Inlet</a></li>
 <span><span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader...</span></span>
 <span><span class="co">#&gt; Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...</span></span>
 <span><span class="co">#&gt; Info: reading file 'time_scan_example.scn' with '.scn' reader...</span></span>
-<span><span class="co">#&gt; Info: finished reading 4 files in 1.19 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 4 files in 1.03 secs</span></span>
 <span><span class="co">#&gt; Warning: file creation date could not be accessed for all files because this</span></span>
 <span><span class="co">#&gt; information is not available on some Linux systems, reporting last modified</span></span>
 <span><span class="co">#&gt; time for file_datetime instead. To turn these warnings off, call</span></span>

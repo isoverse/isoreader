@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">Isoreader</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
       </span>
     </div>
 
@@ -107,7 +107,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Operations</h1>
             
-            <h4 data-toc-skip class="date">2023-07-28</h4>
+            <h4 data-toc-skip class="date">2023-07-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/isoverse/isoreader/blob/HEAD/vignettes/operations.Rmd" class="external-link"><code>vignettes/operations.Rmd</code></a></small>
       <div class="hidden name"><code>operations.Rmd</code></div>
@@ -228,7 +228,7 @@ be done globally using <code><a href="../reference/iso_info_messages.html">iso_t
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></span>
 <span><span class="co">#&gt; Info: reading file 'dual_inlet_example.did' from cache...</span></span>
-<span><span class="co">#&gt; Info: finished reading 1 files in 0.31 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 1 files in 0.26 secs</span></span>
 <span><span class="co">#&gt; Info: selecting/renaming the following file info across 1 data file(s): 'file_datetime', 'Identifier 1'</span></span>
 <span><span class="co">#&gt; Info: aggregating file info from 1 data file(s)</span></span></code></pre></div>
 <table class="table">
@@ -310,14 +310,14 @@ reads.</p>
 <span>  <span class="fu"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></span>
 <span><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' from cache...</span></span>
-<span><span class="co">#&gt; Info: finished reading 1 files in 0.16 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 1 files in 0.13 secs</span></span>
 <span></span>
 <span><span class="co"># re-read the same file much faster (it will be read from cache)</span></span>
 <span><span class="va">cf_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iso_get_reader_example.html">iso_get_reader_example</a></span><span class="op">(</span><span class="st">"continuous_flow_example.dxf"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: preparing to read 1 data files (all will be cached)...</span></span>
 <span><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' from cache...</span></span>
-<span><span class="co">#&gt; Info: finished reading 1 files in 0.15 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 1 files in 0.13 secs</span></span>
 <span></span>
 <span><span class="co"># turn reader caching off</span></span>
 <span><span class="fu"><a href="../reference/iso_caching.html">iso_turn_reader_caching_off</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -328,7 +328,7 @@ reads.</p>
 <span>  <span class="fu"><a href="../reference/iso_read_continuous_flow.html">iso_read_continuous_flow</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Info: preparing to read 1 data files...</span></span>
 <span><span class="co">#&gt; Info: reading file 'continuous_flow_example.dxf' with '.dxf' reader...</span></span>
-<span><span class="co">#&gt; Info: finished reading 1 files in 2.17 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 1 files in 1.84 secs</span></span>
 <span></span>
 <span><span class="co"># turn reader caching back on</span></span>
 <span><span class="fu"><a href="../reference/iso_caching.html">iso_turn_reader_caching_on</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -368,7 +368,7 @@ read in parallel once a set of files is already cached.</p>
 <span><span class="co">#&gt; Info (process 1): reading file 'dual_inlet_example.did' from cache...</span></span>
 <span><span class="co">#&gt; Info (process 1): reading file 'dual_inlet_nu_example.txt' from cache...</span></span>
 <span><span class="co">#&gt; Info (process 2): reading file 'dual_inlet_example.caf' from cache...</span></span>
-<span><span class="co">#&gt; Info: finished reading 3 files in 2.61 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Info: finished reading 3 files in 2.31 secs</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="combining-subsetting-isofiles">Combining / subsetting isofiles<a class="anchor" aria-label="anchor" href="#combining-subsetting-isofiles"></a>
@@ -457,7 +457,7 @@ please file a bug report and submit your file at <a href="https://github.com/iso
 <span><span class="co">#&gt; Info: reading file 'extdata/continuous_flow_example.dxf' from cache...</span></span>
 <span><span class="co">#&gt; Info: reading file 'errdata/cf_without_data.dxf' with '.dxf' reader...</span></span>
 <span><span class="co">#&gt; Warning: caught error - cannot identify measured masses - block 'CEvalDataI...</span></span>
-<span><span class="co">#&gt; Info: finished reading 2 files in 0.73 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 2 files in 0.61 secs</span></span>
 <span><span class="co">#&gt; Warning: encountered 1 problem.</span></span>
 <span><span class="co">#&gt; # | FILE                | PROBLEM | OCCURRED IN                  | DETAILS</span></span>
 <span><span class="co">#&gt; 1 | cf_without_data.dxf | error   | extract_dxf_raw_voltage_data | cannot ide...</span></span>
