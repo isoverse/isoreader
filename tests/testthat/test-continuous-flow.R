@@ -154,11 +154,14 @@ test_that("test that additional continous flow files can be read", {
   iso_turn_reader_caching_off()
 
   # testing wrapper
-  check_continuous_flow_test_file <- function(file, file_info_cols = NULL, data_table_nrow = NULL, data_table_col_units = NULL) {
+  check_continuous_flow_test_file <- function(file, file_info_cols = NULL, data_table_nrow = NULL, data_table_col_units = NULL, n_problems = 0) {
     file_path <- get_isoreader_test_file(file, local_folder = test_folder)
     expect_true(file.exists(file_path))
-    expect_is(file <- iso_read_continuous_flow(file_path, read_cache = FALSE), "continuous_flow")
-    expect_equal(nrow(problems(file)), 0)
+    if (n_problems > 0)
+      expect_warning(file <- iso_read_continuous_flow(file_path, read_cache = FALSE))
+    else
+      expect_is(file <- iso_read_continuous_flow(file_path, read_cache = FALSE), "continuous_flow")
+    expect_equal(nrow(problems(file)), n_problems)
     expect_equal(nrow(file$file_info), 1)
     if (!is.null(file_info_cols)) 
       expect_equal(names(file$file_info), file_info_cols)
@@ -189,6 +192,28 @@ test_that("test that additional continous flow files can be read", {
       `R 2H/1H` = NA, `d 2H/1H` = "permil", `AT% 2H/1H` = "%", `Rps 3H2/2H2` = NA
     )
   )
+  
+  dxf2 <- check_continuous_flow_test_file(
+    "dxf_example_H_02.dxf",
+    c("file_id", "file_root", "file_path", "file_subpath", "file_datetime", 
+      "file_size", "Row", "Peak Center", "Check Ref. Dilution", "H3 Stability", 
+      "H3 Factor", "Conditioning", "Seed Oxidation", "GC Method", "AS Sample", 
+      "AS Method", "Identifier 1", "Identifier 2", "Analysis", "Preparation", "Method", 
+      "measurement_info", "MS_integration_time.s"),
+    53,
+    c(Nr. = NA, Start = "s", Rt = "s", End = "s", `Ampl 2` = "mV",
+      `Ampl 3` = "mV", `BGD 2` = "mV", `BGD 3` = "mV", `rIntensity 2` = "mVs",
+      `rIntensity 3` = "mVs", `rIntensity All` = "mVs", `Intensity 2` = "Vs",
+      `Intensity 3` = "Vs", `Intensity All` = "Vs", `Sample Dilution` = "%",
+      `List First Peak` = NA, `rR 3H2/2H2` = NA, `Is Ref.?` = NA, `R 3H2/2H2` = NA,
+      `Ref. Name` = NA, `rd 3H2/2H2` = "permil", `d 3H2/2H2` = "permil",
+      `R 2H/1H` = NA, `d 2H/1H` = "permil", `AT% 2H/1H` = "%", `Rps 3H2/2H2` = NA,
+      `Master Peak` = NA, `DeltaDelta 3H2/2H2` = "permil"
+    ),
+    n_problems = 1L
+  )
+  expect_equal(problems(dxf2)$type, "warning")
+  expect_true(stringr::str_detect(problems(dxf2)$details, "has multiple precisions"))
   
   check_continuous_flow_test_file(
     "dxf_example_HO_01.dxf",
