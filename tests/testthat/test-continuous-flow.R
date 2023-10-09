@@ -320,6 +320,28 @@ test_that("test that additional continous flow files can be read", {
   )
   
   check_continuous_flow_test_file(
+    "dxf_example_C_02.dxf",
+    c("file_id", "file_root", "file_path", "file_subpath", "file_datetime", 
+      "file_size", "Row", "Peak Center", "Check Ref. Dilution", "H3 Stability", 
+      "H3 Factor", "AS Sample", "AS Method", "Identifier 1", "Identifier 2", 
+      "Analysis", "Comment", "Preparation", "Method", "measurement_info", 
+      "MS_integration_time.s"),
+    15,
+    c(Nr. = NA, Start = "s", Rt = "s", End = "s", `Ampl 44` = "mV", `Ampl 45` = "mV", 
+      `Ampl 46` = "mV", `BGD 44` = "mV", `BGD 45` = "mV", `BGD 46` = "mV",
+      `rIntensity 44` = "mVs", `rIntensity 45` = "mVs", `rIntensity 46` = "mVs", 
+      `rIntensity All` = "mVs", `Intensity 44` = "Vs", `Intensity 45` = "Vs", 
+      `Intensity 46` = "Vs", `Intensity All` = "Vs", 
+      `Sample Dilution` = "%", `List First Peak` = NA, `rR 45CO2/44CO2` = NA, 
+      `rR 46CO2/44CO2` = NA, `Is Ref.?` = NA, `R 45CO2/44CO2` = NA, `Ref. Name` = NA, 
+      `rd 45CO2/44CO2` = "permil", `d 45CO2/44CO2` = "permil", `R 46CO2/44CO2` = NA, 
+      `rd 46CO2/44CO2` = "permil", `d 46CO2/44CO2` = "permil", `R 13C/12C` = NA, 
+      `d 13C/12C` = "permil", `AT% 13C/12C` = "%", `R 18O/16O` = NA, `d 18O/16O` = "permil", 
+      `AT% 18O/16O` = "%", `R 17O/16O` = NA, `d 17O/16O` = NA, `Rps 45CO2/44CO2` = NA, 
+      `Rps 46CO2/44CO2` = NA)
+  )
+  
+  check_continuous_flow_test_file(
     "dxf_example_CNS_01.dxf",
     c("file_id", "file_root", "file_path", "file_subpath", "file_datetime", 
       "file_size", "Row", "Peak Center", "Check Ref. Dilution", "H3 Stability", 
