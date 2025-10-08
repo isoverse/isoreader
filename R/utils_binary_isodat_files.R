@@ -793,23 +793,34 @@ parse_raw_data <- function(raw, type, n = full_raw(), ignore_trailing_zeros = FA
     regexp <- sprintf("(%s){%.0f}", dbc[[1]]$regexp, n)
     if (length(grepRaw(regexp, raw_trim)) == 0) {
       # something that is NOT text is in the raw_trim
-      non_text_pos <- grepRaw("([\x20-\xff][\x01-\xff])|(\\x00\\x00)", raw_trim)
-      actual_text <- intToUtf8(raw_trim[1:(non_text_pos - 1)])
-      if (!is.null(errors)) {
-        err_raw <- raw_trim[(non_text_pos + 1):length(raw_trim)]
-        stop(
-          sprintf("%sexpected unicode data for %.0f bytes but found only %.0f ('%s'), non-text raw data afterwards: %s", 
-                  error_prefix, n*2, non_text_pos, actual_text, 
-                  if (length(err_raw) > 10) 
-                    c(as.character(head(err_raw, 10)), sprintf("+%d more", length(err_raw) - 10)) |>
-                    paste(collapse = " ")
-                  else 
-                    as.character(err_raw) |>
-                    paste(collapse = " ")
-          ), 
-          call. = FALSE)
+      
+      # check for common extended unicode characters (micro)
+      ext_uni <- grepRaw("\xb5\xff", raw_trim)
+      if (length(ext_uni) > 0L) {
+        raw_trim[ext_uni + 1L] <- as.raw(00)
+        raw[ext_uni + 1L] <- as.raw(00)
       }
-      return(NULL)
+      
+      # check again if any extended unicodes were found
+      if (length(ext_uni) == 0L || length(grepRaw(regexp, raw_trim)) == 0) {
+        non_text_pos <- grepRaw("([\x20-\xff][\x01-\xff])|(\\x00\\x00)", raw_trim)
+        actual_text <- intToUtf8(raw_trim[1:(non_text_pos - 1)])
+        if (!is.null(errors)) {
+          err_raw <- raw_trim[(non_text_pos + 1):length(raw_trim)]
+          stop(
+            sprintf("%sexpected unicode data for %.0f bytes but found only %.0f ('%s'), non-text raw data afterwards: %s", 
+                    error_prefix, n*2, non_text_pos, actual_text, 
+                    if (length(err_raw) > 10) 
+                      c(as.character(head(err_raw, 10)), sprintf("+%d more", length(err_raw) - 10)) |>
+                      paste(collapse = " ")
+                    else 
+                      as.character(err_raw) |>
+                      paste(collapse = " ")
+            ), 
+            call. = FALSE)
+        }
+        return(NULL)
+      }
     }
   }
   
