@@ -13,6 +13,11 @@ status](https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg)](
 
 ## About
 
+> Note: although some functionality is still only available in this
+> package, check out isoreader’s much faster and more versatile
+> successor at
+> [isoreader2.isoverse.org](https://isoreader2.isoverse.org/)
+
 This package is intended as a unified one-stop command line interface to
 all common IRMS (isotope ratio mass spectrometry) file formats used in
 stable isotope geochemistry. It is an extension and highly stream-lined
@@ -99,7 +104,7 @@ iso_files <- iso_read_scan(data_folder)
 #> Info: reading file 'full_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'time_scan_example.scn' with '.scn' reader...
-#> Info: finished reading 4 files in 1.34 secs
+#> Info: finished reading 4 files in 0.34 secs
 
 iso_files
 #> Data from 4 scan iso files: 
