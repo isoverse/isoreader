@@ -111,6 +111,9 @@
 <div class="section level2">
 <h2 id="about">About<a class="anchor" aria-label="anchor" href="#about"></a>
 </h2>
+<blockquote>
+<p>Note: although some functionality is still only available in this package, check out isoreader’s much faster and more versatile successor at <a href="https://isoreader2.isoverse.org/" class="external-link">isoreader2.isoverse.org</a></p>
+</blockquote>
 <p>This package is intended as a unified one-stop command line interface to all common IRMS (isotope ratio mass spectrometry) file formats used in stable isotope geochemistry. It is an extension and highly stream-lined re-implementation of the proof-of-concept <a href="https://github.com/sebkopf/isoread" class="external-link">isoread</a> package and is designed to fit into a larger framework of IRMS data tools that includes the web-based graphical user interface package <a href="https://github.com/isoverse/isoviewer" class="external-link">isoviewer</a> and the data processing and visualization pipeline <a href="https://github.com/isoverse/isoprocessor" class="external-link">isoprocessor</a>.</p>
 <p><a href="https://isoreader.isoverse.org/" class="external-link">isoreader</a> enables the reading and processing of stable isotope data directly from the data files and thus provides a tool for platform-independent (Windows, Mac, Linux), efficient and reproducible data reduction. Although implemented in R, it can be used in both RMarkdown as well as Jupyter data processing notebooks and also provides functionality for easy export to Python using the shared R/Python feather file format. At present, it can read most Thermo dual inlet (.did, .caf) and continuous flow (.dxf, .cf) data files as well as Elementar continuous flow data archives (.iarc) with additional extensions for other file formats in the works. Due to the dynamic implementation and design based on the popular <a href="https://www.tidyverse.org/" class="external-link">tidyverse</a> style of R programming, isoreader is easily extendable, takes care of error catching to avoid pipeline breaks due to problems encountered in source data files (modeled after <a href="https://readr.tidyverse.org/" class="external-link">readr</a>) and works great with <a href="https://www.tidyverse.org/" class="external-link">tidyverse</a> packages such as <a href="https://tidyr.tidyverse.org/" class="external-link">tidyr</a>, <a href="https://dplyr.tidyverse.org/" class="external-link">dplyr</a> and <a href="https://ggplot2.tidyverse.org/" class="external-link">ggplot</a>.</p>
 </div>
@@ -121,7 +124,7 @@
 <code class="sourceCode R"><span><span class="co"># Note: isoreader is temporarily not available on CRAN because of a missing dependency, please install directly from GitHub using the commands below</span></span>
 <span><span class="co"># install.packages("isoreader")</span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"isoverse/isoreader"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"isoverse/isoreader"</span><span class="op">)</span></span></code></pre></div>
 <p>Some isoreader features including Excel and feather export depend on optional packages that are not required for the core functionality of isoreader. To use this functionality, please install the following packages manually if not already installed (isoreader will throw an informative warning if they are needed but missing):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># optional extensions</span></span>
@@ -131,7 +134,7 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># installs the development tools package if not yet installed</span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"isoverse/isoreader"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"isoverse/isoreader"</span><span class="op">)</span></span></code></pre></div>
 <p>Troubleshooting note: depending on your workspace and operating system, you may have to re-start your R session or manually install some dependencies. For example, the <code>digest</code> package sometimes causes trouble - re-install with <code>remove.packages("digest"); install.packages("digest")</code>.</p>
 </div>
 <div class="section level2">
@@ -147,7 +150,7 @@
 <span><span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader...</span></span>
 <span><span class="co">#&gt; Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...</span></span>
 <span><span class="co">#&gt; Info: reading file 'time_scan_example.scn' with '.scn' reader...</span></span>
-<span><span class="co">#&gt; Info: finished reading 4 files in 1.34 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 4 files in 0.34 secs</span></span>
 <span></span>
 <span><span class="va">iso_files</span></span>
 <span><span class="co">#&gt; Data from 4 scan iso files: </span></span>
@@ -170,68 +173,68 @@
 <col width="14%">
 <col width="48%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th align="left">type</th>
 <th align="left">extension</th>
 <th align="left">software</th>
 <th align="left">description</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td align="left">continuous flow</td>
 <td align="left">.cf</td>
 <td align="left">Isodat</td>
 <td align="left">Continuous Flow file format (older)</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">continuous flow</td>
 <td align="left">.cf.rds</td>
 <td align="left">isoreader</td>
 <td align="left">R Data Storage</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">continuous flow</td>
 <td align="left">.dxf</td>
 <td align="left">Isodat</td>
 <td align="left">Continuous Flow file format (newer)</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">continuous flow</td>
 <td align="left">.iarc</td>
 <td align="left">ionOS</td>
 <td align="left">Continuous Flow data archive</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">dual inlet</td>
 <td align="left">.caf</td>
 <td align="left">Isodat</td>
 <td align="left">Dual Inlet file format (older)</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">dual inlet</td>
 <td align="left">.di.rds</td>
 <td align="left">isoreader</td>
 <td align="left">R Data Storage</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">dual inlet</td>
 <td align="left">.did</td>
 <td align="left">Isodat</td>
 <td align="left">Dual Inlet file format (newer)</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">dual inlet</td>
 <td align="left">.txt</td>
 <td align="left">Nu</td>
 <td align="left">Dual Inlet file format</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">scan</td>
 <td align="left">.scan.rds</td>
 <td align="left">isoreader</td>
 <td align="left">R Data Storage</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">scan</td>
 <td align="left">.scn</td>
 <td align="left">Isodat</td>
@@ -328,7 +331,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>
