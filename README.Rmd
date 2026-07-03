@@ -17,14 +17,16 @@ version <- as.character(packageVersion("isoreader"))
 # isoreader <a href='https://isoreader.isoverse.org'><img src='man/figures/isoreader_logo_thumb.png' align="right" height="138.5"/></a>
 
 <!-- badges: start -->
+[![Life cycle](https://img.shields.io/badge/lifecycle-superseded-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![R build status](https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg)](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://isoreader.isoverse.org/)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.02878/status.svg)](https://doi.org/10.21105/joss.02878)
 <!-- badges: end -->
 
-## About
+## This R package is deprecated, please check out isoreader's much faster and more versatile successor at [isoreader2.isoverse.org](https://isoreader2.isoverse.org/)
 
-> Note: although some functionality is still only available in this package, check out isoreader's much faster and more versatile successor at [isoreader2.isoverse.org](https://isoreader2.isoverse.org/)
+
+## About
 
 This package is intended as a unified one-stop command line interface to all common IRMS (isotope ratio mass spectrometry) file formats used in stable isotope geochemistry. It is an extension and highly stream-lined re-implementation of the proof-of-concept [isoread](https://github.com/sebkopf/isoread) package and is designed to fit into a larger framework of IRMS data tools that includes the web-based graphical user interface package [isoviewer](https://github.com/isoverse/isoviewer) and the data processing and visualization pipeline [isoprocessor](https://github.com/isoverse/isoprocessor).
 

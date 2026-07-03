@@ -5,18 +5,17 @@
 
 <!-- badges: start -->
 
+[![Life
+cycle](https://img.shields.io/badge/lifecycle-superseded-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![R build
 status](https://github.com/isoverse/isoreader/workflows/R-CMD-check/badge.svg)](https://github.com/isoverse/isoreader/actions?workflow=R-CMD-check)
 [![Documentation](https://img.shields.io/badge/docs-online-green.svg)](https://isoreader.isoverse.org/)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.02878/status.svg)](https://doi.org/10.21105/joss.02878)
 <!-- badges: end -->
 
-## About
+## This R package is deprecated, please check out isoreader’s much faster and more versatile successor at [isoreader2.isoverse.org](https://isoreader2.isoverse.org/)
 
-> Note: although some functionality is still only available in this
-> package, check out isoreader’s much faster and more versatile
-> successor at
-> [isoreader2.isoverse.org](https://isoreader2.isoverse.org/)
+## About
 
 This package is intended as a unified one-stop command line interface to
 all common IRMS (isotope ratio mass spectrometry) file formats used in
@@ -104,7 +103,7 @@ iso_files <- iso_read_scan(data_folder)
 #> Info: reading file 'full_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...
 #> Info: reading file 'time_scan_example.scn' with '.scn' reader...
-#> Info: finished reading 4 files in 0.34 secs
+#> Info: finished reading 4 files in 0.32 secs
 
 iso_files
 #> Data from 4 scan iso files: 
