@@ -109,11 +109,13 @@
 <!-- badges: start -->
 
 <div class="section level2">
+<h2 id="this-r-package-is-deprecated-please-check-out-isoreaders-much-faster-and-more-versatile-successor-at-isoreader2isoverseorg">This R package is deprecated, please check out isoreader’s much faster and more versatile successor at <a href="https://isoreader2.isoverse.org/" class="external-link">isoreader2.isoverse.org</a>
+<a class="anchor" aria-label="anchor" href="#this-r-package-is-deprecated-please-check-out-isoreaders-much-faster-and-more-versatile-successor-at-isoreader2isoverseorg"></a>
+</h2>
+</div>
+<div class="section level2">
 <h2 id="about">About<a class="anchor" aria-label="anchor" href="#about"></a>
 </h2>
-<blockquote>
-<p>Note: although some functionality is still only available in this package, check out isoreader’s much faster and more versatile successor at <a href="https://isoreader2.isoverse.org/" class="external-link">isoreader2.isoverse.org</a></p>
-</blockquote>
 <p>This package is intended as a unified one-stop command line interface to all common IRMS (isotope ratio mass spectrometry) file formats used in stable isotope geochemistry. It is an extension and highly stream-lined re-implementation of the proof-of-concept <a href="https://github.com/sebkopf/isoread" class="external-link">isoread</a> package and is designed to fit into a larger framework of IRMS data tools that includes the web-based graphical user interface package <a href="https://github.com/isoverse/isoviewer" class="external-link">isoviewer</a> and the data processing and visualization pipeline <a href="https://github.com/isoverse/isoprocessor" class="external-link">isoprocessor</a>.</p>
 <p><a href="https://isoreader.isoverse.org/" class="external-link">isoreader</a> enables the reading and processing of stable isotope data directly from the data files and thus provides a tool for platform-independent (Windows, Mac, Linux), efficient and reproducible data reduction. Although implemented in R, it can be used in both RMarkdown as well as Jupyter data processing notebooks and also provides functionality for easy export to Python using the shared R/Python feather file format. At present, it can read most Thermo dual inlet (.did, .caf) and continuous flow (.dxf, .cf) data files as well as Elementar continuous flow data archives (.iarc) with additional extensions for other file formats in the works. Due to the dynamic implementation and design based on the popular <a href="https://www.tidyverse.org/" class="external-link">tidyverse</a> style of R programming, isoreader is easily extendable, takes care of error catching to avoid pipeline breaks due to problems encountered in source data files (modeled after <a href="https://readr.tidyverse.org/" class="external-link">readr</a>) and works great with <a href="https://www.tidyverse.org/" class="external-link">tidyverse</a> packages such as <a href="https://tidyr.tidyverse.org/" class="external-link">tidyr</a>, <a href="https://dplyr.tidyverse.org/" class="external-link">dplyr</a> and <a href="https://ggplot2.tidyverse.org/" class="external-link">ggplot</a>.</p>
 </div>
@@ -150,7 +152,7 @@
 <span><span class="co">#&gt; Info: reading file 'full_scan_example.scn' with '.scn' reader...</span></span>
 <span><span class="co">#&gt; Info: reading file 'peak_shape_scan_example.scn' with '.scn' reader...</span></span>
 <span><span class="co">#&gt; Info: reading file 'time_scan_example.scn' with '.scn' reader...</span></span>
-<span><span class="co">#&gt; Info: finished reading 4 files in 0.34 secs</span></span>
+<span><span class="co">#&gt; Info: finished reading 4 files in 0.32 secs</span></span>
 <span></span>
 <span><span class="va">iso_files</span></span>
 <span><span class="co">#&gt; Data from 4 scan iso files: </span></span>
